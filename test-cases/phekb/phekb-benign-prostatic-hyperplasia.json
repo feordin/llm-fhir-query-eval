@@ -1,0 +1,60 @@
+{
+  "id": "phekb-benign-prostatic-hyperplasia",
+  "source": "phekb",
+  "source_id": "phema-bph-benign-prostatic-hyperplasia-cases",
+  "name": "Benign Prostatic Hyperplasia",
+  "description": "This test case evaluates the ability to identify patients with benign prostatic hyperplasia (BPH). The phenotype is based on the PhEMA implementation using HQMF representation.",
+  "prompt": "Find all male patients who have been diagnosed with benign prostatic hyperplasia or enlarged prostate, including those with lower urinary tract symptoms due to BPH.",
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "code_systems": [
+      "ICD-9-CM",
+      "ICD-10-CM",
+      "SNOMED CT"
+    ],
+    "required_codes": [
+      {
+        "system": "http://hl7.org/fhir/sid/icd-9-cm",
+        "code": "600",
+        "display": "Hyperplasia of prostate"
+      },
+      {
+        "system": "http://hl7.org/fhir/sid/icd-10-cm",
+        "code": "N40",
+        "display": "Benign prostatic hyperplasia"
+      },
+      {
+        "system": "http://hl7.org/fhir/sid/icd-10-cm",
+        "code": "N40.1",
+        "display": "Benign prostatic hyperplasia with lower urinary tract symptoms"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "266569009",
+        "display": "Benign prostatic hyperplasia"
+      }
+    ],
+    "complexity": "simple",
+    "tags": [
+      "condition",
+      "urology",
+      "benign-prostatic-hyperplasia",
+      "prostate"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "Condition",
+    "parameters": {
+      "code": "http://hl7.org/fhir/sid/icd-9-cm|600,http://hl7.org/fhir/sid/icd-10-cm|N40,http://hl7.org/fhir/sid/icd-10-cm|N40.1,http://snomed.info/sct|266569009",
+      "patient.gender": "male"
+    },
+    "url": "Condition?code=http://hl7.org/fhir/sid/icd-9-cm|600,http://hl7.org/fhir/sid/icd-10-cm|N40,http://hl7.org/fhir/sid/icd-10-cm|N40.1,http://snomed.info/sct|266569009&patient.gender=male"
+  },
+  "test_data": {
+    "resources": [],
+    "expected_result_count": 0,
+    "expected_resource_ids": []
+  },
+  "created_at": "2026-01-24T12:00:00.000000Z",
+  "updated_at": "2026-01-24T12:00:00.000000Z"
+}

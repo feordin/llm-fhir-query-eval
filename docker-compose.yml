@@ -1,0 +1,46 @@
+version: '3.8'
+
+services:
+  fhir-candle:
+    image: ghcr.io/fhir/fhir-candle:latest
+    container_name: fhir-candle
+    ports:
+      - "5826:5826"
+    environment:
+      - ASPNETCORE_URLS=http://+:5826
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5826/r4/metadata"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  backend:
+    build: ./backend
+    container_name: fhir-eval-backend
+    ports:
+      - "8000:8000"
+    environment:
+      - FHIR_SERVER_URL=http://fhir-candle:5826
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+    volumes:
+      - ./backend/src:/app/src
+      - ./test-cases:/app/test-cases
+      - ./data:/app/data
+    depends_on:
+      fhir-candle:
+        condition: service_healthy
+    command: uvicorn src.api.main:app --host 0.0.0.0 --port 8000 --reload
+
+  frontend:
+    build: ./frontend
+    container_name: fhir-eval-frontend
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend/src:/app/src
+    depends_on:
+      - backend
+    command: npm run dev -- --host 0.0.0.0

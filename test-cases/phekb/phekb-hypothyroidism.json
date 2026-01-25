@@ -1,0 +1,67 @@
+{
+  "id": "phekb-hypothyroidism",
+  "source": "phekb",
+  "source_id": "hypothyroidism",
+  "name": "Hypothyroidism",
+  "description": "This test case evaluates the ability to identify patients with autoimmune hypothyroidism (Hashimoto's) requiring thyroid hormone replacement therapy. The phenotype excludes secondary causes such as surgical removal or radiological ablation.",
+  "prompt": "Find all patients diagnosed with hypothyroidism who are on thyroid hormone replacement therapy, excluding those with hypothyroidism due to thyroidectomy, radioactive iodine treatment, or medication-induced causes.",
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "code_systems": [
+      "ICD-9-CM",
+      "ICD-10-CM",
+      "RxNorm",
+      "SNOMED CT"
+    ],
+    "required_codes": [
+      {
+        "system": "http://hl7.org/fhir/sid/icd-9-cm",
+        "code": "244.9",
+        "display": "Unspecified hypothyroidism"
+      },
+      {
+        "system": "http://hl7.org/fhir/sid/icd-10-cm",
+        "code": "E03.9",
+        "display": "Hypothyroidism, unspecified"
+      },
+      {
+        "system": "http://hl7.org/fhir/sid/icd-10-cm",
+        "code": "E06.3",
+        "display": "Autoimmune thyroiditis"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "10582",
+        "display": "Levothyroxine"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "40930008",
+        "display": "Hypothyroidism"
+      }
+    ],
+    "complexity": "high",
+    "tags": [
+      "condition",
+      "endocrinology",
+      "hypothyroidism",
+      "thyroid",
+      "medication"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "Patient",
+    "parameters": {
+      "_has:Condition:patient:code": "http://hl7.org/fhir/sid/icd-9-cm|244.9,http://hl7.org/fhir/sid/icd-10-cm|E03.9,http://hl7.org/fhir/sid/icd-10-cm|E06.3",
+      "_has:MedicationRequest:patient:medication.code": "http://www.nlm.nih.gov/research/umls/rxnorm|10582"
+    },
+    "url": "Patient?_has:Condition:patient:code=http://hl7.org/fhir/sid/icd-9-cm|244.9,http://hl7.org/fhir/sid/icd-10-cm|E03.9,http://hl7.org/fhir/sid/icd-10-cm|E06.3&_has:MedicationRequest:patient:medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|10582"
+  },
+  "test_data": {
+    "resources": [],
+    "expected_result_count": 0,
+    "expected_resource_ids": []
+  },
+  "created_at": "2026-01-24T12:00:00.000000Z",
+  "updated_at": "2026-01-24T12:00:00.000000Z"
+}

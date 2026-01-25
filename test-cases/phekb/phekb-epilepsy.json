@@ -1,0 +1,73 @@
+{
+  "id": "phekb-epilepsy",
+  "source": "phekb",
+  "source_id": "epilepsyantiepileptic-drug-response-algorithm",
+  "name": "Epilepsy and Antiepileptic Drug Response",
+  "description": "This test case evaluates the ability to identify patients with epilepsy and their response to antiepileptic drug therapy. The phenotype targets both pediatric and adult patients across diverse racial backgrounds.",
+  "prompt": "Find all patients diagnosed with epilepsy or seizure disorder who have been prescribed antiepileptic medications such as phenytoin, carbamazepine, valproic acid, levetiracetam, or lamotrigine.",
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "code_systems": [
+      "ICD-9-CM",
+      "ICD-10-CM",
+      "RxNorm",
+      "SNOMED CT"
+    ],
+    "required_codes": [
+      {
+        "system": "http://hl7.org/fhir/sid/icd-9-cm",
+        "code": "345",
+        "display": "Epilepsy and recurrent seizures"
+      },
+      {
+        "system": "http://hl7.org/fhir/sid/icd-10-cm",
+        "code": "G40",
+        "display": "Epilepsy and recurrent seizures"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "8183",
+        "display": "Phenytoin"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "2002",
+        "display": "Carbamazepine"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "114477",
+        "display": "Levetiracetam"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "84757009",
+        "display": "Epilepsy"
+      }
+    ],
+    "complexity": "high",
+    "tags": [
+      "condition",
+      "neurology",
+      "epilepsy",
+      "seizures",
+      "medication",
+      "pharmacogenomics"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "Patient",
+    "parameters": {
+      "_has:Condition:patient:code": "http://hl7.org/fhir/sid/icd-9-cm|345,http://hl7.org/fhir/sid/icd-10-cm|G40",
+      "_has:MedicationRequest:patient:medication.code": "http://www.nlm.nih.gov/research/umls/rxnorm|8183,http://www.nlm.nih.gov/research/umls/rxnorm|2002,http://www.nlm.nih.gov/research/umls/rxnorm|114477"
+    },
+    "url": "Patient?_has:Condition:patient:code=http://hl7.org/fhir/sid/icd-9-cm|345,http://hl7.org/fhir/sid/icd-10-cm|G40&_has:MedicationRequest:patient:medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|8183,http://www.nlm.nih.gov/research/umls/rxnorm|2002,http://www.nlm.nih.gov/research/umls/rxnorm|114477"
+  },
+  "test_data": {
+    "resources": [],
+    "expected_result_count": 0,
+    "expected_resource_ids": []
+  },
+  "created_at": "2026-01-24T12:00:00.000000Z",
+  "updated_at": "2026-01-24T12:00:00.000000Z"
+}

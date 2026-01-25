@@ -1,0 +1,58 @@
+{
+  "id": "phekb-atopic-dermatitis-algorithm",
+  "source": "phekb",
+  "source_id": "atopic-dermatitis-algorithm",
+  "name": "Atopic Dermatitis Algorithm",
+  "description": "This test case evaluates the ability to identify atopic dermatitis patients using a complex phenotype algorithm that requires: (1) patients \u226560 days old, (2) multiple visits with atopic dermatitis diagnosis codes, and (3) either associated medications OR additional visits. It tests the LLM's ability to translate clinical inclusion criteria involving diagnosis frequency, medication history, and age constraints into appropriate FHIR queries.",
+  "prompt": "Find all patients with atopic dermatitis who are at least 60 days old and have had multiple clinic visits with this diagnosis, along with prescriptions for atopic dermatitis medications or at least three separate visits with the diagnosis.",
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "code_systems": [
+      "ICD-9-CM",
+      "SNOMED CT",
+      "RxNorm"
+    ],
+    "required_codes": [
+      {
+        "system": "http://hl7.org/fhir/sid/icd-9-cm",
+        "code": "691.8",
+        "display": "Other atopic dermatitis and related conditions"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "24079001",
+        "display": "Atopic dermatitis"
+      },
+      {
+        "system": "http://terminology.hl7.org/CodeSystem/v3-ActCode",
+        "code": "AMB",
+        "display": "ambulatory"
+      }
+    ],
+    "complexity": "high",
+    "tags": [
+      "atopic-dermatitis",
+      "condition",
+      "pediatric",
+      "medication",
+      "multiple-visits",
+      "phenotype-algorithm"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "Patient",
+    "parameters": {
+      "_has:Condition:patient:code": "http://hl7.org/fhir/sid/icd-9-cm|691.8",
+      "_has:Encounter:patient:class": "AMB",
+      "birthdate": "le2023-10-01"
+    },
+    "url": "Patient?_has:Condition:patient:code=http://hl7.org/fhir/sid/icd-9-cm|691.8&_has:Encounter:patient:class=AMB&birthdate=le2023-10-01"
+  },
+  "test_data": {
+    "resources": [],
+    "expected_result_count": 0,
+    "expected_resource_ids": []
+  },
+  "created_at": "2026-01-18T06:58:18.019398Z",
+  "updated_at": "2026-01-18T06:58:18.019406Z"
+}

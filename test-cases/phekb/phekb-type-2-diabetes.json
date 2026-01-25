@@ -1,0 +1,123 @@
+{
+  "id": "phekb-type-2-diabetes",
+  "source": "phekb",
+  "source_id": "type-2-diabetes-mellitus",
+  "name": "Type 2 Diabetes Mellitus",
+  "description": "This test case evaluates the ability to identify patients with type 2 diabetes mellitus. The algorithm extracts both T2DM cases and controls from the electronic medical record using diagnosis codes, diabetes medications, and abnormal lab values (random glucose >200 mg/dl, fasting glucose >=125 mg/dl, or HbA1c >=6.5%).",
+  "prompt": "Find all patients diagnosed with type 2 diabetes mellitus who have been prescribed diabetes medications or have elevated hemoglobin A1c levels.",
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "code_systems": [
+      "ICD-9-CM",
+      "ICD-10-CM",
+      "RxNorm",
+      "SNOMED CT",
+      "LOINC"
+    ],
+    "required_codes": [
+      {
+        "system": "http://hl7.org/fhir/sid/icd-9-cm",
+        "code": "250.00",
+        "display": "Diabetes mellitus without complication, type II or unspecified type, not stated as uncontrolled"
+      },
+      {
+        "system": "http://hl7.org/fhir/sid/icd-9-cm",
+        "code": "250.02",
+        "display": "Diabetes mellitus without complication, type II or unspecified type, uncontrolled"
+      },
+      {
+        "system": "http://hl7.org/fhir/sid/icd-10-cm",
+        "code": "E11",
+        "display": "Type 2 diabetes mellitus"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "44054006",
+        "display": "Type 2 diabetes mellitus"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "6809",
+        "display": "Metformin"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "4821",
+        "display": "Glipizide"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "4815",
+        "display": "Glyburide"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "25789",
+        "display": "Glimepiride"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "33738",
+        "display": "Pioglitazone"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "84108",
+        "display": "Rosiglitazone"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "593411",
+        "display": "Sitagliptin"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "60548",
+        "display": "Exenatide"
+      },
+      {
+        "system": "http://loinc.org",
+        "code": "4548-4",
+        "display": "Hemoglobin A1c/Hemoglobin.total in Blood"
+      },
+      {
+        "system": "http://loinc.org",
+        "code": "17856-6",
+        "display": "Hemoglobin A1c/Hemoglobin.total in Blood by HPLC"
+      },
+      {
+        "system": "http://loinc.org",
+        "code": "2339-0",
+        "display": "Glucose [Mass/volume] in Blood"
+      },
+      {
+        "system": "http://loinc.org",
+        "code": "1558-6",
+        "display": "Fasting glucose [Mass/volume] in Serum or Plasma"
+      }
+    ],
+    "complexity": "medium",
+    "tags": [
+      "condition",
+      "endocrinology",
+      "type-2-diabetes",
+      "metabolic",
+      "medication",
+      "laboratory"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "Condition",
+    "parameters": {
+      "code": "http://hl7.org/fhir/sid/icd-9-cm|250.00,http://hl7.org/fhir/sid/icd-9-cm|250.02,http://hl7.org/fhir/sid/icd-10-cm|E11,http://snomed.info/sct|44054006"
+    },
+    "url": "Condition?code=http://hl7.org/fhir/sid/icd-9-cm|250.00,http://hl7.org/fhir/sid/icd-9-cm|250.02,http://hl7.org/fhir/sid/icd-10-cm|E11,http://snomed.info/sct|44054006"
+  },
+  "test_data": {
+    "resources": [],
+    "expected_result_count": 0,
+    "expected_resource_ids": []
+  },
+  "created_at": "2026-01-24T12:00:00.000000Z",
+  "updated_at": "2026-01-24T12:00:00.000000Z"
+}

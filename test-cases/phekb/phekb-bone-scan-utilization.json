@@ -1,0 +1,56 @@
+{
+  "id": "phekb-bone-scan-utilization",
+  "source": "phekb",
+  "source_id": "bone-scan-utilization-0",
+  "name": "Bone Scan Utilization",
+  "description": "This test case evaluates the ability to identify bone scan procedures performed for prostate cancer staging. The phenotype assesses guideline adherence by identifying which prostate cancer patients received bone scans based on their risk stratification.",
+  "prompt": "Find all patients with prostate cancer who have had a bone scan procedure performed for cancer staging purposes.",
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "code_systems": [
+      "ICD-10-CM",
+      "CPT",
+      "SNOMED CT"
+    ],
+    "required_codes": [
+      {
+        "system": "http://hl7.org/fhir/sid/icd-10-cm",
+        "code": "C61",
+        "display": "Malignant neoplasm of prostate"
+      },
+      {
+        "system": "http://www.ama-assn.org/go/cpt",
+        "code": "78306",
+        "display": "Bone and/or joint imaging; whole body"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "41747006",
+        "display": "Bone scan"
+      }
+    ],
+    "complexity": "high",
+    "tags": [
+      "procedure",
+      "imaging",
+      "prostate-cancer",
+      "staging",
+      "bone-scan"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "Patient",
+    "parameters": {
+      "_has:Condition:patient:code": "http://hl7.org/fhir/sid/icd-10-cm|C61",
+      "_has:Procedure:patient:code": "http://www.ama-assn.org/go/cpt|78306"
+    },
+    "url": "Patient?_has:Condition:patient:code=http://hl7.org/fhir/sid/icd-10-cm|C61&_has:Procedure:patient:code=http://www.ama-assn.org/go/cpt|78306"
+  },
+  "test_data": {
+    "resources": [],
+    "expected_result_count": 0,
+    "expected_resource_ids": []
+  },
+  "created_at": "2026-01-24T12:00:00.000000Z",
+  "updated_at": "2026-01-24T12:00:00.000000Z"
+}

@@ -1,0 +1,67 @@
+{
+  "id": "phekb-hiv",
+  "source": "phekb",
+  "source_id": "hiv",
+  "name": "HIV",
+  "description": "This test case evaluates the ability to identify all patients aged 13 or older with HIV infection from electronic health record data. The phenotype uses diagnosis codes and laboratory tests.",
+  "prompt": "Find all patients aged 13 years or older who have been diagnosed with human immunodeficiency virus (HIV) infection, including asymptomatic HIV status, symptomatic HIV disease, and AIDS.",
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "code_systems": [
+      "ICD-9-CM",
+      "ICD-10-CM",
+      "LOINC",
+      "SNOMED CT"
+    ],
+    "required_codes": [
+      {
+        "system": "http://hl7.org/fhir/sid/icd-9-cm",
+        "code": "042",
+        "display": "Human immunodeficiency virus [HIV] disease"
+      },
+      {
+        "system": "http://hl7.org/fhir/sid/icd-10-cm",
+        "code": "B20",
+        "display": "Human immunodeficiency virus [HIV] disease"
+      },
+      {
+        "system": "http://hl7.org/fhir/sid/icd-10-cm",
+        "code": "Z21",
+        "display": "Asymptomatic human immunodeficiency virus [HIV] infection status"
+      },
+      {
+        "system": "http://loinc.org",
+        "code": "68961-2",
+        "display": "HIV 1 Ab [Presence] in Serum or Plasma"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "86406008",
+        "display": "Human immunodeficiency virus infection"
+      }
+    ],
+    "complexity": "medium",
+    "tags": [
+      "condition",
+      "infectious-disease",
+      "hiv",
+      "aids",
+      "laboratory"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "Condition",
+    "parameters": {
+      "code": "http://hl7.org/fhir/sid/icd-9-cm|042,http://hl7.org/fhir/sid/icd-10-cm|B20,http://hl7.org/fhir/sid/icd-10-cm|Z21,http://snomed.info/sct|86406008",
+      "patient.birthdate": "le2013-01-01"
+    },
+    "url": "Condition?code=http://hl7.org/fhir/sid/icd-9-cm|042,http://hl7.org/fhir/sid/icd-10-cm|B20,http://hl7.org/fhir/sid/icd-10-cm|Z21,http://snomed.info/sct|86406008&patient.birthdate=le2013-01-01"
+  },
+  "test_data": {
+    "resources": [],
+    "expected_result_count": 0,
+    "expected_resource_ids": []
+  },
+  "created_at": "2026-01-24T12:00:00.000000Z",
+  "updated_at": "2026-01-24T12:00:00.000000Z"
+}

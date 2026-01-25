@@ -1,0 +1,59 @@
+{
+  "id": "phekb-cataracts",
+  "source": "phekb",
+  "source_id": "cataracts",
+  "name": "Cataracts",
+  "description": "This test case evaluates the ability to identify patients with cataracts using a multi-modal strategy including structured diagnosis codes and clinical documentation. The phenotype aims to identify cataract subjects and related cataract attributes.",
+  "prompt": "Find all patients who have been diagnosed with cataracts, including age-related cataracts, traumatic cataracts, or other cataract types.",
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "code_systems": [
+      "ICD-9-CM",
+      "ICD-10-CM",
+      "SNOMED CT"
+    ],
+    "required_codes": [
+      {
+        "system": "http://hl7.org/fhir/sid/icd-9-cm",
+        "code": "366",
+        "display": "Cataract"
+      },
+      {
+        "system": "http://hl7.org/fhir/sid/icd-10-cm",
+        "code": "H25",
+        "display": "Age-related cataract"
+      },
+      {
+        "system": "http://hl7.org/fhir/sid/icd-10-cm",
+        "code": "H26",
+        "display": "Other cataract"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "193570009",
+        "display": "Cataract"
+      }
+    ],
+    "complexity": "simple",
+    "tags": [
+      "condition",
+      "ophthalmology",
+      "cataracts",
+      "eye-disease"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "Condition",
+    "parameters": {
+      "code": "http://hl7.org/fhir/sid/icd-9-cm|366,http://hl7.org/fhir/sid/icd-10-cm|H25,http://hl7.org/fhir/sid/icd-10-cm|H26,http://snomed.info/sct|193570009"
+    },
+    "url": "Condition?code=http://hl7.org/fhir/sid/icd-9-cm|366,http://hl7.org/fhir/sid/icd-10-cm|H25,http://hl7.org/fhir/sid/icd-10-cm|H26,http://snomed.info/sct|193570009"
+  },
+  "test_data": {
+    "resources": [],
+    "expected_result_count": 0,
+    "expected_resource_ids": []
+  },
+  "created_at": "2026-01-24T12:00:00.000000Z",
+  "updated_at": "2026-01-24T12:00:00.000000Z"
+}

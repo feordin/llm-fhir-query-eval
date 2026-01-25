@@ -1,0 +1,19 @@
+Phenotype: Blood Pressure
+URL: https://phekb.org/phenotype/blood-pressure
+================================================================================
+
+These are the algorithms for the PRIMED Harmonized systolic and diastolic blood pressures (SBP and DBP). The overall procedure of gathering single BP values per individual consists of:
+1. Extract trait measurements using measurement codes and calculations
+2. Convert measurement units to expected units, if necessary
+3. Apply measurement exclusion criteria, other than statistical outliers
+4. Prepare measurements for analysis
+5. Remove statistical outliers
+6. Compute a single value per individual for inclusion in analysis
+7. Calculate counts of flagged individuals
+Codes for data extraction are present in the added files along with a more detailed version of the algorithm. Antihypertensives (blood pressure lowering meds) will be gathered as well and the codes are also included in added files. 
+Expected units for BP is mm Hg for both traits.
+Exclusions should be for measurements taken when age <18, at inpatient or emergency department visits as appropriate for your EHR and any measurements taken when individuals have end stage kidney disease diagnosis or pregnancy condition codes (included in additional file). 
+To prepare the measurements for analysis, duplicate measurements/multiple taken on the same clinic visit should be averaged. If there are more than two measurements taken at the same visit, the average should be between the second and third measurements.
+Statistical outliers outside of the Q1-Q3 interval using Interquartile range should be excluded after the other exclusions.
+To compute a single value per individual, median values for SBP and DBP should be calculated, extract the age corresponding to the median value records, extract the BMI (BMI_codes file) corresponding to the visit of median BP (if available- if missing use the BMI value closest to the time of median BP record), and if there is record of BP medication used at any timepoint prior to the median BP record, adjust for the BP meds by adding 15 mmHg to the SBP and 10 mmHg to DBP.
+Flags for the following diseases/conditions should be noted and still used in the analysis.

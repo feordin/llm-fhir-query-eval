@@ -1,0 +1,77 @@
+{
+  "id": "phekb-adhd-phenotype-algorithm",
+  "source": "phekb",
+  "source_id": "adhd-phenotype-algorithm",
+  "name": "ADHD phenotype algorithm",
+  "description": "This test case evaluates the ability to identify ADHD cases using a complex phenotype algorithm that requires: 1) patients aged 4+ years, 2) presence of ADHD/hyperkinetic disorder diagnostic codes from clinical encounters, and 3) prescription history of ADHD medications. This represents the primary case definition path (1a+1b+1c) from the PheKB ADHD phenotype algorithm, testing multi-resource queries combining patient demographics, diagnostic history, and medication prescriptions.",
+  "prompt": "Find all patients who are at least 4 years old with a documented diagnosis of ADHD or hyperkinetic disorder and have been prescribed ADHD medications.",
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "code_systems": [
+      "ICD-9-CM",
+      "ICD-10-CM",
+      "RxNorm"
+    ],
+    "required_codes": [
+      {
+        "system": "http://hl7.org/fhir/sid/icd-9-cm",
+        "code": "314.00",
+        "display": "Attention deficit disorder without mention of hyperactivity"
+      },
+      {
+        "system": "http://hl7.org/fhir/sid/icd-9-cm",
+        "code": "314.01",
+        "display": "Attention deficit disorder with hyperactivity"
+      },
+      {
+        "system": "http://hl7.org/fhir/sid/icd-9-cm",
+        "code": "314.9",
+        "display": "Unspecified hyperkinetic syndrome of childhood"
+      },
+      {
+        "system": "http://hl7.org/fhir/sid/icd-10-cm",
+        "code": "F90.0",
+        "display": "Attention-deficit hyperactivity disorder, predominantly inattentive type"
+      },
+      {
+        "system": "http://hl7.org/fhir/sid/icd-10-cm",
+        "code": "F90.1",
+        "display": "Attention-deficit hyperactivity disorder, predominantly hyperactive type"
+      },
+      {
+        "system": "http://rxnorm.nlm.nih.gov",
+        "code": "1819",
+        "display": "Methylphenidate"
+      },
+      {
+        "system": "http://rxnorm.nlm.nih.gov",
+        "code": "42347",
+        "display": "Amphetamine"
+      }
+    ],
+    "complexity": "high",
+    "tags": [
+      "adhd",
+      "phenotype",
+      "multi-resource",
+      "pediatric",
+      "psychiatric"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "Patient",
+    "parameters": {
+      "_has:Condition:patient:code": "314.00,314.01,314.9,F90.0,F90.1,F90.2,F90.8,F90.9",
+      "_has:MedicationRequest:patient:medication-code": "1819,18631,18632,25480,42347,105258",
+      "birthdate": "le2020-01-01"
+    },
+    "url": "Patient?_has:Condition:patient:code=314.00,314.01,314.9,F90.0,F90.1,F90.2,F90.8,F90.9&_has:MedicationRequest:patient:medication-code=1819,18631,18632,25480,42347,105258&birthdate=le2020-01-01"
+  },
+  "test_data": {
+    "resources": [],
+    "expected_result_count": 0,
+    "expected_resource_ids": []
+  },
+  "created_at": "2026-01-18T06:57:13.908995Z",
+  "updated_at": "2026-01-18T06:57:13.909003Z"
+}

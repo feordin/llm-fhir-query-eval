@@ -1,0 +1,65 @@
+{
+  "id": "phekb-gerd",
+  "source": "phekb",
+  "source_id": "gastroesophageal-reflux-disease-gerd-phenotype-algorithm",
+  "name": "Gastroesophageal Reflux Disease (GERD)",
+  "description": "This test case evaluates the ability to identify patients with gastroesophageal reflux disease using diagnosis codes, procedures, and medications. The phenotype uses CPT and ICD-9 codes from clinical observations.",
+  "prompt": "Find all patients diagnosed with gastroesophageal reflux disease or who have been prescribed proton pump inhibitors or H2 blockers for acid reflux treatment.",
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "code_systems": [
+      "ICD-9-CM",
+      "ICD-10-CM",
+      "RxNorm",
+      "SNOMED CT"
+    ],
+    "required_codes": [
+      {
+        "system": "http://hl7.org/fhir/sid/icd-9-cm",
+        "code": "530.81",
+        "display": "Esophageal reflux"
+      },
+      {
+        "system": "http://hl7.org/fhir/sid/icd-10-cm",
+        "code": "K21.0",
+        "display": "Gastro-esophageal reflux disease with esophagitis"
+      },
+      {
+        "system": "http://hl7.org/fhir/sid/icd-10-cm",
+        "code": "K21.9",
+        "display": "Gastro-esophageal reflux disease without esophagitis"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "235595009",
+        "display": "Gastroesophageal reflux disease"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "7646",
+        "display": "Omeprazole"
+      }
+    ],
+    "complexity": "medium",
+    "tags": [
+      "condition",
+      "gastroenterology",
+      "gerd",
+      "acid-reflux"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "Condition",
+    "parameters": {
+      "code": "http://hl7.org/fhir/sid/icd-9-cm|530.81,http://hl7.org/fhir/sid/icd-10-cm|K21.0,http://hl7.org/fhir/sid/icd-10-cm|K21.9,http://snomed.info/sct|235595009"
+    },
+    "url": "Condition?code=http://hl7.org/fhir/sid/icd-9-cm|530.81,http://hl7.org/fhir/sid/icd-10-cm|K21.0,http://hl7.org/fhir/sid/icd-10-cm|K21.9,http://snomed.info/sct|235595009"
+  },
+  "test_data": {
+    "resources": [],
+    "expected_result_count": 0,
+    "expected_resource_ids": []
+  },
+  "created_at": "2026-01-24T12:00:00.000000Z",
+  "updated_at": "2026-01-24T12:00:00.000000Z"
+}

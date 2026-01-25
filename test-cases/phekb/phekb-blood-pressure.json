@@ -1,0 +1,53 @@
+{
+  "id": "phekb-blood-pressure",
+  "source": "phekb",
+  "source_id": "blood-pressure",
+  "name": "Blood Pressure",
+  "description": "This test case evaluates the ability to query for blood pressure measurements (systolic and diastolic) from adult patients, excluding emergency department and inpatient encounters. The phenotype focuses on outpatient blood pressure values measured in mm Hg.",
+  "prompt": "Find all blood pressure observations for adult patients aged 18 and older, including both systolic and diastolic measurements, excluding readings taken during emergency department or inpatient encounters.",
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "code_systems": [
+      "LOINC"
+    ],
+    "required_codes": [
+      {
+        "system": "http://loinc.org",
+        "code": "85354-9",
+        "display": "Blood pressure panel with all children optional"
+      },
+      {
+        "system": "http://loinc.org",
+        "code": "8480-6",
+        "display": "Systolic blood pressure"
+      },
+      {
+        "system": "http://loinc.org",
+        "code": "8462-4",
+        "display": "Diastolic blood pressure"
+      }
+    ],
+    "complexity": "medium",
+    "tags": [
+      "vital-signs",
+      "observation",
+      "blood-pressure",
+      "quantitative"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "Observation",
+    "parameters": {
+      "code": "http://loinc.org|85354-9,http://loinc.org|8480-6,http://loinc.org|8462-4",
+      "patient.birthdate": "le2008-01-01"
+    },
+    "url": "Observation?code=http://loinc.org|85354-9,http://loinc.org|8480-6,http://loinc.org|8462-4&patient.birthdate=le2008-01-01"
+  },
+  "test_data": {
+    "resources": [],
+    "expected_result_count": 0,
+    "expected_resource_ids": []
+  },
+  "created_at": "2026-01-24T12:00:00.000000Z",
+  "updated_at": "2026-01-24T12:00:00.000000Z"
+}

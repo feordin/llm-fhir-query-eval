@@ -1,0 +1,65 @@
+{
+  "id": "phekb-developmental-language-disorder",
+  "source": "phekb",
+  "source_id": "developmental-language-disorder",
+  "name": "Developmental Language Disorder",
+  "description": "This test case evaluates the ability to identify pediatric patients with developmental language disorder (DLD) using the APT-DLD automated phenotyping tool. The algorithm classifies cases based on ICD-9 and ICD-10 diagnosis codes.",
+  "prompt": "Find all pediatric patients who have been diagnosed with developmental language disorder, speech and language developmental delay, or other specific developmental disorders of speech and language.",
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "code_systems": [
+      "ICD-9-CM",
+      "ICD-10-CM",
+      "SNOMED CT"
+    ],
+    "required_codes": [
+      {
+        "system": "http://hl7.org/fhir/sid/icd-9-cm",
+        "code": "315.31",
+        "display": "Expressive language disorder"
+      },
+      {
+        "system": "http://hl7.org/fhir/sid/icd-9-cm",
+        "code": "315.32",
+        "display": "Mixed receptive-expressive language disorder"
+      },
+      {
+        "system": "http://hl7.org/fhir/sid/icd-10-cm",
+        "code": "F80.1",
+        "display": "Expressive language disorder"
+      },
+      {
+        "system": "http://hl7.org/fhir/sid/icd-10-cm",
+        "code": "F80.2",
+        "display": "Mixed receptive-expressive language disorder"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "229746007",
+        "display": "Developmental language disorder"
+      }
+    ],
+    "complexity": "medium",
+    "tags": [
+      "condition",
+      "pediatric",
+      "developmental-disorder",
+      "speech-language"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "Condition",
+    "parameters": {
+      "code": "http://hl7.org/fhir/sid/icd-9-cm|315.31,http://hl7.org/fhir/sid/icd-9-cm|315.32,http://hl7.org/fhir/sid/icd-10-cm|F80.1,http://hl7.org/fhir/sid/icd-10-cm|F80.2",
+      "patient.birthdate": "ge2008-01-01"
+    },
+    "url": "Condition?code=http://hl7.org/fhir/sid/icd-9-cm|315.31,http://hl7.org/fhir/sid/icd-9-cm|315.32,http://hl7.org/fhir/sid/icd-10-cm|F80.1,http://hl7.org/fhir/sid/icd-10-cm|F80.2&patient.birthdate=ge2008-01-01"
+  },
+  "test_data": {
+    "resources": [],
+    "expected_result_count": 0,
+    "expected_resource_ids": []
+  },
+  "created_at": "2026-01-24T12:00:00.000000Z",
+  "updated_at": "2026-01-24T12:00:00.000000Z"
+}

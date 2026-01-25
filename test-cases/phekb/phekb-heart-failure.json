@@ -1,0 +1,258 @@
+{
+  "id": "phekb-heart-failure",
+  "source": "phekb",
+  "source_id": "heart-failure-hf-differentiation-between-preserved-and-reduced-ejection-fraction",
+  "name": "Heart Failure with Ejection Fraction Differentiation",
+  "description": "This test case evaluates the ability to identify patients with heart failure and differentiate between preserved (HFpEF, EF≥50%) and reduced ejection fraction (HFrEF, EF<50%). The eMERGE algorithm uses ICD-9 codes (428.X), NLP-detected mentions in clinical notes, and echocardiography ejection fraction measurements. Cases are classified as definite, probable, or possible based on corroborating evidence within specified time windows.",
+  "prompt": "Find all adult patients diagnosed with heart failure, including those with preserved ejection fraction (greater than 50%) and those with reduced ejection fraction (less than 50%), along with their echocardiogram ejection fraction measurements.",
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "code_systems": [
+      "ICD-9-CM",
+      "ICD-10-CM",
+      "LOINC",
+      "SNOMED CT"
+    ],
+    "required_codes": [
+      {
+        "system": "http://hl7.org/fhir/sid/icd-9-cm",
+        "code": "428",
+        "display": "Heart failure"
+      },
+      {
+        "system": "http://hl7.org/fhir/sid/icd-9-cm",
+        "code": "428.0",
+        "display": "Congestive heart failure, unspecified"
+      },
+      {
+        "system": "http://hl7.org/fhir/sid/icd-9-cm",
+        "code": "428.1",
+        "display": "Left heart failure"
+      },
+      {
+        "system": "http://hl7.org/fhir/sid/icd-9-cm",
+        "code": "428.2",
+        "display": "Systolic heart failure"
+      },
+      {
+        "system": "http://hl7.org/fhir/sid/icd-9-cm",
+        "code": "428.20",
+        "display": "Systolic heart failure, unspecified"
+      },
+      {
+        "system": "http://hl7.org/fhir/sid/icd-9-cm",
+        "code": "428.21",
+        "display": "Acute systolic heart failure"
+      },
+      {
+        "system": "http://hl7.org/fhir/sid/icd-9-cm",
+        "code": "428.22",
+        "display": "Chronic systolic heart failure"
+      },
+      {
+        "system": "http://hl7.org/fhir/sid/icd-9-cm",
+        "code": "428.23",
+        "display": "Acute on chronic systolic heart failure"
+      },
+      {
+        "system": "http://hl7.org/fhir/sid/icd-9-cm",
+        "code": "428.3",
+        "display": "Diastolic heart failure"
+      },
+      {
+        "system": "http://hl7.org/fhir/sid/icd-9-cm",
+        "code": "428.30",
+        "display": "Diastolic heart failure, unspecified"
+      },
+      {
+        "system": "http://hl7.org/fhir/sid/icd-9-cm",
+        "code": "428.31",
+        "display": "Acute diastolic heart failure"
+      },
+      {
+        "system": "http://hl7.org/fhir/sid/icd-9-cm",
+        "code": "428.32",
+        "display": "Chronic diastolic heart failure"
+      },
+      {
+        "system": "http://hl7.org/fhir/sid/icd-9-cm",
+        "code": "428.33",
+        "display": "Acute on chronic diastolic heart failure"
+      },
+      {
+        "system": "http://hl7.org/fhir/sid/icd-9-cm",
+        "code": "428.4",
+        "display": "Combined systolic and diastolic heart failure"
+      },
+      {
+        "system": "http://hl7.org/fhir/sid/icd-9-cm",
+        "code": "428.40",
+        "display": "Combined systolic and diastolic heart failure, unspecified"
+      },
+      {
+        "system": "http://hl7.org/fhir/sid/icd-9-cm",
+        "code": "428.41",
+        "display": "Acute combined systolic and diastolic heart failure"
+      },
+      {
+        "system": "http://hl7.org/fhir/sid/icd-9-cm",
+        "code": "428.42",
+        "display": "Chronic combined systolic and diastolic heart failure"
+      },
+      {
+        "system": "http://hl7.org/fhir/sid/icd-9-cm",
+        "code": "428.43",
+        "display": "Acute on chronic combined systolic and diastolic heart failure"
+      },
+      {
+        "system": "http://hl7.org/fhir/sid/icd-9-cm",
+        "code": "428.9",
+        "display": "Heart failure, unspecified"
+      },
+      {
+        "system": "http://hl7.org/fhir/sid/icd-10-cm",
+        "code": "I50",
+        "display": "Heart failure"
+      },
+      {
+        "system": "http://hl7.org/fhir/sid/icd-10-cm",
+        "code": "I50.1",
+        "display": "Left ventricular failure, unspecified"
+      },
+      {
+        "system": "http://hl7.org/fhir/sid/icd-10-cm",
+        "code": "I50.2",
+        "display": "Systolic (congestive) heart failure"
+      },
+      {
+        "system": "http://hl7.org/fhir/sid/icd-10-cm",
+        "code": "I50.20",
+        "display": "Unspecified systolic (congestive) heart failure"
+      },
+      {
+        "system": "http://hl7.org/fhir/sid/icd-10-cm",
+        "code": "I50.21",
+        "display": "Acute systolic (congestive) heart failure"
+      },
+      {
+        "system": "http://hl7.org/fhir/sid/icd-10-cm",
+        "code": "I50.22",
+        "display": "Chronic systolic (congestive) heart failure"
+      },
+      {
+        "system": "http://hl7.org/fhir/sid/icd-10-cm",
+        "code": "I50.23",
+        "display": "Acute on chronic systolic (congestive) heart failure"
+      },
+      {
+        "system": "http://hl7.org/fhir/sid/icd-10-cm",
+        "code": "I50.3",
+        "display": "Diastolic (congestive) heart failure"
+      },
+      {
+        "system": "http://hl7.org/fhir/sid/icd-10-cm",
+        "code": "I50.30",
+        "display": "Unspecified diastolic (congestive) heart failure"
+      },
+      {
+        "system": "http://hl7.org/fhir/sid/icd-10-cm",
+        "code": "I50.31",
+        "display": "Acute diastolic (congestive) heart failure"
+      },
+      {
+        "system": "http://hl7.org/fhir/sid/icd-10-cm",
+        "code": "I50.32",
+        "display": "Chronic diastolic (congestive) heart failure"
+      },
+      {
+        "system": "http://hl7.org/fhir/sid/icd-10-cm",
+        "code": "I50.33",
+        "display": "Acute on chronic diastolic (congestive) heart failure"
+      },
+      {
+        "system": "http://hl7.org/fhir/sid/icd-10-cm",
+        "code": "I50.4",
+        "display": "Combined systolic and diastolic heart failure"
+      },
+      {
+        "system": "http://hl7.org/fhir/sid/icd-10-cm",
+        "code": "I50.40",
+        "display": "Unspecified combined systolic and diastolic heart failure"
+      },
+      {
+        "system": "http://hl7.org/fhir/sid/icd-10-cm",
+        "code": "I50.41",
+        "display": "Acute combined systolic and diastolic heart failure"
+      },
+      {
+        "system": "http://hl7.org/fhir/sid/icd-10-cm",
+        "code": "I50.42",
+        "display": "Chronic combined systolic and diastolic heart failure"
+      },
+      {
+        "system": "http://hl7.org/fhir/sid/icd-10-cm",
+        "code": "I50.43",
+        "display": "Acute on chronic combined systolic and diastolic heart failure"
+      },
+      {
+        "system": "http://hl7.org/fhir/sid/icd-10-cm",
+        "code": "I50.9",
+        "display": "Heart failure, unspecified"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "84114007",
+        "display": "Heart failure"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "42343007",
+        "display": "Congestive heart failure"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "85232009",
+        "display": "Left heart failure"
+      },
+      {
+        "system": "http://loinc.org",
+        "code": "8806-2",
+        "display": "Left ventricular Ejection fraction by 2D echocardiography"
+      },
+      {
+        "system": "http://loinc.org",
+        "code": "10230-1",
+        "display": "Left ventricular Ejection fraction"
+      },
+      {
+        "system": "http://loinc.org",
+        "code": "18043-0",
+        "display": "Left ventricular Ejection fraction by US"
+      }
+    ],
+    "complexity": "high",
+    "tags": [
+      "condition",
+      "cardiology",
+      "heart-failure",
+      "ejection-fraction",
+      "echocardiography",
+      "HFrEF",
+      "HFpEF"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "Condition",
+    "parameters": {
+      "code": "http://hl7.org/fhir/sid/icd-9-cm|428,http://hl7.org/fhir/sid/icd-9-cm|428.0,http://hl7.org/fhir/sid/icd-9-cm|428.1,http://hl7.org/fhir/sid/icd-9-cm|428.2,http://hl7.org/fhir/sid/icd-9-cm|428.3,http://hl7.org/fhir/sid/icd-9-cm|428.4,http://hl7.org/fhir/sid/icd-9-cm|428.9,http://hl7.org/fhir/sid/icd-10-cm|I50,http://hl7.org/fhir/sid/icd-10-cm|I50.1,http://hl7.org/fhir/sid/icd-10-cm|I50.2,http://hl7.org/fhir/sid/icd-10-cm|I50.3,http://hl7.org/fhir/sid/icd-10-cm|I50.4,http://hl7.org/fhir/sid/icd-10-cm|I50.9,http://snomed.info/sct|84114007,http://snomed.info/sct|42343007"
+    },
+    "url": "Condition?code=http://hl7.org/fhir/sid/icd-9-cm|428,http://hl7.org/fhir/sid/icd-9-cm|428.0,http://hl7.org/fhir/sid/icd-9-cm|428.1,http://hl7.org/fhir/sid/icd-9-cm|428.2,http://hl7.org/fhir/sid/icd-9-cm|428.3,http://hl7.org/fhir/sid/icd-9-cm|428.4,http://hl7.org/fhir/sid/icd-9-cm|428.9,http://hl7.org/fhir/sid/icd-10-cm|I50,http://hl7.org/fhir/sid/icd-10-cm|I50.1,http://hl7.org/fhir/sid/icd-10-cm|I50.2,http://hl7.org/fhir/sid/icd-10-cm|I50.3,http://hl7.org/fhir/sid/icd-10-cm|I50.4,http://hl7.org/fhir/sid/icd-10-cm|I50.9,http://snomed.info/sct|84114007,http://snomed.info/sct|42343007"
+  },
+  "test_data": {
+    "resources": [],
+    "expected_result_count": 0,
+    "expected_resource_ids": []
+  },
+  "created_at": "2026-01-24T12:00:00.000000Z",
+  "updated_at": "2026-01-24T12:00:00.000000Z"
+}

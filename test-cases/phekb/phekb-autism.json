@@ -1,0 +1,71 @@
+{
+  "id": "phekb-autism",
+  "source": "phekb",
+  "source_id": "autism",
+  "name": "Autism",
+  "description": "This test case evaluates the ability to identify pediatric patients with autism spectrum disorders using ICD-9 and ICD-10 diagnostic codes. The phenotype includes autism (299.0), Asperger's syndrome (299.80), and PDD-NOS (299.9), while excluding other developmental disorders like childhood schizophrenia and Rett syndrome. This is a foundational query for autism research and clinical care coordination.",
+  "prompt": "Find all pediatric patients with a documented diagnosis of autism spectrum disorders including autism, Asperger's syndrome, or pervasive developmental disorder not otherwise specified.",
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "code_systems": [
+      "ICD-9-CM",
+      "ICD-10-CM",
+      "SNOMED CT"
+    ],
+    "required_codes": [
+      {
+        "system": "http://hl7.org/fhir/sid/icd-9-cm",
+        "code": "299.00",
+        "display": "Autistic disorder, current or active state"
+      },
+      {
+        "system": "http://hl7.org/fhir/sid/icd-9-cm",
+        "code": "299.80",
+        "display": "Other specified pervasive developmental disorders, current or active state"
+      },
+      {
+        "system": "http://hl7.org/fhir/sid/icd-9-cm",
+        "code": "299.90",
+        "display": "Unspecified pervasive developmental disorder, current or active state"
+      },
+      {
+        "system": "http://hl7.org/fhir/sid/icd-10-cm",
+        "code": "F84.0",
+        "display": "Autistic disorder"
+      },
+      {
+        "system": "http://hl7.org/fhir/sid/icd-10-cm",
+        "code": "F84.5",
+        "display": "Asperger's syndrome"
+      },
+      {
+        "system": "http://hl7.org/fhir/sid/icd-10-cm",
+        "code": "F84.9",
+        "display": "Pervasive developmental disorder, unspecified"
+      }
+    ],
+    "complexity": "medium",
+    "tags": [
+      "autism",
+      "pediatric",
+      "developmental-disorders",
+      "condition",
+      "asd"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "Condition",
+    "parameters": {
+      "code": "299.00,299.01,299.80,299.81,299.90,299.91,F84.0,F84.5,F84.9",
+      "patient.birthdate": "ge2005-01-01"
+    },
+    "url": "Condition?code=http://hl7.org/fhir/sid/icd-9-cm|299.00,http://hl7.org/fhir/sid/icd-9-cm|299.01,http://hl7.org/fhir/sid/icd-9-cm|299.80,http://hl7.org/fhir/sid/icd-9-cm|299.81,http://hl7.org/fhir/sid/icd-9-cm|299.90,http://hl7.org/fhir/sid/icd-9-cm|299.91,http://hl7.org/fhir/sid/icd-10-cm|F84.0,http://hl7.org/fhir/sid/icd-10-cm|F84.5,http://hl7.org/fhir/sid/icd-10-cm|F84.9&patient.birthdate=ge2005-01-01"
+  },
+  "test_data": {
+    "resources": [],
+    "expected_result_count": 0,
+    "expected_resource_ids": []
+  },
+  "created_at": "2026-01-18T06:58:39.869550Z",
+  "updated_at": "2026-01-18T06:58:39.869560Z"
+}

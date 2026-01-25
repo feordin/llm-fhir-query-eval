@@ -1,0 +1,64 @@
+{
+  "id": "phekb-breast-cancer",
+  "source": "phekb",
+  "source_id": "breast-cancer",
+  "name": "Breast Cancer",
+  "description": "This test case evaluates the ability to identify breast cancer cases and subtypes based on hormone receptor status. The phenotype aims to identify cohorts for precision medicine approaches to breast cancer prevention, including patients who may benefit from anti-estrogen therapy.",
+  "prompt": "Find all female patients who have been diagnosed with breast cancer, including information about hormone receptor status (estrogen receptor positive or negative) when available.",
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "code_systems": [
+      "ICD-10-CM",
+      "SNOMED CT"
+    ],
+    "required_codes": [
+      {
+        "system": "http://hl7.org/fhir/sid/icd-10-cm",
+        "code": "C50",
+        "display": "Malignant neoplasm of breast"
+      },
+      {
+        "system": "http://hl7.org/fhir/sid/icd-10-cm",
+        "code": "C50.9",
+        "display": "Malignant neoplasm of breast, unspecified"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "254837009",
+        "display": "Malignant neoplasm of breast"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "416053008",
+        "display": "Estrogen receptor positive tumor"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "416237000",
+        "display": "Estrogen receptor negative neoplasm"
+      }
+    ],
+    "complexity": "medium",
+    "tags": [
+      "condition",
+      "oncology",
+      "breast-cancer",
+      "hormone-receptor"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "Condition",
+    "parameters": {
+      "code": "http://hl7.org/fhir/sid/icd-10-cm|C50,http://snomed.info/sct|254837009",
+      "patient.gender": "female"
+    },
+    "url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|C50,http://snomed.info/sct|254837009&patient.gender=female"
+  },
+  "test_data": {
+    "resources": [],
+    "expected_result_count": 0,
+    "expected_resource_ids": []
+  },
+  "created_at": "2026-01-24T12:00:00.000000Z",
+  "updated_at": "2026-01-24T12:00:00.000000Z"
+}

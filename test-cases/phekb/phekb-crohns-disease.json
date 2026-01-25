@@ -1,0 +1,65 @@
+{
+  "id": "phekb-crohns-disease",
+  "source": "phekb",
+  "source_id": "crohns-disease-demonstration-project",
+  "name": "Crohn's Disease",
+  "description": "This test case evaluates the ability to identify patients with Crohn's disease. Case records require more than 2 occurrences of diagnostic codes along with appropriate medications. The phenotype excludes patients with dual diagnosis of Crohn's and ulcerative colitis.",
+  "prompt": "Find all patients diagnosed with Crohn's disease who have had multiple encounters with the diagnosis and have been prescribed medications used to treat inflammatory bowel disease.",
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "code_systems": [
+      "ICD-9-CM",
+      "ICD-10-CM",
+      "SNOMED CT",
+      "RxNorm"
+    ],
+    "required_codes": [
+      {
+        "system": "http://hl7.org/fhir/sid/icd-9-cm",
+        "code": "555",
+        "display": "Regional enteritis"
+      },
+      {
+        "system": "http://hl7.org/fhir/sid/icd-10-cm",
+        "code": "K50",
+        "display": "Crohn's disease"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "34000006",
+        "display": "Crohn's disease"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "6851",
+        "display": "Mesalamine"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "191831",
+        "display": "Infliximab"
+      }
+    ],
+    "complexity": "high",
+    "tags": [
+      "condition",
+      "gastroenterology",
+      "crohns-disease",
+      "inflammatory-bowel-disease"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "Patient",
+    "parameters": {
+      "_has:Condition:patient:code": "http://hl7.org/fhir/sid/icd-9-cm|555,http://hl7.org/fhir/sid/icd-10-cm|K50,http://snomed.info/sct|34000006"
+    },
+    "url": "Patient?_has:Condition:patient:code=http://hl7.org/fhir/sid/icd-9-cm|555,http://hl7.org/fhir/sid/icd-10-cm|K50,http://snomed.info/sct|34000006"
+  },
+  "test_data": {
+    "resources": [],
+    "expected_result_count": 0,
+    "expected_resource_ids": []
+  },
+  "created_at": "2026-01-24T12:00:00.000000Z",
+  "updated_at": "2026-01-24T12:00:00.000000Z"
+}

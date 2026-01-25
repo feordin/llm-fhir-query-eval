@@ -1,0 +1,47 @@
+{
+  "id": "hypertension-diagnosis",
+  "source": "manual",
+  "source_id": null,
+  "name": "Hypertension Diagnosis",
+  "description": "Find patients with a diagnosis of hypertension",
+  "prompt": "I need to find all patients who have been diagnosed with hypertension or high blood pressure.",
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "code_systems": ["SNOMED CT", "ICD-10-CM"],
+    "required_codes": [
+      {
+        "system": "http://snomed.info/sct",
+        "code": "38341003",
+        "display": "Hypertensive disorder, systemic arterial (disorder)"
+      },
+      {
+        "system": "http://hl7.org/fhir/sid/icd-10-cm",
+        "code": "I10",
+        "display": "Essential (primary) hypertension"
+      }
+    ],
+    "complexity": "medium",
+    "tags": ["hypertension", "diagnosis", "cardiovascular", "condition"]
+  },
+  "expected_query": {
+    "resource_type": "Condition",
+    "parameters": {
+      "code": "http://snomed.info/sct|38341003,http://hl7.org/fhir/sid/icd-10-cm|I10"
+    },
+    "url": "Condition?code=http://snomed.info/sct|38341003,http://hl7.org/fhir/sid/icd-10-cm|I10"
+  },
+  "test_data": {
+    "resources": [
+      "data/fhir-resources/patients.json",
+      "data/fhir-resources/conditions-hypertension.json"
+    ],
+    "expected_result_count": 8,
+    "expected_resource_ids": [
+      "condition-htn-001",
+      "condition-htn-002",
+      "condition-htn-003"
+    ]
+  },
+  "created_at": "2026-01-12T10:00:00Z",
+  "updated_at": "2026-01-12T10:00:00Z"
+}

@@ -1,0 +1,56 @@
+{
+  "id": "phekb-digital-rectal-exam",
+  "source": "phekb",
+  "source_id": "digital-rectal-exam",
+  "name": "Digital Rectal Exam",
+  "description": "This test case evaluates the ability to identify prostate cancer patients who have had a digital rectal examination documented within 6 months before first treatment. DRE is a quality metric for prostate cancer care.",
+  "prompt": "Find all male patients with prostate cancer who have had a digital rectal examination performed within six months prior to their initial prostate cancer treatment.",
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "code_systems": [
+      "ICD-10-CM",
+      "CPT",
+      "SNOMED CT"
+    ],
+    "required_codes": [
+      {
+        "system": "http://hl7.org/fhir/sid/icd-10-cm",
+        "code": "C61",
+        "display": "Malignant neoplasm of prostate"
+      },
+      {
+        "system": "http://www.ama-assn.org/go/cpt",
+        "code": "G0102",
+        "display": "Prostate cancer screening; digital rectal examination"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "410006001",
+        "display": "Digital rectal examination"
+      }
+    ],
+    "complexity": "high",
+    "tags": [
+      "procedure",
+      "prostate-cancer",
+      "quality-metric",
+      "screening"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "Patient",
+    "parameters": {
+      "gender": "male",
+      "_has:Condition:patient:code": "http://hl7.org/fhir/sid/icd-10-cm|C61",
+      "_has:Procedure:patient:code": "http://snomed.info/sct|410006001"
+    },
+    "url": "Patient?gender=male&_has:Condition:patient:code=http://hl7.org/fhir/sid/icd-10-cm|C61&_has:Procedure:patient:code=http://snomed.info/sct|410006001"
+  },
+  "test_data": {
+    "resources": [],
+    "expected_result_count": 0,
+    "expected_resource_ids": []
+  },
+  "created_at": "2026-01-24T12:00:00.000000Z",
+  "updated_at": "2026-01-24T12:00:00.000000Z"
+}

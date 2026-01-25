@@ -1,0 +1,67 @@
+{
+  "id": "phekb-febrile-neutropenia-pediatric",
+  "source": "phekb",
+  "source_id": "febrile-neutropenia-pediatric",
+  "name": "Febrile Neutropenia (Pediatric)",
+  "description": "This test case evaluates the ability to identify pediatric patients with high-risk febrile neutropenia, a serious complication of myelosuppressive chemotherapy. Patients must be under 18 years with fever and ANC less than 500 cells/microL.",
+  "prompt": "Find all pediatric patients under 18 years of age with febrile neutropenia who have fever greater than 38 degrees Celsius and an absolute neutrophil count less than 500 cells per microliter, particularly those undergoing chemotherapy for leukemia or lymphoma or within 100 days of hematopoietic cell transplantation.",
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "code_systems": [
+      "ICD-9-CM",
+      "ICD-10-CM",
+      "LOINC",
+      "SNOMED CT"
+    ],
+    "required_codes": [
+      {
+        "system": "http://hl7.org/fhir/sid/icd-9-cm",
+        "code": "288.0",
+        "display": "Neutropenia"
+      },
+      {
+        "system": "http://hl7.org/fhir/sid/icd-10-cm",
+        "code": "D70",
+        "display": "Neutropenia"
+      },
+      {
+        "system": "http://hl7.org/fhir/sid/icd-10-cm",
+        "code": "R50.81",
+        "display": "Fever presenting with conditions classified elsewhere"
+      },
+      {
+        "system": "http://loinc.org",
+        "code": "751-8",
+        "display": "Neutrophils [#/volume] in Blood by Automated count"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "409089005",
+        "display": "Febrile neutropenia"
+      }
+    ],
+    "complexity": "high",
+    "tags": [
+      "condition",
+      "pediatric",
+      "oncology",
+      "febrile-neutropenia",
+      "chemotherapy-complication"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "Condition",
+    "parameters": {
+      "code": "http://hl7.org/fhir/sid/icd-10-cm|D70,http://snomed.info/sct|409089005",
+      "patient.birthdate": "ge2008-01-01"
+    },
+    "url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|D70,http://snomed.info/sct|409089005&patient.birthdate=ge2008-01-01"
+  },
+  "test_data": {
+    "resources": [],
+    "expected_result_count": 0,
+    "expected_resource_ids": []
+  },
+  "created_at": "2026-01-24T12:00:00.000000Z",
+  "updated_at": "2026-01-24T12:00:00.000000Z"
+}

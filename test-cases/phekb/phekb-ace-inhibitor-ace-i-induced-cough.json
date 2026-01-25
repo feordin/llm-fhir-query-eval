@@ -1,0 +1,62 @@
+{
+  "id": "phekb-ace-inhibitor-ace-i-induced-cough",
+  "source": "phekb",
+  "source_id": "ace-inhibitor-ace-i-induced-cough",
+  "name": "ACE Inhibitor (ACE-I) induced cough",
+  "description": "This test case evaluates the ability to identify patients with ACE inhibitor-induced cough, a common adverse drug reaction. The query should find patients who have both ACE inhibitor medication exposure and documented cough that developed as a drug-related adverse event. This is a complex phenotype requiring correlation between medication history and adverse events.",
+  "prompt": "Find patients who developed a cough as a side effect after being prescribed ACE inhibitor medications for blood pressure management.",
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "code_systems": [
+      "SNOMED CT",
+      "RxNorm"
+    ],
+    "required_codes": [
+      {
+        "system": "http://snomed.info/sct",
+        "code": "41549009",
+        "display": "Product containing angiotensin-converting enzyme inhibitor (product)"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "49727002",
+        "display": "Cough"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "386872004",
+        "display": "Substance with angiotensin-converting enzyme inhibitor mechanism of action"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "62014003",
+        "display": "Adverse reaction to drug"
+      }
+    ],
+    "complexity": "high",
+    "tags": [
+      "adverse-drug-reaction",
+      "ace-inhibitor",
+      "cough",
+      "medication-safety",
+      "pharmacogenomics"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "Patient",
+    "parameters": {
+      "medication": "ACE inhibitor",
+      "adverse-event": "cough",
+      "_include": "Patient:general-practitioner",
+      "_revinclude": "MedicationStatement:patient,AdverseEvent:patient"
+    },
+    "url": "Patient?_has:MedicationStatement:patient:medication.code:in=http://snomed.info/sct|41549009,http://snomed.info/sct|386872004&_has:AdverseEvent:patient:event.code=http://snomed.info/sct|49727002&_has:AdverseEvent:patient:suspectEntity.instance:Medication.code:in=http://snomed.info/sct|41549009"
+  },
+  "test_data": {
+    "resources": [],
+    "expected_result_count": 0,
+    "expected_resource_ids": []
+  },
+  "created_at": "2026-01-18T06:56:44.097837Z",
+  "updated_at": "2026-01-18T06:56:44.097854Z"
+}

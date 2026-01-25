@@ -1,0 +1,44 @@
+{
+  "id": "diabetes-glucose-observations",
+  "source": "manual",
+  "source_id": null,
+  "name": "Diabetes Glucose Observations",
+  "description": "Find all glucose measurements for patients with diabetes diagnosis",
+  "prompt": "Find all blood glucose measurements from January 2020 onwards. Limit results to 100.",
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "code_systems": ["LOINC"],
+    "required_codes": [
+      {
+        "system": "http://loinc.org",
+        "code": "2339-0",
+        "display": "Glucose [Mass/volume] in Blood"
+      }
+    ],
+    "complexity": "medium",
+    "tags": ["diabetes", "lab-results", "glucose", "observations"]
+  },
+  "expected_query": {
+    "resource_type": "Observation",
+    "parameters": {
+      "code": "http://loinc.org|2339-0",
+      "date": "ge2020-01-01",
+      "_count": "100"
+    },
+    "url": "Observation?code=http://loinc.org|2339-0&date=ge2020-01-01&_count=100"
+  },
+  "test_data": {
+    "resources": [
+      "data/fhir-resources/patients-diabetes.json",
+      "data/fhir-resources/observations-glucose.json"
+    ],
+    "expected_result_count": 15,
+    "expected_resource_ids": [
+      "obs-glucose-001",
+      "obs-glucose-002",
+      "obs-glucose-003"
+    ]
+  },
+  "created_at": "2026-01-12T10:00:00Z",
+  "updated_at": "2026-01-12T10:00:00Z"
+}

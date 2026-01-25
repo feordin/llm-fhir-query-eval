@@ -1,0 +1,61 @@
+{
+  "id": "phekb-clopidogrel-poor-metabolizers",
+  "source": "phekb",
+  "source_id": "clopidogrel-poor-metabolizers",
+  "name": "Clopidogrel Poor Metabolizers",
+  "description": "This test case evaluates the ability to identify patients who are on clopidogrel therapy and may be poor metabolizers at risk for adverse cardiovascular events. The phenotype identifies patients on clopidogrel who experienced cardiovascular events during treatment.",
+  "prompt": "Find all patients who have been prescribed clopidogrel and subsequently experienced a cardiovascular event such as myocardial infarction, stroke, or required revascularization while on the medication.",
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "code_systems": [
+      "RxNorm",
+      "ICD-10-CM",
+      "SNOMED CT"
+    ],
+    "required_codes": [
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "32968",
+        "display": "Clopidogrel"
+      },
+      {
+        "system": "http://hl7.org/fhir/sid/icd-10-cm",
+        "code": "I21",
+        "display": "Acute myocardial infarction"
+      },
+      {
+        "system": "http://hl7.org/fhir/sid/icd-10-cm",
+        "code": "I63",
+        "display": "Cerebral infarction"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "22298006",
+        "display": "Myocardial infarction"
+      }
+    ],
+    "complexity": "high",
+    "tags": [
+      "medication",
+      "pharmacogenomics",
+      "clopidogrel",
+      "cardiovascular",
+      "adverse-event"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "Patient",
+    "parameters": {
+      "_has:MedicationRequest:patient:medication.code": "http://www.nlm.nih.gov/research/umls/rxnorm|32968",
+      "_has:Condition:patient:code": "http://hl7.org/fhir/sid/icd-10-cm|I21,http://hl7.org/fhir/sid/icd-10-cm|I63"
+    },
+    "url": "Patient?_has:MedicationRequest:patient:medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|32968&_has:Condition:patient:code=http://hl7.org/fhir/sid/icd-10-cm|I21,http://hl7.org/fhir/sid/icd-10-cm|I63"
+  },
+  "test_data": {
+    "resources": [],
+    "expected_result_count": 0,
+    "expected_resource_ids": []
+  },
+  "created_at": "2026-01-24T12:00:00.000000Z",
+  "updated_at": "2026-01-24T12:00:00.000000Z"
+}

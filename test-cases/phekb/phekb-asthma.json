@@ -1,0 +1,73 @@
+{
+  "id": "phekb-asthma",
+  "source": "phekb",
+  "source_id": "asthma",
+  "name": "Asthma",
+  "description": "This test case evaluates the ability to identify asthma cases based on the PheKB phenotype definition, which requires patients to be at least 4 years old, have documented asthma diagnoses, and have been prescribed asthma-related medications. The phenotype combines diagnostic codes with medication history to create a comprehensive case definition.",
+  "prompt": "Find all pediatric and adult patients aged 4 years and older who have been diagnosed with asthma and have been prescribed asthma medications.",
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "code_systems": [
+      "ICD-9-CM",
+      "RxNorm",
+      "SNOMED CT"
+    ],
+    "required_codes": [
+      {
+        "system": "http://hl7.org/fhir/sid/icd-9-cm",
+        "code": "493",
+        "display": "Asthma"
+      },
+      {
+        "system": "http://hl7.org/fhir/sid/icd-9-cm",
+        "code": "493.0",
+        "display": "Extrinsic asthma"
+      },
+      {
+        "system": "http://hl7.org/fhir/sid/icd-9-cm",
+        "code": "493.1",
+        "display": "Intrinsic asthma"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "1998",
+        "display": "Albuterol"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "630208",
+        "display": "Fluticasone"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "200683",
+        "display": "Montelukast"
+      }
+    ],
+    "complexity": "high",
+    "tags": [
+      "asthma",
+      "condition",
+      "medication",
+      "pediatric",
+      "adult",
+      "phenotype"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "Patient",
+    "parameters": {
+      "_has:Condition:patient:code": "http://hl7.org/fhir/sid/icd-9-cm|493",
+      "_has:MedicationRequest:patient:medication.code:in": "http://www.nlm.nih.gov/research/umls/rxnorm|1998,http://www.nlm.nih.gov/research/umls/rxnorm|630208,http://www.nlm.nih.gov/research/umls/rxnorm|200683",
+      "birthdate": "le2019-01-01"
+    },
+    "url": "Patient?_has:Condition:patient:code=http://hl7.org/fhir/sid/icd-9-cm|493&_has:MedicationRequest:patient:medication.code:in=http://www.nlm.nih.gov/research/umls/rxnorm|1998,http://www.nlm.nih.gov/research/umls/rxnorm|630208,http://www.nlm.nih.gov/research/umls/rxnorm|200683&birthdate=le2019-01-01"
+  },
+  "test_data": {
+    "resources": [],
+    "expected_result_count": 0,
+    "expected_resource_ids": []
+  },
+  "created_at": "2026-01-18T06:57:53.430486Z",
+  "updated_at": "2026-01-18T06:57:53.430496Z"
+}

@@ -1,0 +1,55 @@
+{
+  "id": "phekb-camrsa",
+  "source": "phekb",
+  "source_id": "camrsa",
+  "name": "Community-Associated MRSA (caMRSA)",
+  "description": "This test case evaluates the ability to identify patients with community-associated methicillin-resistant Staphylococcus aureus (MRSA) infections based on laboratory culture results rather than diagnosis codes. The phenotype specifically targets community-acquired cases across all age groups.",
+  "prompt": "Find all patients aged 0 to 89 years who have positive laboratory culture results for methicillin-resistant Staphylococcus aureus from community-acquired infections.",
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "code_systems": [
+      "LOINC",
+      "SNOMED CT"
+    ],
+    "required_codes": [
+      {
+        "system": "http://loinc.org",
+        "code": "42721-1",
+        "display": "Methicillin resistant Staphylococcus aureus [Presence] in Specimen by Organism specific culture"
+      },
+      {
+        "system": "http://loinc.org",
+        "code": "35492-8",
+        "display": "Methicillin resistant Staphylococcus aureus DNA [Presence] in Specimen by NAA with probe detection"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "115329001",
+        "display": "Methicillin resistant Staphylococcus aureus"
+      }
+    ],
+    "complexity": "high",
+    "tags": [
+      "observation",
+      "laboratory",
+      "infectious-disease",
+      "mrsa",
+      "culture"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "Observation",
+    "parameters": {
+      "code": "http://loinc.org|42721-1,http://loinc.org|35492-8",
+      "value-concept": "http://snomed.info/sct|115329001"
+    },
+    "url": "Observation?code=http://loinc.org|42721-1,http://loinc.org|35492-8&value-concept=http://snomed.info/sct|115329001"
+  },
+  "test_data": {
+    "resources": [],
+    "expected_result_count": 0,
+    "expected_resource_ids": []
+  },
+  "created_at": "2026-01-24T12:00:00.000000Z",
+  "updated_at": "2026-01-24T12:00:00.000000Z"
+}

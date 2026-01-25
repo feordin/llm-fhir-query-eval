@@ -1,0 +1,66 @@
+{
+  "id": "phekb-fibromyalgia",
+  "source": "phekb",
+  "source_id": "identification-fibromyalgia-patients-rheumatoid-arthritis-cohort",
+  "name": "Fibromyalgia in Rheumatoid Arthritis",
+  "description": "This test case evaluates the ability to identify fibromyalgia patients within a rheumatoid arthritis cohort. The phenotype requires myalgia diagnosis codes appearing two or more times on different dates.",
+  "prompt": "Find all patients with rheumatoid arthritis who have also been diagnosed with fibromyalgia, characterized by widespread musculoskeletal pain, myalgia, or myofascial pain syndrome.",
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "code_systems": [
+      "ICD-9-CM",
+      "ICD-10-CM",
+      "SNOMED CT"
+    ],
+    "required_codes": [
+      {
+        "system": "http://hl7.org/fhir/sid/icd-9-cm",
+        "code": "729.1",
+        "display": "Myalgia and myositis unspecified"
+      },
+      {
+        "system": "http://hl7.org/fhir/sid/icd-10-cm",
+        "code": "M79.7",
+        "display": "Fibromyalgia"
+      },
+      {
+        "system": "http://hl7.org/fhir/sid/icd-10-cm",
+        "code": "M79.1",
+        "display": "Myalgia"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "203082005",
+        "display": "Fibromyalgia"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "69896004",
+        "display": "Rheumatoid arthritis"
+      }
+    ],
+    "complexity": "high",
+    "tags": [
+      "condition",
+      "rheumatology",
+      "fibromyalgia",
+      "rheumatoid-arthritis",
+      "chronic-pain"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "Patient",
+    "parameters": {
+      "_has:Condition:patient:code": "http://snomed.info/sct|69896004",
+      "_has:Condition:patient:code": "http://hl7.org/fhir/sid/icd-10-cm|M79.7,http://snomed.info/sct|203082005"
+    },
+    "url": "Patient?_has:Condition:patient:code=http://snomed.info/sct|69896004&_has:Condition:patient:code=http://hl7.org/fhir/sid/icd-10-cm|M79.7,http://snomed.info/sct|203082005"
+  },
+  "test_data": {
+    "resources": [],
+    "expected_result_count": 0,
+    "expected_resource_ids": []
+  },
+  "created_at": "2026-01-24T12:00:00.000000Z",
+  "updated_at": "2026-01-24T12:00:00.000000Z"
+}
