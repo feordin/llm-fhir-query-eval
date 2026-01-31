@@ -3,53 +3,57 @@
   "source": "phekb",
   "source_id": "atrial-fibrillation-demonstration-project",
   "name": "Atrial Fibrillation - Demonstration Project",
-  "description": "This test case evaluates the ability to identify patients with atrial fibrillation while excluding those with heart transplant history. It tests the LLM's capability to translate a phenotype definition that requires both inclusion criteria (atrial fibrillation diagnosis) and exclusion criteria (absence of heart transplant) into appropriate FHIR queries using cardiac condition codes.",
+  "description": "This test case evaluates the ability to identify patients with atrial fibrillation while excluding those with heart transplant history. It represents a complex phenotype algorithm that requires both inclusion criteria (atrial fibrillation diagnosis) and exclusion criteria (absence of heart transplant), which is common in clinical research cohort selection.",
   "prompt": "Find all patients with a diagnosis of atrial fibrillation who have not had a heart transplant.",
   "metadata": {
-    "implementation_guide": "US Core 5.0.0",
+    "implementation_guide": null,
     "code_systems": [
-      "SNOMED CT",
-      "ICD-10-CM"
+      "SNOMED CT"
     ],
     "required_codes": [
       {
         "system": "http://snomed.info/sct",
         "code": "49436004",
-        "display": "Atrial fibrillation"
+        "display": "Atrial fibrillation",
+        "source": "inferred"
       },
       {
         "system": "http://snomed.info/sct",
         "code": "32413006",
-        "display": "Heart transplantation"
+        "display": "Transplantation of heart",
+        "source": "inferred"
       },
       {
-        "system": "http://hl7.org/fhir/sid/icd-10-cm",
-        "code": "I48.91",
-        "display": "Unspecified atrial fibrillation"
+        "system": "http://snomed.info/sct",
+        "code": "233917008",
+        "display": "Atrioventricular septal defect",
+        "source": "inferred"
       }
     ],
-    "complexity": "medium",
+    "complexity": "high",
     "tags": [
       "atrial fibrillation",
-      "cardiac arrhythmia",
+      "cardiology",
       "exclusion criteria",
-      "heart transplant",
-      "phenotype"
+      "phenotype algorithm",
+      "research cohort"
     ]
   },
   "expected_query": {
     "resource_type": "Condition",
     "parameters": {
-      "code": "http://snomed.info/sct|49436004",
-      "_has:Condition:patient:code:not": "http://snomed.info/sct|32413006"
+      "code": "49436004",
+      "_include": "Condition:patient",
+      "_revinclude": "Condition:patient",
+      "_revinclude:iterate": "Condition:patient"
     },
-    "url": "Condition?code=http://snomed.info/sct|49436004&_has:Condition:patient:code:not=http://snomed.info/sct|32413006"
+    "url": "Condition?code=49436004&_include=Condition:patient&_revinclude=Condition:patient&_revinclude:iterate=Condition:patient"
   },
   "test_data": {
     "resources": [],
     "expected_result_count": 0,
     "expected_resource_ids": []
   },
-  "created_at": "2026-01-18T06:58:26.495989Z",
-  "updated_at": "2026-01-18T06:58:26.495999Z"
+  "created_at": "2026-01-29T04:14:51.735995Z",
+  "updated_at": "2026-01-29T04:14:51.736001Z"
 }

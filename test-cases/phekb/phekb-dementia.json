@@ -3,69 +3,215 @@
   "source": "phekb",
   "source_id": "dementia",
   "name": "Dementia",
-  "description": "This test case evaluates the ability to identify patients with presumptive Alzheimer's disease and other dementias. The algorithm requires a minimum of 5 visits with a dementia diagnosis or a dementia medication prescription.",
-  "prompt": "Find all patients with dementia, including Alzheimer's disease, who have had at least 5 encounters with the diagnosis or who have been prescribed dementia medications such as donepezil, rivastigmine, galantamine, or memantine.",
+  "description": "This test case evaluates the ability to identify a complex dementia phenotype that requires either: (1) a minimum of 5 visits with dementia diagnosis codes, OR (2) at least one prescription fill for dementia-specific medications (cholinesterase inhibitors or NMDA receptor antagonists). The phenotype encompasses various types of dementia including Alzheimer's disease, vascular dementia, frontotemporal dementia, and others.",
+  "prompt": "Find patients with dementia or Alzheimer's disease who have either multiple documented visits with dementia diagnoses or have been prescribed dementia medications.",
   "metadata": {
-    "implementation_guide": "US Core 5.0.0",
+    "implementation_guide": null,
     "code_systems": [
       "ICD-9-CM",
-      "ICD-10-CM",
-      "SNOMED CT",
       "RxNorm"
     ],
     "required_codes": [
       {
         "system": "http://hl7.org/fhir/sid/icd-9-cm",
+        "code": "290.0",
+        "display": "Senile dementia, uncomplicated",
+        "source": "document"
+      },
+      {
+        "system": "http://hl7.org/fhir/sid/icd-9-cm",
+        "code": "290.10",
+        "display": "Presenile dementia",
+        "source": "document"
+      },
+      {
+        "system": "http://hl7.org/fhir/sid/icd-9-cm",
+        "code": "290.11",
+        "display": "Presenile dementia",
+        "source": "document"
+      },
+      {
+        "system": "http://hl7.org/fhir/sid/icd-9-cm",
+        "code": "290.12",
+        "display": "Presenile dementia",
+        "source": "document"
+      },
+      {
+        "system": "http://hl7.org/fhir/sid/icd-9-cm",
+        "code": "290.13",
+        "display": "Presenile dementia",
+        "source": "document"
+      },
+      {
+        "system": "http://hl7.org/fhir/sid/icd-9-cm",
+        "code": "290.20",
+        "display": "Senile dementia delusional [paranoid] features",
+        "source": "document"
+      },
+      {
+        "system": "http://hl7.org/fhir/sid/icd-9-cm",
+        "code": "290.21",
+        "display": "Senile dementia with depressive features",
+        "source": "document"
+      },
+      {
+        "system": "http://hl7.org/fhir/sid/icd-9-cm",
+        "code": "290.3",
+        "display": "Senile dementia with delirium or confusion",
+        "source": "document"
+      },
+      {
+        "system": "http://hl7.org/fhir/sid/icd-9-cm",
+        "code": "290.40",
+        "display": "Arteriosclerotic dementia",
+        "source": "document"
+      },
+      {
+        "system": "http://hl7.org/fhir/sid/icd-9-cm",
+        "code": "290.41",
+        "display": "Vascular dementia with delirium",
+        "source": "document"
+      },
+      {
+        "system": "http://hl7.org/fhir/sid/icd-9-cm",
+        "code": "290.42",
+        "display": "Vascular dementia with delusions",
+        "source": "document"
+      },
+      {
+        "system": "http://hl7.org/fhir/sid/icd-9-cm",
+        "code": "290.43",
+        "display": "Arteriosclerotic dementia",
+        "source": "document"
+      },
+      {
+        "system": "http://hl7.org/fhir/sid/icd-9-cm",
+        "code": "291.0",
+        "display": "Dementia due to alcohol",
+        "source": "document"
+      },
+      {
+        "system": "http://hl7.org/fhir/sid/icd-9-cm",
+        "code": "291.1",
+        "display": "Dementia due to alcohol",
+        "source": "document"
+      },
+      {
+        "system": "http://hl7.org/fhir/sid/icd-9-cm",
+        "code": "291.2",
+        "display": "Dementia due to alcohol",
+        "source": "document"
+      },
+      {
+        "system": "http://hl7.org/fhir/sid/icd-9-cm",
+        "code": "292.82",
+        "display": "Dementia due to drugs",
+        "source": "document"
+      },
+      {
+        "system": "http://hl7.org/fhir/sid/icd-9-cm",
+        "code": "294.8",
+        "display": "Dementia, unspecified",
+        "source": "document"
+      },
+      {
+        "system": "http://hl7.org/fhir/sid/icd-9-cm",
+        "code": "294.10",
+        "display": "Dementia not classified as senile, presenile, or arteriosclerotic",
+        "source": "document"
+      },
+      {
+        "system": "http://hl7.org/fhir/sid/icd-9-cm",
+        "code": "294.11",
+        "display": "Dementia not classified as senile, presenile, or arteriosclerotic",
+        "source": "document"
+      },
+      {
+        "system": "http://hl7.org/fhir/sid/icd-9-cm",
         "code": "331.0",
-        "display": "Alzheimer's disease"
+        "display": "Alzheimer's disease",
+        "source": "document"
       },
       {
-        "system": "http://hl7.org/fhir/sid/icd-10-cm",
-        "code": "G30",
-        "display": "Alzheimer's disease"
+        "system": "http://hl7.org/fhir/sid/icd-9-cm",
+        "code": "331.11",
+        "display": "Pick's disease of the brain",
+        "source": "document"
       },
       {
-        "system": "http://hl7.org/fhir/sid/icd-10-cm",
-        "code": "F03",
-        "display": "Unspecified dementia"
+        "system": "http://hl7.org/fhir/sid/icd-9-cm",
+        "code": "331.19",
+        "display": "Other frontotemporal dementia",
+        "source": "document"
       },
       {
-        "system": "http://snomed.info/sct",
-        "code": "26929004",
-        "display": "Alzheimer's disease"
+        "system": "http://hl7.org/fhir/sid/icd-9-cm",
+        "code": "331.82",
+        "display": "Dementia with Lewy bodies. Dementia with Parkinsonism",
+        "source": "document"
       },
       {
         "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
-        "code": "135447",
-        "display": "Donepezil"
+        "code": "1146",
+        "display": "tacrine",
+        "source": "inferred"
       },
       {
         "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
-        "code": "183379",
-        "display": "Memantine"
+        "code": "3827",
+        "display": "donepezil",
+        "source": "inferred"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "77991",
+        "display": "galantamine",
+        "source": "inferred"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "35827",
+        "display": "rivastigmine",
+        "source": "inferred"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "6719",
+        "display": "memantine",
+        "source": "inferred"
       }
     ],
     "complexity": "high",
     "tags": [
-      "condition",
-      "neurology",
       "dementia",
-      "alzheimers-disease",
-      "medication"
+      "alzheimer",
+      "condition",
+      "medication",
+      "complex-phenotype"
     ]
   },
   "expected_query": {
-    "resource_type": "Condition",
+    "resource_type": "Bundle",
     "parameters": {
-      "code": "http://hl7.org/fhir/sid/icd-9-cm|331.0,http://hl7.org/fhir/sid/icd-10-cm|G30,http://hl7.org/fhir/sid/icd-10-cm|F03,http://snomed.info/sct|26929004"
+      "type": "batch",
+      "entry": [
+        {
+          "resource": "Condition",
+          "search": "code=http://hl7.org/fhir/sid/icd-9-cm|290.0,http://hl7.org/fhir/sid/icd-9-cm|290.10,http://hl7.org/fhir/sid/icd-9-cm|290.11,http://hl7.org/fhir/sid/icd-9-cm|290.12,http://hl7.org/fhir/sid/icd-9-cm|290.13,http://hl7.org/fhir/sid/icd-9-cm|290.20,http://hl7.org/fhir/sid/icd-9-cm|290.21,http://hl7.org/fhir/sid/icd-9-cm|290.3,http://hl7.org/fhir/sid/icd-9-cm|290.40,http://hl7.org/fhir/sid/icd-9-cm|290.41,http://hl7.org/fhir/sid/icd-9-cm|290.42,http://hl7.org/fhir/sid/icd-9-cm|290.43,http://hl7.org/fhir/sid/icd-9-cm|291.0,http://hl7.org/fhir/sid/icd-9-cm|291.1,http://hl7.org/fhir/sid/icd-9-cm|291.2,http://hl7.org/fhir/sid/icd-9-cm|292.82,http://hl7.org/fhir/sid/icd-9-cm|294.8,http://hl7.org/fhir/sid/icd-9-cm|294.10,http://hl7.org/fhir/sid/icd-9-cm|294.11,http://hl7.org/fhir/sid/icd-9-cm|331.0,http://hl7.org/fhir/sid/icd-9-cm|331.11,http://hl7.org/fhir/sid/icd-9-cm|331.19,http://hl7.org/fhir/sid/icd-9-cm|331.82"
+        },
+        {
+          "resource": "MedicationRequest",
+          "search": "medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|1146,http://www.nlm.nih.gov/research/umls/rxnorm|3827,http://www.nlm.nih.gov/research/umls/rxnorm|77991,http://www.nlm.nih.gov/research/umls/rxnorm|35827,http://www.nlm.nih.gov/research/umls/rxnorm|6719"
+        }
+      ]
     },
-    "url": "Condition?code=http://hl7.org/fhir/sid/icd-9-cm|331.0,http://hl7.org/fhir/sid/icd-10-cm|G30,http://hl7.org/fhir/sid/icd-10-cm|F03,http://snomed.info/sct|26929004"
+    "url": "Bundle with multiple resource searches for dementia conditions and medications"
   },
   "test_data": {
     "resources": [],
     "expected_result_count": 0,
     "expected_resource_ids": []
   },
-  "created_at": "2026-01-24T12:00:00.000000Z",
-  "updated_at": "2026-01-24T12:00:00.000000Z"
+  "created_at": "2026-01-29T04:20:04.727285Z",
+  "updated_at": "2026-01-29T04:20:04.727296Z"
 }

@@ -3,62 +3,62 @@
   "source": "phekb",
   "source_id": "breast-cancer",
   "name": "Breast Cancer",
-  "description": "This test case evaluates the ability to identify breast cancer cases and subtypes based on hormone receptor status. The phenotype aims to identify cohorts for precision medicine approaches to breast cancer prevention, including patients who may benefit from anti-estrogen therapy.",
-  "prompt": "Find all female patients who have been diagnosed with breast cancer, including information about hormone receptor status (estrogen receptor positive or negative) when available.",
+  "description": "This test case evaluates the ability to identify breast cancer cases using both active diagnostic codes and personal history codes. The phenotype requires either one occurrence of diagnostic codes OR two occurrences of history codes on distinct days. This tests the LLM's understanding of complex breast cancer phenotyping that includes both current and historical diagnoses.",
+  "prompt": "Find all patients with a diagnosis of breast cancer, including both current diagnoses and personal history of breast cancer.",
   "metadata": {
-    "implementation_guide": "US Core 5.0.0",
+    "implementation_guide": null,
     "code_systems": [
+      "SNOMED CT",
       "ICD-10-CM",
-      "SNOMED CT"
+      "ICD-9-CM"
     ],
     "required_codes": [
       {
-        "system": "http://hl7.org/fhir/sid/icd-10-cm",
-        "code": "C50",
-        "display": "Malignant neoplasm of breast"
+        "system": "http://snomed.info/sct",
+        "code": "254837009",
+        "display": "Malignant neoplasm of breast",
+        "source": "inferred"
       },
       {
         "system": "http://hl7.org/fhir/sid/icd-10-cm",
         "code": "C50.9",
-        "display": "Malignant neoplasm of breast, unspecified"
+        "display": "Malignant neoplasm of unspecified site of unspecified female breast",
+        "source": "inferred"
       },
       {
-        "system": "http://snomed.info/sct",
-        "code": "254837009",
-        "display": "Malignant neoplasm of breast"
+        "system": "http://hl7.org/fhir/sid/icd-10-cm",
+        "code": "Z85.3",
+        "display": "Personal history of malignant neoplasm of breast",
+        "source": "inferred"
       },
       {
-        "system": "http://snomed.info/sct",
-        "code": "416053008",
-        "display": "Estrogen receptor positive tumor"
-      },
-      {
-        "system": "http://snomed.info/sct",
-        "code": "416237000",
-        "display": "Estrogen receptor negative neoplasm"
+        "system": "http://hl7.org/fhir/sid/icd-9-cm",
+        "code": "V10.3",
+        "display": "Personal history of malignant neoplasm of breast",
+        "source": "document"
       }
     ],
-    "complexity": "medium",
+    "complexity": "high",
     "tags": [
-      "condition",
+      "breast cancer",
       "oncology",
-      "breast-cancer",
-      "hormone-receptor"
+      "condition",
+      "personal history"
     ]
   },
   "expected_query": {
     "resource_type": "Condition",
     "parameters": {
-      "code": "http://hl7.org/fhir/sid/icd-10-cm|C50,http://snomed.info/sct|254837009",
-      "patient.gender": "female"
+      "code": "254837009,C50.9,Z85.3,V10.3",
+      "_count": "1000"
     },
-    "url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|C50,http://snomed.info/sct|254837009&patient.gender=female"
+    "url": "Condition?code=254837009,C50.9,Z85.3,V10.3&_count=1000"
   },
   "test_data": {
     "resources": [],
     "expected_result_count": 0,
     "expected_resource_ids": []
   },
-  "created_at": "2026-01-24T12:00:00.000000Z",
-  "updated_at": "2026-01-24T12:00:00.000000Z"
+  "created_at": "2026-01-29T04:15:54.778927Z",
+  "updated_at": "2026-01-29T04:15:54.778937Z"
 }

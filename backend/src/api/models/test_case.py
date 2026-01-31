@@ -8,6 +8,11 @@ class Code(BaseModel):
     system: str
     code: str
     display: str
+    source: str = Field(
+        default="inferred",
+        pattern="^(document|inferred)$",
+        description="Whether code was found in source documents or inferred by LLM"
+    )
 
 
 class TestCaseMetadata(BaseModel):

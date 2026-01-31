@@ -1,0 +1,97 @@
+{
+  "id": "phekb-colorectal-cancer-crc",
+  "source": "phekb",
+  "source_id": "colorectal-cancer-crc",
+  "name": "Colorectal Cancer (CRC)",
+  "description": "This test case evaluates identification of colorectal cancer patients using a hierarchical approach that combines cancer diagnosis codes with treatment evidence (surgical procedures, chemotherapy, or radiation therapy). The phenotype excludes patients with inflammatory bowel diseases like ulcerative colitis or Crohn's disease that could confound the diagnosis.",
+  "prompt": "Find all patients with a diagnosis of colorectal cancer who also have evidence of surgical procedures, chemotherapy, or radiation therapy for cancer treatment.",
+  "metadata": {
+    "implementation_guide": null,
+    "code_systems": [
+      "ICD-10-CM",
+      "SNOMED CT",
+      "CPT"
+    ],
+    "required_codes": [
+      {
+        "system": "http://hl7.org/fhir/sid/icd-10-cm",
+        "code": "C18",
+        "display": "Malignant neoplasm of colon",
+        "source": "inferred"
+      },
+      {
+        "system": "http://hl7.org/fhir/sid/icd-10-cm",
+        "code": "C19",
+        "display": "Malignant neoplasm of rectosigmoid junction",
+        "source": "inferred"
+      },
+      {
+        "system": "http://hl7.org/fhir/sid/icd-10-cm",
+        "code": "C20",
+        "display": "Malignant neoplasm of rectum",
+        "source": "inferred"
+      },
+      {
+        "system": "http://hl7.org/fhir/sid/icd-10-cm",
+        "code": "C21",
+        "display": "Malignant neoplasm of anus and anal canal",
+        "source": "inferred"
+      },
+      {
+        "system": "http://hl7.org/fhir/sid/icd-10-cm",
+        "code": "K51.0",
+        "display": "Ulcerative (chronic) pancolitis",
+        "source": "document"
+      },
+      {
+        "system": "http://hl7.org/fhir/sid/icd-10-cm",
+        "code": "K51.00",
+        "display": "Ulcerative (chronic) pancolitis without complications",
+        "source": "document"
+      },
+      {
+        "system": "http://hl7.org/fhir/sid/icd-10-cm",
+        "code": "K51.2",
+        "display": "Ulcerative (chronic) proctitis",
+        "source": "document"
+      },
+      {
+        "system": "http://hl7.org/fhir/sid/icd-10-cm",
+        "code": "K51.3",
+        "display": "Ulcerative (chronic) rectosigmoiditis",
+        "source": "document"
+      },
+      {
+        "system": "http://hl7.org/fhir/sid/icd-10-cm",
+        "code": "K51.4",
+        "display": "Inflammatory polyps of colon",
+        "source": "document"
+      }
+    ],
+    "complexity": "high",
+    "tags": [
+      "colorectal cancer",
+      "cancer",
+      "oncology",
+      "condition",
+      "procedure",
+      "exclusions"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "Condition",
+    "parameters": {
+      "code": "http://hl7.org/fhir/sid/icd-10-cm|C18,http://hl7.org/fhir/sid/icd-10-cm|C19,http://hl7.org/fhir/sid/icd-10-cm|C20,http://hl7.org/fhir/sid/icd-10-cm|C21",
+      "_include": "Condition:patient",
+      "_revinclude": "Procedure:patient"
+    },
+    "url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|C18,http://hl7.org/fhir/sid/icd-10-cm|C19,http://hl7.org/fhir/sid/icd-10-cm|C20,http://hl7.org/fhir/sid/icd-10-cm|C21&_include=Condition:patient&_revinclude=Procedure:patient"
+  },
+  "test_data": {
+    "resources": [],
+    "expected_result_count": 0,
+    "expected_resource_ids": []
+  },
+  "created_at": "2026-01-29T04:18:09.536009Z",
+  "updated_at": "2026-01-29T04:18:09.536018Z"
+}

@@ -3,115 +3,58 @@
   "source": "phekb",
   "source_id": "autoimmune-disease-phenotype",
   "name": "Autoimmune Disease Phenotype",
-  "description": "This test case evaluates the ability to identify patients with autoimmune diseases using the PheKB autoimmune disease phenotype algorithm. It tests for complex temporal logic requiring multiple diagnosis codes for the same condition spread across time, which is a key criterion in the algorithm to establish a persistent autoimmune disease diagnosis rather than a single acute episode.",
-  "prompt": "Find patients with autoimmune diseases who have at least 3 diagnosis codes for the same autoimmune condition on different dates, with the first and last diagnoses being at least 7 days apart.",
+  "description": "This test case evaluates the ability to identify patients with autoimmune diseases using a complex temporal pattern requiring multiple diagnosis codes over time. It tests the LLM's capability to construct queries with temporal constraints, multiple code lookups across different terminology systems (ICD-9, ICD-10, SNOMED), and logical grouping of related autoimmune conditions. The phenotype spans 51 autoimmune diseases across 9 disease groups and requires sophisticated date-based filtering.",
+  "prompt": "Find patients with any autoimmune disease diagnosis where they have at least 3 diagnosis codes for the same autoimmune condition on distinct days, with the first and last diagnoses being at least 7 days apart.",
   "metadata": {
-    "implementation_guide": "US Core 5.0.0",
+    "implementation_guide": null,
     "code_systems": [
-      "SNOMED CT",
       "ICD-10-CM",
+      "SNOMED CT",
       "ICD-9-CM"
     ],
     "required_codes": [
       {
-        "system": "http://snomed.info/sct",
-        "code": "396332003",
-        "display": "Multiple sclerosis"
+        "system": "http://hl7.org/fhir/sid/icd-10-cm",
+        "code": "M31.4",
+        "display": "Aortic arch syndrome [Takayasu]",
+        "source": "document"
       },
       {
         "system": "http://snomed.info/sct",
-        "code": "68618008",
-        "display": "Rheumatoid arthritis"
+        "code": "359789008",
+        "display": "Takayasu's disease",
+        "source": "document"
       },
       {
-        "system": "http://snomed.info/sct",
-        "code": "9014002",
-        "display": "Psoriasis"
-      },
-      {
-        "system": "http://snomed.info/sct",
-        "code": "201436003",
-        "display": "Type 1 diabetes mellitus"
-      },
-      {
-        "system": "http://snomed.info/sct",
-        "code": "396275006",
-        "display": "Osteoarthritis"
-      },
-      {
-        "system": "http://snomed.info/sct",
-        "code": "36402006",
-        "display": "Inflammatory bowel disease"
-      },
-      {
-        "system": "http://snomed.info/sct",
-        "code": "239931005",
-        "display": "Systemic lupus erythematosus"
-      },
-      {
-        "system": "http://snomed.info/sct",
-        "code": "396347007",
-        "display": "Sj\u00f6gren's syndrome"
-      },
-      {
-        "system": "http://snomed.info/sct",
-        "code": "40930008",
-        "display": "Hypothyroidism"
-      },
-      {
-        "system": "http://snomed.info/sct",
-        "code": "396285003",
-        "display": "Polymyalgia rheumatica"
-      },
-      {
-        "system": "http://snomed.info/sct",
-        "code": "239890004",
-        "display": "Scleroderma"
-      },
-      {
-        "system": "http://snomed.info/sct",
-        "code": "396354009",
-        "display": "Myasthenia gravis"
-      },
-      {
-        "system": "http://snomed.info/sct",
-        "code": "33935003",
-        "display": "Guillain-Barr\u00e9 syndrome"
-      },
-      {
-        "system": "http://snomed.info/sct",
-        "code": "6623004",
-        "display": "Chronic thyroiditis"
-      },
-      {
-        "system": "http://snomed.info/sct",
-        "code": "396230008",
-        "display": "Antiphospholipid syndrome"
+        "system": "http://hl7.org/fhir/sid/icd-9-cm",
+        "code": "446.7",
+        "display": "Takayasu's disease",
+        "source": "document"
       }
     ],
     "complexity": "high",
     "tags": [
       "autoimmune",
       "condition",
-      "temporal-logic",
-      "phenotype",
-      "multiple-diagnoses"
+      "temporal-pattern",
+      "multiple-codes",
+      "phenotype"
     ]
   },
   "expected_query": {
     "resource_type": "Condition",
     "parameters": {
-      "code": "396332003,68618008,9014002,201436003,396275006,36402006,239931005,396347007,40930008,396285003,239890004,396354009,33935003,6623004,396285003,396230008",
+      "code": "M31.4,359789008,446.7",
       "_count": "1000",
-      "_sort": "patient,recorded-date"
+      "_sort": "patient,date"
     },
-    "url": "Condition?code=396332003,68618008,9014002,201436003,396275006,36402006,239931005,396347007,40930008,396285003,239890004,396354009,33935003,6623004,396285003,396230008&_count=1000&_sort=patient,recorded-date"
+    "url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|M31.4,http://snomed.info/sct|359789008,http://hl7.org/fhir/sid/icd-9-cm|446.7&_count=1000&_sort=patient,date"
   },
   "test_data": {
     "resources": [],
     "expected_result_count": 0,
     "expected_resource_ids": []
   },
-  "created_at": "2026-01-18T06:58:55.722085Z",
-  "updated_at": "2026-01-18T06:58:55.722095Z"
+  "created_at": "2026-01-29T04:15:09.190710Z",
+  "updated_at": "2026-01-29T04:15:09.190727Z"
 }

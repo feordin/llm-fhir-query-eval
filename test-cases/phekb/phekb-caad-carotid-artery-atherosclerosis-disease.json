@@ -1,0 +1,71 @@
+{
+  "id": "phekb-caad-carotid-artery-atherosclerosis-disease",
+  "source": "phekb",
+  "source_id": "caad-carotid-artery-atherosclerosis-disease",
+  "name": "CAAD (Carotid Artery Atherosclerosis Disease)",
+  "description": "This test case evaluates the ability to identify patients with carotid artery atherosclerosis disease (CAAD) using both diagnostic codes for carotid artery stenosis/occlusion and procedure codes for carotid imaging studies. The phenotype requires identifying patients with carotid stenosis diagnoses while excluding those with hypercholesterolemia.",
+  "prompt": "Find patients with carotid artery atherosclerosis disease who have had carotid imaging studies performed",
+  "metadata": {
+    "implementation_guide": null,
+    "code_systems": [
+      "ICD-9-CM",
+      "CPT"
+    ],
+    "required_codes": [
+      {
+        "system": "http://hl7.org/fhir/sid/icd-9-cm",
+        "code": "433.1",
+        "display": "Occlusion and stenosis of carotid artery",
+        "source": "document"
+      },
+      {
+        "system": "http://hl7.org/fhir/sid/icd-9-cm",
+        "code": "433.10",
+        "display": "Occlusion and stenosis of carotid artery without mention of cerebral infarction",
+        "source": "document"
+      },
+      {
+        "system": "http://hl7.org/fhir/sid/icd-9-cm",
+        "code": "433.11",
+        "display": "Occlusion and stenosis of carotid artery with cerebral infarction",
+        "source": "document"
+      },
+      {
+        "system": "http://www.ama-assn.org/go/cpt",
+        "code": "93880",
+        "display": "Duplex scan of extracranial arteries; complete bilateral study",
+        "source": "document"
+      },
+      {
+        "system": "http://hl7.org/fhir/sid/icd-9-cm",
+        "code": "272.0",
+        "display": "Pure hypercholesterolemia",
+        "source": "document"
+      }
+    ],
+    "complexity": "high",
+    "tags": [
+      "carotid",
+      "atherosclerosis",
+      "stenosis",
+      "imaging",
+      "cardiovascular"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "Patient",
+    "parameters": {
+      "_has:Condition:subject:code": "http://hl7.org/fhir/sid/icd-9-cm|433.1,http://hl7.org/fhir/sid/icd-9-cm|433.10,http://hl7.org/fhir/sid/icd-9-cm|433.11",
+      "_has:Procedure:subject:code": "http://www.ama-assn.org/go/cpt|93880",
+      "_has:Condition:subject:code:not": "http://hl7.org/fhir/sid/icd-9-cm|272.0"
+    },
+    "url": "Patient?_has:Condition:subject:code=http://hl7.org/fhir/sid/icd-9-cm|433.1,http://hl7.org/fhir/sid/icd-9-cm|433.10,http://hl7.org/fhir/sid/icd-9-cm|433.11&_has:Procedure:subject:code=http://www.ama-assn.org/go/cpt|93880&_has:Condition:subject:code:not=http://hl7.org/fhir/sid/icd-9-cm|272.0"
+  },
+  "test_data": {
+    "resources": [],
+    "expected_result_count": 0,
+    "expected_resource_ids": []
+  },
+  "created_at": "2026-01-29T04:16:15.206686Z",
+  "updated_at": "2026-01-29T04:16:15.206697Z"
+}

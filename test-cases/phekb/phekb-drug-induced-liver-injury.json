@@ -3,63 +3,146 @@
   "source": "phekb",
   "source_id": "drug-induced-liver-injury",
   "name": "Drug Induced Liver Injury",
-  "description": "This test case evaluates the ability to identify inpatients with acute drug-induced liver injury (DILI). The phenotype requires exposure to a suspect drug within 3 months prior to liver injury with elevated liver enzymes meeting DILI thresholds.",
-  "prompt": "Find all hospitalized patients who have experienced acute drug-induced liver injury, characterized by significantly elevated liver enzymes (ALT greater than 5 times upper limit of normal or ALP greater than 2 times upper limit of normal) following medication exposure.",
+  "description": "This test case evaluates the identification of drug-induced liver injury (DILI) patients based on the complex phenotype algorithm. It requires finding patients with liver injury diagnoses, recent medication exposure, and specific laboratory thresholds (ALT \u22655x ULN or ALP \u22652x ULN or ALT \u22653x ULN with Bilirubin \u22652x ULN), while excluding patients with alternative causes of liver injury. This is a multi-step algorithm requiring temporal relationships between drug exposure and abnormal lab values.",
+  "prompt": "Find patients with drug-induced liver injury who have elevated liver enzymes (ALT at least 5 times upper normal or alkaline phosphatase at least 2 times upper normal) following medication exposure within the past 3 months.",
   "metadata": {
-    "implementation_guide": "US Core 5.0.0",
+    "implementation_guide": null,
     "code_systems": [
-      "ICD-10-CM",
+      "ICD-9-CM",
       "LOINC",
       "SNOMED CT"
     ],
     "required_codes": [
       {
-        "system": "http://hl7.org/fhir/sid/icd-10-cm",
-        "code": "K71",
-        "display": "Toxic liver disease"
+        "system": "http://hl7.org/fhir/sid/icd-9-cm",
+        "code": "570",
+        "display": "Acute and subacute necrosis of the liver",
+        "source": "inferred"
       },
       {
-        "system": "http://hl7.org/fhir/sid/icd-10-cm",
-        "code": "K71.0",
-        "display": "Toxic liver disease with cholestasis"
+        "system": "http://hl7.org/fhir/sid/icd-9-cm",
+        "code": "572.2",
+        "display": "Hepatic coma (hepatorenal syndrome)",
+        "source": "document"
+      },
+      {
+        "system": "http://hl7.org/fhir/sid/icd-9-cm",
+        "code": "572.4",
+        "display": "Hepatorenal syndrome",
+        "source": "inferred"
+      },
+      {
+        "system": "http://hl7.org/fhir/sid/icd-9-cm",
+        "code": "573",
+        "display": "Other disorders of the liver, including chemical or drug induced",
+        "source": "inferred"
+      },
+      {
+        "system": "http://hl7.org/fhir/sid/icd-9-cm",
+        "code": "576.8",
+        "display": "Other specified disorders of biliary tract",
+        "source": "document"
+      },
+      {
+        "system": "http://hl7.org/fhir/sid/icd-9-cm",
+        "code": "782.4",
+        "display": "Jaundice, unspecified, not of newborn",
+        "source": "document"
+      },
+      {
+        "system": "http://hl7.org/fhir/sid/icd-9-cm",
+        "code": "789.1",
+        "display": "Hepatomegaly",
+        "source": "inferred"
+      },
+      {
+        "system": "http://hl7.org/fhir/sid/icd-9-cm",
+        "code": "790.4",
+        "display": "Nonspecific elevation of transaminase or lactic dehydrogenase levels",
+        "source": "inferred"
+      },
+      {
+        "system": "http://hl7.org/fhir/sid/icd-9-cm",
+        "code": "794.8",
+        "display": "Abnormal liver function test results",
+        "source": "inferred"
+      },
+      {
+        "system": "http://hl7.org/fhir/sid/icd-9-cm",
+        "code": "277.4",
+        "display": "Disorders of bilirubin excretion",
+        "source": "document"
       },
       {
         "system": "http://loinc.org",
         "code": "1742-6",
-        "display": "Alanine aminotransferase [Enzymatic activity/volume] in Serum or Plasma"
+        "display": "Alanine aminotransferase [Enzymatic activity/volume] in Serum or Plasma",
+        "source": "inferred"
       },
       {
         "system": "http://loinc.org",
-        "code": "6768-6",
-        "display": "Alkaline phosphatase [Enzymatic activity/volume] in Serum or Plasma"
+        "code": "1920-8",
+        "display": "Aspartate aminotransferase [Enzymatic activity/volume] in Serum or Plasma",
+        "source": "inferred"
       },
       {
-        "system": "http://snomed.info/sct",
-        "code": "197359006",
-        "display": "Drug-induced hepatitis"
+        "system": "http://loinc.org",
+        "code": "1975-2",
+        "display": "Bilirubin.total [Mass/volume] in Serum or Plasma",
+        "source": "inferred"
+      },
+      {
+        "system": "http://loinc.org",
+        "code": "1744-2",
+        "display": "Alkaline phosphatase [Enzymatic activity/volume] in Serum or Plasma",
+        "source": "inferred"
+      },
+      {
+        "system": "http://loinc.org",
+        "code": "1743-4",
+        "display": "Alkaline phosphatase.liver [Enzymatic activity/volume] in Serum or Plasma",
+        "source": "inferred"
       }
     ],
     "complexity": "high",
     "tags": [
-      "condition",
-      "hepatology",
       "drug-induced-liver-injury",
-      "adverse-event",
-      "laboratory"
+      "hepatotoxicity",
+      "liver-enzymes",
+      "temporal-relationship",
+      "medication-exposure"
     ]
   },
   "expected_query": {
-    "resource_type": "Condition",
+    "resource_type": "Bundle",
     "parameters": {
-      "code": "http://hl7.org/fhir/sid/icd-10-cm|K71,http://hl7.org/fhir/sid/icd-10-cm|K71.0,http://snomed.info/sct|197359006"
+      "type": "batch",
+      "entry": [
+        {
+          "resource": "Condition",
+          "search": "code=570,572.2,572.4,573,576.8,782.4,789.1,790.4,794.8,277.4&clinical-status=active"
+        },
+        {
+          "resource": "Observation",
+          "search": "code=1742-6,1920-8,1975-2&value-quantity=gt225|http://unitsofmeasure.org|U/L"
+        },
+        {
+          "resource": "Observation",
+          "search": "code=1744-2,1743-4&value-quantity=gt240|http://unitsofmeasure.org|U/L"
+        },
+        {
+          "resource": "MedicationAdministration",
+          "search": "effective-time=ge2023-01-01&effective-time=le2023-12-31"
+        }
+      ]
     },
-    "url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|K71,http://hl7.org/fhir/sid/icd-10-cm|K71.0,http://snomed.info/sct|197359006"
+    "url": "Bundle with multiple queries for conditions, lab values, and medication timing"
   },
   "test_data": {
     "resources": [],
     "expected_result_count": 0,
     "expected_resource_ids": []
   },
-  "created_at": "2026-01-24T12:00:00.000000Z",
-  "updated_at": "2026-01-24T12:00:00.000000Z"
+  "created_at": "2026-01-29T04:21:44.715243Z",
+  "updated_at": "2026-01-29T04:21:44.715263Z"
 }

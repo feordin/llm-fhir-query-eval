@@ -1,0 +1,78 @@
+{
+  "id": "phekb-diverticular-disease-severity-left-colonic",
+  "source": "phekb",
+  "source_id": "diverticular-disease-severity-left-colonic",
+  "name": "Diverticular Disease Severity, Left Colonic",
+  "description": "This test case evaluates a complex phenotype algorithm that classifies diverticular disease severity into multiple categories based on diagnostic codes, procedural codes, care settings, and temporal relationships. It requires identifying patients with lower GI procedures, diverticular disease diagnoses within specific timeframes, and categorizing severity based on inpatient admissions and surgical interventions.",
+  "prompt": "Find patients with left-sided diverticular disease who have had colonic procedures and classify them by disease severity including diverticulosis, mild diverticulitis, and severe or recurrent diverticulitis requiring surgery or multiple hospitalizations.",
+  "metadata": {
+    "implementation_guide": null,
+    "code_systems": [
+      "SNOMED CT",
+      "ICD-10-CM",
+      "CPT"
+    ],
+    "required_codes": [
+      {
+        "system": "http://snomed.info/sct",
+        "code": "397825006",
+        "display": "Diverticulosis of colon",
+        "source": "inferred"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "86204009",
+        "display": "Diverticulitis of colon",
+        "source": "inferred"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "73761001",
+        "display": "Colonoscopy",
+        "source": "inferred"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "34264006",
+        "display": "Sigmoidoscopy",
+        "source": "inferred"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "116783008",
+        "display": "Percutaneous drainage",
+        "source": "inferred"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "26390003",
+        "display": "Colectomy",
+        "source": "inferred"
+      }
+    ],
+    "complexity": "high",
+    "tags": [
+      "diverticular disease",
+      "condition",
+      "procedure",
+      "severity classification",
+      "temporal relationships"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "Patient",
+    "parameters": {
+      "_has:Condition:patient:code": "http://snomed.info/sct|397825006,http://snomed.info/sct|86204009",
+      "_has:Procedure:patient:code": "http://snomed.info/sct|73761001,http://snomed.info/sct|34264006",
+      "_has:Encounter:patient:class": "IMP,AMB"
+    },
+    "url": "Patient?_has:Condition:patient:code=http://snomed.info/sct|397825006,http://snomed.info/sct|86204009&_has:Procedure:patient:code=http://snomed.info/sct|73761001,http://snomed.info/sct|34264006&_has:Encounter:patient:class=IMP,AMB"
+  },
+  "test_data": {
+    "resources": [],
+    "expected_result_count": 0,
+    "expected_resource_ids": []
+  },
+  "created_at": "2026-01-29T04:21:08.566085Z",
+  "updated_at": "2026-01-29T04:21:08.566101Z"
+}

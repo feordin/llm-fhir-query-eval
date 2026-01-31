@@ -4,255 +4,140 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-This is an evaluation framework for testing LLM capabilities in generating FHIR (Fast Healthcare Interoperability Resources) queries from natural language inputs. The project aims to benchmark how well different LLMs can:
-
-- Understand healthcare data requirements expressed in natural language
-- Generate syntactically correct FHIR queries
-- Produce semantically accurate queries that retrieve the intended healthcare data
-- Handle complex clinical scenarios and edge cases
-- Properly use clinical code systems (LOINC, SNOMED CT, etc.)
-
-## Architecture
-
-### Technology Stack
-
-- **Backend**: Python 3.10+ with FastAPI
-- **Frontend**: TypeScript/React with Vite
-- **CLI**: Python Click-based command-line tool
-- **FHIR Server**: fhir-candle (lightweight .NET test server via Docker)
-- **Storage**: JSON files for test cases (version-controllable)
-- **LLM SDKs**: Anthropic SDK, OpenAI SDK
-
-### Project Structure
-
-```
-llm-fhir-query-eval/
-├── backend/               # Python FastAPI backend
-│   ├── src/
-│   │   ├── api/          # API routes and models
-│   │   ├── evaluation/   # Evaluation engines (execution, semantic, LLM judge)
-│   │   ├── llm/          # LLM provider integrations
-│   │   ├── fhir/         # FHIR server management and client
-│   │   ├── scraper/      # PheKB phenotype scraper
-│   │   └── utils/        # Configuration and utilities
-│   └── tests/            # Backend tests
-├── frontend/             # React/TypeScript frontend
-│   └── src/
-│       ├── components/   # React components
-│       ├── pages/        # Page components
-│       └── api/          # API client
-├── cli/                  # Command-line interface
-│   └── fhir_eval/
-│       └── commands/     # CLI commands (run, scrape, report)
-├── test-cases/           # Test case JSON files
-│   ├── manual/           # Manually curated test cases
-│   └── phekb/            # Auto-generated from PheKB
-├── data/                 # Test FHIR resources and code systems
-└── docs/                 # Documentation
-```
+Evaluation framework for testing LLM capabilities in generating FHIR queries from natural language. Benchmarks how well LLMs can translate clinical requirements into syntactically and semantically correct FHIR queries with proper clinical code systems (LOINC, SNOMED CT, ICD-10, etc.).
 
 ## Development Commands
 
-### Initial Setup
-
-```bash
-# Clone repository (if not already done)
-git clone <repo-url>
-cd llm-fhir-query-eval
-
-# Copy environment file and configure
-cp .env.example .env
-# Edit .env and add your API keys (ANTHROPIC_API_KEY, OPENAI_API_KEY)
-```
-
-### Backend Development
+### Backend (Python/FastAPI)
 
 ```bash
 cd backend
-
-# Install dependencies with Poetry
-poetry install
-
-# Run backend server (development mode)
-poetry run uvicorn src.api.main:app --reload --host 0.0.0.0 --port 8000
-
-# Run tests
-poetry run pytest
-
-# Format code
-poetry run black src tests
-poetry run ruff check src tests
+poetry install                    # Install dependencies
+poetry run uvicorn src.api.main:app --reload --host 0.0.0.0 --port 8000  # Dev server
+poetry run pytest                 # Run all tests
+poetry run pytest tests/test_evaluation/test_semantic.py -k test_parse_query  # Single test
+poetry run black src tests        # Format code
+poetry run ruff check src tests   # Lint
 ```
 
-### Frontend Development
+### Frontend (React/TypeScript/Vite)
 
 ```bash
 cd frontend
-
-# Install dependencies
-npm install
-
-# Run development server
-npm run dev
-
-# Build for production
-npm run build
-
-# Run linter
-npm run lint
+npm install      # Install dependencies
+npm run dev      # Dev server (localhost:3000)
+npm run build    # Production build
+npm run lint     # ESLint
 ```
 
 ### CLI Tool
 
 ```bash
 cd cli
-
-# Install CLI in editable mode
-pip install -e .
-
-# Use CLI commands
-fhir-eval --help
-fhir-eval run --help
-fhir-eval scrape --help
-fhir-eval report --help
+pip install -e .         # Install in editable mode
+fhir-eval --help         # Show commands
 ```
 
-### Docker (Full Stack)
+### Docker
 
 ```bash
-# Start all services (fhir-candle, backend, frontend)
-docker-compose up
-
-# Start only FHIR server
-docker-compose up -d fhir-candle
-
-# Stop all services
-docker-compose down
+docker-compose up -d fhir-candle   # Start FHIR server only
+docker-compose up                   # Start all services
+docker-compose down                 # Stop all services
 ```
 
-### FHIR Server Access
+## Architecture
 
-- **fhir-candle endpoints**:
-  - R4: http://localhost:5826/r4
-  - R4B: http://localhost:5826/r4b
-  - R5: http://localhost:5826/r5
-  - Metadata: http://localhost:5826/r4/metadata
-
-## FHIR Context
-
-FHIR is a standard for exchanging healthcare information electronically. When working with FHIR queries in this project:
-
-- **Resource Types**: Patient, Observation, Condition, Medication, Encounter, etc.
-- **Query Format**: `GET /[ResourceType]?[parameter]=[value]&[parameter]=[value]`
-- **Common Parameters**:
-  - `_id`: Resource ID
-  - `_count`: Number of results
-  - `_sort`: Sort order
-  - Resource-specific parameters (e.g., `code` for Observation, `family` for Patient)
-- **Code Systems**:
-  - LOINC for lab observations
-  - SNOMED CT for clinical findings
-  - Format: `code=http://loinc.org|2339-0`
-
-## Test Case Format
-
-Test cases are stored as JSON files in `test-cases/manual/` or `test-cases/phekb/`. Each test case includes:
-
-- **prompt**: Natural language description of the query
-- **expected_query**: The correct FHIR query
-- **test_data**: FHIR resources to load for testing
-- **metadata**: Implementation guide, code systems, complexity, tags
-
-Example test case: `test-cases/manual/diabetes-glucose-observations.json`
-
-## Evaluation Methods
-
-The framework uses three evaluation strategies:
-
-1. **Execution-based**: Compare results from running expected vs generated queries against test FHIR data
-2. **Semantic parsing**: Parse and compare query semantics (resource type, parameters)
-3. **LLM judge**: Use an LLM (Claude) to evaluate if queries are semantically equivalent
-4. **Code system validation**: Verify correct use of code systems and codes
-
-## API Endpoints
-
-### Test Cases
-
-- `GET /api/test-cases` - List all test cases
-- `GET /api/test-cases/{id}` - Get specific test case
-- `POST /api/test-cases` - Create new test case
-- `PUT /api/test-cases/{id}` - Update test case
-- `DELETE /api/test-cases/{id}` - Delete test case
-
-### Health Check
-
-- `GET /api/health` - API health check
-- `GET /` - API information
-
-## Common Tasks
-
-### Adding a New Test Case
-
-1. Create JSON file in `test-cases/manual/`
-2. Use the test case schema (see existing examples)
-3. Include prompt, expected query, test data references, and metadata
-4. API will automatically pick up new test cases
-
-### Running Evaluations
-
-Via API:
-```bash
-POST /api/evaluations
-{
-  "test_case_ids": ["test-case-id"],
-  "llm_provider": "anthropic",
-  "model": "claude-sonnet-4-5"
-}
+```
+┌─────────────────────────────────────────────────────────────┐
+│                   Web UI (React/TS)                         │
+└─────────────────────┬───────────────────────────────────────┘
+                      │ REST API (port 8000)
+┌─────────────────────▼───────────────────────────────────────┐
+│                 Backend API (FastAPI)                       │
+│  Test Management | LLM Orchestration | Evaluation Engines  │
+└─────────────────────┬───────────────────────────────────────┘
+                      │
+         ┌────────────┼────────────┐
+         │            │            │
+┌────────▼──────┐ ┌──▼────────┐ ┌─▼──────────────┐
+│ Test Cases    │ │ LLM       │ │ FHIR Server    │
+│ (JSON files)  │ │ Providers │ │ (fhir-candle)  │
+└───────────────┘ └───────────┘ └────────────────┘
 ```
 
-Via CLI (when implemented):
-```bash
-fhir-eval run --test-case diabetes-glucose-observations --provider anthropic
+### Key Components
+
+- **backend/src/api/**: FastAPI routes and Pydantic models. Main app in `main.py`
+- **backend/src/evaluation/**: Evaluation engines (execution-based, semantic parsing, LLM judge)
+- **backend/src/llm/**: LLM provider abstractions (Anthropic, OpenAI)
+- **backend/src/scraper/**: PheKB phenotype scraper and test case generator
+  - `phekb.py`: Web scraper using Selenium
+  - `extractor.py`: Claude-based prompt extraction
+  - `generator.py`: Orchestrates scraping → extraction → test case creation
+- **cli/fhir_eval/commands/**: CLI commands (scrape, run, report)
+- **test-cases/**: JSON test case files
+  - `manual/`: Hand-curated test cases
+  - `phekb/`: Auto-generated from PheKB phenotypes
+
+### Data Flow for Evaluation
+
+1. Load test case JSON (prompt + expected query)
+2. Send prompt to LLM provider → get generated FHIR query
+3. Run both queries against fhir-candle (localhost:5826/r4)
+4. Compare results using evaluation engines
+5. Generate scores/report
+
+## FHIR Query Format
+
+```
+GET /[ResourceType]?[parameter]=[value]&[parameter]=[value]
 ```
 
-### Code System References
+Code system format: `code=http://loinc.org|2339-0` (system|code)
 
-When creating test cases with clinical codes:
-- Always include full system URI (e.g., `http://loinc.org`)
-- Include code and display name
-- Reference implementation guides when applicable (e.g., US Core)
+Common code systems:
+- LOINC (`http://loinc.org`) - Lab observations
+- SNOMED CT (`http://snomed.info/sct`) - Clinical findings
+- ICD-10-CM (`http://hl7.org/fhir/sid/icd-10-cm`) - Diagnoses
+- RxNorm (`http://www.nlm.nih.gov/research/umls/rxnorm`) - Medications
 
-### PheKB Scraping
+## Test Case Design Principle
 
-The framework can automatically generate test cases from PheKB phenotypes:
-
-```bash
-# List available phenotypes
-fhir-eval scrape --list
-
-# Generate test case from specific phenotype
-fhir-eval scrape --id diabetes-mellitus-type-2
-
-# Generate first 10 test cases
-fhir-eval scrape --all --limit 10
-```
-
-**Important Design Principle**:
-- **Prompts are code-free**: Generated prompts use natural clinical language WITHOUT codes
-- **Expected queries have codes**: The expected FHIR queries contain proper clinical codes
-- **Why?**: Part of the evaluation is testing whether LLMs can determine appropriate codes
-- LLMs should either know the codes or use MCP servers to look them up
+**Prompts are code-free**: Test case prompts use natural clinical language WITHOUT codes. The expected FHIR query contains proper codes. This tests whether LLMs can determine appropriate clinical codes from context.
 
 Example:
 - Prompt: "Find all patients with a diagnosis of type 2 diabetes"
-- Expected query: `Condition?code=http://hl7.org/fhir/sid/icd-10-cm|E11`
+- Expected: `Condition?code=http://hl7.org/fhir/sid/icd-10-cm|E11`
 
-See [docs/phekb-scraping.md](docs/phekb-scraping.md) for details.
+## PheKB Scraping Workflow
 
-## Notes for Claude Code
+Three-stage process to generate test cases from phekb.org phenotypes:
 
-- Test cases are file-based (JSON) for easy version control and manual curation
-- The fhir-candle server runs in Docker and provides in-memory FHIR storage
-- Backend uses Pydantic for data validation and FastAPI for routing
-- Frontend communicates with backend via REST API
-- All LLM integrations go through provider abstraction in `backend/src/llm/`
+```bash
+# Stage 1: Fetch all phenotype URLs (run once)
+fhir-eval scrape list-urls
+
+# Stage 2: Download details and files (no API credits)
+fhir-eval scrape download --limit 10
+
+# Stage 3: Generate test cases with Claude (requires ANTHROPIC_API_KEY)
+fhir-eval scrape generate --limit 10
+```
+
+Data is saved to `data/phekb-raw/[phenotype-id]/` and test cases to `test-cases/phekb/`.
+
+## Environment Variables
+
+Required in `.env`:
+- `ANTHROPIC_API_KEY` - For Claude API (test case generation, LLM judge)
+- `OPENAI_API_KEY` - For OpenAI models (optional)
+- `FHIR_SERVER_URL` - Defaults to `http://localhost:5826` (fhir-candle)
+
+## FHIR Server (fhir-candle)
+
+Lightweight .NET FHIR server for testing. Endpoints:
+- R4: http://localhost:5826/r4
+- Metadata: http://localhost:5826/r4/metadata
+
+In-memory storage - data resets on restart.

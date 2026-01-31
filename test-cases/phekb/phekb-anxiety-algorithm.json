@@ -3,88 +3,79 @@
   "source": "phekb",
   "source_id": "anxiety-algorithm",
   "name": "Anxiety algorithm",
-  "description": "This test case evaluates the ability to identify anxiety disorder patients based on the PheKB anxiety algorithm criteria, which requires multiple diagnostic encounters plus treatment evidence (medications or procedures). The algorithm is designed to capture various anxiety disorders including generalized anxiety disorder, panic disorder, phobias, and social anxiety disorder while excluding patients with certain comorbid conditions.",
-  "prompt": "Find patients with anxiety disorders who have had at least two anxiety-related visits on different days and have been prescribed anxiety medications or received anxiety-related therapy.",
+  "description": "This test case evaluates identification of a complex anxiety phenotype requiring multiple clinical data elements: longitudinal EHR history (365+ days), age restrictions (741+ days at last visit, approximately 2 years), multiple anxiety-related encounters on different days, and evidence of treatment through medications or procedures. It tests the system's ability to handle multi-criteria phenotype algorithms with temporal constraints and treatment evidence requirements.",
+  "prompt": "Find pediatric and adult patients with anxiety disorders who have at least two anxiety-related visits on different days after approximately age 2 years, plus evidence of anxiety medication treatment or therapy procedures, with sufficient EHR history for longitudinal tracking.",
   "metadata": {
-    "implementation_guide": "US Core 5.0.0",
+    "implementation_guide": null,
     "code_systems": [
       "SNOMED CT",
-      "RxNorm",
-      "ICD-10-CM"
+      "ICD-10-CM",
+      "RxNorm"
     ],
     "required_codes": [
       {
         "system": "http://snomed.info/sct",
         "code": "197480006",
-        "display": "Anxiety disorder"
+        "display": "Anxiety disorder",
+        "source": "inferred"
       },
       {
         "system": "http://snomed.info/sct",
         "code": "21897009",
-        "display": "Generalized anxiety disorder"
+        "display": "Generalized anxiety disorder",
+        "source": "inferred"
       },
       {
         "system": "http://snomed.info/sct",
-        "code": "225624000",
-        "display": "Panic disorder"
+        "code": "443752008",
+        "display": "Panic disorder",
+        "source": "inferred"
       },
       {
         "system": "http://snomed.info/sct",
-        "code": "387712008",
-        "display": "Social anxiety disorder"
+        "code": "8195005",
+        "display": "Social anxiety disorder",
+        "source": "inferred"
       },
       {
         "system": "http://snomed.info/sct",
-        "code": "48694002",
-        "display": "Agoraphobia"
-      },
-      {
-        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
-        "code": "2556",
-        "display": "Alprazolam"
-      },
-      {
-        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
-        "code": "596",
-        "display": "Lorazepam"
+        "code": "29164008",
+        "display": "Agoraphobia",
+        "source": "inferred"
       },
       {
         "system": "http://snomed.info/sct",
-        "code": "75516001",
-        "display": "Psychotherapy"
-      },
-      {
-        "system": "http://snomed.info/sct",
-        "code": "182896008",
-        "display": "Cognitive behavioral therapy"
+        "code": "386808009",
+        "display": "Separation anxiety disorder",
+        "source": "inferred"
       }
     ],
     "complexity": "high",
     "tags": [
       "anxiety",
-      "mental health",
-      "phenotype",
-      "condition",
-      "medication",
-      "procedure",
-      "multi-criteria"
+      "phenotype-algorithm",
+      "multi-criteria",
+      "longitudinal",
+      "pediatric",
+      "adult",
+      "mental-health"
     ]
   },
   "expected_query": {
     "resource_type": "Patient",
     "parameters": {
-      "_has:Condition:patient:code": "http://snomed.info/sct|197480006,http://snomed.info/sct|21897009,http://snomed.info/sct|225624000,http://snomed.info/sct|387712008,http://snomed.info/sct|48694002",
-      "_has:Condition:patient:_count": ">=2",
-      "_has:MedicationRequest:patient:medication-code": "http://www.nlm.nih.gov/research/umls/rxnorm|2556,http://www.nlm.nih.gov/research/umls/rxnorm|596",
-      "_has:Procedure:patient:code": "http://snomed.info/sct|75516001,http://snomed.info/sct|182896008"
+      "condition": "anxiety-disorder",
+      "_has:Condition:patient:code": "http://snomed.info/sct|197480006,http://snomed.info/sct|21897009,http://snomed.info/sct|443752008,http://snomed.info/sct|8195005",
+      "_has:MedicationRequest:patient:medication": "anxiolytic-medications",
+      "_has:Procedure:patient:code": "anxiety-therapy-procedures"
     },
-    "url": "Patient?_has:Condition:patient:code=http://snomed.info/sct|197480006,http://snomed.info/sct|21897009,http://snomed.info/sct|225624000,http://snomed.info/sct|387712008,http://snomed.info/sct|48694002&_has:Condition:patient:_count=>=2&_has:MedicationRequest:patient:medication-code=http://www.nlm.nih.gov/research/umls/rxnorm|2556,http://www.nlm.nih.gov/research/umls/rxnorm|596&_has:Procedure:patient:code=http://snomed.info/sct|75516001,http://snomed.info/sct|182896008"
+    "url": "Patient?_has:Condition:patient:code=http://snomed.info/sct|197480006,http://snomed.info/sct|21897009,http://snomed.info/sct|443752008,http://snomed.info/sct|8195005&_has:MedicationRequest:patient:medication=anxiolytic-medications&_has:Procedure:patient:code=anxiety-therapy-procedures"
   },
   "test_data": {
     "resources": [],
     "expected_result_count": 0,
     "expected_resource_ids": []
   },
-  "created_at": "2026-01-18T06:57:29.112130Z",
-  "updated_at": "2026-01-18T06:57:29.112139Z"
+  "created_at": "2026-01-29T04:13:53.624637Z",
+  "updated_at": "2026-01-29T04:13:53.624646Z"
 }

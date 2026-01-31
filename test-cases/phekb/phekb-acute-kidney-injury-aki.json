@@ -3,73 +3,58 @@
   "source": "phekb",
   "source_id": "acute-kidney-injury-aki",
   "name": "Acute kidney injury (AKI)",
-  "description": "This test case evaluates the ability to identify patients with acute kidney injury (AKI) using FHIR resources. The phenotype follows KDIGO guidelines and focuses on detecting rapid decline in kidney function through serum creatinine changes. The test should identify relevant diagnostic codes for AKI across different classification systems and potentially related laboratory values that support the diagnosis.",
-  "prompt": "Find all patients who have been diagnosed with acute kidney injury based on laboratory evidence of rapidly declining kidney function.",
+  "description": "This test case evaluates the ability to identify acute kidney injury (AKI) phenotypes using serum creatinine measurements and KDIGO classification criteria. The phenotype requires detecting significant increases in creatinine levels from baseline to diagnose AKI stages, which is a complex multi-step algorithm involving baseline calculation, temporal analysis, and staging based on fold-increases.",
+  "prompt": "Find patients with acute kidney injury based on serum creatinine increases of 50% or more from baseline values",
   "metadata": {
-    "implementation_guide": "US Core 5.0.0",
+    "implementation_guide": null,
     "code_systems": [
+      "LOINC",
       "SNOMED CT",
-      "ICD-10-CM",
-      "ICD-9-CM",
-      "LOINC"
+      "ICD-10-CM"
     ],
     "required_codes": [
       {
-        "system": "http://snomed.info/sct",
-        "code": "14669001",
-        "display": "Acute kidney injury"
-      },
-      {
-        "system": "http://hl7.org/fhir/sid/icd-10-cm",
-        "code": "N17",
-        "display": "Acute kidney failure"
-      },
-      {
-        "system": "http://hl7.org/fhir/sid/icd-10-cm",
-        "code": "N17.0",
-        "display": "Acute kidney failure with tubular necrosis"
-      },
-      {
-        "system": "http://hl7.org/fhir/sid/icd-10-cm",
-        "code": "N17.1",
-        "display": "Acute kidney failure with acute cortical necrosis"
-      },
-      {
-        "system": "http://hl7.org/fhir/sid/icd-10-cm",
-        "code": "N17.2",
-        "display": "Acute kidney failure with medullary necrosis"
-      },
-      {
-        "system": "http://hl7.org/fhir/sid/icd-9-cm",
-        "code": "584",
-        "display": "Acute kidney failure"
-      },
-      {
         "system": "http://loinc.org",
         "code": "2160-0",
-        "display": "Creatinine [Mass/volume] in Serum or Plasma"
+        "display": "Creatinine [Mass/volume] in Serum or Plasma",
+        "source": "document"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "14669001",
+        "display": "Acute kidney injury",
+        "source": "inferred"
+      },
+      {
+        "system": "http://hl7.org/fhir/sid/icd-10-cm",
+        "code": "N17.9",
+        "display": "Acute kidney failure, unspecified",
+        "source": "inferred"
       }
     ],
-    "complexity": "medium",
+    "complexity": "high",
     "tags": [
       "nephrology",
-      "acute kidney injury",
-      "kidney function",
-      "creatinine"
+      "acute-kidney-injury",
+      "creatinine",
+      "laboratory",
+      "algorithm-based"
     ]
   },
   "expected_query": {
-    "resource_type": "Condition",
+    "resource_type": "Observation",
     "parameters": {
-      "code": "http://snomed.info/sct|14669001,http://hl7.org/fhir/sid/icd-10-cm|N17,http://hl7.org/fhir/sid/icd-10-cm|N17.0,http://hl7.org/fhir/sid/icd-10-cm|N17.1,http://hl7.org/fhir/sid/icd-10-cm|N17.2,http://hl7.org/fhir/sid/icd-10-cm|N17.8,http://hl7.org/fhir/sid/icd-10-cm|N17.9,http://hl7.org/fhir/sid/icd-9-cm|584,http://hl7.org/fhir/sid/icd-9-cm|584.5,http://hl7.org/fhir/sid/icd-9-cm|584.6,http://hl7.org/fhir/sid/icd-9-cm|584.7,http://hl7.org/fhir/sid/icd-9-cm|584.8,http://hl7.org/fhir/sid/icd-9-cm|584.9"
+      "code": "2160-0",
+      "_sort": "patient,date",
+      "_include": "Observation:patient"
     },
-    "url": "Condition?code=http://snomed.info/sct|14669001,http://hl7.org/fhir/sid/icd-10-cm|N17,http://hl7.org/fhir/sid/icd-10-cm|N17.0,http://hl7.org/fhir/sid/icd-10-cm|N17.1,http://hl7.org/fhir/sid/icd-10-cm|N17.2,http://hl7.org/fhir/sid/icd-10-cm|N17.8,http://hl7.org/fhir/sid/icd-10-cm|N17.9,http://hl7.org/fhir/sid/icd-9-cm|584,http://hl7.org/fhir/sid/icd-9-cm|584.5,http://hl7.org/fhir/sid/icd-9-cm|584.6,http://hl7.org/fhir/sid/icd-9-cm|584.7,http://hl7.org/fhir/sid/icd-9-cm|584.8,http://hl7.org/fhir/sid/icd-9-cm|584.9"
+    "url": "Observation?code=2160-0&_sort=patient,date&_include=Observation:patient"
   },
   "test_data": {
     "resources": [],
     "expected_result_count": 0,
     "expected_resource_ids": []
   },
-  "created_at": "2026-01-18T06:56:59.506542Z",
-  "updated_at": "2026-01-18T06:56:59.506549Z"
+  "created_at": "2026-01-29T04:13:28.704756Z",
+  "updated_at": "2026-01-29T04:13:28.704763Z"
 }

@@ -3,13 +3,12 @@
   "source": "phekb",
   "source_id": "abdominal-aortic-aneurysm-aaa",
   "name": "Abdominal Aortic Aneurysm ( AAA )",
-  "description": "This test case evaluates the ability to identify abdominal aortic aneurysm (AAA) cases using a complex multi-criteria phenotype algorithm. It tests the LLM's capability to handle three distinct case types: Type 1 (repair procedures via CPT codes), Type 2 (ruptured AAA diagnosis in vascular clinics), and Type 3 (multiple unruptured AAA diagnoses in vascular settings). The query must also incorporate age restrictions and department-specific encounter filtering, representing a sophisticated clinical phenotyping scenario that combines procedural codes, diagnostic codes, encounter types, and temporal requirements.",
-  "prompt": "Find all patients aged 40-89 who have had abdominal aortic aneurysm repair procedures or have been diagnosed with ruptured abdominal aortic aneurysm in a vascular clinic, or have at least two diagnoses of unruptured abdominal aortic aneurysm from vascular encounters.",
+  "description": "This test case evaluates identification of patients with abdominal aortic aneurysm (AAA) based on a complex phenotype algorithm that includes three case types: patients with AAA repair procedures (Case Type 1), patients with ruptured AAA diagnoses from vascular clinics (Case Type 2), and patients with multiple unruptured AAA diagnoses from vascular clinics (Case Type 3). The phenotype requires integration of procedure codes, condition codes, and clinical context including department specificity and encounter timing.",
+  "prompt": "Find all patients with abdominal aortic aneurysm who have undergone repair procedures or have documented diagnoses of ruptured or unruptured abdominal aortic aneurysm.",
   "metadata": {
-    "implementation_guide": "US Core 5.0.0",
+    "implementation_guide": null,
     "code_systems": [
       "CPT",
-      "ICD-9-CM",
       "ICD-10-CM",
       "SNOMED CT"
     ],
@@ -17,59 +16,85 @@
       {
         "system": "http://www.ama-assn.org/go/cpt",
         "code": "34800",
-        "display": "Endovascular repair of infrarenal abdominal aortic aneurysm or dissection; using aorto-aortic tube prosthesis"
+        "display": "Endovascular repair of infrarenal abdominal aortic aneurysm or dissection; using aorto-aortic tube prosthesis",
+        "source": "document"
+      },
+      {
+        "system": "http://www.ama-assn.org/go/cpt",
+        "code": "34802",
+        "display": "Endovascular repair of infrarenal abdominal aortic aneurysm or dissection; using modular bifurcated prosthesis (1 docking limb)",
+        "source": "document"
+      },
+      {
+        "system": "http://www.ama-assn.org/go/cpt",
+        "code": "34803",
+        "display": "Endovascular repair of infrarenal abdominal aortic aneurysm or dissection; using modular bifurcated prosthesis (2 docking limbs)",
+        "source": "document"
+      },
+      {
+        "system": "http://www.ama-assn.org/go/cpt",
+        "code": "34804",
+        "display": "Endovascular repair of infrarenal abdominal aortic aneurysm or dissection; using unibody bifurcated prosthesis",
+        "source": "document"
+      },
+      {
+        "system": "http://www.ama-assn.org/go/cpt",
+        "code": "34805",
+        "display": "Endovascular repair of infrarenal abdominal aortic aneurysm or dissection; using aorto-uniiliac or aorto-unifemoral prosthesis",
+        "source": "document"
       },
       {
         "system": "http://www.ama-assn.org/go/cpt",
         "code": "35081",
-        "display": "Direct repair of aneurysm, pseudoaneurysm, or excision and graft insertion; for aneurysm, pseudoaneurysm, and associated occlusive disease, abdominal aorta"
+        "display": "Direct repair of aneurysm, pseudoaneurysm, or excision (partial or total) and graft insertion, with or without patch graft; for aneurysm, pseudoaneurysm, and associated occlusive disease, abdominal aorta",
+        "source": "document"
       },
       {
-        "system": "http://hl7.org/fhir/sid/icd-9-cm",
-        "code": "441.3",
-        "display": "Abdominal aneurysm, ruptured"
-      },
-      {
-        "system": "http://hl7.org/fhir/sid/icd-9-cm",
-        "code": "441.4",
-        "display": "Abdominal aneurysm without mention of rupture"
+        "system": "http://www.ama-assn.org/go/cpt",
+        "code": "35082",
+        "display": "Direct repair of aneurysm, pseudoaneurysm, or excision (partial or total) and graft insertion, with or without patch graft; for ruptured aneurysm, abdominal aorta",
+        "source": "document"
       },
       {
         "system": "http://hl7.org/fhir/sid/icd-10-cm",
         "code": "I71.3",
-        "display": "Abdominal aortic aneurysm, ruptured"
+        "display": "Abdominal aortic aneurysm, ruptured",
+        "source": "inferred"
       },
       {
         "system": "http://hl7.org/fhir/sid/icd-10-cm",
         "code": "I71.4",
-        "display": "Abdominal aortic aneurysm, without rupture"
+        "display": "Abdominal aortic aneurysm, without rupture",
+        "source": "inferred"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "233985008",
+        "display": "Abdominal aortic aneurysm",
+        "source": "inferred"
       }
     ],
     "complexity": "high",
     "tags": [
-      "abdominal aortic aneurysm",
-      "AAA",
-      "vascular surgery",
-      "multi-criteria phenotype",
-      "procedure codes",
-      "encounter filtering"
+      "abdominal_aortic_aneurysm",
+      "vascular_surgery",
+      "procedure",
+      "condition",
+      "complex_phenotype"
     ]
   },
   "expected_query": {
     "resource_type": "Patient",
     "parameters": {
-      "_has:Procedure:patient:code": "34800,34802,34803,34804,34805,34830,34831,34832,35081,35082,35091,35092,35102,35103",
-      "_has:Condition:patient:code": "441.3,441.4,I71.3,I71.4",
-      "_has:Encounter:patient:type": "vascular",
-      "birthdate": "le1983-12-31"
+      "_has:Procedure:patient:code": "http://www.ama-assn.org/go/cpt|34800,http://www.ama-assn.org/go/cpt|34802,http://www.ama-assn.org/go/cpt|34803,http://www.ama-assn.org/go/cpt|34804,http://www.ama-assn.org/go/cpt|34805,http://www.ama-assn.org/go/cpt|34830,http://www.ama-assn.org/go/cpt|34831,http://www.ama-assn.org/go/cpt|34832,http://www.ama-assn.org/go/cpt|35081,http://www.ama-assn.org/go/cpt|35082,http://www.ama-assn.org/go/cpt|35091,http://www.ama-assn.org/go/cpt|35092,http://www.ama-assn.org/go/cpt|35102,http://www.ama-assn.org/go/cpt|35103,http://www.ama-assn.org/go/cpt|35131,http://www.ama-assn.org/go/cpt|35132"
     },
-    "url": "Patient?_has:Procedure:patient:code=34800,34802,34803,34804,34805,34830,34831,34832,35081,35082,35091,35092,35102,35103&_has:Condition:patient:code=441.3,441.4,I71.3,I71.4&_has:Encounter:patient:type=vascular&birthdate=ge1934-01-01&birthdate=le1983-12-31"
+    "url": "Patient?_has:Procedure:patient:code=http://www.ama-assn.org/go/cpt|34800,http://www.ama-assn.org/go/cpt|34802,http://www.ama-assn.org/go/cpt|34803,http://www.ama-assn.org/go/cpt|34804,http://www.ama-assn.org/go/cpt|34805,http://www.ama-assn.org/go/cpt|34830,http://www.ama-assn.org/go/cpt|34831,http://www.ama-assn.org/go/cpt|34832,http://www.ama-assn.org/go/cpt|35081,http://www.ama-assn.org/go/cpt|35082,http://www.ama-assn.org/go/cpt|35091,http://www.ama-assn.org/go/cpt|35092,http://www.ama-assn.org/go/cpt|35102,http://www.ama-assn.org/go/cpt|35103,http://www.ama-assn.org/go/cpt|35131,http://www.ama-assn.org/go/cpt|35132"
   },
   "test_data": {
     "resources": [],
     "expected_result_count": 0,
     "expected_resource_ids": []
   },
-  "created_at": "2026-01-18T06:56:32.684973Z",
-  "updated_at": "2026-01-18T06:56:32.685025Z"
+  "created_at": "2026-01-29T04:13:10.486946Z",
+  "updated_at": "2026-01-29T04:13:10.486988Z"
 }

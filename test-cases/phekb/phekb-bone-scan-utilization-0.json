@@ -1,0 +1,79 @@
+{
+  "id": "phekb-bone-scan-utilization-0",
+  "source": "phekb",
+  "source_id": "bone-scan-utilization-0",
+  "name": "bone scan utilization",
+  "description": "This test case evaluates the identification of bone scan utilization in prostate cancer patients. It requires finding diagnostic imaging procedures (specifically bone scans) for male patients with prostate cancer, which is a quality metric used to assess guideline adherence for cancer staging workup.",
+  "prompt": "Find all diagnostic imaging procedures for bone scans performed on male patients aged 35 or older with prostate cancer diagnosis, specifically looking for nuclear medicine bone scans or whole body bone scans.",
+  "metadata": {
+    "implementation_guide": null,
+    "code_systems": [
+      "CPT",
+      "ICD-10-CM",
+      "SNOMED CT"
+    ],
+    "required_codes": [
+      {
+        "system": "http://www.ama-assn.org/go/cpt",
+        "code": "78300",
+        "display": "Bone and/or joint imaging; limited area",
+        "source": "document"
+      },
+      {
+        "system": "http://www.ama-assn.org/go/cpt",
+        "code": "78305",
+        "display": "Bone and/or joint imaging; multiple areas",
+        "source": "document"
+      },
+      {
+        "system": "http://www.ama-assn.org/go/cpt",
+        "code": "78306",
+        "display": "Bone and/or joint imaging; whole body",
+        "source": "document"
+      },
+      {
+        "system": "http://www.ama-assn.org/go/cpt",
+        "code": "78315",
+        "display": "Bone and/or joint imaging; 3 phase study",
+        "source": "document"
+      },
+      {
+        "system": "http://hl7.org/fhir/sid/icd-10-cm",
+        "code": "C61",
+        "display": "Malignant neoplasm of prostate",
+        "source": "inferred"
+      },
+      {
+        "system": "http://hl7.org/fhir/administrative-gender",
+        "code": "male",
+        "display": "Male",
+        "source": "inferred"
+      }
+    ],
+    "complexity": "high",
+    "tags": [
+      "bone-scan",
+      "prostate-cancer",
+      "diagnostic-imaging",
+      "quality-metric",
+      "oncology"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "Procedure",
+    "parameters": {
+      "code": "78300,78305,78306,78315",
+      "patient.gender": "male",
+      "patient.birthdate": "le2024-01-01",
+      "subject:Patient.condition.code": "C61"
+    },
+    "url": "Procedure?code=78300,78305,78306,78315&patient.gender=male&patient.birthdate=le2024-01-01&subject:Patient.condition.code=http://hl7.org/fhir/sid/icd-10-cm|C61"
+  },
+  "test_data": {
+    "resources": [],
+    "expected_result_count": 0,
+    "expected_resource_ids": []
+  },
+  "created_at": "2026-01-29T04:15:45.723880Z",
+  "updated_at": "2026-01-29T04:15:45.723890Z"
+}

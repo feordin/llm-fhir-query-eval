@@ -1,0 +1,89 @@
+{
+  "id": "phekb-cpt-codes",
+  "source": "phekb",
+  "source_id": "cpt-codes",
+  "name": "CPT Codes",
+  "description": "This test case evaluates the ability to identify patients with abdominal aortic aneurysm (AAA) through multiple clinical pathways: procedural codes for AAA repair, diagnostic codes for ruptured AAA in vascular specialty encounters, and patterns of care for unruptured AAA requiring multiple vascular clinic visits. It tests complex phenotyping that combines procedure codes, diagnosis codes, and encounter context.",
+  "prompt": "Find patients who have been diagnosed with or treated for abdominal aortic aneurysm, including those who had surgical repair procedures, encounters for ruptured aneurysms, or multiple encounters for unruptured aneurysms in vascular clinics.",
+  "metadata": {
+    "implementation_guide": null,
+    "code_systems": [
+      "CPT",
+      "SNOMED CT",
+      "ICD-10-CM"
+    ],
+    "required_codes": [
+      {
+        "system": "http://www.ama-assn.org/go/cpt",
+        "code": "34800",
+        "display": "Endovascular repair of infrarenal abdominal aortic aneurysm",
+        "source": "inferred"
+      },
+      {
+        "system": "http://www.ama-assn.org/go/cpt",
+        "code": "34802",
+        "display": "Endovascular repair of infrarenal abdominal aortic aneurysm",
+        "source": "inferred"
+      },
+      {
+        "system": "http://www.ama-assn.org/go/cpt",
+        "code": "34803",
+        "display": "Endovascular repair of infrarenal abdominal aortic aneurysm",
+        "source": "inferred"
+      },
+      {
+        "system": "http://www.ama-assn.org/go/cpt",
+        "code": "34804",
+        "display": "Endovascular repair of infrarenal abdominal aortic aneurysm",
+        "source": "inferred"
+      },
+      {
+        "system": "http://www.ama-assn.org/go/cpt",
+        "code": "34805",
+        "display": "Endovascular repair of infrarenal abdominal aortic aneurysm",
+        "source": "inferred"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "233985008",
+        "display": "Ruptured abdominal aortic aneurysm",
+        "source": "inferred"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "432102000",
+        "display": "Aneurysm of abdominal aorta",
+        "source": "inferred"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "722138006",
+        "display": "Vascular surgery service",
+        "source": "inferred"
+      }
+    ],
+    "complexity": "high",
+    "tags": [
+      "procedure",
+      "condition",
+      "encounter",
+      "vascular",
+      "aneurysm",
+      "phenotyping"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "Bundle",
+    "parameters": {
+      "type": "searchset"
+    },
+    "url": "Patient?_has:Procedure:patient:code=http://www.ama-assn.org/go/cpt|34800,http://www.ama-assn.org/go/cpt|34802,http://www.ama-assn.org/go/cpt|34803,http://www.ama-assn.org/go/cpt|34804,http://www.ama-assn.org/go/cpt|34805&_has:Encounter:patient:type=http://snomed.info/sct|722138006&_has:Condition:patient:code=http://snomed.info/sct|233985008,http://snomed.info/sct|432102000"
+  },
+  "test_data": {
+    "resources": [],
+    "expected_result_count": 0,
+    "expected_resource_ids": []
+  },
+  "created_at": "2026-01-29T04:19:20.377456Z",
+  "updated_at": "2026-01-29T04:19:20.377469Z"
+}

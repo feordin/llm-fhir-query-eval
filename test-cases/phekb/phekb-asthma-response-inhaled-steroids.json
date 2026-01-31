@@ -3,80 +3,130 @@
   "source": "phekb",
   "source_id": "asthma-response-inhaled-steroids",
   "name": "Asthma Response to Inhaled Steroids",
-  "description": "This test case evaluates the ability to identify asthma patients within a specific age range who have been treated with inhaled corticosteroids, while properly excluding patients with various comorbid conditions that could confound asthma diagnosis and treatment response. It tests complex phenotyping logic involving multiple inclusion and exclusion criteria, age restrictions, and medication history.",
-  "prompt": "Find patients with asthma who are between ages 4-35 and have been prescribed inhaled corticosteroids, but exclude those with cystic fibrosis, immunodeficiency disorders, COPD, or other chronic respiratory conditions.",
+  "description": "This test case evaluates identification of asthma patients who respond to inhaled corticosteroids (ICS). It requires finding patients aged 4-35 with at least 2 asthma diagnoses on different days, who have used inhaled corticosteroids during the specified age range, and have had inpatient hospitalizations with asthma exacerbations treated with oral/IV steroids. The phenotype also excludes patients with various comorbid conditions like cystic fibrosis, COPD, immunodeficiency, and other respiratory or systemic diseases that could confound asthma treatment response assessment.",
+  "prompt": "Find patients aged 4-35 with asthma who have been treated with inhaled corticosteroids and have had hospitalizations requiring oral or IV steroids for asthma exacerbations.",
   "metadata": {
-    "implementation_guide": "US Core 5.0.0",
+    "implementation_guide": null,
     "code_systems": [
-      "SNOMED CT",
-      "RxNorm"
+      "ICD-9-CM",
+      "RxNorm",
+      "SNOMED CT"
     ],
     "required_codes": [
       {
-        "system": "http://snomed.info/sct",
-        "code": "195967001",
-        "display": "Asthma"
+        "system": "http://hl7.org/fhir/sid/icd-9-cm",
+        "code": "493",
+        "display": "Asthma",
+        "source": "inferred"
       },
       {
-        "system": "http://snomed.info/sct",
-        "code": "116602009",
-        "display": "Beclomethasone"
+        "system": "http://hl7.org/fhir/sid/icd-9-cm",
+        "code": "277.00",
+        "display": "Cystic fibrosis without meconium ileus",
+        "source": "document"
       },
       {
-        "system": "http://snomed.info/sct",
-        "code": "387467008",
-        "display": "Budesonide"
+        "system": "http://hl7.org/fhir/sid/icd-9-cm",
+        "code": "277.01",
+        "display": "Cystic fibrosis with meconium ileus",
+        "source": "document"
       },
       {
-        "system": "http://snomed.info/sct",
-        "code": "396064000",
-        "display": "Fluticasone"
+        "system": "http://hl7.org/fhir/sid/icd-9-cm",
+        "code": "277.02",
+        "display": "Cystic fibrosis with pulmonary manifestations",
+        "source": "document"
       },
       {
-        "system": "http://snomed.info/sct",
-        "code": "190905008",
-        "display": "Cystic fibrosis"
+        "system": "http://hl7.org/fhir/sid/icd-9-cm",
+        "code": "279",
+        "display": "Disorders involving the immune mechanism",
+        "source": "inferred"
       },
       {
-        "system": "http://snomed.info/sct",
-        "code": "234532001",
-        "display": "Immunodeficiency disorder"
+        "system": "http://hl7.org/fhir/sid/icd-9-cm",
+        "code": "496",
+        "display": "Chronic airway obstruction, not elsewhere classified",
+        "source": "document"
       },
       {
-        "system": "http://snomed.info/sct",
-        "code": "13645005",
-        "display": "Chronic obstructive lung disease"
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "51723",
+        "display": "Fluticasone",
+        "source": "inferred"
       },
       {
-        "system": "http://snomed.info/sct",
-        "code": "87433001",
-        "display": "Bronchiectasis"
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "6809",
+        "display": "Beclomethasone",
+        "source": "inferred"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "40648",
+        "display": "Budesonide",
+        "source": "inferred"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "8640",
+        "display": "Prednisone",
+        "source": "inferred"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "8638",
+        "display": "Prednisolone",
+        "source": "inferred"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "6902",
+        "display": "Methylprednisolone",
+        "source": "inferred"
       }
     ],
     "complexity": "high",
     "tags": [
       "asthma",
-      "respiratory",
-      "medication",
-      "phenotyping",
-      "exclusion-criteria"
+      "inhaled-corticosteroids",
+      "medication-response",
+      "hospitalization",
+      "age-restriction"
     ]
   },
   "expected_query": {
-    "resource_type": "Patient",
+    "resource_type": "Bundle",
     "parameters": {
-      "condition": "http://snomed.info/sct|195967001",
-      "age_range": "4-35",
-      "medication": "inhaled-corticosteroids",
-      "exclude_conditions": "cystic-fibrosis,immunodeficiency,copd,bronchiectasis"
+      "type": "batch",
+      "entry": [
+        {
+          "request": {
+            "method": "GET",
+            "url": "Condition?code=http://hl7.org/fhir/sid/icd-9-cm|493&patient={{Patient.id}}"
+          }
+        },
+        {
+          "request": {
+            "method": "GET",
+            "url": "MedicationStatement?medication-code=http://www.nlm.nih.gov/research/umls/rxnorm|51723,http://www.nlm.nih.gov/research/umls/rxnorm|6809,http://www.nlm.nih.gov/research/umls/rxnorm|40648&patient={{Patient.id}}"
+          }
+        },
+        {
+          "request": {
+            "method": "GET",
+            "url": "Encounter?class=http://terminology.hl7.org/CodeSystem/v3-ActCode|IMP&patient={{Patient.id}}"
+          }
+        }
+      ]
     },
-    "url": "Patient?_has:Condition:patient:code=http://snomed.info/sct|195967001&_has:MedicationRequest:patient:medication.code:in=http://snomed.info/sct|116602009,http://snomed.info/sct|387467008,http://snomed.info/sct|396064000&birthdate=ge2000-01-01&birthdate=le2020-12-31&_has:Condition:patient:code:not=http://snomed.info/sct|190905008,http://snomed.info/sct|234532001,http://snomed.info/sct|13645005,http://snomed.info/sct|87433001"
+    "url": "Bundle"
   },
   "test_data": {
     "resources": [],
     "expected_result_count": 0,
     "expected_resource_ids": []
   },
-  "created_at": "2026-01-18T06:58:07.606339Z",
-  "updated_at": "2026-01-18T06:58:07.606349Z"
+  "created_at": "2026-01-29T04:14:31.729381Z",
+  "updated_at": "2026-01-29T04:14:31.729387Z"
 }

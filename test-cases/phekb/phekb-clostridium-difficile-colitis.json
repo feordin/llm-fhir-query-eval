@@ -3,59 +3,74 @@
   "source": "phekb",
   "source_id": "clostridium-difficile-colitis",
   "name": "Clostridium Difficile Colitis",
-  "description": "This test case evaluates the ability to identify patients with C. difficile colitis based on positive laboratory tests or clinical treatment patterns. The phenotype identifies both confirmed cases via testing and probable cases treated with appropriate antibiotics.",
-  "prompt": "Find all patients who have been diagnosed with Clostridium difficile infection, either through positive laboratory testing or clinical diagnosis with treatment using oral vancomycin or metronidazole.",
+  "description": "This test case evaluates the ability to identify patients with C. difficile colitis through multiple clinical indicators including diagnostic test results (antigen/antibody tests, colonoscopy findings) and clinical diagnosis with appropriate antibiotic treatment (vancomycin or metronidazole). It tests complex phenotype identification that requires correlating laboratory results, diagnostic procedures, conditions, and medication treatments.",
+  "prompt": "Find all patients who have been diagnosed with Clostridium difficile colitis or have had positive C. diff testing.",
   "metadata": {
-    "implementation_guide": "US Core 5.0.0",
+    "implementation_guide": null,
     "code_systems": [
-      "ICD-10-CM",
+      "SNOMED CT",
       "LOINC",
-      "RxNorm",
-      "SNOMED CT"
+      "RxNorm"
     ],
     "required_codes": [
       {
-        "system": "http://hl7.org/fhir/sid/icd-10-cm",
-        "code": "A04.7",
-        "display": "Enterocolitis due to Clostridium difficile"
+        "system": "http://snomed.info/sct",
+        "code": "5548005",
+        "display": "Clostridium difficile colitis",
+        "source": "inferred"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "186265009",
+        "display": "Pseudomembranous colitis due to Clostridium difficile",
+        "source": "inferred"
       },
       {
         "system": "http://loinc.org",
-        "code": "34468-3",
-        "display": "Clostridium difficile toxin A+B [Presence] in Stool"
+        "code": "6327-6",
+        "display": "Clostridium difficile toxin A+B [Presence] in Stool",
+        "source": "inferred"
+      },
+      {
+        "system": "http://loinc.org",
+        "code": "33747-0",
+        "display": "Clostridium difficile antigen [Presence] in Stool",
+        "source": "inferred"
       },
       {
         "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
         "code": "11124",
-        "display": "Vancomycin"
+        "display": "Vancomycin",
+        "source": "document"
       },
       {
         "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
         "code": "6922",
-        "display": "Metronidazole"
+        "display": "Metronidazole",
+        "source": "document"
       }
     ],
-    "complexity": "medium",
+    "complexity": "high",
     "tags": [
-      "condition",
-      "infectious-disease",
-      "c-difficile",
-      "gastrointestinal",
-      "laboratory"
+      "infectious_disease",
+      "colitis",
+      "c_diff",
+      "antibiotic_treatment",
+      "laboratory_testing"
     ]
   },
   "expected_query": {
     "resource_type": "Condition",
     "parameters": {
-      "code": "http://hl7.org/fhir/sid/icd-10-cm|A04.7,http://snomed.info/sct|186431008"
+      "code": "http://snomed.info/sct|5548005,http://snomed.info/sct|186265009"
     },
-    "url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|A04.7,http://snomed.info/sct|186431008"
+    "url": "Condition?code=http://snomed.info/sct|5548005,http://snomed.info/sct|186265009"
   },
   "test_data": {
     "resources": [],
     "expected_result_count": 0,
     "expected_resource_ids": []
   },
-  "created_at": "2026-01-24T12:00:00.000000Z",
-  "updated_at": "2026-01-24T12:00:00.000000Z"
+  "created_at": "2026-01-29T04:17:56.493016Z",
+  "updated_at": "2026-01-29T04:17:56.493026Z"
 }

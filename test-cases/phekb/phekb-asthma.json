@@ -3,71 +3,95 @@
   "source": "phekb",
   "source_id": "asthma",
   "name": "Asthma",
-  "description": "This test case evaluates the ability to identify asthma cases based on the PheKB phenotype definition, which requires patients to be at least 4 years old, have documented asthma diagnoses, and have been prescribed asthma-related medications. The phenotype combines diagnostic codes with medication history to create a comprehensive case definition.",
-  "prompt": "Find all pediatric and adult patients aged 4 years and older who have been diagnosed with asthma and have been prescribed asthma medications.",
+  "description": "This test case evaluates the ability to identify asthma patients using a complex phenotype algorithm that requires multiple conditions: age restriction (4+ years), presence of asthma medications, multiple asthma diagnoses from separate visits, and exclusion of competing respiratory conditions. It tests the LLM's ability to handle multi-step phenotyping logic with both inclusion and exclusion criteria.",
+  "prompt": "Find patients aged 4 years and older with asthma who have been prescribed asthma medications and have multiple asthma diagnoses from separate clinical encounters, excluding those with cystic fibrosis, COPD, or organ transplant history.",
   "metadata": {
-    "implementation_guide": "US Core 5.0.0",
+    "implementation_guide": null,
     "code_systems": [
       "ICD-9-CM",
-      "RxNorm",
-      "SNOMED CT"
+      "RxNorm"
     ],
     "required_codes": [
       {
         "system": "http://hl7.org/fhir/sid/icd-9-cm",
         "code": "493",
-        "display": "Asthma"
+        "display": "Asthma",
+        "source": "inferred"
       },
       {
         "system": "http://hl7.org/fhir/sid/icd-9-cm",
         "code": "493.0",
-        "display": "Extrinsic asthma"
+        "display": "Extrinsic asthma",
+        "source": "document"
       },
       {
         "system": "http://hl7.org/fhir/sid/icd-9-cm",
-        "code": "493.1",
-        "display": "Intrinsic asthma"
+        "code": "277",
+        "display": "Cystic Fibrosis",
+        "source": "inferred"
+      },
+      {
+        "system": "http://hl7.org/fhir/sid/icd-9-cm",
+        "code": "496",
+        "display": "COPD",
+        "source": "inferred"
+      },
+      {
+        "system": "http://hl7.org/fhir/sid/icd-9-cm",
+        "code": "492",
+        "display": "Emphysema",
+        "source": "inferred"
+      },
+      {
+        "system": "http://hl7.org/fhir/sid/icd-9-cm",
+        "code": "V42",
+        "display": "Organ or tissue replaced by transplant",
+        "source": "document"
+      },
+      {
+        "system": "http://hl7.org/fhir/sid/icd-9-cm",
+        "code": "477",
+        "display": "Allergic rhinitis",
+        "source": "document"
+      },
+      {
+        "system": "http://hl7.org/fhir/sid/icd-9-cm",
+        "code": "691",
+        "display": "Atopic dermatitis and related conditions",
+        "source": "inferred"
       },
       {
         "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
-        "code": "1998",
-        "display": "Albuterol"
-      },
-      {
-        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
-        "code": "630208",
-        "display": "Fluticasone"
-      },
-      {
-        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
-        "code": "200683",
-        "display": "Montelukast"
+        "code": "2123",
+        "display": "Albuterol",
+        "source": "inferred"
       }
     ],
     "complexity": "high",
     "tags": [
       "asthma",
-      "condition",
-      "medication",
+      "respiratory",
+      "phenotype-algorithm",
+      "medications",
+      "exclusion-criteria",
       "pediatric",
-      "adult",
-      "phenotype"
+      "adult"
     ]
   },
   "expected_query": {
     "resource_type": "Patient",
     "parameters": {
+      "age": "ge4",
       "_has:Condition:patient:code": "http://hl7.org/fhir/sid/icd-9-cm|493",
-      "_has:MedicationRequest:patient:medication.code:in": "http://www.nlm.nih.gov/research/umls/rxnorm|1998,http://www.nlm.nih.gov/research/umls/rxnorm|630208,http://www.nlm.nih.gov/research/umls/rxnorm|200683",
-      "birthdate": "le2019-01-01"
+      "_has:MedicationRequest:patient:medication.code": "http://www.nlm.nih.gov/research/umls/rxnorm|2123"
     },
-    "url": "Patient?_has:Condition:patient:code=http://hl7.org/fhir/sid/icd-9-cm|493&_has:MedicationRequest:patient:medication.code:in=http://www.nlm.nih.gov/research/umls/rxnorm|1998,http://www.nlm.nih.gov/research/umls/rxnorm|630208,http://www.nlm.nih.gov/research/umls/rxnorm|200683&birthdate=le2019-01-01"
+    "url": "Patient?age=ge4&_has:Condition:patient:code=http://hl7.org/fhir/sid/icd-9-cm|493&_has:MedicationRequest:patient:medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|2123"
   },
   "test_data": {
     "resources": [],
     "expected_result_count": 0,
     "expected_resource_ids": []
   },
-  "created_at": "2026-01-18T06:57:53.430486Z",
-  "updated_at": "2026-01-18T06:57:53.430496Z"
+  "created_at": "2026-01-29T04:14:16.063441Z",
+  "updated_at": "2026-01-29T04:14:16.063446Z"
 }

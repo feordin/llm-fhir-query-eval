@@ -1,0 +1,139 @@
+{
+  "id": "phekb-cardiorespiratory-fitness-algorithm-emerge-mayo-network-phenotype",
+  "source": "phekb",
+  "source_id": "cardiorespiratory-fitness-algorithm-emerge-mayo-network-phenotype",
+  "name": "Cardiorespiratory Fitness Algorithm (eMERGE Mayo Network Phenotype)",
+  "description": "This test case evaluates a complex cardiorespiratory fitness phenotype algorithm that identifies patients with non-pharmacologic cardiac exercise stress tests. The algorithm requires specific combinations of procedures (ECG + Echo/Nuclear/Oxygen uptake) performed on the same date while excluding pharmacologic stress tests. It also tracks various cardiac and pulmonary comorbidities within specific time windows around the test date.",
+  "prompt": "Find patients who had cardiac exercise stress tests that included ECG monitoring combined with either echocardiography, nuclear cardiac imaging, or oxygen uptake measurement, but exclude any tests that used pharmacologic stress agents like adenosine, dipyridamole, or dobutamine.",
+  "metadata": {
+    "implementation_guide": null,
+    "code_systems": [
+      "CPT",
+      "ICD-9-CM"
+    ],
+    "required_codes": [
+      {
+        "system": "http://www.ama-assn.org/go/cpt",
+        "code": "J0152",
+        "display": "Adenosine",
+        "source": "document"
+      },
+      {
+        "system": "http://www.ama-assn.org/go/cpt",
+        "code": "J0150",
+        "display": "Adenosine",
+        "source": "document"
+      },
+      {
+        "system": "http://www.ama-assn.org/go/cpt",
+        "code": "J1245",
+        "display": "Dipyridamole",
+        "source": "document"
+      },
+      {
+        "system": "http://www.ama-assn.org/go/cpt",
+        "code": "J1250",
+        "display": "Dobutamine",
+        "source": "document"
+      },
+      {
+        "system": "http://www.ama-assn.org/go/cpt",
+        "code": "93015",
+        "display": "Cardiovascular stress test using maximal or submaximal treadmill or bicycle exercise, continuous electrocardiographic monitoring, and/or pharmacological stress; with supervision, interpretation and report only",
+        "source": "document"
+      },
+      {
+        "system": "http://www.ama-assn.org/go/cpt",
+        "code": "93016",
+        "display": "Cardiovascular stress test using maximal or submaximal treadmill or bicycle exercise, continuous electrocardiographic monitoring, and/or pharmacological stress; supervision only, without interpretation and report",
+        "source": "document"
+      },
+      {
+        "system": "http://www.ama-assn.org/go/cpt",
+        "code": "93017",
+        "display": "Cardiovascular stress test using maximal or submaximal treadmill or bicycle exercise, continuous electrocardiographic monitoring, and/or pharmacological stress; tracing only, without interpretation and report",
+        "source": "document"
+      },
+      {
+        "system": "http://www.ama-assn.org/go/cpt",
+        "code": "93018",
+        "display": "Cardiovascular stress test using maximal or submaximal treadmill or bicycle exercise, continuous electrocardiographic monitoring, and/or pharmacological stress; interpretation and report only",
+        "source": "document"
+      },
+      {
+        "system": "http://www.ama-assn.org/go/cpt",
+        "code": "93350",
+        "display": "Echocardiography, transthoracic, real-time with image documentation (2D), includes M-mode recording, when performed, during rest and cardiovascular stress test using treadmill, bicycle exercise and/or pharmacologically induced stress, with interpretation and report",
+        "source": "document"
+      },
+      {
+        "system": "http://www.ama-assn.org/go/cpt",
+        "code": "93351",
+        "display": "Echocardiography, transthoracic, real-time with image documentation (2D), includes M-mode recording, when performed, during rest and cardiovascular stress test using treadmill, bicycle exercise and/or pharmacologically induced stress, with interpretation and report; including performance of continuous electrocardiographic monitoring, with supervision by a physician or other qualified health care professional",
+        "source": "document"
+      },
+      {
+        "system": "http://www.ama-assn.org/go/cpt",
+        "code": "A9500",
+        "display": "Technetium tc-99m sestamibi, diagnostic, per study dose",
+        "source": "document"
+      },
+      {
+        "system": "http://www.ama-assn.org/go/cpt",
+        "code": "94680",
+        "display": "Oxygen uptake, expired gas analysis; rest and exercise, direct, simple",
+        "source": "document"
+      },
+      {
+        "system": "http://www.ama-assn.org/go/cpt",
+        "code": "94681",
+        "display": "Oxygen uptake, expired gas analysis; including CO2 output, percentage oxygen extracted",
+        "source": "document"
+      },
+      {
+        "system": "http://hl7.org/fhir/sid/icd-9-cm",
+        "code": "410.00",
+        "display": "Acute myocardial infarction of anterolateral wall, episode of care unspecified",
+        "source": "document"
+      },
+      {
+        "system": "http://hl7.org/fhir/sid/icd-9-cm",
+        "code": "410.01",
+        "display": "Acute myocardial infarction of anterolateral wall, initial episode of care",
+        "source": "document"
+      },
+      {
+        "system": "http://hl7.org/fhir/sid/icd-9-cm",
+        "code": "410.02",
+        "display": "Acute myocardial infarction of anterolateral wall, subsequent episode of care",
+        "source": "document"
+      }
+    ],
+    "complexity": "high",
+    "tags": [
+      "cardiorespiratory",
+      "fitness",
+      "stress-test",
+      "cardiac",
+      "exercise",
+      "phenotype"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "Bundle",
+    "parameters": {
+      "_type": "Procedure,MedicationAdministration,Condition",
+      "procedure_code": "93015,93016,93017,93018,93350,93351,A9500,94680,94681",
+      "medication_code": "J0152,J0150,J1245,J1250",
+      "condition_code": "410.00,410.01,410.02,410.10,410.11,410.12,410.20,410.21,410.22,410.30,410.31,410.32,410.40,410.41,410.42,410.50,410.51"
+    },
+    "url": "Bundle?_type=Procedure,MedicationAdministration,Condition&procedure:code=93015,93016,93017,93018,93350,93351,A9500,94680,94681&medication:code=J0152,J0150,J1245,J1250&condition:code=410.00,410.01,410.02,410.10,410.11,410.12,410.20,410.21,410.22,410.30,410.31,410.32,410.40,410.41,410.42,410.50,410.51"
+  },
+  "test_data": {
+    "resources": [],
+    "expected_result_count": 0,
+    "expected_resource_ids": []
+  },
+  "created_at": "2026-01-29T04:17:01.486057Z",
+  "updated_at": "2026-01-29T04:17:01.486066Z"
+}

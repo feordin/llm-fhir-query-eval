@@ -1,0 +1,90 @@
+{
+  "phenotype_id": "type-2-diabetes-prs-evaluation",
+  "analyzed_files": [
+    "DMmeds_BMJpaper1_0.docx",
+    "MGB20T2DM_Algorithm_Implementation_20210123.docx"
+  ],
+  "extracted_codes": [
+    {
+      "system": "RxNorm",
+      "code": "1153649",
+      "display": "acarbose",
+      "found_in": "DMmeds_BMJpaper1_0.docx",
+      "context": "Alpha-glucosidase inhibitors: acarbose (Precose, Glucobay) - RXNORM_CUI list"
+    },
+    {
+      "system": "RxNorm",
+      "code": "1153650",
+      "display": "acarbose",
+      "found_in": "DMmeds_BMJpaper1_0.docx",
+      "context": "Alpha-glucosidase inhibitors: acarbose (Precose, Glucobay) - RXNORM_CUI list"
+    },
+    {
+      "system": "RxNorm",
+      "code": "1157268",
+      "display": "miglitol",
+      "found_in": "DMmeds_BMJpaper1_0.docx",
+      "context": "Alpha-glucosidase inhibitors: miglitol (Glyset) - RXNORM_CUI list"
+    },
+    {
+      "system": "RxNorm",
+      "code": "1157269",
+      "display": "miglitol",
+      "found_in": "DMmeds_BMJpaper1_0.docx",
+      "context": "Alpha-glucosidase inhibitors: miglitol (Glyset) - RXNORM_CUI list"
+    },
+    {
+      "system": "RxNorm",
+      "code": "1043560",
+      "display": "alogliptin",
+      "found_in": "DMmeds_BMJpaper1_0.docx",
+      "context": "Dipeptidyl Peptidase IV Inhibitors: alogliptin (Nesina) - RXNORM_CUI list"
+    },
+    {
+      "system": "RxNorm",
+      "code": "593411",
+      "display": "sitagliptin",
+      "found_in": "DMmeds_BMJpaper1_0.docx",
+      "context": "Dipeptidyl Peptidase IV Inhibitors: sitagliptin (Januvia) - RXNORM_CUI list"
+    },
+    {
+      "system": "RxNorm",
+      "code": "665031",
+      "display": "saxagliptin",
+      "found_in": "DMmeds_BMJpaper1_0.docx",
+      "context": "Dipeptidyl Peptidase IV Inhibitors: saxagliptin (Onglyza) - RXNORM_CUI list"
+    },
+    {
+      "system": "RxNorm",
+      "code": "1100700",
+      "display": "linagliptin",
+      "found_in": "DMmeds_BMJpaper1_0.docx",
+      "context": "Dipeptidyl Peptidase IV Inhibitors: linagliptin (Tradjenta) - RXNORM_CUI list"
+    },
+    {
+      "system": "NDC",
+      "code": "00009501201",
+      "display": "acarbose",
+      "found_in": "DMmeds_BMJpaper1_0.docx",
+      "context": "Alpha-glucosidase inhibitors NDC codes list"
+    },
+    {
+      "system": "NDC",
+      "code": "00003421411",
+      "display": "DPP-IV inhibitor",
+      "found_in": "DMmeds_BMJpaper1_0.docx",
+      "context": "Dipeptidyl Peptidase IV Inhibitors NDC codes list"
+    }
+  ],
+  "clinical_criteria": [
+    "At least one ICD9/ICD-10 code for Type 2 diabetes mellitus (T2DM) for filter criteria",
+    "At least 3 diagnosis codes for any ICD9/10 code for data floor",
+    "30 days or more between first and last date of diagnosis code",
+    "At least one diagnosis code after '1/1/2005'",
+    "At least one clinical note in the electronic health record (EHR)",
+    "Specificity held at >95% for case classification",
+    "MGB cutoff of 0.593 for case/non-case status determination"
+  ],
+  "algorithm_summary": "This is a Type 2 Diabetes phenotype algorithm that uses a logistic regression classifier trained on chart-reviewed gold standard data. The algorithm first applies filter criteria requiring at least one ICD9/ICD-10 code for T2DM, then applies data floor requirements (\u22653 diagnosis codes, \u226530 days between first/last codes, \u22651 code after 2005, \u22651 clinical note). Features include coded diagnosis variables (COD_DX_T2DM, COD_DX_T1DM) and diabetes medication variables (COD_MED_diabetes) derived from multiple RxNorm CUIs and NDC codes for various diabetes medication classes including alpha-glucosidase inhibitors and DPP-IV inhibitors. The model uses LASSO penalized logistic regression with a threshold optimized for >95% specificity to classify cases vs. non-cases, achieving 90-94% positive predictive value across validation sets.",
+  "analysis_timestamp": "2026-01-29T03:24:40.975134Z"
+}

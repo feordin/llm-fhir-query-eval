@@ -3,63 +3,90 @@
   "source": "phekb",
   "source_id": "depression",
   "name": "Depression",
-  "description": "This test case evaluates the ability to identify patients with depressive disorders for genetic and epidemiologic studies. Depression manifests along a gradient from mild to severe and may have a genetic component.",
-  "prompt": "Find all patients who have been diagnosed with major depressive disorder or other depressive conditions, including those who have been prescribed antidepressant medications.",
+  "description": "This test case evaluates the ability to identify patients with depression diagnoses using ICD-9 and ICD-10 codes. The phenotype requires complex longitudinal analysis with a 2/30/180 rule (evidence on at least 2 distinct days, 30-180 days apart), but this query focuses on the core diagnosis identification component. It should capture the three severity types mentioned in the phenotype: depression with psychosis (most severe), major depressive disorder, and non-major depressive disorder.",
+  "prompt": "Find all patients with a diagnosis of depression, including major depressive disorder, non-major depressive disorder, and depression with psychosis.",
   "metadata": {
-    "implementation_guide": "US Core 5.0.0",
+    "implementation_guide": null,
     "code_systems": [
       "ICD-9-CM",
-      "ICD-10-CM",
-      "SNOMED CT",
-      "RxNorm"
+      "ICD-10-CM"
     ],
     "required_codes": [
       {
-        "system": "http://hl7.org/fhir/sid/icd-9-cm",
-        "code": "296.2",
-        "display": "Major depressive disorder, single episode"
-      },
-      {
-        "system": "http://hl7.org/fhir/sid/icd-9-cm",
-        "code": "296.3",
-        "display": "Major depressive disorder, recurrent episode"
-      },
-      {
         "system": "http://hl7.org/fhir/sid/icd-10-cm",
         "code": "F32",
-        "display": "Major depressive disorder, single episode"
+        "display": "Major depressive disorder, single episode",
+        "source": "inferred"
       },
       {
         "system": "http://hl7.org/fhir/sid/icd-10-cm",
         "code": "F33",
-        "display": "Major depressive disorder, recurrent"
+        "display": "Major depressive disorder, recurrent",
+        "source": "inferred"
       },
       {
-        "system": "http://snomed.info/sct",
-        "code": "35489007",
-        "display": "Depressive disorder"
+        "system": "http://hl7.org/fhir/sid/icd-10-cm",
+        "code": "F34.1",
+        "display": "Dysthymic disorder",
+        "source": "inferred"
+      },
+      {
+        "system": "http://hl7.org/fhir/sid/icd-10-cm",
+        "code": "F32.3",
+        "display": "Major depressive disorder, single episode, severe with psychotic features",
+        "source": "inferred"
+      },
+      {
+        "system": "http://hl7.org/fhir/sid/icd-10-cm",
+        "code": "F33.3",
+        "display": "Major depressive disorder, recurrent, severe with psychotic features",
+        "source": "inferred"
+      },
+      {
+        "system": "http://hl7.org/fhir/sid/icd-9-cm",
+        "code": "296.2",
+        "display": "Major depressive disorder, single episode",
+        "source": "inferred"
+      },
+      {
+        "system": "http://hl7.org/fhir/sid/icd-9-cm",
+        "code": "296.3",
+        "display": "Major depressive disorder, recurrent episode",
+        "source": "inferred"
+      },
+      {
+        "system": "http://hl7.org/fhir/sid/icd-9-cm",
+        "code": "300.4",
+        "display": "Dysthymic disorder",
+        "source": "inferred"
+      },
+      {
+        "system": "http://hl7.org/fhir/sid/icd-9-cm",
+        "code": "311",
+        "display": "Depressive disorder, not elsewhere classified",
+        "source": "inferred"
       }
     ],
-    "complexity": "medium",
+    "complexity": "high",
     "tags": [
-      "condition",
-      "psychiatry",
       "depression",
-      "mental-health"
+      "condition",
+      "mental health",
+      "longitudinal"
     ]
   },
   "expected_query": {
     "resource_type": "Condition",
     "parameters": {
-      "code": "http://hl7.org/fhir/sid/icd-9-cm|296.2,http://hl7.org/fhir/sid/icd-9-cm|296.3,http://hl7.org/fhir/sid/icd-10-cm|F32,http://hl7.org/fhir/sid/icd-10-cm|F33,http://snomed.info/sct|35489007"
+      "code": "http://hl7.org/fhir/sid/icd-10-cm|F32,http://hl7.org/fhir/sid/icd-10-cm|F33,http://hl7.org/fhir/sid/icd-10-cm|F34.1,http://hl7.org/fhir/sid/icd-10-cm|F32.3,http://hl7.org/fhir/sid/icd-10-cm|F33.3,http://hl7.org/fhir/sid/icd-9-cm|296.2,http://hl7.org/fhir/sid/icd-9-cm|296.3,http://hl7.org/fhir/sid/icd-9-cm|300.4,http://hl7.org/fhir/sid/icd-9-cm|311"
     },
-    "url": "Condition?code=http://hl7.org/fhir/sid/icd-9-cm|296.2,http://hl7.org/fhir/sid/icd-9-cm|296.3,http://hl7.org/fhir/sid/icd-10-cm|F32,http://hl7.org/fhir/sid/icd-10-cm|F33,http://snomed.info/sct|35489007"
+    "url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|F32,http://hl7.org/fhir/sid/icd-10-cm|F33,http://hl7.org/fhir/sid/icd-10-cm|F34.1,http://hl7.org/fhir/sid/icd-10-cm|F32.3,http://hl7.org/fhir/sid/icd-10-cm|F33.3,http://hl7.org/fhir/sid/icd-9-cm|296.2,http://hl7.org/fhir/sid/icd-9-cm|296.3,http://hl7.org/fhir/sid/icd-9-cm|300.4,http://hl7.org/fhir/sid/icd-9-cm|311"
   },
   "test_data": {
     "resources": [],
     "expected_result_count": 0,
     "expected_resource_ids": []
   },
-  "created_at": "2026-01-24T12:00:00.000000Z",
-  "updated_at": "2026-01-24T12:00:00.000000Z"
+  "created_at": "2026-01-29T04:20:20.440663Z",
+  "updated_at": "2026-01-29T04:20:20.440673Z"
 }

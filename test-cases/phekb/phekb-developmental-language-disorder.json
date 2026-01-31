@@ -3,63 +3,136 @@
   "source": "phekb",
   "source_id": "developmental-language-disorder",
   "name": "Developmental Language Disorder",
-  "description": "This test case evaluates the ability to identify pediatric patients with developmental language disorder (DLD) using the APT-DLD automated phenotyping tool. The algorithm classifies cases based on ICD-9 and ICD-10 diagnosis codes.",
-  "prompt": "Find all pediatric patients who have been diagnosed with developmental language disorder, speech and language developmental delay, or other specific developmental disorders of speech and language.",
+  "description": "This test case evaluates the ability to identify pediatric patients with Developmental Language Disorder (DLD) using the APT-DLD algorithm. It requires finding patients with specific language disorder diagnoses while applying exclusion criteria for conditions that would disqualify a DLD diagnosis. The query must handle both ICD-9 and ICD-10 coding systems and implement age-based filtering to ensure only pediatric cases are included.",
+  "prompt": "Find pediatric patients diagnosed with developmental language disorder, including expressive language disorder, mixed receptive-expressive language disorder, and other developmental speech or language disorders, but exclude those with hearing loss, intellectual disabilities, or chromosomal abnormalities.",
   "metadata": {
-    "implementation_guide": "US Core 5.0.0",
+    "implementation_guide": null,
     "code_systems": [
       "ICD-9-CM",
-      "ICD-10-CM",
-      "SNOMED CT"
+      "ICD-10-CM"
     ],
     "required_codes": [
       {
         "system": "http://hl7.org/fhir/sid/icd-9-cm",
-        "code": "315.31",
-        "display": "Expressive language disorder"
+        "code": "315.39",
+        "display": "Other developmental speech or language disorder",
+        "source": "document"
       },
       {
         "system": "http://hl7.org/fhir/sid/icd-9-cm",
         "code": "315.32",
-        "display": "Mixed receptive-expressive language disorder"
+        "display": "Mixed receptive-expressive language disorder",
+        "source": "document"
+      },
+      {
+        "system": "http://hl7.org/fhir/sid/icd-9-cm",
+        "code": "315.31",
+        "display": "Expressive language disorder",
+        "source": "document"
       },
       {
         "system": "http://hl7.org/fhir/sid/icd-10-cm",
-        "code": "F80.1",
-        "display": "Expressive language disorder"
+        "code": "F80.89",
+        "display": "Other developmental disorders of speech and language",
+        "source": "document"
       },
       {
         "system": "http://hl7.org/fhir/sid/icd-10-cm",
         "code": "F80.2",
-        "display": "Mixed receptive-expressive language disorder"
+        "display": "Mixed receptive-expressive language disorder",
+        "source": "document"
       },
       {
-        "system": "http://snomed.info/sct",
-        "code": "229746007",
-        "display": "Developmental language disorder"
+        "system": "http://hl7.org/fhir/sid/icd-10-cm",
+        "code": "F80.1",
+        "display": "Expressive language disorder",
+        "source": "document"
+      },
+      {
+        "system": "http://hl7.org/fhir/sid/icd-9-cm",
+        "code": "389",
+        "display": "Hearing loss",
+        "source": "document"
+      },
+      {
+        "system": "http://hl7.org/fhir/sid/icd-9-cm",
+        "code": "317",
+        "display": "Mild intellectual disabilities",
+        "source": "document"
+      },
+      {
+        "system": "http://hl7.org/fhir/sid/icd-9-cm",
+        "code": "318",
+        "display": "Other specified intellectual disabilities",
+        "source": "document"
+      },
+      {
+        "system": "http://hl7.org/fhir/sid/icd-9-cm",
+        "code": "319",
+        "display": "Unspecified intellectual disabilities",
+        "source": "document"
+      },
+      {
+        "system": "http://hl7.org/fhir/sid/icd-10-cm",
+        "code": "H90",
+        "display": "Conductive and sensorineural hearing loss",
+        "source": "document"
+      },
+      {
+        "system": "http://hl7.org/fhir/sid/icd-10-cm",
+        "code": "H91",
+        "display": "Other and unspecified hearing loss",
+        "source": "document"
+      },
+      {
+        "system": "http://hl7.org/fhir/sid/icd-10-cm",
+        "code": "F70",
+        "display": "Mild intellectual disabilities",
+        "source": "document"
+      },
+      {
+        "system": "http://hl7.org/fhir/sid/icd-10-cm",
+        "code": "F71",
+        "display": "Moderate intellectual disabilities",
+        "source": "document"
+      },
+      {
+        "system": "http://hl7.org/fhir/sid/icd-10-cm",
+        "code": "F72",
+        "display": "Severe intellectual disabilities",
+        "source": "document"
+      },
+      {
+        "system": "http://hl7.org/fhir/sid/icd-10-cm",
+        "code": "F73",
+        "display": "Profound intellectual disabilities",
+        "source": "document"
       }
     ],
-    "complexity": "medium",
+    "complexity": "high",
     "tags": [
-      "condition",
       "pediatric",
-      "developmental-disorder",
-      "speech-language"
+      "developmental-language-disorder",
+      "speech-language",
+      "exclusion-criteria",
+      "multi-step-algorithm"
     ]
   },
   "expected_query": {
     "resource_type": "Condition",
     "parameters": {
-      "code": "http://hl7.org/fhir/sid/icd-9-cm|315.31,http://hl7.org/fhir/sid/icd-9-cm|315.32,http://hl7.org/fhir/sid/icd-10-cm|F80.1,http://hl7.org/fhir/sid/icd-10-cm|F80.2",
-      "patient.birthdate": "ge2008-01-01"
+      "code": "315.39,315.32,315.31,F80.89,F80.2,F80.1",
+      "_include": "Condition:patient",
+      "_revinclude": "Condition:patient",
+      "_has": "Patient:_id$gt=0"
     },
-    "url": "Condition?code=http://hl7.org/fhir/sid/icd-9-cm|315.31,http://hl7.org/fhir/sid/icd-9-cm|315.32,http://hl7.org/fhir/sid/icd-10-cm|F80.1,http://hl7.org/fhir/sid/icd-10-cm|F80.2&patient.birthdate=ge2008-01-01"
+    "url": "Condition?code=http://hl7.org/fhir/sid/icd-9-cm|315.39,http://hl7.org/fhir/sid/icd-9-cm|315.32,http://hl7.org/fhir/sid/icd-9-cm|315.31,http://hl7.org/fhir/sid/icd-10-cm|F80.89,http://hl7.org/fhir/sid/icd-10-cm|F80.2,http://hl7.org/fhir/sid/icd-10-cm|F80.1&_include=Condition:patient&_revinclude=Condition:patient"
   },
   "test_data": {
     "resources": [],
     "expected_result_count": 0,
     "expected_resource_ids": []
   },
-  "created_at": "2026-01-24T12:00:00.000000Z",
-  "updated_at": "2026-01-24T12:00:00.000000Z"
+  "created_at": "2026-01-29T04:20:37.925359Z",
+  "updated_at": "2026-01-29T04:20:37.925371Z"
 }

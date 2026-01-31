@@ -3,51 +3,76 @@
   "source": "phekb",
   "source_id": "blood-pressure",
   "name": "Blood Pressure",
-  "description": "This test case evaluates the ability to query for blood pressure measurements (systolic and diastolic) from adult patients, excluding emergency department and inpatient encounters. The phenotype focuses on outpatient blood pressure values measured in mm Hg.",
-  "prompt": "Find all blood pressure observations for adult patients aged 18 and older, including both systolic and diastolic measurements, excluding readings taken during emergency department or inpatient encounters.",
+  "description": "This test case evaluates the ability to identify blood pressure measurements (both systolic and diastolic) with complex clinical exclusion criteria including age restrictions, visit type filtering, and comorbidity exclusions. It tests understanding of multi-step phenotype algorithms that require filtering measurements based on clinical context and patient demographics.",
+  "prompt": "Find all blood pressure measurements for adult outpatients, excluding measurements from inpatient or emergency department visits, and excluding patients with end-stage kidney disease or pregnancy conditions.",
   "metadata": {
-    "implementation_guide": "US Core 5.0.0",
+    "implementation_guide": "US Core 6.1.0",
     "code_systems": [
-      "LOINC"
+      "LOINC",
+      "ICD-10-CM",
+      "SNOMED CT",
+      "ATC"
     ],
     "required_codes": [
       {
         "system": "http://loinc.org",
-        "code": "85354-9",
-        "display": "Blood pressure panel with all children optional"
-      },
-      {
-        "system": "http://loinc.org",
         "code": "8480-6",
-        "display": "Systolic blood pressure"
+        "display": "Systolic blood pressure",
+        "source": "inferred"
       },
       {
         "system": "http://loinc.org",
         "code": "8462-4",
-        "display": "Diastolic blood pressure"
+        "display": "Diastolic blood pressure",
+        "source": "inferred"
+      },
+      {
+        "system": "http://hl7.org/fhir/sid/icd-10-cm",
+        "code": "Z79.899",
+        "display": "Other long-term (current) drug therapy",
+        "source": "document"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "46177005",
+        "display": "End-stage renal disease",
+        "source": "inferred"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "77386006",
+        "display": "Pregnancy",
+        "source": "inferred"
+      },
+      {
+        "system": "http://terminology.hl7.org/CodeSystem/v3-ActCode",
+        "code": "AMB",
+        "display": "Ambulatory",
+        "source": "inferred"
       }
     ],
-    "complexity": "medium",
+    "complexity": "high",
     "tags": [
-      "vital-signs",
-      "observation",
       "blood-pressure",
-      "quantitative"
+      "vital-signs",
+      "outpatient",
+      "exclusion-criteria"
     ]
   },
   "expected_query": {
     "resource_type": "Observation",
     "parameters": {
-      "code": "http://loinc.org|85354-9,http://loinc.org|8480-6,http://loinc.org|8462-4",
-      "patient.birthdate": "le2008-01-01"
+      "code": "8480-6,8462-4",
+      "_include": "Observation:encounter",
+      "_revinclude": "Patient:_id"
     },
-    "url": "Observation?code=http://loinc.org|85354-9,http://loinc.org|8480-6,http://loinc.org|8462-4&patient.birthdate=le2008-01-01"
+    "url": "Observation?code=8480-6,8462-4&_include=Observation:encounter&_revinclude=Patient:_id"
   },
   "test_data": {
     "resources": [],
     "expected_result_count": 0,
     "expected_resource_ids": []
   },
-  "created_at": "2026-01-24T12:00:00.000000Z",
-  "updated_at": "2026-01-24T12:00:00.000000Z"
+  "created_at": "2026-01-29T04:15:18.550995Z",
+  "updated_at": "2026-01-29T04:15:18.551003Z"
 }

@@ -3,56 +3,93 @@
   "source": "phekb",
   "source_id": "atopic-dermatitis-algorithm",
   "name": "Atopic Dermatitis Algorithm",
-  "description": "This test case evaluates the ability to identify atopic dermatitis patients using a complex phenotype algorithm that requires: (1) patients \u226560 days old, (2) multiple visits with atopic dermatitis diagnosis codes, and (3) either associated medications OR additional visits. It tests the LLM's ability to translate clinical inclusion criteria involving diagnosis frequency, medication history, and age constraints into appropriate FHIR queries.",
-  "prompt": "Find all patients with atopic dermatitis who are at least 60 days old and have had multiple clinic visits with this diagnosis, along with prescriptions for atopic dermatitis medications or at least three separate visits with the diagnosis.",
+  "description": "This test case evaluates identification of atopic dermatitis cases using a complex phenotyping algorithm that requires either: (1) patients \u226560 days old with 2+ visits coded for atopic dermatitis plus 2+ prescriptions for AD-related medications, or (2) patients \u226560 days old with 3+ visits coded for atopic dermatitis. The test also validates exclusion of patients with confounding conditions like immune disorders, other skin conditions, or malignancies.",
+  "prompt": "Find patients who have been diagnosed with atopic dermatitis and either have multiple visits with this diagnosis or have received appropriate medications for treating atopic dermatitis.",
   "metadata": {
-    "implementation_guide": "US Core 5.0.0",
+    "implementation_guide": null,
     "code_systems": [
       "ICD-9-CM",
-      "SNOMED CT",
-      "RxNorm"
+      "SNOMED CT"
     ],
     "required_codes": [
       {
         "system": "http://hl7.org/fhir/sid/icd-9-cm",
         "code": "691.8",
-        "display": "Other atopic dermatitis and related conditions"
+        "display": "Atopic Dermatitis",
+        "source": "document"
+      },
+      {
+        "system": "http://hl7.org/fhir/sid/icd-9-cm",
+        "code": "133.0",
+        "display": "Scabies",
+        "source": "document"
+      },
+      {
+        "system": "http://hl7.org/fhir/sid/icd-9-cm",
+        "code": "279.12",
+        "display": "Wiskott-Aldrich Syndrome",
+        "source": "document"
+      },
+      {
+        "system": "http://hl7.org/fhir/sid/icd-9-cm",
+        "code": "287.0",
+        "display": "Allergic Purpura",
+        "source": "document"
+      },
+      {
+        "system": "http://hl7.org/fhir/sid/icd-9-cm",
+        "code": "757.1",
+        "display": "Ichtyosis congenita",
+        "source": "document"
+      },
+      {
+        "system": "http://hl7.org/fhir/sid/icd-9-cm",
+        "code": "493",
+        "display": "Asthma",
+        "source": "inferred"
+      },
+      {
+        "system": "http://hl7.org/fhir/sid/icd-9-cm",
+        "code": "477",
+        "display": "Allergic rhinitis",
+        "source": "inferred"
+      },
+      {
+        "system": "http://hl7.org/fhir/sid/icd-9-cm",
+        "code": "372.14",
+        "display": "Other chronic allergic rhinoconjunctivitis",
+        "source": "document"
       },
       {
         "system": "http://snomed.info/sct",
         "code": "24079001",
-        "display": "Atopic dermatitis"
-      },
-      {
-        "system": "http://terminology.hl7.org/CodeSystem/v3-ActCode",
-        "code": "AMB",
-        "display": "ambulatory"
+        "display": "Atopic dermatitis",
+        "source": "inferred"
       }
     ],
     "complexity": "high",
     "tags": [
-      "atopic-dermatitis",
+      "atopic_dermatitis",
       "condition",
+      "phenotype_algorithm",
       "pediatric",
-      "medication",
-      "multiple-visits",
-      "phenotype-algorithm"
+      "dermatology",
+      "multi_criteria"
     ]
   },
   "expected_query": {
-    "resource_type": "Patient",
+    "resource_type": "Condition",
     "parameters": {
-      "_has:Condition:patient:code": "http://hl7.org/fhir/sid/icd-9-cm|691.8",
-      "_has:Encounter:patient:class": "AMB",
-      "birthdate": "le2023-10-01"
+      "code": "http://hl7.org/fhir/sid/icd-9-cm|691.8",
+      "_count": "1000"
     },
-    "url": "Patient?_has:Condition:patient:code=http://hl7.org/fhir/sid/icd-9-cm|691.8&_has:Encounter:patient:class=AMB&birthdate=le2023-10-01"
+    "url": "Condition?code=http://hl7.org/fhir/sid/icd-9-cm|691.8&_count=1000"
   },
   "test_data": {
     "resources": [],
     "expected_result_count": 0,
     "expected_resource_ids": []
   },
-  "created_at": "2026-01-18T06:58:18.019398Z",
-  "updated_at": "2026-01-18T06:58:18.019406Z"
+  "created_at": "2026-01-29T04:14:43.098706Z",
+  "updated_at": "2026-01-29T04:14:43.098714Z"
 }

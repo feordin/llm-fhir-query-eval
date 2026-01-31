@@ -1,0 +1,25 @@
+{
+  "phenotype_id": "blood-pressure",
+  "analyzed_files": [
+    "Blood20pressure.docx"
+  ],
+  "extracted_codes": [
+    {
+      "system": "ICD-10-CM",
+      "code": "Z79.899",
+      "display": "Other long-term (current) drug therapy",
+      "found_in": "Blood20pressure.docx",
+      "context": "Could also include ICD code Z79.899, indicating 'Other long-term (current) drug therapy' due to no direct access to patient EHRs"
+    }
+  ],
+  "clinical_criteria": [
+    "Age at measurement \u226518 years (exclude measurements <18 years)",
+    "Exclude measurements from Inpatient or Emergency Department visits",
+    "Keep only measurements from Outpatient visits",
+    "Statistical outliers: Remove measurements outside Q1 - 3*IQR and Q3 + 3*IQR",
+    "BP adjustment: Add 15 mmHg to SBP and 10 mmHg to DBP if participant has record of BP lowering medication use before median BP measurement",
+    "Expected units: SBP and DBP in mm Hg"
+  ],
+  "algorithm_summary": "Multi-step blood pressure phenotype algorithm: 1) Extract SBP/DBP measurements using codes from CSV files (SBP_codes.csv, SBP_LOINC_codes.csv, DBP_codes.csv, DBP_LOINC_codes.csv), 2) Convert units to mm Hg, 3) Apply exclusions (age <18, inpatient/ED visits, end stage kidney disease, pregnancy), 4) Average measurements per visit (using 2nd and 3rd measurements if >2 available), 5) Remove statistical outliers using IQR method, 6) Calculate median value per individual with corresponding age and BMI, 7) Adjust for antihypertensive medications (ATC C02 codes) by adding 15/10 mmHg to SBP/DBP. Additional flagged conditions are tracked but don't exclude participants.",
+  "analysis_timestamp": "2026-01-28T06:34:43.436373Z"
+}

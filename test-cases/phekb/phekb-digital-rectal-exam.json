@@ -3,54 +3,70 @@
   "source": "phekb",
   "source_id": "digital-rectal-exam",
   "name": "Digital Rectal Exam",
-  "description": "This test case evaluates the ability to identify prostate cancer patients who have had a digital rectal examination documented within 6 months before first treatment. DRE is a quality metric for prostate cancer care.",
-  "prompt": "Find all male patients with prostate cancer who have had a digital rectal examination performed within six months prior to their initial prostate cancer treatment.",
+  "description": "This test case evaluates a complex phenotype algorithm for identifying digital rectal examination (DRE) cases in prostate cancer patients. It requires finding male patients over 35 with prostate cancer diagnosis, then searching clinical notes for DRE documentation within a specific timeframe relative to treatment initiation. This represents a quality care metric phenotype that combines structured data (diagnosis codes, demographics) with unstructured clinical note analysis and temporal constraints.",
+  "prompt": "Find all male patients aged 35 or older with prostate cancer who have documentation of digital rectal examination performed within 6 months before their first prostate cancer treatment.",
   "metadata": {
-    "implementation_guide": "US Core 5.0.0",
+    "implementation_guide": null,
     "code_systems": [
+      "ICD-9-CM",
       "ICD-10-CM",
-      "CPT",
       "SNOMED CT"
     ],
     "required_codes": [
       {
-        "system": "http://hl7.org/fhir/sid/icd-10-cm",
-        "code": "C61",
-        "display": "Malignant neoplasm of prostate"
+        "system": "http://hl7.org/fhir/sid/icd-9-cm",
+        "code": "185",
+        "display": "Malignant neoplasm of prostate",
+        "source": "document"
       },
       {
-        "system": "http://www.ama-assn.org/go/cpt",
-        "code": "G0102",
-        "display": "Prostate cancer screening; digital rectal examination"
+        "system": "http://hl7.org/fhir/sid/icd-10-cm",
+        "code": "C61",
+        "display": "Malignant neoplasm of prostate",
+        "source": "document"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "254900004",
+        "display": "Carcinoma of prostate",
+        "source": "inferred"
       },
       {
         "system": "http://snomed.info/sct",
         "code": "410006001",
-        "display": "Digital rectal examination"
+        "display": "Digital rectal examination",
+        "source": "inferred"
+      },
+      {
+        "system": "http://hl7.org/fhir/sid/icd-9-cm",
+        "code": "89.34",
+        "display": "Digital examination of rectum",
+        "source": "document"
       }
     ],
     "complexity": "high",
     "tags": [
-      "procedure",
       "prostate-cancer",
+      "procedure",
       "quality-metric",
-      "screening"
+      "temporal-analysis",
+      "clinical-notes"
     ]
   },
   "expected_query": {
     "resource_type": "Patient",
     "parameters": {
       "gender": "male",
-      "_has:Condition:patient:code": "http://hl7.org/fhir/sid/icd-10-cm|C61",
-      "_has:Procedure:patient:code": "http://snomed.info/sct|410006001"
+      "birthdate": "le2024-12-19",
+      "_has:Condition:patient:code": "http://snomed.info/sct|254900004,http://hl7.org/fhir/sid/icd-9-cm|185,http://hl7.org/fhir/sid/icd-10-cm|C61"
     },
-    "url": "Patient?gender=male&_has:Condition:patient:code=http://hl7.org/fhir/sid/icd-10-cm|C61&_has:Procedure:patient:code=http://snomed.info/sct|410006001"
+    "url": "Patient?gender=male&birthdate=le2024-12-19&_has:Condition:patient:code=http://snomed.info/sct|254900004,http://hl7.org/fhir/sid/icd-9-cm|185,http://hl7.org/fhir/sid/icd-10-cm|C61"
   },
   "test_data": {
     "resources": [],
     "expected_result_count": 0,
     "expected_resource_ids": []
   },
-  "created_at": "2026-01-24T12:00:00.000000Z",
-  "updated_at": "2026-01-24T12:00:00.000000Z"
+  "created_at": "2026-01-29T04:20:56.788871Z",
+  "updated_at": "2026-01-29T04:20:56.788888Z"
 }

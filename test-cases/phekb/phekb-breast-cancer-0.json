@@ -1,0 +1,64 @@
+{
+  "id": "phekb-breast-cancer-0",
+  "source": "phekb",
+  "source_id": "breast-cancer-0",
+  "name": "Breast Cancer",
+  "description": "This test case evaluates the ability to identify breast cancer cases using a modified eMERGE algorithm. It requires finding female patients 18+ with either diagnostic breast cancer codes or multiple instances of breast cancer history codes on different dates. The phenotype is specifically designed for research cohorts and excludes cancer subtypes, focusing only on case identification with age as the primary covariate.",
+  "prompt": "Find all female patients aged 18 years or older who have been diagnosed with breast cancer or have a documented history of breast cancer.",
+  "metadata": {
+    "implementation_guide": null,
+    "code_systems": [
+      "SNOMED CT"
+    ],
+    "required_codes": [
+      {
+        "system": "http://snomed.info/sct",
+        "code": "254837009",
+        "display": "Malignant neoplasm of breast",
+        "source": "inferred"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "408643008",
+        "display": "Infiltrating duct carcinoma of breast",
+        "source": "inferred"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "372064008",
+        "display": "Malignant neoplasm of left breast",
+        "source": "inferred"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "109838007",
+        "display": "Overlapping malignant neoplasm of breast",
+        "source": "inferred"
+      }
+    ],
+    "complexity": "high",
+    "tags": [
+      "breast cancer",
+      "oncology",
+      "condition",
+      "female",
+      "research phenotype"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "Patient",
+    "parameters": {
+      "gender": "female",
+      "_has:Condition:patient:code": "http://snomed.info/sct|254837009,http://snomed.info/sct|408643008,http://snomed.info/sct|372064008,http://snomed.info/sct|109838007",
+      "birthdate": "le2005-12-31"
+    },
+    "url": "Patient?gender=female&_has:Condition:patient:code=http://snomed.info/sct|254837009,http://snomed.info/sct|408643008,http://snomed.info/sct|372064008,http://snomed.info/sct|109838007&birthdate=le2005-12-31"
+  },
+  "test_data": {
+    "resources": [],
+    "expected_result_count": 0,
+    "expected_resource_ids": []
+  },
+  "created_at": "2026-01-29T04:16:04.833068Z",
+  "updated_at": "2026-01-29T04:16:04.833078Z"
+}

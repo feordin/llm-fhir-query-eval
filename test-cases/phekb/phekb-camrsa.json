@@ -2,54 +2,88 @@
   "id": "phekb-camrsa",
   "source": "phekb",
   "source_id": "camrsa",
-  "name": "Community-Associated MRSA (caMRSA)",
-  "description": "This test case evaluates the ability to identify patients with community-associated methicillin-resistant Staphylococcus aureus (MRSA) infections based on laboratory culture results rather than diagnosis codes. The phenotype specifically targets community-acquired cases across all age groups.",
-  "prompt": "Find all patients aged 0 to 89 years who have positive laboratory culture results for methicillin-resistant Staphylococcus aureus from community-acquired infections.",
+  "name": "caMRSA",
+  "description": "This test case evaluates the identification of community-associated MRSA (caMRSA) cases using a complex phenotype algorithm that combines culture results, diagnostic codes, and clinical criteria. The phenotype requires distinguishing community-associated from healthcare-associated MRSA based on timing, setting, and associated conditions like skin and soft tissue infections.",
+  "prompt": "Find patients with community-associated MRSA infections, including those with culture-confirmed methicillin-resistant Staphylococcus aureus from outpatient settings or diagnosed within 72 hours of hospital admission, particularly focusing on skin and soft tissue infections.",
   "metadata": {
-    "implementation_guide": "US Core 5.0.0",
+    "implementation_guide": null,
     "code_systems": [
-      "LOINC",
+      "ICD-9-CM",
       "SNOMED CT"
     ],
     "required_codes": [
       {
-        "system": "http://loinc.org",
-        "code": "42721-1",
-        "display": "Methicillin resistant Staphylococcus aureus [Presence] in Specimen by Organism specific culture"
+        "system": "http://hl7.org/fhir/sid/icd-9-cm",
+        "code": "041.12",
+        "display": "Methicillin resistant Staphylococcus aureus in conditions classified elsewhere and of unspecified site",
+        "source": "document"
       },
       {
-        "system": "http://loinc.org",
-        "code": "35492-8",
-        "display": "Methicillin resistant Staphylococcus aureus DNA [Presence] in Specimen by NAA with probe detection"
+        "system": "http://hl7.org/fhir/sid/icd-9-cm",
+        "code": "482.42",
+        "display": "Methicillin resistant pneumonia due to Staphylococcus aureus",
+        "source": "document"
+      },
+      {
+        "system": "http://hl7.org/fhir/sid/icd-9-cm",
+        "code": "482.41",
+        "display": "Pneumonia due to Staphylococcus aureus",
+        "source": "document"
+      },
+      {
+        "system": "http://hl7.org/fhir/sid/icd-9-cm",
+        "code": "038.12",
+        "display": "Methicillin resistant staphylococcus aureus septicemia",
+        "source": "document"
+      },
+      {
+        "system": "http://hl7.org/fhir/sid/icd-9-cm",
+        "code": "V02.54",
+        "display": "Carrier or suspected carrier of Methicillin resistant Staphylococcus aureus",
+        "source": "document"
+      },
+      {
+        "system": "http://hl7.org/fhir/sid/icd-9-cm",
+        "code": "V12.04",
+        "display": "Personal history of Methicillin resistant Staphylococcus aureus",
+        "source": "document"
+      },
+      {
+        "system": "http://hl7.org/fhir/sid/icd-9-cm",
+        "code": "V09.0",
+        "display": "Infection with microorganisms resistant to penicillins",
+        "source": "document"
       },
       {
         "system": "http://snomed.info/sct",
         "code": "115329001",
-        "display": "Methicillin resistant Staphylococcus aureus"
+        "display": "Methicillin resistant Staphylococcus aureus infection",
+        "source": "inferred"
       }
     ],
     "complexity": "high",
     "tags": [
-      "observation",
-      "laboratory",
-      "infectious-disease",
-      "mrsa",
-      "culture"
+      "MRSA",
+      "community-associated",
+      "infection",
+      "culture",
+      "skin-soft-tissue"
     ]
   },
   "expected_query": {
-    "resource_type": "Observation",
+    "resource_type": "Condition",
     "parameters": {
-      "code": "http://loinc.org|42721-1,http://loinc.org|35492-8",
-      "value-concept": "http://snomed.info/sct|115329001"
+      "code": "041.12,482.42,038.12,V02.54,V12.04",
+      "_include": "Condition:patient",
+      "_revinclude": "Observation:patient"
     },
-    "url": "Observation?code=http://loinc.org|42721-1,http://loinc.org|35492-8&value-concept=http://snomed.info/sct|115329001"
+    "url": "Condition?code=http://hl7.org/fhir/sid/icd-9-cm|041.12,http://hl7.org/fhir/sid/icd-9-cm|482.42,http://hl7.org/fhir/sid/icd-9-cm|038.12,http://hl7.org/fhir/sid/icd-9-cm|V02.54,http://hl7.org/fhir/sid/icd-9-cm|V12.04&_include=Condition:patient&_revinclude=Observation:patient"
   },
   "test_data": {
     "resources": [],
     "expected_result_count": 0,
     "expected_resource_ids": []
   },
-  "created_at": "2026-01-24T12:00:00.000000Z",
-  "updated_at": "2026-01-24T12:00:00.000000Z"
+  "created_at": "2026-01-29T04:16:27.554696Z",
+  "updated_at": "2026-01-29T04:16:27.554703Z"
 }

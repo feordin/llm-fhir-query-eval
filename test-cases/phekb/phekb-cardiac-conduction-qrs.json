@@ -2,53 +2,67 @@
   "id": "phekb-cardiac-conduction-qrs",
   "source": "phekb",
   "source_id": "cardiac-conduction-qrs",
-  "name": "Cardiac Conduction (QRS Duration)",
-  "description": "This test case evaluates the ability to identify patients with normal electrocardiograms for cardiac conduction studies. The phenotype selects subjects without heart disease, interfering medications, or abnormal electrolytes at the time of ECG to study QRS duration.",
-  "prompt": "Find all patients who have had an electrocardiogram performed with QRS duration measurements, excluding those with diagnosed heart disease, cardiac medications, or electrolyte abnormalities.",
+  "name": "Cardiac Conduction (QRS)",
+  "description": "This test case evaluates the ability to identify patients with normal ECG results while excluding those with cardiovascular conditions, medications that could affect cardiac conduction, or electrolyte abnormalities that might interfere with ECG interpretation. It tests complex phenotyping logic that requires correlating multiple clinical data types.",
+  "prompt": "Find patients with normal electrocardiogram readings who do not have heart disease, are not taking interfering medications, and have normal electrolyte levels at the time of the ECG.",
   "metadata": {
-    "implementation_guide": "US Core 5.0.0",
+    "implementation_guide": null,
     "code_systems": [
       "LOINC",
-      "CPT"
+      "SNOMED CT",
+      "ICD-10-CM"
     ],
     "required_codes": [
       {
         "system": "http://loinc.org",
-        "code": "8625-6",
-        "display": "QRS duration"
+        "code": "11524-6",
+        "display": "EKG study",
+        "source": "inferred"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "17621005",
+        "display": "Normal",
+        "source": "inferred"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "56265001",
+        "display": "Heart disease",
+        "source": "inferred"
       },
       {
         "system": "http://loinc.org",
-        "code": "11524-6",
-        "display": "EKG study"
-      },
-      {
-        "system": "http://www.ama-assn.org/go/cpt",
-        "code": "93000",
-        "display": "Electrocardiogram, routine ECG with at least 12 leads"
+        "code": "33747-0",
+        "display": "Electrolytes panel",
+        "source": "inferred"
       }
     ],
     "complexity": "high",
     "tags": [
-      "observation",
       "cardiology",
       "ecg",
-      "qrs-duration",
-      "cardiac-conduction"
+      "electrocardiogram",
+      "cardiac-conduction",
+      "normal-ecg",
+      "exclusion-criteria"
     ]
   },
   "expected_query": {
     "resource_type": "Observation",
     "parameters": {
-      "code": "http://loinc.org|8625-6,http://loinc.org|11524-6"
+      "code": "http://loinc.org|11524-6",
+      "value-concept": "http://snomed.info/sct|17621005",
+      "_include": "Observation:patient",
+      "_revinclude": "MedicationStatement:patient"
     },
-    "url": "Observation?code=http://loinc.org|8625-6,http://loinc.org|11524-6"
+    "url": "Observation?code=http://loinc.org|11524-6&value-concept=http://snomed.info/sct|17621005&_include=Observation:patient&_revinclude=Condition:patient&_revinclude=MedicationStatement:patient"
   },
   "test_data": {
     "resources": [],
     "expected_result_count": 0,
     "expected_resource_ids": []
   },
-  "created_at": "2026-01-24T12:00:00.000000Z",
-  "updated_at": "2026-01-24T12:00:00.000000Z"
+  "created_at": "2026-01-29T04:16:37.456793Z",
+  "updated_at": "2026-01-29T04:16:37.456804Z"
 }

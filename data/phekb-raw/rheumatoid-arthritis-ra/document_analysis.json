@@ -1,0 +1,34 @@
+{
+  "phenotype_id": "rheumatoid-arthritis-ra",
+  "analyzed_files": [
+    "Harvard_eMERGE_RA_Algorithm_Implementation_20171219.docx",
+    "Harvard_eMERGE_Rheumatoid_Arthritis_Algorithm_Training_and_Testing_20171011.docx"
+  ],
+  "extracted_codes": [
+    {
+      "system": "ICD-9-CM",
+      "code": "Not explicitly specified",
+      "display": "Rheumatoid arthritis codes",
+      "found_in": "Harvard_eMERGE_Rheumatoid_Arthritis_Algorithm_Training_and_Testing_20171011.docx",
+      "context": "First, the Biobank dataset was screened for presence of ICD9/ICD-10 codes for rheumatoid arthritis"
+    },
+    {
+      "system": "ICD-10-CM",
+      "code": "Not explicitly specified",
+      "display": "Rheumatoid arthritis codes",
+      "found_in": "Harvard_eMERGE_Rheumatoid_Arthritis_Algorithm_Training_and_Testing_20171011.docx",
+      "context": "First, the Biobank dataset was screened for presence of ICD9/ICD-10 codes for rheumatoid arthritis"
+    }
+  ],
+  "clinical_criteria": [
+    "At least one RA diagnosis code required for inclusion",
+    "Predicted probability >= 0.632 defines RA cases",
+    "Specificity set at 0.97 (FPR=0.03)",
+    "PPV = 0.946 and NPV = 0.923 in training set",
+    "At least 1 joint with definite clinical synovitis (swelling) for target population",
+    "Score of 6/10 needed for classification using 2010 ACR/EULAR criteria",
+    "RF positive = 1, RF negative or no test = 0 for Lab_RF feature"
+  ],
+  "algorithm_summary": "This RA algorithm uses a machine-learning logistic regression model (LASSO) trained on chart-reviewed cases based on 2010 ACR criteria. The algorithm includes multiple features: RA_COD_DX_RheumatoidArthritis_v2 (RA diagnoses), RA_COD_DX_SystemicLupusErythematosus (lupus diagnoses), RA_COD_DX_PsoriaticArthritis_v2 (psoriatic arthritis diagnoses), RA_COD_LAB_RFpos1 (rheumatoid factor), and Patient_dxenct (total diagnosis encounters). Each feature has an associated beta coefficient weight. The model calculates a predicted probability using: exp(Intercept + sum_beta)/(1 + exp(Intercept + sum_beta)) where Intercept = -1.017. Patients with predicted probability >= 0.632 are classified as RA cases. Controls are subjects without RA diagnosis codes and without any control exclusion codes. The algorithm achieved AUC = 0.95, with performance validated in independent test sets at Harvard and Vanderbilt.",
+  "analysis_timestamp": "2026-01-29T03:17:07.728138Z"
+}

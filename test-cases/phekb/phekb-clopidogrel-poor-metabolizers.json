@@ -3,59 +3,188 @@
   "source": "phekb",
   "source_id": "clopidogrel-poor-metabolizers",
   "name": "Clopidogrel Poor Metabolizers",
-  "description": "This test case evaluates the ability to identify patients who are on clopidogrel therapy and may be poor metabolizers at risk for adverse cardiovascular events. The phenotype identifies patients on clopidogrel who experienced cardiovascular events during treatment.",
-  "prompt": "Find all patients who have been prescribed clopidogrel and subsequently experienced a cardiovascular event such as myocardial infarction, stroke, or required revascularization while on the medication.",
+  "description": "This test case evaluates the ability to identify a complex pharmacogenomic phenotype for clopidogrel poor metabolizers. It requires finding patients who received coronary stents and then had adverse events (MI, stroke, revascularization) that suggest inadequate antiplatelet response to clopidogrel therapy. The phenotype involves multiple resource types including procedures (stent placement, CABG), conditions (MI, stroke), and requires temporal relationships between events.",
+  "prompt": "Find patients who had coronary stent placement and subsequently experienced adverse cardiovascular events like myocardial infarction, stroke, or need for revascularization procedures, indicating they may be poor metabolizers of clopidogrel.",
   "metadata": {
-    "implementation_guide": "US Core 5.0.0",
+    "implementation_guide": null,
     "code_systems": [
-      "RxNorm",
-      "ICD-10-CM",
-      "SNOMED CT"
+      "CPT",
+      "ICD-9-CM"
     ],
     "required_codes": [
       {
-        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
-        "code": "32968",
-        "display": "Clopidogrel"
+        "system": "http://www.ama-assn.org/go/cpt",
+        "code": "92980",
+        "display": "Percutaneous transluminal coronary angioplasty; single vessel",
+        "source": "document"
       },
       {
-        "system": "http://hl7.org/fhir/sid/icd-10-cm",
-        "code": "I21",
-        "display": "Acute myocardial infarction"
+        "system": "http://www.ama-assn.org/go/cpt",
+        "code": "92981",
+        "display": "Percutaneous transluminal coronary angioplasty; each additional vessel",
+        "source": "document"
       },
       {
-        "system": "http://hl7.org/fhir/sid/icd-10-cm",
-        "code": "I63",
-        "display": "Cerebral infarction"
+        "system": "http://hl7.org/fhir/sid/icd-9-cm",
+        "code": "410",
+        "display": "Acute myocardial infarction",
+        "source": "inferred"
       },
       {
-        "system": "http://snomed.info/sct",
-        "code": "22298006",
-        "display": "Myocardial infarction"
+        "system": "http://hl7.org/fhir/sid/icd-9-cm",
+        "code": "433.01",
+        "display": "Occlusion and stenosis of basilar artery",
+        "source": "document"
+      },
+      {
+        "system": "http://hl7.org/fhir/sid/icd-9-cm",
+        "code": "433.11",
+        "display": "Occlusion and stenosis of carotid artery",
+        "source": "document"
+      },
+      {
+        "system": "http://hl7.org/fhir/sid/icd-9-cm",
+        "code": "433.21",
+        "display": "Occlusion and stenosis of vertebral artery",
+        "source": "document"
+      },
+      {
+        "system": "http://hl7.org/fhir/sid/icd-9-cm",
+        "code": "433.31",
+        "display": "Occlusion and stenosis of multiple and bilateral precerebral arteries",
+        "source": "document"
+      },
+      {
+        "system": "http://www.ama-assn.org/go/cpt",
+        "code": "33533",
+        "display": "Coronary artery bypass, using arterial grafts; single arterial graft",
+        "source": "document"
+      },
+      {
+        "system": "http://www.ama-assn.org/go/cpt",
+        "code": "33534",
+        "display": "Coronary artery bypass, using arterial grafts; two coronary artery grafts",
+        "source": "document"
+      },
+      {
+        "system": "http://www.ama-assn.org/go/cpt",
+        "code": "33510",
+        "display": "Coronary artery bypass, vein only, single coronary venous graft",
+        "source": "document"
+      },
+      {
+        "system": "http://www.ama-assn.org/go/cpt",
+        "code": "33511",
+        "display": "Coronary artery bypass, vein only, two coronary venous grafts",
+        "source": "document"
+      },
+      {
+        "system": "http://www.ama-assn.org/go/cpt",
+        "code": "92982",
+        "display": "Percutaneous transluminal coronary balloon angioplasty, single vessel",
+        "source": "document"
+      },
+      {
+        "system": "http://www.ama-assn.org/go/cpt",
+        "code": "92995",
+        "display": "Percutaneous transluminal coronary atherectomy, by mechanical or other method, with or without balloon angioplasty, single vessel",
+        "source": "document"
       }
     ],
     "complexity": "high",
     "tags": [
-      "medication",
       "pharmacogenomics",
       "clopidogrel",
+      "poor metabolizer",
       "cardiovascular",
-      "adverse-event"
+      "adverse events",
+      "stent",
+      "myocardial infarction",
+      "stroke",
+      "revascularization"
     ]
   },
   "expected_query": {
-    "resource_type": "Patient",
+    "resource_type": "Bundle",
     "parameters": {
-      "_has:MedicationRequest:patient:medication.code": "http://www.nlm.nih.gov/research/umls/rxnorm|32968",
-      "_has:Condition:patient:code": "http://hl7.org/fhir/sid/icd-10-cm|I21,http://hl7.org/fhir/sid/icd-10-cm|I63"
+      "type": "searchset",
+      "entry": [
+        {
+          "resource": "Procedure",
+          "code": [
+            {
+              "system": "http://www.ama-assn.org/go/cpt",
+              "code": "92980"
+            },
+            {
+              "system": "http://www.ama-assn.org/go/cpt",
+              "code": "92981"
+            }
+          ]
+        },
+        {
+          "resource": "Condition",
+          "code": [
+            {
+              "system": "http://hl7.org/fhir/sid/icd-9-cm",
+              "code": "410"
+            },
+            {
+              "system": "http://hl7.org/fhir/sid/icd-9-cm",
+              "code": "433.01"
+            },
+            {
+              "system": "http://hl7.org/fhir/sid/icd-9-cm",
+              "code": "433.11"
+            },
+            {
+              "system": "http://hl7.org/fhir/sid/icd-9-cm",
+              "code": "433.21"
+            },
+            {
+              "system": "http://hl7.org/fhir/sid/icd-9-cm",
+              "code": "433.31"
+            }
+          ]
+        },
+        {
+          "resource": "Procedure",
+          "code": [
+            {
+              "system": "http://www.ama-assn.org/go/cpt",
+              "code": "33533"
+            },
+            {
+              "system": "http://www.ama-assn.org/go/cpt",
+              "code": "33534"
+            },
+            {
+              "system": "http://www.ama-assn.org/go/cpt",
+              "code": "33510"
+            },
+            {
+              "system": "http://www.ama-assn.org/go/cpt",
+              "code": "33511"
+            },
+            {
+              "system": "http://www.ama-assn.org/go/cpt",
+              "code": "92982"
+            },
+            {
+              "system": "http://www.ama-assn.org/go/cpt",
+              "code": "92995"
+            }
+          ]
+        }
+      ]
     },
-    "url": "Patient?_has:MedicationRequest:patient:medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|32968&_has:Condition:patient:code=http://hl7.org/fhir/sid/icd-10-cm|I21,http://hl7.org/fhir/sid/icd-10-cm|I63"
+    "url": "Patient?_has:Procedure:patient:code=92980,92981&_has:Condition:patient:code=410,433.01,433.11,433.21,433.31"
   },
   "test_data": {
     "resources": [],
     "expected_result_count": 0,
     "expected_resource_ids": []
   },
-  "created_at": "2026-01-24T12:00:00.000000Z",
-  "updated_at": "2026-01-24T12:00:00.000000Z"
+  "created_at": "2026-01-29T04:17:45.811765Z",
+  "updated_at": "2026-01-29T04:17:45.811774Z"
 }

@@ -1,0 +1,47 @@
+{
+  "id": "phekb-consistent-care",
+  "source": "phekb",
+  "source_id": "consistent-care",
+  "name": "Consistent Care",
+  "description": "This test case evaluates the ability to identify patients with consistent healthcare engagement using the eMERGE 3 Consistent Care Definition. It requires finding patients with at least 2 visits (evidenced by any diagnostic or procedure codes) occurring more than 365 days apart within age-appropriate timeframes, serving as a prerequisite filter for other phenotyping algorithms.",
+  "prompt": "Find patients who have consistent healthcare engagement, defined as having at least two healthcare visits more than 365 days apart within an appropriate timeframe based on age (5 years for patients 40 and under, 2 years for patients over 40).",
+  "metadata": {
+    "implementation_guide": null,
+    "code_systems": [
+      "ICD-9-CM",
+      "ICD-10-CM",
+      "CPT"
+    ],
+    "required_codes": [
+      {
+        "system": "http://hl7.org/fhir/v3/ActCode",
+        "code": "AMB",
+        "display": "ambulatory",
+        "source": "inferred"
+      }
+    ],
+    "complexity": "high",
+    "tags": [
+      "consistent-care",
+      "healthcare-utilization",
+      "longitudinal-care",
+      "emerge"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "Patient",
+    "parameters": {
+      "_has:Encounter:patient:_count": ">=2",
+      "_has:Encounter:patient:date": "sa2021-01-01",
+      "_has:Encounter:patient:class": "AMB"
+    },
+    "url": "Patient?_has:Encounter:patient:_count=>=2&_has:Encounter:patient:date=sa2021-01-01&_has:Encounter:patient:class=AMB"
+  },
+  "test_data": {
+    "resources": [],
+    "expected_result_count": 0,
+    "expected_resource_ids": []
+  },
+  "created_at": "2026-01-29T04:18:51.613672Z",
+  "updated_at": "2026-01-29T04:18:51.613683Z"
+}

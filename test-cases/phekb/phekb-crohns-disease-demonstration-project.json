@@ -1,0 +1,76 @@
+{
+  "id": "phekb-crohns-disease-demonstration-project",
+  "source": "phekb",
+  "source_id": "crohns-disease-demonstration-project",
+  "name": "Crohn's Disease - Demonstration Project",
+  "description": "This test case evaluates the identification of Crohn's disease cases based on the PheKB demonstration project phenotype algorithm. It requires finding patients with multiple occurrences of Crohn's disease diagnoses (Regional enteritis codes) combined with appropriate medication prescriptions, while potentially excluding patients with dual inflammatory bowel disease diagnoses.",
+  "prompt": "Find patients with a confirmed diagnosis of Crohn's disease who have been prescribed medications for inflammatory bowel disease treatment and have at least two documented occurrences of the condition",
+  "metadata": {
+    "implementation_guide": null,
+    "code_systems": [
+      "ICD-9-CM",
+      "SNOMED CT"
+    ],
+    "required_codes": [
+      {
+        "system": "http://hl7.org/fhir/sid/icd-9-cm",
+        "code": "555",
+        "display": "Regional enteritis",
+        "source": "document"
+      },
+      {
+        "system": "http://hl7.org/fhir/sid/icd-9-cm",
+        "code": "555.0",
+        "display": "Regional enteritis of small intestine",
+        "source": "document"
+      },
+      {
+        "system": "http://hl7.org/fhir/sid/icd-9-cm",
+        "code": "555.1",
+        "display": "Regional enteritis of large intestine",
+        "source": "document"
+      },
+      {
+        "system": "http://hl7.org/fhir/sid/icd-9-cm",
+        "code": "555.2",
+        "display": "Regional enteritis of small/large intestine",
+        "source": "document"
+      },
+      {
+        "system": "http://hl7.org/fhir/sid/icd-9-cm",
+        "code": "555.9",
+        "display": "Regional enteritis of unspecified site",
+        "source": "document"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "34000006",
+        "display": "Crohn's disease",
+        "source": "inferred"
+      }
+    ],
+    "complexity": "high",
+    "tags": [
+      "crohns-disease",
+      "inflammatory-bowel-disease",
+      "condition",
+      "phenotype",
+      "multi-occurrence"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "Condition",
+    "parameters": {
+      "code": "http://hl7.org/fhir/sid/icd-9-cm|555,http://hl7.org/fhir/sid/icd-9-cm|555.0,http://hl7.org/fhir/sid/icd-9-cm|555.1,http://hl7.org/fhir/sid/icd-9-cm|555.2,http://hl7.org/fhir/sid/icd-9-cm|555.9,http://snomed.info/sct|34000006",
+      "_count": "1000"
+    },
+    "url": "Condition?code=http://hl7.org/fhir/sid/icd-9-cm|555,http://hl7.org/fhir/sid/icd-9-cm|555.0,http://hl7.org/fhir/sid/icd-9-cm|555.1,http://hl7.org/fhir/sid/icd-9-cm|555.2,http://hl7.org/fhir/sid/icd-9-cm|555.9,http://snomed.info/sct|34000006&_count=1000"
+  },
+  "test_data": {
+    "resources": [],
+    "expected_result_count": 0,
+    "expected_resource_ids": []
+  },
+  "created_at": "2026-01-29T04:19:31.785747Z",
+  "updated_at": "2026-01-29T04:19:31.785758Z"
+}

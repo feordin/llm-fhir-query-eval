@@ -3,60 +3,56 @@
   "source": "phekb",
   "source_id": "ace-inhibitor-ace-i-induced-cough",
   "name": "ACE Inhibitor (ACE-I) induced cough",
-  "description": "This test case evaluates the ability to identify patients with ACE inhibitor-induced cough, a common adverse drug reaction. The query should find patients who have both ACE inhibitor medication exposure and documented cough that developed as a drug-related adverse event. This is a complex phenotype requiring correlation between medication history and adverse events.",
-  "prompt": "Find patients who developed a cough as a side effect after being prescribed ACE inhibitor medications for blood pressure management.",
+  "description": "This test case evaluates the ability to identify patients with ACE inhibitor-induced cough, a common pharmacogenomic phenotype. It requires finding patients with documented cough adverse reactions specifically associated with ACE inhibitor use, which involves querying medication administrations/statements for ACE inhibitors and linking them to adverse drug reaction records or allergy intolerances documenting cough as the reaction.",
+  "prompt": "Find patients who have experienced cough as an adverse reaction to ACE inhibitor medications, including both documented allergies and adverse drug events related to ACE inhibitor use.",
   "metadata": {
-    "implementation_guide": "US Core 5.0.0",
+    "implementation_guide": null,
     "code_systems": [
-      "SNOMED CT",
-      "RxNorm"
+      "SNOMED CT"
     ],
     "required_codes": [
       {
         "system": "http://snomed.info/sct",
-        "code": "41549009",
-        "display": "Product containing angiotensin-converting enzyme inhibitor (product)"
-      },
-      {
-        "system": "http://snomed.info/sct",
         "code": "49727002",
-        "display": "Cough"
+        "display": "Cough",
+        "source": "inferred"
       },
       {
         "system": "http://snomed.info/sct",
-        "code": "386872004",
-        "display": "Substance with angiotensin-converting enzyme inhibitor mechanism of action"
+        "code": "41549009",
+        "display": "Product containing angiotensin-converting enzyme inhibitor",
+        "source": "inferred"
       },
       {
-        "system": "http://snomed.info/sct",
-        "code": "62014003",
-        "display": "Adverse reaction to drug"
+        "system": "http://terminology.hl7.org/CodeSystem/adverse-event-category",
+        "code": "medication-mishap",
+        "display": "Medication Mishap",
+        "source": "inferred"
       }
     ],
     "complexity": "high",
     "tags": [
+      "pharmacogenomics",
       "adverse-drug-reaction",
       "ace-inhibitor",
       "cough",
-      "medication-safety",
-      "pharmacogenomics"
+      "medication-allergy"
     ]
   },
   "expected_query": {
-    "resource_type": "Patient",
+    "resource_type": "AdverseEvent",
     "parameters": {
-      "medication": "ACE inhibitor",
-      "adverse-event": "cough",
-      "_include": "Patient:general-practitioner",
-      "_revinclude": "MedicationStatement:patient,AdverseEvent:patient"
+      "category": "medication-mishap",
+      "event": "http://snomed.info/sct|49727002",
+      "suspectEntity.instance": "MedicationStatement?medication.coding=http://snomed.info/sct|41549009"
     },
-    "url": "Patient?_has:MedicationStatement:patient:medication.code:in=http://snomed.info/sct|41549009,http://snomed.info/sct|386872004&_has:AdverseEvent:patient:event.code=http://snomed.info/sct|49727002&_has:AdverseEvent:patient:suspectEntity.instance:Medication.code:in=http://snomed.info/sct|41549009"
+    "url": "AdverseEvent?category=medication-mishap&event=http://snomed.info/sct|49727002&suspectEntity.instance=MedicationStatement?medication.coding=http://snomed.info/sct|41549009"
   },
   "test_data": {
     "resources": [],
     "expected_result_count": 0,
     "expected_resource_ids": []
   },
-  "created_at": "2026-01-18T06:56:44.097837Z",
-  "updated_at": "2026-01-18T06:56:44.097854Z"
+  "created_at": "2026-01-29T04:13:19.838073Z",
+  "updated_at": "2026-01-29T04:13:19.838082Z"
 }

@@ -1,0 +1,66 @@
+{
+  "id": "phekb-body-mass-index-bmi-0",
+  "source": "phekb",
+  "source_id": "body-mass-index-bmi-0",
+  "name": "Body Mass Index (BMI)",
+  "description": "This test case evaluates the ability to identify BMI observations with appropriate clinical exclusions including age restrictions (\u226518 years), encounter type filtering (outpatient only), and condition-based exclusions (cancer and pregnancy). It tests understanding of clinical context requirements for BMI phenotyping in research settings.",
+  "prompt": "Find body mass index measurements for adult patients from outpatient visits, excluding those with cancer or pregnancy at the time of measurement.",
+  "metadata": {
+    "implementation_guide": "US Core 6.1.0",
+    "code_systems": [
+      "LOINC",
+      "SNOMED CT"
+    ],
+    "required_codes": [
+      {
+        "system": "http://loinc.org",
+        "code": "39156-5",
+        "display": "Body mass index (BMI) [Ratio]",
+        "source": "inferred"
+      },
+      {
+        "system": "http://terminology.hl7.org/CodeSystem/v3-ActCode",
+        "code": "AMB",
+        "display": "ambulatory",
+        "source": "inferred"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "363346000",
+        "display": "Malignant neoplastic disease",
+        "source": "inferred"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "77386006",
+        "display": "Pregnancy",
+        "source": "inferred"
+      }
+    ],
+    "complexity": "high",
+    "tags": [
+      "bmi",
+      "anthropometric",
+      "exclusion-criteria",
+      "research-phenotype"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "Observation",
+    "parameters": {
+      "code": "39156-5",
+      "subject:Patient.birthDate": "$lte{{today-18years}}",
+      "encounter:Encounter.class": "AMB",
+      "_include": "Observation:subject",
+      "_revinclude": "Condition:subject"
+    },
+    "url": "Observation?code=39156-5&subject:Patient.birthDate=$lte{{today-18years}}&encounter:Encounter.class=AMB&_include=Observation:subject&_revinclude=Condition:subject"
+  },
+  "test_data": {
+    "resources": [],
+    "expected_result_count": 0,
+    "expected_resource_ids": []
+  },
+  "created_at": "2026-01-29T04:15:35.094328Z",
+  "updated_at": "2026-01-29T04:15:35.094334Z"
+}
