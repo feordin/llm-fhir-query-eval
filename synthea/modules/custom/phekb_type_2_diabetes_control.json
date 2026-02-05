@@ -1,0 +1,205 @@
+{
+  "name": "PheKB Type 2 Diabetes Control (Non-Diabetic)",
+  "remarks": [
+    "Control module for T2DM phenotype testing",
+    "Generates patients who should NOT match T2DM criteria",
+    "",
+    "Control Criteria (exclusion from T2DM):",
+    "- No diabetes diagnosis codes",
+    "- No diabetes medications",
+    "- Normal glucose levels (fasting < 100 mg/dL)",
+    "- Normal HbA1c (< 5.7%)",
+    "",
+    "These patients should NOT be returned by T2DM queries"
+  ],
+  "states": {
+    "Initial": {
+      "type": "Initial",
+      "direct_transition": "Age_Guard"
+    },
+
+    "Age_Guard": {
+      "type": "Guard",
+      "allow": {
+        "condition_type": "Age",
+        "operator": ">=",
+        "quantity": 18,
+        "unit": "years"
+      },
+      "direct_transition": "Wellness_Visit"
+    },
+
+    "Wellness_Visit": {
+      "type": "Encounter",
+      "encounter_class": "ambulatory",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": "185349003",
+          "display": "Encounter for check up"
+        }
+      ],
+      "direct_transition": "Record_Normal_HbA1c"
+    },
+
+    "Record_Normal_HbA1c": {
+      "type": "Observation",
+      "category": "laboratory",
+      "unit": "%",
+      "codes": [
+        {
+          "system": "LOINC",
+          "code": "4548-4",
+          "display": "Hemoglobin A1c/Hemoglobin.total in Blood"
+        }
+      ],
+      "range": {
+        "low": 4.5,
+        "high": 5.6
+      },
+      "remarks": ["Normal HbA1c < 5.7%"],
+      "direct_transition": "Record_Normal_Fasting_Glucose"
+    },
+
+    "Record_Normal_Fasting_Glucose": {
+      "type": "Observation",
+      "category": "laboratory",
+      "unit": "mg/dL",
+      "codes": [
+        {
+          "system": "LOINC",
+          "code": "1558-6",
+          "display": "Fasting glucose [Mass/volume] in Serum or Plasma"
+        }
+      ],
+      "range": {
+        "low": 70,
+        "high": 99
+      },
+      "remarks": ["Normal fasting glucose < 100 mg/dL"],
+      "direct_transition": "Record_Normal_Random_Glucose"
+    },
+
+    "Record_Normal_Random_Glucose": {
+      "type": "Observation",
+      "category": "laboratory",
+      "unit": "mg/dL",
+      "codes": [
+        {
+          "system": "LOINC",
+          "code": "2339-0",
+          "display": "Glucose [Mass/volume] in Blood"
+        }
+      ],
+      "range": {
+        "low": 80,
+        "high": 139
+      },
+      "remarks": ["Normal random glucose < 140 mg/dL"],
+      "direct_transition": "Check_Other_Conditions"
+    },
+
+    "Check_Other_Conditions": {
+      "type": "Simple",
+      "remarks": ["Some control patients may have other non-diabetes conditions"],
+      "distributed_transition": [
+        {
+          "transition": "Has_Hypertension",
+          "distribution": 0.30,
+          "remarks": ["30% have hypertension (common comorbidity, not diabetes)"]
+        },
+        {
+          "transition": "Has_Hyperlipidemia",
+          "distribution": 0.25,
+          "remarks": ["25% have high cholesterol"]
+        },
+        {
+          "transition": "Healthy_Patient",
+          "distribution": 0.45,
+          "remarks": ["45% are generally healthy"]
+        }
+      ]
+    },
+
+    "Has_Hypertension": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": "38341003",
+          "display": "Hypertensive disorder"
+        },
+        {
+          "system": "ICD-10-CM",
+          "code": "I10",
+          "display": "Essential (primary) hypertension"
+        }
+      ],
+      "remarks": ["Non-diabetes condition to ensure variety in control population"],
+      "direct_transition": "Prescribe_Antihypertensive"
+    },
+
+    "Prescribe_Antihypertensive": {
+      "type": "MedicationOrder",
+      "codes": [
+        {
+          "system": "RxNorm",
+          "code": "29046",
+          "display": "Lisinopril"
+        }
+      ],
+      "reason": "Has_Hypertension",
+      "remarks": ["Non-diabetes medication"],
+      "direct_transition": "End_Encounter"
+    },
+
+    "Has_Hyperlipidemia": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": "55822004",
+          "display": "Hyperlipidemia"
+        },
+        {
+          "system": "ICD-10-CM",
+          "code": "E78.5",
+          "display": "Hyperlipidemia, unspecified"
+        }
+      ],
+      "remarks": ["Non-diabetes condition"],
+      "direct_transition": "Prescribe_Statin"
+    },
+
+    "Prescribe_Statin": {
+      "type": "MedicationOrder",
+      "codes": [
+        {
+          "system": "RxNorm",
+          "code": "36567",
+          "display": "Atorvastatin"
+        }
+      ],
+      "reason": "Has_Hyperlipidemia",
+      "remarks": ["Non-diabetes medication"],
+      "direct_transition": "End_Encounter"
+    },
+
+    "Healthy_Patient": {
+      "type": "Simple",
+      "remarks": ["No additional conditions"],
+      "direct_transition": "End_Encounter"
+    },
+
+    "End_Encounter": {
+      "type": "EncounterEnd",
+      "direct_transition": "Terminal_Control"
+    },
+
+    "Terminal_Control": {
+      "type": "Terminal",
+      "remarks": ["Control patient - should NOT be found by T2DM phenotype query"]
+    }
+  },
+  "gmf_version": 2
+}

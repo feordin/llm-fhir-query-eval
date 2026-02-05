@@ -1,0 +1,222 @@
+{
+  "name": "PheKB Abdominal Aortic Aneurysm Control (Non-AAA)",
+  "remarks": [
+    "Control module for AAA phenotype testing",
+    "Generates patients who should NOT match AAA criteria",
+    "",
+    "Control Criteria (per PheKB algorithm):",
+    "- Never had ICD-9 441.3, 441.4, or 441.9 from any department",
+    "- No AAA repair procedures",
+    "- No exclusion diagnoses (Marfan, Ehlers-Danlos, thoracic aneurysms, etc.)",
+    "- Age 40-89",
+    "- Had encounter within past 5 years",
+    "",
+    "These patients should NOT be returned by AAA phenotype queries"
+  ],
+  "states": {
+    "Initial": {
+      "type": "Initial",
+      "direct_transition": "Age_Guard"
+    },
+
+    "Age_Guard": {
+      "type": "Guard",
+      "remarks": ["Match the same age range as the phenotype (40-89)"],
+      "allow": {
+        "condition_type": "Age",
+        "operator": ">=",
+        "quantity": 40,
+        "unit": "years"
+      },
+      "direct_transition": "Wellness_Visit"
+    },
+
+    "Wellness_Visit": {
+      "type": "Encounter",
+      "encounter_class": "ambulatory",
+      "remarks": ["Recent encounter - controls must have visit within 5 years"],
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": "185349003",
+          "display": "Encounter for check up"
+        }
+      ],
+      "direct_transition": "Record_Normal_Blood_Pressure"
+    },
+
+    "Record_Normal_Blood_Pressure": {
+      "type": "Observation",
+      "category": "vital-signs",
+      "unit": "mmHg",
+      "codes": [
+        {
+          "system": "LOINC",
+          "code": "8480-6",
+          "display": "Systolic blood pressure"
+        }
+      ],
+      "range": {
+        "low": 110,
+        "high": 145
+      },
+      "direct_transition": "Record_Lipid_Panel"
+    },
+
+    "Record_Lipid_Panel": {
+      "type": "Observation",
+      "category": "laboratory",
+      "unit": "mg/dL",
+      "codes": [
+        {
+          "system": "LOINC",
+          "code": "2093-3",
+          "display": "Cholesterol [Mass/volume] in Serum or Plasma"
+        }
+      ],
+      "range": {
+        "low": 150,
+        "high": 260
+      },
+      "direct_transition": "Check_Comorbidities"
+    },
+
+    "Check_Comorbidities": {
+      "type": "Simple",
+      "remarks": [
+        "Control patients may have common non-AAA conditions",
+        "Adds realistic variety to the control population"
+      ],
+      "distributed_transition": [
+        {
+          "transition": "Has_Hypertension",
+          "distribution": 0.35,
+          "remarks": ["35% have hypertension - common but not AAA-specific"]
+        },
+        {
+          "transition": "Has_Peripheral_Artery_Disease",
+          "distribution": 0.10,
+          "remarks": ["10% have PAD - vascular but not AAA"]
+        },
+        {
+          "transition": "Has_Hyperlipidemia",
+          "distribution": 0.25,
+          "remarks": ["25% have hyperlipidemia"]
+        },
+        {
+          "transition": "Healthy_Patient",
+          "distribution": 0.30,
+          "remarks": ["30% are generally healthy"]
+        }
+      ]
+    },
+
+    "Has_Hypertension": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": "38341003",
+          "display": "Hypertensive disorder"
+        },
+        {
+          "system": "ICD-10-CM",
+          "code": "I10",
+          "display": "Essential (primary) hypertension"
+        }
+      ],
+      "direct_transition": "Prescribe_Antihypertensive"
+    },
+
+    "Prescribe_Antihypertensive": {
+      "type": "MedicationOrder",
+      "codes": [
+        {
+          "system": "RxNorm",
+          "code": "29046",
+          "display": "Lisinopril"
+        }
+      ],
+      "reason": "Has_Hypertension",
+      "direct_transition": "End_Encounter"
+    },
+
+    "Has_Peripheral_Artery_Disease": {
+      "type": "ConditionOnset",
+      "remarks": ["PAD is a vascular condition but NOT AAA - good discriminator for control"],
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": "399957001",
+          "display": "Peripheral arterial occlusive disease"
+        },
+        {
+          "system": "ICD-10-CM",
+          "code": "I73.9",
+          "display": "Peripheral vascular disease, unspecified"
+        }
+      ],
+      "direct_transition": "Prescribe_Antiplatelet"
+    },
+
+    "Prescribe_Antiplatelet": {
+      "type": "MedicationOrder",
+      "codes": [
+        {
+          "system": "RxNorm",
+          "code": "32968",
+          "display": "Clopidogrel"
+        }
+      ],
+      "reason": "Has_Peripheral_Artery_Disease",
+      "direct_transition": "End_Encounter"
+    },
+
+    "Has_Hyperlipidemia": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": "55822004",
+          "display": "Hyperlipidemia"
+        },
+        {
+          "system": "ICD-10-CM",
+          "code": "E78.5",
+          "display": "Hyperlipidemia, unspecified"
+        }
+      ],
+      "direct_transition": "Prescribe_Statin"
+    },
+
+    "Prescribe_Statin": {
+      "type": "MedicationOrder",
+      "codes": [
+        {
+          "system": "RxNorm",
+          "code": "36567",
+          "display": "Atorvastatin"
+        }
+      ],
+      "reason": "Has_Hyperlipidemia",
+      "direct_transition": "End_Encounter"
+    },
+
+    "Healthy_Patient": {
+      "type": "Simple",
+      "remarks": ["No additional conditions"],
+      "direct_transition": "End_Encounter"
+    },
+
+    "End_Encounter": {
+      "type": "EncounterEnd",
+      "direct_transition": "Terminal_Control"
+    },
+
+    "Terminal_Control": {
+      "type": "Terminal",
+      "remarks": ["Control patient - should NOT be found by AAA phenotype query"]
+    }
+  },
+  "gmf_version": 2
+}

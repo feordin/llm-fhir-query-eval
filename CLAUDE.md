@@ -141,3 +141,50 @@ Lightweight .NET FHIR server for testing. Endpoints:
 - Metadata: http://localhost:5826/r4/metadata
 
 In-memory storage - data resets on restart.
+
+## Custom Skills
+
+### /synthea - Test Data Generation
+
+Generate synthetic FHIR test data from PheKB phenotypes using Synthea.
+
+```bash
+/synthea create-module <phenotype>  # Create Synthea module from phenotype data
+/synthea generate <phenotype>       # Run Synthea to generate FHIR data
+/synthea load <phenotype>           # Load generated data to FHIR server
+/synthea full <phenotype>           # Full pipeline: create + generate + load
+/synthea status                     # Show status of all phenotypes
+/synthea list                       # List phenotypes with modules ready
+/synthea batch <phenotypes...>      # Process multiple phenotypes
+```
+
+**Examples:**
+```bash
+/synthea create-module asthma
+/synthea full type-2-diabetes
+/synthea batch asthma,heart-failure,copd
+```
+
+See `.claude/skills/synthea.md` for detailed instructions.
+
+## Synthea Test Data
+
+Custom Synthea modules are in `synthea/modules/custom/`. Each phenotype has:
+- `phekb_<phenotype>.json` - Positive cases (patients matching phenotype)
+- `phekb_<phenotype>_control.json` - Control cases (patients NOT matching)
+
+Generated data goes to `synthea/output/<phenotype>/positive/` and `synthea/output/<phenotype>/control/`.
+
+To run Synthea manually:
+```bash
+python synthea/generate_test_data.py --phenotype <name> --patients 20 --controls 20
+```
+
+### Synthea Bash Environment Notes
+
+Claude Code runs in **git bash**, not cmd.exe. Three known issues:
+1. **`.bat` files don't run** - Use `./gradlew` directly instead of `run_synthea.bat`
+2. **JAVA_HOME not set** - Export before running: `export JAVA_HOME="/c/Program Files/Eclipse Adoptium/jdk-17.0.18.8-hotspot"`
+3. **Backslash paths break Gradle** - Always use forward slashes (`C:/repos/...` not `C:\repos\...`)
+
+The Python helper script (`synthea/generate_test_data.py`) handles all three automatically.
