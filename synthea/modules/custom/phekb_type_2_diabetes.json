@@ -1,0 +1,373 @@
+{
+  "name": "PheKB Type 2 Diabetes Mellitus",
+  "remarks": [
+    "Auto-generated Synthea module from PheKB phenotype: type-2-diabetes-mellitus",
+    "Based on Northwestern University T2DM algorithm",
+    "Generates patients matching T2DM phenotype criteria for FHIR query evaluation",
+    "",
+    "Clinical Criteria:",
+    "- Random glucose > 200 mg/dl OR",
+    "- Fasting glucose >= 125 mg/dl OR",
+    "- Hemoglobin A1c >= 6.5%",
+    "- T2DM diagnosis codes present",
+    "- T2DM medications prescribed",
+    "- No T1DM diagnosis codes"
+  ],
+  "states": {
+    "Initial": {
+      "type": "Initial",
+      "remarks": ["All patients start here"],
+      "direct_transition": "Age_Guard"
+    },
+
+    "Age_Guard": {
+      "type": "Guard",
+      "remarks": ["T2DM typically diagnosed in adults, though can occur earlier"],
+      "allow": {
+        "condition_type": "Age",
+        "operator": ">=",
+        "quantity": 18,
+        "unit": "years"
+      },
+      "direct_transition": "Diabetes_Prevalence_Check"
+    },
+
+    "Diabetes_Prevalence_Check": {
+      "type": "Simple",
+      "remarks": [
+        "~11% of US adults have diabetes, ~90-95% of those are T2DM",
+        "For testing purposes, we use higher prevalence to ensure enough positive cases"
+      ],
+      "distributed_transition": [
+        {
+          "transition": "Prediabetes_Onset",
+          "distribution": 0.35,
+          "remarks": ["35% will develop prediabetes -> T2DM pathway"]
+        },
+        {
+          "transition": "Terminal_No_Diabetes",
+          "distribution": 0.65,
+          "remarks": ["65% remain non-diabetic (control patients)"]
+        }
+      ]
+    },
+
+    "Prediabetes_Onset": {
+      "type": "ConditionOnset",
+      "remarks": ["Patient develops prediabetes first"],
+      "assign_to_attribute": "prediabetes",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": "15777000",
+          "display": "Prediabetes"
+        },
+        {
+          "system": "ICD-10-CM",
+          "code": "R73.03",
+          "display": "Prediabetes"
+        }
+      ],
+      "direct_transition": "Prediabetes_HbA1c"
+    },
+
+    "Prediabetes_HbA1c": {
+      "type": "Observation",
+      "category": "laboratory",
+      "unit": "%",
+      "codes": [
+        {
+          "system": "LOINC",
+          "code": "4548-4",
+          "display": "Hemoglobin A1c/Hemoglobin.total in Blood"
+        }
+      ],
+      "range": {
+        "low": 5.7,
+        "high": 6.4
+      },
+      "direct_transition": "Wait_For_T2DM_Progression"
+    },
+
+    "Wait_For_T2DM_Progression": {
+      "type": "Delay",
+      "remarks": ["Wait 1-5 years before progressing to T2DM"],
+      "range": {
+        "low": 1,
+        "high": 5,
+        "unit": "years"
+      },
+      "direct_transition": "T2DM_Onset"
+    },
+
+    "T2DM_Onset": {
+      "type": "ConditionOnset",
+      "remarks": ["Patient now has Type 2 Diabetes Mellitus - multiple code systems for testing"],
+      "assign_to_attribute": "diabetes",
+      "target_encounter": "Diabetes_Diagnosis_Encounter",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": "44054006",
+          "display": "Type 2 diabetes mellitus"
+        },
+        {
+          "system": "ICD-10-CM",
+          "code": "E11",
+          "display": "Type 2 diabetes mellitus"
+        },
+        {
+          "system": "ICD-10-CM",
+          "code": "E11.9",
+          "display": "Type 2 diabetes mellitus without complications"
+        },
+        {
+          "system": "ICD-9-CM",
+          "code": "250.00",
+          "display": "Diabetes mellitus without complication, type II"
+        }
+      ],
+      "direct_transition": "Diabetes_Diagnosis_Encounter"
+    },
+
+    "Diabetes_Diagnosis_Encounter": {
+      "type": "Encounter",
+      "encounter_class": "ambulatory",
+      "reason": "diabetes",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": "185347001",
+          "display": "Encounter for problem"
+        }
+      ],
+      "direct_transition": "Record_Elevated_HbA1c"
+    },
+
+    "Record_Elevated_HbA1c": {
+      "type": "Observation",
+      "category": "laboratory",
+      "unit": "%",
+      "codes": [
+        {
+          "system": "LOINC",
+          "code": "4548-4",
+          "display": "Hemoglobin A1c/Hemoglobin.total in Blood"
+        },
+        {
+          "system": "LOINC",
+          "code": "17856-6",
+          "display": "Hemoglobin A1c/Hemoglobin.total in Blood by HPLC"
+        }
+      ],
+      "range": {
+        "low": 6.5,
+        "high": 10.0
+      },
+      "remarks": ["HbA1c >= 6.5% meets T2DM diagnostic criteria"],
+      "direct_transition": "Record_Fasting_Glucose"
+    },
+
+    "Record_Fasting_Glucose": {
+      "type": "Observation",
+      "category": "laboratory",
+      "unit": "mg/dL",
+      "codes": [
+        {
+          "system": "LOINC",
+          "code": "1558-6",
+          "display": "Fasting glucose [Mass/volume] in Serum or Plasma"
+        }
+      ],
+      "range": {
+        "low": 126,
+        "high": 250
+      },
+      "remarks": ["Fasting glucose >= 126 mg/dL meets T2DM diagnostic criteria"],
+      "direct_transition": "Record_Random_Glucose"
+    },
+
+    "Record_Random_Glucose": {
+      "type": "Observation",
+      "category": "laboratory",
+      "unit": "mg/dL",
+      "codes": [
+        {
+          "system": "LOINC",
+          "code": "2339-0",
+          "display": "Glucose [Mass/volume] in Blood"
+        }
+      ],
+      "range": {
+        "low": 200,
+        "high": 350
+      },
+      "remarks": ["Random glucose > 200 mg/dL meets T2DM diagnostic criteria"],
+      "direct_transition": "Prescribe_First_Line_Medication"
+    },
+
+    "Prescribe_First_Line_Medication": {
+      "type": "MedicationOrder",
+      "codes": [
+        {
+          "system": "RxNorm",
+          "code": "6809",
+          "display": "Metformin"
+        }
+      ],
+      "reason": "diabetes",
+      "remarks": ["Metformin is first-line treatment for T2DM"],
+      "direct_transition": "Check_Additional_Medication_Need"
+    },
+
+    "Check_Additional_Medication_Need": {
+      "type": "Simple",
+      "remarks": ["Some patients need additional medications"],
+      "distributed_transition": [
+        {
+          "transition": "Prescribe_Sulfonylurea",
+          "distribution": 0.4,
+          "remarks": ["40% get additional sulfonylurea"]
+        },
+        {
+          "transition": "Prescribe_DPP4_Inhibitor",
+          "distribution": 0.3,
+          "remarks": ["30% get DPP-4 inhibitor"]
+        },
+        {
+          "transition": "End_Encounter",
+          "distribution": 0.3,
+          "remarks": ["30% stay on metformin only"]
+        }
+      ]
+    },
+
+    "Prescribe_Sulfonylurea": {
+      "type": "MedicationOrder",
+      "codes": [
+        {
+          "system": "RxNorm",
+          "code": "4821",
+          "display": "Glipizide"
+        }
+      ],
+      "reason": "diabetes",
+      "remarks": ["Second-line sulfonylurea medication"],
+      "direct_transition": "End_Encounter"
+    },
+
+    "Prescribe_DPP4_Inhibitor": {
+      "type": "MedicationOrder",
+      "codes": [
+        {
+          "system": "RxNorm",
+          "code": "593411",
+          "display": "Sitagliptin"
+        }
+      ],
+      "reason": "diabetes",
+      "remarks": ["DPP-4 inhibitor as alternative second-line"],
+      "direct_transition": "End_Encounter"
+    },
+
+    "End_Encounter": {
+      "type": "EncounterEnd",
+      "direct_transition": "Followup_Care_Loop"
+    },
+
+    "Followup_Care_Loop": {
+      "type": "Delay",
+      "remarks": ["Diabetic patients have regular follow-up every 3-6 months"],
+      "range": {
+        "low": 3,
+        "high": 6,
+        "unit": "months"
+      },
+      "direct_transition": "Followup_Encounter"
+    },
+
+    "Followup_Encounter": {
+      "type": "Encounter",
+      "encounter_class": "ambulatory",
+      "reason": "diabetes",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": "185347001",
+          "display": "Encounter for problem"
+        }
+      ],
+      "direct_transition": "Followup_HbA1c"
+    },
+
+    "Followup_HbA1c": {
+      "type": "Observation",
+      "category": "laboratory",
+      "unit": "%",
+      "codes": [
+        {
+          "system": "LOINC",
+          "code": "4548-4",
+          "display": "Hemoglobin A1c/Hemoglobin.total in Blood"
+        }
+      ],
+      "range": {
+        "low": 6.0,
+        "high": 9.5
+      },
+      "remarks": ["Ongoing HbA1c monitoring"],
+      "direct_transition": "Followup_Glucose"
+    },
+
+    "Followup_Glucose": {
+      "type": "Observation",
+      "category": "laboratory",
+      "unit": "mg/dL",
+      "codes": [
+        {
+          "system": "LOINC",
+          "code": "2339-0",
+          "display": "Glucose [Mass/volume] in Blood"
+        }
+      ],
+      "range": {
+        "low": 100,
+        "high": 280
+      },
+      "direct_transition": "End_Followup"
+    },
+
+    "End_Followup": {
+      "type": "EncounterEnd",
+      "direct_transition": "Check_Continue_Followup"
+    },
+
+    "Check_Continue_Followup": {
+      "type": "Simple",
+      "remarks": ["Continue followup care or terminate"],
+      "distributed_transition": [
+        {
+          "transition": "Followup_Care_Loop",
+          "distribution": 0.85,
+          "remarks": ["85% continue followup"]
+        },
+        {
+          "transition": "Terminal_With_Diabetes",
+          "distribution": 0.15,
+          "remarks": ["15% end (death, lost to followup, etc)"]
+        }
+      ]
+    },
+
+    "Terminal_With_Diabetes": {
+      "type": "Terminal",
+      "remarks": ["Patient with T2DM - should be found by phenotype query"]
+    },
+
+    "Terminal_No_Diabetes": {
+      "type": "Terminal",
+      "remarks": ["Patient without diabetes - control patient for phenotype testing"]
+    }
+  },
+  "gmf_version": 2
+}
