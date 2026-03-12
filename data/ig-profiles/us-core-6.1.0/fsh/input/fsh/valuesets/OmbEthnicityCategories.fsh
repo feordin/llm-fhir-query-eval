@@ -1,0 +1,10 @@
+ValueSet: OmbEthnicityCategories
+Id: omb-ethnicity-category
+Title: "OMB Ethnicity Categories"
+Description: "The codes for the concepts 'Unknown', 'Asked but no answer', and the ethnicity categories - 'Hispanic or Latino' and 'Not Hispanic or Latino' - as defined by the [OMB Standards for Maintaining, Collecting, and Presenting Federal Data on Race and Ethnicity, Statistical Policy Directive No. 15, as revised, October 30, 1997](https://www.govinfo.gov/content/pkg/FR-1997-10-30/pdf/97-28653.pdf)."
+* ^status = #active
+* ^experimental = false
+* ^date = "2022-09-29"
+* ^copyright = "Used by permission of HL7 International, all rights reserved Creative Commons License"
+* include codes from valueset http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.114222.4.11.837
+* include codes from valueset http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113762.1.4.1021.102

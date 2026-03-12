@@ -1,20 +1,36 @@
 version: '3.8'
 
 services:
-  fhir-candle:
-    image: ghcr.io/fhir/fhir-candle:latest
-    container_name: fhir-candle
+  fhir-server:
+    image: hapiproject/hapi:latest
+    container_name: fhir-server
     ports:
-      - "5826:5826"
+      - "8080:8080"
     environment:
-      - ASPNETCORE_URLS=http://+:5826
-    restart: unless-stopped
+      - hapi.fhir.fhir_version=R4
+      - hapi.fhir.allow_multiple_delete=true
+      - hapi.fhir.reuse_cached_search_results_millis=-1
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:5826/r4/metadata"]
+      test: ["CMD-SHELL", "curl -f http://localhost:8080/fhir/metadata || exit 1"]
       interval: 30s
       timeout: 10s
-      retries: 3
-      start_period: 40s
+      retries: 5
+      start_period: 60s
+
+  azure-fhir:
+    image: mcr.microsoft.com/healthcareapis/r4-fhir-server:latest
+    container_name: azure-fhir-server
+    ports:
+      - "9080:8080"
+    environment:
+      - FHIRServer__Security__Enabled=false
+      - FHIRServer__SqlServer__ConnectionString=Server=host.docker.internal;Database=FHIR_R4;User Id=sa;Password=${SA_PASSWORD:-YourStrong!Passw0rd};TrustServerCertificate=True
+      - FHIRServer__SqlServer__Initialize=true
+      - FHIRServer__SqlServer__SchemaOptions__AutomaticUpdatesEnabled=true
+      - FHIRServer__Operations__Import__MaxBatchSize=500
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    restart: unless-stopped
 
   backend:
     build: ./backend
@@ -22,7 +38,8 @@ services:
     ports:
       - "8000:8000"
     environment:
-      - FHIR_SERVER_URL=http://fhir-candle:5826
+      - FHIR_SERVER_URL=http://fhir-server:8080
+      - FHIR_VERSION=fhir
       - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
       - OPENAI_API_KEY=${OPENAI_API_KEY}
     volumes:
@@ -30,7 +47,7 @@ services:
       - ./test-cases:/app/test-cases
       - ./data:/app/data
     depends_on:
-      fhir-candle:
+      fhir-server:
         condition: service_healthy
     command: uvicorn src.api.main:app --host 0.0.0.0 --port 8000 --reload
 

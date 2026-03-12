@@ -1,0 +1,99 @@
+{
+  "id": "phekb-type-2-diabetes-path4-meds-labs",
+  "source": "phekb",
+  "source_id": "type-2-diabetes-mellitus",
+  "name": "Type 2 Diabetes - Path 4: Patients on T2DM Meds with Elevated A1c (No Diagnosis)",
+  "description": "Tests the hardest T2DM identification path: patients who have NO formal diabetes diagnosis but ARE prescribed diabetes medications AND have elevated HbA1c. This requires a cross-resource query combining MedicationRequest and Observation evidence at the Patient level. Tests whether the LLM can use _has parameters or other cross-resource FHIR search techniques.",
+  "prompt": "Find all patients who are currently prescribed type 2 diabetes medications such as metformin, sulfonylureas, or thiazolidinediones, and who also have hemoglobin A1c lab results at or above 6.5 percent. These patients may not have a formal diabetes diagnosis recorded.",
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "algorithm_path": "path-4",
+    "algorithm_path_description": "Path 4: No T1DM dx, no T2DM dx, but T2DM medication prescribed + abnormal lab. Requires combining evidence from MedicationRequest and Observation. The most challenging test case.",
+    "code_systems": [
+      "RxNorm",
+      "LOINC"
+    ],
+    "required_codes": [
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "860975",
+        "display": "Metformin 500mg ER"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "310490",
+        "display": "Glipizide 5mg"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "310537",
+        "display": "Glyburide 5mg"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "312440",
+        "display": "Pioglitazone 30mg"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "199246",
+        "display": "Glimepiride 2mg"
+      },
+      {
+        "system": "http://loinc.org",
+        "code": "4548-4",
+        "display": "Hemoglobin A1c"
+      }
+    ],
+    "complexity": "expert",
+    "tags": [
+      "cross-resource",
+      "patient-level",
+      "_has",
+      "medication",
+      "observation",
+      "type-2-diabetes",
+      "no-diagnosis"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "Patient",
+    "parameters": {
+      "_has:MedicationRequest:patient:code": "http://www.nlm.nih.gov/research/umls/rxnorm|860975,http://www.nlm.nih.gov/research/umls/rxnorm|310490,http://www.nlm.nih.gov/research/umls/rxnorm|310539,http://www.nlm.nih.gov/research/umls/rxnorm|312440,http://www.nlm.nih.gov/research/umls/rxnorm|199246",
+      "_has:Observation:patient:code": "http://loinc.org|4548-4"
+    },
+    "url": "Patient?_has:MedicationRequest:patient:code=http://www.nlm.nih.gov/research/umls/rxnorm|860975,http://www.nlm.nih.gov/research/umls/rxnorm|310490,http://www.nlm.nih.gov/research/umls/rxnorm|310539,http://www.nlm.nih.gov/research/umls/rxnorm|312440,http://www.nlm.nih.gov/research/umls/rxnorm|199246&_has:Observation:patient:code=http://loinc.org|4548-4",
+    "notes": "This uses dual _has parameters to find Patients who have BOTH a T2DM MedicationRequest AND an HbA1c Observation. An ideal query would also add value-quantity filtering on the Observation. Acceptable alternatives include separate queries for MedicationRequest and Observation with client-side intersection."
+  },
+  "test_data": {
+    "resources": [
+      "synthea/output/type-2-diabetes/positive/fhir/",
+      "synthea/output/type-2-diabetes/control/fhir/"
+    ],
+    "expected_result_count": 20,
+    "expected_resource_ids": [
+      "1389",
+      "1440",
+      "1686",
+      "1747",
+      "1839",
+      "1946",
+      "2072",
+      "2312",
+      "2365",
+      "2563",
+      "2763",
+      "2814",
+      "3023",
+      "3410",
+      "3514",
+      "3572",
+      "3653",
+      "3760",
+      "3816",
+      "4009"
+    ]
+  },
+  "created_at": "2026-03-12T18:30:00.000000Z",
+  "updated_at": "2026-03-12T18:30:00.000000Z"
+}

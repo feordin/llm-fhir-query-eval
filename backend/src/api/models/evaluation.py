@@ -11,9 +11,19 @@ class ParsedQuery(BaseModel):
 
 
 class GeneratedQuery(BaseModel):
-    """LLM-generated query"""
+    """LLM-generated query (single or multi)"""
     raw_response: str
     parsed_query: ParsedQuery
+    additional_queries: List[ParsedQuery] = Field(default_factory=list)
+
+    @property
+    def all_queries(self) -> List[ParsedQuery]:
+        """Return all parsed queries (primary + additional)."""
+        return [self.parsed_query] + self.additional_queries
+
+    @property
+    def is_multi_query(self) -> bool:
+        return len(self.additional_queries) > 0
 
 
 class ExecutionMatchResult(BaseModel):

@@ -10,7 +10,8 @@
     "- Normal glucose levels (fasting < 100 mg/dL)",
     "- Normal HbA1c (< 5.7%)",
     "",
-    "These patients should NOT be returned by T2DM queries"
+    "Uses 'wellness: true' encounter pattern to produce FHIR resources.",
+    "These patients should NOT be returned by T2DM queries."
   ],
   "states": {
     "Initial": {
@@ -26,19 +27,19 @@
         "quantity": 18,
         "unit": "years"
       },
-      "direct_transition": "Wellness_Visit"
+      "direct_transition": "Set_Control_Flag"
     },
 
-    "Wellness_Visit": {
+    "Set_Control_Flag": {
+      "type": "SetAttribute",
+      "attribute": "t2dm_control",
+      "value": true,
+      "direct_transition": "Wellness_Encounter"
+    },
+
+    "Wellness_Encounter": {
       "type": "Encounter",
-      "encounter_class": "ambulatory",
-      "codes": [
-        {
-          "system": "SNOMED-CT",
-          "code": "185349003",
-          "display": "Encounter for check up"
-        }
-      ],
+      "wellness": true,
       "direct_transition": "Record_Normal_HbA1c"
     },
 
@@ -101,41 +102,34 @@
 
     "Check_Other_Conditions": {
       "type": "Simple",
-      "remarks": ["Some control patients may have other non-diabetes conditions"],
+      "remarks": ["Some control patients have non-diabetes conditions for variety"],
       "distributed_transition": [
         {
-          "transition": "Has_Hypertension",
-          "distribution": 0.30,
-          "remarks": ["30% have hypertension (common comorbidity, not diabetes)"]
+          "transition": "Diagnose_Hypertension",
+          "distribution": 0.30
         },
         {
-          "transition": "Has_Hyperlipidemia",
-          "distribution": 0.25,
-          "remarks": ["25% have high cholesterol"]
+          "transition": "Diagnose_Hyperlipidemia",
+          "distribution": 0.25
         },
         {
-          "transition": "Healthy_Patient",
-          "distribution": 0.45,
-          "remarks": ["45% are generally healthy"]
+          "transition": "End_Wellness_Encounter",
+          "distribution": 0.45
         }
       ]
     },
 
-    "Has_Hypertension": {
+    "Diagnose_Hypertension": {
       "type": "ConditionOnset",
+      "assign_to_attribute": "hypertension",
       "codes": [
         {
           "system": "SNOMED-CT",
           "code": "38341003",
           "display": "Hypertensive disorder"
-        },
-        {
-          "system": "ICD-10-CM",
-          "code": "I10",
-          "display": "Essential (primary) hypertension"
         }
       ],
-      "remarks": ["Non-diabetes condition to ensure variety in control population"],
+      "remarks": ["Non-diabetes condition for control population variety"],
       "direct_transition": "Prescribe_Antihypertensive"
     },
 
@@ -144,30 +138,25 @@
       "codes": [
         {
           "system": "RxNorm",
-          "code": "29046",
-          "display": "Lisinopril"
+          "code": "314076",
+          "display": "lisinopril 10 MG Oral Tablet"
         }
       ],
-      "reason": "Has_Hypertension",
-      "remarks": ["Non-diabetes medication"],
-      "direct_transition": "End_Encounter"
+      "reason": "hypertension",
+      "direct_transition": "End_Wellness_Encounter"
     },
 
-    "Has_Hyperlipidemia": {
+    "Diagnose_Hyperlipidemia": {
       "type": "ConditionOnset",
+      "assign_to_attribute": "hyperlipidemia",
       "codes": [
         {
           "system": "SNOMED-CT",
           "code": "55822004",
           "display": "Hyperlipidemia"
-        },
-        {
-          "system": "ICD-10-CM",
-          "code": "E78.5",
-          "display": "Hyperlipidemia, unspecified"
         }
       ],
-      "remarks": ["Non-diabetes condition"],
+      "remarks": ["Non-diabetes condition for control population variety"],
       "direct_transition": "Prescribe_Statin"
     },
 
@@ -176,22 +165,15 @@
       "codes": [
         {
           "system": "RxNorm",
-          "code": "36567",
-          "display": "Atorvastatin"
+          "code": "259255",
+          "display": "atorvastatin 20 MG Oral Tablet"
         }
       ],
-      "reason": "Has_Hyperlipidemia",
-      "remarks": ["Non-diabetes medication"],
-      "direct_transition": "End_Encounter"
+      "reason": "hyperlipidemia",
+      "direct_transition": "End_Wellness_Encounter"
     },
 
-    "Healthy_Patient": {
-      "type": "Simple",
-      "remarks": ["No additional conditions"],
-      "direct_transition": "End_Encounter"
-    },
-
-    "End_Encounter": {
+    "End_Wellness_Encounter": {
       "type": "EncounterEnd",
       "direct_transition": "Terminal_Control"
     },

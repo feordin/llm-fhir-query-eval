@@ -23,8 +23,8 @@ class Settings(BaseSettings):
     api_description: str = "API for evaluating LLM-generated FHIR queries"
 
     # FHIR Server
-    fhir_server_url: str = "http://localhost:5826"
-    fhir_version: str = "r4"
+    fhir_server_url: str = "http://localhost:8080"
+    fhir_version: str = "fhir"
 
     # LLM Providers
     anthropic_api_key: Optional[str] = None
@@ -40,7 +40,8 @@ class Settings(BaseSettings):
     model_config = SettingsConfigDict(
         env_file=".env",
         env_file_encoding="utf-8",
-        case_sensitive=False
+        case_sensitive=False,
+        extra="ignore"
     )
 
 
