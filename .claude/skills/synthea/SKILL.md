@@ -1,7 +1,7 @@
 ---
 name: synthea
 description: Generate synthetic FHIR test data from PheKB phenotype definitions using Synthea. Creates custom Synthea modules, runs data generation, and loads results to the FHIR server.
-allowed-tools: Read, Write, Edit, Bash, Glob, Grep
+allowed-tools: Read, Write, Edit, Bash, Glob, Grep, mcp__nih-umls__search_umls, mcp__nih-umls__get_concept, mcp__nih-umls__crosswalk_codes, mcp__nih-umls__get_source_concept, mcp__nih-umls__get_definitions
 ---
 
 # Synthea Test Data Generation Skill
@@ -54,11 +54,13 @@ Runs Synthea with the custom module to generate synthetic patients.
 
 ### load
 
-Loads generated FHIR bundles to the fhir-candle server.
+Loads generated FHIR bundles to the FHIR server.
 
 **Prerequisites:**
-- FHIR server running at `http://localhost:5826/r4`
+- FHIR server running (HAPI FHIR at `http://localhost:8080/fhir` or Azure FHIR at `http://localhost:9080`)
 - Generated data exists in `synthea/output/<phenotype>/`
+
+**Important:** Infrastructure bundles (hospitals, practitioners) must load BEFORE patient bundles. The CLI `fhir-eval load synthea` command handles this automatically. If loading manually, load `hospitalInformation*.json` and `practitionerInformation*.json` files first.
 
 ### full
 
@@ -93,7 +95,41 @@ When this skill is invoked, follow these instructions based on the command:
    - Age requirements
    - Exclusion criteria
 
-3. **Generate the Synthea module** following GMF format:
+3. **Verify and enrich codes using the UMLS MCP server (CRITICAL):**
+
+   Do NOT trust codes from document_analysis.json blindly — they may be incomplete, outdated, or wrong. Use the UMLS MCP tools to get authoritative codes:
+
+   a. **For each diagnosis concept**, search UMLS and get codes across systems:
+      ```
+      search_umls(query="<condition name>", search_type="exact")
+      get_concept(cui="<CUI>")
+      crosswalk_codes(source="SNOMEDCT_US", code="<SNOMED>", target_source="ICD10CM")
+      crosswalk_codes(source="SNOMEDCT_US", code="<SNOMED>", target_source="ICD9CM")
+      ```
+
+   b. **For each lab concept**, find the correct LOINC code:
+      ```
+      search_umls(query="<lab name>", search_type="words")
+      ```
+      Look for results with semantic type "Laboratory Procedure" or "Clinical Attribute".
+
+   c. **For each medication**, find the RxNorm code:
+      ```
+      search_umls(query="<medication name>", search_type="exact")
+      crosswalk_codes(source="RXNORM", code="<CODE>", target_source="SNOMEDCT_US")
+      ```
+
+   d. **Cross-check codes from the phenotype data** against UMLS:
+      ```
+      get_source_concept(source="ICD10CM", id="<CODE>")
+      ```
+      Verify the display name matches the intended concept. Discard obsolete codes.
+
+   e. **If crosswalk returns empty** (common for SNOMED→ICD-10), search UMLS for the term with `search_type="words"` and look for CUIs with atoms from the target system.
+
+   See `/umls` skill for full details on UMLS MCP usage patterns and gotchas.
+
+4. **Generate the Synthea module** following GMF format:
    - Use the existing `synthea/modules/custom/phekb_type_2_diabetes.json` as a template
    - Include multiple code systems for each concept (SNOMED + ICD-10 + ICD-9)
    - Set realistic value ranges based on clinical_criteria
@@ -169,13 +205,13 @@ When this skill is invoked, follow these instructions based on the command:
 
 1. **Check FHIR server is running:**
    ```bash
-   curl -s http://localhost:5826/r4/metadata | head -5
+   curl -s http://localhost:8080/fhir/metadata | head -5
    ```
 
 2. **Load positive cases:**
    ```bash
    for f in synthea/output/<phenotype>/positive/fhir/*.json; do
-     curl -X POST http://localhost:5826/r4 \
+     curl -X POST http://localhost:8080/fhir \
        -H "Content-Type: application/fhir+json" \
        -d @"$f"
    done
@@ -184,7 +220,7 @@ When this skill is invoked, follow these instructions based on the command:
 3. **Load control cases:**
    ```bash
    for f in synthea/output/<phenotype>/control/fhir/*.json; do
-     curl -X POST http://localhost:5826/r4 \
+     curl -X POST http://localhost:8080/fhir \
        -H "Content-Type: application/fhir+json" \
        -d @"$f"
    done
@@ -235,6 +271,121 @@ ls synthea/modules/custom/phekb_*.json | grep -v _control
 2. For each phenotype, run `full <phenotype>`
 3. Track successes and failures
 4. Report summary at end
+
+---
+
+## Multi-Path Phenotype Modules
+
+### Key Learning: Phenotype Algorithms Have Multiple Paths
+
+PheKB phenotype algorithms are multi-path decision trees, NOT simple code lookups. A single phenotype may identify patients through DIFFERENT combinations of clinical data:
+- Diagnosis codes only
+- Diagnosis codes + medications
+- Diagnosis codes + abnormal labs
+- Medications + abnormal labs (NO diagnosis code)
+- Complex temporal ordering rules
+
+### Generating Path-Specific Patients
+
+When creating Synthea modules for phenotypes with multiple identification paths, generate DISTINCT patient groups:
+
+1. **Analyze the algorithm document** (usually a PDF in `data/phekb-raw/<phenotype>/`) to identify all paths
+2. **Create separate state branches** in the Synthea module for each path type
+3. **Path 4-type patients** (no diagnosis code): These patients should have MedicationRequest + Observation resources but NO Condition resource. This requires a separate branch in the module that:
+   - Skips the ConditionOnset state
+   - Still prescribes medications (MedicationOrder)
+   - Still records abnormal lab values (Observation)
+4. **Use distributed_transition** to control the mix of patient types
+
+### Module Structure for Multi-Path Phenotypes
+
+```
+Initial → Age_Guard → Set_Diabetes_Flag → Wellness_Encounter → Path_Router
+                                                                    ├→ Path_With_Diagnosis (70%)
+                                                                    │     ├→ Diagnose_Condition
+                                                                    │     ├→ Record_Labs
+                                                                    │     ├→ Prescribe_Meds
+                                                                    │     └→ End_Encounter
+                                                                    └→ Path_No_Diagnosis (30%)
+                                                                          ├→ Record_Abnormal_Labs (NO ConditionOnset!)
+                                                                          ├→ Prescribe_Meds
+                                                                          └→ End_Encounter
+```
+
+### Lab Value Thresholds
+
+When generating observation values, use thresholds from the phenotype algorithm document:
+- **Case thresholds**: Values that qualify as "abnormal" for case identification
+- **Control thresholds**: Values that must be normal for control patients (often stricter)
+
+Example from T2DM:
+| Lab | Case Threshold | Control Exclusion |
+|-----|---------------|-------------------|
+| HbA1c | >= 6.5% | >= 6.0% |
+| Fasting glucose | >= 125 mg/dL | >= 110 mg/dL |
+| Random glucose | > 200 mg/dL | > 110 mg/dL |
+
+### Dual Data Sets: Generic vs US Core
+
+For each phenotype, plan to generate TWO Synthea module variants:
+
+| Variant | Module Suffix | Condition Codes | Meds | Categories | When to Use |
+|---------|--------------|----------------|------|------------|-------------|
+| **Generic** | `phekb_<name>.json` | SNOMED only | RxNorm SCD | Base FHIR | Tier 1 eval, basic testing |
+| **US Core** | `phekb_<name>_uscore.json` | SNOMED + ICD-10-CM | RxNorm SCD | US Core categories | Tier 3 eval, profile-aware testing |
+
+The US Core variant adds:
+- **ICD-10-CM codes** alongside SNOMED on ConditionOnset (US Core allows both)
+- **`Condition.category`** = `problem-list-item` (US Core requires this)
+- **`Observation.category`** = `laboratory` with proper US Core category coding
+- **`MedicationRequest.intent`** = `order` and `.status` = `active` (US Core requires these)
+- Note: **US Core 8 removed ICD-9-CM** from the condition valueset — don't include ICD-9 in US Core variant
+
+Output directories:
+```
+synthea/output/<phenotype>/
+├── generic/
+│   ├── positive/fhir/
+│   └── control/fhir/
+└── uscore/
+    ├── positive/fhir/
+    └── control/fhir/
+```
+
+### Medication Codes: Ingredient vs SCD
+
+Synthea's FHIR exporter works best with SCD-level (Semantic Clinical Drug) RxNorm codes, not ingredient-level codes. Always:
+1. Check the algorithm doc for ingredient-level codes
+2. Use /umls to find the corresponding SCD codes
+3. Use Synthea's built-in modules as reference for which SCD codes to use
+
+**IMPORTANT**: Test case expected queries and Synthea modules need DIFFERENT code levels:
+- **Synthea modules**: Use SCD codes (e.g., `860975` for "metformin 500 MG ER Tablet") because Synthea generates FHIR MedicationRequest resources with specific drug forms
+- **Test case expected queries**: May use EITHER ingredient OR SCD codes depending on what the FHIR server indexes. HAPI FHIR does NOT automatically resolve ingredient→SCD relationships, so queries must match the exact codes in the data
+
+### Synthea GMF Critical Patterns (Lessons Learned)
+
+These are hard-won lessons from debugging Synthea module generation:
+
+1. **`"wellness": true` on Encounter states is REQUIRED.** Without it, the module's ConditionOnset/Observation/MedicationOrder states will process but produce ZERO FHIR resources. Synthea only writes resources to output when they occur inside a lifecycle-managed encounter.
+
+2. **ConditionOnset MUST be inside an encounter.** Place it AFTER the Encounter state and BEFORE the EncounterEnd state. The old pattern of using `target_encounter` pointing to a future encounter state does NOT work reliably for custom modules.
+
+3. **Use `SetAttribute` for disease flags, `conditional_transition` for branching.** Match the pattern from Synthea's built-in `metabolic_syndrome_disease.json` + `metabolic_syndrome_care.json`. Disease modules set attributes; care/encounter modules check attributes and create resources.
+
+4. **MedicationOrder `reason` field must reference an attribute name**, not a state name. Use `"reason": "t2dm_condition"` where `t2dm_condition` was set via `assign_to_attribute` on a ConditionOnset. For Path 4 patients (no condition), omit the `reason` field.
+
+5. **Infrastructure bundles must load first on HAPI FHIR.** Synthea generates `hospitalInformation*.json` and `practitionerInformation*.json` files. These must be loaded before patient bundles, or HAPI returns 404 errors for Practitioner references.
+
+6. **Patient count vs module filter.** The `-m` flag in Synthea keeps only patients who enter the named module. Combined with `-p N`, it generates N total patients but only outputs those matching the module. If the module has an Age_Guard, young patients may pass the filter but lack clinical data.
+
+### FHIR Server Compatibility Notes
+
+| Server | Healthcheck | Data Persistence | Bundle Load Order | `_has` Support | Notes |
+|--------|------------|-----------------|-------------------|---------------|-------|
+| HAPI FHIR | curl works | Stable in-memory | Infra files first | Yes | Recommended for dev |
+| fhir-candle | No curl/wget | Unstable (periodic resets) | Any order | Limited | NOT recommended |
+| Azure FHIR | TBD | SQL-backed | Infra files first | Yes | Requires SQL Server |
 
 ---
 
@@ -300,6 +451,10 @@ When creating modules, use this structure:
 | ICD-9-CM | `ICD-9-CM` | `http://hl7.org/fhir/sid/icd-9-cm` |
 | LOINC | `LOINC` | `http://loinc.org` |
 | RxNorm | `RxNorm` | `http://www.nlm.nih.gov/research/umls/rxnorm` |
+
+**Note:** Algorithm PDFs (e.g., Table 7) may list additional LOINC codes beyond the primary ones. Include all relevant codes in modules:
+- Random glucose: 2339-0, **2345-7**
+- HbA1c: 4548-4, 17856-6, **4549-2**, **17855-8**
 
 ---
 

@@ -1,0 +1,20 @@
+ValueSet: OmbRaceCategories
+Id: omb-race-category
+Title: "OMB Race Categories"
+Description: """The codes for the concepts 'Unknown', 'Asked but Unknown', 'Other Race'* and
+the codes for the five race categories - 'American Indian' or 'Alaska Native',
+'Asian', 'Black or African American', 'Native Hawaiian or Other Pacific
+Islander', and 'White' - as defined by the [OMB Standards for Maintaining,
+Collecting, and Presenting Federal Data on Race and Ethnicity, Statistical
+Policy Directive No. 15, as revised, October 30,
+1997](https://www.govinfo.gov/content/pkg/FR-1997-10-30/pdf/97-28653.pdf)
+
+\* The use of 'Other Race' is discouraged for statistical analysis."""
+* ^identifier.system = "urn:ietf:rfc:3986"
+* ^identifier.value = "urn:oid:2.16.840.1.113883.4.642.2.575"
+* ^status = #active
+* ^experimental = false
+* ^date = "2022-09-29"
+* ^copyright = "Used by permission of HL7 International, all rights reserved Creative Commons License"
+* include codes from valueset http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.114222.4.11.836
+* include codes from valueset http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113762.1.4.1021.102

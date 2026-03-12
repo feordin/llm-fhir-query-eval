@@ -165,7 +165,52 @@ Generate synthetic FHIR test data from PheKB phenotypes using Synthea.
 /synthea batch asthma,heart-failure,copd
 ```
 
-See `.claude/skills/synthea.md` for detailed instructions.
+See `.claude/skills/synthea/SKILL.md` for detailed instructions.
+
+### /umls - Clinical Code Lookup
+
+Look up and crosswalk clinical codes using the NIH UMLS MCP server.
+
+```bash
+/umls lookup <term>              # Find codes for a clinical concept
+/umls crosswalk <system> <code>  # Map a code to other systems
+/umls codes-for <term>           # Get all FHIR-relevant codes (SNOMED, ICD-10, LOINC, RxNorm)
+/umls validate <system> <code>   # Check if a code exists and get its display name
+```
+
+**Examples:**
+```bash
+/umls lookup atrial fibrillation
+/umls codes-for hemoglobin A1c
+/umls crosswalk SNOMEDCT_US 44054006
+/umls validate ICD10CM E11
+```
+
+Requires the `nih-umls` MCP server configured in `.mcp.json`. See `.claude/skills/umls/SKILL.md` for detailed instructions.
+
+### /phenotype_test_case - Phenotype Test Case Creation
+
+Create phenotype-based test cases from PheKB algorithm analysis.
+
+```bash
+/phenotype_test_case analyze <phenotype>    # Analyze algorithm paths from PheKB docs
+/phenotype_test_case create <phenotype>     # Create per-path test case JSON files
+/phenotype_test_case validate <phenotype>   # Validate test cases against FHIR server
+```
+
+Key methodology:
+- PheKB algorithms are multi-path decision trees, NOT simple code lookups
+- Each algorithm path becomes a separate test case targeting one FHIR resource type
+- Path 4-type cases (no diagnosis code, meds + labs only) are the hardest LLM test
+- Always verify codes via `/umls` before creating test cases
+
+See `.claude/skills/phenotype_test_case/SKILL.md` for detailed instructions.
+
+### /fhir_server_introspection - Server-Aware Query Construction
+
+Teaches the LLM how to introspect a FHIR server's capabilities and use profile/valueset information to construct accurate queries. Used in agentic evaluation (Tier 2/3) where the LLM has tool access.
+
+See `.claude/skills/fhir_server_introspection/SKILL.md` and `docs/PLAN-AGENTIC-EVALUATION.md` for the full architecture.
 
 ## Synthea Test Data
 

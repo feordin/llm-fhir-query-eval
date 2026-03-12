@@ -1,0 +1,93 @@
+{
+  "id": "phekb-type-2-diabetes-meds",
+  "source": "phekb",
+  "source_id": "type-2-diabetes-mellitus",
+  "name": "Type 2 Diabetes - Medication Query",
+  "description": "Tests ability to find T2DM patients by searching for diabetes medication prescriptions. This is critical for PheKB algorithm Path 4 where patients have NO diagnosis code but ARE prescribed T2DM medications. Also catches patients from paths 1-2 who have both diagnosis and medications.",
+  "prompt": "Find all medication orders for type 2 diabetes medications such as metformin, sulfonylureas (glipizide, glyburide, glimepiride), thiazolidinediones (pioglitazone), DPP-4 inhibitors (sitagliptin), or GLP-1 agonists (exenatide).",
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "algorithm_path": "paths-1-2-4",
+    "algorithm_path_description": "Patients with T2DM medication prescriptions. Path 4 patients have ONLY medications and labs, no diagnosis code. This tests whether LLMs search MedicationRequest, not just Condition.",
+    "code_systems": [
+      "RxNorm"
+    ],
+    "required_codes": [
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "860975",
+        "display": "24 HR metformin hydrochloride 500 MG Extended Release Oral Tablet"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "310490",
+        "display": "glipizide 5 MG Oral Tablet"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "665033",
+        "display": "sitagliptin 100 MG Oral Tablet"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "310537",
+        "display": "glyburide 5 MG Oral Tablet"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "312440",
+        "display": "pioglitazone 30 MG Oral Tablet"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "199246",
+        "display": "glimepiride 2 MG Oral Tablet"
+      }
+    ],
+    "complexity": "medium",
+    "tags": [
+      "medication",
+      "endocrinology",
+      "type-2-diabetes",
+      "rxnorm"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "MedicationRequest",
+    "parameters": {
+      "code": "http://www.nlm.nih.gov/research/umls/rxnorm|860975,http://www.nlm.nih.gov/research/umls/rxnorm|310490,http://www.nlm.nih.gov/research/umls/rxnorm|665033,http://www.nlm.nih.gov/research/umls/rxnorm|310539,http://www.nlm.nih.gov/research/umls/rxnorm|312440,http://www.nlm.nih.gov/research/umls/rxnorm|199246"
+    },
+    "url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|860975,http://www.nlm.nih.gov/research/umls/rxnorm|310490,http://www.nlm.nih.gov/research/umls/rxnorm|665033,http://www.nlm.nih.gov/research/umls/rxnorm|310539,http://www.nlm.nih.gov/research/umls/rxnorm|312440,http://www.nlm.nih.gov/research/umls/rxnorm|199246"
+  },
+  "test_data": {
+    "resources": [
+      "synthea/output/type-2-diabetes/positive/fhir/",
+      "synthea/output/type-2-diabetes/control/fhir/"
+    ],
+    "expected_result_count": 20,
+    "expected_resource_ids": [
+      "1392",
+      "1395",
+      "1442",
+      "1689",
+      "1750",
+      "1842",
+      "2075",
+      "2330",
+      "2377",
+      "2566",
+      "2766",
+      "2769",
+      "2820",
+      "3025",
+      "3413",
+      "3557",
+      "3656",
+      "3762",
+      "3821",
+      "4011"
+    ]
+  },
+  "created_at": "2026-03-12T18:00:00.000000Z",
+  "updated_at": "2026-03-12T18:00:00.000000Z"
+}

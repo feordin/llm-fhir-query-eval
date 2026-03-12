@@ -2,11 +2,13 @@
   "id": "phekb-type-2-diabetes",
   "source": "phekb",
   "source_id": "type-2-diabetes-mellitus",
-  "name": "Type 2 Diabetes Mellitus",
-  "description": "This test case evaluates the ability to identify patients with type 2 diabetes mellitus. The algorithm extracts both T2DM cases and controls from the electronic medical record using diagnosis codes, diabetes medications, and abnormal lab values (random glucose >200 mg/dl, fasting glucose >=125 mg/dl, or HbA1c >=6.5%).",
-  "prompt": "Find all patients diagnosed with type 2 diabetes mellitus who have been prescribed diabetes medications or have elevated hemoglobin A1c levels.",
+  "name": "Type 2 Diabetes Mellitus (Comprehensive)",
+  "description": "Comprehensive test case covering all 5 paths of the Northwestern University T2DM algorithm. This evaluates the LLM's overall approach to identifying T2DM patients. The algorithm identifies cases through diagnosis codes, medications, and abnormal lab values. Path 4 patients have NO diagnosis code - only medications and abnormal labs. See path-specific test cases (phekb-type-2-diabetes-dx, -meds, -labs) for targeted evaluation.",
+  "prompt": "Find all patients who may have type 2 diabetes mellitus. Consider patients who have a formal diabetes diagnosis, those prescribed diabetes medications like metformin or sulfonylureas, and those with elevated hemoglobin A1c levels at or above 6.5 percent.",
   "metadata": {
     "implementation_guide": "US Core 5.0.0",
+    "algorithm_paths": "all-5-paths",
+    "algorithm_path_description": "Comprehensive query. An ideal answer would query Condition (diagnosis codes), MedicationRequest (T2DM meds), and Observation (abnormal HbA1c). See path-specific test cases for per-resource evaluation.",
     "code_systems": [
       "ICD-9-CM",
       "ICD-10-CM",
@@ -16,14 +18,9 @@
     ],
     "required_codes": [
       {
-        "system": "http://hl7.org/fhir/sid/icd-9-cm",
-        "code": "250.00",
-        "display": "Diabetes mellitus without complication, type II or unspecified type, not stated as uncontrolled"
-      },
-      {
-        "system": "http://hl7.org/fhir/sid/icd-9-cm",
-        "code": "250.02",
-        "display": "Diabetes mellitus without complication, type II or unspecified type, uncontrolled"
+        "system": "http://snomed.info/sct",
+        "code": "44054006",
+        "display": "Type 2 diabetes mellitus"
       },
       {
         "system": "http://hl7.org/fhir/sid/icd-10-cm",
@@ -31,93 +28,97 @@
         "display": "Type 2 diabetes mellitus"
       },
       {
-        "system": "http://snomed.info/sct",
-        "code": "44054006",
-        "display": "Type 2 diabetes mellitus"
+        "system": "http://hl7.org/fhir/sid/icd-9-cm",
+        "code": "250.00",
+        "display": "DM type II"
       },
       {
         "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
-        "code": "6809",
-        "display": "Metformin"
+        "code": "860975",
+        "display": "Metformin 500mg ER"
       },
       {
         "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
-        "code": "4821",
-        "display": "Glipizide"
+        "code": "310490",
+        "display": "Glipizide 5mg"
       },
       {
         "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
-        "code": "4815",
-        "display": "Glyburide"
+        "code": "665033",
+        "display": "Sitagliptin 100mg"
       },
       {
         "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
-        "code": "25789",
-        "display": "Glimepiride"
+        "code": "310537",
+        "display": "Glyburide 5mg"
       },
       {
         "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
-        "code": "33738",
-        "display": "Pioglitazone"
+        "code": "312440",
+        "display": "Pioglitazone 30mg"
       },
       {
         "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
-        "code": "84108",
-        "display": "Rosiglitazone"
-      },
-      {
-        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
-        "code": "593411",
-        "display": "Sitagliptin"
-      },
-      {
-        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
-        "code": "60548",
-        "display": "Exenatide"
+        "code": "199246",
+        "display": "Glimepiride 2mg"
       },
       {
         "system": "http://loinc.org",
         "code": "4548-4",
-        "display": "Hemoglobin A1c/Hemoglobin.total in Blood"
-      },
-      {
-        "system": "http://loinc.org",
-        "code": "17856-6",
-        "display": "Hemoglobin A1c/Hemoglobin.total in Blood by HPLC"
-      },
-      {
-        "system": "http://loinc.org",
-        "code": "2339-0",
-        "display": "Glucose [Mass/volume] in Blood"
+        "display": "Hemoglobin A1c"
       },
       {
         "system": "http://loinc.org",
         "code": "1558-6",
-        "display": "Fasting glucose [Mass/volume] in Serum or Plasma"
+        "display": "Fasting glucose"
+      },
+      {
+        "system": "http://loinc.org",
+        "code": "2339-0",
+        "display": "Glucose in Blood"
       }
     ],
-    "complexity": "medium",
+    "complexity": "hard",
     "tags": [
       "condition",
+      "medication",
+      "observation",
       "endocrinology",
       "type-2-diabetes",
-      "metabolic",
-      "medication",
-      "laboratory"
+      "multi-resource"
     ]
   },
   "expected_query": {
     "resource_type": "Condition",
     "parameters": {
-      "code": "http://hl7.org/fhir/sid/icd-9-cm|250.00,http://hl7.org/fhir/sid/icd-9-cm|250.02,http://hl7.org/fhir/sid/icd-10-cm|E11,http://snomed.info/sct|44054006"
+      "code": "http://snomed.info/sct|44054006"
     },
-    "url": "Condition?code=http://hl7.org/fhir/sid/icd-9-cm|250.00,http://hl7.org/fhir/sid/icd-9-cm|250.02,http://hl7.org/fhir/sid/icd-10-cm|E11,http://snomed.info/sct|44054006"
+    "url": "Condition?code=http://snomed.info/sct|44054006",
+    "notes": "This is the minimum viable query (Condition by SNOMED). A complete answer would also query MedicationRequest and Observation to catch Path 4 patients without diagnosis codes."
   },
   "test_data": {
-    "resources": [],
-    "expected_result_count": 0,
-    "expected_resource_ids": []
+    "resources": [
+      "synthea/output/type-2-diabetes/positive/fhir/",
+      "synthea/output/type-2-diabetes/control/fhir/"
+    ],
+    "expected_result_count": 14,
+    "expected_resource_ids": [
+      "1391",
+      "1688",
+      "1749",
+      "1841",
+      "2074",
+      "2326",
+      "2373",
+      "2565",
+      "2765",
+      "2816",
+      "3412",
+      "3553",
+      "3655",
+      "4114"
+    ]
   },
   "created_at": "2026-01-24T12:00:00.000000Z",
-  "updated_at": "2026-01-24T12:00:00.000000Z"
+  "updated_at": "2026-03-12T18:00:00.000000Z"
 }

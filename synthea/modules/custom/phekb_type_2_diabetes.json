@@ -1,150 +1,162 @@
 {
   "name": "PheKB Type 2 Diabetes Mellitus",
   "remarks": [
-    "Auto-generated Synthea module from PheKB phenotype: type-2-diabetes-mellitus",
-    "Based on Northwestern University T2DM algorithm",
-    "Generates patients matching T2DM phenotype criteria for FHIR query evaluation",
+    "Custom Synthea module for PheKB phenotype: type-2-diabetes-mellitus",
+    "Based on Northwestern University T2DM algorithm (5 identification paths)",
     "",
-    "Clinical Criteria:",
-    "- Random glucose > 200 mg/dl OR",
-    "- Fasting glucose >= 125 mg/dl OR",
-    "- Hemoglobin A1c >= 6.5%",
-    "- T2DM diagnosis codes present",
-    "- T2DM medications prescribed",
-    "- No T1DM diagnosis codes"
+    "Generates TWO types of positive patients:",
+    "  Type A (70%): Diagnosis + Meds + Labs (Algorithm Paths 1-3, 5)",
+    "  Type B (30%): Meds + Labs, NO diagnosis code (Algorithm Path 4)",
+    "",
+    "Path 4 patients test whether LLMs can identify T2DM cases that have",
+    "no Condition resource - only MedicationRequest + Observation evidence.",
+    "",
+    "Lab thresholds (from PheKB T2DM-algorithm.pdf Table 7):",
+    "  Case: HbA1c >= 6.5%, Fasting glucose >= 125 mg/dL, Random glucose > 200 mg/dL",
+    "  Control: HbA1c < 6.0%, Fasting glucose < 110 mg/dL, Random glucose < 110 mg/dL",
+    "",
+    "Codes verified via NIH UMLS MCP (2025AB):",
+    "  SNOMED 44054006, LOINC 4548-4/1558-6/2339-0",
+    "  RxNorm SCD: 860975 (Metformin), 310490 (Glipizide), 665033 (Sitagliptin),",
+    "             310539 (Glyburide), 312440 (Pioglitazone), 199246 (Glimepiride)"
   ],
   "states": {
     "Initial": {
       "type": "Initial",
-      "remarks": ["All patients start here"],
       "direct_transition": "Age_Guard"
     },
 
     "Age_Guard": {
       "type": "Guard",
-      "remarks": ["T2DM typically diagnosed in adults, though can occur earlier"],
       "allow": {
         "condition_type": "Age",
         "operator": ">=",
         "quantity": 18,
         "unit": "years"
       },
-      "direct_transition": "Diabetes_Prevalence_Check"
+      "direct_transition": "Set_Prediabetes"
     },
 
-    "Diabetes_Prevalence_Check": {
-      "type": "Simple",
-      "remarks": [
-        "~11% of US adults have diabetes, ~90-95% of those are T2DM",
-        "For testing purposes, we use higher prevalence to ensure enough positive cases"
-      ],
-      "distributed_transition": [
-        {
-          "transition": "Prediabetes_Onset",
-          "distribution": 0.35,
-          "remarks": ["35% will develop prediabetes -> T2DM pathway"]
-        },
-        {
-          "transition": "Terminal_No_Diabetes",
-          "distribution": 0.65,
-          "remarks": ["65% remain non-diabetic (control patients)"]
-        }
-      ]
-    },
-
-    "Prediabetes_Onset": {
-      "type": "ConditionOnset",
-      "remarks": ["Patient develops prediabetes first"],
-      "assign_to_attribute": "prediabetes",
-      "codes": [
-        {
-          "system": "SNOMED-CT",
-          "code": "15777000",
-          "display": "Prediabetes"
-        },
-        {
-          "system": "ICD-10-CM",
-          "code": "R73.03",
-          "display": "Prediabetes"
-        }
-      ],
-      "direct_transition": "Prediabetes_HbA1c"
-    },
-
-    "Prediabetes_HbA1c": {
-      "type": "Observation",
-      "category": "laboratory",
-      "unit": "%",
-      "codes": [
-        {
-          "system": "LOINC",
-          "code": "4548-4",
-          "display": "Hemoglobin A1c/Hemoglobin.total in Blood"
-        }
-      ],
-      "range": {
-        "low": 5.7,
-        "high": 6.4
-      },
+    "Set_Prediabetes": {
+      "type": "SetAttribute",
+      "attribute": "prediabetes",
+      "value": true,
       "direct_transition": "Wait_For_T2DM_Progression"
     },
 
     "Wait_For_T2DM_Progression": {
       "type": "Delay",
-      "remarks": ["Wait 1-5 years before progressing to T2DM"],
-      "range": {
-        "low": 1,
-        "high": 5,
-        "unit": "years"
-      },
-      "direct_transition": "T2DM_Onset"
+      "range": { "low": 1, "high": 3, "unit": "years" },
+      "direct_transition": "Set_Diabetes"
     },
 
-    "T2DM_Onset": {
+    "Set_Diabetes": {
+      "type": "SetAttribute",
+      "attribute": "diabetes",
+      "value": true,
+      "direct_transition": "Choose_Patient_Path"
+    },
+
+    "Choose_Patient_Path": {
+      "type": "Simple",
+      "remarks": [
+        "Split patients into two groups:",
+        "  70% get a formal T2DM diagnosis (Paths 1-3, 5)",
+        "  30% have NO diagnosis - only meds + abnormal labs (Path 4)",
+        "This tests whether LLMs search beyond Condition resources."
+      ],
+      "distributed_transition": [
+        {
+          "transition": "Set_Path_With_Diagnosis",
+          "distribution": 0.7
+        },
+        {
+          "transition": "Set_Path_No_Diagnosis",
+          "distribution": 0.3
+        }
+      ]
+    },
+
+    "Set_Path_With_Diagnosis": {
+      "type": "SetAttribute",
+      "attribute": "t2dm_has_diagnosis",
+      "value": true,
+      "direct_transition": "Set_Needs_First_Visit"
+    },
+
+    "Set_Path_No_Diagnosis": {
+      "type": "SetAttribute",
+      "remarks": ["Path 4: No diagnosis code, only meds + labs"],
+      "attribute": "t2dm_has_diagnosis",
+      "value": false,
+      "direct_transition": "Set_Needs_First_Visit"
+    },
+
+    "Set_Needs_First_Visit": {
+      "type": "SetAttribute",
+      "attribute": "t2dm_needs_first_visit",
+      "value": true,
+      "direct_transition": "Wellness_Encounter"
+    },
+
+    "Wellness_Encounter": {
+      "type": "Encounter",
+      "wellness": true,
+      "direct_transition": "Check_First_Visit"
+    },
+
+    "Check_First_Visit": {
+      "type": "Simple",
+      "conditional_transition": [
+        {
+          "condition": {
+            "condition_type": "Attribute",
+            "attribute": "t2dm_needs_first_visit",
+            "operator": "==",
+            "value": true
+          },
+          "transition": "Route_First_Visit"
+        },
+        {
+          "transition": "Record_Followup_HbA1c"
+        }
+      ]
+    },
+
+    "Route_First_Visit": {
+      "type": "Simple",
+      "remarks": ["Route to diagnosis or no-diagnosis path based on patient type"],
+      "conditional_transition": [
+        {
+          "condition": {
+            "condition_type": "Attribute",
+            "attribute": "t2dm_has_diagnosis",
+            "operator": "==",
+            "value": true
+          },
+          "transition": "Diagnose_T2DM"
+        },
+        {
+          "transition": "Record_Path4_HbA1c"
+        }
+      ]
+    },
+
+    "Diagnose_T2DM": {
       "type": "ConditionOnset",
-      "remarks": ["Patient now has Type 2 Diabetes Mellitus - multiple code systems for testing"],
-      "assign_to_attribute": "diabetes",
-      "target_encounter": "Diabetes_Diagnosis_Encounter",
+      "remarks": ["Paths 1-3,5: Record T2DM diagnosis inside wellness encounter"],
+      "assign_to_attribute": "t2dm_condition",
       "codes": [
         {
           "system": "SNOMED-CT",
           "code": "44054006",
           "display": "Type 2 diabetes mellitus"
-        },
-        {
-          "system": "ICD-10-CM",
-          "code": "E11",
-          "display": "Type 2 diabetes mellitus"
-        },
-        {
-          "system": "ICD-10-CM",
-          "code": "E11.9",
-          "display": "Type 2 diabetes mellitus without complications"
-        },
-        {
-          "system": "ICD-9-CM",
-          "code": "250.00",
-          "display": "Diabetes mellitus without complication, type II"
         }
       ],
-      "direct_transition": "Diabetes_Diagnosis_Encounter"
+      "direct_transition": "Record_Diagnosis_HbA1c"
     },
 
-    "Diabetes_Diagnosis_Encounter": {
-      "type": "Encounter",
-      "encounter_class": "ambulatory",
-      "reason": "diabetes",
-      "codes": [
-        {
-          "system": "SNOMED-CT",
-          "code": "185347001",
-          "display": "Encounter for problem"
-        }
-      ],
-      "direct_transition": "Record_Elevated_HbA1c"
-    },
-
-    "Record_Elevated_HbA1c": {
+    "Record_Diagnosis_HbA1c": {
       "type": "Observation",
       "category": "laboratory",
       "unit": "%",
@@ -153,22 +165,13 @@
           "system": "LOINC",
           "code": "4548-4",
           "display": "Hemoglobin A1c/Hemoglobin.total in Blood"
-        },
-        {
-          "system": "LOINC",
-          "code": "17856-6",
-          "display": "Hemoglobin A1c/Hemoglobin.total in Blood by HPLC"
         }
       ],
-      "range": {
-        "low": 6.5,
-        "high": 10.0
-      },
-      "remarks": ["HbA1c >= 6.5% meets T2DM diagnostic criteria"],
-      "direct_transition": "Record_Fasting_Glucose"
+      "range": { "low": 6.5, "high": 10.0 },
+      "direct_transition": "Record_Diagnosis_Fasting_Glucose"
     },
 
-    "Record_Fasting_Glucose": {
+    "Record_Diagnosis_Fasting_Glucose": {
       "type": "Observation",
       "category": "laboratory",
       "unit": "mg/dL",
@@ -179,15 +182,11 @@
           "display": "Fasting glucose [Mass/volume] in Serum or Plasma"
         }
       ],
-      "range": {
-        "low": 126,
-        "high": 250
-      },
-      "remarks": ["Fasting glucose >= 126 mg/dL meets T2DM diagnostic criteria"],
-      "direct_transition": "Record_Random_Glucose"
+      "range": { "low": 126, "high": 250 },
+      "direct_transition": "Record_Diagnosis_Random_Glucose"
     },
 
-    "Record_Random_Glucose": {
+    "Record_Diagnosis_Random_Glucose": {
       "type": "Observation",
       "category": "laboratory",
       "unit": "mg/dL",
@@ -198,109 +197,143 @@
           "display": "Glucose [Mass/volume] in Blood"
         }
       ],
-      "range": {
-        "low": 200,
-        "high": 350
-      },
-      "remarks": ["Random glucose > 200 mg/dL meets T2DM diagnostic criteria"],
-      "direct_transition": "Prescribe_First_Line_Medication"
+      "range": { "low": 201, "high": 350 },
+      "direct_transition": "Prescribe_Metformin_Diagnosed"
     },
 
-    "Prescribe_First_Line_Medication": {
+    "Prescribe_Metformin_Diagnosed": {
       "type": "MedicationOrder",
       "codes": [
         {
           "system": "RxNorm",
-          "code": "6809",
-          "display": "Metformin"
+          "code": "860975",
+          "display": "24 HR metformin hydrochloride 500 MG Extended Release Oral Tablet"
         }
       ],
-      "reason": "diabetes",
-      "remarks": ["Metformin is first-line treatment for T2DM"],
-      "direct_transition": "Check_Additional_Medication_Need"
+      "reason": "t2dm_condition",
+      "direct_transition": "Choose_Second_Med_Diagnosed"
     },
 
-    "Check_Additional_Medication_Need": {
+    "Choose_Second_Med_Diagnosed": {
       "type": "Simple",
-      "remarks": ["Some patients need additional medications"],
       "distributed_transition": [
-        {
-          "transition": "Prescribe_Sulfonylurea",
-          "distribution": 0.4,
-          "remarks": ["40% get additional sulfonylurea"]
-        },
-        {
-          "transition": "Prescribe_DPP4_Inhibitor",
-          "distribution": 0.3,
-          "remarks": ["30% get DPP-4 inhibitor"]
-        },
-        {
-          "transition": "End_Encounter",
-          "distribution": 0.3,
-          "remarks": ["30% stay on metformin only"]
-        }
+        { "transition": "Prescribe_Glipizide_Dx", "distribution": 0.25 },
+        { "transition": "Prescribe_Sitagliptin_Dx", "distribution": 0.25 },
+        { "transition": "Prescribe_Glyburide_Dx", "distribution": 0.2 },
+        { "transition": "Clear_First_Visit_Flag", "distribution": 0.3 }
       ]
     },
 
-    "Prescribe_Sulfonylurea": {
+    "Prescribe_Glipizide_Dx": {
       "type": "MedicationOrder",
-      "codes": [
-        {
-          "system": "RxNorm",
-          "code": "4821",
-          "display": "Glipizide"
-        }
-      ],
-      "reason": "diabetes",
-      "remarks": ["Second-line sulfonylurea medication"],
-      "direct_transition": "End_Encounter"
+      "codes": [{ "system": "RxNorm", "code": "310490", "display": "glipizide 5 MG Oral Tablet" }],
+      "reason": "t2dm_condition",
+      "direct_transition": "Clear_First_Visit_Flag"
     },
 
-    "Prescribe_DPP4_Inhibitor": {
+    "Prescribe_Sitagliptin_Dx": {
       "type": "MedicationOrder",
+      "codes": [{ "system": "RxNorm", "code": "665033", "display": "sitagliptin 100 MG Oral Tablet" }],
+      "reason": "t2dm_condition",
+      "direct_transition": "Clear_First_Visit_Flag"
+    },
+
+    "Prescribe_Glyburide_Dx": {
+      "type": "MedicationOrder",
+      "codes": [{ "system": "RxNorm", "code": "310537", "display": "glyburide 5 MG Oral Tablet" }],
+      "reason": "t2dm_condition",
+      "direct_transition": "Clear_First_Visit_Flag"
+    },
+
+    "Record_Path4_HbA1c": {
+      "type": "Observation",
+      "remarks": ["Path 4: Abnormal HbA1c but NO ConditionOnset - no diagnosis code"],
+      "category": "laboratory",
+      "unit": "%",
       "codes": [
         {
-          "system": "RxNorm",
-          "code": "593411",
-          "display": "Sitagliptin"
+          "system": "LOINC",
+          "code": "4548-4",
+          "display": "Hemoglobin A1c/Hemoglobin.total in Blood"
         }
       ],
-      "reason": "diabetes",
-      "remarks": ["DPP-4 inhibitor as alternative second-line"],
-      "direct_transition": "End_Encounter"
+      "range": { "low": 6.5, "high": 9.5 },
+      "direct_transition": "Record_Path4_Fasting_Glucose"
     },
 
-    "End_Encounter": {
-      "type": "EncounterEnd",
-      "direct_transition": "Followup_Care_Loop"
-    },
-
-    "Followup_Care_Loop": {
-      "type": "Delay",
-      "remarks": ["Diabetic patients have regular follow-up every 3-6 months"],
-      "range": {
-        "low": 3,
-        "high": 6,
-        "unit": "months"
-      },
-      "direct_transition": "Followup_Encounter"
-    },
-
-    "Followup_Encounter": {
-      "type": "Encounter",
-      "encounter_class": "ambulatory",
-      "reason": "diabetes",
+    "Record_Path4_Fasting_Glucose": {
+      "type": "Observation",
+      "category": "laboratory",
+      "unit": "mg/dL",
       "codes": [
         {
-          "system": "SNOMED-CT",
-          "code": "185347001",
-          "display": "Encounter for problem"
+          "system": "LOINC",
+          "code": "1558-6",
+          "display": "Fasting glucose [Mass/volume] in Serum or Plasma"
         }
       ],
-      "direct_transition": "Followup_HbA1c"
+      "range": { "low": 126, "high": 220 },
+      "direct_transition": "Record_Path4_Random_Glucose"
     },
 
-    "Followup_HbA1c": {
+    "Record_Path4_Random_Glucose": {
+      "type": "Observation",
+      "category": "laboratory",
+      "unit": "mg/dL",
+      "codes": [
+        {
+          "system": "LOINC",
+          "code": "2339-0",
+          "display": "Glucose [Mass/volume] in Blood"
+        }
+      ],
+      "range": { "low": 201, "high": 320 },
+      "direct_transition": "Choose_Path4_Med"
+    },
+
+    "Choose_Path4_Med": {
+      "type": "Simple",
+      "remarks": ["Path 4 patients get T2DM meds (key evidence without diagnosis)"],
+      "distributed_transition": [
+        { "transition": "Prescribe_Metformin_Path4", "distribution": 0.4 },
+        { "transition": "Prescribe_Pioglitazone_Path4", "distribution": 0.2 },
+        { "transition": "Prescribe_Glimepiride_Path4", "distribution": 0.2 },
+        { "transition": "Prescribe_Glyburide_Path4", "distribution": 0.2 }
+      ]
+    },
+
+    "Prescribe_Metformin_Path4": {
+      "type": "MedicationOrder",
+      "codes": [{ "system": "RxNorm", "code": "860975", "display": "24 HR metformin hydrochloride 500 MG Extended Release Oral Tablet" }],
+      "direct_transition": "Clear_First_Visit_Flag"
+    },
+
+    "Prescribe_Pioglitazone_Path4": {
+      "type": "MedicationOrder",
+      "codes": [{ "system": "RxNorm", "code": "312440", "display": "pioglitazone 30 MG Oral Tablet" }],
+      "direct_transition": "Clear_First_Visit_Flag"
+    },
+
+    "Prescribe_Glimepiride_Path4": {
+      "type": "MedicationOrder",
+      "codes": [{ "system": "RxNorm", "code": "199246", "display": "glimepiride 2 MG Oral Tablet" }],
+      "direct_transition": "Clear_First_Visit_Flag"
+    },
+
+    "Prescribe_Glyburide_Path4": {
+      "type": "MedicationOrder",
+      "codes": [{ "system": "RxNorm", "code": "310537", "display": "glyburide 5 MG Oral Tablet" }],
+      "direct_transition": "Clear_First_Visit_Flag"
+    },
+
+    "Clear_First_Visit_Flag": {
+      "type": "SetAttribute",
+      "attribute": "t2dm_needs_first_visit",
+      "value": false,
+      "direct_transition": "End_Wellness_Encounter"
+    },
+
+    "Record_Followup_HbA1c": {
       "type": "Observation",
       "category": "laboratory",
       "unit": "%",
@@ -311,15 +344,11 @@
           "display": "Hemoglobin A1c/Hemoglobin.total in Blood"
         }
       ],
-      "range": {
-        "low": 6.0,
-        "high": 9.5
-      },
-      "remarks": ["Ongoing HbA1c monitoring"],
-      "direct_transition": "Followup_Glucose"
+      "range": { "low": 6.0, "high": 9.5 },
+      "direct_transition": "Record_Followup_Glucose"
     },
 
-    "Followup_Glucose": {
+    "Record_Followup_Glucose": {
       "type": "Observation",
       "category": "laboratory",
       "unit": "mg/dL",
@@ -330,43 +359,19 @@
           "display": "Glucose [Mass/volume] in Blood"
         }
       ],
-      "range": {
-        "low": 100,
-        "high": 280
-      },
-      "direct_transition": "End_Followup"
+      "range": { "low": 100, "high": 280 },
+      "direct_transition": "End_Wellness_Encounter"
     },
 
-    "End_Followup": {
+    "End_Wellness_Encounter": {
       "type": "EncounterEnd",
-      "direct_transition": "Check_Continue_Followup"
+      "direct_transition": "Followup_Delay"
     },
 
-    "Check_Continue_Followup": {
-      "type": "Simple",
-      "remarks": ["Continue followup care or terminate"],
-      "distributed_transition": [
-        {
-          "transition": "Followup_Care_Loop",
-          "distribution": 0.85,
-          "remarks": ["85% continue followup"]
-        },
-        {
-          "transition": "Terminal_With_Diabetes",
-          "distribution": 0.15,
-          "remarks": ["15% end (death, lost to followup, etc)"]
-        }
-      ]
-    },
-
-    "Terminal_With_Diabetes": {
-      "type": "Terminal",
-      "remarks": ["Patient with T2DM - should be found by phenotype query"]
-    },
-
-    "Terminal_No_Diabetes": {
-      "type": "Terminal",
-      "remarks": ["Patient without diabetes - control patient for phenotype testing"]
+    "Followup_Delay": {
+      "type": "Delay",
+      "range": { "low": 3, "high": 6, "unit": "months" },
+      "direct_transition": "Wellness_Encounter"
     }
   },
   "gmf_version": 2

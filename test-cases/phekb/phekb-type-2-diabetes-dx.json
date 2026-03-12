@@ -1,0 +1,79 @@
+{
+  "id": "phekb-type-2-diabetes-dx",
+  "source": "phekb",
+  "source_id": "type-2-diabetes-mellitus",
+  "name": "Type 2 Diabetes - Diagnosis Code Query",
+  "description": "Tests ability to find T2DM patients by searching for diagnosis codes. Covers PheKB algorithm paths 1-3 and 5 where patients have formal T2DM diagnosis codes recorded as Condition resources.",
+  "prompt": "Find all patients who have a recorded diagnosis of type 2 diabetes mellitus.",
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "algorithm_path": "paths-1-3-5",
+    "algorithm_path_description": "Patients with T2DM diagnosis codes (ICD-9/ICD-10/SNOMED). These patients have Condition resources with T2DM codes.",
+    "code_systems": [
+      "ICD-9-CM",
+      "ICD-10-CM",
+      "SNOMED CT"
+    ],
+    "required_codes": [
+      {
+        "system": "http://snomed.info/sct",
+        "code": "44054006",
+        "display": "Type 2 diabetes mellitus"
+      },
+      {
+        "system": "http://hl7.org/fhir/sid/icd-10-cm",
+        "code": "E11",
+        "display": "Type 2 diabetes mellitus"
+      },
+      {
+        "system": "http://hl7.org/fhir/sid/icd-9-cm",
+        "code": "250.00",
+        "display": "DM type II, not stated as uncontrolled"
+      },
+      {
+        "system": "http://hl7.org/fhir/sid/icd-9-cm",
+        "code": "250.02",
+        "display": "DM type II, uncontrolled"
+      }
+    ],
+    "complexity": "easy",
+    "tags": [
+      "condition",
+      "endocrinology",
+      "type-2-diabetes",
+      "diagnosis-code"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "Condition",
+    "parameters": {
+      "code": "http://snomed.info/sct|44054006"
+    },
+    "url": "Condition?code=http://snomed.info/sct|44054006"
+  },
+  "test_data": {
+    "resources": [
+      "synthea/output/type-2-diabetes/positive/fhir/",
+      "synthea/output/type-2-diabetes/control/fhir/"
+    ],
+    "expected_result_count": 14,
+    "expected_resource_ids": [
+      "1391",
+      "1688",
+      "1749",
+      "1841",
+      "2074",
+      "2326",
+      "2373",
+      "2565",
+      "2765",
+      "2816",
+      "3412",
+      "3553",
+      "3655",
+      "4114"
+    ]
+  },
+  "created_at": "2026-03-12T18:00:00.000000Z",
+  "updated_at": "2026-03-12T18:00:00.000000Z"
+}

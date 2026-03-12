@@ -17,15 +17,24 @@ class Code(BaseModel):
 
 class TestCaseMetadata(BaseModel):
     """Metadata for a test case"""
+    model_config = {"extra": "allow"}
+
     implementation_guide: Optional[str] = None
     code_systems: List[str] = Field(default_factory=list)
     required_codes: List[Code] = Field(default_factory=list)
-    complexity: str = Field(default="medium", pattern="^(simple|medium|complex)$")
+    complexity: str = Field(default="medium")
     tags: List[str] = Field(default_factory=list)
+    # Multi-query support
+    multi_query: bool = False
+    expected_queries: List[str] = Field(default_factory=list)
+    algorithm_path: Optional[str] = None
+    algorithm_paths: Optional[str] = None
 
 
 class ExpectedQuery(BaseModel):
     """Expected FHIR query"""
+    model_config = {"extra": "allow"}
+
     resource_type: str
     parameters: Dict[str, Any]
     url: str
@@ -33,9 +42,12 @@ class ExpectedQuery(BaseModel):
 
 class TestData(BaseModel):
     """Test data configuration"""
+    model_config = {"extra": "allow"}
+
     resources: List[str] = Field(default_factory=list)
     expected_result_count: int
     expected_resource_ids: List[str] = Field(default_factory=list)
+    expected_patient_ids: List[str] = Field(default_factory=list)
 
 
 class TestCase(BaseModel):
