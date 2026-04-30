@@ -1,0 +1,88 @@
+{
+  "id": "phekb-osteoporosis-meds",
+  "source": "phekb",
+  "source_id": "osteoporosis",
+  "name": "Osteoporosis - Bisphosphonate Medication Query",
+  "description": "Tests ability to find osteoporosis patients via bisphosphonate prescriptions. First bisphosphonate phenotype. Risedronate (oral) and zoledronic acid (IV) are the two bisphosphonates verified.",
+  "prompt": "Find patients prescribed bisphosphonates for osteoporosis treatment, including risedronate and zoledronic acid.",
+  "prompts": {
+    "naive": "Find patients on bisphosphonates.",
+    "broad": "Find patients prescribed bisphosphonate medications used to treat osteoporosis — including oral risedronate and intravenous zoledronic acid.",
+    "expert": "Search MedicationRequest with RxNorm codes for risedronate (73056) and zoledronic acid (77655). Query: MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|73056,http://www.nlm.nih.gov/research/umls/rxnorm|77655"
+  },
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "algorithm_path": "medication-path",
+    "algorithm_path_description": "Patients prescribed bisphosphonates. First bisphosphonate phenotype.",
+    "code_systems": [
+      "RxNorm"
+    ],
+    "required_codes": [
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "73056",
+        "display": "risedronate",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "77655",
+        "display": "zoledronic acid",
+        "source": "UMLS verified"
+      }
+    ],
+    "complexity": "medium",
+    "tags": [
+      "medication",
+      "endocrinology",
+      "bone-disease",
+      "osteoporosis",
+      "bisphosphonate"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "MedicationRequest",
+    "parameters": {
+      "code": "http://www.nlm.nih.gov/research/umls/rxnorm|73056,http://www.nlm.nih.gov/research/umls/rxnorm|77655"
+    },
+    "url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|73056,http://www.nlm.nih.gov/research/umls/rxnorm|77655"
+  },
+  "test_data": {
+    "resources": [
+      "synthea/output/osteoporosis/positive/fhir/",
+      "synthea/output/osteoporosis/control/fhir/"
+    ],
+    "expected_result_count": 26,
+    "expected_resource_ids": [],
+    "expected_patient_ids": [
+      "0178e2b1-1e34-2061-da30-72b88c2686ea",
+      "10890d84-5e7a-9904-b664-ffec94da452e",
+      "17ffd4a5-676d-a45c-9b26-f04717e94420",
+      "1a4c88bf-5905-5e21-77d8-84b724b263fc",
+      "20db4d45-2941-3954-7415-2c4b36158400",
+      "2fa3d862-2e03-5c89-23f0-0ef700ba317e",
+      "669911fc-a806-bd39-6409-c3c5189c1152",
+      "67a3499f-8aaa-2fa2-cd1d-26516c989caf",
+      "75089e82-54d8-7b9a-9a56-951f6ca05455",
+      "8b9be6e4-7666-47e9-114b-f6c5e109a486",
+      "8defe26c-3c14-365f-0fd1-248607ee9f9b",
+      "9c32115b-5c1c-6b12-5c30-6888d640c8ad",
+      "afcfb7bb-00b3-b5f9-13ad-c39cf658366a",
+      "c36d60ee-ea3a-3307-417c-538771091397",
+      "c5a9585d-e973-84c9-3502-350793452369",
+      "c7cdee36-b92c-2ca9-127a-bda8c2ea4568",
+      "c9f66f14-e1da-ab78-4c50-ebafd5023680",
+      "cc36fb65-8c4c-e79f-db0f-89841a46b907",
+      "cda23a8a-6b2d-594a-505e-5d263cf517d0",
+      "cede04b6-8577-9ba0-83eb-a9373106c5b4",
+      "cee9bfd3-9899-a1ec-75e2-7ae7e2fa2ca6",
+      "d265e882-b379-4491-5e19-3cd001b7df13",
+      "e732c2a8-7df8-3443-6fe1-687af91cb5b4",
+      "ec2c1de0-9cfd-1388-fee0-c8b069a3a934",
+      "f1efe6a2-0b43-5c3b-814a-fa397a29cabb",
+      "f68a0796-5205-15b0-ff2c-03155abd4926"
+    ]
+  },
+  "created_at": "2026-04-29T00:00:00.000000Z",
+  "updated_at": "2026-04-27T00:00:00.000000Z"
+}

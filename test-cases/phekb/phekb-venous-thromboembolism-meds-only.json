@@ -1,0 +1,90 @@
+{
+  "id": "phekb-venous-thromboembolism-meds-only",
+  "source": "phekb",
+  "source_id": "venous-thromboembolism",
+  "name": "Venous Thromboembolism - Anticoagulants Without VTE Diagnosis (Tricky)",
+  "description": "**TRICKY test case.** Tests ability to find patients on therapeutic anticoagulants who do NOT have a formal VTE diagnosis on their problem list. These represent the cross-indication problem: patients on warfarin/DOACs for atrial fibrillation, mechanical valves, or post-op DVT prophylaxis. An LLM searching only Condition resources will miss these — and an LLM searching only MedicationRequest will find too many. The provider needs to know that anticoagulant use alone does not equal VTE.",
+  "prompt": "Find patients prescribed anticoagulants (warfarin, apixaban, rivaroxaban, dabigatran, or enoxaparin) who do NOT have a formal venous thromboembolism diagnosis. These are patients on long-term anticoagulation for other indications.",
+  "prompts": {
+    "naive": "Find patients on blood thinners without a clot diagnosis.",
+    "broad": "Find patients prescribed therapeutic anticoagulants (warfarin, DOACs like apixaban or rivaroxaban, or LMWH like enoxaparin) who do NOT have a formal VTE/DVT/PE diagnosis on their problem list — typically indicating use for AFib, mechanical valves, or post-op prophylaxis.",
+    "expert": "I need MedicationRequest resources for any anticoagulant (warfarin 11289, apixaban 1364430, rivaroxaban 1114195, dabigatran 1037042, enoxaparin 67108) WHERE the patient does NOT have a Condition with VTE codes (128053003, 234044007, 281595001, 59282003, 234049002). FHIR servers don't natively support 'NOT EXISTS' subqueries, so this is best done as two queries (anticoagulant patients minus VTE-diagnosed patients) client-side."
+  },
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "algorithm_path": "medication-only-path",
+    "algorithm_path_description": "Path C: anticoagulant patients without VTE Condition. Tests cross-indication awareness.",
+    "code_systems": [
+      "RxNorm"
+    ],
+    "required_codes": [
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "11289",
+        "display": "warfarin",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "1364430",
+        "display": "apixaban",
+        "source": "VSAC verified"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "1114195",
+        "display": "rivaroxaban",
+        "source": "VSAC verified"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "1037042",
+        "display": "dabigatran etexilate",
+        "source": "VSAC verified"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "67108",
+        "display": "enoxaparin",
+        "source": "VSAC verified"
+      }
+    ],
+    "complexity": "hard",
+    "tags": [
+      "medication",
+      "vascular",
+      "venous-thromboembolism",
+      "anticoagulant",
+      "tricky",
+      "cross-indication",
+      "path-c"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "MedicationRequest",
+    "parameters": {
+      "code": "http://www.nlm.nih.gov/research/umls/rxnorm|11289,http://www.nlm.nih.gov/research/umls/rxnorm|1364430,http://www.nlm.nih.gov/research/umls/rxnorm|1114195,http://www.nlm.nih.gov/research/umls/rxnorm|1037042,http://www.nlm.nih.gov/research/umls/rxnorm|67108"
+    },
+    "url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|11289,http://www.nlm.nih.gov/research/umls/rxnorm|1364430,http://www.nlm.nih.gov/research/umls/rxnorm|1114195,http://www.nlm.nih.gov/research/umls/rxnorm|1037042,http://www.nlm.nih.gov/research/umls/rxnorm|67108"
+  },
+  "test_data": {
+    "resources": [
+      "synthea/output/venous-thromboembolism/positive/fhir/",
+      "synthea/output/venous-thromboembolism/control/fhir/"
+    ],
+    "expected_result_count": 8,
+    "expected_resource_ids": [],
+    "expected_patient_ids": [
+      "0f6ff136-b44e-03c5-d7ed-a368168a4a69",
+      "4e71a082-772c-dc9a-4fca-e1e8052a259e",
+      "561614dd-3521-cb72-bd0b-f8400e900799",
+      "9cdf486e-8634-adbd-72ac-8ce62c315e62",
+      "b39887f3-49a6-2a39-9f68-5331622e5798",
+      "c2a1a7d7-64ca-3773-0f43-c921bde903c9",
+      "c491cb8b-130b-d80c-2f17-29b0eec7b30c",
+      "f1b76f27-3b7d-eef7-3def-1f70ae76e352"
+    ]
+  },
+  "created_at": "2026-04-27T00:00:00.000000Z",
+  "updated_at": "2026-04-27T00:00:00.000000Z"
+}

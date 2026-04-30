@@ -1,0 +1,126 @@
+{
+  "name": "PheKB Severe Childhood Obesity",
+  "remarks": [
+    "Custom Synthea module for severe pediatric obesity.",
+    "**First pediatric phenotype** in suite (age 5-17 only).",
+    "",
+    "Generates THREE patient paths:",
+    "  Path A (60%): Obesity dx + elevated BMI",
+    "  Path B (20%): Obesity dx, no recent BMI",
+    "  Path D (20%): Elevated BMI only, NO obesity dx (undocumented but measured)",
+    "",
+    "Diagnosis SNOMED variation (Paths A + B):",
+    "  30% Obesity (414916001) — parent disorder",
+    "  25% Morbid obesity (238136002)",
+    "  20% Obese class II (443381000124105)",
+    "  15% Obese finding (414915002)",
+    "  10% BMI 40+ severely obese (408512008)",
+    "",
+    "BMI lab values: 30-45 kg/m² (severe pediatric obesity range, ≥99th percentile in adolescents)"
+  ],
+  "states": {
+    "Initial": { "type": "Initial", "direct_transition": "Age_Guard_Min" },
+    "Age_Guard_Min": { "type": "Guard", "allow": { "condition_type": "Age", "operator": ">=", "quantity": 5, "unit": "years" }, "direct_transition": "Age_Guard_Max" },
+    "Age_Guard_Max": { "type": "Guard", "allow": { "condition_type": "Age", "operator": "<=", "quantity": 17, "unit": "years" }, "direct_transition": "Set_SECO_Flag" },
+    "Set_SECO_Flag": { "type": "SetAttribute", "attribute": "seco_positive", "value": true, "direct_transition": "Choose_Patient_Path" },
+    "Choose_Patient_Path": {
+      "type": "Simple",
+      "distributed_transition": [
+        { "transition": "Set_Path_A", "distribution": 0.60 },
+        { "transition": "Set_Path_B", "distribution": 0.20 },
+        { "transition": "Set_Path_D", "distribution": 0.20 }
+      ]
+    },
+    "Set_Path_A": { "type": "SetAttribute", "attribute": "seco_has_dx", "value": true, "direct_transition": "Set_Path_A_Lab" },
+    "Set_Path_A_Lab": { "type": "SetAttribute", "attribute": "seco_has_high_bmi", "value": true, "direct_transition": "Choose_Subtype" },
+    "Set_Path_B": { "type": "SetAttribute", "attribute": "seco_has_dx", "value": true, "direct_transition": "Set_Path_B_Lab" },
+    "Set_Path_B_Lab": { "type": "SetAttribute", "attribute": "seco_has_high_bmi", "value": false, "direct_transition": "Choose_Subtype" },
+    "Set_Path_D": { "type": "SetAttribute", "remarks": ["TRICKY: high BMI without obesity dx"], "attribute": "seco_has_dx", "value": false, "direct_transition": "Set_Path_D_Lab" },
+    "Set_Path_D_Lab": { "type": "SetAttribute", "attribute": "seco_has_high_bmi", "value": true, "direct_transition": "Choose_Subtype" },
+
+    "Choose_Subtype": {
+      "type": "Simple",
+      "distributed_transition": [
+        { "transition": "Set_Subtype_Obesity", "distribution": 0.30 },
+        { "transition": "Set_Subtype_Morbid", "distribution": 0.25 },
+        { "transition": "Set_Subtype_ClassII", "distribution": 0.20 },
+        { "transition": "Set_Subtype_Obese", "distribution": 0.15 },
+        { "transition": "Set_Subtype_BMI40", "distribution": 0.10 }
+      ]
+    },
+    "Set_Subtype_Obesity": { "type": "SetAttribute", "attribute": "seco_subtype", "value": "obesity", "direct_transition": "Set_Needs_First_Visit" },
+    "Set_Subtype_Morbid": { "type": "SetAttribute", "attribute": "seco_subtype", "value": "morbid", "direct_transition": "Set_Needs_First_Visit" },
+    "Set_Subtype_ClassII": { "type": "SetAttribute", "attribute": "seco_subtype", "value": "classII", "direct_transition": "Set_Needs_First_Visit" },
+    "Set_Subtype_Obese": { "type": "SetAttribute", "attribute": "seco_subtype", "value": "obese", "direct_transition": "Set_Needs_First_Visit" },
+    "Set_Subtype_BMI40": { "type": "SetAttribute", "attribute": "seco_subtype", "value": "bmi40", "direct_transition": "Set_Needs_First_Visit" },
+
+    "Set_Needs_First_Visit": { "type": "SetAttribute", "attribute": "seco_needs_first_visit", "value": true, "direct_transition": "Wellness_Encounter" },
+    "Wellness_Encounter": { "type": "Encounter", "wellness": true, "direct_transition": "Check_First_Visit" },
+    "Check_First_Visit": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "seco_needs_first_visit", "operator": "==", "value": true }, "transition": "Check_Has_Diagnosis" },
+        { "transition": "End_Wellness_Encounter" }
+      ]
+    },
+    "Check_Has_Diagnosis": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "seco_has_dx", "operator": "==", "value": true }, "transition": "Route_By_Subtype" },
+        { "transition": "Check_Lab_NoDx" }
+      ]
+    },
+    "Route_By_Subtype": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "seco_subtype", "operator": "==", "value": "obesity" }, "transition": "Diagnose_Obesity" },
+        { "condition": { "condition_type": "Attribute", "attribute": "seco_subtype", "operator": "==", "value": "morbid" }, "transition": "Diagnose_Morbid" },
+        { "condition": { "condition_type": "Attribute", "attribute": "seco_subtype", "operator": "==", "value": "classII" }, "transition": "Diagnose_ClassII" },
+        { "condition": { "condition_type": "Attribute", "attribute": "seco_subtype", "operator": "==", "value": "obese" }, "transition": "Diagnose_Obese" },
+        { "transition": "Diagnose_BMI40" }
+      ]
+    },
+    "Diagnose_Obesity": { "type": "ConditionOnset", "assign_to_attribute": "seco_condition", "codes": [{ "system": "SNOMED-CT", "code": "414916001", "display": "Obesity" }], "direct_transition": "Check_Lab_WithDx" },
+    "Diagnose_Morbid": { "type": "ConditionOnset", "assign_to_attribute": "seco_condition", "codes": [{ "system": "SNOMED-CT", "code": "238136002", "display": "Morbid obesity" }], "direct_transition": "Check_Lab_WithDx" },
+    "Diagnose_ClassII": { "type": "ConditionOnset", "assign_to_attribute": "seco_condition", "codes": [{ "system": "SNOMED-CT", "code": "443381000124105", "display": "Obese class II" }], "direct_transition": "Check_Lab_WithDx" },
+    "Diagnose_Obese": { "type": "ConditionOnset", "assign_to_attribute": "seco_condition", "codes": [{ "system": "SNOMED-CT", "code": "414915002", "display": "Obese" }], "direct_transition": "Check_Lab_WithDx" },
+    "Diagnose_BMI40": { "type": "ConditionOnset", "assign_to_attribute": "seco_condition", "codes": [{ "system": "SNOMED-CT", "code": "408512008", "display": "Body mass index 40+ - severely obese" }], "direct_transition": "Check_Lab_WithDx" },
+
+    "Check_Lab_WithDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "seco_has_high_bmi", "operator": "==", "value": true }, "transition": "Record_High_BMI_WithDx" },
+        { "transition": "Clear_First_Visit_Flag" }
+      ]
+    },
+    "Record_High_BMI_WithDx": {
+      "type": "Observation",
+      "category": "vital-signs",
+      "unit": "kg/m2",
+      "codes": [{ "system": "LOINC", "code": "39156-5", "display": "Body mass index (BMI) [Ratio]" }],
+      "range": { "low": 30, "high": 45 },
+      "direct_transition": "Clear_First_Visit_Flag"
+    },
+
+    "Check_Lab_NoDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "seco_has_high_bmi", "operator": "==", "value": true }, "transition": "Record_High_BMI_NoDx" },
+        { "transition": "Clear_First_Visit_Flag" }
+      ]
+    },
+    "Record_High_BMI_NoDx": {
+      "type": "Observation",
+      "category": "vital-signs",
+      "unit": "kg/m2",
+      "codes": [{ "system": "LOINC", "code": "39156-5", "display": "Body mass index (BMI) [Ratio]" }],
+      "range": { "low": 30, "high": 38 },
+      "direct_transition": "Clear_First_Visit_Flag"
+    },
+
+    "Clear_First_Visit_Flag": { "type": "SetAttribute", "attribute": "seco_needs_first_visit", "value": false, "direct_transition": "End_Wellness_Encounter" },
+    "End_Wellness_Encounter": { "type": "EncounterEnd", "direct_transition": "Followup_Delay" },
+    "Followup_Delay": { "type": "Delay", "range": { "low": 6, "high": 12, "unit": "months" }, "direct_transition": "Wellness_Encounter" }
+  },
+  "gmf_version": 2
+}

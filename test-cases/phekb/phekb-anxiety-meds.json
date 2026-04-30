@@ -1,0 +1,87 @@
+{
+  "id": "phekb-anxiety-meds",
+  "source": "phekb",
+  "source_id": "anxiety-algorithm",
+  "name": "Anxiety Disorder - Medication Query",
+  "description": "Tests ability to find patients prescribed anti-anxiety medications. The PheKB anxiety algorithm requires at least 1 relevant medication or therapy procedure as supporting evidence. This query targets MedicationRequest resources for SSRIs (sertraline, escitalopram), anxiolytics (buspirone), and benzodiazepines (alprazolam). Some patients may have medications without a formal anxiety diagnosis in the system.",
+  "prompt": "Find all patients prescribed anti-anxiety medications such as sertraline, escitalopram, buspirone, or alprazolam.",
+  "prompts": {
+    "naive": "Find all patients prescribed anti-anxiety medications such as sertraline, escitalopram, buspirone, or alprazolam.",
+    "expert": "I need to find patients prescribed medications commonly used to treat anxiety disorders. The relevant medication classes include SSRIs (selective serotonin reuptake inhibitors) like sertraline and escitalopram, which are first-line pharmacotherapy for anxiety; buspirone, a non-benzodiazepine anxiolytic; and benzodiazepines like alprazolam for acute anxiety management. Search MedicationRequest resources for the specific RxNorm product codes. Be aware that SSRIs are also prescribed for depression, so patients found through this query may not all have anxiety -- but for phenotyping purposes, capturing this population is important because some patients are prescribed anti-anxiety medications by primary care without a formal anxiety diagnosis in the system."
+  },
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "algorithm_path": "case-medications",
+    "algorithm_path_description": "Patients with anti-anxiety medication prescriptions. Some patients have ONLY medication records without a formal anxiety diagnosis code, testing whether LLMs search MedicationRequest in addition to Condition.",
+    "code_systems": [
+      "RxNorm"
+    ],
+    "required_codes": [
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "312941",
+        "display": "sertraline 50 MG Oral Tablet",
+        "source": "umls"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "349332",
+        "display": "escitalopram 10 MG Oral Tablet",
+        "source": "umls"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "866083",
+        "display": "buspirone hydrochloride 10 MG Oral Tablet",
+        "source": "umls"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "308048",
+        "display": "alprazolam 0.5 MG Oral Tablet",
+        "source": "umls"
+      }
+    ],
+    "complexity": "medium",
+    "tags": [
+      "medication",
+      "psychiatry",
+      "anxiety",
+      "rxnorm"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "MedicationRequest",
+    "parameters": {
+      "code": "http://www.nlm.nih.gov/research/umls/rxnorm|312941,http://www.nlm.nih.gov/research/umls/rxnorm|349332,http://www.nlm.nih.gov/research/umls/rxnorm|866083,http://www.nlm.nih.gov/research/umls/rxnorm|308048"
+    },
+    "url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|312941,http://www.nlm.nih.gov/research/umls/rxnorm|349332,http://www.nlm.nih.gov/research/umls/rxnorm|866083,http://www.nlm.nih.gov/research/umls/rxnorm|308048"
+  },
+  "test_data": {
+    "resources": [
+      "synthea/output/anxiety/positive/fhir/",
+      "synthea/output/anxiety/control/fhir/"
+    ],
+    "expected_result_count": 15,
+    "expected_resource_ids": [],
+    "expected_patient_ids": [
+      "2c167999-289d-95fa-5c27-7d8b8d35348c",
+      "35b353dd-402b-571a-d67a-af0a104d0854",
+      "46976cf7-b0bf-be20-39a5-9f425a52886d",
+      "46ee9d82-b52c-856d-069b-5064ff052225",
+      "4f083ce3-f12b-bb4b-7353-e17f0cd55b0a",
+      "62f60bdb-cc5c-8305-b98b-f2b229a55eca",
+      "6fbddf55-7096-b883-7cd3-260f27953080",
+      "9661a432-4630-2cd9-142c-386845fae837",
+      "982750f4-569b-5949-196b-60699bdda3fb",
+      "aa616abe-1761-0c9a-7959-07544679dafd",
+      "ba419d35-0dfe-8af7-347c-eebf02485a56",
+      "bff9d9d5-ee3d-d852-9c67-36d8361a4a4a",
+      "c86c400e-ff88-a1e3-2e23-caa4d8311f47",
+      "e74367bd-7385-97dc-2c7f-251b4cd9fe29",
+      "eb5910f1-26e6-bc6f-b300-716eae678d6f"
+    ]
+  },
+  "created_at": "2026-03-15T12:00:00.000000Z",
+  "updated_at": "2026-04-27T00:00:00.000000Z"
+}

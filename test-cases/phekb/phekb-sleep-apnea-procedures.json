@@ -1,0 +1,60 @@
+{
+  "id": "phekb-sleep-apnea-procedures",
+  "source": "phekb",
+  "source_id": "sleep-apnea",
+  "name": "Sleep Apnea - Polysomnography Procedure Query",
+  "description": "**Second Procedure-resource test in the suite (first non-cardiac).** Tests ability to find sleep apnea patients via the diagnostic procedure: polysomnography (the overnight sleep study). Tests whether LLM correctly queries Procedure resources (not Condition or MedicationRequest) when the question is about a sleep study.",
+  "prompt": "Find patients who have undergone a polysomnography (overnight sleep study) procedure.",
+  "prompts": {
+    "naive": "Find patients with sleep studies.",
+    "broad": "Find Procedure resources for polysomnography — the diagnostic overnight sleep study used to evaluate suspected sleep apnea.",
+    "expert": "I need Procedure resources (NOT Condition or MedicationRequest) for polysomnography. Use SNOMED code 60554003 (Polysomnography). The query should target the Procedure resource: Procedure?code=http://snomed.info/sct|60554003"
+  },
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "algorithm_path": "procedure-path",
+    "algorithm_path_description": "Patients with polysomnography. **Second Procedure-resource test in the suite, first non-cardiac.** Validates the duration-field + non-wellness-Encounter pattern works beyond cardiac procedures.",
+    "code_systems": [
+      "SNOMED CT"
+    ],
+    "required_codes": [
+      {
+        "system": "http://snomed.info/sct",
+        "code": "60554003",
+        "display": "Polysomnography (procedure)",
+        "source": "UMLS verified"
+      }
+    ],
+    "complexity": "medium",
+    "tags": [
+      "procedure",
+      "sleep-medicine",
+      "sleep-apnea",
+      "polysomnography",
+      "second-procedure-test"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "Procedure",
+    "parameters": {
+      "code": "http://snomed.info/sct|60554003"
+    },
+    "url": "Procedure?code=http://snomed.info/sct|60554003"
+  },
+  "test_data": {
+    "resources": [
+      "synthea/output/sleep-apnea/positive/fhir/",
+      "synthea/output/sleep-apnea/control/fhir/"
+    ],
+    "expected_result_count": 4,
+    "expected_resource_ids": [],
+    "expected_patient_ids": [
+      "095d1d92-7953-568a-b3d6-2171b3879fd7",
+      "1428149c-62dd-4e3f-3f16-728e4acbaa16",
+      "27cbff04-d698-0ce1-ea10-b9cb81131575",
+      "b0392433-84d3-b77e-fe28-ef53c6b42608"
+    ]
+  },
+  "created_at": "2026-04-27T00:00:00.000000Z",
+  "updated_at": "2026-04-27T00:00:00.000000Z"
+}

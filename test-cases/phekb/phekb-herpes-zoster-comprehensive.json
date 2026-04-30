@@ -1,0 +1,108 @@
+{
+  "id": "phekb-herpes-zoster-comprehensive",
+  "source": "phekb",
+  "source_id": "herpes-zoster",
+  "name": "Herpes Zoster - Comprehensive Provider Query (Multi-Resource)",
+  "description": "Provider-level query identifying all shingles patients via Condition (zoster dx) + MedicationRequest (acyclovir Rx). Path C patients have acyclovir without zoster dx (likely HSV indication).",
+  "prompt": "I need to identify my complete herpes zoster patient population for a vaccine quality initiative. Some patients have a coded shingles diagnosis. Others were prescribed acyclovir for empirical antiviral coverage without ever getting a formal shingles diagnosis. Run multiple FHIR queries — diagnosis and antiviral medication — and union the patient sets.",
+  "prompts": {
+    "naive": "Find all patients with shingles or on acyclovir.",
+    "broad": "Find all herpes zoster patients — by diagnosis or by acyclovir prescription. Run multiple queries and union the patient sets.",
+    "expert": "Run two queries. (1) Condition?code=http://snomed.info/sct|4740000 — zoster dx. (2) MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|281 — acyclovir. Union the patient IDs."
+  },
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "algorithm_path": "comprehensive-provider-query",
+    "algorithm_path_description": "Multi-query union: Condition + MedicationRequest. Tests cross-resource reasoning.",
+    "code_systems": [
+      "SNOMED CT",
+      "RxNorm"
+    ],
+    "required_codes": [
+      {
+        "system": "http://snomed.info/sct",
+        "code": "4740000",
+        "display": "Herpes zoster",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "281",
+        "display": "acyclovir",
+        "source": "UMLS verified"
+      }
+    ],
+    "complexity": "expert",
+    "tags": [
+      "multi-query",
+      "comprehensive",
+      "infectious",
+      "shingles",
+      "herpes-zoster"
+    ],
+    "multi_query": true,
+    "expected_queries": [
+      "Condition?code=http://snomed.info/sct|4740000",
+      "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|281"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "multi",
+    "parameters": {},
+    "url": "Condition?code=http://snomed.info/sct|4740000"
+  },
+  "test_data": {
+    "resources": [
+      "synthea/output/herpes-zoster/positive/fhir/",
+      "synthea/output/herpes-zoster/control/fhir/"
+    ],
+    "expected_result_count": 42,
+    "expected_resource_ids": [],
+    "expected_patient_ids": [
+      "02723d32-c42d-c09b-1152-d60630c6ee53",
+      "07df9b2e-783a-ed35-6eee-1609d2a61d52",
+      "0d15c4d6-e3ef-dd93-2502-a7fa8d6d87cf",
+      "0f770f8b-affe-a146-8960-36f6d7b7019d",
+      "0f98dab1-675c-8b79-e13d-23432aeaa9a7",
+      "23c57979-8ad9-7177-0210-0e4adca5f099",
+      "26b13b31-5c0a-60bf-b2ef-bcb28e1b537d",
+      "26f15e02-048a-aed4-2f37-691ebdc7d305",
+      "298f20e9-b3cd-3c8f-0769-40e9f5bd40a5",
+      "2e824d64-7356-1fd2-6481-bb77c0961f5f",
+      "2efe4e57-0a7e-66e4-187f-7a7860075854",
+      "2ffdbb04-f682-9397-a5ca-d28de1328592",
+      "33139bda-e649-8c86-5292-3a77b65693d3",
+      "39d68397-3cef-7514-bac5-922943566edc",
+      "3b62d91c-1e12-2952-7fee-8c1eb603a0d3",
+      "3b83abd4-b593-7504-ef30-a4c9605ffc0b",
+      "3d1e2434-bda7-f32c-3fc4-8d08549f6abe",
+      "43a8c1fe-52b6-9581-57b2-6a4284f3e102",
+      "4959ad67-627a-5bb6-2ad3-dc3d8ce58ce7",
+      "4f707914-1651-88c0-c4ed-66c92462ede9",
+      "5326342b-c48d-60b9-edd9-f9fc3f15b279",
+      "5e99794d-03cb-d267-a569-c265e37f4adb",
+      "6ff7fd8f-91a9-f127-cdf1-da159bfe2138",
+      "758eae72-6738-e4f2-1baf-9da5a78db860",
+      "784623e6-0dd5-5a1f-9ff7-aecd9c5c09fc",
+      "7bb2c7c9-6f56-e782-6212-81fb79256457",
+      "805173f5-5a5b-26fc-6185-041d2d5c153c",
+      "8151a52d-4029-2ba9-bfc3-0aa4fa4e87ce",
+      "8b6abf44-b117-b679-e59b-bdb2d4000e6d",
+      "90678602-15a8-a7c5-232c-a623a120040b",
+      "9d0bfb3e-0a4c-7699-3267-b9bf538ac7c4",
+      "a2aa3a43-9b79-c53a-add0-f053f52acb2d",
+      "a6ca277d-fc82-0bbf-d5c2-3ca7390a3848",
+      "a6fa42c6-b57d-3c67-d5b2-d832ab4f8425",
+      "b99be762-7db9-f106-4a4d-0237644b779b",
+      "c42c7781-4075-78f3-cff7-a231d8a3f8ba",
+      "cb3665a3-6fa6-8ac0-64c4-3a0de83d8f46",
+      "d1897fcc-2a8a-47ee-377c-671881a6b16a",
+      "de9b8d27-ebaf-9ff4-9fd3-e95d173aa011",
+      "f26b37b9-7778-29c9-7b41-35d3fb9e33f3",
+      "f5baaaf9-fee4-03cc-e504-6c3904625961",
+      "f8a31c0f-7ce8-6040-6ce7-eb916d3f6b9d"
+    ]
+  },
+  "created_at": "2026-04-28T00:00:00.000000Z",
+  "updated_at": "2026-04-27T00:00:00.000000Z"
+}

@@ -1,0 +1,90 @@
+{
+  "id": "phekb-heart-failure-dx",
+  "source": "phekb",
+  "source_id": "heart-failure",
+  "name": "Heart Failure - Diagnosis Code Query (Multi-Subtype)",
+  "description": "Tests ability to find heart failure patients via diagnosis codes. The PheKB HF algorithm distinguishes HF with reduced EF (HFrEF, EF<50%) from HF with preserved EF (HFpEF, EF>=50%). Synthea distributes patients across SNOMED codes for the HF family: parent Heart failure, Congestive heart failure, Chronic CHF, HFrEF, HFpEF. An LLM querying only the parent code will miss patients coded with the more specific HFrEF/HFpEF codes — and vice versa.",
+  "prompt": "Find all patients with a diagnosis of heart failure, including congestive heart failure, heart failure with reduced ejection fraction (HFrEF), and heart failure with preserved ejection fraction (HFpEF).",
+  "prompts": {
+    "naive": "Find all patients with heart failure.",
+    "broad": "Find all patients diagnosed with any form of heart failure — including congestive heart failure (CHF), chronic heart failure, heart failure with reduced ejection fraction (HFrEF, also called systolic heart failure), and heart failure with preserved ejection fraction (HFpEF, also called diastolic heart failure).",
+    "expert": "I need to identify all heart failure patients in our population. Heart failure is documented under multiple related SNOMED codes, distinguished by ejection fraction phenotype: Heart failure (84114007) is the parent concept, Congestive heart failure (42343007) and Chronic congestive heart failure (88805009) are common general codes, and Heart failure with reduced ejection fraction (703272007, HFrEF) and Heart failure with normal ejection fraction (446221000, HFpEF) capture the specific physiologic subtypes. Search Condition resources for all five codes."
+  },
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "algorithm_path": "diagnosis-path",
+    "algorithm_path_description": "Patients with HF diagnosis codes (Paths A and B). Maps to PheKB HF algorithm criterion of ICD-9 428.X / SNOMED 84114007 descendant traversal. Does NOT find Path C patients (on HF medications without dx) or Path D (low EF on echo without dx).",
+    "code_systems": [
+      "SNOMED CT",
+      "ICD-10-CM"
+    ],
+    "required_codes": [
+      {
+        "system": "http://snomed.info/sct",
+        "code": "84114007",
+        "display": "Heart failure",
+        "source": "PheKB algorithm parent SNOMED, verified"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "42343007",
+        "display": "Congestive heart failure",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "88805009",
+        "display": "Chronic congestive heart failure",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "703272007",
+        "display": "Heart failure with reduced ejection fraction",
+        "source": "UMLS verified, HFrEF"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "446221000",
+        "display": "Heart failure with normal ejection fraction",
+        "source": "UMLS verified, HFpEF"
+      }
+    ],
+    "complexity": "medium",
+    "tags": [
+      "condition",
+      "cardiology",
+      "heart-failure",
+      "diagnosis-code",
+      "multi-subtype",
+      "code-variation",
+      "hfref-hfpef"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "Condition",
+    "parameters": {
+      "code": "http://snomed.info/sct|84114007,http://snomed.info/sct|42343007,http://snomed.info/sct|88805009,http://snomed.info/sct|703272007,http://snomed.info/sct|446221000"
+    },
+    "url": "Condition?code=http://snomed.info/sct|84114007,http://snomed.info/sct|42343007,http://snomed.info/sct|88805009,http://snomed.info/sct|703272007,http://snomed.info/sct|446221000"
+  },
+  "test_data": {
+    "resources": [
+      "synthea/output/heart-failure/positive/fhir/",
+      "synthea/output/heart-failure/control/fhir/"
+    ],
+    "expected_result_count": 7,
+    "expected_resource_ids": [],
+    "expected_patient_ids": [
+      "2c167999-289d-95fa-5c27-7d8b8d35348c",
+      "7811dc30-8c86-8164-6c33-6b6f464745ef",
+      "a2fb233f-60e0-b477-cd38-af3923f792a3",
+      "aa616abe-1761-0c9a-7959-07544679dafd",
+      "ba419d35-0dfe-8af7-347c-eebf02485a56",
+      "bff9d9d5-ee3d-d852-9c67-36d8361a4a4a",
+      "c86c400e-ff88-a1e3-2e23-caa4d8311f47"
+    ]
+  },
+  "created_at": "2026-04-27T00:00:00.000000Z",
+  "updated_at": "2026-04-27T00:00:00.000000Z"
+}

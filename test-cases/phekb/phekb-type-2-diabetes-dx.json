@@ -4,36 +4,36 @@
   "source_id": "type-2-diabetes-mellitus",
   "name": "Type 2 Diabetes - Diagnosis Code Query",
   "description": "Tests ability to find T2DM patients by searching for diagnosis codes. Covers PheKB algorithm paths 1-3 and 5 where patients have formal T2DM diagnosis codes recorded as Condition resources.",
-  "prompt": "Find all patients who have a recorded diagnosis of type 2 diabetes mellitus.",
+  "prompt": "Find all patients diagnosed with type 2 diabetes mellitus.",
+  "prompts": {
+    "naive": "Find all patients diagnosed with type 2 diabetes mellitus.",
+    "expert": "I need to identify patients with type 2 diabetes by searching their documented diagnoses. Keep in mind that diabetes may be coded under different terminology systems -- some records use ICD-10 codes while others use SNOMED CT clinical findings. The query should look at Condition resources, which may appear on the problem list or as encounter diagnoses. The key is finding the specific type 2 diabetes code rather than a broader diabetes search, since type 1 and type 2 have distinct codes and conflating them would be clinically inappropriate."
+  },
   "metadata": {
     "implementation_guide": "US Core 5.0.0",
     "algorithm_path": "paths-1-3-5",
     "algorithm_path_description": "Patients with T2DM diagnosis codes (ICD-9/ICD-10/SNOMED). These patients have Condition resources with T2DM codes.",
     "code_systems": [
-      "ICD-9-CM",
-      "ICD-10-CM",
       "SNOMED CT"
     ],
     "required_codes": [
       {
         "system": "http://snomed.info/sct",
         "code": "44054006",
-        "display": "Type 2 diabetes mellitus"
+        "display": "Type 2 diabetes mellitus",
+        "source": "UMLS verified, code variation"
       },
       {
-        "system": "http://hl7.org/fhir/sid/icd-10-cm",
-        "code": "E11",
-        "display": "Type 2 diabetes mellitus"
+        "system": "http://snomed.info/sct",
+        "code": "73211009",
+        "display": "Diabetes mellitus",
+        "source": "UMLS verified, code variation"
       },
       {
-        "system": "http://hl7.org/fhir/sid/icd-9-cm",
-        "code": "250.00",
-        "display": "DM type II, not stated as uncontrolled"
-      },
-      {
-        "system": "http://hl7.org/fhir/sid/icd-9-cm",
-        "code": "250.02",
-        "display": "DM type II, uncontrolled"
+        "system": "http://snomed.info/sct",
+        "code": "9414007",
+        "display": "Impaired glucose tolerance",
+        "source": "UMLS verified, code variation"
       }
     ],
     "complexity": "easy",
@@ -47,33 +47,64 @@
   "expected_query": {
     "resource_type": "Condition",
     "parameters": {
-      "code": "http://snomed.info/sct|44054006"
+      "code": "http://snomed.info/sct|44054006,http://snomed.info/sct|73211009,http://snomed.info/sct|9414007"
     },
-    "url": "Condition?code=http://snomed.info/sct|44054006"
+    "url": "Condition?code=http://snomed.info/sct|44054006,http://snomed.info/sct|73211009,http://snomed.info/sct|9414007"
   },
   "test_data": {
     "resources": [
       "synthea/output/type-2-diabetes/positive/fhir/",
       "synthea/output/type-2-diabetes/control/fhir/"
     ],
-    "expected_result_count": 14,
-    "expected_resource_ids": [
-      "1391",
-      "1688",
-      "1749",
-      "1841",
-      "2074",
-      "2326",
-      "2373",
-      "2565",
-      "2765",
-      "2816",
-      "3412",
-      "3553",
-      "3655",
-      "4114"
+    "expected_result_count": 44,
+    "expected_resource_ids": [],
+    "expected_patient_ids": [
+      "0c07fba7-424b-53b7-b593-b9f82d87416d",
+      "1ad96ef4-e416-4722-441e-3cb3ce280833",
+      "1ee7c50f-5670-cbe9-241c-8ee0c76169a2",
+      "244397f7-9204-140c-0301-0678bcc3c4a0",
+      "2c167999-289d-95fa-5c27-7d8b8d35348c",
+      "2dbe8913-9254-068d-bbbb-cd42528ca0fb",
+      "35b353dd-402b-571a-d67a-af0a104d0854",
+      "46f6a358-f8f8-614d-0542-19451221109a",
+      "4bfa091f-113c-25f3-9eec-381f1e884a58",
+      "4f083ce3-f12b-bb4b-7353-e17f0cd55b0a",
+      "559f630b-99b6-b0cf-1cb1-97625ff2fc01",
+      "5ba0a3f3-32f7-02b1-ec6a-8f568923954c",
+      "61e24146-3373-5634-b04c-0c53949fd033",
+      "639e38d8-6d69-f17d-d55f-2378d9039499",
+      "6fbddf55-7096-b883-7cd3-260f27953080",
+      "75768779-dbf2-ef75-613f-b4331ae42946",
+      "77cc4d24-863d-7d6f-1774-67dd9f563063",
+      "7b06ee52-df9a-8487-0be6-dff27cc7d519",
+      "840e5833-655e-1dff-59e7-e4e1f4f1db7b",
+      "89b73d4b-8b8c-1b15-1b4a-687147f661a4",
+      "8ad5d7b1-bc3d-8a55-ff50-ae6d863c8826",
+      "922fb35e-148d-9e82-7e65-bfa05e3b3515",
+      "9661a432-4630-2cd9-142c-386845fae837",
+      "97831cc7-a4d9-9690-42f2-feec54e86943",
+      "a2102333-3206-a76f-74aa-f471137fdffa",
+      "a65890ee-275c-2935-abf7-ac448a829871",
+      "a862380e-4d7b-7f34-2462-5dda8ce2f9f7",
+      "ab126ccb-62f8-c219-fe5c-7b33b84340bc",
+      "b8e80a18-3024-169f-17e0-d3f4bcaf270d",
+      "b97f99f3-6c1d-090b-f6d3-39bea7df0b04",
+      "ba419d35-0dfe-8af7-347c-eebf02485a56",
+      "bff9d9d5-ee3d-d852-9c67-36d8361a4a4a",
+      "c0139ea3-de29-71b8-b6da-fe13ca7209a9",
+      "c0a47dee-cc72-29ce-df5a-ea6d306c36a4",
+      "c3f5ba78-4bf3-c61d-af9e-8bddb229f7b3",
+      "c86c400e-ff88-a1e3-2e23-caa4d8311f47",
+      "ca0e013b-9d15-6bf7-c32c-e703725df964",
+      "db3fff49-3bd8-9684-ff2f-a52757e9afa1",
+      "df9f6545-52b2-5c29-faca-b1563b1efe3b",
+      "e2b354d9-1408-a615-3848-1ad7c9142e34",
+      "e74367bd-7385-97dc-2c7f-251b4cd9fe29",
+      "eb5910f1-26e6-bc6f-b300-716eae678d6f",
+      "fd08f424-a245-6d32-ee9e-005154f96c5b",
+      "fed54161-0f33-63f0-7d02-d958d26ce492"
     ]
   },
   "created_at": "2026-03-12T18:00:00.000000Z",
-  "updated_at": "2026-03-12T18:00:00.000000Z"
+  "updated_at": "2026-04-27T00:00:00.000000Z"
 }

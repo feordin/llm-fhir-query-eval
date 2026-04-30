@@ -1,0 +1,95 @@
+{
+  "id": "phekb-hepatitis-c-meds",
+  "source": "phekb",
+  "source_id": "hepatitis-c",
+  "name": "Hepatitis C - Direct-Acting Antiviral (DAA) Therapy Query",
+  "description": "Tests ability to find hepatitis C patients via direct-acting antiviral (DAA) prescriptions. The post-2013 era of HCV treatment is dominated by DAAs achieving >95% cure rates. Synthea distributes patients across DAA classes: NS5B polymerase inhibitors (sofosbuvir), NS5A inhibitors (ledipasvir, often combined with sofosbuvir as Harvoni), NS3/4A protease inhibitors (simeprevir), and the older nucleoside ribavirin. Like MS DMTs, DAAs are highly specific to HCV — Path C (DAA without HCV dx) should be near-zero.",
+  "prompt": "Find patients prescribed direct-acting antiviral medications used to treat hepatitis C, including sofosbuvir, ledipasvir, simeprevir, and ribavirin.",
+  "prompts": {
+    "naive": "Find patients on hepatitis C medications.",
+    "broad": "Find patients prescribed any direct-acting antiviral (DAA) for hepatitis C — sofosbuvir (NS5B inhibitor, Sovaldi), ledipasvir (NS5A inhibitor, often combined with sofosbuvir as Harvoni), simeprevir (NS3/4A protease inhibitor), or ribavirin (older nucleoside, often combined with DAAs).",
+    "expert": "I need MedicationRequest resources for any HCV DAA. Use these RxNorm codes: 1484911 (sofosbuvir ingredient), 1591922 (ledipasvir ingredient), 1482790 (simeprevir ingredient), 108766 (ribavirin 100 MG Oral Capsule SCD). The HCV Treatment VSAC OID 2.16.840.1.113762.1.4.1221.141 catalogs these. Combine in a single comma-separated code search. DAAs are highly specific to HCV so Path C (DAA without HCV dx) is near-zero."
+  },
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "algorithm_path": "medication-path",
+    "algorithm_path_description": "Patients with DAA orders (Paths A and C). Like MS DMTs, DAAs are highly specific — Path C should be tiny because there's no significant non-HCV indication for these drugs.",
+    "code_systems": [
+      "RxNorm"
+    ],
+    "required_codes": [
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "1484911",
+        "display": "sofosbuvir",
+        "source": "UMLS verified, RxNorm ingredient"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "1591922",
+        "display": "ledipasvir",
+        "source": "UMLS verified, RxNorm ingredient"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "1482790",
+        "display": "simeprevir",
+        "source": "UMLS verified, RxNorm ingredient"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "108766",
+        "display": "ribavirin 100 MG Oral Capsule",
+        "source": "VSAC HCV Treatment value set"
+      }
+    ],
+    "complexity": "medium",
+    "tags": [
+      "medication",
+      "infectious-disease",
+      "hepatitis-c",
+      "daa",
+      "antiviral",
+      "high-specificity"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "MedicationRequest",
+    "parameters": {
+      "code": "http://www.nlm.nih.gov/research/umls/rxnorm|1484911,http://www.nlm.nih.gov/research/umls/rxnorm|1591922,http://www.nlm.nih.gov/research/umls/rxnorm|1482790,http://www.nlm.nih.gov/research/umls/rxnorm|108766"
+    },
+    "url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1484911,http://www.nlm.nih.gov/research/umls/rxnorm|1591922,http://www.nlm.nih.gov/research/umls/rxnorm|1482790,http://www.nlm.nih.gov/research/umls/rxnorm|108766"
+  },
+  "test_data": {
+    "resources": [
+      "synthea/output/hepatitis-c/positive/fhir/",
+      "synthea/output/hepatitis-c/control/fhir/"
+    ],
+    "expected_result_count": 20,
+    "expected_resource_ids": [],
+    "expected_patient_ids": [
+      "1068af52-2083-6616-3b1a-a2bf3dd4d886",
+      "114b3097-f259-d915-9d79-8276b7c57e65",
+      "152eab27-7dd8-c0b8-c85e-37634dbe3d03",
+      "1e899a04-f489-a4fe-a9ad-78b69ac5a583",
+      "22867eeb-ef45-a60e-67a4-961973304d40",
+      "3fc9d15b-d93e-5f83-f3fa-8ec7a7f6fc59",
+      "5aecc878-faf8-c900-e77f-9dabbc4a1020",
+      "5e84d377-2de4-2aec-f96c-78c1018c28f2",
+      "796cc791-428f-3e2a-ca0e-3f678ebd7040",
+      "84137e50-6e01-9d54-e2ba-0111f19ac7ed",
+      "9d3974e2-d258-ec51-4eef-8bc4318a9dc9",
+      "c0f9210f-da2a-dd30-010e-1284f5a0d867",
+      "c7ce7487-ca57-f520-5f57-82548f9e9238",
+      "c9e69b65-159e-d923-c8b4-60e6e8023740",
+      "cafc828c-eadb-2d3b-c75f-d28d3a972896",
+      "d4d3c041-7407-b867-b70e-fd0394fa3f87",
+      "daab7292-bbdb-3fa0-ef77-e949dfcfc762",
+      "dff289fb-921f-119b-0b67-068b30868bdd",
+      "e14f7ac4-4e00-9114-35ad-a5d4a63502af",
+      "f06cea72-c9c1-c4ab-4f62-d822f0929117"
+    ]
+  },
+  "created_at": "2026-04-27T00:00:00.000000Z",
+  "updated_at": "2026-04-27T00:00:00.000000Z"
+}

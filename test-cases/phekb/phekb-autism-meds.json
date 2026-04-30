@@ -1,0 +1,137 @@
+{
+  "id": "phekb-autism-meds",
+  "source": "phekb",
+  "source_id": "autism",
+  "name": "Autism Spectrum Disorder - Medication Query",
+  "description": "Tests ability to find patients prescribed medications specifically FDA-approved for ASD-associated irritability. Risperidone (2006) and aripiprazole (2009) are the only two medications with FDA approval for irritability associated with autistic disorder. This test case identifies patients who may have ASD but lack a formal diagnosis code in the system, having only medication evidence.",
+  "prompt": "Find all medication orders for risperidone or aripiprazole, which are used to treat irritability associated with autism spectrum disorder.",
+  "prompts": {
+    "naive": "Find all medication orders for risperidone or aripiprazole, which are used to treat irritability associated with autism spectrum disorder.",
+    "expert": "I need to find patients prescribed the two atypical antipsychotic medications that have specific FDA approval for treating irritability associated with autism spectrum disorder: risperidone (approved in 2006) and aripiprazole (approved in 2009). Search MedicationRequest resources for the specific RxNorm product codes for these medications. While both risperidone and aripiprazole are prescribed for other psychiatric conditions as well (schizophrenia, bipolar disorder), in a pediatric or neurodevelopmental context, their presence often signals an ASD diagnosis that may not be formally documented in our system. Some patients were diagnosed and started on these medications by outside developmental specialists, with only the medication record appearing in our EMR."
+  },
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "algorithm_path": "medication-evidence",
+    "algorithm_path_description": "Patients prescribed ASD-related medications. Some patients have ONLY medication records and no formal ASD diagnosis code, testing whether LLMs search MedicationRequest in addition to Condition.",
+    "code_systems": [
+      "RxNorm"
+    ],
+    "required_codes": [
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "312804",
+        "display": "risperidone 1 MG Oral Tablet",
+        "source": "document"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "350386",
+        "display": "aripiprazole 5 MG Oral Tablet",
+        "source": "document"
+      }
+    ],
+    "complexity": "medium",
+    "tags": [
+      "medication",
+      "neurodevelopmental",
+      "autism",
+      "antipsychotic",
+      "rxnorm"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "MedicationRequest",
+    "parameters": {
+      "code": "http://www.nlm.nih.gov/research/umls/rxnorm|312804,http://www.nlm.nih.gov/research/umls/rxnorm|350386"
+    },
+    "url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|312804,http://www.nlm.nih.gov/research/umls/rxnorm|350386"
+  },
+  "test_data": {
+    "resources": [
+      "synthea/output/autism/positive/fhir/",
+      "synthea/output/autism/control/fhir/"
+    ],
+    "expected_result_count": 76,
+    "expected_resource_ids": [],
+    "expected_patient_ids": [
+      "0a5edc69-9269-3dd0-9e20-0030653c5b63",
+      "0a655059-2e15-99cd-bbeb-ab7f6a634c56",
+      "133f7826-1dc7-cc89-6eaf-55536bfe39df",
+      "1749a84f-ad9f-4a12-e7c3-f60b9c4b22f6",
+      "1a9eb9b3-94cf-3b61-c19c-a4716c73d8f9",
+      "1ff1a9aa-7a1f-64a2-e3aa-7ec04c79dc0f",
+      "22059e0d-f31a-f7e0-b534-0191124ef316",
+      "22e8443e-cf30-c4f3-b29c-395f78a2f3b5",
+      "2473b5be-86b5-e65e-f6d4-ea4dbb0af63d",
+      "28f3d7ad-331c-3979-2bec-44d4ff25f69d",
+      "2bac41c9-da4d-f5e9-ad55-d66538907172",
+      "2c167999-289d-95fa-5c27-7d8b8d35348c",
+      "2d68ad16-268a-478c-1f84-d0f1976e1a46",
+      "30c94691-965f-3bf8-f1cd-8c23a5e0a8f1",
+      "3113a4fd-4276-2f47-defa-c81d35187825",
+      "343e196e-aa25-134d-598b-9e973a919ab4",
+      "35b353dd-402b-571a-d67a-af0a104d0854",
+      "36ca7109-727a-8d02-3bf5-9ac2bb82923f",
+      "3be5a69b-80ef-229c-c864-babd55466557",
+      "3e56fbd0-ae19-9706-9442-fe116b25cc6c",
+      "41f6aea1-d937-de78-89d3-00346e9c0501",
+      "43f81732-4942-ee4d-5662-4302c509bfcc",
+      "46976cf7-b0bf-be20-39a5-9f425a52886d",
+      "46ee9d82-b52c-856d-069b-5064ff052225",
+      "47c4a086-57b8-a4ba-cb59-6525a0a2f05a",
+      "48bbf044-f1bd-32d2-6efc-d7f15390672f",
+      "4af47a2d-b628-1db1-628d-434603eadc59",
+      "4d82ce2c-d108-38ea-930e-a213fb97bf07",
+      "4f083ce3-f12b-bb4b-7353-e17f0cd55b0a",
+      "596f9472-a30c-e938-6b06-644a871ea0d2",
+      "5b381ff5-acf8-0d85-250b-8b1a4014ba50",
+      "5e688e99-61b3-5c88-3f60-21df8aaced27",
+      "5e6d6cf9-b20d-5ec4-feb1-892f03592418",
+      "61f6e6a4-d1b8-6c65-a437-7c8593a81af7",
+      "62f60bdb-cc5c-8305-b98b-f2b229a55eca",
+      "69144469-20bf-be5c-e80e-170be0b1f236",
+      "6fbddf55-7096-b883-7cd3-260f27953080",
+      "7235809d-cf97-8940-b9ca-5e42f7dd56af",
+      "76b20010-c318-5754-8c85-983aa538522f",
+      "7cc55167-6c55-efcd-f5e0-54d3a9ff321f",
+      "7cf65bca-7d16-ca27-6e95-2073ec4b10f1",
+      "7f3d14ad-a010-df39-9c8e-d367c723b11e",
+      "8378734e-640f-52de-9e8e-25f6b7920171",
+      "9661a432-4630-2cd9-142c-386845fae837",
+      "982750f4-569b-5949-196b-60699bdda3fb",
+      "98836612-a985-636a-48dc-c5e663c5c2b2",
+      "98d4245d-c98e-dbd2-289f-0e9a3f0f1fa3",
+      "9d41a136-7ec5-13f5-4e1a-e414595a42b6",
+      "9dd93ce3-89fe-9099-5150-71740a649a71",
+      "a32449bd-4395-9294-e97e-90b58dfc6ba4",
+      "aa616abe-1761-0c9a-7959-07544679dafd",
+      "acf1dbf7-f024-fb7d-4d18-375dfc0ef14d",
+      "aee7bbe1-0c45-c028-1e62-1f4cdb30c273",
+      "ba419d35-0dfe-8af7-347c-eebf02485a56",
+      "bee2c35b-9858-537d-0db2-667bb8310116",
+      "bff9d9d5-ee3d-d852-9c67-36d8361a4a4a",
+      "c13ed7eb-7c2a-9067-8052-fd52fb11f3f7",
+      "c1fa1563-da91-73c4-7d75-44dcf92e247d",
+      "c86c400e-ff88-a1e3-2e23-caa4d8311f47",
+      "c953d5fa-f001-58a7-8419-72a2639e9c98",
+      "c9fc3626-26d0-3df0-8bd6-96da3169e250",
+      "caa076ea-2110-0e75-c633-a8acb1750b1e",
+      "cbcfdf2d-12e2-3723-eadc-9dcfbbf97bd8",
+      "cc608d62-86e3-83d5-a817-defb72e267ba",
+      "cc894554-39ff-6132-8490-6e693c030764",
+      "d05fddb0-49fc-b1e0-a11e-896d8cf4b9fe",
+      "d1fd6d70-ae99-1a66-5cfa-41f7464f77a8",
+      "d3727ff2-5d7b-347f-d78c-edc4323cf890",
+      "dc6438fb-df08-50bc-5f55-1880615970eb",
+      "dc83c613-e20c-73fb-18b7-5d050fc93339",
+      "e44d3cd0-2c9b-f902-bdc2-f9976656e482",
+      "e74367bd-7385-97dc-2c7f-251b4cd9fe29",
+      "eb409851-4fbd-3a4a-da4c-926e5be68df5",
+      "eb5910f1-26e6-bc6f-b300-716eae678d6f",
+      "edb40e8e-2385-ec64-8b55-4c0cc3288d1d",
+      "f88bcb3a-efc9-d7da-51ab-8747215d126e"
+    ]
+  },
+  "created_at": "2026-03-15T00:00:00.000000Z",
+  "updated_at": "2026-04-27T00:00:00.000000Z"
+}

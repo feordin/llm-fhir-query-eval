@@ -1,0 +1,130 @@
+{
+  "id": "phekb-migraine-meds",
+  "source": "phekb",
+  "source_id": "migraine",
+  "name": "Migraine - Triptan Medication Query (High-Specificity)",
+  "description": "Tests ability to find migraine patients via triptan medications — sumatriptan, rizatriptan, eletriptan, zolmitriptan, naratriptan. **Triptans are highly migraine-specific** (essentially no other indication), so Path C cross-indication is minimal. This contrasts with biologics, anticoagulants, and steroids — making triptans a clean signal for migraine cohort identification.",
+  "prompt": "Find patients prescribed triptan medications used for migraine, including sumatriptan, rizatriptan, eletriptan, zolmitriptan, or naratriptan.",
+  "prompts": {
+    "naive": "Find patients on triptans.",
+    "broad": "Find patients prescribed triptan-class medications used for acute migraine attacks — sumatriptan, rizatriptan, eletriptan, zolmitriptan, and naratriptan. Triptans are 5-HT1B/1D receptor agonists used almost exclusively for migraine.",
+    "expert": "I need MedicationRequest resources for any triptan. Use these RxNorm ingredient codes: 37418 (sumatriptan), 88014 (rizatriptan), 231049 (eletriptan), 135775 (zolmitriptan), 141366 (naratriptan). Combine in a single comma-separated code search. Triptans have minimal cross-indication — they are essentially migraine-specific drugs, making this a high-precision medication-based query."
+  },
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "algorithm_path": "medication-path",
+    "algorithm_path_description": "Patients with triptan orders. High-specificity drug class — minimal cross-indication.",
+    "code_systems": [
+      "RxNorm"
+    ],
+    "required_codes": [
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "37418",
+        "display": "sumatriptan",
+        "source": "RxNav verified"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "88014",
+        "display": "rizatriptan",
+        "source": "RxNav verified"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "231049",
+        "display": "eletriptan",
+        "source": "RxNav verified"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "135775",
+        "display": "zolmitriptan",
+        "source": "RxNav verified"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "141366",
+        "display": "naratriptan",
+        "source": "RxNav verified"
+      }
+    ],
+    "complexity": "medium",
+    "tags": [
+      "medication",
+      "neurology",
+      "migraine",
+      "triptan",
+      "high-specificity",
+      "low-cross-indication"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "MedicationRequest",
+    "parameters": {
+      "code": "http://www.nlm.nih.gov/research/umls/rxnorm|37418,http://www.nlm.nih.gov/research/umls/rxnorm|88014,http://www.nlm.nih.gov/research/umls/rxnorm|231049,http://www.nlm.nih.gov/research/umls/rxnorm|135775,http://www.nlm.nih.gov/research/umls/rxnorm|141366"
+    },
+    "url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|37418,http://www.nlm.nih.gov/research/umls/rxnorm|88014,http://www.nlm.nih.gov/research/umls/rxnorm|231049,http://www.nlm.nih.gov/research/umls/rxnorm|135775,http://www.nlm.nih.gov/research/umls/rxnorm|141366"
+  },
+  "test_data": {
+    "resources": [
+      "synthea/output/migraine/positive/fhir/",
+      "synthea/output/migraine/control/fhir/"
+    ],
+    "expected_result_count": 49,
+    "expected_resource_ids": [],
+    "expected_patient_ids": [
+      "04411d0c-68ee-9f35-1496-8cde2c432e33",
+      "08f78aa7-4b48-3915-5bb0-afc729974643",
+      "121a6014-7786-3614-4556-789ed98bd32f",
+      "14144f2b-6d12-c4cb-993e-987039525dfe",
+      "180c24f8-744e-b2ec-b68d-edebf19bcbd5",
+      "25c80d49-2f97-eb0f-5c7f-fb975c4e1abf",
+      "3644e95c-b39f-afb6-d15f-c9c0b5af38dd",
+      "3b7ea707-64c0-4eac-68b3-620330e497c3",
+      "3d257b9b-8d49-b8c9-bfa7-43ed4ae47d4f",
+      "45ec11ff-5867-d193-c40e-5f09a2903796",
+      "46f42d20-1cd6-ae2f-1503-a39edd9f5030",
+      "4bd609c7-f75d-e421-a984-8f1e1e627742",
+      "4d643bf2-0a90-4c5f-3d38-ffe904dcaaf8",
+      "4e3bf44b-89b9-dcce-871f-b9bfa48ffc7f",
+      "57a30e75-1c31-fb4b-8bfb-8a37ae9f2e34",
+      "5b6e8f00-2b4c-cb2d-639b-4c1fa475984f",
+      "5fc9ada0-50ca-da0c-65ce-470f4ead3d7b",
+      "6095b6e7-a12e-c24b-03c6-6dad057ff3ba",
+      "7a349da3-fc76-b7da-88a9-49e9fbdf73d9",
+      "7c37d76f-3636-32d9-d5b1-737ded8dcff7",
+      "7cfa1c00-6c40-44db-a456-9aec995668f1",
+      "7dad5afe-dee7-b903-9d22-3d979348b9a9",
+      "85a797a3-371b-18c5-1b7b-b3ff7e304603",
+      "88f31635-7a55-37d9-a738-2435a62b4b36",
+      "90faa3ba-9132-7a7c-f84c-c9c88b848e04",
+      "92a66593-1542-0fe2-b4c8-6671e7a90369",
+      "9c162243-01b5-5a50-f31f-7c2c20d3b859",
+      "9d659bd9-3206-f741-3954-5391f45c7243",
+      "a1925466-6fb1-91d2-0b79-2ddfda0867d9",
+      "a98313c7-98f0-8ce9-1ae6-81a2cfea38be",
+      "ab36ecee-8ff8-0ee0-89f4-0d182a18c2ad",
+      "b3aea234-63d4-379e-cc4c-86d8c7820180",
+      "bceceb0c-3a09-8d27-3e10-e949b86e6928",
+      "bd786b30-95ab-baf1-2308-1964661b4fea",
+      "bf125fdb-e711-656d-94c0-116fb59345d8",
+      "c1a93b0f-d10e-7ed8-54e7-326214e9afed",
+      "c5a55728-1fbc-75fb-3ca5-84a930f41b08",
+      "cbc3f774-62d2-de45-02d1-a9c884cc282c",
+      "d2ba6442-b5f1-4a0c-925c-85d77dd213d7",
+      "d2ea6e37-ba0f-bbae-8daf-481cda80c03e",
+      "e1b6b32e-bb2d-eb35-f439-ad9c999109ed",
+      "e9ff0509-64ce-c91f-2ffb-caee60ce41ea",
+      "eb7c322e-852c-b880-8205-ea94cded02ad",
+      "ee63263e-0f13-a5c3-954c-641bc38f00cc",
+      "efba552d-a321-4451-64b1-24d340cf4f2f",
+      "efef44e8-d7a9-389e-ad6b-373c84d9028f",
+      "f04b9a30-5c6c-112d-5132-1efe80626376",
+      "f642ef33-5060-9bfc-4ed3-a9ed89a22884",
+      "fa8d5a8d-f599-3cb4-4410-454ea312f4ba"
+    ]
+  },
+  "created_at": "2026-04-28T00:00:00.000000Z",
+  "updated_at": "2026-04-27T00:00:00.000000Z"
+}

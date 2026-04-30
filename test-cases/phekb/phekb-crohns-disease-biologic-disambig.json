@@ -1,0 +1,120 @@
+{
+  "id": "phekb-crohns-disease-biologic-disambig",
+  "source": "phekb",
+  "source_id": "crohns-disease",
+  "name": "Crohn's Disease - Biologic Disambiguation via _has (Cross-Indication Filter)",
+  "description": "**Cross-resource _has test.** Anti-TNF biologics like infliximab and adalimumab are used for BOTH Crohn's disease AND rheumatoid arthritis. A naive MedicationRequest query for these biologics returns the union of Crohn's + RA patients. This test exercises the FHIR `_has` reverse chaining parameter to find patients who have a Crohn's diagnosis AND a biologic prescription — filtering out RA patients on the same biologics. This is the classic disambiguation problem solved by combining evidence at the patient level.",
+  "prompt": "Find patients who have a Crohn's disease diagnosis AND are prescribed an anti-TNF biologic (infliximab or adalimumab) or other Crohn's biologic (ustekinumab). The point is to identify Crohn's patients on biologic therapy — not rheumatoid arthritis patients on the same biologics.",
+  "prompts": {
+    "naive": "Find Crohn's patients on biologics.",
+    "broad": "Find patients who have BOTH a Crohn's disease diagnosis AND a biologic medication prescription. Anti-TNF biologics (infliximab, adalimumab) are also used in rheumatoid arthritis, so the Crohn's diagnosis is required to disambiguate. Use FHIR `_has` (reverse chaining) to combine evidence from Condition + MedicationRequest at the patient level.",
+    "expert": "I need patients who match TWO criteria simultaneously: a Condition with a Crohn's SNOMED code (34000006, 7620006, 196977009, 1197732001, 1197733006) AND a MedicationRequest with a Crohn's biologic RxNorm code (191831 infliximab, 327361 adalimumab, 847083 ustekinumab). Use FHIR `_has` parameter on the Patient resource: `Patient?_has:Condition:patient:code=...&_has:MedicationRequest:patient:code=...`. The double `_has` ensures both conditions are met for the same patient (intersection, not union)."
+  },
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "algorithm_path": "cross-resource-_has",
+    "algorithm_path_description": "Cross-resource intersection via FHIR `_has` reverse chaining. Tests whether LLM can combine Condition + MedicationRequest evidence at the patient level to disambiguate cross-indicated drugs.",
+    "code_systems": [
+      "SNOMED CT",
+      "RxNorm"
+    ],
+    "required_codes": [
+      {
+        "system": "http://snomed.info/sct",
+        "code": "34000006",
+        "display": "Crohn's disease",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "7620006",
+        "display": "Crohn's disease of large bowel",
+        "source": "VSAC"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "196977009",
+        "display": "Crohn's disease of terminal ileum",
+        "source": "VSAC"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "1197732001",
+        "display": "Crohn disease of colon and rectum",
+        "source": "VSAC"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "1197733006",
+        "display": "Crohn disease of jejunum and ileum",
+        "source": "VSAC"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "191831",
+        "display": "infliximab",
+        "source": "RxNav verified"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "327361",
+        "display": "adalimumab",
+        "source": "RxNav verified"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "847083",
+        "display": "ustekinumab",
+        "source": "RxNav verified"
+      }
+    ],
+    "complexity": "expert",
+    "tags": [
+      "_has",
+      "cross-resource",
+      "intersection",
+      "gastroenterology",
+      "crohns-disease",
+      "ibd",
+      "biologic-disambiguation",
+      "rheumatology-overlap"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "Patient",
+    "parameters": {
+      "_has:Condition:patient:code": "http://snomed.info/sct|34000006,http://snomed.info/sct|7620006,http://snomed.info/sct|196977009,http://snomed.info/sct|1197732001,http://snomed.info/sct|1197733006",
+      "_has:MedicationRequest:patient:code": "http://www.nlm.nih.gov/research/umls/rxnorm|191831,http://www.nlm.nih.gov/research/umls/rxnorm|327361,http://www.nlm.nih.gov/research/umls/rxnorm|847083"
+    },
+    "url": "Patient?_has:Condition:patient:code=http://snomed.info/sct|34000006,http://snomed.info/sct|7620006,http://snomed.info/sct|196977009,http://snomed.info/sct|1197732001,http://snomed.info/sct|1197733006&_has:MedicationRequest:patient:code=http://www.nlm.nih.gov/research/umls/rxnorm|191831,http://www.nlm.nih.gov/research/umls/rxnorm|327361,http://www.nlm.nih.gov/research/umls/rxnorm|847083"
+  },
+  "test_data": {
+    "resources": [
+      "synthea/output/crohns-disease/positive/fhir/",
+      "synthea/output/crohns-disease/control/fhir/",
+      "synthea/output/rheumatoid-arthritis/positive/fhir/",
+      "synthea/output/rheumatoid-arthritis/control/fhir/"
+    ],
+    "expected_result_count": 15,
+    "expected_resource_ids": [],
+    "expected_patient_ids": [
+      "09ac3be2-327f-6615-e3bd-d587c1ea04bf",
+      "1cbaf1ae-1372-d5f4-6465-5b58a5e3308f",
+      "2f882635-3959-d5c4-841b-4a892f5b6283",
+      "62f990ac-ca99-cbed-63ef-350b3b619d48",
+      "6411907c-15df-3b14-2147-886e03c07d3a",
+      "664a2781-d543-5476-f865-ba70d76d6521",
+      "7f082324-6ed8-bf53-79d8-a9e95c2de1fa",
+      "836c526c-79d5-ee6c-2b0e-deca7abcda86",
+      "856bee24-f6c3-5c62-64fe-1a7a6d16fd79",
+      "94a56f64-7fb8-f62b-2e66-06c0e82e9782",
+      "9c830ee3-1c52-e9f5-dd3c-9b5cb2d1e62f",
+      "aad9b22b-b222-81b4-5fae-ccc41534413d",
+      "b884194c-1307-4180-856a-c569b4f40046",
+      "c4f68e05-9f6a-477b-96bc-190c50318459",
+      "fc045b95-6b07-0b29-7e0d-5aa99044d3b2"
+    ]
+  },
+  "created_at": "2026-04-27T00:00:00.000000Z",
+  "updated_at": "2026-04-27T00:00:00.000000Z"
+}

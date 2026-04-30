@@ -1,0 +1,98 @@
+{
+  "id": "phekb-lung-cancer-dx",
+  "source": "phekb",
+  "source_id": "lung-cancer",
+  "name": "Lung Cancer - Diagnosis Code Query (NSCLC + SCLC + Broader)",
+  "description": "Tests ability to find lung cancer patients across NSCLC (most common), SCLC, and the broader 'malignant neoplasm of lung' SNOMED variants. Sixth cancer phenotype.",
+  "prompt": "Find all patients with a diagnosis of lung cancer, including non-small cell and small cell variants.",
+  "prompts": {
+    "naive": "Find patients with lung cancer.",
+    "broad": "Find patients diagnosed with lung cancer — including non-small cell lung cancer (NSCLC, ~85% of cases), small cell carcinoma of lung (SCLC), and the broader malignant neoplasm of lung concept.",
+    "expert": "Search Condition resources for SNOMED codes NSCLC (254637007), SCLC (254632001), and Malignant neoplasm of lung (363358000). Query: Condition?code=http://snomed.info/sct|254637007,http://snomed.info/sct|254632001,http://snomed.info/sct|363358000"
+  },
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "algorithm_path": "diagnosis-path",
+    "algorithm_path_description": "Patients with lung cancer dx (NSCLC + SCLC + broader). Sixth cancer phenotype.",
+    "code_systems": [
+      "SNOMED CT"
+    ],
+    "required_codes": [
+      {
+        "system": "http://snomed.info/sct",
+        "code": "254637007",
+        "display": "Non-small cell lung cancer",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "254632001",
+        "display": "Small cell carcinoma of lung",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "363358000",
+        "display": "Malignant neoplasm of lung",
+        "source": "UMLS verified"
+      }
+    ],
+    "complexity": "medium",
+    "tags": [
+      "condition",
+      "oncology",
+      "lung-cancer",
+      "nsclc",
+      "sclc",
+      "diagnosis-code"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "Condition",
+    "parameters": {
+      "code": "http://snomed.info/sct|254637007,http://snomed.info/sct|254632001,http://snomed.info/sct|363358000"
+    },
+    "url": "Condition?code=http://snomed.info/sct|254637007,http://snomed.info/sct|254632001,http://snomed.info/sct|363358000"
+  },
+  "test_data": {
+    "resources": [
+      "synthea/output/lung-cancer/positive/fhir/",
+      "synthea/output/lung-cancer/control/fhir/"
+    ],
+    "expected_result_count": 29,
+    "expected_resource_ids": [],
+    "expected_patient_ids": [
+      "04fc9e92-09cd-b6b9-1c11-2be5dcd2d74f",
+      "0a6a2f66-0101-b020-aa0e-01d70f95f546",
+      "160b8ba0-b859-34fb-b2ea-06012a2ace99",
+      "1d9be6b7-64b2-33b7-5268-3a8552d0bb7a",
+      "2235ac16-cbc3-1da6-612f-e186a9f5110e",
+      "243c59e4-f221-3e76-a2e4-5ad725118ac7",
+      "26af6270-4a10-297b-48b1-46de72609358",
+      "3980c753-0917-d901-20b3-a80af2908421",
+      "42e0201a-6af8-f4da-0a34-7a9dcc3170f7",
+      "45b0ffca-85a0-de37-81e1-8f860b85f4f2",
+      "492c9d64-0bc5-e52c-d631-11cc60059799",
+      "4e1d0d28-9952-7e0f-dbad-c585f583e69d",
+      "520947e1-b06c-9af6-e79f-12628a223fa0",
+      "5290f01d-76d0-6bf0-7b9a-ba6c7f1e42e1",
+      "543a0bd6-9ddc-7940-356e-828b78b7915d",
+      "543b1c42-2c34-c599-5c63-65e3d7b9dfd7",
+      "57c8f16b-92e2-1fb0-07aa-6d046a53441c",
+      "64758094-3239-f971-3e22-ade51fa7f614",
+      "767b5f32-7e12-0185-2088-37b23521f1d9",
+      "9165f634-c15c-8a30-ac65-5c2d81edff0b",
+      "9bc9943d-7242-2439-08b7-8da4dfe3779a",
+      "a720315a-3f13-c1d5-48ae-8ba19c6a0c3e",
+      "b0aafee7-fffd-7268-b639-0edc1d3b9f9c",
+      "b6557e44-b7fb-c22f-2f82-fd1bbbedd336",
+      "bbdf6c54-3b8b-a1f4-cd83-2695735d7e4b",
+      "bc7f2ae5-b572-1ee5-73d7-9eb36d396afe",
+      "e6fa3134-ff70-40e1-c6b0-ef64f2894ed0",
+      "f3b3d5b0-978e-efb1-2e91-603f05cc85c9",
+      "fcecb65d-2027-31f8-4ec6-3d764a69aea8"
+    ]
+  },
+  "created_at": "2026-04-29T00:00:00.000000Z",
+  "updated_at": "2026-04-27T00:00:00.000000Z"
+}

@@ -1,0 +1,162 @@
+{
+  "name": "PheKB Peripheral Arterial Disease",
+  "remarks": [
+    "Custom Synthea module for PAD.",
+    "First peripheral vascular phenotype (distinct from coronary CHD or venous VTE).",
+    "",
+    "Generates THREE patient paths (no labs path — ABI is bedside vital, not standard FHIR Observation):",
+    "  Path A (60%): PAD dx + medication",
+    "  Path B (20%): PAD dx, no medication (mild/conservative management)",
+    "  Path C (20%): Medication only, NO PAD dx (cross-indication — antiplatelet/statin for CHD/VTE)",
+    "",
+    "Diagnosis SNOMED variation (Paths A + B):",
+    "  30% Peripheral vascular disease (400047006) — broader parent",
+    "  25% Peripheral arterial occlusive disease (399957001)",
+    "  20% Intermittent claudication (63491006) — characteristic finding",
+    "  15% Peripheral angiopathy due to T2DM (314902007)",
+    "  10% Peripheral vascular disorder due to DM (421895002)",
+    "",
+    "Medication variation (Paths A + C — 5 ingredients):",
+    "  25% Cilostazol (21107) — PAD-specific",
+    "  20% Aspirin (1191) — antiplatelet, cross-indicated",
+    "  20% Clopidogrel (32968) — antiplatelet, cross-indicated",
+    "  20% Atorvastatin (83367) — statin, cross-indicated",
+    "  15% Pentoxifylline (8013) — PAD/claudication"
+  ],
+  "states": {
+    "Initial": { "type": "Initial", "direct_transition": "Age_Guard" },
+    "Age_Guard": { "type": "Guard", "allow": { "condition_type": "Age", "operator": ">=", "quantity": 50, "unit": "years" }, "direct_transition": "Set_PAD_Flag" },
+    "Set_PAD_Flag": { "type": "SetAttribute", "attribute": "pad_positive", "value": true, "direct_transition": "Choose_Patient_Path" },
+    "Choose_Patient_Path": {
+      "type": "Simple",
+      "distributed_transition": [
+        { "transition": "Set_Path_A", "distribution": 0.60 },
+        { "transition": "Set_Path_B", "distribution": 0.20 },
+        { "transition": "Set_Path_C", "distribution": 0.20 }
+      ]
+    },
+    "Set_Path_A": { "type": "SetAttribute", "attribute": "pad_has_dx", "value": true, "direct_transition": "Set_Path_A_Meds" },
+    "Set_Path_A_Meds": { "type": "SetAttribute", "attribute": "pad_has_meds", "value": true, "direct_transition": "Choose_Subtype" },
+    "Set_Path_B": { "type": "SetAttribute", "attribute": "pad_has_dx", "value": true, "direct_transition": "Set_Path_B_Meds" },
+    "Set_Path_B_Meds": { "type": "SetAttribute", "attribute": "pad_has_meds", "value": false, "direct_transition": "Choose_Subtype" },
+    "Set_Path_C": { "type": "SetAttribute", "remarks": ["TRICKY: antiplatelet/statin without PAD dx (cross-indication)"], "attribute": "pad_has_dx", "value": false, "direct_transition": "Set_Path_C_Meds" },
+    "Set_Path_C_Meds": { "type": "SetAttribute", "attribute": "pad_has_meds", "value": true, "direct_transition": "Choose_Subtype" },
+
+    "Choose_Subtype": {
+      "type": "Simple",
+      "distributed_transition": [
+        { "transition": "Set_Subtype_PVD", "distribution": 0.30 },
+        { "transition": "Set_Subtype_PAOD", "distribution": 0.25 },
+        { "transition": "Set_Subtype_Claudication", "distribution": 0.20 },
+        { "transition": "Set_Subtype_DiabAngio", "distribution": 0.15 },
+        { "transition": "Set_Subtype_DiabPVD", "distribution": 0.10 }
+      ]
+    },
+    "Set_Subtype_PVD": { "type": "SetAttribute", "attribute": "pad_subtype", "value": "pvd", "direct_transition": "Choose_Med" },
+    "Set_Subtype_PAOD": { "type": "SetAttribute", "attribute": "pad_subtype", "value": "paod", "direct_transition": "Choose_Med" },
+    "Set_Subtype_Claudication": { "type": "SetAttribute", "attribute": "pad_subtype", "value": "claudication", "direct_transition": "Choose_Med" },
+    "Set_Subtype_DiabAngio": { "type": "SetAttribute", "attribute": "pad_subtype", "value": "diabangio", "direct_transition": "Choose_Med" },
+    "Set_Subtype_DiabPVD": { "type": "SetAttribute", "attribute": "pad_subtype", "value": "diabpvd", "direct_transition": "Choose_Med" },
+
+    "Choose_Med": {
+      "type": "Simple",
+      "distributed_transition": [
+        { "transition": "Set_Med_Cilostazol", "distribution": 0.25 },
+        { "transition": "Set_Med_Aspirin", "distribution": 0.20 },
+        { "transition": "Set_Med_Clopidogrel", "distribution": 0.20 },
+        { "transition": "Set_Med_Atorvastatin", "distribution": 0.20 },
+        { "transition": "Set_Med_Pentoxifylline", "distribution": 0.15 }
+      ]
+    },
+    "Set_Med_Cilostazol": { "type": "SetAttribute", "attribute": "pad_med", "value": "cilostazol", "direct_transition": "Set_Needs_First_Visit" },
+    "Set_Med_Aspirin": { "type": "SetAttribute", "attribute": "pad_med", "value": "aspirin", "direct_transition": "Set_Needs_First_Visit" },
+    "Set_Med_Clopidogrel": { "type": "SetAttribute", "attribute": "pad_med", "value": "clopidogrel", "direct_transition": "Set_Needs_First_Visit" },
+    "Set_Med_Atorvastatin": { "type": "SetAttribute", "attribute": "pad_med", "value": "atorvastatin", "direct_transition": "Set_Needs_First_Visit" },
+    "Set_Med_Pentoxifylline": { "type": "SetAttribute", "attribute": "pad_med", "value": "pentoxifylline", "direct_transition": "Set_Needs_First_Visit" },
+
+    "Set_Needs_First_Visit": { "type": "SetAttribute", "attribute": "pad_needs_first_visit", "value": true, "direct_transition": "Wellness_Encounter" },
+    "Wellness_Encounter": { "type": "Encounter", "wellness": true, "direct_transition": "Check_First_Visit" },
+    "Check_First_Visit": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "pad_needs_first_visit", "operator": "==", "value": true }, "transition": "Check_Has_Diagnosis" },
+        { "transition": "End_Wellness_Encounter" }
+      ]
+    },
+    "Check_Has_Diagnosis": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "pad_has_dx", "operator": "==", "value": true }, "transition": "Route_By_Subtype" },
+        { "transition": "Route_Med_NoDx" }
+      ]
+    },
+    "Route_By_Subtype": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "pad_subtype", "operator": "==", "value": "pvd" }, "transition": "Diagnose_PVD" },
+        { "condition": { "condition_type": "Attribute", "attribute": "pad_subtype", "operator": "==", "value": "paod" }, "transition": "Diagnose_PAOD" },
+        { "condition": { "condition_type": "Attribute", "attribute": "pad_subtype", "operator": "==", "value": "claudication" }, "transition": "Diagnose_Claudication" },
+        { "condition": { "condition_type": "Attribute", "attribute": "pad_subtype", "operator": "==", "value": "diabangio" }, "transition": "Diagnose_DiabAngio" },
+        { "transition": "Diagnose_DiabPVD" }
+      ]
+    },
+    "Diagnose_PVD": { "type": "ConditionOnset", "assign_to_attribute": "pad_condition", "codes": [{ "system": "SNOMED-CT", "code": "400047006", "display": "Peripheral vascular disease" }], "direct_transition": "Route_Med_WithDx" },
+    "Diagnose_PAOD": { "type": "ConditionOnset", "assign_to_attribute": "pad_condition", "codes": [{ "system": "SNOMED-CT", "code": "399957001", "display": "Peripheral arterial occlusive disease" }], "direct_transition": "Route_Med_WithDx" },
+    "Diagnose_Claudication": { "type": "ConditionOnset", "assign_to_attribute": "pad_condition", "codes": [{ "system": "SNOMED-CT", "code": "63491006", "display": "Intermittent claudication" }], "direct_transition": "Route_Med_WithDx" },
+    "Diagnose_DiabAngio": { "type": "ConditionOnset", "assign_to_attribute": "pad_condition", "codes": [{ "system": "SNOMED-CT", "code": "314902007", "display": "Peripheral angiopathy due to type 2 diabetes mellitus" }], "direct_transition": "Route_Med_WithDx" },
+    "Diagnose_DiabPVD": { "type": "ConditionOnset", "assign_to_attribute": "pad_condition", "codes": [{ "system": "SNOMED-CT", "code": "421895002", "display": "Peripheral vascular disorder due to diabetes mellitus" }], "direct_transition": "Route_Med_WithDx" },
+
+    "Route_Med_WithDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "And", "conditions": [
+          { "condition_type": "Attribute", "attribute": "pad_has_meds", "operator": "==", "value": true },
+          { "condition_type": "Attribute", "attribute": "pad_med", "operator": "==", "value": "cilostazol" }
+        ]}, "transition": "Prescribe_Cilostazol_WithDx" },
+        { "condition": { "condition_type": "And", "conditions": [
+          { "condition_type": "Attribute", "attribute": "pad_has_meds", "operator": "==", "value": true },
+          { "condition_type": "Attribute", "attribute": "pad_med", "operator": "==", "value": "aspirin" }
+        ]}, "transition": "Prescribe_Aspirin_WithDx" },
+        { "condition": { "condition_type": "And", "conditions": [
+          { "condition_type": "Attribute", "attribute": "pad_has_meds", "operator": "==", "value": true },
+          { "condition_type": "Attribute", "attribute": "pad_med", "operator": "==", "value": "clopidogrel" }
+        ]}, "transition": "Prescribe_Clopidogrel_WithDx" },
+        { "condition": { "condition_type": "And", "conditions": [
+          { "condition_type": "Attribute", "attribute": "pad_has_meds", "operator": "==", "value": true },
+          { "condition_type": "Attribute", "attribute": "pad_med", "operator": "==", "value": "atorvastatin" }
+        ]}, "transition": "Prescribe_Atorvastatin_WithDx" },
+        { "condition": { "condition_type": "And", "conditions": [
+          { "condition_type": "Attribute", "attribute": "pad_has_meds", "operator": "==", "value": true },
+          { "condition_type": "Attribute", "attribute": "pad_med", "operator": "==", "value": "pentoxifylline" }
+        ]}, "transition": "Prescribe_Pentoxifylline_WithDx" },
+        { "transition": "Clear_First_Visit_Flag" }
+      ]
+    },
+    "Prescribe_Cilostazol_WithDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "21107", "display": "cilostazol" }], "reason": "pad_condition", "direct_transition": "Clear_First_Visit_Flag" },
+    "Prescribe_Aspirin_WithDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "1191", "display": "aspirin" }], "reason": "pad_condition", "direct_transition": "Clear_First_Visit_Flag" },
+    "Prescribe_Clopidogrel_WithDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "32968", "display": "clopidogrel" }], "reason": "pad_condition", "direct_transition": "Clear_First_Visit_Flag" },
+    "Prescribe_Atorvastatin_WithDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "83367", "display": "atorvastatin" }], "reason": "pad_condition", "direct_transition": "Clear_First_Visit_Flag" },
+    "Prescribe_Pentoxifylline_WithDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "8013", "display": "pentoxifylline" }], "reason": "pad_condition", "direct_transition": "Clear_First_Visit_Flag" },
+
+    "Route_Med_NoDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "pad_med", "operator": "==", "value": "cilostazol" }, "transition": "Prescribe_Cilostazol_NoDx" },
+        { "condition": { "condition_type": "Attribute", "attribute": "pad_med", "operator": "==", "value": "aspirin" }, "transition": "Prescribe_Aspirin_NoDx" },
+        { "condition": { "condition_type": "Attribute", "attribute": "pad_med", "operator": "==", "value": "clopidogrel" }, "transition": "Prescribe_Clopidogrel_NoDx" },
+        { "condition": { "condition_type": "Attribute", "attribute": "pad_med", "operator": "==", "value": "atorvastatin" }, "transition": "Prescribe_Atorvastatin_NoDx" },
+        { "transition": "Prescribe_Pentoxifylline_NoDx" }
+      ]
+    },
+    "Prescribe_Cilostazol_NoDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "21107", "display": "cilostazol" }], "direct_transition": "Clear_First_Visit_Flag" },
+    "Prescribe_Aspirin_NoDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "1191", "display": "aspirin" }], "direct_transition": "Clear_First_Visit_Flag" },
+    "Prescribe_Clopidogrel_NoDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "32968", "display": "clopidogrel" }], "direct_transition": "Clear_First_Visit_Flag" },
+    "Prescribe_Atorvastatin_NoDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "83367", "display": "atorvastatin" }], "direct_transition": "Clear_First_Visit_Flag" },
+    "Prescribe_Pentoxifylline_NoDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "8013", "display": "pentoxifylline" }], "direct_transition": "Clear_First_Visit_Flag" },
+
+    "Clear_First_Visit_Flag": { "type": "SetAttribute", "attribute": "pad_needs_first_visit", "value": false, "direct_transition": "End_Wellness_Encounter" },
+    "End_Wellness_Encounter": { "type": "EncounterEnd", "direct_transition": "Followup_Delay" },
+    "Followup_Delay": { "type": "Delay", "range": { "low": 6, "high": 12, "unit": "months" }, "direct_transition": "Wellness_Encounter" }
+  },
+  "gmf_version": 2
+}

@@ -1,0 +1,116 @@
+{
+  "name": "PheKB Autism Control (Non-ASD)",
+  "remarks": [
+    "Control module for ASD phenotype testing",
+    "Generates patients who should NOT match ASD criteria",
+    "",
+    "Control Criteria (exclusion from ASD):",
+    "- No autism spectrum disorder diagnosis codes",
+    "- No ASD-related medications (risperidone, aripiprazole)",
+    "- May have common pediatric conditions (otitis media, upper respiratory infection)",
+    "",
+    "Uses 'wellness: true' encounter pattern to produce FHIR resources.",
+    "These patients should NOT be returned by ASD queries."
+  ],
+  "states": {
+    "Initial": {
+      "type": "Initial",
+      "direct_transition": "Age_Guard"
+    },
+
+    "Age_Guard": {
+      "type": "Guard",
+      "allow": {
+        "condition_type": "Age",
+        "operator": ">=",
+        "quantity": 2,
+        "unit": "years"
+      },
+      "direct_transition": "Set_Control_Flag"
+    },
+
+    "Set_Control_Flag": {
+      "type": "SetAttribute",
+      "attribute": "asd_control",
+      "value": true,
+      "direct_transition": "Wellness_Encounter"
+    },
+
+    "Wellness_Encounter": {
+      "type": "Encounter",
+      "wellness": true,
+      "direct_transition": "Check_Other_Conditions"
+    },
+
+    "Check_Other_Conditions": {
+      "type": "Simple",
+      "remarks": ["Some control patients have common pediatric conditions for variety"],
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Otitis_Media",
+          "distribution": 0.30
+        },
+        {
+          "transition": "Diagnose_URI",
+          "distribution": 0.25
+        },
+        {
+          "transition": "End_Wellness_Encounter",
+          "distribution": 0.45
+        }
+      ]
+    },
+
+    "Diagnose_Otitis_Media": {
+      "type": "ConditionOnset",
+      "assign_to_attribute": "otitis_media",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": "65363002",
+          "display": "Otitis media"
+        }
+      ],
+      "remarks": ["Common pediatric condition for control population variety"],
+      "direct_transition": "Prescribe_Amoxicillin"
+    },
+
+    "Prescribe_Amoxicillin": {
+      "type": "MedicationOrder",
+      "codes": [
+        {
+          "system": "RxNorm",
+          "code": "308182",
+          "display": "amoxicillin 250 MG Oral Capsule"
+        }
+      ],
+      "reason": "otitis_media",
+      "direct_transition": "End_Wellness_Encounter"
+    },
+
+    "Diagnose_URI": {
+      "type": "ConditionOnset",
+      "assign_to_attribute": "upper_respiratory_infection",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": "54150009",
+          "display": "Upper respiratory infection"
+        }
+      ],
+      "remarks": ["Common pediatric condition for control population variety"],
+      "direct_transition": "End_Wellness_Encounter"
+    },
+
+    "End_Wellness_Encounter": {
+      "type": "EncounterEnd",
+      "direct_transition": "Terminal_Control"
+    },
+
+    "Terminal_Control": {
+      "type": "Terminal",
+      "remarks": ["Control patient - should NOT be found by ASD phenotype query"]
+    }
+  },
+  "gmf_version": 2
+}

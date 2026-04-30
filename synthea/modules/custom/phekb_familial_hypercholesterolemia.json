@@ -1,0 +1,210 @@
+{
+  "name": "PheKB Familial Hypercholesterolemia",
+  "remarks": [
+    "Custom Synthea module for PheKB phenotype: familial hypercholesterolemia (FH)",
+    "Based on Geisinger PheKB FH eAlgorithm (modified Dutch Lipid Clinic Network criteria)",
+    "",
+    "PheKB algorithm: case requires DLCN score >= 6, with LDL >= 190 mg/dL contributing.",
+    "",
+    "Generates FOUR patient paths:",
+    "  Path A (40%): Diagnosis + statin + elevated LDL — full diagnosed/treated",
+    "  Path B (15%): Diagnosis + statin, no LDL labs (treatment normalized)",
+    "  Path C (15%): Statin ONLY, NO FH diagnosis (statin for non-FH cardiovascular risk)",
+    "  Path D (30%): Severely elevated LDL ONLY, NO dx, NO statin (UNDIAGNOSED FH — flagship Path D)",
+    "",
+    "Path D weighting reflects real-world FH underdiagnosis (~90% undiagnosed per studies).",
+    "",
+    "Diagnosis SNOMED variation (Paths A + B):",
+    "  35% Familial hypercholesterolemia (398036000) — generic parent",
+    "  30% FH heterozygous (238079002) — most common form",
+    "  10% FH homozygous (238078005) — severe",
+    "  15% FH due to heterozygous LDLR mutation (403829002)",
+    "  10% FH due to homozygous LDLR mutation (403830007)",
+    "",
+    "Medication ingredient variation (Paths A + B + C):",
+    "  35% Atorvastatin (83367) — high-intensity, first-line for FH",
+    "  20% Simvastatin (36567)",
+    "  20% Rosuvastatin (301542) — high-intensity",
+    "  15% Pravastatin (42463)",
+    "  10% Lovastatin (6472)",
+    "",
+    "Lab values (Paths A + D get severely elevated LDL):",
+    "  LDL case range: 200-380 mg/dL (above FH threshold of >= 190)",
+    "",
+    "Codes verified via AIR Familial Hypercholesterolemia VSAC (OID 2.16.840.1.113762.1.4.1047.85)."
+  ],
+  "states": {
+    "Initial": { "type": "Initial", "direct_transition": "Age_Guard" },
+    "Age_Guard": { "type": "Guard", "allow": { "condition_type": "Age", "operator": ">=", "quantity": 25, "unit": "years" }, "direct_transition": "Set_FH_Flag" },
+    "Set_FH_Flag": { "type": "SetAttribute", "attribute": "fh_positive", "value": true, "direct_transition": "Choose_Patient_Path" },
+    "Choose_Patient_Path": {
+      "type": "Simple",
+      "distributed_transition": [
+        { "transition": "Set_Path_A", "distribution": 0.40 },
+        { "transition": "Set_Path_B", "distribution": 0.15 },
+        { "transition": "Set_Path_C", "distribution": 0.15 },
+        { "transition": "Set_Path_D", "distribution": 0.30 }
+      ]
+    },
+    "Set_Path_A": { "type": "SetAttribute", "attribute": "fh_has_dx", "value": true, "direct_transition": "Set_Path_A_Labs" },
+    "Set_Path_A_Labs": { "type": "SetAttribute", "attribute": "fh_has_high_ldl", "value": true, "direct_transition": "Set_Path_A_Meds" },
+    "Set_Path_A_Meds": { "type": "SetAttribute", "attribute": "fh_has_meds", "value": true, "direct_transition": "Choose_Subtype" },
+
+    "Set_Path_B": { "type": "SetAttribute", "attribute": "fh_has_dx", "value": true, "direct_transition": "Set_Path_B_Labs" },
+    "Set_Path_B_Labs": { "type": "SetAttribute", "attribute": "fh_has_high_ldl", "value": false, "direct_transition": "Set_Path_B_Meds" },
+    "Set_Path_B_Meds": { "type": "SetAttribute", "attribute": "fh_has_meds", "value": true, "direct_transition": "Choose_Subtype" },
+
+    "Set_Path_C": { "type": "SetAttribute", "remarks": ["TRICKY: statin without FH dx (general cardiovascular risk)"], "attribute": "fh_has_dx", "value": false, "direct_transition": "Set_Path_C_Labs" },
+    "Set_Path_C_Labs": { "type": "SetAttribute", "attribute": "fh_has_high_ldl", "value": false, "direct_transition": "Set_Path_C_Meds" },
+    "Set_Path_C_Meds": { "type": "SetAttribute", "attribute": "fh_has_meds", "value": true, "direct_transition": "Choose_Subtype" },
+
+    "Set_Path_D": { "type": "SetAttribute", "remarks": ["FLAGSHIP TRICKY: severe LDL only — UNDIAGNOSED FH"], "attribute": "fh_has_dx", "value": false, "direct_transition": "Set_Path_D_Labs" },
+    "Set_Path_D_Labs": { "type": "SetAttribute", "attribute": "fh_has_high_ldl", "value": true, "direct_transition": "Set_Path_D_Meds" },
+    "Set_Path_D_Meds": { "type": "SetAttribute", "attribute": "fh_has_meds", "value": false, "direct_transition": "Choose_Subtype" },
+
+    "Choose_Subtype": {
+      "type": "Simple",
+      "distributed_transition": [
+        { "transition": "Set_Subtype_FH", "distribution": 0.35 },
+        { "transition": "Set_Subtype_Het", "distribution": 0.30 },
+        { "transition": "Set_Subtype_Hom", "distribution": 0.10 },
+        { "transition": "Set_Subtype_HetLDLR", "distribution": 0.15 },
+        { "transition": "Set_Subtype_HomLDLR", "distribution": 0.10 }
+      ]
+    },
+    "Set_Subtype_FH": { "type": "SetAttribute", "attribute": "fh_subtype", "value": "fh", "direct_transition": "Choose_Med" },
+    "Set_Subtype_Het": { "type": "SetAttribute", "attribute": "fh_subtype", "value": "het", "direct_transition": "Choose_Med" },
+    "Set_Subtype_Hom": { "type": "SetAttribute", "attribute": "fh_subtype", "value": "hom", "direct_transition": "Choose_Med" },
+    "Set_Subtype_HetLDLR": { "type": "SetAttribute", "attribute": "fh_subtype", "value": "hetldlr", "direct_transition": "Choose_Med" },
+    "Set_Subtype_HomLDLR": { "type": "SetAttribute", "attribute": "fh_subtype", "value": "homldlr", "direct_transition": "Choose_Med" },
+
+    "Choose_Med": {
+      "type": "Simple",
+      "distributed_transition": [
+        { "transition": "Set_Med_Atorvastatin", "distribution": 0.35 },
+        { "transition": "Set_Med_Simvastatin", "distribution": 0.20 },
+        { "transition": "Set_Med_Rosuvastatin", "distribution": 0.20 },
+        { "transition": "Set_Med_Pravastatin", "distribution": 0.15 },
+        { "transition": "Set_Med_Lovastatin", "distribution": 0.10 }
+      ]
+    },
+    "Set_Med_Atorvastatin": { "type": "SetAttribute", "attribute": "fh_med", "value": "atorvastatin", "direct_transition": "Set_Needs_First_Visit" },
+    "Set_Med_Simvastatin": { "type": "SetAttribute", "attribute": "fh_med", "value": "simvastatin", "direct_transition": "Set_Needs_First_Visit" },
+    "Set_Med_Rosuvastatin": { "type": "SetAttribute", "attribute": "fh_med", "value": "rosuvastatin", "direct_transition": "Set_Needs_First_Visit" },
+    "Set_Med_Pravastatin": { "type": "SetAttribute", "attribute": "fh_med", "value": "pravastatin", "direct_transition": "Set_Needs_First_Visit" },
+    "Set_Med_Lovastatin": { "type": "SetAttribute", "attribute": "fh_med", "value": "lovastatin", "direct_transition": "Set_Needs_First_Visit" },
+
+    "Set_Needs_First_Visit": { "type": "SetAttribute", "attribute": "fh_needs_first_visit", "value": true, "direct_transition": "Wellness_Encounter" },
+    "Wellness_Encounter": { "type": "Encounter", "wellness": true, "direct_transition": "Check_First_Visit" },
+    "Check_First_Visit": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "fh_needs_first_visit", "operator": "==", "value": true }, "transition": "Check_Has_Diagnosis" },
+        { "transition": "End_Wellness_Encounter" }
+      ]
+    },
+    "Check_Has_Diagnosis": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "fh_has_dx", "operator": "==", "value": true }, "transition": "Route_By_Subtype" },
+        { "transition": "Check_Labs_NoDx" }
+      ]
+    },
+    "Route_By_Subtype": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "fh_subtype", "operator": "==", "value": "fh" }, "transition": "Diagnose_FH" },
+        { "condition": { "condition_type": "Attribute", "attribute": "fh_subtype", "operator": "==", "value": "het" }, "transition": "Diagnose_Het" },
+        { "condition": { "condition_type": "Attribute", "attribute": "fh_subtype", "operator": "==", "value": "hom" }, "transition": "Diagnose_Hom" },
+        { "condition": { "condition_type": "Attribute", "attribute": "fh_subtype", "operator": "==", "value": "hetldlr" }, "transition": "Diagnose_HetLDLR" },
+        { "transition": "Diagnose_HomLDLR" }
+      ]
+    },
+    "Diagnose_FH": { "type": "ConditionOnset", "assign_to_attribute": "fh_condition", "codes": [{ "system": "SNOMED-CT", "code": "398036000", "display": "Familial hypercholesterolemia" }], "direct_transition": "Check_Labs_WithDx" },
+    "Diagnose_Het": { "type": "ConditionOnset", "assign_to_attribute": "fh_condition", "codes": [{ "system": "SNOMED-CT", "code": "238079002", "display": "Familial hypercholesterolemia - heterozygous" }], "direct_transition": "Check_Labs_WithDx" },
+    "Diagnose_Hom": { "type": "ConditionOnset", "assign_to_attribute": "fh_condition", "codes": [{ "system": "SNOMED-CT", "code": "238078005", "display": "Familial hypercholesterolemia - homozygous" }], "direct_transition": "Check_Labs_WithDx" },
+    "Diagnose_HetLDLR": { "type": "ConditionOnset", "assign_to_attribute": "fh_condition", "codes": [{ "system": "SNOMED-CT", "code": "403829002", "display": "Familial hypercholesterolemia due to heterozygous low density lipoprotein receptor mutation" }], "direct_transition": "Check_Labs_WithDx" },
+    "Diagnose_HomLDLR": { "type": "ConditionOnset", "assign_to_attribute": "fh_condition", "codes": [{ "system": "SNOMED-CT", "code": "403830007", "display": "Familial hypercholesterolemia due to homozygous low density lipoprotein receptor mutation" }], "direct_transition": "Check_Labs_WithDx" },
+
+    "Check_Labs_WithDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "fh_has_high_ldl", "operator": "==", "value": true }, "transition": "Record_High_LDL_WithDx" },
+        { "transition": "Check_Meds_WithDx" }
+      ]
+    },
+    "Record_High_LDL_WithDx": {
+      "type": "Observation",
+      "category": "laboratory",
+      "unit": "mg/dL",
+      "codes": [{ "system": "LOINC", "code": "2089-1", "display": "Cholesterol in LDL [Mass/volume] in Serum or Plasma" }],
+      "range": { "low": 200, "high": 380 },
+      "direct_transition": "Check_Meds_WithDx"
+    },
+    "Check_Meds_WithDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "fh_has_meds", "operator": "==", "value": true }, "transition": "Route_Med_WithDx" },
+        { "transition": "Clear_First_Visit_Flag" }
+      ]
+    },
+    "Route_Med_WithDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "fh_med", "operator": "==", "value": "atorvastatin" }, "transition": "Prescribe_Atorvastatin_WithDx" },
+        { "condition": { "condition_type": "Attribute", "attribute": "fh_med", "operator": "==", "value": "simvastatin" }, "transition": "Prescribe_Simvastatin_WithDx" },
+        { "condition": { "condition_type": "Attribute", "attribute": "fh_med", "operator": "==", "value": "rosuvastatin" }, "transition": "Prescribe_Rosuvastatin_WithDx" },
+        { "condition": { "condition_type": "Attribute", "attribute": "fh_med", "operator": "==", "value": "pravastatin" }, "transition": "Prescribe_Pravastatin_WithDx" },
+        { "transition": "Prescribe_Lovastatin_WithDx" }
+      ]
+    },
+    "Prescribe_Atorvastatin_WithDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "83367", "display": "atorvastatin" }], "reason": "fh_condition", "direct_transition": "Clear_First_Visit_Flag" },
+    "Prescribe_Simvastatin_WithDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "36567", "display": "simvastatin" }], "reason": "fh_condition", "direct_transition": "Clear_First_Visit_Flag" },
+    "Prescribe_Rosuvastatin_WithDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "301542", "display": "rosuvastatin" }], "reason": "fh_condition", "direct_transition": "Clear_First_Visit_Flag" },
+    "Prescribe_Pravastatin_WithDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "42463", "display": "pravastatin" }], "reason": "fh_condition", "direct_transition": "Clear_First_Visit_Flag" },
+    "Prescribe_Lovastatin_WithDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "6472", "display": "lovastatin" }], "reason": "fh_condition", "direct_transition": "Clear_First_Visit_Flag" },
+
+    "Check_Labs_NoDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "fh_has_high_ldl", "operator": "==", "value": true }, "transition": "Record_High_LDL_NoDx" },
+        { "transition": "Check_Meds_NoDx" }
+      ]
+    },
+    "Record_High_LDL_NoDx": {
+      "type": "Observation",
+      "category": "laboratory",
+      "unit": "mg/dL",
+      "codes": [{ "system": "LOINC", "code": "2089-1", "display": "Cholesterol in LDL [Mass/volume] in Serum or Plasma" }],
+      "range": { "low": 195, "high": 320 },
+      "direct_transition": "Check_Meds_NoDx"
+    },
+    "Check_Meds_NoDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "fh_has_meds", "operator": "==", "value": true }, "transition": "Route_Med_NoDx" },
+        { "transition": "Clear_First_Visit_Flag" }
+      ]
+    },
+    "Route_Med_NoDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "fh_med", "operator": "==", "value": "atorvastatin" }, "transition": "Prescribe_Atorvastatin_NoDx" },
+        { "condition": { "condition_type": "Attribute", "attribute": "fh_med", "operator": "==", "value": "simvastatin" }, "transition": "Prescribe_Simvastatin_NoDx" },
+        { "condition": { "condition_type": "Attribute", "attribute": "fh_med", "operator": "==", "value": "rosuvastatin" }, "transition": "Prescribe_Rosuvastatin_NoDx" },
+        { "condition": { "condition_type": "Attribute", "attribute": "fh_med", "operator": "==", "value": "pravastatin" }, "transition": "Prescribe_Pravastatin_NoDx" },
+        { "transition": "Prescribe_Lovastatin_NoDx" }
+      ]
+    },
+    "Prescribe_Atorvastatin_NoDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "83367", "display": "atorvastatin" }], "direct_transition": "Clear_First_Visit_Flag" },
+    "Prescribe_Simvastatin_NoDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "36567", "display": "simvastatin" }], "direct_transition": "Clear_First_Visit_Flag" },
+    "Prescribe_Rosuvastatin_NoDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "301542", "display": "rosuvastatin" }], "direct_transition": "Clear_First_Visit_Flag" },
+    "Prescribe_Pravastatin_NoDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "42463", "display": "pravastatin" }], "direct_transition": "Clear_First_Visit_Flag" },
+    "Prescribe_Lovastatin_NoDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "6472", "display": "lovastatin" }], "direct_transition": "Clear_First_Visit_Flag" },
+
+    "Clear_First_Visit_Flag": { "type": "SetAttribute", "attribute": "fh_needs_first_visit", "value": false, "direct_transition": "End_Wellness_Encounter" },
+    "End_Wellness_Encounter": { "type": "EncounterEnd", "direct_transition": "Followup_Delay" },
+    "Followup_Delay": { "type": "Delay", "range": { "low": 6, "high": 12, "unit": "months" }, "direct_transition": "Wellness_Encounter" }
+  },
+  "gmf_version": 2
+}

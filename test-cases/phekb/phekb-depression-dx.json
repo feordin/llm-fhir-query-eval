@@ -1,0 +1,94 @@
+{
+  "id": "phekb-depression-dx",
+  "source": "phekb",
+  "source_id": "depression",
+  "name": "Depression - Diagnosis Code Query (Multi-Subtype)",
+  "description": "Tests ability to find depression patients via diagnosis codes. The PheKB depression algorithm classifies into severity types — depression with psychosis, major depressive disorder, non-major depressive disorder. Synthea distributes patients across SNOMED codes for the depression family: Major depressive disorder, Major depression single episode, Recurrent major depression, Dysthymia, and the parent Depressive disorder. An LLM that queries only one code (e.g., MDD) will miss patients coded as recurrent or dysthymia.",
+  "prompt": "Find all patients with a diagnosis of depression, including major depressive disorder (single episode and recurrent) and dysthymia (persistent depressive disorder).",
+  "prompts": {
+    "naive": "Find all patients with depression.",
+    "broad": "Find all patients diagnosed with any form of depression — including major depressive disorder (both single-episode and recurrent variants), dysthymia (persistent depressive disorder), and other depressive disorders.",
+    "expert": "I need to identify all depression patients in our population. Depression is documented under multiple related SNOMED codes: Major depressive disorder (370143000) is the most common, with subtypes Major depression single episode (36923009) and Recurrent major depression (66344007). Dysthymia (78667006) represents persistent low-grade depression. The parent concept Depressive disorder (35489007) is sometimes used for less specific documentation. Search Condition resources for all five codes."
+  },
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "algorithm_path": "diagnosis-path",
+    "algorithm_path_description": "Patients with depression diagnosis codes (Paths A and B). Maps to PheKB depression algorithm criterion for ICD-9/ICD-10 depression codes. Does NOT find Path C patients (on SSRIs without formal dx) — a substantial subset because SSRIs are widely prescribed for many indications.",
+    "code_systems": [
+      "SNOMED CT",
+      "ICD-10-CM"
+    ],
+    "required_codes": [
+      {
+        "system": "http://snomed.info/sct",
+        "code": "370143000",
+        "display": "Major depressive disorder",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "36923009",
+        "display": "Major depression, single episode (disorder)",
+        "source": "Synthea built-in veteran_mdd module"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "66344007",
+        "display": "Recurrent major depression",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "78667006",
+        "display": "Dysthymia",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "35489007",
+        "display": "Depressive disorder",
+        "source": "UMLS verified, parent concept"
+      }
+    ],
+    "complexity": "medium",
+    "tags": [
+      "condition",
+      "psychiatry",
+      "depression",
+      "diagnosis-code",
+      "multi-subtype",
+      "code-variation"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "Condition",
+    "parameters": {
+      "code": "http://snomed.info/sct|370143000,http://snomed.info/sct|36923009,http://snomed.info/sct|66344007,http://snomed.info/sct|78667006,http://snomed.info/sct|35489007"
+    },
+    "url": "Condition?code=http://snomed.info/sct|370143000,http://snomed.info/sct|36923009,http://snomed.info/sct|66344007,http://snomed.info/sct|78667006,http://snomed.info/sct|35489007"
+  },
+  "test_data": {
+    "resources": [
+      "synthea/output/depression/positive/fhir/",
+      "synthea/output/depression/control/fhir/"
+    ],
+    "expected_result_count": 12,
+    "expected_resource_ids": [],
+    "expected_patient_ids": [
+      "21fa6ecc-518a-31ad-7921-0ef5e498bdde",
+      "71cb9d93-0fbd-7471-a2b2-7428ef9df756",
+      "7e0e7cc6-84d7-e8f2-2ec0-33248785c5d9",
+      "a714119a-c214-2162-8060-394901e90a85",
+      "b949ae0b-4fb7-fde2-9452-274b77ccb1ff",
+      "bf8b1ab3-301f-a005-4701-86ed1ff71667",
+      "c4a42722-b087-3935-fbe1-9cc0cf276d40",
+      "d7022824-a930-89ac-2586-594a17e14019",
+      "df299005-16dc-7f0f-ce17-50277d84553f",
+      "e306284b-aaa3-5279-8b2b-530fdb5853d4",
+      "fa04876c-372c-ad66-4fa7-c8bcce305712",
+      "fa05ed8a-d01c-016e-7e8d-9cc291645259"
+    ]
+  },
+  "created_at": "2026-04-25T00:00:00.000000Z",
+  "updated_at": "2026-04-25T00:00:00.000000Z"
+}

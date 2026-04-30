@@ -1,0 +1,32 @@
+{
+  "name": "PheKB Familial Hypercholesterolemia Control",
+  "remarks": [
+    "Control module for PheKB FH phenotype.",
+    "Generates patients who do NOT have FH.",
+    "",
+    "Controls per Geisinger PheKB FH algorithm must:",
+    "  - Have no FH diagnosis",
+    "  - Have LDL < 155 mg/dL (algorithm cutoff for FH controls)",
+    "  - Have no statin therapy",
+    "",
+    "Lab values (intentionally below the case threshold of LDL >= 190):",
+    "  Control LDL range: 70-145 mg/dL"
+  ],
+  "states": {
+    "Initial": { "type": "Initial", "direct_transition": "Age_Guard" },
+    "Age_Guard": { "type": "Guard", "allow": { "condition_type": "Age", "operator": ">=", "quantity": 25, "unit": "years" }, "direct_transition": "Set_Control_Flag" },
+    "Set_Control_Flag": { "type": "SetAttribute", "attribute": "fh_positive", "value": false, "direct_transition": "Wellness_Encounter" },
+    "Wellness_Encounter": { "type": "Encounter", "wellness": true, "direct_transition": "Record_Normal_LDL" },
+    "Record_Normal_LDL": {
+      "type": "Observation",
+      "category": "laboratory",
+      "unit": "mg/dL",
+      "codes": [{ "system": "LOINC", "code": "2089-1", "display": "Cholesterol in LDL [Mass/volume] in Serum or Plasma" }],
+      "range": { "low": 70, "high": 145 },
+      "direct_transition": "End_Wellness_Encounter"
+    },
+    "End_Wellness_Encounter": { "type": "EncounterEnd", "direct_transition": "Followup_Delay" },
+    "Followup_Delay": { "type": "Delay", "range": { "low": 12, "high": 24, "unit": "months" }, "direct_transition": "Wellness_Encounter" }
+  },
+  "gmf_version": 2
+}

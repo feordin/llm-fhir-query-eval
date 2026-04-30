@@ -96,6 +96,85 @@ Condition?code=E11&_include=Condition:subject
 | **F1 Score** | 2 × (P × R) / (P + R) | Harmonic mean - balanced measure |
 | **Exact Match** | Expected == Returned | Boolean - perfect result set |
 
+### Three-Layer Evaluation Decomposition
+
+Our current evaluation produces a single F1 score per test case, making it impossible to diagnose **where** in the reasoning chain the LLM failed. Inspired by FHIR-AgentBench's separation of retrieval metrics from answer correctness, and noting that neither FHIRPath-QA nor FHIR-AgentBench evaluate clinical code accuracy (our unique contribution), we define a three-layer evaluation decomposition:
+
+#### Layer 1: Resource Type Accuracy
+
+> "Did the LLM target the right FHIR resource type?"
+
+- Compares the resource type in the generated query against `expected_query.resource_type` in the test case JSON
+- **Binary metric**: correct or incorrect
+- For multi-query test cases, check whether all required resource types were identified
+- FHIR-AgentBench found this is a major failure mode — agents frequently search `Procedure` when the answer is in `Observation`
+- This metric is essentially free to implement — just parse the generated query URL
+
+#### Layer 2: Code System Accuracy
+
+> "Did the LLM select the right clinical codes?"
+
+This is our **UNIQUE contribution** that neither FHIRPath-QA nor FHIR-AgentBench evaluates. Neither paper tests whether LLMs can map natural clinical language to the correct code system and code.
+
+Three sub-metrics:
+
+- **a) Code system match**: Did the agent use the correct code system URI? (e.g., `http://snomed.info/sct` vs `http://hl7.org/fhir/sid/icd-10-cm`)
+- **b) Code value match**: Did the agent select a valid code? Options for scoring: exact match against `metadata.required_codes`, OR clinically equivalent match via VSAC value set membership
+- **c) Code format correctness**: Did the agent use correct FHIR code parameter syntax? (`system|code` format)
+
+This layer directly measures the value of the UMLS/VSAC MCP server tools: **Tier 1 (no tools) vs Tier 2 (with UMLS MCP) delta on this metric isolates the impact of clinical terminology access**.
+
+Parse `code=` parameter from generated query URL and compare against `metadata.required_codes` array in the test case JSON.
+
+#### Layer 3: Execution Correctness
+
+> "Does the query return the right results?"
+
+- This is our existing F1 metric (precision/recall on patient IDs)
+- Also captures query syntax validity (malformed queries → HTTP 400 → F1 = 0)
+- This remains the **GROUND TRUTH** for pass/fail determination
+- Subsumes Layers 1 and 2 (if both are wrong, Layer 3 will be 0; but Layer 3 can be 0 even with Layers 1 and 2 correct, e.g., correct resource type and code but wrong date filter)
+
+#### Decomposition Summary
+
+| Layer | Metric | Source | Implementation Cost | Key Question |
+|-------|--------|--------|-------------------|--------------|
+| 1. Resource Type | Binary match | `expected_query.resource_type` vs parsed generated URL | Trivial (string parse) | Did it look at the right data? |
+| 2a. Code System | URI match | `metadata.required_codes[].system` vs parsed `code=` param | Low (URL parsing) | Does it know which terminology to use? |
+| 2b. Code Value | Exact or VSAC-equivalent match | `metadata.required_codes[].code` vs parsed code value | Medium (VSAC lookup for lenient mode) | Can it find the right clinical concept? |
+| 2c. Code Format | Syntax check | Check `system\|code` format in query params | Trivial (regex) | Does it know FHIR code parameter syntax? |
+| 3. Execution | Precision/Recall/F1 on patient IDs | FHIR server query execution | Already implemented | Does the query actually work? |
+
+#### Diagnostic Example
+
+The three layers pinpoint exactly where in the reasoning chain the LLM failed:
+
+```yaml
+Test Case: "Find patients with acute kidney injury"
+Expected: Condition?code=http://snomed.info/sct|14669001
+
+Generated (Tier 1, closed book): Observation?code=http://loinc.org|2160-0&value-quantity=gt2||mg/dL
+  Layer 1: FAIL (Observation ≠ Condition) — LLM assumed AKI is found via lab values
+  Layer 2: N/A (wrong resource type, code comparison not meaningful)
+  Layer 3: F1 = 0.00
+
+Generated (Tier 2, with UMLS tools): Condition?code=http://hl7.org/fhir/sid/icd-10-cm|N17
+  Layer 1: PASS (Condition = Condition)
+  Layer 2a: FAIL (ICD-10 ≠ SNOMED) — correct code system for real EHRs but wrong for Synthea data
+  Layer 2b: EQUIVALENT (N17 and 14669001 both represent AKI — verifiable via VSAC)
+  Layer 3: F1 = 0.00 — Synthea uses SNOMED only, so ICD-10 returns no results
+
+Generated (Tier 2, with UMLS tools + server sampling): Condition?code=http://snomed.info/sct|14669001
+  Layer 1: PASS
+  Layer 2a: PASS
+  Layer 2b: PASS (exact match)
+  Layer 3: F1 = 1.00
+```
+
+> **Key insight:** With single F1, the first two generated queries both score 0.00 and appear equally bad. With three-layer decomposition, we can see that the Tier 2 ICD-10 query was actually **MUCH closer** to correct — it identified the right resource type and a clinically valid code, but failed only because Synthea's synthetic data uses SNOMED exclusively. This kind of diagnostic granularity is essential for understanding model behavior and the value of tool access.
+
+See `docs/literature_review.md` for the full analysis of FHIRPath-QA and FHIR-AgentBench that motivated this decomposition.
+
 ### Why Keep Semantic & LLM Judge?
 
 Even though execution is primary, the other evaluators provide value:
@@ -147,6 +226,116 @@ This is why **Phase 2 (Test Data Generation) is critical** - without test data l
 
 ---
 
+## Dual-Track Evaluation: Synthea + MIMIC-IV
+
+### Why Two Tracks?
+
+Synthea provides **controlled ground truth** — we design the modules, we know exactly which patients match each phenotype. But Synthea data is synthetic, uses only SNOMED for conditions, and lacks the messiness of real clinical records. Both FHIRPath-QA and FHIR-AgentBench use MIMIC-IV on FHIR as their data source and explicitly note the limitations of Synthea-based benchmarks.
+
+We run **both tracks** to get the best of each:
+
+| Track | Data Source | Ground Truth Method | Strengths | Limitations |
+|-------|------------|-------------------|-----------|-------------|
+| **Track A: Synthea** (Primary) | Synthea custom modules | Controlled — we built the data, we know the answer | Perfect ground truth, reproducible, multi-path phenotype coverage | Synthetic, SNOMED-only conditions, limited code system diversity |
+| **Track B: MIMIC-IV** (Secondary) | MIMIC-IV on FHIR Demo (100 patients) | Comprehensive reference query with VSAC-expanded codes | Real clinical data, multi-code-system, noise and variability | Approximate ground truth, limited to 100 patients, requires manual validation |
+
+### Track B: MIMIC-IV Ground Truth via Comprehensive Reference Queries
+
+Since MIMIC-IV has no pre-labeled phenotype cohorts, we establish ground truth using **comprehensive reference queries** — maximally inclusive FHIR queries built from VSAC value set expansions that capture all valid codes for a phenotype across all code systems present in the data.
+
+#### Methodology
+
+For each phenotype evaluated on MIMIC-IV:
+
+1. **Identify the relevant VSAC value set(s)** for the condition/phenotype. For example:
+   - Type 2 Diabetes: OID `2.16.840.1.113883.3.464.1003.103.12.1001`
+   - Acute Kidney Injury: search VSAC for relevant value sets
+
+2. **Expand the value set** to get all member codes across all code systems:
+   ```bash
+   /umls expand <OID>
+   ```
+   This returns codes from SNOMED CT, ICD-10-CM, ICD-9-CM, and any other systems included in the value set.
+
+3. **Build a comprehensive reference query** that unions all codes:
+   ```
+   Condition?code=http://snomed.info/sct|44054006,
+     http://hl7.org/fhir/sid/icd-10-cm|E11,
+     http://hl7.org/fhir/sid/icd-10-cm|E11.0,
+     http://hl7.org/fhir/sid/icd-10-cm|E11.1,
+     http://hl7.org/fhir/sid/icd-10-cm|E11.2,
+     ...
+   ```
+
+4. **Execute the reference query** against the MIMIC-IV FHIR server and collect the patient set.
+
+5. **Manually validate** a sample of the returned patients (spot-check 10-20 records) to confirm the reference query is correct. Document any edge cases.
+
+6. **Store the reference patient set** in the test case JSON as `test_data.mimic_expected_patient_ids` (separate from Synthea's `expected_patient_ids`).
+
+#### What This Tests
+
+The MIMIC track is particularly valuable for evaluating **Layer 2 (Code System Accuracy)** because:
+- MIMIC uses multiple code systems (ICD-10-CM, ICD-9-CM, SNOMED CT) for conditions — unlike Synthea which is SNOMED-only
+- The LLM must choose which code system to query, or ideally query multiple
+- The UMLS/VSAC MCP tools become essential for navigating this multi-code-system reality
+- A generated query using ICD-10 `E11` will actually WORK on MIMIC (unlike Synthea), so Layer 3 execution scores are more meaningful for alternative code choices
+
+#### Three-Layer Scoring on MIMIC
+
+| Layer | Synthea Track | MIMIC Track |
+|-------|--------------|-------------|
+| L1: Resource Type | Same | Same |
+| L2: Code Accuracy | Strict — must match Synthea's specific codes | Lenient — any code in the VSAC value set is valid |
+| L3: Execution F1 | Against Synthea patient IDs (controlled) | Against comprehensive reference query patient IDs (validated) |
+
+The key difference: On Synthea, an ICD-10 query for T2DM scores L2b=EQUIVALENT but L3=0.00 (data is SNOMED-only). On MIMIC, the same ICD-10 query scores both L2b=PASS and L3>0 (ICD-10 codes are actually present). This dual-track approach reveals whether a generated query is **clinically correct but data-mismatched** (Synthea L3 failure) vs **genuinely wrong**.
+
+#### Phenotype Priority for MIMIC Track
+
+Start with 3-5 well-characterized phenotypes where VSAC value sets are readily available:
+
+| Phenotype | VSAC Value Set | Expected Code Systems in MIMIC |
+|-----------|---------------|-------------------------------|
+| Type 2 Diabetes | 2.16.840.1.113883.3.464.1003.103.12.1001 | ICD-10-CM, ICD-9-CM, SNOMED CT |
+| Acute Kidney Injury | TBD — search VSAC | ICD-10-CM, ICD-9-CM, SNOMED CT |
+| Asthma | TBD — search VSAC | ICD-10-CM, ICD-9-CM, SNOMED CT |
+| Atrial Fibrillation | TBD — search VSAC | ICD-10-CM, ICD-9-CM, SNOMED CT |
+| Type 2 Diabetes (meds) | RxNorm-based | RxNorm (multiple term types) |
+
+#### Data Setup
+
+MIMIC-IV on FHIR Demo is freely available from PhysioNet:
+- Download: https://physionet.org/content/mimic-iv-fhir-demo/
+- 100 de-identified patients, full FHIR R4 bundles
+- Load into the same HAPI FHIR instance (separate FHIR store or tagged with source)
+- Both FHIRPath-QA and FHIR-AgentBench provide loading scripts we can reference
+
+#### Test Case Structure for MIMIC
+
+MIMIC test cases extend the existing JSON format with a `mimic` section:
+
+```json
+{
+  "id": "phekb-type-2-diabetes-dx",
+  "test_data": {
+    "resources": ["synthea/output/type-2-diabetes/..."],
+    "expected_patient_ids": ["uuid1", "uuid2", "..."],
+    "expected_result_count": 14
+  },
+  "mimic_test_data": {
+    "reference_query_url": "Condition?code=http://snomed.info/sct|44054006,http://hl7.org/fhir/sid/icd-10-cm|E11,http://hl7.org/fhir/sid/icd-10-cm|E11.9,...",
+    "reference_query_vsac_oids": ["2.16.840.1.113883.3.464.1003.103.12.1001"],
+    "expected_patient_ids": ["mimic-patient-id-1", "mimic-patient-id-2", "..."],
+    "expected_result_count": null,
+    "validation_notes": "Manually validated 15/20 returned patients. All confirmed T2DM.",
+    "validated_date": "2026-04-01"
+  }
+}
+```
+
+---
+
 ## Implementation Phases
 
 ```
@@ -158,7 +347,7 @@ This is why **Phase 2 (Test Data Generation) is critical** - without test data l
                                 ▼
 ┌─────────────────────────────────────────────────────────────────────┐
 │                   PHASE 2: Test Data (Weeks 2-4)                     │
-│  Synthea Modules │ Data Generation │ FHIR Server Loading            │
+│  Synthea Modules │ MIMIC-IV Setup │ Data Loading │ Reference Queries │
 └─────────────────────────────────────────────────────────────────────┘
                                 │
                                 ▼
@@ -305,6 +494,19 @@ tools/
 - [ ] FHIR bundle loader
 - [ ] Update test_data in test case files
 
+#### 2.4 MIMIC-IV Data Setup (Track B)
+
+**Key Tasks:**
+- [ ] Download MIMIC-IV on FHIR Demo from PhysioNet (100 de-identified patients)
+- [ ] Load MIMIC-IV FHIR bundles into HAPI FHIR (separate from Synthea data)
+- [ ] For 3-5 priority phenotypes, expand VSAC value sets via `/umls expand <OID>`
+- [ ] Build comprehensive reference queries covering all code systems per phenotype
+- [ ] Execute reference queries, collect ground truth patient sets
+- [ ] Manually validate a sample (10-20 patients) per phenotype
+- [ ] Store results in test case JSON as `mimic_test_data` section
+
+See "Dual-Track Evaluation: Synthea + MIMIC-IV" above for the full methodology.
+
 ### Generated Modules (Priority)
 
 | Phenotype | Complexity | Priority |
@@ -347,6 +549,12 @@ backend/src/evaluation/engines/
 - [ ] Handle query execution errors gracefully
 - [ ] Timeout and retry logic
 - [ ] Detailed diff output (missing IDs, extra IDs)
+- [ ] Implement Layer 1: Resource type match extraction and comparison
+- [ ] Implement Layer 2: Code system and code value parsing from generated query URLs
+- [ ] Implement Layer 2 lenient mode: VSAC value set membership check for clinically equivalent codes
+- [ ] Add three-layer breakdown to `ExecutionResult` dataclass
+- [ ] Update batch evaluation report to show per-layer metrics
+- [ ] Track per-layer deltas between Tier 1 and Tier 2 to quantify UMLS MCP server impact
 
 **Evaluation Output:**
 ```python
@@ -575,6 +783,7 @@ fhir-eval report --run-id latest --format html
 ### Services
 - fhir-candle (Docker) - FHIR server
 - Synthea (Docker) - Patient generator
+- MIMIC-IV on FHIR Demo (PhysioNet) - Real patient data for Track B evaluation
 
 ---
 
@@ -588,3 +797,4 @@ fhir-eval report --run-id latest --format html
 See detailed plans:
 - [LLM Execution Framework](./PLAN-LLM-EXECUTION.md)
 - [Test Data Generation](./PLAN-TEST-DATA-GENERATION.md)
+- `docs/literature_review.md` — Analysis of FHIRPath-QA and FHIR-AgentBench, and how our three-layer evaluation + UMLS/VSAC MCP tools address gaps in both benchmarks

@@ -1,0 +1,138 @@
+{
+  "name": "PheKB Stroke (Cerebral Infarction)",
+  "remarks": [
+    "Custom Synthea module for ischemic stroke / cerebral infarction.",
+    "First cerebrovascular event phenotype (vs CAAD = precursor). Major specialty gap filled.",
+    "First thrombolytic phenotype (alteplase/tPA).",
+    "",
+    "Generates THREE patient paths:",
+    "  Path A (35%): Stroke dx + alteplase (acute thrombolysis) + secondary prevention antiplatelet",
+    "  Path B (50%): Stroke dx + secondary prevention antiplatelet only (missed tPA window or ineligible)",
+    "  Path C (15%): Antiplatelet only, no stroke dx (TRICKY — primary prevention or TIA without coded stroke)",
+    "",
+    "Diagnosis SNOMED variation:",
+    "  60% Cerebral infarction (432504007) — most specific ischemic stroke",
+    "  40% Cerebrovascular accident (230690007) — broader CVA",
+    "",
+    "Antiplatelet distribution:",
+    "  60% Aspirin (RxNorm 1191) — first-line",
+    "  40% Clopidogrel (RxNorm 32968) — for aspirin-intolerant or recurrent",
+    "",
+    "Age guard: >=50 (stroke risk increases with age)."
+  ],
+  "states": {
+    "Initial": { "type": "Initial", "direct_transition": "Age_Guard" },
+    "Age_Guard": { "type": "Guard", "allow": { "condition_type": "Age", "operator": ">=", "quantity": 50, "unit": "years" }, "direct_transition": "Set_Stroke_Flag" },
+    "Set_Stroke_Flag": { "type": "SetAttribute", "attribute": "stroke_positive", "value": true, "direct_transition": "Choose_Patient_Path" },
+    "Choose_Patient_Path": {
+      "type": "Simple",
+      "distributed_transition": [
+        { "transition": "Set_Path_A", "distribution": 0.35 },
+        { "transition": "Set_Path_B", "distribution": 0.50 },
+        { "transition": "Set_Path_C", "distribution": 0.15 }
+      ]
+    },
+    "Set_Path_A": { "type": "SetAttribute", "attribute": "stroke_has_dx", "value": true, "direct_transition": "Set_Path_A_tPA" },
+    "Set_Path_A_tPA": { "type": "SetAttribute", "attribute": "stroke_has_tpa", "value": true, "direct_transition": "Set_Path_A_AP" },
+    "Set_Path_A_AP": { "type": "SetAttribute", "attribute": "stroke_has_ap", "value": true, "direct_transition": "Choose_Subtype" },
+    "Set_Path_B": { "type": "SetAttribute", "attribute": "stroke_has_dx", "value": true, "direct_transition": "Set_Path_B_tPA" },
+    "Set_Path_B_tPA": { "type": "SetAttribute", "attribute": "stroke_has_tpa", "value": false, "direct_transition": "Set_Path_B_AP" },
+    "Set_Path_B_AP": { "type": "SetAttribute", "attribute": "stroke_has_ap", "value": true, "direct_transition": "Choose_Subtype" },
+    "Set_Path_C": { "type": "SetAttribute", "remarks": ["TRICKY: antiplatelet only, no stroke dx"], "attribute": "stroke_has_dx", "value": false, "direct_transition": "Set_Path_C_tPA" },
+    "Set_Path_C_tPA": { "type": "SetAttribute", "attribute": "stroke_has_tpa", "value": false, "direct_transition": "Set_Path_C_AP" },
+    "Set_Path_C_AP": { "type": "SetAttribute", "attribute": "stroke_has_ap", "value": true, "direct_transition": "Choose_Subtype" },
+
+    "Choose_Subtype": {
+      "type": "Simple",
+      "distributed_transition": [
+        { "transition": "Set_Subtype_Infarct", "distribution": 0.60 },
+        { "transition": "Set_Subtype_CVA", "distribution": 0.40 }
+      ]
+    },
+    "Set_Subtype_Infarct": { "type": "SetAttribute", "attribute": "stroke_subtype", "value": "infarct", "direct_transition": "Choose_AP" },
+    "Set_Subtype_CVA": { "type": "SetAttribute", "attribute": "stroke_subtype", "value": "cva", "direct_transition": "Choose_AP" },
+
+    "Choose_AP": {
+      "type": "Simple",
+      "distributed_transition": [
+        { "transition": "Set_AP_Aspirin", "distribution": 0.60 },
+        { "transition": "Set_AP_Clopidogrel", "distribution": 0.40 }
+      ]
+    },
+    "Set_AP_Aspirin": { "type": "SetAttribute", "attribute": "stroke_ap_med", "value": "aspirin", "direct_transition": "Set_Needs_First_Visit" },
+    "Set_AP_Clopidogrel": { "type": "SetAttribute", "attribute": "stroke_ap_med", "value": "clopidogrel", "direct_transition": "Set_Needs_First_Visit" },
+
+    "Set_Needs_First_Visit": { "type": "SetAttribute", "attribute": "stroke_needs_first_visit", "value": true, "direct_transition": "Wellness_Encounter" },
+    "Wellness_Encounter": { "type": "Encounter", "wellness": true, "direct_transition": "Check_First_Visit" },
+    "Check_First_Visit": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "stroke_needs_first_visit", "operator": "==", "value": true }, "transition": "Check_Has_Diagnosis" },
+        { "transition": "End_Wellness_Encounter" }
+      ]
+    },
+    "Check_Has_Diagnosis": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "stroke_has_dx", "operator": "==", "value": true }, "transition": "Route_By_Subtype" },
+        { "transition": "Check_AP_NoDx" }
+      ]
+    },
+    "Route_By_Subtype": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "stroke_subtype", "operator": "==", "value": "infarct" }, "transition": "Diagnose_Infarct" },
+        { "transition": "Diagnose_CVA" }
+      ]
+    },
+    "Diagnose_Infarct": { "type": "ConditionOnset", "assign_to_attribute": "stroke_condition", "codes": [{ "system": "SNOMED-CT", "code": "432504007", "display": "Cerebral infarction" }], "direct_transition": "Check_tPA_WithDx" },
+    "Diagnose_CVA": { "type": "ConditionOnset", "assign_to_attribute": "stroke_condition", "codes": [{ "system": "SNOMED-CT", "code": "230690007", "display": "Cerebrovascular accident" }], "direct_transition": "Check_tPA_WithDx" },
+
+    "Check_tPA_WithDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "stroke_has_tpa", "operator": "==", "value": true }, "transition": "Prescribe_Alteplase_WithDx" },
+        { "transition": "Check_AP_WithDx" }
+      ]
+    },
+    "Prescribe_Alteplase_WithDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "8410", "display": "alteplase" }], "reason": "stroke_condition", "direct_transition": "Check_AP_WithDx" },
+    "Check_AP_WithDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "stroke_has_ap", "operator": "==", "value": true }, "transition": "Route_AP_WithDx" },
+        { "transition": "Clear_First_Visit_Flag" }
+      ]
+    },
+    "Route_AP_WithDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "stroke_ap_med", "operator": "==", "value": "aspirin" }, "transition": "Prescribe_Aspirin_WithDx" },
+        { "transition": "Prescribe_Clopidogrel_WithDx" }
+      ]
+    },
+    "Prescribe_Aspirin_WithDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "1191", "display": "aspirin" }], "reason": "stroke_condition", "direct_transition": "Clear_First_Visit_Flag" },
+    "Prescribe_Clopidogrel_WithDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "32968", "display": "clopidogrel" }], "reason": "stroke_condition", "direct_transition": "Clear_First_Visit_Flag" },
+
+    "Check_AP_NoDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "stroke_has_ap", "operator": "==", "value": true }, "transition": "Route_AP_NoDx" },
+        { "transition": "Clear_First_Visit_Flag" }
+      ]
+    },
+    "Route_AP_NoDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "stroke_ap_med", "operator": "==", "value": "aspirin" }, "transition": "Prescribe_Aspirin_NoDx" },
+        { "transition": "Prescribe_Clopidogrel_NoDx" }
+      ]
+    },
+    "Prescribe_Aspirin_NoDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "1191", "display": "aspirin" }], "direct_transition": "Clear_First_Visit_Flag" },
+    "Prescribe_Clopidogrel_NoDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "32968", "display": "clopidogrel" }], "direct_transition": "Clear_First_Visit_Flag" },
+
+    "Clear_First_Visit_Flag": { "type": "SetAttribute", "attribute": "stroke_needs_first_visit", "value": false, "direct_transition": "End_Wellness_Encounter" },
+    "End_Wellness_Encounter": { "type": "EncounterEnd", "direct_transition": "Followup_Delay" },
+    "Followup_Delay": { "type": "Delay", "range": { "low": 6, "high": 12, "unit": "months" }, "direct_transition": "Wellness_Encounter" }
+  },
+  "gmf_version": 2
+}

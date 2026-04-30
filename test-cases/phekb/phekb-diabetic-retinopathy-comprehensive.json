@@ -1,0 +1,138 @@
+{
+  "id": "phekb-diabetic-retinopathy-comprehensive",
+  "source": "phekb",
+  "source_id": "diabetic-retinopathy",
+  "name": "Diabetic Retinopathy - Comprehensive Provider Query (DX + Meds + Procedures)",
+  "description": "Simulates an ophthalmologist identifying their complete diabetic retinopathy patient population. Combines: DR diagnosis codes, anti-VEGF injections, and fundoscopic procedures. Tests Condition + MedicationRequest + Procedure union for diabetes complication.",
+  "prompt": "I need to identify my complete diabetic retinopathy patient population for a quality improvement initiative on screening adherence and anti-VEGF treatment monitoring. From clinical experience, DR patients are documented in different ways: most have a formal DR diagnosis (proliferative, nonproliferative, or with macular edema), some are on anti-VEGF intravitreal injections (ranibizumab, aflibercept, bevacizumab), and most have undergone fundoscopic eye examination.\n\nPlease run multiple FHIR queries to capture the full population:\n1. Patients with any diabetic retinopathy diagnosis\n2. Patients prescribed anti-VEGF injections\n3. Patients who have undergone camera fundoscopy\n\nFor each query, return the matching resources. I want the union of all patients found. Note: DR is a complication of diabetes, so all DR patients should also have a diabetes diagnosis on their problem list.",
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "multi_query": true,
+    "algorithm_path": "comprehensive",
+    "algorithm_path_description": "Union of DR dx + anti-VEGF Rx + fundoscopy Procedure. Tests Condition + MedicationRequest + Procedure cross-resource union for diabetes complication.",
+    "expected_queries": [
+      "Condition?code=http://snomed.info/sct|4855003,http://snomed.info/sct|59276001,http://snomed.info/sct|390834004,http://snomed.info/sct|1551000119108,http://snomed.info/sct|312912001",
+      "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|595060,http://www.nlm.nih.gov/research/umls/rxnorm|1232150,http://www.nlm.nih.gov/research/umls/rxnorm|253337",
+      "Procedure?code=http://snomed.info/sct|314971001"
+    ],
+    "code_systems": [
+      "SNOMED CT",
+      "RxNorm"
+    ],
+    "required_codes": [
+      {
+        "system": "http://snomed.info/sct",
+        "code": "4855003",
+        "display": "Retinopathy due to diabetes mellitus",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "59276001",
+        "display": "Proliferative retinopathy due to diabetes",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "390834004",
+        "display": "Nonproliferative retinopathy due to diabetes",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "1551000119108",
+        "display": "Nonproliferative retinopathy due to T2DM",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "312912001",
+        "display": "Macular edema due to diabetes",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "595060",
+        "display": "ranibizumab",
+        "source": "RxNav"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "1232150",
+        "display": "aflibercept",
+        "source": "RxNav"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "253337",
+        "display": "bevacizumab",
+        "source": "RxNav"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "314971001",
+        "display": "Camera fundoscopy",
+        "source": "UMLS verified"
+      }
+    ],
+    "complexity": "expert",
+    "tags": [
+      "multi-query",
+      "ophthalmology",
+      "endocrinology",
+      "diabetic-retinopathy",
+      "comprehensive",
+      "cross-resource",
+      "diabetes-complication"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "Patient",
+    "parameters": {},
+    "url": "Condition?code=http://snomed.info/sct|4855003,http://snomed.info/sct|59276001,http://snomed.info/sct|390834004,http://snomed.info/sct|1551000119108,http://snomed.info/sct|312912001"
+  },
+  "test_data": {
+    "resources": [
+      "synthea/output/diabetic-retinopathy/positive/fhir/",
+      "synthea/output/diabetic-retinopathy/control/fhir/"
+    ],
+    "expected_result_count": 32,
+    "expected_resource_ids": [],
+    "expected_patient_ids": [
+      "03906476-eb43-2d89-903d-a7e3607a2012",
+      "181cbad8-9a29-3f47-785b-6cc9236b2563",
+      "1f692384-f5c5-f3cf-6dfb-6ac1020a59c3",
+      "245c4da0-71dc-497d-c1e9-ab01868f6bf1",
+      "26d56732-a937-035c-2ca8-66716ce8ffe9",
+      "330e036e-e859-ff37-d2bd-3f5f6ac962d5",
+      "3d44dd41-ae97-85fb-961e-4abfb87beb3a",
+      "4ccc72dc-062c-9e79-fd0b-c419752d0caa",
+      "5a72baf1-7ac2-e183-0ced-276d71de2933",
+      "5b4c5728-3e94-c067-9790-677255aba1fa",
+      "6c473997-f23a-4c6f-d512-7f262d96298a",
+      "7995d283-e2f0-5b31-fbd7-e312011df15d",
+      "9c53c50a-d21a-63c9-61ee-9808fe526d87",
+      "a00ce3e0-ae4b-d7f0-883d-a0aca75b248a",
+      "a2778aa4-b309-55fb-e498-28ebe5f04d94",
+      "a2ee893a-7ccd-d320-9fba-e38988910e64",
+      "ada012b4-398c-d68d-a775-0eaf4516ac02",
+      "adc7c9a5-e76d-79d3-5036-311970485f0c",
+      "aee649a2-fa0f-1192-fb9e-7eb9b248dacc",
+      "b0a14ba3-92ff-d81d-2e2b-aa204391e4cc",
+      "bb4238ef-0ae8-4172-1f8e-ab06c97d3d57",
+      "bce1ecd8-7d2b-4432-33b9-cb17f86263ce",
+      "bdc5b3d2-0d31-fd00-25ef-01e9af0c9555",
+      "bf293810-0017-d7b1-a584-4109ee16589a",
+      "cc383f65-ed33-b39c-bdcf-c6ca3be2722e",
+      "d7ea7b90-0a4f-29b2-c1fb-8364057496ea",
+      "d94f72ed-2a0d-07d0-7349-63621954a9e0",
+      "decfda0d-0e8f-ff85-e3c6-62a36e885ca7",
+      "e25af212-4f40-f0f0-5693-f86af0f1888a",
+      "e4db0471-7b58-b23b-9174-4adbf21308bc",
+      "e6e18607-a958-9e3a-1a49-e878fa5c703c",
+      "f59f28b1-1cf2-6394-bc89-9eaa95d9450c"
+    ]
+  },
+  "created_at": "2026-04-28T00:00:00.000000Z",
+  "updated_at": "2026-04-27T00:00:00.000000Z"
+}

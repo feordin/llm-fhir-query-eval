@@ -1,0 +1,60 @@
+{
+  "name": "PheKB Hearing Loss",
+  "remarks": [
+    "Custom Synthea module for hearing loss.",
+    "First sensory disorder phenotype.",
+    "",
+    "Generates patients with diagnosis only (no medications or labs — hearing aids are devices, not medications):",
+    "  100% have hearing loss diagnosis distributed across 3 SNOMED variants",
+    "",
+    "Diagnosis SNOMED variation:",
+    "  50% Sensorineural hearing loss (60700002) — most common, age-related/noise-induced",
+    "  30% Conductive hearing loss (44057004) — outer/middle ear cause",
+    "  20% Partial deafness (343087000) — broader concept",
+    "",
+    "Age guard: >=50 (age-related hearing loss prevalence increases sharply after 50)."
+  ],
+  "states": {
+    "Initial": { "type": "Initial", "direct_transition": "Age_Guard" },
+    "Age_Guard": { "type": "Guard", "allow": { "condition_type": "Age", "operator": ">=", "quantity": 50, "unit": "years" }, "direct_transition": "Set_HL_Flag" },
+    "Set_HL_Flag": { "type": "SetAttribute", "attribute": "hl_positive", "value": true, "direct_transition": "Choose_Subtype" },
+
+    "Choose_Subtype": {
+      "type": "Simple",
+      "distributed_transition": [
+        { "transition": "Set_Subtype_Sensorineural", "distribution": 0.50 },
+        { "transition": "Set_Subtype_Conductive", "distribution": 0.30 },
+        { "transition": "Set_Subtype_Partial", "distribution": 0.20 }
+      ]
+    },
+    "Set_Subtype_Sensorineural": { "type": "SetAttribute", "attribute": "hl_subtype", "value": "sensorineural", "direct_transition": "Set_Needs_First_Visit" },
+    "Set_Subtype_Conductive": { "type": "SetAttribute", "attribute": "hl_subtype", "value": "conductive", "direct_transition": "Set_Needs_First_Visit" },
+    "Set_Subtype_Partial": { "type": "SetAttribute", "attribute": "hl_subtype", "value": "partial", "direct_transition": "Set_Needs_First_Visit" },
+
+    "Set_Needs_First_Visit": { "type": "SetAttribute", "attribute": "hl_needs_first_visit", "value": true, "direct_transition": "Wellness_Encounter" },
+    "Wellness_Encounter": { "type": "Encounter", "wellness": true, "direct_transition": "Check_First_Visit" },
+    "Check_First_Visit": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "hl_needs_first_visit", "operator": "==", "value": true }, "transition": "Route_By_Subtype" },
+        { "transition": "End_Wellness_Encounter" }
+      ]
+    },
+    "Route_By_Subtype": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "hl_subtype", "operator": "==", "value": "sensorineural" }, "transition": "Diagnose_Sensorineural" },
+        { "condition": { "condition_type": "Attribute", "attribute": "hl_subtype", "operator": "==", "value": "conductive" }, "transition": "Diagnose_Conductive" },
+        { "transition": "Diagnose_Partial" }
+      ]
+    },
+    "Diagnose_Sensorineural": { "type": "ConditionOnset", "assign_to_attribute": "hl_condition", "codes": [{ "system": "SNOMED-CT", "code": "60700002", "display": "Sensorineural hearing loss" }], "direct_transition": "Clear_First_Visit_Flag" },
+    "Diagnose_Conductive": { "type": "ConditionOnset", "assign_to_attribute": "hl_condition", "codes": [{ "system": "SNOMED-CT", "code": "44057004", "display": "Conductive hearing loss" }], "direct_transition": "Clear_First_Visit_Flag" },
+    "Diagnose_Partial": { "type": "ConditionOnset", "assign_to_attribute": "hl_condition", "codes": [{ "system": "SNOMED-CT", "code": "343087000", "display": "Partial deafness" }], "direct_transition": "Clear_First_Visit_Flag" },
+
+    "Clear_First_Visit_Flag": { "type": "SetAttribute", "attribute": "hl_needs_first_visit", "value": false, "direct_transition": "End_Wellness_Encounter" },
+    "End_Wellness_Encounter": { "type": "EncounterEnd", "direct_transition": "Followup_Delay" },
+    "Followup_Delay": { "type": "Delay", "range": { "low": 12, "high": 24, "unit": "months" }, "direct_transition": "Wellness_Encounter" }
+  },
+  "gmf_version": 2
+}

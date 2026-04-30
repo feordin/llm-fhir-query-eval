@@ -1,0 +1,132 @@
+{
+  "id": "phekb-breast-cancer-comprehensive",
+  "source": "phekb",
+  "source_id": "breast-cancer",
+  "name": "Breast Cancer - Comprehensive Provider Query",
+  "description": "Simulates an oncologist identifying their complete breast cancer patient population for a quality improvement initiative. The PheKB breast cancer algorithm uses ICD diagnostic codes plus hormone therapy use as case-classifying signals. Real-world identification primarily unions: breast cancer diagnosis codes and adjuvant systemic therapy prescriptions. Note that the chemoprevention population (Path C) introduces a small false-positive signal in the medication query.",
+  "prompt": "I need to identify my complete breast cancer patient population for a treatment adherence and survivorship quality initiative. From clinical experience, I know breast cancer patients are documented in different ways: most have a formal diagnosis code with histology (IDC, ILC, or general carcinoma), and most receive adjuvant systemic therapy (endocrine therapy for HR-positive disease, trastuzumab for HER2-positive disease). A small number of patients receive tamoxifen or aromatase inhibitors for chemoprevention without an active breast cancer diagnosis.\n\nPlease run multiple FHIR queries to capture the full population:\n1. Patients with any breast cancer diagnosis (parent malignant neoplasm, carcinoma of breast, IDC, ILC, or invasive carcinoma)\n2. Patients prescribed adjuvant therapy (tamoxifen, aromatase inhibitors, or trastuzumab)\n\nFor each query, return the matching resources. I want the union of all patients found. Note that the medication query will overcount slightly because of the chemoprevention population.",
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "multi_query": true,
+    "algorithm_path": "comprehensive",
+    "algorithm_path_description": "Union of breast cancer dx codes (Paths A+B) and endocrine therapy/HER2 therapy Rx (Paths A+C). Path C is small (~15%) because chemoprevention is a niche use.",
+    "expected_queries": [
+      "Condition?code=http://snomed.info/sct|254837009,http://snomed.info/sct|254838004,http://snomed.info/sct|408643008,http://snomed.info/sct|278054005,http://snomed.info/sct|713609000",
+      "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|10324,http://www.nlm.nih.gov/research/umls/rxnorm|199224,http://www.nlm.nih.gov/research/umls/rxnorm|200064,http://www.nlm.nih.gov/research/umls/rxnorm|310261,http://www.nlm.nih.gov/research/umls/rxnorm|224905"
+    ],
+    "code_systems": [
+      "SNOMED CT",
+      "RxNorm"
+    ],
+    "required_codes": [
+      {
+        "system": "http://snomed.info/sct",
+        "code": "254837009",
+        "display": "Malignant neoplasm of breast",
+        "source": "ASCO VSAC"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "254838004",
+        "display": "Carcinoma of breast",
+        "source": "ASCO VSAC"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "408643008",
+        "display": "Infiltrating duct carcinoma of breast",
+        "source": "ASCO VSAC"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "278054005",
+        "display": "Lobular carcinoma of breast",
+        "source": "ASCO VSAC"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "713609000",
+        "display": "Invasive carcinoma of breast",
+        "source": "ASCO VSAC"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "10324",
+        "display": "tamoxifen",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "199224",
+        "display": "anastrozole 1 MG Oral Tablet",
+        "source": "VSAC verified"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "200064",
+        "display": "letrozole 2.5 MG Oral Tablet",
+        "source": "VSAC verified"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "310261",
+        "display": "exemestane 25 MG Oral Tablet",
+        "source": "VSAC verified"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "224905",
+        "display": "trastuzumab",
+        "source": "UMLS verified"
+      }
+    ],
+    "complexity": "expert",
+    "tags": [
+      "multi-query",
+      "oncology",
+      "breast-cancer",
+      "comprehensive",
+      "cross-resource"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "Patient",
+    "parameters": {},
+    "url": "Condition?code=http://snomed.info/sct|254837009,http://snomed.info/sct|254838004,http://snomed.info/sct|408643008,http://snomed.info/sct|278054005,http://snomed.info/sct|713609000"
+  },
+  "test_data": {
+    "resources": [
+      "synthea/output/breast-cancer/positive/fhir/",
+      "synthea/output/breast-cancer/control/fhir/"
+    ],
+    "expected_result_count": 23,
+    "expected_resource_ids": [],
+    "expected_patient_ids": [
+      "157ef18c-208e-3e27-05d1-ba3d7af10aba",
+      "18fb1dd9-c6cd-2630-9891-e0c756ae00fc",
+      "2976dab9-dc5c-ce87-1393-47445d0f5208",
+      "41cc47e3-9883-b373-877c-534e405ea8ea",
+      "484ad1ea-f8e8-de23-ac9f-51f57d3e9f80",
+      "5b5456b4-945c-a3fa-f1b4-fcd3863a4f32",
+      "66316f15-f227-a3db-705f-012abfec553f",
+      "84aab935-2975-ee2f-1b5d-a4952ddb8353",
+      "8731fac9-87f4-f4dd-19de-06e432eabd2d",
+      "8c134c6b-b20f-99d3-f9e3-f3d829e8bac8",
+      "90fd40b5-2649-d413-4c97-e5689aabf617",
+      "a46f5350-df0d-cc4d-7cb8-824a4f940f35",
+      "ad35f856-856e-6757-6526-1eea11470b8c",
+      "ae4ca1b9-fa3e-0da2-870a-3723c29ad322",
+      "b136c08d-fc91-5523-a1fe-836d37248eb1",
+      "ba1884ba-f019-9c56-538d-2064caf29f17",
+      "c4efe1fe-d6fe-7f3c-dc7b-eeeb386273bb",
+      "c65de70d-5bf1-078a-f770-b39dd9513eae",
+      "c8374d67-93d2-2d1a-2432-6ab0c125e240",
+      "f1e7ab73-931e-2d5d-8d5d-9a367098acf2",
+      "f1fc0f13-1412-6ab5-edef-ffa63f39464b",
+      "f782a497-fab6-7145-c137-74aedb93eaca",
+      "f7955fc9-6273-813e-9751-a870b74dea81"
+    ]
+  },
+  "created_at": "2026-04-27T00:00:00.000000Z",
+  "updated_at": "2026-04-27T00:00:00.000000Z"
+}

@@ -1,0 +1,130 @@
+{
+  "id": "phekb-liver-cancer-comprehensive",
+  "source": "phekb",
+  "source_id": "liver-cancer",
+  "name": "Liver Cancer (HCC) - Comprehensive Provider Query (Multi-Resource)",
+  "description": "Provider-level query simulating a hepatology QI lead identifying ALL HCC patients across the system. Some patients have a coded HCC diagnosis; others were flagged via incidental elevated AFP without a formal diagnosis (Path D). The LLM should run two queries — by Condition and by elevated AFP Observation — and union the patient sets.",
+  "prompt": "I need to identify my complete liver cancer patient population for a hepatology quality initiative. Some patients have a formal hepatocellular carcinoma diagnosis on their problem list. Others have an incidentally elevated alpha-fetoprotein without yet having a formal diagnosis — these are often the highest-priority cases for follow-up imaging. Please run multiple FHIR queries to capture both groups: (1) patients with any liver cancer diagnosis on their problem list, and (2) patients with AFP results at or above 100 ng/mL. Return the union of patients found.",
+  "prompts": {
+    "naive": "Find all my liver cancer patients across the chart.",
+    "broad": "Find all liver cancer patients — some have a coded HCC diagnosis, others may have only an elevated AFP without a formal diagnosis. Run separate queries for diagnoses and lab results, then return the union.",
+    "expert": "Run two queries. (1) Condition?code=http://snomed.info/sct|187769009,http://snomed.info/sct|93870000,http://snomed.info/sct|94381002 — covers HCC diagnosis variants. (2) Observation?code=http://loinc.org|1834-1&value-quantity=ge100||ng/mL — captures elevated AFP without formal diagnosis. Union the patient IDs across both queries."
+  },
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "algorithm_path": "comprehensive-provider-query",
+    "algorithm_path_description": "Multi-query union: Condition (HCC dx) + Observation (AFP elevation). Tests provider-level reasoning that some patients are flagged by labs alone.",
+    "code_systems": [
+      "SNOMED CT",
+      "LOINC"
+    ],
+    "required_codes": [
+      {
+        "system": "http://snomed.info/sct",
+        "code": "187769009",
+        "display": "Primary carcinoma of liver",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "93870000",
+        "display": "Malignant neoplasm of liver",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "94381002",
+        "display": "Metastatic malignant neoplasm to liver",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://loinc.org",
+        "code": "1834-1",
+        "display": "Alpha-1-Fetoprotein [Mass/volume] in Serum or Plasma",
+        "source": "UMLS verified"
+      }
+    ],
+    "complexity": "expert",
+    "tags": [
+      "multi-query",
+      "comprehensive",
+      "oncology",
+      "liver-cancer",
+      "hcc",
+      "afp",
+      "tumor-marker"
+    ],
+    "multi_query": true,
+    "expected_queries": [
+      "Condition?code=http://snomed.info/sct|187769009,http://snomed.info/sct|93870000,http://snomed.info/sct|94381002",
+      "Observation?code=http://loinc.org|1834-1&value-quantity=ge100||ng/mL"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "multi",
+    "parameters": {},
+    "url": "Condition?code=http://snomed.info/sct|187769009,http://snomed.info/sct|93870000,http://snomed.info/sct|94381002"
+  },
+  "test_data": {
+    "resources": [
+      "synthea/output/liver-cancer/positive/fhir/",
+      "synthea/output/liver-cancer/control/fhir/"
+    ],
+    "expected_result_count": 50,
+    "expected_resource_ids": [],
+    "expected_patient_ids": [
+      "053b737f-a6df-5828-7be0-87e0bce74d7a",
+      "082cbd41-bc2a-5137-1a2a-116c3793b295",
+      "0a40142b-2534-98c6-1a8f-fdb434b2c2a5",
+      "0e3d44e0-81c7-8bde-b31d-22de079d317c",
+      "183505c6-946f-11d4-bb69-6053cc86aee3",
+      "1b4c3ffe-7575-9fbd-d8f4-809e36603abc",
+      "1b721303-e568-98e3-ae80-e9e1868f5422",
+      "20ad1b47-dc41-55aa-8be4-99b240360abb",
+      "210d615a-a5c7-46e1-99b2-f13a0a234e4e",
+      "2efb9408-f9ed-2540-1ca8-c8d41a85f9a5",
+      "3804a99c-30e5-02b5-b524-a87a248772f7",
+      "398aa54b-1d14-77d5-dbb0-ab6e7a7d231c",
+      "3dfe3d68-ce4d-b2d1-b13f-6d2c209676bc",
+      "3eb07164-5b1d-5375-746e-d182a46b6d89",
+      "3f1913fa-c3fc-f906-6364-d5816adb7ae7",
+      "48de5b53-3403-14a0-ef5c-aabfcadb6bee",
+      "49727baa-9038-ff91-b8d3-de97070ec4b8",
+      "49d2364f-7347-cc61-0f96-adec2029ac6f",
+      "4a559561-cf77-3b56-2085-3a3640b6d960",
+      "4cb506bc-db91-cd33-c880-349ba2d556a4",
+      "4e68e661-0624-732b-db1e-274ef76ff8e0",
+      "4ee7356f-409c-0fa4-0d5b-ecb92246b76a",
+      "529f3e39-ee2c-80fd-1bf8-3ba6f637218b",
+      "5374d941-b322-1ee7-3eb7-48153ddd46a0",
+      "55e10ef8-6e88-f7fe-1116-d26b5cff9b79",
+      "6a7e7ec2-b57f-9554-08eb-97fcb1949b32",
+      "76bf549a-57e4-d4f1-5ac5-8fef7e9c9fb3",
+      "805d4eef-7e62-b4f6-a570-347f4cd3e226",
+      "9220429d-00fe-1614-1cab-fd30dbfc815d",
+      "9468826b-20c1-1fbb-6bc7-3540c7b1027d",
+      "9e1e989c-e876-0fbe-8f15-fbe3731e29ad",
+      "a0fde809-7fb1-c5d6-f134-9de9377ad2a6",
+      "ae021cf2-ad0d-1797-2ad2-51ce1307eb6d",
+      "aed870df-99d8-0073-28f0-9b0d16a30c8b",
+      "b6826b18-1edb-9a98-3bcc-351bc37357a0",
+      "baefc8a4-c246-c836-2b55-27b5c4c25807",
+      "c20b45c9-17e4-ca88-e1bb-8efa10809305",
+      "cddb02bf-5bb7-1c2a-10da-f416a400135f",
+      "cf8e80b2-ec70-c64e-dd94-d1cb8a81c389",
+      "dab8ba97-7c53-8768-2106-e21ec23e8070",
+      "dc354432-9274-9b0d-8087-b18bb4e985f0",
+      "dcde3b8e-5100-5bb6-71a6-8bcbf93be05d",
+      "dfa17492-7704-2348-2ed5-1d4e357b67b6",
+      "e893f296-bcc6-46c3-33f6-a46fb7492ca8",
+      "ebfaf99c-651e-eb4a-d095-d7846688966f",
+      "f358f579-f4e8-6edc-d601-00647777e288",
+      "f4a267c7-9deb-6baa-908a-2623ac630d0e",
+      "f883c03f-33bc-2fa5-21d3-5c9494987e0b",
+      "f8af8cfd-d134-2885-1738-96b5ff3abd3e",
+      "f96a19d0-4d67-263e-4caa-c9c174ca8e0e"
+    ]
+  },
+  "created_at": "2026-04-28T00:00:00.000000Z",
+  "updated_at": "2026-04-27T00:00:00.000000Z"
+}

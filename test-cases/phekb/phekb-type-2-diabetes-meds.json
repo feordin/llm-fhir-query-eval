@@ -4,7 +4,11 @@
   "source_id": "type-2-diabetes-mellitus",
   "name": "Type 2 Diabetes - Medication Query",
   "description": "Tests ability to find T2DM patients by searching for diabetes medication prescriptions. This is critical for PheKB algorithm Path 4 where patients have NO diagnosis code but ARE prescribed T2DM medications. Also catches patients from paths 1-2 who have both diagnosis and medications.",
-  "prompt": "Find all medication orders for type 2 diabetes medications such as metformin, sulfonylureas (glipizide, glyburide, glimepiride), thiazolidinediones (pioglitazone), DPP-4 inhibitors (sitagliptin), or GLP-1 agonists (exenatide).",
+  "prompt": "Find all medication orders for type 2 diabetes medications.",
+  "prompts": {
+    "naive": "Find all medication orders for type 2 diabetes medications.",
+    "expert": "I need to find all patients who have been prescribed oral hypoglycemic agents or other diabetes-specific medications. The medication classes to look for include biguanides like metformin (the most commonly prescribed first-line agent), sulfonylureas such as glipizide and glyburide, thiazolidinediones like pioglitazone, DPP-4 inhibitors such as sitagliptin, and GLP-1 receptor agonists. Patients may be on various formulations and dosages of these medications, so the query should search MedicationRequest resources using the specific drug product codes. Note that some of these patients may not have a formal diabetes diagnosis in the system -- they may have been started on metformin by an outside provider."
+  },
   "metadata": {
     "implementation_guide": "US Core 5.0.0",
     "algorithm_path": "paths-1-2-4",
@@ -16,32 +20,32 @@
       {
         "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
         "code": "860975",
-        "display": "24 HR metformin hydrochloride 500 MG Extended Release Oral Tablet"
+        "display": "24 HR metformin hydrochloride 500 MG Extended Release Oral Tablet",
+        "source": "document"
       },
       {
         "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
         "code": "310490",
-        "display": "glipizide 5 MG Oral Tablet"
+        "display": "glipizide 5 MG Oral Tablet",
+        "source": "document"
       },
       {
         "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
         "code": "665033",
-        "display": "sitagliptin 100 MG Oral Tablet"
+        "display": "sitagliptin 100 MG Oral Tablet",
+        "source": "document"
       },
       {
         "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
         "code": "310537",
-        "display": "glyburide 5 MG Oral Tablet"
+        "display": "glyburide 5 MG Oral Tablet",
+        "source": "document"
       },
       {
         "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
         "code": "312440",
-        "display": "pioglitazone 30 MG Oral Tablet"
-      },
-      {
-        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
-        "code": "199246",
-        "display": "glimepiride 2 MG Oral Tablet"
+        "display": "pioglitazone 30 MG Oral Tablet",
+        "source": "document"
       }
     ],
     "complexity": "medium",
@@ -55,39 +59,85 @@
   "expected_query": {
     "resource_type": "MedicationRequest",
     "parameters": {
-      "code": "http://www.nlm.nih.gov/research/umls/rxnorm|860975,http://www.nlm.nih.gov/research/umls/rxnorm|310490,http://www.nlm.nih.gov/research/umls/rxnorm|665033,http://www.nlm.nih.gov/research/umls/rxnorm|310539,http://www.nlm.nih.gov/research/umls/rxnorm|312440,http://www.nlm.nih.gov/research/umls/rxnorm|199246"
+      "code": "http://www.nlm.nih.gov/research/umls/rxnorm|860975,http://www.nlm.nih.gov/research/umls/rxnorm|310490,http://www.nlm.nih.gov/research/umls/rxnorm|665033,http://www.nlm.nih.gov/research/umls/rxnorm|310537,http://www.nlm.nih.gov/research/umls/rxnorm|312440"
     },
-    "url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|860975,http://www.nlm.nih.gov/research/umls/rxnorm|310490,http://www.nlm.nih.gov/research/umls/rxnorm|665033,http://www.nlm.nih.gov/research/umls/rxnorm|310539,http://www.nlm.nih.gov/research/umls/rxnorm|312440,http://www.nlm.nih.gov/research/umls/rxnorm|199246"
+    "url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|860975,http://www.nlm.nih.gov/research/umls/rxnorm|310490,http://www.nlm.nih.gov/research/umls/rxnorm|665033,http://www.nlm.nih.gov/research/umls/rxnorm|310537,http://www.nlm.nih.gov/research/umls/rxnorm|312440"
   },
   "test_data": {
     "resources": [
       "synthea/output/type-2-diabetes/positive/fhir/",
       "synthea/output/type-2-diabetes/control/fhir/"
     ],
-    "expected_result_count": 20,
-    "expected_resource_ids": [
-      "1392",
-      "1395",
-      "1442",
-      "1689",
-      "1750",
-      "1842",
-      "2075",
-      "2330",
-      "2377",
-      "2566",
-      "2766",
-      "2769",
-      "2820",
-      "3025",
-      "3413",
-      "3557",
-      "3656",
-      "3762",
-      "3821",
-      "4011"
+    "expected_result_count": 65,
+    "expected_resource_ids": [],
+    "expected_patient_ids": [
+      "080b069b-5108-46b6-ecef-6aacd3b9ef3f",
+      "0c07fba7-424b-53b7-b593-b9f82d87416d",
+      "1ad96ef4-e416-4722-441e-3cb3ce280833",
+      "1ee7c50f-5670-cbe9-241c-8ee0c76169a2",
+      "244397f7-9204-140c-0301-0678bcc3c4a0",
+      "2c167999-289d-95fa-5c27-7d8b8d35348c",
+      "2dbe8913-9254-068d-bbbb-cd42528ca0fb",
+      "35b353dd-402b-571a-d67a-af0a104d0854",
+      "374a7a12-0a25-632b-8db1-0d3f3e27780e",
+      "46ee9d82-b52c-856d-069b-5064ff052225",
+      "46f6a358-f8f8-614d-0542-19451221109a",
+      "4bfa091f-113c-25f3-9eec-381f1e884a58",
+      "4f083ce3-f12b-bb4b-7353-e17f0cd55b0a",
+      "559f630b-99b6-b0cf-1cb1-97625ff2fc01",
+      "56a1a07e-47a5-7407-9121-43cd2bbadf1d",
+      "57fba869-2570-031e-a7c0-292907b28680",
+      "5ba0a3f3-32f7-02b1-ec6a-8f568923954c",
+      "5e7ebf2c-22ec-a89b-53ab-38edddd81be9",
+      "61e24146-3373-5634-b04c-0c53949fd033",
+      "62f60bdb-cc5c-8305-b98b-f2b229a55eca",
+      "639e38d8-6d69-f17d-d55f-2378d9039499",
+      "6ad2dd19-6429-2020-2a52-9253f9a033b4",
+      "6aed9210-c500-4375-b0fc-3374c40b8591",
+      "6fbddf55-7096-b883-7cd3-260f27953080",
+      "75768779-dbf2-ef75-613f-b4331ae42946",
+      "77cc4d24-863d-7d6f-1774-67dd9f563063",
+      "79f1c6d7-8add-c610-2711-ad39f2800507",
+      "7b06ee52-df9a-8487-0be6-dff27cc7d519",
+      "840e5833-655e-1dff-59e7-e4e1f4f1db7b",
+      "89b73d4b-8b8c-1b15-1b4a-687147f661a4",
+      "8ad5d7b1-bc3d-8a55-ff50-ae6d863c8826",
+      "8e031d52-2ae1-197f-3319-03ce8cc45bbf",
+      "8fee110c-d66a-8634-de2a-e70d182be55b",
+      "922fb35e-148d-9e82-7e65-bfa05e3b3515",
+      "9661a432-4630-2cd9-142c-386845fae837",
+      "97831cc7-a4d9-9690-42f2-feec54e86943",
+      "982750f4-569b-5949-196b-60699bdda3fb",
+      "9af513f8-372b-e1f2-0682-1733cf7371f4",
+      "a2102333-3206-a76f-74aa-f471137fdffa",
+      "a2fb233f-60e0-b477-cd38-af3923f792a3",
+      "a65890ee-275c-2935-abf7-ac448a829871",
+      "a862380e-4d7b-7f34-2462-5dda8ce2f9f7",
+      "aa616abe-1761-0c9a-7959-07544679dafd",
+      "ab126ccb-62f8-c219-fe5c-7b33b84340bc",
+      "b6a1cac9-8873-36a7-e726-4aad8a07d44d",
+      "b8e80a18-3024-169f-17e0-d3f4bcaf270d",
+      "b97f99f3-6c1d-090b-f6d3-39bea7df0b04",
+      "ba419d35-0dfe-8af7-347c-eebf02485a56",
+      "bbfe92bc-ab7c-4a2c-0259-f8ed47c47cc0",
+      "bff9d9d5-ee3d-d852-9c67-36d8361a4a4a",
+      "c0139ea3-de29-71b8-b6da-fe13ca7209a9",
+      "c07ad94d-67cb-d96f-0993-81252fc11607",
+      "c0a47dee-cc72-29ce-df5a-ea6d306c36a4",
+      "c3f5ba78-4bf3-c61d-af9e-8bddb229f7b3",
+      "c86c400e-ff88-a1e3-2e23-caa4d8311f47",
+      "ca0e013b-9d15-6bf7-c32c-e703725df964",
+      "d2f7cdbc-c194-ed1c-b317-10dec56f51e0",
+      "db3fff49-3bd8-9684-ff2f-a52757e9afa1",
+      "df9f6545-52b2-5c29-faca-b1563b1efe3b",
+      "e2b354d9-1408-a615-3848-1ad7c9142e34",
+      "e74367bd-7385-97dc-2c7f-251b4cd9fe29",
+      "eb5910f1-26e6-bc6f-b300-716eae678d6f",
+      "f95a6723-14a5-c4b6-78df-fa97f7ab361c",
+      "fd08f424-a245-6d32-ee9e-005154f96c5b",
+      "fed54161-0f33-63f0-7d02-d958d26ce492"
     ]
   },
   "created_at": "2026-03-12T18:00:00.000000Z",
-  "updated_at": "2026-03-12T18:00:00.000000Z"
+  "updated_at": "2026-04-27T00:00:00.000000Z"
 }

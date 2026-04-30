@@ -1,0 +1,119 @@
+{
+  "name": "PheKB Schizophrenia",
+  "remarks": [
+    "Custom Synthea module for schizophrenia.",
+    "First antipsychotic phenotype. 5th psychiatric phenotype (after Depression, Anxiety, ADHD, Bipolar).",
+    "Tests typical (haloperidol) vs atypical (risperidone, olanzapine, quetiapine) antipsychotic distinction.",
+    "",
+    "Generates THREE patient paths:",
+    "  Path A (65%): Schizophrenia dx + antipsychotic Rx",
+    "  Path B (20%): Schizophrenia dx, no medication (newly dx, treatment-naive)",
+    "  Path C (15%): Antipsychotic only, no schizophrenia dx (TRICKY — bipolar mania, MDD adjunct, dementia agitation)",
+    "",
+    "Antipsychotic distribution (Paths A + C):",
+    "  15% Haloperidol (RxNorm 5093) — typical/first-gen",
+    "  35% Risperidone (RxNorm 35636) — atypical, common first-line",
+    "  30% Olanzapine (RxNorm 61381) — atypical, weight-gain risk",
+    "  20% Quetiapine (RxNorm 51272) — atypical, sedating (high cross-indication with bipolar/insomnia/MDD)",
+    "",
+    "Age guard: >=18."
+  ],
+  "states": {
+    "Initial": { "type": "Initial", "direct_transition": "Age_Guard" },
+    "Age_Guard": { "type": "Guard", "allow": { "condition_type": "Age", "operator": ">=", "quantity": 18, "unit": "years" }, "direct_transition": "Set_Schizo_Flag" },
+    "Set_Schizo_Flag": { "type": "SetAttribute", "attribute": "schizo_positive", "value": true, "direct_transition": "Choose_Patient_Path" },
+    "Choose_Patient_Path": {
+      "type": "Simple",
+      "distributed_transition": [
+        { "transition": "Set_Path_A", "distribution": 0.65 },
+        { "transition": "Set_Path_B", "distribution": 0.20 },
+        { "transition": "Set_Path_C", "distribution": 0.15 }
+      ]
+    },
+    "Set_Path_A": { "type": "SetAttribute", "attribute": "schizo_has_dx", "value": true, "direct_transition": "Set_Path_A_Med" },
+    "Set_Path_A_Med": { "type": "SetAttribute", "attribute": "schizo_has_med", "value": true, "direct_transition": "Choose_Med" },
+    "Set_Path_B": { "type": "SetAttribute", "attribute": "schizo_has_dx", "value": true, "direct_transition": "Set_Path_B_Med" },
+    "Set_Path_B_Med": { "type": "SetAttribute", "attribute": "schizo_has_med", "value": false, "direct_transition": "Choose_Med" },
+    "Set_Path_C": { "type": "SetAttribute", "remarks": ["TRICKY: antipsychotic without schizophrenia dx"], "attribute": "schizo_has_dx", "value": false, "direct_transition": "Set_Path_C_Med" },
+    "Set_Path_C_Med": { "type": "SetAttribute", "attribute": "schizo_has_med", "value": true, "direct_transition": "Choose_Med" },
+
+    "Choose_Med": {
+      "type": "Simple",
+      "distributed_transition": [
+        { "transition": "Set_Med_Haloperidol", "distribution": 0.15 },
+        { "transition": "Set_Med_Risperidone", "distribution": 0.35 },
+        { "transition": "Set_Med_Olanzapine", "distribution": 0.30 },
+        { "transition": "Set_Med_Quetiapine", "distribution": 0.20 }
+      ]
+    },
+    "Set_Med_Haloperidol": { "type": "SetAttribute", "attribute": "schizo_med", "value": "haloperidol", "direct_transition": "Set_Needs_First_Visit" },
+    "Set_Med_Risperidone": { "type": "SetAttribute", "attribute": "schizo_med", "value": "risperidone", "direct_transition": "Set_Needs_First_Visit" },
+    "Set_Med_Olanzapine": { "type": "SetAttribute", "attribute": "schizo_med", "value": "olanzapine", "direct_transition": "Set_Needs_First_Visit" },
+    "Set_Med_Quetiapine": { "type": "SetAttribute", "attribute": "schizo_med", "value": "quetiapine", "direct_transition": "Set_Needs_First_Visit" },
+
+    "Set_Needs_First_Visit": { "type": "SetAttribute", "attribute": "schizo_needs_first_visit", "value": true, "direct_transition": "Wellness_Encounter" },
+    "Wellness_Encounter": { "type": "Encounter", "wellness": true, "direct_transition": "Check_First_Visit" },
+    "Check_First_Visit": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "schizo_needs_first_visit", "operator": "==", "value": true }, "transition": "Check_Has_Diagnosis" },
+        { "transition": "End_Wellness_Encounter" }
+      ]
+    },
+    "Check_Has_Diagnosis": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "schizo_has_dx", "operator": "==", "value": true }, "transition": "Diagnose_Schizo" },
+        { "transition": "Check_Med_NoDx" }
+      ]
+    },
+    "Diagnose_Schizo": { "type": "ConditionOnset", "assign_to_attribute": "schizo_condition", "codes": [{ "system": "SNOMED-CT", "code": "58214004", "display": "Schizophrenia" }], "direct_transition": "Check_Med_WithDx" },
+
+    "Check_Med_WithDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "schizo_has_med", "operator": "==", "value": true }, "transition": "Route_Med_WithDx" },
+        { "transition": "Clear_First_Visit_Flag" }
+      ]
+    },
+    "Route_Med_WithDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "schizo_med", "operator": "==", "value": "haloperidol" }, "transition": "Prescribe_Haloperidol_WithDx" },
+        { "condition": { "condition_type": "Attribute", "attribute": "schizo_med", "operator": "==", "value": "risperidone" }, "transition": "Prescribe_Risperidone_WithDx" },
+        { "condition": { "condition_type": "Attribute", "attribute": "schizo_med", "operator": "==", "value": "olanzapine" }, "transition": "Prescribe_Olanzapine_WithDx" },
+        { "transition": "Prescribe_Quetiapine_WithDx" }
+      ]
+    },
+    "Prescribe_Haloperidol_WithDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "5093", "display": "haloperidol" }], "reason": "schizo_condition", "direct_transition": "Clear_First_Visit_Flag" },
+    "Prescribe_Risperidone_WithDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "35636", "display": "risperidone" }], "reason": "schizo_condition", "direct_transition": "Clear_First_Visit_Flag" },
+    "Prescribe_Olanzapine_WithDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "61381", "display": "olanzapine" }], "reason": "schizo_condition", "direct_transition": "Clear_First_Visit_Flag" },
+    "Prescribe_Quetiapine_WithDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "51272", "display": "quetiapine" }], "reason": "schizo_condition", "direct_transition": "Clear_First_Visit_Flag" },
+
+    "Check_Med_NoDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "schizo_has_med", "operator": "==", "value": true }, "transition": "Route_Med_NoDx" },
+        { "transition": "Clear_First_Visit_Flag" }
+      ]
+    },
+    "Route_Med_NoDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "schizo_med", "operator": "==", "value": "haloperidol" }, "transition": "Prescribe_Haloperidol_NoDx" },
+        { "condition": { "condition_type": "Attribute", "attribute": "schizo_med", "operator": "==", "value": "risperidone" }, "transition": "Prescribe_Risperidone_NoDx" },
+        { "condition": { "condition_type": "Attribute", "attribute": "schizo_med", "operator": "==", "value": "olanzapine" }, "transition": "Prescribe_Olanzapine_NoDx" },
+        { "transition": "Prescribe_Quetiapine_NoDx" }
+      ]
+    },
+    "Prescribe_Haloperidol_NoDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "5093", "display": "haloperidol" }], "direct_transition": "Clear_First_Visit_Flag" },
+    "Prescribe_Risperidone_NoDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "35636", "display": "risperidone" }], "direct_transition": "Clear_First_Visit_Flag" },
+    "Prescribe_Olanzapine_NoDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "61381", "display": "olanzapine" }], "direct_transition": "Clear_First_Visit_Flag" },
+    "Prescribe_Quetiapine_NoDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "51272", "display": "quetiapine" }], "direct_transition": "Clear_First_Visit_Flag" },
+
+    "Clear_First_Visit_Flag": { "type": "SetAttribute", "attribute": "schizo_needs_first_visit", "value": false, "direct_transition": "End_Wellness_Encounter" },
+    "End_Wellness_Encounter": { "type": "EncounterEnd", "direct_transition": "Followup_Delay" },
+    "Followup_Delay": { "type": "Delay", "range": { "low": 3, "high": 6, "unit": "months" }, "direct_transition": "Wellness_Encounter" }
+  },
+  "gmf_version": 2
+}

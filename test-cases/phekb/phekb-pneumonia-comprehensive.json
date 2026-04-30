@@ -1,0 +1,167 @@
+{
+  "id": "phekb-pneumonia-comprehensive",
+  "source": "phekb",
+  "source_id": "pneumonia",
+  "name": "Pneumonia - Comprehensive Provider Query (DX + Meds + Procedures)",
+  "description": "Simulates a hospitalist identifying their complete pneumonia patient population. Combines: pneumonia diagnosis codes (multi-etiology), antibiotics, and chest X-ray procedures. Tests Condition + MedicationRequest + Procedure resource union for acute infection.",
+  "prompt": "I need to identify my complete pneumonia patient population for a quality improvement initiative on antibiotic stewardship and timely imaging. From clinical experience, pneumonia patients are documented in different ways: most have a formal pneumonia diagnosis (community-acquired, nosocomial, bacterial, or viral), most are on antibiotics (azithromycin, ceftriaxone, amoxicillin, levofloxacin, doxycycline), and most have undergone chest X-ray for confirmation.\n\nPlease run multiple FHIR queries to capture the full population:\n1. Patients with any pneumonia diagnosis\n2. Patients prescribed pneumonia antibiotics\n3. Patients who have undergone chest X-ray\n\nFor each query, return the matching resources. I want the union of all patients found. Note: antibiotics have heavy cross-indication with other infections, so the diagnosis and procedure paths are more specific.",
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "multi_query": true,
+    "algorithm_path": "comprehensive",
+    "algorithm_path_description": "Union of pneumonia dx + antibiotic Rx + chest X-ray Procedure. Tests Condition + MedicationRequest + Procedure cross-resource union for acute infection.",
+    "expected_queries": [
+      "Condition?code=http://snomed.info/sct|233604007,http://snomed.info/sct|385093006,http://snomed.info/sct|425464007,http://snomed.info/sct|53084003,http://snomed.info/sct|75570004",
+      "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|18631,http://www.nlm.nih.gov/research/umls/rxnorm|2193,http://www.nlm.nih.gov/research/umls/rxnorm|723,http://www.nlm.nih.gov/research/umls/rxnorm|82122,http://www.nlm.nih.gov/research/umls/rxnorm|3640",
+      "Procedure?code=http://snomed.info/sct|399208008"
+    ],
+    "code_systems": [
+      "SNOMED CT",
+      "RxNorm"
+    ],
+    "required_codes": [
+      {
+        "system": "http://snomed.info/sct",
+        "code": "233604007",
+        "display": "Pneumonia",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "385093006",
+        "display": "Community acquired pneumonia",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "425464007",
+        "display": "Nosocomial pneumonia",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "53084003",
+        "display": "Bacterial pneumonia",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "75570004",
+        "display": "Viral pneumonia",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "18631",
+        "display": "azithromycin",
+        "source": "RxNav"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "2193",
+        "display": "ceftriaxone",
+        "source": "RxNav"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "723",
+        "display": "amoxicillin",
+        "source": "RxNav"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "82122",
+        "display": "levofloxacin",
+        "source": "RxNav"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "3640",
+        "display": "doxycycline",
+        "source": "RxNav"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "399208008",
+        "display": "Plain X-ray of chest",
+        "source": "UMLS verified"
+      }
+    ],
+    "complexity": "expert",
+    "tags": [
+      "multi-query",
+      "pulmonary",
+      "infectious",
+      "pneumonia",
+      "comprehensive",
+      "cross-resource"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "Patient",
+    "parameters": {},
+    "url": "Condition?code=http://snomed.info/sct|233604007,http://snomed.info/sct|385093006,http://snomed.info/sct|425464007,http://snomed.info/sct|53084003,http://snomed.info/sct|75570004"
+  },
+  "test_data": {
+    "resources": [
+      "synthea/output/pneumonia/positive/fhir/",
+      "synthea/output/pneumonia/control/fhir/"
+    ],
+    "expected_result_count": 50,
+    "expected_resource_ids": [],
+    "expected_patient_ids": [
+      "01afacac-995e-47c5-64fd-55091847832c",
+      "050f131d-a2fb-cc21-4e6d-adf9c9f3fd4f",
+      "09d512a8-1840-d329-30d4-6231d4410300",
+      "0f9e4555-af6d-179e-c55d-f1e0e1dced7f",
+      "12e66073-f97b-36cf-d4e4-48271f298ae5",
+      "1e5b012a-0c7f-a93a-5ccc-f6c00ba6eb93",
+      "226f5d33-bb6f-3b29-bea4-abbd656362c7",
+      "24c50ee6-527e-b2c8-e7b2-289804a6f2c3",
+      "2a7085c2-b47b-218e-d982-de18f4d7a500",
+      "34f44f8d-6988-cff9-1820-5fbbf42d7e37",
+      "350a6880-0169-58d6-8496-11473ffa9e5c",
+      "37bd1337-38ac-639a-2754-1a8319915f1d",
+      "44ee3c82-2589-9f1f-e885-b1813b549beb",
+      "45ada565-cdfd-ca10-d99f-f6e5ca5a37a9",
+      "4bd4bacb-b540-a1ef-6b54-47e3d05a3466",
+      "501e6fbf-79ba-fc17-a976-dab35c780191",
+      "51e6015d-291b-6c6b-63e3-fd33764fa1b9",
+      "588587a7-2680-b934-893b-b9a40ca57791",
+      "59fb81f3-4b0c-f94f-f2a2-bee029569284",
+      "623202da-3fea-19d5-d8f9-8a4cd6177c3f",
+      "65891ca5-ddba-879c-e7da-5c992a5481b7",
+      "67f65c4a-c673-18f8-6523-ef10d67187f3",
+      "68e41563-dd18-cef8-8227-5a7f5ea2252f",
+      "68eee745-9b5c-9471-e848-78e96d5b537f",
+      "6b615f38-c9ef-301c-3a05-494b47cfb092",
+      "70979eb8-c8ad-e6c4-1d1d-3781d76eb9d5",
+      "77cbed44-394f-14d2-9ae1-1e68e6fcf747",
+      "789b837b-1234-8bb9-e194-3a1fcf12feec",
+      "7919127a-c0d0-c773-ba6b-00158862fcdd",
+      "7e93fc99-b5eb-8063-2d18-d365dc2f6c48",
+      "85b498bc-8e44-c21c-5d53-912d4c6d4865",
+      "86a16931-50d1-e542-ad65-b271a91f506e",
+      "95023c4a-9aa1-b2ef-a525-1d6ad4195dc9",
+      "98669eac-9074-9673-f776-3bd58d3a86b8",
+      "9c460c27-abc6-570b-ff6c-0ca42ee7c581",
+      "9dcacaae-ed79-776a-bff0-f1cdc93330e1",
+      "a2bb0e7e-6c5b-79c4-e726-31df2ac5d5b9",
+      "b0a55131-30c7-1f91-49b8-be050b52aa8a",
+      "bee426c2-c276-a743-a364-bda33e31aa6e",
+      "bee6e48e-0abe-86f1-bb48-ff24c24d5e46",
+      "bf15c007-83f7-6243-8c52-4a5fede0b19c",
+      "c62b042b-73f3-975f-dd8c-dbdf2a83ebd0",
+      "ce10f59c-9f67-1e29-17d6-67503ec3fe44",
+      "d5117732-23f5-3a51-8f6b-0dfe3a914be6",
+      "e0147cb4-c95d-1925-10fb-923d4c9d4a1f",
+      "ea698188-8be1-886c-eb0d-2d342294030d",
+      "eecca33e-9c8a-ff3d-a4b2-f9ec51b93d7e",
+      "eedbed9f-7254-578a-198f-16e622d61c50",
+      "f1719505-3b41-5180-2581-41388c40b96b",
+      "fda5e6df-d9c9-0317-ec83-49b2c52e9546"
+    ]
+  },
+  "created_at": "2026-04-28T00:00:00.000000Z",
+  "updated_at": "2026-04-27T00:00:00.000000Z"
+}

@@ -1,0 +1,118 @@
+{
+  "id": "phekb-dementia-meds",
+  "source": "phekb",
+  "source_id": "dementia",
+  "name": "Dementia - Cognitive Enhancer Medication Query",
+  "description": "Tests ability to find dementia patients via cholinesterase inhibitor and NMDA antagonist medications. The PheKB algorithm allows medication evidence as a sufficient criterion (criterion 2: any dementia drug fill). Synthea distributes patients across multiple SCD codes for donepezil (Aricept), galantamine (Razadyne), memantine (Namenda), and the donepezil/memantine combo (Namzaric). An LLM that queries only one drug will miss patients on others.",
+  "prompt": "Retrieve medication orders for patients prescribed dementia treatments such as cholinesterase inhibitors or NMDA receptor antagonists.",
+  "prompts": {
+    "naive": "Find patients on dementia medications.",
+    "broad": "Find patients prescribed cognitive enhancer medications used to treat dementia. The two main drug classes are cholinesterase inhibitors (donepezil/Aricept, galantamine/Razadyne, rivastigmine/Exelon) and NMDA receptor antagonists (memantine/Namenda). There are also combination products like Namzaric (donepezil + memantine).",
+    "expert": "I need to find all patients on chronic dementia therapy. Synthea generates these at the SCD level — search MedicationRequest for these RxNorm codes: 997223 (Donepezil 10 MG), 1100184 (Donepezil 23 MG), 310436 (Galantamine 4 MG), 996740 (Memantine HCl 2 MG/ML solution), and 1599803 (Donepezil 10 MG / Memantine 28 MG ER combo). Note that querying ingredient codes will not match SCD-coded prescriptions in HAPI FHIR — you must query the specific SCD codes."
+  },
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "algorithm_path": "medication-path",
+    "algorithm_path_description": "PheKB dementia algorithm criterion 2: dementia drug fill. Maps to Path A and Path C patients (anyone on cognitive enhancer meds). Includes Path C tricky patients who have no formal dementia diagnosis.",
+    "code_systems": [
+      "RxNorm"
+    ],
+    "required_codes": [
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "997223",
+        "display": "Donepezil hydrochloride 10 MG Oral Tablet",
+        "source": "Synthea built-in dementia module"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "1100184",
+        "display": "Donepezil hydrochloride 23 MG Oral Tablet",
+        "source": "Synthea built-in dementia module"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "310436",
+        "display": "Galantamine 4 MG Oral Tablet",
+        "source": "Synthea built-in dementia module"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "996740",
+        "display": "Memantine hydrochloride 2 MG/ML Oral Solution",
+        "source": "Synthea built-in dementia module"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "1599803",
+        "display": "24 HR Donepezil 10 MG / Memantine 28 MG ER Oral Capsule",
+        "source": "Synthea built-in dementia module (Namzaric combo)"
+      }
+    ],
+    "complexity": "medium",
+    "tags": [
+      "medication",
+      "neurology",
+      "dementia",
+      "rxnorm-scd",
+      "code-variation"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "MedicationRequest",
+    "parameters": {
+      "code": "http://www.nlm.nih.gov/research/umls/rxnorm|997223,http://www.nlm.nih.gov/research/umls/rxnorm|1100184,http://www.nlm.nih.gov/research/umls/rxnorm|310436,http://www.nlm.nih.gov/research/umls/rxnorm|996740,http://www.nlm.nih.gov/research/umls/rxnorm|1599803"
+    },
+    "url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|997223,http://www.nlm.nih.gov/research/umls/rxnorm|1100184,http://www.nlm.nih.gov/research/umls/rxnorm|310436,http://www.nlm.nih.gov/research/umls/rxnorm|996740,http://www.nlm.nih.gov/research/umls/rxnorm|1599803"
+  },
+  "test_data": {
+    "resources": [
+      "synthea/output/dementia/positive/fhir/",
+      "synthea/output/dementia/control/fhir/"
+    ],
+    "expected_result_count": 38,
+    "expected_resource_ids": [],
+    "expected_patient_ids": [
+      "09278a56-0541-6d95-b59b-2212f90e7614",
+      "0f321eb0-3fe3-e648-803c-66a0b357edf7",
+      "14cd5a2b-c703-6204-e1cd-5c598f0d0b48",
+      "2017daab-c1bc-808d-bed8-3b352a2c5cdc",
+      "2a4d9d5b-fec0-4a16-43e7-c6965b6ca17b",
+      "3ed9f977-3713-3382-9245-9322cd5545f4",
+      "3f3eb144-2570-245d-965a-40aeb8e50b2a",
+      "3f753e95-1db1-f0bf-3b94-5770f0937f2e",
+      "486c49f5-1086-54f8-208d-729581d16600",
+      "48bf6ebc-b754-b7c5-248f-870d48c12542",
+      "4e5e84ea-ec03-ef23-ccfe-719257d59a42",
+      "54e82802-0a04-8d4f-07a7-b769e04b00da",
+      "59ce1274-1db7-9389-c91d-a75da40be80d",
+      "5b897894-d747-42f9-1ee4-629a282a39d5",
+      "6b20f9fb-e318-b6ae-65b5-1eae81c039ec",
+      "6b815db1-d138-8b50-abc5-b1ce85ac67a5",
+      "74a89a95-0cd5-0eb9-a2c6-d0a052202284",
+      "7f8b7232-2086-8d42-4dc7-cff6069b6d9f",
+      "881b42b8-a663-b348-72df-0dfbc68eca98",
+      "89c7d417-f506-ecfd-e530-b5537d39e9c3",
+      "8ae0d313-4083-1efe-ef7a-190898515f70",
+      "9095f2e4-4b47-b0f7-0fbe-0080a3dd07bb",
+      "93e4c3ca-d318-c6f4-4079-852ecd8c2991",
+      "9aa3b49c-f51b-a242-b251-d78fb27f0de5",
+      "a09de125-08f9-dcdb-8811-8236a06e6b76",
+      "a29023a1-2cbf-0f67-e9d2-763c05b3437a",
+      "a93ab8fc-0fd8-4571-9806-41b39edd279c",
+      "b2e88ff8-aae6-f90c-1a6c-054a83cb0e89",
+      "b9e0c2d4-23f7-29b9-b563-ce4b89636b71",
+      "ba3bbe48-52dd-d697-9203-f6d7f360bdc8",
+      "c5d7e9c3-5c55-79db-23e6-92eb2a7820fe",
+      "c9cf5b3b-d231-18e0-bc0b-bddff94ee60b",
+      "d6bc2a3c-f643-db37-108b-ef44c367d0f6",
+      "d962ad1d-4e81-94b1-f36d-423eeefd5c48",
+      "e1073fe9-ab54-8401-a0e7-78e9cc6509c5",
+      "e4f2487c-098d-f0b9-71cc-e435aa8c0464",
+      "e9a1681b-3a7a-34e4-1ebd-135387fbdbc8",
+      "f1636daf-0022-3707-b936-afc4993138cf"
+    ]
+  },
+  "created_at": "2026-04-25T00:00:00.000000Z",
+  "updated_at": "2026-04-25T00:00:00.000000Z"
+}

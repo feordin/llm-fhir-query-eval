@@ -1,0 +1,63 @@
+{
+  "id": "phekb-aaa-dx",
+  "source": "phekb",
+  "source_id": "abdominal-aortic-aneurysm-aaa",
+  "name": "Abdominal Aortic Aneurysm - Diagnosis Code Query",
+  "description": "Tests ability to find AAA patients by searching for diagnosis codes. Covers PheKB algorithm Case Types 2 and 3 where patients have formal AAA diagnosis codes (ruptured or unruptured) recorded as Condition resources. This is the simplest AAA query — a single FHIR search for the general SNOMED code for abdominal aortic aneurysm.",
+  "prompt": "Find all patients diagnosed with an abdominal aortic aneurysm.",
+  "prompts": {
+    "naive": "Find all patients diagnosed with an abdominal aortic aneurysm.",
+    "expert": "I need to identify patients with an abdominal aortic aneurysm diagnosis in their records. AAA can present as either ruptured or unruptured, and these are distinct clinical entities with different SNOMED codes. The general abdominal aortic aneurysm code should capture unruptured cases, but ruptured AAA has its own specific code that may need to be included separately. Search Condition resources for both variants to ensure complete capture. Some patients may have had their AAA discovered incidentally on imaging and the diagnosis documented on the problem list without any surgical intervention."
+  },
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "algorithm_path": "Case Types 2-3: diagnosis-based",
+    "algorithm_path_description": "Patients with AAA diagnosis codes (SNOMED). Case Type 2 patients have ruptured AAA (I71.3/SNOMED 14336007), Case Type 3 patients have unruptured AAA (I71.4/SNOMED 233985008). The general SNOMED code 233985008 covers the parent concept.",
+    "code_systems": [
+      "SNOMED CT"
+    ],
+    "required_codes": [
+      {
+        "system": "http://snomed.info/sct",
+        "code": "233985008",
+        "display": "Abdominal aortic aneurysm",
+        "source": "document"
+      }
+    ],
+    "complexity": "easy",
+    "tags": [
+      "condition",
+      "vascular",
+      "abdominal-aortic-aneurysm",
+      "diagnosis-code"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "Condition",
+    "parameters": {
+      "code": "http://snomed.info/sct|233985008"
+    },
+    "url": "Condition?code=http://snomed.info/sct|233985008"
+  },
+  "test_data": {
+    "resources": [
+      "synthea/output/abdominal-aortic-aneurysm/positive/fhir/",
+      "synthea/output/abdominal-aortic-aneurysm/control/fhir/"
+    ],
+    "expected_result_count": 9,
+    "expected_resource_ids": [],
+    "expected_patient_ids": [
+      "2c167999-289d-95fa-5c27-7d8b8d35348c",
+      "35b353dd-402b-571a-d67a-af0a104d0854",
+      "62f60bdb-cc5c-8305-b98b-f2b229a55eca",
+      "6fbddf55-7096-b883-7cd3-260f27953080",
+      "9661a432-4630-2cd9-142c-386845fae837",
+      "aa616abe-1761-0c9a-7959-07544679dafd",
+      "bff9d9d5-ee3d-d852-9c67-36d8361a4a4a",
+      "c86c400e-ff88-a1e3-2e23-caa4d8311f47",
+      "e74367bd-7385-97dc-2c7f-251b4cd9fe29"
+    ]
+  },
+  "created_at": "2026-03-15T00:00:00.000000Z",
+  "updated_at": "2026-03-15T00:00:00.000000Z"
+}

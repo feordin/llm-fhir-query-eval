@@ -1,0 +1,573 @@
+{
+  "name": "PheKB Dementia",
+  "remarks": [
+    "Custom Synthea module for PheKB phenotype: dementia (Marshfield Clinic, Peggy Peissig)",
+    "",
+    "PheKB algorithm: Identify dementia patients via either:",
+    "  Criterion 1: >= 5 visits with dementia ICD codes (290.x, 291.0-2, 292.82, 294.x, 331.0/11/19/82)",
+    "  Criterion 2: >= 1 dementia drug fill (donepezil, galantamine, rivastigmine, memantine, tacrine)",
+    "  Final cohort = UNION of the two criteria.",
+    "",
+    "Generates THREE patient paths:",
+    "  Path A (40%): Diagnosis + Medication — full presentation",
+    "  Path B (25%): Diagnosis only, no meds — early-stage dementia, lifestyle interventions only",
+    "  Path C (35%): Medication only, NO diagnosis (tricky — outside neurologist Rx, undocumented)",
+    "",
+    "Diagnosis SNOMED code variation (Paths A + B):",
+    "  40% Alzheimer's disease (26929004) — most common",
+    "  20% Vascular dementia (429998004)",
+    "  15% Late onset dementia due to Lewy body disease (312991009)",
+    "  10% Frontotemporal dementia (230270009)",
+    "  15% Generic Dementia parent (52448006)",
+    "",
+    "Medication SCD variation (Paths A + C):",
+    "  35% Donepezil 10 MG (997223) — most common dementia med",
+    "  15% Donepezil 23 MG (1100184) — high-dose Aricept",
+    "  15% Galantamine 4 MG (310436) — Razadyne",
+    "  15% Memantine 2 MG/ML solution (996740) — Namenda",
+    "  20% Donepezil/Memantine combo 1599803 — Namzaric",
+    "",
+    "Age guard: >= 50 years (dementia is overwhelmingly an elderly condition)",
+    "",
+    "Codes verified via NIH UMLS MCP (2025AB)."
+  ],
+  "states": {
+    "Initial": {
+      "type": "Initial",
+      "direct_transition": "Age_Guard"
+    },
+
+    "Age_Guard": {
+      "type": "Guard",
+      "allow": {
+        "condition_type": "Age",
+        "operator": ">=",
+        "quantity": 50,
+        "unit": "years"
+      },
+      "direct_transition": "Set_Dementia_Flag"
+    },
+
+    "Set_Dementia_Flag": {
+      "type": "SetAttribute",
+      "attribute": "dementia_positive",
+      "value": true,
+      "direct_transition": "Choose_Patient_Path"
+    },
+
+    "Choose_Patient_Path": {
+      "type": "Simple",
+      "remarks": [
+        "Three-way split:",
+        "  Path A (40%): Dx + meds (standard)",
+        "  Path B (25%): Dx only, no meds",
+        "  Path C (35%): Meds only, NO dx (tricky)"
+      ],
+      "distributed_transition": [
+        { "transition": "Set_Path_A", "distribution": 0.40 },
+        { "transition": "Set_Path_B", "distribution": 0.25 },
+        { "transition": "Set_Path_C", "distribution": 0.35 }
+      ]
+    },
+
+    "Set_Path_A": {
+      "type": "SetAttribute",
+      "attribute": "dementia_has_dx",
+      "value": true,
+      "direct_transition": "Set_Path_A_Meds"
+    },
+    "Set_Path_A_Meds": {
+      "type": "SetAttribute",
+      "attribute": "dementia_has_meds",
+      "value": true,
+      "direct_transition": "Choose_Subtype"
+    },
+
+    "Set_Path_B": {
+      "type": "SetAttribute",
+      "attribute": "dementia_has_dx",
+      "value": true,
+      "direct_transition": "Set_Path_B_Meds"
+    },
+    "Set_Path_B_Meds": {
+      "type": "SetAttribute",
+      "attribute": "dementia_has_meds",
+      "value": false,
+      "direct_transition": "Choose_Subtype"
+    },
+
+    "Set_Path_C": {
+      "type": "SetAttribute",
+      "remarks": ["TRICKY: Meds only, no dementia diagnosis"],
+      "attribute": "dementia_has_dx",
+      "value": false,
+      "direct_transition": "Set_Path_C_Meds"
+    },
+    "Set_Path_C_Meds": {
+      "type": "SetAttribute",
+      "attribute": "dementia_has_meds",
+      "value": true,
+      "direct_transition": "Choose_Subtype"
+    },
+
+    "Choose_Subtype": {
+      "type": "Simple",
+      "remarks": [
+        "Distribute across dementia SNOMED subtypes (only matters for Paths with dx):",
+        "  40% Alzheimer's disease (most common)",
+        "  20% Vascular dementia",
+        "  15% Late onset dementia due to Lewy body disease",
+        "  10% Frontotemporal dementia",
+        "  15% Generic Dementia (parent code)"
+      ],
+      "distributed_transition": [
+        { "transition": "Set_Subtype_Alzheimers", "distribution": 0.40 },
+        { "transition": "Set_Subtype_Vascular", "distribution": 0.20 },
+        { "transition": "Set_Subtype_LewyBody", "distribution": 0.15 },
+        { "transition": "Set_Subtype_Frontotemporal", "distribution": 0.10 },
+        { "transition": "Set_Subtype_Generic", "distribution": 0.15 }
+      ]
+    },
+
+    "Set_Subtype_Alzheimers": {
+      "type": "SetAttribute",
+      "attribute": "dementia_subtype",
+      "value": "alzheimers",
+      "direct_transition": "Choose_Med"
+    },
+    "Set_Subtype_Vascular": {
+      "type": "SetAttribute",
+      "attribute": "dementia_subtype",
+      "value": "vascular",
+      "direct_transition": "Choose_Med"
+    },
+    "Set_Subtype_LewyBody": {
+      "type": "SetAttribute",
+      "attribute": "dementia_subtype",
+      "value": "lewy_body",
+      "direct_transition": "Choose_Med"
+    },
+    "Set_Subtype_Frontotemporal": {
+      "type": "SetAttribute",
+      "attribute": "dementia_subtype",
+      "value": "frontotemporal",
+      "direct_transition": "Choose_Med"
+    },
+    "Set_Subtype_Generic": {
+      "type": "SetAttribute",
+      "attribute": "dementia_subtype",
+      "value": "generic",
+      "direct_transition": "Choose_Med"
+    },
+
+    "Choose_Med": {
+      "type": "Simple",
+      "remarks": [
+        "Distribute across dementia drug SCD codes:",
+        "  35% Donepezil 10 MG (Aricept)",
+        "  15% Donepezil 23 MG (high-dose Aricept)",
+        "  15% Galantamine 4 MG (Razadyne)",
+        "  15% Memantine 2 MG/ML solution (Namenda)",
+        "  20% Donepezil/Memantine combo (Namzaric)"
+      ],
+      "distributed_transition": [
+        { "transition": "Set_Med_Donepezil_10", "distribution": 0.35 },
+        { "transition": "Set_Med_Donepezil_23", "distribution": 0.15 },
+        { "transition": "Set_Med_Galantamine_4", "distribution": 0.15 },
+        { "transition": "Set_Med_Memantine_Sol", "distribution": 0.15 },
+        { "transition": "Set_Med_Combo_Namzaric", "distribution": 0.20 }
+      ]
+    },
+
+    "Set_Med_Donepezil_10": {
+      "type": "SetAttribute",
+      "attribute": "dementia_med",
+      "value": "donepezil_10",
+      "direct_transition": "Set_Needs_First_Visit"
+    },
+    "Set_Med_Donepezil_23": {
+      "type": "SetAttribute",
+      "attribute": "dementia_med",
+      "value": "donepezil_23",
+      "direct_transition": "Set_Needs_First_Visit"
+    },
+    "Set_Med_Galantamine_4": {
+      "type": "SetAttribute",
+      "attribute": "dementia_med",
+      "value": "galantamine_4",
+      "direct_transition": "Set_Needs_First_Visit"
+    },
+    "Set_Med_Memantine_Sol": {
+      "type": "SetAttribute",
+      "attribute": "dementia_med",
+      "value": "memantine_sol",
+      "direct_transition": "Set_Needs_First_Visit"
+    },
+    "Set_Med_Combo_Namzaric": {
+      "type": "SetAttribute",
+      "attribute": "dementia_med",
+      "value": "combo_namzaric",
+      "direct_transition": "Set_Needs_First_Visit"
+    },
+
+    "Set_Needs_First_Visit": {
+      "type": "SetAttribute",
+      "attribute": "dementia_needs_first_visit",
+      "value": true,
+      "direct_transition": "Wellness_Encounter"
+    },
+
+    "Wellness_Encounter": {
+      "type": "Encounter",
+      "wellness": true,
+      "direct_transition": "Check_First_Visit"
+    },
+
+    "Check_First_Visit": {
+      "type": "Simple",
+      "conditional_transition": [
+        {
+          "condition": {
+            "condition_type": "Attribute",
+            "attribute": "dementia_needs_first_visit",
+            "operator": "==",
+            "value": true
+          },
+          "transition": "Check_Has_Diagnosis"
+        },
+        {
+          "transition": "End_Wellness_Encounter"
+        }
+      ]
+    },
+
+    "Check_Has_Diagnosis": {
+      "type": "Simple",
+      "conditional_transition": [
+        {
+          "condition": {
+            "condition_type": "Attribute",
+            "attribute": "dementia_has_dx",
+            "operator": "==",
+            "value": true
+          },
+          "transition": "Route_By_Subtype"
+        },
+        {
+          "transition": "Route_Med_NoDx"
+        }
+      ]
+    },
+
+    "Route_By_Subtype": {
+      "type": "Simple",
+      "conditional_transition": [
+        {
+          "condition": {
+            "condition_type": "Attribute",
+            "attribute": "dementia_subtype",
+            "operator": "==",
+            "value": "alzheimers"
+          },
+          "transition": "Diagnose_Alzheimers"
+        },
+        {
+          "condition": {
+            "condition_type": "Attribute",
+            "attribute": "dementia_subtype",
+            "operator": "==",
+            "value": "vascular"
+          },
+          "transition": "Diagnose_Vascular"
+        },
+        {
+          "condition": {
+            "condition_type": "Attribute",
+            "attribute": "dementia_subtype",
+            "operator": "==",
+            "value": "lewy_body"
+          },
+          "transition": "Diagnose_LewyBody"
+        },
+        {
+          "condition": {
+            "condition_type": "Attribute",
+            "attribute": "dementia_subtype",
+            "operator": "==",
+            "value": "frontotemporal"
+          },
+          "transition": "Diagnose_Frontotemporal"
+        },
+        {
+          "transition": "Diagnose_Generic"
+        }
+      ]
+    },
+
+    "Diagnose_Alzheimers": {
+      "type": "ConditionOnset",
+      "assign_to_attribute": "dementia_condition",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": "26929004",
+          "display": "Alzheimer's disease"
+        }
+      ],
+      "direct_transition": "Check_Meds_WithDx"
+    },
+    "Diagnose_Vascular": {
+      "type": "ConditionOnset",
+      "assign_to_attribute": "dementia_condition",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": "429998004",
+          "display": "Vascular dementia"
+        }
+      ],
+      "direct_transition": "Check_Meds_WithDx"
+    },
+    "Diagnose_LewyBody": {
+      "type": "ConditionOnset",
+      "assign_to_attribute": "dementia_condition",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": "312991009",
+          "display": "Late onset dementia due to Lewy body disease"
+        }
+      ],
+      "direct_transition": "Check_Meds_WithDx"
+    },
+    "Diagnose_Frontotemporal": {
+      "type": "ConditionOnset",
+      "assign_to_attribute": "dementia_condition",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": "230270009",
+          "display": "Frontotemporal dementia"
+        }
+      ],
+      "direct_transition": "Check_Meds_WithDx"
+    },
+    "Diagnose_Generic": {
+      "type": "ConditionOnset",
+      "assign_to_attribute": "dementia_condition",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": "52448006",
+          "display": "Dementia"
+        }
+      ],
+      "direct_transition": "Check_Meds_WithDx"
+    },
+
+    "Check_Meds_WithDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        {
+          "condition": {
+            "condition_type": "Attribute",
+            "attribute": "dementia_has_meds",
+            "operator": "==",
+            "value": true
+          },
+          "transition": "Route_Med_WithDx"
+        },
+        {
+          "transition": "Clear_First_Visit_Flag"
+        }
+      ]
+    },
+
+    "Route_Med_WithDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        {
+          "condition": {
+            "condition_type": "Attribute",
+            "attribute": "dementia_med",
+            "operator": "==",
+            "value": "donepezil_10"
+          },
+          "transition": "Prescribe_Donepezil_10_WithDx"
+        },
+        {
+          "condition": {
+            "condition_type": "Attribute",
+            "attribute": "dementia_med",
+            "operator": "==",
+            "value": "donepezil_23"
+          },
+          "transition": "Prescribe_Donepezil_23_WithDx"
+        },
+        {
+          "condition": {
+            "condition_type": "Attribute",
+            "attribute": "dementia_med",
+            "operator": "==",
+            "value": "galantamine_4"
+          },
+          "transition": "Prescribe_Galantamine_WithDx"
+        },
+        {
+          "condition": {
+            "condition_type": "Attribute",
+            "attribute": "dementia_med",
+            "operator": "==",
+            "value": "memantine_sol"
+          },
+          "transition": "Prescribe_Memantine_WithDx"
+        },
+        {
+          "transition": "Prescribe_Combo_WithDx"
+        }
+      ]
+    },
+
+    "Prescribe_Donepezil_10_WithDx": {
+      "type": "MedicationOrder",
+      "codes": [
+        { "system": "RxNorm", "code": "997223", "display": "Donepezil hydrochloride 10 MG Oral Tablet" }
+      ],
+      "reason": "dementia_condition",
+      "direct_transition": "Clear_First_Visit_Flag"
+    },
+    "Prescribe_Donepezil_23_WithDx": {
+      "type": "MedicationOrder",
+      "codes": [
+        { "system": "RxNorm", "code": "1100184", "display": "Donepezil hydrochloride 23 MG Oral Tablet" }
+      ],
+      "reason": "dementia_condition",
+      "direct_transition": "Clear_First_Visit_Flag"
+    },
+    "Prescribe_Galantamine_WithDx": {
+      "type": "MedicationOrder",
+      "codes": [
+        { "system": "RxNorm", "code": "310436", "display": "Galantamine 4 MG Oral Tablet" }
+      ],
+      "reason": "dementia_condition",
+      "direct_transition": "Clear_First_Visit_Flag"
+    },
+    "Prescribe_Memantine_WithDx": {
+      "type": "MedicationOrder",
+      "codes": [
+        { "system": "RxNorm", "code": "996740", "display": "Memantine hydrochloride 2 MG/ML Oral Solution" }
+      ],
+      "reason": "dementia_condition",
+      "direct_transition": "Clear_First_Visit_Flag"
+    },
+    "Prescribe_Combo_WithDx": {
+      "type": "MedicationOrder",
+      "codes": [
+        { "system": "RxNorm", "code": "1599803", "display": "24 HR Donepezil hydrochloride 10 MG / Memantine hydrochloride 28 MG Extended Release Oral Capsule" }
+      ],
+      "reason": "dementia_condition",
+      "direct_transition": "Clear_First_Visit_Flag"
+    },
+
+    "Route_Med_NoDx": {
+      "type": "Simple",
+      "remarks": ["Path C: meds without diagnosis — no 'reason' field"],
+      "conditional_transition": [
+        {
+          "condition": {
+            "condition_type": "Attribute",
+            "attribute": "dementia_med",
+            "operator": "==",
+            "value": "donepezil_10"
+          },
+          "transition": "Prescribe_Donepezil_10_NoDx"
+        },
+        {
+          "condition": {
+            "condition_type": "Attribute",
+            "attribute": "dementia_med",
+            "operator": "==",
+            "value": "donepezil_23"
+          },
+          "transition": "Prescribe_Donepezil_23_NoDx"
+        },
+        {
+          "condition": {
+            "condition_type": "Attribute",
+            "attribute": "dementia_med",
+            "operator": "==",
+            "value": "galantamine_4"
+          },
+          "transition": "Prescribe_Galantamine_NoDx"
+        },
+        {
+          "condition": {
+            "condition_type": "Attribute",
+            "attribute": "dementia_med",
+            "operator": "==",
+            "value": "memantine_sol"
+          },
+          "transition": "Prescribe_Memantine_NoDx"
+        },
+        {
+          "transition": "Prescribe_Combo_NoDx"
+        }
+      ]
+    },
+
+    "Prescribe_Donepezil_10_NoDx": {
+      "type": "MedicationOrder",
+      "codes": [
+        { "system": "RxNorm", "code": "997223", "display": "Donepezil hydrochloride 10 MG Oral Tablet" }
+      ],
+      "direct_transition": "Clear_First_Visit_Flag"
+    },
+    "Prescribe_Donepezil_23_NoDx": {
+      "type": "MedicationOrder",
+      "codes": [
+        { "system": "RxNorm", "code": "1100184", "display": "Donepezil hydrochloride 23 MG Oral Tablet" }
+      ],
+      "direct_transition": "Clear_First_Visit_Flag"
+    },
+    "Prescribe_Galantamine_NoDx": {
+      "type": "MedicationOrder",
+      "codes": [
+        { "system": "RxNorm", "code": "310436", "display": "Galantamine 4 MG Oral Tablet" }
+      ],
+      "direct_transition": "Clear_First_Visit_Flag"
+    },
+    "Prescribe_Memantine_NoDx": {
+      "type": "MedicationOrder",
+      "codes": [
+        { "system": "RxNorm", "code": "996740", "display": "Memantine hydrochloride 2 MG/ML Oral Solution" }
+      ],
+      "direct_transition": "Clear_First_Visit_Flag"
+    },
+    "Prescribe_Combo_NoDx": {
+      "type": "MedicationOrder",
+      "codes": [
+        { "system": "RxNorm", "code": "1599803", "display": "24 HR Donepezil hydrochloride 10 MG / Memantine hydrochloride 28 MG Extended Release Oral Capsule" }
+      ],
+      "direct_transition": "Clear_First_Visit_Flag"
+    },
+
+    "Clear_First_Visit_Flag": {
+      "type": "SetAttribute",
+      "attribute": "dementia_needs_first_visit",
+      "value": false,
+      "direct_transition": "End_Wellness_Encounter"
+    },
+
+    "End_Wellness_Encounter": {
+      "type": "EncounterEnd",
+      "direct_transition": "Followup_Delay"
+    },
+
+    "Followup_Delay": {
+      "type": "Delay",
+      "range": { "low": 3, "high": 6, "unit": "months" },
+      "direct_transition": "Wellness_Encounter"
+    }
+  },
+  "gmf_version": 2
+}

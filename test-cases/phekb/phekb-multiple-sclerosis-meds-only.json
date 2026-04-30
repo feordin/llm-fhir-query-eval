@@ -1,0 +1,83 @@
+{
+  "id": "phekb-multiple-sclerosis-meds-only",
+  "source": "phekb",
+  "source_id": "multiple-sclerosis",
+  "name": "Multiple Sclerosis - DMT-Only Patients (No Diagnosis)",
+  "description": "Tricky test case: finds patients on MS DMTs who have NO formal multiple sclerosis diagnosis on their problem list (Path C). Unlike GERD or RA, MS DMTs are highly specific — very few non-MS patients receive natalizumab, ocrelizumab, dimethyl fumarate, or fingolimod. The few exceptions: ocrelizumab (rituximab successor) is used off-label for severe RA and other autoimmune conditions; alemtuzumab is also approved for chronic lymphocytic leukemia. The Synthea module weights this path lightly (~10%) to reflect this clinical reality. This test case is the INVERSE of GERD's Path C — useful for evaluating whether the LLM understands that medication specificity varies dramatically by drug class.",
+  "prompt": "I want to find patients in our system who are taking multiple sclerosis disease-modifying therapy but don't have a formal MS diagnosis on their problem list. These are uncommon — MS DMTs are very specific to MS — but include cases where the diagnosis was made elsewhere and not yet imported, or where alemtuzumab is prescribed for chronic lymphocytic leukemia.",
+  "prompts": {
+    "naive": "Find patients on MS DMTs without a multiple sclerosis diagnosis.",
+    "expert": "I need to identify the rare MS-DMT-without-MS-dx population. Two-step approach: first find patients with MedicationRequest for any MS DMT (RxNorm 354770 natalizumab, 117055 alemtuzumab, 1876366 ocrelizumab, 1373478 dimethyl fumarate, 1012896 Gilenya/fingolimod), then exclude patients with a Condition for MS (24700007, 426373005, 425500002, 428700003, 192927008). The remaining group is small — typically alemtuzumab for CLL or recently-diagnosed MS not yet documented in the problem list."
+  },
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "algorithm_path": "meds-only-path",
+    "algorithm_path_description": "Path C 'tricky' patients: have MS DMT but NO MS Condition resource. The Synthea module weights this path lightly (~10%) — unlike GERD's PPI Path C, MS DMTs are highly specific and Path C is small.",
+    "code_systems": [
+      "RxNorm",
+      "SNOMED CT"
+    ],
+    "required_codes": [
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "354770",
+        "display": "natalizumab",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "117055",
+        "display": "alemtuzumab",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "1876366",
+        "display": "ocrelizumab",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "1373478",
+        "display": "dimethyl fumarate",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "1012896",
+        "display": "Gilenya",
+        "source": "UMLS verified"
+      }
+    ],
+    "complexity": "hard",
+    "tags": [
+      "medication",
+      "neurology",
+      "multiple-sclerosis",
+      "tricky",
+      "meds-only",
+      "cross-resource",
+      "small-path-c"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "MedicationRequest",
+    "parameters": {
+      "code": "http://www.nlm.nih.gov/research/umls/rxnorm|354770,http://www.nlm.nih.gov/research/umls/rxnorm|117055,http://www.nlm.nih.gov/research/umls/rxnorm|1876366,http://www.nlm.nih.gov/research/umls/rxnorm|1373478,http://www.nlm.nih.gov/research/umls/rxnorm|1012896"
+    },
+    "url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|354770,http://www.nlm.nih.gov/research/umls/rxnorm|117055,http://www.nlm.nih.gov/research/umls/rxnorm|1876366,http://www.nlm.nih.gov/research/umls/rxnorm|1373478,http://www.nlm.nih.gov/research/umls/rxnorm|1012896"
+  },
+  "test_data": {
+    "resources": [
+      "synthea/output/multiple-sclerosis/positive/fhir/",
+      "synthea/output/multiple-sclerosis/control/fhir/"
+    ],
+    "expected_result_count": 1,
+    "expected_resource_ids": [],
+    "expected_patient_ids": [
+      "844008b3-bcc2-f17e-7316-8ec02932fb9c"
+    ]
+  },
+  "created_at": "2026-04-27T00:00:00.000000Z",
+  "updated_at": "2026-04-27T00:00:00.000000Z"
+}

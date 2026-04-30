@@ -1,0 +1,94 @@
+{
+  "id": "phekb-hypertension-meds-only",
+  "source": "phekb",
+  "source_id": "hypertension",
+  "name": "Hypertension - Antihypertensives Without HTN Diagnosis (Cross-Indication)",
+  "description": "Tricky test case: finds patients on antihypertensive drugs who have NO hypertension diagnosis. Antihypertensive drug classes are HEAVILY cross-indication: lisinopril is used for diabetic nephropathy and HF; carvedilol is used for HF; furosemide for edema/HF; amlodipine for angina; losartan for HF or CKD progression. The Synthea module weights this path moderately (~25%) — smaller than GERD's PPI Path C but still substantial.",
+  "prompt": "I want to find patients in our system who are taking blood pressure medications such as lisinopril, losartan, amlodipine, carvedilol, or furosemide but don't have a formal hypertension diagnosis on their problem list. These medications are commonly prescribed for many other indications.",
+  "prompts": {
+    "naive": "Find patients on antihypertensives without an HTN diagnosis.",
+    "expert": "I need to identify the antihypertensive cross-indication-prescribing population. Two-step approach: first find patients with MedicationRequest for antihypertensive ingredients (RxNorm 29046 lisinopril, 52175 losartan, 17767 amlodipine, 20352 carvedilol, 4603 furosemide), then exclude patients with a Condition for HTN (SNOMED 59621000, 1201005, 78975002, 429457004, 371125006). The remaining group is on these drugs for HF, CKD, diabetic nephropathy, edema, or angina."
+  },
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "algorithm_path": "meds-only-path",
+    "algorithm_path_description": "Path C 'tricky' patients: have antihypertensive meds but NO HTN Condition. The Synthea module weights this path moderately (~25%) reflecting widespread cross-indication use.",
+    "code_systems": [
+      "RxNorm",
+      "SNOMED CT"
+    ],
+    "required_codes": [
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "29046",
+        "display": "lisinopril",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "52175",
+        "display": "losartan",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "17767",
+        "display": "amlodipine",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "20352",
+        "display": "carvedilol",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "4603",
+        "display": "furosemide",
+        "source": "UMLS verified"
+      }
+    ],
+    "complexity": "hard",
+    "tags": [
+      "medication",
+      "cardiology",
+      "hypertension",
+      "tricky",
+      "meds-only",
+      "cross-resource",
+      "cross-indication"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "MedicationRequest",
+    "parameters": {
+      "code": "http://www.nlm.nih.gov/research/umls/rxnorm|29046,http://www.nlm.nih.gov/research/umls/rxnorm|52175,http://www.nlm.nih.gov/research/umls/rxnorm|17767,http://www.nlm.nih.gov/research/umls/rxnorm|20352,http://www.nlm.nih.gov/research/umls/rxnorm|4603"
+    },
+    "url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|29046,http://www.nlm.nih.gov/research/umls/rxnorm|52175,http://www.nlm.nih.gov/research/umls/rxnorm|17767,http://www.nlm.nih.gov/research/umls/rxnorm|20352,http://www.nlm.nih.gov/research/umls/rxnorm|4603"
+  },
+  "test_data": {
+    "resources": [
+      "synthea/output/hypertension/positive/fhir/",
+      "synthea/output/hypertension/control/fhir/"
+    ],
+    "expected_result_count": 12,
+    "expected_resource_ids": [],
+    "expected_patient_ids": [
+      "322ab5c6-5846-ac1e-38cc-48b8cb441e20",
+      "35b353dd-402b-571a-d67a-af0a104d0854",
+      "3b15077e-6f01-c2b3-4f1f-e4c2b545e6cb",
+      "5e7ebf2c-22ec-a89b-53ab-38edddd81be9",
+      "933d25dc-0ffd-6c28-46c3-354d9e8025ae",
+      "976dc413-6af0-ff8a-a0bf-2d56b3130ad7",
+      "aa616abe-1761-0c9a-7959-07544679dafd",
+      "b35562d2-0fb4-ad1a-1d37-0028d18ce321",
+      "bac2c591-22ce-0b38-a7da-98326b8aafff",
+      "d57841fa-c9e2-a3d1-0e78-09bdbe4eed66",
+      "e3042215-ec00-4d81-0103-101f3c7ad07f",
+      "f407face-6c81-fdf8-500f-7c989877f7c6"
+    ]
+  },
+  "created_at": "2026-04-27T00:00:00.000000Z",
+  "updated_at": "2026-04-27T00:00:00.000000Z"
+}

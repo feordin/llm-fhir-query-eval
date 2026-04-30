@@ -1,0 +1,172 @@
+{
+  "name": "PheKB Type 1 Diabetes",
+  "remarks": [
+    "Custom Synthea module for PheKB phenotype: type 1 diabetes mellitus",
+    "T1D is autoimmune, requires insulin from disease onset (lifelong).",
+    "",
+    "Generates THREE patient paths:",
+    "  Path A (70%): Diagnosis + insulin + elevated HbA1c — full presentation",
+    "  Path B (20%): Diagnosis + insulin, no labs",
+    "  Path C (10%): Insulin ONLY, NO T1D dx (insulin-treated T2D miscoded, gestational, hospital protocol)",
+    "",
+    "Path C is small because insulin is highly specific to diabetes overall — but most insulin patients",
+    "do have a diabetes diagnosis of some type.",
+    "",
+    "Diagnosis SNOMED variation (Paths A + B):",
+    "  35% Diabetes mellitus type 1 (46635009) — generic parent",
+    "  25% IDDM type IA (23045005)",
+    "  15% T1D with ulcer (190368000)",
+    "  15% Pre-existing T1D (199229001)",
+    "  10% T1D without retinopathy (31321000119102)",
+    "",
+    "Insulin variation (Paths A + B + C):",
+    "  20% Insulin (5856 — parent)",
+    "  25% Regular human insulin (253182)",
+    "  30% Insulin glargine (274783) — long-acting basal",
+    "  15% Insulin aspart protamine (575068) — intermediate",
+    "  10% Humulin R SCD (311036)",
+    "",
+    "Lab values (Path A gets elevated HbA1c):",
+    "  HbA1c case range: 7.5 - 12.0 % (T1D often poorly controlled)"
+  ],
+  "states": {
+    "Initial": { "type": "Initial", "direct_transition": "Age_Guard" },
+    "Age_Guard": { "type": "Guard", "allow": { "condition_type": "Age", "operator": ">=", "quantity": 12, "unit": "years" }, "direct_transition": "Set_T1D_Flag" },
+    "Set_T1D_Flag": { "type": "SetAttribute", "attribute": "t1d_positive", "value": true, "direct_transition": "Choose_Patient_Path" },
+    "Choose_Patient_Path": {
+      "type": "Simple",
+      "distributed_transition": [
+        { "transition": "Set_Path_A", "distribution": 0.70 },
+        { "transition": "Set_Path_B", "distribution": 0.20 },
+        { "transition": "Set_Path_C", "distribution": 0.10 }
+      ]
+    },
+    "Set_Path_A": { "type": "SetAttribute", "attribute": "t1d_has_dx", "value": true, "direct_transition": "Set_Path_A_Labs" },
+    "Set_Path_A_Labs": { "type": "SetAttribute", "attribute": "t1d_has_labs", "value": true, "direct_transition": "Set_Path_A_Meds" },
+    "Set_Path_A_Meds": { "type": "SetAttribute", "attribute": "t1d_has_meds", "value": true, "direct_transition": "Choose_Subtype" },
+
+    "Set_Path_B": { "type": "SetAttribute", "attribute": "t1d_has_dx", "value": true, "direct_transition": "Set_Path_B_Labs" },
+    "Set_Path_B_Labs": { "type": "SetAttribute", "attribute": "t1d_has_labs", "value": false, "direct_transition": "Set_Path_B_Meds" },
+    "Set_Path_B_Meds": { "type": "SetAttribute", "attribute": "t1d_has_meds", "value": true, "direct_transition": "Choose_Subtype" },
+
+    "Set_Path_C": { "type": "SetAttribute", "remarks": ["TRICKY: insulin without T1D dx"], "attribute": "t1d_has_dx", "value": false, "direct_transition": "Set_Path_C_Labs" },
+    "Set_Path_C_Labs": { "type": "SetAttribute", "attribute": "t1d_has_labs", "value": false, "direct_transition": "Set_Path_C_Meds" },
+    "Set_Path_C_Meds": { "type": "SetAttribute", "attribute": "t1d_has_meds", "value": true, "direct_transition": "Choose_Subtype" },
+
+    "Choose_Subtype": {
+      "type": "Simple",
+      "distributed_transition": [
+        { "transition": "Set_Subtype_T1D", "distribution": 0.35 },
+        { "transition": "Set_Subtype_IDDM", "distribution": 0.25 },
+        { "transition": "Set_Subtype_Ulcer", "distribution": 0.15 },
+        { "transition": "Set_Subtype_PreExisting", "distribution": 0.15 },
+        { "transition": "Set_Subtype_NoRetinopathy", "distribution": 0.10 }
+      ]
+    },
+    "Set_Subtype_T1D": { "type": "SetAttribute", "attribute": "t1d_subtype", "value": "t1d", "direct_transition": "Choose_Med" },
+    "Set_Subtype_IDDM": { "type": "SetAttribute", "attribute": "t1d_subtype", "value": "iddm", "direct_transition": "Choose_Med" },
+    "Set_Subtype_Ulcer": { "type": "SetAttribute", "attribute": "t1d_subtype", "value": "ulcer", "direct_transition": "Choose_Med" },
+    "Set_Subtype_PreExisting": { "type": "SetAttribute", "attribute": "t1d_subtype", "value": "preexisting", "direct_transition": "Choose_Med" },
+    "Set_Subtype_NoRetinopathy": { "type": "SetAttribute", "attribute": "t1d_subtype", "value": "noretino", "direct_transition": "Choose_Med" },
+
+    "Choose_Med": {
+      "type": "Simple",
+      "distributed_transition": [
+        { "transition": "Set_Med_Insulin", "distribution": 0.20 },
+        { "transition": "Set_Med_RegularHuman", "distribution": 0.25 },
+        { "transition": "Set_Med_Glargine", "distribution": 0.30 },
+        { "transition": "Set_Med_Aspart", "distribution": 0.15 },
+        { "transition": "Set_Med_HumulinR", "distribution": 0.10 }
+      ]
+    },
+    "Set_Med_Insulin": { "type": "SetAttribute", "attribute": "t1d_med", "value": "insulin", "direct_transition": "Set_Needs_First_Visit" },
+    "Set_Med_RegularHuman": { "type": "SetAttribute", "attribute": "t1d_med", "value": "regular", "direct_transition": "Set_Needs_First_Visit" },
+    "Set_Med_Glargine": { "type": "SetAttribute", "attribute": "t1d_med", "value": "glargine", "direct_transition": "Set_Needs_First_Visit" },
+    "Set_Med_Aspart": { "type": "SetAttribute", "attribute": "t1d_med", "value": "aspart", "direct_transition": "Set_Needs_First_Visit" },
+    "Set_Med_HumulinR": { "type": "SetAttribute", "attribute": "t1d_med", "value": "humulin", "direct_transition": "Set_Needs_First_Visit" },
+
+    "Set_Needs_First_Visit": { "type": "SetAttribute", "attribute": "t1d_needs_first_visit", "value": true, "direct_transition": "Wellness_Encounter" },
+    "Wellness_Encounter": { "type": "Encounter", "wellness": true, "direct_transition": "Check_First_Visit" },
+    "Check_First_Visit": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "t1d_needs_first_visit", "operator": "==", "value": true }, "transition": "Check_Has_Diagnosis" },
+        { "transition": "End_Wellness_Encounter" }
+      ]
+    },
+    "Check_Has_Diagnosis": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "t1d_has_dx", "operator": "==", "value": true }, "transition": "Route_By_Subtype" },
+        { "transition": "Route_Med_NoDx" }
+      ]
+    },
+    "Route_By_Subtype": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "t1d_subtype", "operator": "==", "value": "t1d" }, "transition": "Diagnose_T1D" },
+        { "condition": { "condition_type": "Attribute", "attribute": "t1d_subtype", "operator": "==", "value": "iddm" }, "transition": "Diagnose_IDDM" },
+        { "condition": { "condition_type": "Attribute", "attribute": "t1d_subtype", "operator": "==", "value": "ulcer" }, "transition": "Diagnose_Ulcer" },
+        { "condition": { "condition_type": "Attribute", "attribute": "t1d_subtype", "operator": "==", "value": "preexisting" }, "transition": "Diagnose_PreExisting" },
+        { "transition": "Diagnose_NoRetinopathy" }
+      ]
+    },
+    "Diagnose_T1D": { "type": "ConditionOnset", "assign_to_attribute": "t1d_condition", "codes": [{ "system": "SNOMED-CT", "code": "46635009", "display": "Diabetes mellitus type 1" }], "direct_transition": "Check_Labs_WithDx" },
+    "Diagnose_IDDM": { "type": "ConditionOnset", "assign_to_attribute": "t1d_condition", "codes": [{ "system": "SNOMED-CT", "code": "23045005", "display": "Insulin dependent diabetes mellitus type IA" }], "direct_transition": "Check_Labs_WithDx" },
+    "Diagnose_Ulcer": { "type": "ConditionOnset", "assign_to_attribute": "t1d_condition", "codes": [{ "system": "SNOMED-CT", "code": "190368000", "display": "Type I diabetes mellitus with ulcer" }], "direct_transition": "Check_Labs_WithDx" },
+    "Diagnose_PreExisting": { "type": "ConditionOnset", "assign_to_attribute": "t1d_condition", "codes": [{ "system": "SNOMED-CT", "code": "199229001", "display": "Pre-existing type 1 diabetes mellitus" }], "direct_transition": "Check_Labs_WithDx" },
+    "Diagnose_NoRetinopathy": { "type": "ConditionOnset", "assign_to_attribute": "t1d_condition", "codes": [{ "system": "SNOMED-CT", "code": "31321000119102", "display": "Diabetes mellitus type 1 without retinopathy" }], "direct_transition": "Check_Labs_WithDx" },
+
+    "Check_Labs_WithDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "t1d_has_labs", "operator": "==", "value": true }, "transition": "Record_HbA1c_WithDx" },
+        { "transition": "Route_Med_WithDx" }
+      ]
+    },
+    "Record_HbA1c_WithDx": {
+      "type": "Observation",
+      "category": "laboratory",
+      "unit": "%",
+      "codes": [{ "system": "LOINC", "code": "4548-4", "display": "Hemoglobin A1c/Hemoglobin.total in Blood" }],
+      "range": { "low": 7.5, "high": 12.0 },
+      "direct_transition": "Route_Med_WithDx"
+    },
+    "Route_Med_WithDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "t1d_med", "operator": "==", "value": "insulin" }, "transition": "Prescribe_Insulin_WithDx" },
+        { "condition": { "condition_type": "Attribute", "attribute": "t1d_med", "operator": "==", "value": "regular" }, "transition": "Prescribe_Regular_WithDx" },
+        { "condition": { "condition_type": "Attribute", "attribute": "t1d_med", "operator": "==", "value": "glargine" }, "transition": "Prescribe_Glargine_WithDx" },
+        { "condition": { "condition_type": "Attribute", "attribute": "t1d_med", "operator": "==", "value": "aspart" }, "transition": "Prescribe_Aspart_WithDx" },
+        { "transition": "Prescribe_HumulinR_WithDx" }
+      ]
+    },
+    "Prescribe_Insulin_WithDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "5856", "display": "Insulin" }], "reason": "t1d_condition", "direct_transition": "Clear_First_Visit_Flag" },
+    "Prescribe_Regular_WithDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "253182", "display": "insulin, regular, human" }], "reason": "t1d_condition", "direct_transition": "Clear_First_Visit_Flag" },
+    "Prescribe_Glargine_WithDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "274783", "display": "insulin glargine" }], "reason": "t1d_condition", "direct_transition": "Clear_First_Visit_Flag" },
+    "Prescribe_Aspart_WithDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "575068", "display": "insulin aspart protamine, human" }], "reason": "t1d_condition", "direct_transition": "Clear_First_Visit_Flag" },
+    "Prescribe_HumulinR_WithDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "311036", "display": "insulin, regular, human 100 UNT/ML Injectable Solution [Humulin R]" }], "reason": "t1d_condition", "direct_transition": "Clear_First_Visit_Flag" },
+
+    "Route_Med_NoDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "t1d_med", "operator": "==", "value": "insulin" }, "transition": "Prescribe_Insulin_NoDx" },
+        { "condition": { "condition_type": "Attribute", "attribute": "t1d_med", "operator": "==", "value": "regular" }, "transition": "Prescribe_Regular_NoDx" },
+        { "condition": { "condition_type": "Attribute", "attribute": "t1d_med", "operator": "==", "value": "glargine" }, "transition": "Prescribe_Glargine_NoDx" },
+        { "condition": { "condition_type": "Attribute", "attribute": "t1d_med", "operator": "==", "value": "aspart" }, "transition": "Prescribe_Aspart_NoDx" },
+        { "transition": "Prescribe_HumulinR_NoDx" }
+      ]
+    },
+    "Prescribe_Insulin_NoDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "5856", "display": "Insulin" }], "direct_transition": "Clear_First_Visit_Flag" },
+    "Prescribe_Regular_NoDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "253182", "display": "insulin, regular, human" }], "direct_transition": "Clear_First_Visit_Flag" },
+    "Prescribe_Glargine_NoDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "274783", "display": "insulin glargine" }], "direct_transition": "Clear_First_Visit_Flag" },
+    "Prescribe_Aspart_NoDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "575068", "display": "insulin aspart protamine, human" }], "direct_transition": "Clear_First_Visit_Flag" },
+    "Prescribe_HumulinR_NoDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "311036", "display": "Humulin R" }], "direct_transition": "Clear_First_Visit_Flag" },
+
+    "Clear_First_Visit_Flag": { "type": "SetAttribute", "attribute": "t1d_needs_first_visit", "value": false, "direct_transition": "End_Wellness_Encounter" },
+    "End_Wellness_Encounter": { "type": "EncounterEnd", "direct_transition": "Followup_Delay" },
+    "Followup_Delay": { "type": "Delay", "range": { "low": 3, "high": 6, "unit": "months" }, "direct_transition": "Wellness_Encounter" }
+  },
+  "gmf_version": 2
+}

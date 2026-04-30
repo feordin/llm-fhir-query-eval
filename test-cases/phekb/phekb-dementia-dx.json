@@ -1,0 +1,106 @@
+{
+  "id": "phekb-dementia-dx",
+  "source": "phekb",
+  "source_id": "dementia",
+  "name": "Dementia - Diagnosis Code Query (Multi-Subtype)",
+  "description": "THE flagship code-variation test case. Dementia is documented under multiple SNOMED codes for distinct subtypes — Alzheimer's disease (most common), vascular dementia (post-stroke), dementia with Lewy bodies, frontotemporal dementia (Pick's), and unspecified dementia. An LLM that queries only one code (or only the parent) will miss substantial subsets. Synthea distributes patients across all 5 SNOMED codes, so query recall directly measures whether the LLM understands the dementia code family. The naive→broad→expert prompt levels test how much code knowledge the LLM has built-in.",
+  "prompt": "Find all patients with a diagnosis of dementia, including all subtypes such as Alzheimer's disease, vascular dementia, dementia with Lewy bodies, frontotemporal dementia, and unspecified dementia.",
+  "prompts": {
+    "naive": "Find all patients with dementia.",
+    "broad": "Find all patients diagnosed with any form of dementia, including Alzheimer's disease, vascular dementia, Lewy body dementia, and frontotemporal dementia (Pick's disease).",
+    "expert": "I need to identify all dementia patients in our population. Dementia encompasses multiple subtypes, each with distinct SNOMED codes: Alzheimer's disease (26929004, the most common form), Vascular dementia (429998004), Late onset dementia due to Lewy body disease (312991009), Frontotemporal dementia (230270009), and the parent concept Dementia (52448006). The parent SNOMED concept may subsume subtypes on servers supporting the :below modifier, but explicitly querying all subtype codes is more reliable across servers. Search Condition resources for all five codes."
+  },
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "algorithm_path": "diagnosis-path",
+    "algorithm_path_description": "PheKB dementia algorithm criterion 1: any of the dementia ICD codes. Maps to Path A and Path B patients (those WITH a Condition resource). Path C (meds-only) patients are missed by this query.",
+    "code_systems": [
+      "SNOMED CT",
+      "ICD-10-CM"
+    ],
+    "required_codes": [
+      {
+        "system": "http://snomed.info/sct",
+        "code": "26929004",
+        "display": "Alzheimer's disease",
+        "source": "UMLS verified, most common dementia subtype"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "429998004",
+        "display": "Vascular dementia",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "312991009",
+        "display": "Late onset dementia due to Lewy body disease",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "230270009",
+        "display": "Frontotemporal dementia",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "52448006",
+        "display": "Dementia",
+        "source": "UMLS verified, parent concept"
+      }
+    ],
+    "complexity": "medium",
+    "tags": [
+      "condition",
+      "neurology",
+      "dementia",
+      "diagnosis-code",
+      "multi-subtype",
+      "code-variation",
+      "flagship-test"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "Condition",
+    "parameters": {
+      "code": "http://snomed.info/sct|26929004,http://snomed.info/sct|429998004,http://snomed.info/sct|312991009,http://snomed.info/sct|230270009,http://snomed.info/sct|52448006"
+    },
+    "url": "Condition?code=http://snomed.info/sct|26929004,http://snomed.info/sct|429998004,http://snomed.info/sct|312991009,http://snomed.info/sct|230270009,http://snomed.info/sct|52448006"
+  },
+  "test_data": {
+    "resources": [
+      "synthea/output/dementia/positive/fhir/",
+      "synthea/output/dementia/control/fhir/"
+    ],
+    "expected_result_count": 23,
+    "expected_resource_ids": [],
+    "expected_patient_ids": [
+      "14cd5a2b-c703-6204-e1cd-5c598f0d0b48",
+      "3a09b303-45d6-d544-bc0c-e74e551ab28f",
+      "40ab6d85-6067-6da0-2bcf-3dbfd04cd107",
+      "4e5e84ea-ec03-ef23-ccfe-719257d59a42",
+      "59ce1274-1db7-9389-c91d-a75da40be80d",
+      "5b897894-d747-42f9-1ee4-629a282a39d5",
+      "6b20f9fb-e318-b6ae-65b5-1eae81c039ec",
+      "6b815db1-d138-8b50-abc5-b1ce85ac67a5",
+      "74a89a95-0cd5-0eb9-a2c6-d0a052202284",
+      "7f8b7232-2086-8d42-4dc7-cff6069b6d9f",
+      "8cdd61b1-c746-068f-080d-d50cf76debbf",
+      "9095f2e4-4b47-b0f7-0fbe-0080a3dd07bb",
+      "97b232fc-deb2-e526-9346-759ce0c21ef6",
+      "a09de125-08f9-dcdb-8811-8236a06e6b76",
+      "a7b5693a-3b2d-89c3-b632-c19b837e2cb6",
+      "a93ab8fc-0fd8-4571-9806-41b39edd279c",
+      "b2e88ff8-aae6-f90c-1a6c-054a83cb0e89",
+      "b595d199-4fb9-fbb9-d3dd-67a7743169c9",
+      "b9e0c2d4-23f7-29b9-b563-ce4b89636b71",
+      "e1073fe9-ab54-8401-a0e7-78e9cc6509c5",
+      "e4f2487c-098d-f0b9-71cc-e435aa8c0464",
+      "e9a1681b-3a7a-34e4-1ebd-135387fbdbc8",
+      "ebf6a3f5-2477-aa44-86fc-a3e2362b5075"
+    ]
+  },
+  "created_at": "2026-04-25T00:00:00.000000Z",
+  "updated_at": "2026-04-25T00:00:00.000000Z"
+}

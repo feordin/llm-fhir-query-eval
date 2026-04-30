@@ -1,0 +1,493 @@
+{
+  "name": "PheKB Depression",
+  "remarks": [
+    "Custom Synthea module for PheKB phenotype: depression",
+    "Based on PheKB depression algorithm (Castro et al, 2/30/180 rule)",
+    "",
+    "PheKB algorithm: classifies into 4 categories using 4 longitudinal data sources:",
+    "  1. Depression diagnosis ICD codes (3 severity types)",
+    "  2. Antidepressant medication fills",
+    "  3. Depression scale measures (PHQ-9)",
+    "  4. Psychotherapy records",
+    "  2/30/180 rule: evidence on >= 2 days, 30-180 days apart",
+    "",
+    "Generates THREE patient paths with HEAVY Path C:",
+    "  Path A (35%): Diagnosis + Antidepressant — full presentation",
+    "  Path B (25%): Diagnosis only, no meds — milder depression managed with therapy",
+    "  Path C (40%): Antidepressant only, NO depression dx — common SSRI prescribing pattern",
+    "",
+    "Path C is intentionally weighted heavily because SSRIs are widely prescribed",
+    "for non-depression indications (anxiety, insomnia, hot flashes, chronic pain)",
+    "and many patients receive empirical SSRI trials without a formal depression dx.",
+    "This Path C dominance makes the meds-only test case especially diagnostic.",
+    "",
+    "Diagnosis SNOMED variation (Paths A + B):",
+    "  35% Major depressive disorder (370143000) — most common",
+    "  25% Major depression single episode (36923009) — Synthea built-in",
+    "  20% Recurrent major depression (66344007)",
+    "  10% Dysthymia (78667006) — persistent low-grade",
+    "  10% Generic Depressive disorder (35489007)",
+    "",
+    "Medication SCD variation (Paths A + C):",
+    "  25% Sertraline 100 MG (312938) — Zoloft, most-prescribed SSRI",
+    "  20% Fluoxetine 20 MG (310385) — Prozac",
+    "  15% Escitalopram 20 MG (351250) — Lexapro",
+    "  15% Citalopram 20 MG (200371) — Celexa",
+    "  10% Venlafaxine 100 MG (313580) — Effexor SNRI",
+    "  15% Bupropion ER 200 MG (993537) — Wellbutrin atypical",
+    "",
+    "Codes verified via NIH UMLS MCP (2025AB)."
+  ],
+  "states": {
+    "Initial": {
+      "type": "Initial",
+      "direct_transition": "Age_Guard"
+    },
+
+    "Age_Guard": {
+      "type": "Guard",
+      "allow": {
+        "condition_type": "Age",
+        "operator": ">=",
+        "quantity": 18,
+        "unit": "years"
+      },
+      "direct_transition": "Set_Dep_Flag"
+    },
+
+    "Set_Dep_Flag": {
+      "type": "SetAttribute",
+      "attribute": "dep_positive",
+      "value": true,
+      "direct_transition": "Choose_Patient_Path"
+    },
+
+    "Choose_Patient_Path": {
+      "type": "Simple",
+      "remarks": [
+        "Three-way split with HEAVY Path C:",
+        "  Path A (35%): Dx + meds (standard)",
+        "  Path B (25%): Dx only, no meds",
+        "  Path C (40%): Meds only, NO dx (tricky — SSRI prescribing without formal dx)"
+      ],
+      "distributed_transition": [
+        { "transition": "Set_Path_A", "distribution": 0.35 },
+        { "transition": "Set_Path_B", "distribution": 0.25 },
+        { "transition": "Set_Path_C", "distribution": 0.40 }
+      ]
+    },
+
+    "Set_Path_A": {
+      "type": "SetAttribute",
+      "attribute": "dep_has_dx",
+      "value": true,
+      "direct_transition": "Set_Path_A_Meds"
+    },
+    "Set_Path_A_Meds": {
+      "type": "SetAttribute",
+      "attribute": "dep_has_meds",
+      "value": true,
+      "direct_transition": "Choose_Subtype"
+    },
+
+    "Set_Path_B": {
+      "type": "SetAttribute",
+      "attribute": "dep_has_dx",
+      "value": true,
+      "direct_transition": "Set_Path_B_Meds"
+    },
+    "Set_Path_B_Meds": {
+      "type": "SetAttribute",
+      "attribute": "dep_has_meds",
+      "value": false,
+      "direct_transition": "Choose_Subtype"
+    },
+
+    "Set_Path_C": {
+      "type": "SetAttribute",
+      "remarks": ["TRICKY: Antidepressant only, no formal depression diagnosis"],
+      "attribute": "dep_has_dx",
+      "value": false,
+      "direct_transition": "Set_Path_C_Meds"
+    },
+    "Set_Path_C_Meds": {
+      "type": "SetAttribute",
+      "attribute": "dep_has_meds",
+      "value": true,
+      "direct_transition": "Choose_Subtype"
+    },
+
+    "Choose_Subtype": {
+      "type": "Simple",
+      "remarks": [
+        "Distribute across depression SNOMED subtypes (only matters for Paths with dx):",
+        "  35% Major depressive disorder",
+        "  25% Major depression single episode (Synthea built-in)",
+        "  20% Recurrent major depression",
+        "  10% Dysthymia",
+        "  10% Generic Depressive disorder"
+      ],
+      "distributed_transition": [
+        { "transition": "Set_Subtype_MDD", "distribution": 0.35 },
+        { "transition": "Set_Subtype_SingleEp", "distribution": 0.25 },
+        { "transition": "Set_Subtype_Recurrent", "distribution": 0.20 },
+        { "transition": "Set_Subtype_Dysthymia", "distribution": 0.10 },
+        { "transition": "Set_Subtype_Generic", "distribution": 0.10 }
+      ]
+    },
+
+    "Set_Subtype_MDD": {
+      "type": "SetAttribute",
+      "attribute": "dep_subtype",
+      "value": "mdd",
+      "direct_transition": "Choose_Med"
+    },
+    "Set_Subtype_SingleEp": {
+      "type": "SetAttribute",
+      "attribute": "dep_subtype",
+      "value": "single_ep",
+      "direct_transition": "Choose_Med"
+    },
+    "Set_Subtype_Recurrent": {
+      "type": "SetAttribute",
+      "attribute": "dep_subtype",
+      "value": "recurrent",
+      "direct_transition": "Choose_Med"
+    },
+    "Set_Subtype_Dysthymia": {
+      "type": "SetAttribute",
+      "attribute": "dep_subtype",
+      "value": "dysthymia",
+      "direct_transition": "Choose_Med"
+    },
+    "Set_Subtype_Generic": {
+      "type": "SetAttribute",
+      "attribute": "dep_subtype",
+      "value": "generic",
+      "direct_transition": "Choose_Med"
+    },
+
+    "Choose_Med": {
+      "type": "Simple",
+      "remarks": [
+        "Distribute across antidepressant SCD codes:",
+        "  25% Sertraline 100 MG",
+        "  20% Fluoxetine 20 MG",
+        "  15% Escitalopram 20 MG",
+        "  15% Citalopram 20 MG",
+        "  10% Venlafaxine 100 MG (SNRI)",
+        "  15% Bupropion ER 200 MG (atypical)"
+      ],
+      "distributed_transition": [
+        { "transition": "Set_Med_Sertraline", "distribution": 0.25 },
+        { "transition": "Set_Med_Fluoxetine", "distribution": 0.20 },
+        { "transition": "Set_Med_Escitalopram", "distribution": 0.15 },
+        { "transition": "Set_Med_Citalopram", "distribution": 0.15 },
+        { "transition": "Set_Med_Venlafaxine", "distribution": 0.10 },
+        { "transition": "Set_Med_Bupropion", "distribution": 0.15 }
+      ]
+    },
+
+    "Set_Med_Sertraline": {
+      "type": "SetAttribute",
+      "attribute": "dep_med",
+      "value": "sertraline",
+      "direct_transition": "Set_Needs_First_Visit"
+    },
+    "Set_Med_Fluoxetine": {
+      "type": "SetAttribute",
+      "attribute": "dep_med",
+      "value": "fluoxetine",
+      "direct_transition": "Set_Needs_First_Visit"
+    },
+    "Set_Med_Escitalopram": {
+      "type": "SetAttribute",
+      "attribute": "dep_med",
+      "value": "escitalopram",
+      "direct_transition": "Set_Needs_First_Visit"
+    },
+    "Set_Med_Citalopram": {
+      "type": "SetAttribute",
+      "attribute": "dep_med",
+      "value": "citalopram",
+      "direct_transition": "Set_Needs_First_Visit"
+    },
+    "Set_Med_Venlafaxine": {
+      "type": "SetAttribute",
+      "attribute": "dep_med",
+      "value": "venlafaxine",
+      "direct_transition": "Set_Needs_First_Visit"
+    },
+    "Set_Med_Bupropion": {
+      "type": "SetAttribute",
+      "attribute": "dep_med",
+      "value": "bupropion",
+      "direct_transition": "Set_Needs_First_Visit"
+    },
+
+    "Set_Needs_First_Visit": {
+      "type": "SetAttribute",
+      "attribute": "dep_needs_first_visit",
+      "value": true,
+      "direct_transition": "Wellness_Encounter"
+    },
+
+    "Wellness_Encounter": {
+      "type": "Encounter",
+      "wellness": true,
+      "direct_transition": "Check_First_Visit"
+    },
+
+    "Check_First_Visit": {
+      "type": "Simple",
+      "conditional_transition": [
+        {
+          "condition": {
+            "condition_type": "Attribute",
+            "attribute": "dep_needs_first_visit",
+            "operator": "==",
+            "value": true
+          },
+          "transition": "Check_Has_Diagnosis"
+        },
+        {
+          "transition": "End_Wellness_Encounter"
+        }
+      ]
+    },
+
+    "Check_Has_Diagnosis": {
+      "type": "Simple",
+      "conditional_transition": [
+        {
+          "condition": {
+            "condition_type": "Attribute",
+            "attribute": "dep_has_dx",
+            "operator": "==",
+            "value": true
+          },
+          "transition": "Route_By_Subtype"
+        },
+        {
+          "transition": "Route_Med_NoDx"
+        }
+      ]
+    },
+
+    "Route_By_Subtype": {
+      "type": "Simple",
+      "conditional_transition": [
+        {
+          "condition": {
+            "condition_type": "Attribute",
+            "attribute": "dep_subtype",
+            "operator": "==",
+            "value": "mdd"
+          },
+          "transition": "Diagnose_MDD"
+        },
+        {
+          "condition": {
+            "condition_type": "Attribute",
+            "attribute": "dep_subtype",
+            "operator": "==",
+            "value": "single_ep"
+          },
+          "transition": "Diagnose_SingleEp"
+        },
+        {
+          "condition": {
+            "condition_type": "Attribute",
+            "attribute": "dep_subtype",
+            "operator": "==",
+            "value": "recurrent"
+          },
+          "transition": "Diagnose_Recurrent"
+        },
+        {
+          "condition": {
+            "condition_type": "Attribute",
+            "attribute": "dep_subtype",
+            "operator": "==",
+            "value": "dysthymia"
+          },
+          "transition": "Diagnose_Dysthymia"
+        },
+        {
+          "transition": "Diagnose_Generic"
+        }
+      ]
+    },
+
+    "Diagnose_MDD": {
+      "type": "ConditionOnset",
+      "assign_to_attribute": "dep_condition",
+      "codes": [
+        { "system": "SNOMED-CT", "code": "370143000", "display": "Major depressive disorder" }
+      ],
+      "direct_transition": "Check_Meds_WithDx"
+    },
+    "Diagnose_SingleEp": {
+      "type": "ConditionOnset",
+      "assign_to_attribute": "dep_condition",
+      "codes": [
+        { "system": "SNOMED-CT", "code": "36923009", "display": "Major depression, single episode (disorder)" }
+      ],
+      "direct_transition": "Check_Meds_WithDx"
+    },
+    "Diagnose_Recurrent": {
+      "type": "ConditionOnset",
+      "assign_to_attribute": "dep_condition",
+      "codes": [
+        { "system": "SNOMED-CT", "code": "66344007", "display": "Recurrent major depression" }
+      ],
+      "direct_transition": "Check_Meds_WithDx"
+    },
+    "Diagnose_Dysthymia": {
+      "type": "ConditionOnset",
+      "assign_to_attribute": "dep_condition",
+      "codes": [
+        { "system": "SNOMED-CT", "code": "78667006", "display": "Dysthymia" }
+      ],
+      "direct_transition": "Check_Meds_WithDx"
+    },
+    "Diagnose_Generic": {
+      "type": "ConditionOnset",
+      "assign_to_attribute": "dep_condition",
+      "codes": [
+        { "system": "SNOMED-CT", "code": "35489007", "display": "Depressive disorder" }
+      ],
+      "direct_transition": "Check_Meds_WithDx"
+    },
+
+    "Check_Meds_WithDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        {
+          "condition": {
+            "condition_type": "Attribute",
+            "attribute": "dep_has_meds",
+            "operator": "==",
+            "value": true
+          },
+          "transition": "Route_Med_WithDx"
+        },
+        {
+          "transition": "Clear_First_Visit_Flag"
+        }
+      ]
+    },
+
+    "Route_Med_WithDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "dep_med", "operator": "==", "value": "sertraline" }, "transition": "Prescribe_Sertraline_WithDx" },
+        { "condition": { "condition_type": "Attribute", "attribute": "dep_med", "operator": "==", "value": "fluoxetine" }, "transition": "Prescribe_Fluoxetine_WithDx" },
+        { "condition": { "condition_type": "Attribute", "attribute": "dep_med", "operator": "==", "value": "escitalopram" }, "transition": "Prescribe_Escitalopram_WithDx" },
+        { "condition": { "condition_type": "Attribute", "attribute": "dep_med", "operator": "==", "value": "citalopram" }, "transition": "Prescribe_Citalopram_WithDx" },
+        { "condition": { "condition_type": "Attribute", "attribute": "dep_med", "operator": "==", "value": "venlafaxine" }, "transition": "Prescribe_Venlafaxine_WithDx" },
+        { "transition": "Prescribe_Bupropion_WithDx" }
+      ]
+    },
+
+    "Prescribe_Sertraline_WithDx": {
+      "type": "MedicationOrder",
+      "codes": [{ "system": "RxNorm", "code": "312938", "display": "Sertraline 100 MG Oral Tablet" }],
+      "reason": "dep_condition",
+      "direct_transition": "Clear_First_Visit_Flag"
+    },
+    "Prescribe_Fluoxetine_WithDx": {
+      "type": "MedicationOrder",
+      "codes": [{ "system": "RxNorm", "code": "310385", "display": "Fluoxetine 20 MG Oral Capsule" }],
+      "reason": "dep_condition",
+      "direct_transition": "Clear_First_Visit_Flag"
+    },
+    "Prescribe_Escitalopram_WithDx": {
+      "type": "MedicationOrder",
+      "codes": [{ "system": "RxNorm", "code": "351250", "display": "Escitalopram 20 MG Oral Tablet" }],
+      "reason": "dep_condition",
+      "direct_transition": "Clear_First_Visit_Flag"
+    },
+    "Prescribe_Citalopram_WithDx": {
+      "type": "MedicationOrder",
+      "codes": [{ "system": "RxNorm", "code": "200371", "display": "Citalopram 20 MG Oral Tablet" }],
+      "reason": "dep_condition",
+      "direct_transition": "Clear_First_Visit_Flag"
+    },
+    "Prescribe_Venlafaxine_WithDx": {
+      "type": "MedicationOrder",
+      "codes": [{ "system": "RxNorm", "code": "313580", "display": "Venlafaxine 100 MG Oral Tablet" }],
+      "reason": "dep_condition",
+      "direct_transition": "Clear_First_Visit_Flag"
+    },
+    "Prescribe_Bupropion_WithDx": {
+      "type": "MedicationOrder",
+      "codes": [{ "system": "RxNorm", "code": "993537", "display": "12 HR bupropion hydrochloride 200 MG Extended Release Oral Tablet [Wellbutrin]" }],
+      "reason": "dep_condition",
+      "direct_transition": "Clear_First_Visit_Flag"
+    },
+
+    "Route_Med_NoDx": {
+      "type": "Simple",
+      "remarks": ["Path C: antidepressant without diagnosis — no 'reason' field"],
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "dep_med", "operator": "==", "value": "sertraline" }, "transition": "Prescribe_Sertraline_NoDx" },
+        { "condition": { "condition_type": "Attribute", "attribute": "dep_med", "operator": "==", "value": "fluoxetine" }, "transition": "Prescribe_Fluoxetine_NoDx" },
+        { "condition": { "condition_type": "Attribute", "attribute": "dep_med", "operator": "==", "value": "escitalopram" }, "transition": "Prescribe_Escitalopram_NoDx" },
+        { "condition": { "condition_type": "Attribute", "attribute": "dep_med", "operator": "==", "value": "citalopram" }, "transition": "Prescribe_Citalopram_NoDx" },
+        { "condition": { "condition_type": "Attribute", "attribute": "dep_med", "operator": "==", "value": "venlafaxine" }, "transition": "Prescribe_Venlafaxine_NoDx" },
+        { "transition": "Prescribe_Bupropion_NoDx" }
+      ]
+    },
+
+    "Prescribe_Sertraline_NoDx": {
+      "type": "MedicationOrder",
+      "codes": [{ "system": "RxNorm", "code": "312938", "display": "Sertraline 100 MG Oral Tablet" }],
+      "direct_transition": "Clear_First_Visit_Flag"
+    },
+    "Prescribe_Fluoxetine_NoDx": {
+      "type": "MedicationOrder",
+      "codes": [{ "system": "RxNorm", "code": "310385", "display": "Fluoxetine 20 MG Oral Capsule" }],
+      "direct_transition": "Clear_First_Visit_Flag"
+    },
+    "Prescribe_Escitalopram_NoDx": {
+      "type": "MedicationOrder",
+      "codes": [{ "system": "RxNorm", "code": "351250", "display": "Escitalopram 20 MG Oral Tablet" }],
+      "direct_transition": "Clear_First_Visit_Flag"
+    },
+    "Prescribe_Citalopram_NoDx": {
+      "type": "MedicationOrder",
+      "codes": [{ "system": "RxNorm", "code": "200371", "display": "Citalopram 20 MG Oral Tablet" }],
+      "direct_transition": "Clear_First_Visit_Flag"
+    },
+    "Prescribe_Venlafaxine_NoDx": {
+      "type": "MedicationOrder",
+      "codes": [{ "system": "RxNorm", "code": "313580", "display": "Venlafaxine 100 MG Oral Tablet" }],
+      "direct_transition": "Clear_First_Visit_Flag"
+    },
+    "Prescribe_Bupropion_NoDx": {
+      "type": "MedicationOrder",
+      "codes": [{ "system": "RxNorm", "code": "993537", "display": "12 HR bupropion hydrochloride 200 MG Extended Release Oral Tablet [Wellbutrin]" }],
+      "direct_transition": "Clear_First_Visit_Flag"
+    },
+
+    "Clear_First_Visit_Flag": {
+      "type": "SetAttribute",
+      "attribute": "dep_needs_first_visit",
+      "value": false,
+      "direct_transition": "End_Wellness_Encounter"
+    },
+
+    "End_Wellness_Encounter": {
+      "type": "EncounterEnd",
+      "direct_transition": "Followup_Delay"
+    },
+
+    "Followup_Delay": {
+      "type": "Delay",
+      "range": { "low": 2, "high": 4, "unit": "months" },
+      "direct_transition": "Wellness_Encounter"
+    }
+  },
+  "gmf_version": 2
+}

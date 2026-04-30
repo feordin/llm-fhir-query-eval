@@ -1,0 +1,64 @@
+{
+  "id": "phekb-pneumonia-procedures",
+  "source": "phekb",
+  "source_id": "pneumonia",
+  "name": "Pneumonia - Chest X-ray Procedure Query",
+  "description": "**Sixth Procedure-resource phenotype.** Tests ability to find pneumonia patients via chest X-ray — the standard imaging used to confirm pneumonia. Tests whether LLM correctly queries Procedure resources for diagnostic imaging (different from biopsy/EEG/colonoscopy/polysomnography/CABG).",
+  "prompt": "Find patients who have undergone a chest X-ray procedure.",
+  "prompts": {
+    "naive": "Find patients with chest X-rays.",
+    "broad": "Find Procedure resources for plain chest X-ray — the standard imaging modality used to confirm pneumonia (looking for infiltrates, consolidation, or effusion).",
+    "expert": "I need Procedure resources for chest X-ray. Use SNOMED code 399208008 (Plain X-ray of chest). Query: Procedure?code=http://snomed.info/sct|399208008"
+  },
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "algorithm_path": "procedure-path",
+    "algorithm_path_description": "Patients with chest X-ray. **Sixth Procedure-resource phenotype** in suite (after CHD revasc, polysomnography, colonoscopy, prostate biopsy, EEG). First diagnostic imaging procedure type.",
+    "code_systems": [
+      "SNOMED CT"
+    ],
+    "required_codes": [
+      {
+        "system": "http://snomed.info/sct",
+        "code": "399208008",
+        "display": "Plain X-ray of chest (procedure)",
+        "source": "UMLS verified"
+      }
+    ],
+    "complexity": "medium",
+    "tags": [
+      "procedure",
+      "imaging",
+      "pulmonary",
+      "pneumonia",
+      "chest-xray",
+      "sixth-procedure-test",
+      "first-imaging-procedure"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "Procedure",
+    "parameters": {
+      "code": "http://snomed.info/sct|399208008"
+    },
+    "url": "Procedure?code=http://snomed.info/sct|399208008"
+  },
+  "test_data": {
+    "resources": [
+      "synthea/output/pneumonia/positive/fhir/",
+      "synthea/output/pneumonia/control/fhir/"
+    ],
+    "expected_result_count": 6,
+    "expected_resource_ids": [],
+    "expected_patient_ids": [
+      "050f131d-a2fb-cc21-4e6d-adf9c9f3fd4f",
+      "34f44f8d-6988-cff9-1820-5fbbf42d7e37",
+      "51e6015d-291b-6c6b-63e3-fd33764fa1b9",
+      "70979eb8-c8ad-e6c4-1d1d-3781d76eb9d5",
+      "9c460c27-abc6-570b-ff6c-0ca42ee7c581",
+      "fda5e6df-d9c9-0317-ec83-49b2c52e9546"
+    ]
+  },
+  "created_at": "2026-04-28T00:00:00.000000Z",
+  "updated_at": "2026-04-27T00:00:00.000000Z"
+}

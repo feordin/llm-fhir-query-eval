@@ -1,0 +1,67 @@
+{
+  "id": "phekb-hepatitis-c-labs",
+  "source": "phekb",
+  "source_id": "hepatitis-c",
+  "name": "Hepatitis C - Two-Step Diagnostic Workup (HCV Antibody + RNA)",
+  "description": "Tests ability to find hepatitis C patients via the two-step diagnostic workup. HCV diagnosis requires TWO sequential labs per CDC/AASLD guidelines: (1) HCV antibody (LOINC 13955-0) screens for past or current infection, then (2) HCV RNA viral load (LOINC 11011-4) confirms active infection. Antibody-positive but RNA-negative means resolved infection (spontaneous clearance or successful treatment). Active infection requires BOTH positive. This is the **first two-step diagnostic test case** — testing whether LLM understands the workflow rather than searching for either alone.",
+  "prompt": "Find laboratory observations for hepatitis C virus antibody tests, indicating either past or current HCV infection.",
+  "prompts": {
+    "naive": "Find patients with HCV antibody tests.",
+    "broad": "Find Observation resources for hepatitis C virus (HCV) antibody testing. A positive HCV antibody indicates past or present HCV infection. The two-step diagnostic workup requires a follow-up HCV RNA viral load to confirm active vs resolved infection.",
+    "expert": "I need Observation resources for HCV antibody testing. Use LOINC 13955-0 (Hepatitis C virus Ab [Presence] in Serum or Plasma by Immunoassay). Note: HCV diagnosis requires a two-step workup — antibody screening (this code) followed by HCV RNA viral load (LOINC 11011-4) to confirm active infection. A complete diagnostic test case would query both codes together with appropriate value-quantity filters, but this test focuses on the antibody screening step alone."
+  },
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "algorithm_path": "lab-path",
+    "algorithm_path_description": "Patients with HCV antibody testing (Paths A, B, and possibly resolved-infection cases). Tests basic HCV diagnostic lab knowledge. The advanced two-step workup is tested in the comprehensive case.",
+    "code_systems": [
+      "LOINC"
+    ],
+    "required_codes": [
+      {
+        "system": "http://loinc.org",
+        "code": "13955-0",
+        "display": "Hepatitis C virus Ab [Presence] in Serum or Plasma by Immunoassay",
+        "source": "UMLS verified"
+      }
+    ],
+    "complexity": "medium",
+    "tags": [
+      "observation",
+      "infectious-disease",
+      "hepatitis-c",
+      "antibody",
+      "two-step-workup",
+      "hcv-screening"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "Observation",
+    "parameters": {
+      "code": "http://loinc.org|13955-0"
+    },
+    "url": "Observation?code=http://loinc.org|13955-0"
+  },
+  "test_data": {
+    "resources": [
+      "synthea/output/hepatitis-c/positive/fhir/",
+      "synthea/output/hepatitis-c/control/fhir/"
+    ],
+    "expected_result_count": 10,
+    "expected_resource_ids": [],
+    "expected_patient_ids": [
+      "0170c5ec-ac6a-e3fb-7c4e-a193cf7d62e3",
+      "1068af52-2083-6616-3b1a-a2bf3dd4d886",
+      "152eab27-7dd8-c0b8-c85e-37634dbe3d03",
+      "31fc5b05-4b4f-f82c-eee5-d338ec698ce8",
+      "35b1094a-c017-9aeb-9b73-cb11a8095a82",
+      "3fc9d15b-d93e-5f83-f3fa-8ec7a7f6fc59",
+      "c0f9210f-da2a-dd30-010e-1284f5a0d867",
+      "c7ce7487-ca57-f520-5f57-82548f9e9238",
+      "d9917246-5b23-666e-ca76-370186ad6744",
+      "daab7292-bbdb-3fa0-ef77-e949dfcfc762"
+    ]
+  },
+  "created_at": "2026-04-27T00:00:00.000000Z",
+  "updated_at": "2026-04-27T00:00:00.000000Z"
+}

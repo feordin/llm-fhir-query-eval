@@ -1,0 +1,138 @@
+{
+  "name": "PheKB Hypothyroidism Control",
+  "remarks": [
+    "Control module for PheKB hypothyroidism phenotype.",
+    "Generates patients who do NOT have hypothyroidism.",
+    "",
+    "Controls per PheKB algorithm must:",
+    "  - Have no hypothyroidism diagnosis",
+    "  - Have no thyroid replacement medication",
+    "  - Have normal TSH (0.5 - 5.0 mIU/L) and normal FT4 (0.5 - 1.2 ng/dL)",
+    "  - Have at least 2 visits documenting their euthyroid status",
+    "",
+    "Lab values (intentionally below the case threshold of TSH > 5):",
+    "  Control TSH range: 0.6 - 4.5 mIU/L (well below 5 to avoid false positives)",
+    "  Control FT4 range: 0.7 - 1.6 ng/dL (above the case threshold of < 0.5)",
+    "",
+    "Controls get NO Condition resources for hypothyroidism and NO levothyroxine."
+  ],
+  "states": {
+    "Initial": {
+      "type": "Initial",
+      "direct_transition": "Age_Guard"
+    },
+
+    "Age_Guard": {
+      "type": "Guard",
+      "allow": {
+        "condition_type": "Age",
+        "operator": ">=",
+        "quantity": 30,
+        "unit": "years"
+      },
+      "direct_transition": "Set_Control_Flag"
+    },
+
+    "Set_Control_Flag": {
+      "type": "SetAttribute",
+      "attribute": "hypo_positive",
+      "value": false,
+      "direct_transition": "Set_Needs_First_Visit"
+    },
+
+    "Set_Needs_First_Visit": {
+      "type": "SetAttribute",
+      "attribute": "hypo_needs_first_visit",
+      "value": true,
+      "direct_transition": "Wellness_Encounter"
+    },
+
+    "Wellness_Encounter": {
+      "type": "Encounter",
+      "wellness": true,
+      "direct_transition": "Check_First_Visit"
+    },
+
+    "Check_First_Visit": {
+      "type": "Simple",
+      "conditional_transition": [
+        {
+          "condition": {
+            "condition_type": "Attribute",
+            "attribute": "hypo_needs_first_visit",
+            "operator": "==",
+            "value": true
+          },
+          "transition": "Record_Normal_TSH"
+        },
+        {
+          "transition": "Record_Followup_Normal_TSH"
+        }
+      ]
+    },
+
+    "Record_Normal_TSH": {
+      "type": "Observation",
+      "category": "laboratory",
+      "unit": "m[IU]/L",
+      "codes": [
+        {
+          "system": "LOINC",
+          "code": "3016-3",
+          "display": "Thyrotropin [Units/volume] in Serum or Plasma"
+        }
+      ],
+      "range": { "low": 0.6, "high": 4.5 },
+      "direct_transition": "Record_Normal_FT4"
+    },
+
+    "Record_Normal_FT4": {
+      "type": "Observation",
+      "category": "laboratory",
+      "unit": "ng/dL",
+      "codes": [
+        {
+          "system": "LOINC",
+          "code": "3024-7",
+          "display": "Thyroxine (T4) free [Mass/volume] in Serum or Plasma"
+        }
+      ],
+      "range": { "low": 0.7, "high": 1.6 },
+      "direct_transition": "Clear_First_Visit_Flag"
+    },
+
+    "Clear_First_Visit_Flag": {
+      "type": "SetAttribute",
+      "attribute": "hypo_needs_first_visit",
+      "value": false,
+      "direct_transition": "End_Wellness_Encounter"
+    },
+
+    "Record_Followup_Normal_TSH": {
+      "type": "Observation",
+      "category": "laboratory",
+      "unit": "m[IU]/L",
+      "codes": [
+        {
+          "system": "LOINC",
+          "code": "3016-3",
+          "display": "Thyrotropin [Units/volume] in Serum or Plasma"
+        }
+      ],
+      "range": { "low": 0.8, "high": 4.0 },
+      "direct_transition": "End_Wellness_Encounter"
+    },
+
+    "End_Wellness_Encounter": {
+      "type": "EncounterEnd",
+      "direct_transition": "Followup_Delay"
+    },
+
+    "Followup_Delay": {
+      "type": "Delay",
+      "range": { "low": 6, "high": 18, "unit": "months" },
+      "direct_transition": "Wellness_Encounter"
+    }
+  },
+  "gmf_version": 2
+}

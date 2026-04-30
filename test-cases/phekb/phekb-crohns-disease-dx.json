@@ -1,0 +1,110 @@
+{
+  "id": "phekb-crohns-disease-dx",
+  "source": "phekb",
+  "source_id": "crohns-disease",
+  "name": "Crohn's Disease - Diagnosis Code Query (Multi-Anatomic-Site)",
+  "description": "Tests ability to find Crohn's disease patients via diagnosis codes. Crohn's is documented under multiple SNOMED codes by anatomic location: parent Crohn's disease, large bowel, terminal ileum, colon and rectum, and jejunum and ileum. Synthea distributes patients across these location-specific codes.",
+  "prompt": "Find all patients with a diagnosis of Crohn's disease, including Crohn's of the large bowel, terminal ileum, colon and rectum, and jejunum and ileum.",
+  "prompts": {
+    "naive": "Find all patients with Crohn's disease.",
+    "broad": "Find all patients diagnosed with Crohn's disease — including the parent concept and all anatomic-location-specific variants (large bowel, terminal ileum, colon and rectum, jejunum and ileum).",
+    "expert": "I need to identify all Crohn's patients. Crohn's is documented under multiple SNOMED codes from the Optum Crohn's Disease SCT VSAC (OID 2.16.840.1.113762.1.4.1078.938): Crohn's disease (34000006) is the parent concept, with anatomic-location variants Crohn's disease of large bowel (7620006), Crohn's disease of terminal ileum (196977009), Crohn's disease of colon and rectum (1197732001), and Crohn's disease of jejunum and ileum (1197733006). Search Condition resources for all five codes."
+  },
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "algorithm_path": "diagnosis-path",
+    "algorithm_path_description": "Patients with Crohn's diagnosis codes. Tests anatomic-location code variation.",
+    "code_systems": [
+      "SNOMED CT"
+    ],
+    "required_codes": [
+      {
+        "system": "http://snomed.info/sct",
+        "code": "34000006",
+        "display": "Crohn's disease",
+        "source": "UMLS verified, parent"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "7620006",
+        "display": "Crohn's disease of large bowel",
+        "source": "VSAC"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "196977009",
+        "display": "Crohn's disease of terminal ileum",
+        "source": "VSAC"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "1197732001",
+        "display": "Crohn disease of colon and rectum",
+        "source": "VSAC"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "1197733006",
+        "display": "Crohn disease of jejunum and ileum",
+        "source": "VSAC"
+      }
+    ],
+    "complexity": "medium",
+    "tags": [
+      "condition",
+      "gastroenterology",
+      "crohns-disease",
+      "ibd",
+      "diagnosis-code",
+      "multi-subtype",
+      "anatomic-variation"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "Condition",
+    "parameters": {
+      "code": "http://snomed.info/sct|34000006,http://snomed.info/sct|7620006,http://snomed.info/sct|196977009,http://snomed.info/sct|1197732001,http://snomed.info/sct|1197733006"
+    },
+    "url": "Condition?code=http://snomed.info/sct|34000006,http://snomed.info/sct|7620006,http://snomed.info/sct|196977009,http://snomed.info/sct|1197732001,http://snomed.info/sct|1197733006"
+  },
+  "test_data": {
+    "resources": [
+      "synthea/output/crohns-disease/positive/fhir/",
+      "synthea/output/crohns-disease/control/fhir/"
+    ],
+    "expected_result_count": 28,
+    "expected_resource_ids": [],
+    "expected_patient_ids": [
+      "01e0976f-9f06-550f-5b7b-5b0cca0186fe",
+      "02c11591-f8cb-549a-bcce-77128a8446ec",
+      "09ac3be2-327f-6615-e3bd-d587c1ea04bf",
+      "1cbaf1ae-1372-d5f4-6465-5b58a5e3308f",
+      "2f882635-3959-d5c4-841b-4a892f5b6283",
+      "38933f76-e491-3125-74c6-08fc23e2d2a3",
+      "3a7ec0bd-27f9-b4b8-7240-832f702d40dc",
+      "47a4ae45-3119-c572-d37f-11c87d671b1f",
+      "62f990ac-ca99-cbed-63ef-350b3b619d48",
+      "6411907c-15df-3b14-2147-886e03c07d3a",
+      "664a2781-d543-5476-f865-ba70d76d6521",
+      "786c7d7f-2959-ca6d-d607-942163ddc750",
+      "7ca52d8c-a720-af84-622d-65695eecf902",
+      "7f082324-6ed8-bf53-79d8-a9e95c2de1fa",
+      "836c526c-79d5-ee6c-2b0e-deca7abcda86",
+      "856bee24-f6c3-5c62-64fe-1a7a6d16fd79",
+      "94a56f64-7fb8-f62b-2e66-06c0e82e9782",
+      "9c830ee3-1c52-e9f5-dd3c-9b5cb2d1e62f",
+      "aad9b22b-b222-81b4-5fae-ccc41534413d",
+      "b884194c-1307-4180-856a-c569b4f40046",
+      "bd96b5e6-d82b-6dbc-9663-408ed95e4566",
+      "c17e7061-b7e4-c533-7f0f-fd906a2a8dbd",
+      "c4f68e05-9f6a-477b-96bc-190c50318459",
+      "e9fc4357-f58e-0deb-fd8f-b144379b0c7e",
+      "eaadb238-3ac3-1e76-88ea-232c78475e8f",
+      "f37ebfab-16e5-cc17-daf3-b487176f40d7",
+      "fa4dbf3b-e89b-a4dc-f95b-8e57e9822b9e",
+      "fc045b95-6b07-0b29-7e0d-5aa99044d3b2"
+    ]
+  },
+  "created_at": "2026-04-27T00:00:00.000000Z",
+  "updated_at": "2026-04-27T00:00:00.000000Z"
+}

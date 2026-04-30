@@ -1,0 +1,144 @@
+{
+  "name": "PheKB Gout",
+  "remarks": [
+    "Custom Synthea module for gout.",
+    "First uric acid lab phenotype. First allopurinol/colchicine medication phenotype. Distinct mechanism from inflammatory arthritis (RA).",
+    "",
+    "Generates FOUR patient paths:",
+    "  Path A (50%): Gout dx + allopurinol/colchicine + elevated urate (>7 mg/dL)",
+    "  Path B (20%): Gout dx + allopurinol/colchicine, no urate measured",
+    "  Path C (15%): Allopurinol/colchicine only, no gout dx (TRICKY — empirical hyperuricemia tx, tumor lysis prophylaxis, FMF for colchicine)",
+    "  Path D (15%): Elevated urate (>7), no formal gout dx (TRICKY — asymptomatic hyperuricemia)",
+    "",
+    "Medication distribution:",
+    "  70% Allopurinol (RxNorm 519) — gold standard urate-lowering therapy",
+    "  30% Colchicine (RxNorm 2683) — also for FMF/pericarditis (cross-indication)",
+    "",
+    "Urate range: 7.5-12 mg/dL (normal <7.0 mg/dL).",
+    "",
+    "Age guard: >=30 (gout uncommon under 30)."
+  ],
+  "states": {
+    "Initial": { "type": "Initial", "direct_transition": "Age_Guard" },
+    "Age_Guard": { "type": "Guard", "allow": { "condition_type": "Age", "operator": ">=", "quantity": 30, "unit": "years" }, "direct_transition": "Set_Gout_Flag" },
+    "Set_Gout_Flag": { "type": "SetAttribute", "attribute": "gout_positive", "value": true, "direct_transition": "Choose_Patient_Path" },
+    "Choose_Patient_Path": {
+      "type": "Simple",
+      "distributed_transition": [
+        { "transition": "Set_Path_A", "distribution": 0.50 },
+        { "transition": "Set_Path_B", "distribution": 0.20 },
+        { "transition": "Set_Path_C", "distribution": 0.15 },
+        { "transition": "Set_Path_D", "distribution": 0.15 }
+      ]
+    },
+    "Set_Path_A": { "type": "SetAttribute", "attribute": "gout_has_dx", "value": true, "direct_transition": "Set_Path_A_Med" },
+    "Set_Path_A_Med": { "type": "SetAttribute", "attribute": "gout_has_med", "value": true, "direct_transition": "Set_Path_A_Lab" },
+    "Set_Path_A_Lab": { "type": "SetAttribute", "attribute": "gout_has_lab", "value": true, "direct_transition": "Choose_Med" },
+    "Set_Path_B": { "type": "SetAttribute", "attribute": "gout_has_dx", "value": true, "direct_transition": "Set_Path_B_Med" },
+    "Set_Path_B_Med": { "type": "SetAttribute", "attribute": "gout_has_med", "value": true, "direct_transition": "Set_Path_B_Lab" },
+    "Set_Path_B_Lab": { "type": "SetAttribute", "attribute": "gout_has_lab", "value": false, "direct_transition": "Choose_Med" },
+    "Set_Path_C": { "type": "SetAttribute", "remarks": ["TRICKY: meds only, no gout dx"], "attribute": "gout_has_dx", "value": false, "direct_transition": "Set_Path_C_Med" },
+    "Set_Path_C_Med": { "type": "SetAttribute", "attribute": "gout_has_med", "value": true, "direct_transition": "Set_Path_C_Lab" },
+    "Set_Path_C_Lab": { "type": "SetAttribute", "attribute": "gout_has_lab", "value": false, "direct_transition": "Choose_Med" },
+    "Set_Path_D": { "type": "SetAttribute", "remarks": ["TRICKY: elevated urate without gout dx"], "attribute": "gout_has_dx", "value": false, "direct_transition": "Set_Path_D_Med" },
+    "Set_Path_D_Med": { "type": "SetAttribute", "attribute": "gout_has_med", "value": false, "direct_transition": "Set_Path_D_Lab" },
+    "Set_Path_D_Lab": { "type": "SetAttribute", "attribute": "gout_has_lab", "value": true, "direct_transition": "Choose_Med" },
+
+    "Choose_Med": {
+      "type": "Simple",
+      "distributed_transition": [
+        { "transition": "Set_Med_Allopurinol", "distribution": 0.70 },
+        { "transition": "Set_Med_Colchicine", "distribution": 0.30 }
+      ]
+    },
+    "Set_Med_Allopurinol": { "type": "SetAttribute", "attribute": "gout_med", "value": "allopurinol", "direct_transition": "Set_Needs_First_Visit" },
+    "Set_Med_Colchicine": { "type": "SetAttribute", "attribute": "gout_med", "value": "colchicine", "direct_transition": "Set_Needs_First_Visit" },
+
+    "Set_Needs_First_Visit": { "type": "SetAttribute", "attribute": "gout_needs_first_visit", "value": true, "direct_transition": "Wellness_Encounter" },
+    "Wellness_Encounter": { "type": "Encounter", "wellness": true, "direct_transition": "Check_First_Visit" },
+    "Check_First_Visit": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "gout_needs_first_visit", "operator": "==", "value": true }, "transition": "Check_Has_Diagnosis" },
+        { "transition": "End_Wellness_Encounter" }
+      ]
+    },
+    "Check_Has_Diagnosis": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "gout_has_dx", "operator": "==", "value": true }, "transition": "Diagnose_Gout" },
+        { "transition": "Check_Med_NoDx" }
+      ]
+    },
+    "Diagnose_Gout": { "type": "ConditionOnset", "assign_to_attribute": "gout_condition", "codes": [{ "system": "SNOMED-CT", "code": "90560007", "display": "Gout" }], "direct_transition": "Check_Med_WithDx" },
+
+    "Check_Med_WithDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "gout_has_med", "operator": "==", "value": true }, "transition": "Route_Med_WithDx" },
+        { "transition": "Check_Lab_WithDx" }
+      ]
+    },
+    "Route_Med_WithDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "gout_med", "operator": "==", "value": "allopurinol" }, "transition": "Prescribe_Allopurinol_WithDx" },
+        { "transition": "Prescribe_Colchicine_WithDx" }
+      ]
+    },
+    "Prescribe_Allopurinol_WithDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "519", "display": "allopurinol" }], "reason": "gout_condition", "direct_transition": "Check_Lab_WithDx" },
+    "Prescribe_Colchicine_WithDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "2683", "display": "colchicine" }], "reason": "gout_condition", "direct_transition": "Check_Lab_WithDx" },
+    "Check_Lab_WithDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "gout_has_lab", "operator": "==", "value": true }, "transition": "Record_Urate_WithDx" },
+        { "transition": "Clear_First_Visit_Flag" }
+      ]
+    },
+    "Record_Urate_WithDx": {
+      "type": "Observation",
+      "category": "laboratory",
+      "unit": "mg/dL",
+      "codes": [{ "system": "LOINC", "code": "3084-1", "display": "Urate [Mass/volume] in Serum or Plasma" }],
+      "range": { "low": 7.5, "high": 12 },
+      "direct_transition": "Clear_First_Visit_Flag"
+    },
+
+    "Check_Med_NoDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "gout_has_med", "operator": "==", "value": true }, "transition": "Route_Med_NoDx" },
+        { "transition": "Check_Lab_NoDx" }
+      ]
+    },
+    "Route_Med_NoDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "gout_med", "operator": "==", "value": "allopurinol" }, "transition": "Prescribe_Allopurinol_NoDx" },
+        { "transition": "Prescribe_Colchicine_NoDx" }
+      ]
+    },
+    "Prescribe_Allopurinol_NoDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "519", "display": "allopurinol" }], "direct_transition": "Check_Lab_NoDx" },
+    "Prescribe_Colchicine_NoDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "2683", "display": "colchicine" }], "direct_transition": "Check_Lab_NoDx" },
+    "Check_Lab_NoDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "gout_has_lab", "operator": "==", "value": true }, "transition": "Record_Urate_NoDx" },
+        { "transition": "Clear_First_Visit_Flag" }
+      ]
+    },
+    "Record_Urate_NoDx": {
+      "type": "Observation",
+      "category": "laboratory",
+      "unit": "mg/dL",
+      "codes": [{ "system": "LOINC", "code": "3084-1", "display": "Urate [Mass/volume] in Serum or Plasma" }],
+      "range": { "low": 7.5, "high": 12 },
+      "direct_transition": "Clear_First_Visit_Flag"
+    },
+
+    "Clear_First_Visit_Flag": { "type": "SetAttribute", "attribute": "gout_needs_first_visit", "value": false, "direct_transition": "End_Wellness_Encounter" },
+    "End_Wellness_Encounter": { "type": "EncounterEnd", "direct_transition": "Followup_Delay" },
+    "Followup_Delay": { "type": "Delay", "range": { "low": 6, "high": 12, "unit": "months" }, "direct_transition": "Wellness_Encounter" }
+  },
+  "gmf_version": 2
+}

@@ -1,0 +1,394 @@
+{
+  "name": "PheKB Atrial Fibrillation",
+  "remarks": [
+    "Custom Synthea module for PheKB phenotype: atrial-fibrillation-demonstration-project",
+    "Based on PheKB AF algorithm: cases have AF diagnosis, absence of heart transplant",
+    "",
+    "Generates TWO types of positive patients:",
+    "  Type A (70%): Diagnosis + Meds (formal AF diagnosis with medications)",
+    "  Type B (30%): Meds only, NO diagnosis code (AF managed by external provider,",
+    "                anticoagulant/rate-control prescribed without local AF diagnosis)",
+    "",
+    "Type B patients test whether LLMs can identify AF cases that have",
+    "no Condition resource - only MedicationRequest evidence.",
+    "",
+    "Medications (AF treatment categories):",
+    "  Anticoagulants: warfarin (RxNorm 855332), apixaban (RxNorm 1364445)",
+    "  Antiarrhythmics: amiodarone (RxNorm 834348)",
+    "  Rate control: metoprolol (RxNorm 866514)",
+    "",
+    "Codes verified via NIH UMLS MCP (2025AB):",
+    "  SNOMED 49436004 (Atrial fibrillation)",
+    "  SNOMED 5370000 (Atrial flutter - used for exclusion reference)",
+    "  ICD-10-CM I48.91 (Unspecified atrial fibrillation)"
+  ],
+  "states": {
+    "Initial": {
+      "type": "Initial",
+      "direct_transition": "Age_Guard"
+    },
+    "Age_Guard": {
+      "type": "Guard",
+      "allow": {
+        "condition_type": "Age",
+        "operator": ">=",
+        "quantity": 40,
+        "unit": "years"
+      },
+      "direct_transition": "Wait_For_AF_Onset"
+    },
+    "Wait_For_AF_Onset": {
+      "type": "Delay",
+      "range": {
+        "low": 1,
+        "high": 5,
+        "unit": "years"
+      },
+      "direct_transition": "Choose_Patient_Path"
+    },
+    "Choose_Patient_Path": {
+      "type": "Simple",
+      "remarks": [
+        "Split patients into two groups:",
+        "  70% get a formal AF diagnosis + meds (standard case)",
+        "  30% have NO diagnosis - only meds (managed externally)",
+        "This tests whether LLMs search beyond Condition resources."
+      ],
+      "distributed_transition": [
+        {
+          "transition": "Set_Path_With_Diagnosis",
+          "distribution": 0.7
+        },
+        {
+          "transition": "Set_Path_No_Diagnosis",
+          "distribution": 0.3
+        }
+      ]
+    },
+    "Set_Path_With_Diagnosis": {
+      "type": "SetAttribute",
+      "attribute": "af_has_diagnosis",
+      "value": true,
+      "direct_transition": "Set_Needs_First_Visit"
+    },
+    "Set_Path_No_Diagnosis": {
+      "type": "SetAttribute",
+      "remarks": [
+        "No diagnosis code, only meds - simulates AF managed by external provider"
+      ],
+      "attribute": "af_has_diagnosis",
+      "value": false,
+      "direct_transition": "Set_Needs_First_Visit"
+    },
+    "Set_Needs_First_Visit": {
+      "type": "SetAttribute",
+      "attribute": "af_needs_first_visit",
+      "value": true,
+      "direct_transition": "Wellness_Encounter"
+    },
+    "Wellness_Encounter": {
+      "type": "Encounter",
+      "wellness": true,
+      "direct_transition": "Check_First_Visit"
+    },
+    "Check_First_Visit": {
+      "type": "Simple",
+      "conditional_transition": [
+        {
+          "condition": {
+            "condition_type": "Attribute",
+            "attribute": "af_needs_first_visit",
+            "operator": "==",
+            "value": true
+          },
+          "transition": "Route_First_Visit"
+        },
+        {
+          "transition": "End_Wellness_Encounter"
+        }
+      ]
+    },
+    "Route_First_Visit": {
+      "type": "Simple",
+      "remarks": [
+        "Route to diagnosis or no-diagnosis path based on patient type"
+      ],
+      "conditional_transition": [
+        {
+          "condition": {
+            "condition_type": "Attribute",
+            "attribute": "af_has_diagnosis",
+            "operator": "==",
+            "value": true
+          },
+          "transition": "Diagnose_Atrial_Fibrillation"
+        },
+        {
+          "transition": "Choose_Med_No_Diagnosis"
+        }
+      ]
+    },
+    "Diagnose_Atrial_Fibrillation": {
+      "type": "Simple",
+      "remarks": [
+        "Formal AF diagnosis inside wellness encounter",
+        "Distributes patients across SNOMED variants for code-variation testing."
+      ],
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Atrial_Fibrillation__variant_0",
+          "distribution": 0.5
+        },
+        {
+          "transition": "Diagnose_Atrial_Fibrillation__variant_1",
+          "distribution": 0.3
+        },
+        {
+          "transition": "Diagnose_Atrial_Fibrillation__variant_2",
+          "distribution": 0.2
+        }
+      ]
+    },
+    "Choose_Med_With_Diagnosis": {
+      "type": "Simple",
+      "remarks": [
+        "Diagnosed patients get one or two AF medications"
+      ],
+      "distributed_transition": [
+        {
+          "transition": "Prescribe_Warfarin_Dx",
+          "distribution": 0.3
+        },
+        {
+          "transition": "Prescribe_Apixaban_Dx",
+          "distribution": 0.3
+        },
+        {
+          "transition": "Prescribe_Amiodarone_Dx",
+          "distribution": 0.2
+        },
+        {
+          "transition": "Prescribe_Metoprolol_Dx",
+          "distribution": 0.2
+        }
+      ]
+    },
+    "Prescribe_Warfarin_Dx": {
+      "type": "MedicationOrder",
+      "codes": [
+        {
+          "system": "RxNorm",
+          "code": "855332",
+          "display": "warfarin sodium 5 MG Oral Tablet"
+        }
+      ],
+      "reason": "atrial_fibrillation_condition",
+      "direct_transition": "Maybe_Second_Med_Dx"
+    },
+    "Prescribe_Apixaban_Dx": {
+      "type": "MedicationOrder",
+      "codes": [
+        {
+          "system": "RxNorm",
+          "code": "1364445",
+          "display": "apixaban 5 MG Oral Tablet"
+        }
+      ],
+      "reason": "atrial_fibrillation_condition",
+      "direct_transition": "Maybe_Second_Med_Dx"
+    },
+    "Prescribe_Amiodarone_Dx": {
+      "type": "MedicationOrder",
+      "codes": [
+        {
+          "system": "RxNorm",
+          "code": "834348",
+          "display": "amiodarone hydrochloride 400 MG Oral Tablet"
+        }
+      ],
+      "reason": "atrial_fibrillation_condition",
+      "direct_transition": "Maybe_Second_Med_Dx"
+    },
+    "Prescribe_Metoprolol_Dx": {
+      "type": "MedicationOrder",
+      "codes": [
+        {
+          "system": "RxNorm",
+          "code": "866514",
+          "display": "metoprolol tartrate 50 MG Oral Tablet"
+        }
+      ],
+      "reason": "atrial_fibrillation_condition",
+      "direct_transition": "Maybe_Second_Med_Dx"
+    },
+    "Maybe_Second_Med_Dx": {
+      "type": "Simple",
+      "remarks": [
+        "50% of diagnosed patients get a second medication (e.g., anticoagulant + rate control)"
+      ],
+      "distributed_transition": [
+        {
+          "transition": "Prescribe_Metoprolol_Second_Dx",
+          "distribution": 0.3
+        },
+        {
+          "transition": "Prescribe_Apixaban_Second_Dx",
+          "distribution": 0.2
+        },
+        {
+          "transition": "Clear_First_Visit_Flag",
+          "distribution": 0.5
+        }
+      ]
+    },
+    "Prescribe_Metoprolol_Second_Dx": {
+      "type": "MedicationOrder",
+      "codes": [
+        {
+          "system": "RxNorm",
+          "code": "866514",
+          "display": "metoprolol tartrate 50 MG Oral Tablet"
+        }
+      ],
+      "reason": "atrial_fibrillation_condition",
+      "direct_transition": "Clear_First_Visit_Flag"
+    },
+    "Prescribe_Apixaban_Second_Dx": {
+      "type": "MedicationOrder",
+      "codes": [
+        {
+          "system": "RxNorm",
+          "code": "1364445",
+          "display": "apixaban 5 MG Oral Tablet"
+        }
+      ],
+      "reason": "atrial_fibrillation_condition",
+      "direct_transition": "Clear_First_Visit_Flag"
+    },
+    "Choose_Med_No_Diagnosis": {
+      "type": "Simple",
+      "remarks": [
+        "No-diagnosis patients: AF managed externally, local record only has medications.",
+        "These patients are the hardest for LLMs to find."
+      ],
+      "distributed_transition": [
+        {
+          "transition": "Prescribe_Warfarin_NoDx",
+          "distribution": 0.35
+        },
+        {
+          "transition": "Prescribe_Apixaban_NoDx",
+          "distribution": 0.35
+        },
+        {
+          "transition": "Prescribe_Amiodarone_NoDx",
+          "distribution": 0.15
+        },
+        {
+          "transition": "Prescribe_Metoprolol_NoDx",
+          "distribution": 0.15
+        }
+      ]
+    },
+    "Prescribe_Warfarin_NoDx": {
+      "type": "MedicationOrder",
+      "codes": [
+        {
+          "system": "RxNorm",
+          "code": "855332",
+          "display": "warfarin sodium 5 MG Oral Tablet"
+        }
+      ],
+      "direct_transition": "Clear_First_Visit_Flag"
+    },
+    "Prescribe_Apixaban_NoDx": {
+      "type": "MedicationOrder",
+      "codes": [
+        {
+          "system": "RxNorm",
+          "code": "1364445",
+          "display": "apixaban 5 MG Oral Tablet"
+        }
+      ],
+      "direct_transition": "Clear_First_Visit_Flag"
+    },
+    "Prescribe_Amiodarone_NoDx": {
+      "type": "MedicationOrder",
+      "codes": [
+        {
+          "system": "RxNorm",
+          "code": "834348",
+          "display": "amiodarone hydrochloride 400 MG Oral Tablet"
+        }
+      ],
+      "direct_transition": "Clear_First_Visit_Flag"
+    },
+    "Prescribe_Metoprolol_NoDx": {
+      "type": "MedicationOrder",
+      "codes": [
+        {
+          "system": "RxNorm",
+          "code": "866514",
+          "display": "metoprolol tartrate 50 MG Oral Tablet"
+        }
+      ],
+      "direct_transition": "Clear_First_Visit_Flag"
+    },
+    "Clear_First_Visit_Flag": {
+      "type": "SetAttribute",
+      "attribute": "af_needs_first_visit",
+      "value": false,
+      "direct_transition": "End_Wellness_Encounter"
+    },
+    "End_Wellness_Encounter": {
+      "type": "EncounterEnd",
+      "direct_transition": "Followup_Delay"
+    },
+    "Followup_Delay": {
+      "type": "Delay",
+      "range": {
+        "low": 3,
+        "high": 6,
+        "unit": "months"
+      },
+      "direct_transition": "Wellness_Encounter"
+    },
+    "Diagnose_Atrial_Fibrillation__variant_0": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": "49436004",
+          "display": "Atrial fibrillation"
+        }
+      ],
+      "direct_transition": "Choose_Med_With_Diagnosis",
+      "assign_to_attribute": "atrial_fibrillation_condition"
+    },
+    "Diagnose_Atrial_Fibrillation__variant_1": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": "282825002",
+          "display": "Paroxysmal atrial fibrillation"
+        }
+      ],
+      "direct_transition": "Choose_Med_With_Diagnosis",
+      "assign_to_attribute": "atrial_fibrillation_condition"
+    },
+    "Diagnose_Atrial_Fibrillation__variant_2": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": "426749004",
+          "display": "Chronic atrial fibrillation"
+        }
+      ],
+      "direct_transition": "Choose_Med_With_Diagnosis",
+      "assign_to_attribute": "atrial_fibrillation_condition"
+    }
+  },
+  "gmf_version": 2
+}

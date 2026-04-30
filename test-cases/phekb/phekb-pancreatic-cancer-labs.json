@@ -1,0 +1,74 @@
+{
+  "id": "phekb-pancreatic-cancer-labs",
+  "source": "phekb",
+  "source_id": "pancreatic-cancer",
+  "name": "Pancreatic Cancer - Elevated CA 19-9 Query",
+  "description": "Tests ability to find pancreatic cancer patients via elevated CA 19-9 tumor marker (>100 U/mL is highly suggestive; normal <37 U/mL). Includes Path D (elevated CA 19-9 without formal pancreatic cancer dx).",
+  "prompt": "Find patients with elevated CA 19-9 tumor marker results greater than 100 U/mL.",
+  "prompts": {
+    "naive": "Find patients with high CA 19-9.",
+    "broad": "Find patients with CA 19-9 (cancer antigen 19-9) measurements above 100 U/mL — highly suggestive of pancreatic cancer (also elevated in cholangiocarcinoma and pancreatitis).",
+    "expert": "Search Observation resources with LOINC 24108-3 (Cancer Ag 19-9) where value-quantity > 100 U/mL. Query: Observation?code=http://loinc.org|24108-3&value-quantity=gt100||U/mL"
+  },
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "algorithm_path": "labs-path",
+    "algorithm_path_description": "Patients with elevated CA 19-9 (>100). Includes Path D (no formal dx).",
+    "code_systems": [
+      "LOINC"
+    ],
+    "required_codes": [
+      {
+        "system": "http://loinc.org",
+        "code": "24108-3",
+        "display": "Cancer Ag 19-9 [Units/volume] in Serum or Plasma",
+        "source": "UMLS verified"
+      }
+    ],
+    "complexity": "hard",
+    "tags": [
+      "observation",
+      "oncology",
+      "pancreatic-cancer",
+      "ca-19-9",
+      "tumor-marker",
+      "value-quantity"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "Observation",
+    "parameters": {
+      "code": "http://loinc.org|24108-3",
+      "value-quantity": "gt100||U/mL"
+    },
+    "url": "Observation?code=http://loinc.org|24108-3&value-quantity=gt100||U/mL"
+  },
+  "test_data": {
+    "resources": [
+      "synthea/output/pancreatic-cancer/positive/fhir/",
+      "synthea/output/pancreatic-cancer/control/fhir/"
+    ],
+    "expected_result_count": 16,
+    "expected_resource_ids": [],
+    "expected_patient_ids": [
+      "1fa3dedd-e0ae-682a-c902-0f1dfebc2fc1",
+      "2ad88052-9f34-1c11-9aa2-30d8e8d55b0f",
+      "4dd59287-9cda-eba9-a55d-20698bd0044a",
+      "53db82f4-73e8-3bd8-e13b-7820f281b38c",
+      "55a639c6-5004-23fa-7ba5-56961c834603",
+      "62860253-9ea3-5a0b-514a-0e71a2622888",
+      "62e79ce5-eb73-b40b-9e61-dfe2c85396a4",
+      "74828e92-4278-1241-5ed6-fae13bdc9269",
+      "7d69a2de-5b67-ade0-f7b5-30f8db40a5c6",
+      "7df248c9-c917-281a-eab0-13c55b1feade",
+      "b3152f40-2214-38a3-dccb-15f76974f79c",
+      "c480dc25-cd37-4516-8769-8ab80cd876a9",
+      "d90d64c3-2d97-6824-38e0-207be45ba01c",
+      "ddecda7f-4475-d5e6-e0ac-e0949461497e",
+      "e6622f6f-9c7f-ee1e-2d39-3ff55954c00c",
+      "e986e95b-daed-510d-a735-aa58420cd034"
+    ]
+  },
+  "created_at": "2026-04-29T00:00:00.000000Z",
+  "updated_at": "2026-04-27T00:00:00.000000Z"
+}

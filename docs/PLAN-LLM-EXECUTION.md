@@ -302,6 +302,8 @@ server.setRequestHandler(ListToolsRequestSchema, async () => ({
 | With full MCP | ✅ | ✅ | Model + tools |
 | With FHIR examples | ❌ | ❌ | Model + RAG |
 
+**UMLS/VSAC MCP Server as Key Differentiator:** Our framework's clinical terminology tools (UMLS search, UMLS crosswalk, VSAC value set expansion) address a gap identified in both FHIRPath-QA (Frew et al., 2026) and FHIR-AgentBench (Lee et al., 2025) — neither benchmark evaluates whether LLMs can resolve natural clinical language to correct code systems and codes. The three-layer evaluation decomposition (Layer 2: Code System Accuracy) directly measures the impact of these tools. See `docs/literature_review.md` for detailed analysis.
+
 ---
 
 ## Evaluation Pipeline
@@ -456,6 +458,28 @@ class SemanticEvaluator:
         # Identify structural differences
         # Compute similarity score
 
+# 1b. THREE-LAYER DECOMPOSITION (diagnostic breakdown of execution failures)
+# Decomposes a single F1 into three diagnostic layers:
+#
+# Layer 1: Resource Type Accuracy
+#   - Compares resource type in generated query vs expected_query.resource_type
+#   - Binary: correct/incorrect
+#   - Implementation: parse generated URL, extract resource type before '?'
+#
+# Layer 2: Code System Accuracy (UNIQUE — our UMLS/VSAC MCP contribution)
+#   - 2a: Code system URI match (e.g., http://snomed.info/sct vs http://hl7.org/fhir/sid/icd-10-cm)
+#   - 2b: Code value match (exact match OR VSAC value set membership for lenient mode)
+#   - 2c: Code format check (system|code syntax)
+#   - Implementation: parse 'code=' param from generated URL, compare vs metadata.required_codes
+#   - Neither FHIRPath-QA nor FHIR-AgentBench evaluate this dimension
+#
+# Layer 3: Execution Correctness (existing F1 metric)
+#   - Precision/Recall/F1 on patient IDs
+#   - Remains the ground truth for pass/fail
+#
+# See: docs/IMPLEMENTATION-ROADMAP.md "Three-Layer Evaluation Decomposition"
+# See: docs/literature_review.md for motivation from published benchmarks
+
 # 3. LLM Judge Evaluation (SUPPLEMENTARY - edge cases)
 class LLMJudgeEvaluator:
     """
@@ -480,6 +504,7 @@ class LLMJudgeEvaluator:
 |----------|-----------|----------|-----------|---------------|
 | Exact execution match | ✅ F1=1.0 | Any | Skip | **PASS** |
 | Partial execution match | ⚠️ F1<1.0 | Low | Check | **PARTIAL** |
+| Resource type correct, wrong code | ❌ F1=0 | ✅ High (structure OK) | Check | **FAIL (Layer 2)** — code accuracy issue, UMLS tools may help |
 | Execution fails | ❌ F1=0 | Any | N/A | **FAIL** |
 | Execution passes, different structure | ✅ F1=1.0 | ❌ Low | ✅ Equivalent | **PASS** |
 

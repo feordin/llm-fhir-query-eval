@@ -1,0 +1,102 @@
+{
+  "id": "phekb-type-2-diabetes-dx-and-uncontrolled",
+  "source": "phekb",
+  "source_id": "type-2-diabetes",
+  "name": "Type 2 Diabetes - Dx + Uncontrolled HbA1c via _has (Combined Evidence)",
+  "description": "**Cross-resource _has + value-quantity test.** Find T2D patients with both a formal diagnosis AND uncontrolled disease (HbA1c≥6.5%). FHIR's `_has` parameter supports nested search criteria, but value-quantity filters in nested chains have inconsistent server support. The expected solution combines `_has:Condition:patient:code=T2D` with a separate Observation query, OR uses `_has:Observation:patient:code-value-quantity=loinc|4548-4$ge6.5` (composite parameter, server-dependent). Tests whether LLM understands the FHIR limit and falls back to two-query intersection.",
+  "prompt": "Find type 2 diabetes patients with a formal diabetes diagnosis AND uncontrolled hemoglobin A1c values at or above 6.5 percent. The point is to identify diabetic patients whose disease is currently poorly controlled — this requires combining diagnosis evidence with abnormal lab evidence at the patient level.",
+  "prompts": {
+    "naive": "Find T2D patients with high A1c.",
+    "broad": "Find patients who have BOTH a type 2 diabetes diagnosis on their problem list AND a hemoglobin A1c lab result at or above 6.5%. Use FHIR `_has` (reverse chaining) to combine evidence from Condition + Observation at the patient level.",
+    "expert": "I need patients matching TWO criteria simultaneously: a Condition with T2D code (SNOMED 44054006 or ICD-10 E11) AND an Observation with LOINC 4548-4 (Hemoglobin A1c) value≥6.5%. The cleanest FHIR approach is `Patient?_has:Condition:patient:code=...&_has:Observation:patient:code=http://loinc.org|4548-4` then filter the result by Observation.value-quantity client-side, OR use the composite parameter `code-value-quantity=4548-4$ge6.5` if the server supports it. Note that `_has` does NOT chain value-quantity natively in FHIR R4."
+  },
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "algorithm_path": "cross-resource-_has-with-value",
+    "algorithm_path_description": "Cross-resource intersection via FHIR `_has` combining Condition (T2D dx) + Observation (HbA1c). Tests value-quantity filtering challenges in nested chains.",
+    "code_systems": [
+      "SNOMED CT",
+      "ICD-10-CM",
+      "LOINC"
+    ],
+    "required_codes": [
+      {
+        "system": "http://snomed.info/sct",
+        "code": "44054006",
+        "display": "Type 2 diabetes mellitus",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://hl7.org/fhir/sid/icd-10-cm",
+        "code": "E11",
+        "display": "Type 2 diabetes mellitus",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://loinc.org",
+        "code": "4548-4",
+        "display": "Hemoglobin A1c/Hemoglobin.total in Blood",
+        "source": "UMLS verified"
+      }
+    ],
+    "complexity": "expert",
+    "tags": [
+      "_has",
+      "cross-resource",
+      "intersection",
+      "value-quantity",
+      "endocrinology",
+      "type-2-diabetes",
+      "uncontrolled-disease"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "Patient",
+    "parameters": {
+      "_has:Condition:patient:code": "http://snomed.info/sct|44054006,http://hl7.org/fhir/sid/icd-10-cm|E11",
+      "_has:Observation:patient:code-value-quantity": "http://loinc.org|4548-4$ge6.5"
+    },
+    "url": "Patient?_has:Condition:patient:code=http://snomed.info/sct|44054006,http://hl7.org/fhir/sid/icd-10-cm|E11&_has:Observation:patient:code-value-quantity=http://loinc.org|4548-4$ge6.5"
+  },
+  "test_data": {
+    "resources": [
+      "synthea/output/type-2-diabetes/positive/fhir/",
+      "synthea/output/type-2-diabetes/control/fhir/"
+    ],
+    "expected_result_count": 29,
+    "expected_resource_ids": [],
+    "expected_patient_ids": [
+      "1ee7c50f-5670-cbe9-241c-8ee0c76169a2",
+      "2c167999-289d-95fa-5c27-7d8b8d35348c",
+      "35b353dd-402b-571a-d67a-af0a104d0854",
+      "46f6a358-f8f8-614d-0542-19451221109a",
+      "4bfa091f-113c-25f3-9eec-381f1e884a58",
+      "4f083ce3-f12b-bb4b-7353-e17f0cd55b0a",
+      "559f630b-99b6-b0cf-1cb1-97625ff2fc01",
+      "5ba0a3f3-32f7-02b1-ec6a-8f568923954c",
+      "61e24146-3373-5634-b04c-0c53949fd033",
+      "639e38d8-6d69-f17d-d55f-2378d9039499",
+      "6fbddf55-7096-b883-7cd3-260f27953080",
+      "75768779-dbf2-ef75-613f-b4331ae42946",
+      "7b06ee52-df9a-8487-0be6-dff27cc7d519",
+      "922fb35e-148d-9e82-7e65-bfa05e3b3515",
+      "9661a432-4630-2cd9-142c-386845fae837",
+      "a2102333-3206-a76f-74aa-f471137fdffa",
+      "a65890ee-275c-2935-abf7-ac448a829871",
+      "a862380e-4d7b-7f34-2462-5dda8ce2f9f7",
+      "b97f99f3-6c1d-090b-f6d3-39bea7df0b04",
+      "ba419d35-0dfe-8af7-347c-eebf02485a56",
+      "bff9d9d5-ee3d-d852-9c67-36d8361a4a4a",
+      "c0a47dee-cc72-29ce-df5a-ea6d306c36a4",
+      "c3f5ba78-4bf3-c61d-af9e-8bddb229f7b3",
+      "c86c400e-ff88-a1e3-2e23-caa4d8311f47",
+      "ca0e013b-9d15-6bf7-c32c-e703725df964",
+      "db3fff49-3bd8-9684-ff2f-a52757e9afa1",
+      "df9f6545-52b2-5c29-faca-b1563b1efe3b",
+      "e74367bd-7385-97dc-2c7f-251b4cd9fe29",
+      "eb5910f1-26e6-bc6f-b300-716eae678d6f"
+    ]
+  },
+  "created_at": "2026-04-27T00:00:00.000000Z",
+  "updated_at": "2026-04-27T00:00:00.000000Z"
+}

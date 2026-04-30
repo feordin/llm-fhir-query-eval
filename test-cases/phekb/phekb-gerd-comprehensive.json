@@ -1,0 +1,135 @@
+{
+  "id": "phekb-gerd-comprehensive",
+  "source": "phekb",
+  "source_id": "gerd",
+  "name": "GERD - Comprehensive Provider Query",
+  "description": "Simulates a primary care provider identifying their complete GERD-treated patient population. The PheKB GERD algorithm itself uses 2+ dx + 2+ meds (or 3+ dx alone). Real-world identification primarily unions: GERD diagnosis codes and PPI prescriptions. Because PPI prescribing is the most cross-indication-heavy of any drug class, the union of dx OR PPI overcounts substantially — but it captures the full population at risk for chronic acid suppression complications.",
+  "prompt": "I need to identify my complete GERD-treated patient population for a quality initiative on chronic PPI use and deprescribing. From clinical experience, PPIs are widely prescribed: most patients with a formal GERD diagnosis are on a PPI, but many PPI patients don't have a formal reflux diagnosis (started empirically for dyspepsia, NSAID prophylaxis, or other indications).\n\nPlease run multiple FHIR queries to capture the full population:\n1. Patients with any GERD-related diagnosis (GERD, acid reflux, heartburn)\n2. Patients prescribed any proton pump inhibitor\n\nFor each query, return the matching resources. I want the union of all patients found. The medication query will substantially overcount because of PPI cross-indication prescribing, but that overcount itself is clinically important — chronic PPI exposure has the same risks regardless of indication.",
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "multi_query": true,
+    "algorithm_path": "comprehensive",
+    "algorithm_path_description": "Union of GERD dx codes (Paths A+B) and PPI Rx (Paths A+C). Path C is dominant (~50%) reflecting real-world PPI cross-indication prescribing. The PheKB algorithm intersects (dx AND meds), but providers screen with the union to find the population at risk for chronic PPI complications.",
+    "expected_queries": [
+      "Condition?code=http://snomed.info/sct|235595009,http://snomed.info/sct|698065002,http://snomed.info/sct|16331000",
+      "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|7646,http://www.nlm.nih.gov/research/umls/rxnorm|40790,http://www.nlm.nih.gov/research/umls/rxnorm|17128,http://www.nlm.nih.gov/research/umls/rxnorm|283742,http://www.nlm.nih.gov/research/umls/rxnorm|114979"
+    ],
+    "code_systems": [
+      "SNOMED CT",
+      "RxNorm"
+    ],
+    "required_codes": [
+      {
+        "system": "http://snomed.info/sct",
+        "code": "235595009",
+        "display": "Gastroesophageal reflux disease",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "698065002",
+        "display": "Acid reflux",
+        "source": "VSAC verified"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "16331000",
+        "display": "Heartburn",
+        "source": "VSAC verified"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "7646",
+        "display": "omeprazole",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "40790",
+        "display": "pantoprazole",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "17128",
+        "display": "lansoprazole",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "283742",
+        "display": "esomeprazole",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "114979",
+        "display": "rabeprazole",
+        "source": "UMLS verified"
+      }
+    ],
+    "complexity": "expert",
+    "tags": [
+      "multi-query",
+      "gastroenterology",
+      "gerd",
+      "comprehensive",
+      "cross-resource"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "Patient",
+    "parameters": {},
+    "url": "Condition?code=http://snomed.info/sct|235595009,http://snomed.info/sct|698065002,http://snomed.info/sct|16331000"
+  },
+  "test_data": {
+    "resources": [
+      "synthea/output/gerd/positive/fhir/",
+      "synthea/output/gerd/control/fhir/"
+    ],
+    "expected_result_count": 38,
+    "expected_resource_ids": [],
+    "expected_patient_ids": [
+      "051f4214-4cea-dade-f42d-099d8789fd8d",
+      "0a8dfb7c-e26a-3516-d8d2-f2af15e6d66d",
+      "0ab61c39-9847-32f2-c47e-3dba59c1f84f",
+      "1889330c-f9b6-3c50-9231-d1bf7752f8f0",
+      "21e9cc36-12a9-4689-d28b-a2613a0f47cf",
+      "241c462a-8a58-9a58-48a5-660798a428f1",
+      "3368574f-e2a4-b52e-1748-d68324dcb609",
+      "42a5c83c-6bfb-544f-baa7-c005b5dcdb97",
+      "456ecb6d-a0d9-cff7-c0d8-77764aedad8c",
+      "4c05b4d9-fc30-54e3-e9c6-5262e323a644",
+      "4f94a7d4-5ed5-d5d1-b649-39129e7bfffe",
+      "51cdf3f0-4026-ca00-bb81-f5c6c534c285",
+      "56f86504-9600-51e9-5831-e45aa9abd92d",
+      "5c84c7b6-4097-e376-e1c3-6225526fd97c",
+      "67fca239-e00a-08d7-e856-7ff2bf881ebd",
+      "6e6ea2b7-6887-cd70-5b59-31b7a0c74dc5",
+      "744c34e1-454b-b940-ff36-ba78c0e3fc18",
+      "7679787c-d95a-0555-6f73-70a8da1490c1",
+      "7bbab65b-3727-3891-a7d6-8d3a15dfd635",
+      "917452cf-b109-ecef-4206-bd8ed617c9b3",
+      "9208f814-a67c-0db0-6708-a554e5154d9b",
+      "970448fc-d9ce-de24-13e3-be4e9b8dfd22",
+      "9d7b202b-936e-0f17-9561-77ae64b48054",
+      "a2f9f259-a73b-b830-96e0-5a47b4eed51f",
+      "a34e3b46-68d6-2cf4-b28c-3c21503ef937",
+      "ae2996a7-a71b-44e3-71ec-93f57344b56c",
+      "b7bce687-8996-36a8-76f5-6ec9506ad51c",
+      "bc570ab3-5045-c726-e754-5dc206a5f3b7",
+      "bcf8913c-15d9-38b2-caa5-217d6968bd0f",
+      "bf263f4c-b743-1c94-d29e-da7575dd1ef4",
+      "c427e2e9-3e1c-670a-e897-3bea7598d797",
+      "d18c3b8e-6b80-2d95-d3c6-5a12bd8087af",
+      "d7d02a2e-a104-ed7b-7801-575fe3a6cb1e",
+      "e7da0918-d8fd-db40-23a9-8153eddeeebc",
+      "e995d27e-9cb5-fe91-9694-defa1ad4385d",
+      "f3ce6281-44ab-6e66-694b-d6d1cca75a84",
+      "f5a486e6-661f-93ed-8e5d-3ea97da173f4",
+      "ffa2121f-45f0-c101-ad9d-a567928659ee"
+    ]
+  },
+  "created_at": "2026-04-27T00:00:00.000000Z",
+  "updated_at": "2026-04-27T00:00:00.000000Z"
+}

@@ -1,0 +1,115 @@
+{
+  "id": "phekb-systemic-lupus-erythematosus-dx",
+  "source": "phekb",
+  "source_id": "systemic-lupus-erythematosus",
+  "name": "SLE - Diagnosis Code Query (Multi-Organ Involvement)",
+  "description": "Tests ability to find SLE patients via diagnosis codes. SLE is a multi-organ systemic autoimmune disease documented under multiple SNOMED codes by organ involvement: parent SLE, multisystem involvement, organ/system involvement, lupus nephropathy, and SLE with pericarditis. Synthea distributes patients across these clinical phenotypes.",
+  "prompt": "Find all patients with a diagnosis of systemic lupus erythematosus, including SLE with multisystem involvement, organ-specific lupus (such as lupus nephropathy or lupus pericarditis).",
+  "prompts": {
+    "naive": "Find all patients with lupus.",
+    "broad": "Find all patients diagnosed with systemic lupus erythematosus (SLE) — including the parent SLE concept and organ-involvement variants such as multisystem SLE, organ/system involvement, lupus nephropathy, and SLE with pericarditis.",
+    "expert": "I need to identify all SLE patients. SLE is documented under multiple SNOMED codes from the MITRE SLE VSAC: Systemic lupus erythematosus (55464009) is the parent concept, with organ-involvement variants Multisystem SLE (239890001), SLE with organ/system involvement (239887007), Nephropathy due to SLE (295101000119105), and SLE with pericarditis (309762007). Search Condition resources for all five codes."
+  },
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "algorithm_path": "diagnosis-path",
+    "algorithm_path_description": "Patients with SLE diagnosis codes. Tests organ-involvement code variation for systemic autoimmune disease.",
+    "code_systems": [
+      "SNOMED CT"
+    ],
+    "required_codes": [
+      {
+        "system": "http://snomed.info/sct",
+        "code": "55464009",
+        "display": "Systemic lupus erythematosus",
+        "source": "UMLS verified, parent"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "239890001",
+        "display": "Systemic lupus erythematosus with multisystem involvement",
+        "source": "VSAC"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "239887007",
+        "display": "Systemic lupus erythematosus with organ/system involvement",
+        "source": "VSAC"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "295101000119105",
+        "display": "Nephropathy co-occurrent and due to systemic lupus erythematosus",
+        "source": "VSAC"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "309762007",
+        "display": "Systemic lupus erythematosus with pericarditis",
+        "source": "VSAC"
+      }
+    ],
+    "complexity": "medium",
+    "tags": [
+      "condition",
+      "rheumatology",
+      "systemic-lupus-erythematosus",
+      "sle",
+      "lupus",
+      "autoimmune-systemic",
+      "diagnosis-code",
+      "multi-organ"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "Condition",
+    "parameters": {
+      "code": "http://snomed.info/sct|55464009,http://snomed.info/sct|239890001,http://snomed.info/sct|239887007,http://snomed.info/sct|295101000119105,http://snomed.info/sct|309762007"
+    },
+    "url": "Condition?code=http://snomed.info/sct|55464009,http://snomed.info/sct|239890001,http://snomed.info/sct|239887007,http://snomed.info/sct|295101000119105,http://snomed.info/sct|309762007"
+  },
+  "test_data": {
+    "resources": [
+      "synthea/output/systemic-lupus-erythematosus/positive/fhir/",
+      "synthea/output/systemic-lupus-erythematosus/control/fhir/"
+    ],
+    "expected_result_count": 32,
+    "expected_resource_ids": [],
+    "expected_patient_ids": [
+      "056ca2f6-8a94-cd90-04ae-7bb601194ff8",
+      "110071e5-3eac-f581-1e25-df40993e81f6",
+      "133ca428-f9a3-ee3f-ee9e-bb8ee87808b6",
+      "1fa11cad-e1ee-24c7-bac5-f39ba0fd9cc4",
+      "22a476e2-c98b-20e5-cd22-07b46f1083ce",
+      "23f138d8-426d-b25c-6b3b-4d3963f4b5c3",
+      "2473e024-dd07-eb31-bd3f-4c71f4b750db",
+      "2a1be381-4dfb-856d-d79e-aa47b77859cc",
+      "2b117ed1-74c9-42ee-5f9b-a3d764cf5569",
+      "2db4f1c1-2258-4780-3e8a-6f80c531efde",
+      "34b1d2b8-8c91-f089-875a-e80e9d60d84d",
+      "4b830f5c-7c17-f5af-c445-250728da7e6f",
+      "4cf4f0cb-0703-8882-d2a4-8605fac25721",
+      "5598bc32-6378-a251-7307-63137d6f57d4",
+      "5aed615e-e2c3-616e-63ba-124db8eedd56",
+      "633c3d4a-64f9-f85c-1d7e-9d86da58a32d",
+      "639e7cb4-18ca-6d9f-91ae-23ead45955e8",
+      "7be03c9b-fb6f-ae44-62cc-6fcfd40c239c",
+      "7c2dffe1-b8b5-5d35-7edc-06e328ec4487",
+      "7c5153a8-37e0-905d-a189-dbfd90479fcc",
+      "843e66e4-4454-4f9e-4fcd-335c5c5a8678",
+      "8b70c49e-863e-9148-e8ec-e0925e5cb311",
+      "91aeebe0-1ec8-a949-e988-d4165f180103",
+      "a505b075-2c17-7d1f-f8f4-74a76c5d6b48",
+      "a619de9a-291d-316e-2e9e-33b2dfa62e87",
+      "a8faf7a3-09c9-791f-2420-95b261211a92",
+      "b872b397-249f-953e-5332-d1210b7ea9d7",
+      "bd8814c1-682e-5d15-ed9c-e6d92bafffba",
+      "e994972d-a435-61cb-c0ce-e765fbc9c80c",
+      "ed8e090a-42fc-478c-52d7-a463a4c28dd0",
+      "f80b5620-a81b-252a-5093-2246e9d2dd80",
+      "ff9f54fb-83cf-f2a7-8b80-dadc367c9aad"
+    ]
+  },
+  "created_at": "2026-04-28T00:00:00.000000Z",
+  "updated_at": "2026-04-27T00:00:00.000000Z"
+}

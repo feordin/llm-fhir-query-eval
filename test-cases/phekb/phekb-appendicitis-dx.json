@@ -1,0 +1,116 @@
+{
+  "id": "phekb-appendicitis-dx",
+  "source": "phekb",
+  "source_id": "appendicitis",
+  "name": "Appendicitis - Diagnosis Code Query",
+  "description": "Tests ability to find appendicitis patients by searching for diagnosis codes. Based on PheKB appendicitis algorithm where patients have acute appendicitis coded as a Condition resource. This is the simplest path — finding patients with a formal appendicitis diagnosis on their problem list.",
+  "prompt": "Find all patients diagnosed with acute appendicitis.",
+  "prompts": {
+    "naive": "Find all patients diagnosed with acute appendicitis.",
+    "expert": "I need to find patients with a documented acute appendicitis diagnosis. Appendicitis is typically coded as acute appendicitis in SNOMED CT. The query should target Condition resources. Note that appendicitis is usually an acute surgical emergency, so the diagnosis may appear as an encounter diagnosis rather than on the chronic problem list. Some patients who had appendectomy may not have a separate appendicitis diagnosis code documented if the surgeon went directly to the procedure without separately coding the underlying condition. This query captures only those patients with the formal diagnosis code."
+  },
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "algorithm_path": "case-1-3-dx",
+    "algorithm_path_description": "Patients with appendicitis diagnosis codes (SNOMED/ICD-10). These patients have Condition resources with acute appendicitis codes. Covers PheKB Case Types 1 and 3 where a formal diagnosis was recorded.",
+    "code_systems": [
+      "SNOMED CT"
+    ],
+    "required_codes": [
+      {
+        "system": "http://snomed.info/sct",
+        "code": "85189001",
+        "display": "Acute appendicitis",
+        "source": "UMLS verified, code variation"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "74400008",
+        "display": "Appendicitis",
+        "source": "UMLS verified, code variation"
+      }
+    ],
+    "complexity": "easy",
+    "tags": [
+      "condition",
+      "gastroenterology",
+      "surgery",
+      "appendicitis",
+      "diagnosis-code"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "Condition",
+    "parameters": {
+      "code": "http://snomed.info/sct|85189001,http://snomed.info/sct|74400008"
+    },
+    "url": "Condition?code=http://snomed.info/sct|85189001,http://snomed.info/sct|74400008"
+  },
+  "test_data": {
+    "resources": [
+      "synthea/output/appendicitis/positive/fhir/",
+      "synthea/output/appendicitis/control/fhir/"
+    ],
+    "expected_result_count": 55,
+    "expected_resource_ids": [],
+    "expected_patient_ids": [
+      "01d86879-d2fb-c11e-b4ec-a0cc99267386",
+      "01da3f87-a453-418a-99da-b178a6f00385",
+      "1565a740-ddd5-c243-8299-5bf5aa158f48",
+      "19e8d060-39e0-41ce-af4b-a7f5e5cf5f2b",
+      "1ab63566-8152-0ce2-86a1-a88865d69349",
+      "21cf1a3f-9fee-c07d-ccf4-9f98a1538db9",
+      "22ada48c-5e15-b0be-139d-0d8b5108f64f",
+      "2c167999-289d-95fa-5c27-7d8b8d35348c",
+      "2d68ad16-268a-478c-1f84-d0f1976e1a46",
+      "3058f58e-f863-4806-87f4-6d757d903882",
+      "329244c2-f9f8-2f95-ad5b-954f32895736",
+      "35b353dd-402b-571a-d67a-af0a104d0854",
+      "4365fb6b-8371-5ae8-42e6-2cb87ac9f357",
+      "46976cf7-b0bf-be20-39a5-9f425a52886d",
+      "46ee9d82-b52c-856d-069b-5064ff052225",
+      "4f38d753-7794-588a-9c3a-e4b7d6085fa3",
+      "53523780-87c7-6d5e-f24a-efb7a3d69779",
+      "5e688e99-61b3-5c88-3f60-21df8aaced27",
+      "625c1dad-e8ce-5816-3498-5335b536b435",
+      "62f60bdb-cc5c-8305-b98b-f2b229a55eca",
+      "674cd155-62f7-8bab-f029-d143dec527a3",
+      "6e81dd8c-04a7-a541-d152-4182af87ca7e",
+      "6fbddf55-7096-b883-7cd3-260f27953080",
+      "7456b35d-55a4-ccdc-3b32-0b24a7e8e41a",
+      "76b20010-c318-5754-8c85-983aa538522f",
+      "787e4688-53a4-7cf7-aabf-ba50623e1415",
+      "7bc3add4-7aaf-0a17-aa25-b6163e5595b6",
+      "80517d95-fd2a-c3e4-e61e-503c66818f47",
+      "8d752a8f-def3-6cc7-973f-14da2026b5c6",
+      "8f465e0b-dae7-b9e6-b3f0-d18663dedc19",
+      "93a5b0d1-fdc5-efac-0f5b-28d57fb3f6e2",
+      "9459a2cc-a4e5-bb2a-cc04-743b353f70ff",
+      "9661a432-4630-2cd9-142c-386845fae837",
+      "97e8b999-7d5d-1912-170e-d6f078032a53",
+      "982750f4-569b-5949-196b-60699bdda3fb",
+      "a0419ca6-e2c5-b3ed-5248-7acc3eae5744",
+      "a3448c38-671a-1771-2ba2-e28c2f8ba42d",
+      "a369854a-b7d3-5d5e-14a4-638be37e9257",
+      "a58aec61-15d0-9f1d-d1a5-2e729946a3a1",
+      "aa616abe-1761-0c9a-7959-07544679dafd",
+      "aee7bbe1-0c45-c028-1e62-1f4cdb30c273",
+      "b119bc13-9491-da1d-2a81-adc566774576",
+      "ba419d35-0dfe-8af7-347c-eebf02485a56",
+      "bc5a2c06-5b11-a6d8-99d4-c72bef33b387",
+      "bff9d9d5-ee3d-d852-9c67-36d8361a4a4a",
+      "c7b3bb25-bd49-5ae4-765f-fc4348f47bc3",
+      "d6f563f2-08c3-98a8-e1d7-4f5b1070f312",
+      "db244e11-b305-f6f5-ba99-6b6a5b42d23a",
+      "dc483eac-3b99-5096-579f-d1f5d37f08fe",
+      "e74367bd-7385-97dc-2c7f-251b4cd9fe29",
+      "ea096dca-46e5-5fe6-a1b4-5e958b7e88e8",
+      "eac24f55-f6b4-c974-d3c0-979f65c2ae80",
+      "f2414d26-7885-9cbd-d59f-60743088755c",
+      "f760bea2-8a00-69dc-5d9b-bcd873e126a2",
+      "f7b26b9e-a16f-008e-0ecb-b87961de4762"
+    ]
+  },
+  "created_at": "2026-03-15T12:00:00.000000Z",
+  "updated_at": "2026-04-27T00:00:00.000000Z"
+}

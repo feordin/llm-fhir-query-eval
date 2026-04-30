@@ -1,0 +1,255 @@
+{
+  "name": "PheKB Breast Cancer",
+  "remarks": [
+    "Custom Synthea module for PheKB phenotype: breast cancer",
+    "Based on Mayo Clinic Breast Cancer Phenotype V2 (07/10/19)",
+    "",
+    "PheKB algorithm: case requires 1+ ICD diagnostic code OR 2+ history codes on distinct days,",
+    "  with hormone receptor status from pathology or hormone therapy use.",
+    "",
+    "Generates THREE patient paths:",
+    "  Path A (60%): Diagnosis + adjuvant therapy — full treatment presentation",
+    "  Path B (25%): Diagnosis only, no therapy yet (newly diagnosed or treatment refused)",
+    "  Path C (15%): Endocrine therapy ONLY, NO diagnosis (chemoprevention — BRCA carriers, atypical hyperplasia)",
+    "",
+    "Diagnosis SNOMED variation (Paths A + B):",
+    "  20% Malignant neoplasm of breast (254837009) — generic parent",
+    "  15% Carcinoma of breast (254838004)",
+    "  35% Infiltrating duct carcinoma (408643008) — IDC, most common",
+    "  15% Lobular carcinoma (278054005) — ILC",
+    "  15% Invasive carcinoma of breast (713609000)",
+    "",
+    "Medication variation (Paths A + C):",
+    "  20% Tamoxifen (10324) — premenopausal SERM",
+    "  25% Anastrozole 1 MG (199224) — postmenopausal AI",
+    "  25% Letrozole 2.5 MG (200064) — postmenopausal AI",
+    "  15% Exemestane 25 MG (310261) — postmenopausal AI",
+    "  15% Trastuzumab (224905) — HER2-targeted",
+    "",
+    "Codes verified via ASCO Breast Cancer VSAC (OID 2.16.840.1.113883.3.1444.3.102) and AIR Aromatase Inhibitors VSAC."
+  ],
+  "states": {
+    "Initial": { "type": "Initial", "direct_transition": "Age_Guard" },
+
+    "Age_Guard": {
+      "type": "Guard",
+      "allow": { "condition_type": "Age", "operator": ">=", "quantity": 40, "unit": "years" },
+      "direct_transition": "Set_BC_Flag"
+    },
+
+    "Set_BC_Flag": { "type": "SetAttribute", "attribute": "bc_positive", "value": true, "direct_transition": "Choose_Patient_Path" },
+
+    "Choose_Patient_Path": {
+      "type": "Simple",
+      "distributed_transition": [
+        { "transition": "Set_Path_A", "distribution": 0.60 },
+        { "transition": "Set_Path_B", "distribution": 0.25 },
+        { "transition": "Set_Path_C", "distribution": 0.15 }
+      ]
+    },
+
+    "Set_Path_A": { "type": "SetAttribute", "attribute": "bc_has_dx", "value": true, "direct_transition": "Set_Path_A_Meds" },
+    "Set_Path_A_Meds": { "type": "SetAttribute", "attribute": "bc_has_meds", "value": true, "direct_transition": "Choose_Subtype" },
+
+    "Set_Path_B": { "type": "SetAttribute", "attribute": "bc_has_dx", "value": true, "direct_transition": "Set_Path_B_Meds" },
+    "Set_Path_B_Meds": { "type": "SetAttribute", "attribute": "bc_has_meds", "value": false, "direct_transition": "Choose_Subtype" },
+
+    "Set_Path_C": { "type": "SetAttribute", "remarks": ["TRICKY: chemoprevention — endocrine therapy without breast cancer dx"], "attribute": "bc_has_dx", "value": false, "direct_transition": "Set_Path_C_Meds" },
+    "Set_Path_C_Meds": { "type": "SetAttribute", "attribute": "bc_has_meds", "value": true, "direct_transition": "Choose_Subtype" },
+
+    "Choose_Subtype": {
+      "type": "Simple",
+      "distributed_transition": [
+        { "transition": "Set_Subtype_Parent", "distribution": 0.20 },
+        { "transition": "Set_Subtype_Carcinoma", "distribution": 0.15 },
+        { "transition": "Set_Subtype_IDC", "distribution": 0.35 },
+        { "transition": "Set_Subtype_ILC", "distribution": 0.15 },
+        { "transition": "Set_Subtype_Invasive", "distribution": 0.15 }
+      ]
+    },
+
+    "Set_Subtype_Parent": { "type": "SetAttribute", "attribute": "bc_subtype", "value": "parent", "direct_transition": "Choose_Med" },
+    "Set_Subtype_Carcinoma": { "type": "SetAttribute", "attribute": "bc_subtype", "value": "carcinoma", "direct_transition": "Choose_Med" },
+    "Set_Subtype_IDC": { "type": "SetAttribute", "attribute": "bc_subtype", "value": "idc", "direct_transition": "Choose_Med" },
+    "Set_Subtype_ILC": { "type": "SetAttribute", "attribute": "bc_subtype", "value": "ilc", "direct_transition": "Choose_Med" },
+    "Set_Subtype_Invasive": { "type": "SetAttribute", "attribute": "bc_subtype", "value": "invasive", "direct_transition": "Choose_Med" },
+
+    "Choose_Med": {
+      "type": "Simple",
+      "distributed_transition": [
+        { "transition": "Set_Med_Tamoxifen", "distribution": 0.20 },
+        { "transition": "Set_Med_Anastrozole", "distribution": 0.25 },
+        { "transition": "Set_Med_Letrozole", "distribution": 0.25 },
+        { "transition": "Set_Med_Exemestane", "distribution": 0.15 },
+        { "transition": "Set_Med_Trastuzumab", "distribution": 0.15 }
+      ]
+    },
+
+    "Set_Med_Tamoxifen": { "type": "SetAttribute", "attribute": "bc_med", "value": "tamoxifen", "direct_transition": "Set_Needs_First_Visit" },
+    "Set_Med_Anastrozole": { "type": "SetAttribute", "attribute": "bc_med", "value": "anastrozole", "direct_transition": "Set_Needs_First_Visit" },
+    "Set_Med_Letrozole": { "type": "SetAttribute", "attribute": "bc_med", "value": "letrozole", "direct_transition": "Set_Needs_First_Visit" },
+    "Set_Med_Exemestane": { "type": "SetAttribute", "attribute": "bc_med", "value": "exemestane", "direct_transition": "Set_Needs_First_Visit" },
+    "Set_Med_Trastuzumab": { "type": "SetAttribute", "attribute": "bc_med", "value": "trastuzumab", "direct_transition": "Set_Needs_First_Visit" },
+
+    "Set_Needs_First_Visit": { "type": "SetAttribute", "attribute": "bc_needs_first_visit", "value": true, "direct_transition": "Wellness_Encounter" },
+
+    "Wellness_Encounter": { "type": "Encounter", "wellness": true, "direct_transition": "Check_First_Visit" },
+
+    "Check_First_Visit": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "bc_needs_first_visit", "operator": "==", "value": true }, "transition": "Check_Has_Diagnosis" },
+        { "transition": "End_Wellness_Encounter" }
+      ]
+    },
+
+    "Check_Has_Diagnosis": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "bc_has_dx", "operator": "==", "value": true }, "transition": "Route_By_Subtype" },
+        { "transition": "Route_Med_NoDx" }
+      ]
+    },
+
+    "Route_By_Subtype": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "bc_subtype", "operator": "==", "value": "parent" }, "transition": "Diagnose_Parent" },
+        { "condition": { "condition_type": "Attribute", "attribute": "bc_subtype", "operator": "==", "value": "carcinoma" }, "transition": "Diagnose_Carcinoma" },
+        { "condition": { "condition_type": "Attribute", "attribute": "bc_subtype", "operator": "==", "value": "idc" }, "transition": "Diagnose_IDC" },
+        { "condition": { "condition_type": "Attribute", "attribute": "bc_subtype", "operator": "==", "value": "ilc" }, "transition": "Diagnose_ILC" },
+        { "transition": "Diagnose_Invasive" }
+      ]
+    },
+
+    "Diagnose_Parent": {
+      "type": "ConditionOnset",
+      "assign_to_attribute": "bc_condition",
+      "codes": [{ "system": "SNOMED-CT", "code": "254837009", "display": "Malignant neoplasm of breast" }],
+      "direct_transition": "Check_Meds_WithDx"
+    },
+    "Diagnose_Carcinoma": {
+      "type": "ConditionOnset",
+      "assign_to_attribute": "bc_condition",
+      "codes": [{ "system": "SNOMED-CT", "code": "254838004", "display": "Carcinoma of breast" }],
+      "direct_transition": "Check_Meds_WithDx"
+    },
+    "Diagnose_IDC": {
+      "type": "ConditionOnset",
+      "assign_to_attribute": "bc_condition",
+      "codes": [{ "system": "SNOMED-CT", "code": "408643008", "display": "Infiltrating duct carcinoma of breast" }],
+      "direct_transition": "Check_Meds_WithDx"
+    },
+    "Diagnose_ILC": {
+      "type": "ConditionOnset",
+      "assign_to_attribute": "bc_condition",
+      "codes": [{ "system": "SNOMED-CT", "code": "278054005", "display": "Lobular carcinoma of breast" }],
+      "direct_transition": "Check_Meds_WithDx"
+    },
+    "Diagnose_Invasive": {
+      "type": "ConditionOnset",
+      "assign_to_attribute": "bc_condition",
+      "codes": [{ "system": "SNOMED-CT", "code": "713609000", "display": "Invasive carcinoma of breast" }],
+      "direct_transition": "Check_Meds_WithDx"
+    },
+
+    "Check_Meds_WithDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "bc_has_meds", "operator": "==", "value": true }, "transition": "Route_Med_WithDx" },
+        { "transition": "Clear_First_Visit_Flag" }
+      ]
+    },
+
+    "Route_Med_WithDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "bc_med", "operator": "==", "value": "tamoxifen" }, "transition": "Prescribe_Tamoxifen_WithDx" },
+        { "condition": { "condition_type": "Attribute", "attribute": "bc_med", "operator": "==", "value": "anastrozole" }, "transition": "Prescribe_Anastrozole_WithDx" },
+        { "condition": { "condition_type": "Attribute", "attribute": "bc_med", "operator": "==", "value": "letrozole" }, "transition": "Prescribe_Letrozole_WithDx" },
+        { "condition": { "condition_type": "Attribute", "attribute": "bc_med", "operator": "==", "value": "exemestane" }, "transition": "Prescribe_Exemestane_WithDx" },
+        { "transition": "Prescribe_Trastuzumab_WithDx" }
+      ]
+    },
+
+    "Prescribe_Tamoxifen_WithDx": {
+      "type": "MedicationOrder",
+      "codes": [{ "system": "RxNorm", "code": "10324", "display": "tamoxifen" }],
+      "reason": "bc_condition",
+      "direct_transition": "Clear_First_Visit_Flag"
+    },
+    "Prescribe_Anastrozole_WithDx": {
+      "type": "MedicationOrder",
+      "codes": [{ "system": "RxNorm", "code": "199224", "display": "anastrozole 1 MG Oral Tablet" }],
+      "reason": "bc_condition",
+      "direct_transition": "Clear_First_Visit_Flag"
+    },
+    "Prescribe_Letrozole_WithDx": {
+      "type": "MedicationOrder",
+      "codes": [{ "system": "RxNorm", "code": "200064", "display": "letrozole 2.5 MG Oral Tablet" }],
+      "reason": "bc_condition",
+      "direct_transition": "Clear_First_Visit_Flag"
+    },
+    "Prescribe_Exemestane_WithDx": {
+      "type": "MedicationOrder",
+      "codes": [{ "system": "RxNorm", "code": "310261", "display": "exemestane 25 MG Oral Tablet" }],
+      "reason": "bc_condition",
+      "direct_transition": "Clear_First_Visit_Flag"
+    },
+    "Prescribe_Trastuzumab_WithDx": {
+      "type": "MedicationOrder",
+      "codes": [{ "system": "RxNorm", "code": "224905", "display": "trastuzumab" }],
+      "reason": "bc_condition",
+      "direct_transition": "Clear_First_Visit_Flag"
+    },
+
+    "Route_Med_NoDx": {
+      "type": "Simple",
+      "remarks": ["Path C: chemoprevention — endocrine therapy without breast cancer dx"],
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "bc_med", "operator": "==", "value": "tamoxifen" }, "transition": "Prescribe_Tamoxifen_NoDx" },
+        { "condition": { "condition_type": "Attribute", "attribute": "bc_med", "operator": "==", "value": "anastrozole" }, "transition": "Prescribe_Anastrozole_NoDx" },
+        { "condition": { "condition_type": "Attribute", "attribute": "bc_med", "operator": "==", "value": "letrozole" }, "transition": "Prescribe_Letrozole_NoDx" },
+        { "condition": { "condition_type": "Attribute", "attribute": "bc_med", "operator": "==", "value": "exemestane" }, "transition": "Prescribe_Exemestane_NoDx" },
+        { "transition": "Prescribe_Trastuzumab_NoDx" }
+      ]
+    },
+
+    "Prescribe_Tamoxifen_NoDx": {
+      "type": "MedicationOrder",
+      "codes": [{ "system": "RxNorm", "code": "10324", "display": "tamoxifen" }],
+      "direct_transition": "Clear_First_Visit_Flag"
+    },
+    "Prescribe_Anastrozole_NoDx": {
+      "type": "MedicationOrder",
+      "codes": [{ "system": "RxNorm", "code": "199224", "display": "anastrozole 1 MG Oral Tablet" }],
+      "direct_transition": "Clear_First_Visit_Flag"
+    },
+    "Prescribe_Letrozole_NoDx": {
+      "type": "MedicationOrder",
+      "codes": [{ "system": "RxNorm", "code": "200064", "display": "letrozole 2.5 MG Oral Tablet" }],
+      "direct_transition": "Clear_First_Visit_Flag"
+    },
+    "Prescribe_Exemestane_NoDx": {
+      "type": "MedicationOrder",
+      "codes": [{ "system": "RxNorm", "code": "310261", "display": "exemestane 25 MG Oral Tablet" }],
+      "direct_transition": "Clear_First_Visit_Flag"
+    },
+    "Prescribe_Trastuzumab_NoDx": {
+      "type": "MedicationOrder",
+      "codes": [{ "system": "RxNorm", "code": "224905", "display": "trastuzumab" }],
+      "direct_transition": "Clear_First_Visit_Flag"
+    },
+
+    "Clear_First_Visit_Flag": { "type": "SetAttribute", "attribute": "bc_needs_first_visit", "value": false, "direct_transition": "End_Wellness_Encounter" },
+
+    "End_Wellness_Encounter": { "type": "EncounterEnd", "direct_transition": "Followup_Delay" },
+
+    "Followup_Delay": {
+      "type": "Delay",
+      "range": { "low": 3, "high": 6, "unit": "months" },
+      "direct_transition": "Wellness_Encounter"
+    }
+  },
+  "gmf_version": 2
+}

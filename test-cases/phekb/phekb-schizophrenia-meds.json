@@ -1,0 +1,142 @@
+{
+  "id": "phekb-schizophrenia-meds",
+  "source": "phekb",
+  "source_id": "schizophrenia",
+  "name": "Schizophrenia - Antipsychotic Medication Query",
+  "description": "Tests ability to find schizophrenia patients via antipsychotic medications across typical (haloperidol) and atypical (risperidone, olanzapine, quetiapine) classes. High cross-indication: quetiapine especially is used for bipolar mania, MDD adjunct, dementia agitation, insomnia.",
+  "prompt": "Find patients prescribed antipsychotic medications including haloperidol, risperidone, olanzapine, or quetiapine.",
+  "prompts": {
+    "naive": "Find patients on antipsychotics.",
+    "broad": "Find patients prescribed antipsychotic medications — including the typical antipsychotic haloperidol and atypicals risperidone, olanzapine, and quetiapine.",
+    "expert": "Search MedicationRequest with RxNorm codes for haloperidol (5093), risperidone (35636), olanzapine (61381), quetiapine (51272). Note: heavy cross-indication especially for quetiapine. Query: MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|5093,http://www.nlm.nih.gov/research/umls/rxnorm|35636,http://www.nlm.nih.gov/research/umls/rxnorm|61381,http://www.nlm.nih.gov/research/umls/rxnorm|51272"
+  },
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "algorithm_path": "medication-path",
+    "algorithm_path_description": "Patients on antipsychotics across typical and atypical classes.",
+    "code_systems": [
+      "RxNorm"
+    ],
+    "required_codes": [
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "5093",
+        "display": "haloperidol",
+        "source": "UMLS verified, typical"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "35636",
+        "display": "risperidone",
+        "source": "UMLS verified, atypical"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "61381",
+        "display": "olanzapine",
+        "source": "UMLS verified, atypical"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "51272",
+        "display": "quetiapine",
+        "source": "UMLS verified, atypical"
+      }
+    ],
+    "complexity": "medium",
+    "tags": [
+      "medication",
+      "psychiatry",
+      "schizophrenia",
+      "antipsychotic",
+      "atypical-antipsychotic"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "MedicationRequest",
+    "parameters": {
+      "code": "http://www.nlm.nih.gov/research/umls/rxnorm|5093,http://www.nlm.nih.gov/research/umls/rxnorm|35636,http://www.nlm.nih.gov/research/umls/rxnorm|61381,http://www.nlm.nih.gov/research/umls/rxnorm|51272"
+    },
+    "url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|5093,http://www.nlm.nih.gov/research/umls/rxnorm|35636,http://www.nlm.nih.gov/research/umls/rxnorm|61381,http://www.nlm.nih.gov/research/umls/rxnorm|51272"
+  },
+  "test_data": {
+    "resources": [
+      "synthea/output/schizophrenia/positive/fhir/",
+      "synthea/output/schizophrenia/control/fhir/"
+    ],
+    "expected_result_count": 68,
+    "expected_resource_ids": [],
+    "expected_patient_ids": [
+      "0307d7eb-c031-36e8-b0e3-4676f6a660db",
+      "081f27a9-80fa-1e52-ce79-dcda81f84bc3",
+      "0a1db4db-729c-cc2a-bae8-0aeb5396753c",
+      "15d73af7-669c-273c-12e7-111f0c707641",
+      "19a826d5-e171-a3a0-8c9c-7e7f55f39c8b",
+      "1e0e7a43-680a-42c1-cd50-42834c3d9774",
+      "1e26a824-c737-b3c9-390b-58e1bece4e53",
+      "26195150-29e6-0f6f-e5df-5338db9018bb",
+      "28063ed8-375b-257f-a275-c2c51f05307d",
+      "296a102a-e5e3-3d0f-c761-9152f304279b",
+      "2bcce856-646d-931a-d82d-714fa5e72622",
+      "2ca8752c-ca68-a594-a676-3b66cae144e6",
+      "3111021f-34ac-5cb3-bbfc-0e880e9c68aa",
+      "3cfd254b-a5d0-fa96-ccc0-4fba046736d8",
+      "418955cc-5313-f807-9318-8e5cc4d0d79d",
+      "4e0c32fc-eda9-84f1-5a80-e95fc7fa6c69",
+      "4f363c71-879e-a2bf-51f4-9e0cf1c67e9c",
+      "53279f81-115a-b0c1-2905-132635a807d5",
+      "599fa54f-bef0-e13a-9b61-f37605e3583e",
+      "5e2a1b36-298f-f9c7-14f2-8b88f4f68ac5",
+      "5e90ac6f-a7b5-40cf-d7ab-2906dc917edf",
+      "60e7aade-7e96-5131-63f4-95a1a641327a",
+      "6164e0a5-4382-55a4-4931-11392a7eea1e",
+      "66effa7b-6350-2971-59ad-bcf180e6b16d",
+      "6ca3f5c5-979a-5fbe-5c52-c1befc80debf",
+      "6ccae9b9-34d7-f2dd-dff6-bb1004fb6680",
+      "6ce6ad51-9317-9152-f19b-85f363caa5af",
+      "6d3c3b6b-7570-cc81-dc75-269f07ca4946",
+      "6e2e41fd-74fc-e5d6-83fe-da8dbcdad2e3",
+      "7063d0a9-8d52-0bad-2072-3138809cb49a",
+      "759bfbda-2755-f80b-0498-903ba0e1b554",
+      "77b4e6a8-274c-5efe-098d-14b8ef0b6fc5",
+      "77d1182a-0f12-f675-08be-07fffa4dedd7",
+      "87c6bf9a-df9e-f01f-4494-4d1ec8c15be5",
+      "87ce680d-3157-91bb-8b1c-68b060eec4f2",
+      "8836cba2-3a82-119c-3e96-edc717eb614c",
+      "8c7ce308-e321-9b9d-017a-1e13b34f610a",
+      "8d1172c5-cdbb-00dd-9604-9c0e143b9fa4",
+      "96e00b48-9939-26e6-bb5d-92be298c7ca5",
+      "9d36b4bb-6aa5-4afc-8b9b-4c183f055fea",
+      "a4f8e253-9e17-3313-adc6-143ef0b0db1d",
+      "ad55e498-7a0a-5606-0027-1be52a3988c9",
+      "b22059ca-e7e8-b348-bdb6-72d54eebb0fd",
+      "b45b0c69-9490-2e17-0771-011edd8db958",
+      "b64cff90-6fdc-cabc-5efd-79d265211e3d",
+      "be68b371-c403-c53d-a192-0d280cb437d9",
+      "c33404cc-8e0f-ff98-15ab-d1856eb7d009",
+      "c337abf3-e232-28c4-2343-273b4e546569",
+      "c391c9ac-878f-e808-1e6a-5b8fe2375fa2",
+      "c4379aac-44ba-0464-0165-9c159f9c1623",
+      "c653f804-098b-b18e-3731-08643f569dbb",
+      "cdd86a4f-da5e-cc8a-5150-385104eb1d60",
+      "d006e9a8-1f61-32e9-2bba-66477e482f93",
+      "d0aa7622-78cd-bf06-fc95-5b153c706653",
+      "d53a5266-c0d9-94a6-4f0b-a26235d543ca",
+      "d54265c4-2f0d-f039-9cc8-d452d8c4fa7c",
+      "df9e271b-6ea2-7239-bf41-4e2199c1f3d1",
+      "e3672707-d765-7457-f12a-9667e75fd0b6",
+      "e5cc4b1f-9f0b-23fe-bd34-605e68e1d7ef",
+      "e8449c97-94c5-a376-6979-2880a8aa49d6",
+      "ea6cf567-7e9d-d27c-345d-2c052e8f5593",
+      "eda471e7-1b26-de80-b8ba-6e763807ffb0",
+      "f2d3f94b-b4a3-f286-fb3f-214883461f6c",
+      "f93d167b-5dce-6303-9b1d-fbab3757eff7",
+      "fa36f2fd-ad82-1527-cf16-5c2434bd2ffb",
+      "fbe9e004-7dbf-4893-a424-81a28331a2a5",
+      "fdfb75c1-9146-a8c7-fdb9-b185182b8e95",
+      "ffc1aaa9-858a-08aa-a832-bad4fd146e20"
+    ]
+  },
+  "created_at": "2026-04-29T00:00:00.000000Z",
+  "updated_at": "2026-04-27T00:00:00.000000Z"
+}

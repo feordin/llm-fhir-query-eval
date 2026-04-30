@@ -1,0 +1,102 @@
+{
+  "name": "PheKB Cervical Cancer",
+  "remarks": [
+    "Custom Synthea module for cervical cancer.",
+    "Seventh cancer phenotype. Second female-specific cancer (after Ovarian).",
+    "Tests sex-restricted oncology + hysterectomy procedure reuse.",
+    "",
+    "Generates THREE patient paths:",
+    "  Path A (60%): Cervical cancer dx + hysterectomy",
+    "  Path B (25%): Cervical cancer dx, no surgery (early-stage observed or chemo-radiation)",
+    "  Path P (15%): Hysterectomy without cervical cancer dx (TRICKY — benign indications: fibroids, prolapse, abnormal bleeding)",
+    "",
+    "Sex restriction: Female only. Age guard: >=21 (cervical cancer screening starts age 21)."
+  ],
+  "states": {
+    "Initial": { "type": "Initial", "direct_transition": "Sex_Guard" },
+    "Sex_Guard": { "type": "Guard", "allow": { "condition_type": "Gender", "gender": "F" }, "direct_transition": "Age_Guard" },
+    "Age_Guard": { "type": "Guard", "allow": { "condition_type": "Age", "operator": ">=", "quantity": 21, "unit": "years" }, "direct_transition": "Set_Cervical_Flag" },
+    "Set_Cervical_Flag": { "type": "SetAttribute", "attribute": "cervical_positive", "value": true, "direct_transition": "Choose_Patient_Path" },
+    "Choose_Patient_Path": {
+      "type": "Simple",
+      "distributed_transition": [
+        { "transition": "Set_Path_A", "distribution": 0.60 },
+        { "transition": "Set_Path_B", "distribution": 0.25 },
+        { "transition": "Set_Path_P", "distribution": 0.15 }
+      ]
+    },
+    "Set_Path_A": { "type": "SetAttribute", "attribute": "cervical_has_dx", "value": true, "direct_transition": "Set_Path_A_Proc" },
+    "Set_Path_A_Proc": { "type": "SetAttribute", "attribute": "cervical_has_proc", "value": true, "direct_transition": "Set_Needs_First_Visit" },
+    "Set_Path_B": { "type": "SetAttribute", "attribute": "cervical_has_dx", "value": true, "direct_transition": "Set_Path_B_Proc" },
+    "Set_Path_B_Proc": { "type": "SetAttribute", "attribute": "cervical_has_proc", "value": false, "direct_transition": "Set_Needs_First_Visit" },
+    "Set_Path_P": { "type": "SetAttribute", "remarks": ["TRICKY: hysterectomy without cervical cancer dx (benign indications)"], "attribute": "cervical_has_dx", "value": false, "direct_transition": "Set_Path_P_Proc" },
+    "Set_Path_P_Proc": { "type": "SetAttribute", "attribute": "cervical_has_proc", "value": true, "direct_transition": "Set_Needs_First_Visit" },
+
+    "Set_Needs_First_Visit": { "type": "SetAttribute", "attribute": "cervical_needs_first_visit", "value": true, "direct_transition": "Wellness_Encounter" },
+    "Wellness_Encounter": { "type": "Encounter", "wellness": true, "direct_transition": "Check_First_Visit" },
+    "Check_First_Visit": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "cervical_needs_first_visit", "operator": "==", "value": true }, "transition": "Check_Has_Diagnosis" },
+        { "transition": "End_Wellness_Encounter" }
+      ]
+    },
+    "Check_Has_Diagnosis": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "cervical_has_dx", "operator": "==", "value": true }, "transition": "Diagnose_Cervical" },
+        { "transition": "Check_Procedure_NoDx" }
+      ]
+    },
+    "Diagnose_Cervical": { "type": "ConditionOnset", "assign_to_attribute": "cervical_condition", "codes": [{ "system": "SNOMED-CT", "code": "363354003", "display": "Malignant neoplasm of cervix uteri" }], "direct_transition": "Check_Procedure_WithDx" },
+
+    "Check_Procedure_WithDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "cervical_has_proc", "operator": "==", "value": true }, "transition": "Hysterectomy_Encounter_WithDx" },
+        { "transition": "Clear_First_Visit_Flag" }
+      ]
+    },
+    "Hysterectomy_Encounter_WithDx": {
+      "type": "Encounter",
+      "encounter_class": "ambulatory",
+      "reason": "cervical_condition",
+      "codes": [{ "system": "SNOMED-CT", "code": "440655000", "display": "Outpatient procedure encounter (procedure)" }],
+      "direct_transition": "Procedure_Hysterectomy_WithDx"
+    },
+    "Procedure_Hysterectomy_WithDx": {
+      "type": "Procedure",
+      "reason": "cervical_condition",
+      "codes": [{ "system": "SNOMED-CT", "code": "236886002", "display": "Hysterectomy" }],
+      "duration": { "low": 90, "high": 240, "unit": "minutes" },
+      "direct_transition": "End_Hyst_Encounter_WithDx"
+    },
+    "End_Hyst_Encounter_WithDx": { "type": "EncounterEnd", "direct_transition": "Clear_First_Visit_Flag" },
+
+    "Check_Procedure_NoDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "cervical_has_proc", "operator": "==", "value": true }, "transition": "Hysterectomy_Encounter_NoDx" },
+        { "transition": "Clear_First_Visit_Flag" }
+      ]
+    },
+    "Hysterectomy_Encounter_NoDx": {
+      "type": "Encounter",
+      "encounter_class": "ambulatory",
+      "codes": [{ "system": "SNOMED-CT", "code": "440655000", "display": "Outpatient procedure encounter (procedure)" }],
+      "direct_transition": "Procedure_Hysterectomy_NoDx"
+    },
+    "Procedure_Hysterectomy_NoDx": {
+      "type": "Procedure",
+      "codes": [{ "system": "SNOMED-CT", "code": "236886002", "display": "Hysterectomy" }],
+      "duration": { "low": 90, "high": 240, "unit": "minutes" },
+      "direct_transition": "End_Hyst_Encounter_NoDx"
+    },
+    "End_Hyst_Encounter_NoDx": { "type": "EncounterEnd", "direct_transition": "Clear_First_Visit_Flag" },
+
+    "Clear_First_Visit_Flag": { "type": "SetAttribute", "attribute": "cervical_needs_first_visit", "value": false, "direct_transition": "End_Wellness_Encounter" },
+    "End_Wellness_Encounter": { "type": "EncounterEnd", "direct_transition": "Followup_Delay" },
+    "Followup_Delay": { "type": "Delay", "range": { "low": 6, "high": 12, "unit": "months" }, "direct_transition": "Wellness_Encounter" }
+  },
+  "gmf_version": 2
+}

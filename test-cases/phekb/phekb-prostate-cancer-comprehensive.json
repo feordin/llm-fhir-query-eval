@@ -1,0 +1,134 @@
+{
+  "id": "phekb-prostate-cancer-comprehensive",
+  "source": "phekb",
+  "source_id": "prostate-cancer",
+  "name": "Prostate Cancer - Comprehensive Provider Query (DX + Meds + Labs + Procedures)",
+  "description": "Simulates a urologist/medical oncologist identifying their complete prostate cancer patient population. Combines: PCa diagnosis codes, ADT/anti-androgens, elevated PSA, and biopsy procedures. **Second 4-resource-type union test in the suite** (after CRC).",
+  "prompt": "I need to identify my complete prostate cancer patient population for a quality improvement initiative on ADT adherence and PSA surveillance. From clinical experience, PCa patients are documented in different ways: most have a formal prostate cancer diagnosis (often stage-specific), most are on ADT or anti-androgens (leuprolide, bicalutamide, enzalutamide, abiraterone, degarelix), most have undergone biopsy, and many have elevated PSA.\n\nPlease run multiple FHIR queries to capture the full population:\n1. Patients with any prostate cancer diagnosis\n2. Patients prescribed ADT/anti-androgens (leuprolide, bicalutamide, enzalutamide, abiraterone, degarelix)\n3. Patients who have undergone prostate biopsy\n4. Patients with elevated PSA (>4 ng/mL)\n\nFor each query, return the matching resources. I want the union of all patients found. Note: this is a male-only population.",
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "multi_query": true,
+    "algorithm_path": "comprehensive",
+    "algorithm_path_description": "Union of PCa dx + ADT Rx + biopsy Procedure + elevated PSA. **Second 4-resource-type union test** in the suite.",
+    "expected_queries": [
+      "Condition?code=http://snomed.info/sct|399068003,http://snomed.info/sct|93974005,http://snomed.info/sct|94503003,http://snomed.info/sct|126906006,http://snomed.info/sct|369485004",
+      "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|42375,http://www.nlm.nih.gov/research/umls/rxnorm|83008,http://www.nlm.nih.gov/research/umls/rxnorm|1307298,http://www.nlm.nih.gov/research/umls/rxnorm|1100072,http://www.nlm.nih.gov/research/umls/rxnorm|475230",
+      "Procedure?code=http://snomed.info/sct|65575008",
+      "Observation?code=http://loinc.org|2857-1&value-quantity=gt4||ng/mL"
+    ],
+    "code_systems": [
+      "SNOMED CT",
+      "RxNorm",
+      "LOINC"
+    ],
+    "required_codes": [
+      {
+        "system": "http://snomed.info/sct",
+        "code": "399068003",
+        "display": "Malignant neoplasm of prostate",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "93974005",
+        "display": "Primary malignant neoplasm of prostate",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "94503003",
+        "display": "Metastatic malignant neoplasm to prostate",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "126906006",
+        "display": "Neoplasm of prostate",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "369485004",
+        "display": "Malignant tumor involving prostate from bladder",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "42375",
+        "display": "leuprolide",
+        "source": "RxNav"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "83008",
+        "display": "bicalutamide",
+        "source": "RxNav"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "1307298",
+        "display": "enzalutamide",
+        "source": "RxNav"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "1100072",
+        "display": "abiraterone",
+        "source": "RxNav"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "475230",
+        "display": "degarelix",
+        "source": "RxNav"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "65575008",
+        "display": "Biopsy of prostate",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://loinc.org",
+        "code": "2857-1",
+        "display": "PSA",
+        "source": "UMLS verified"
+      }
+    ],
+    "complexity": "expert",
+    "tags": [
+      "multi-query",
+      "oncology",
+      "prostate-cancer",
+      "comprehensive",
+      "cross-resource",
+      "male-specific",
+      "four-resource-types"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "Patient",
+    "parameters": {},
+    "url": "Condition?code=http://snomed.info/sct|399068003,http://snomed.info/sct|93974005,http://snomed.info/sct|94503003,http://snomed.info/sct|126906006,http://snomed.info/sct|369485004"
+  },
+  "test_data": {
+    "resources": [
+      "synthea/output/prostate-cancer/positive/fhir/",
+      "synthea/output/prostate-cancer/control/fhir/"
+    ],
+    "expected_result_count": 8,
+    "expected_resource_ids": [],
+    "expected_patient_ids": [
+      "04361431-ab75-3fa9-5616-00548b219024",
+      "390a3fad-08db-baa0-7e83-3571bc82aaba",
+      "79f68bd1-f7bb-443e-a986-a73f364451b4",
+      "7d03dc4f-bd78-fcdc-1cee-17fc2b0d7da3",
+      "83e20c89-16f6-b689-2e8c-401eb4baca85",
+      "92907ddf-ffae-cf3d-9c6c-ad5ce2d8329d",
+      "a2035979-78c8-ea3c-9a16-91a8e1990a82",
+      "ed18aa0c-db22-2aa7-54f3-ec2fbc62a90c"
+    ]
+  },
+  "created_at": "2026-04-28T00:00:00.000000Z",
+  "updated_at": "2026-04-27T00:00:00.000000Z"
+}

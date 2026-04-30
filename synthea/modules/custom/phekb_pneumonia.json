@@ -1,0 +1,172 @@
+{
+  "name": "PheKB Pneumonia",
+  "remarks": [
+    "Custom Synthea module for pneumonia.",
+    "**First acute infection phenotype** in suite. **Sixth Procedure-resource phenotype** (chest X-ray — first imaging procedure type).",
+    "",
+    "Generates THREE patient paths (no labs path — pneumonia diagnosis is clinical/radiographic):",
+    "  Path A (60%): Pneumonia dx + antibiotic + chest X-ray",
+    "  Path B (20%): Pneumonia dx + antibiotic, no X-ray on record",
+    "  Path C (20%): Antibiotic only, NO pneumonia dx (cross-indication — UTI, skin/soft tissue, bronchitis)",
+    "",
+    "Diagnosis SNOMED variation (Paths A + B):",
+    "  35% Pneumonia (233604007) — parent",
+    "  30% Community acquired pneumonia (385093006) — most common",
+    "  15% Bacterial pneumonia (53084003)",
+    "  10% Viral pneumonia (75570004)",
+    "  10% Nosocomial pneumonia (425464007)",
+    "",
+    "Antibiotic variation (Paths A + B + C — 5 ingredients):",
+    "  30% Azithromycin (18631) — macrolide first-line outpatient CAP",
+    "  20% Ceftriaxone (2193) — IV inpatient",
+    "  20% Amoxicillin (723)",
+    "  15% Levofloxacin (82122) — respiratory FQ",
+    "  15% Doxycycline (3640)"
+  ],
+  "states": {
+    "Initial": { "type": "Initial", "direct_transition": "Age_Guard" },
+    "Age_Guard": { "type": "Guard", "allow": { "condition_type": "Age", "operator": ">=", "quantity": 18, "unit": "years" }, "direct_transition": "Set_Pneumonia_Flag" },
+    "Set_Pneumonia_Flag": { "type": "SetAttribute", "attribute": "pna_positive", "value": true, "direct_transition": "Choose_Patient_Path" },
+    "Choose_Patient_Path": {
+      "type": "Simple",
+      "distributed_transition": [
+        { "transition": "Set_Path_A", "distribution": 0.60 },
+        { "transition": "Set_Path_B", "distribution": 0.20 },
+        { "transition": "Set_Path_C", "distribution": 0.20 }
+      ]
+    },
+    "Set_Path_A": { "type": "SetAttribute", "attribute": "pna_has_dx", "value": true, "direct_transition": "Set_Path_A_Proc" },
+    "Set_Path_A_Proc": { "type": "SetAttribute", "attribute": "pna_has_proc", "value": true, "direct_transition": "Set_Path_A_Meds" },
+    "Set_Path_A_Meds": { "type": "SetAttribute", "attribute": "pna_has_meds", "value": true, "direct_transition": "Choose_Subtype" },
+    "Set_Path_B": { "type": "SetAttribute", "attribute": "pna_has_dx", "value": true, "direct_transition": "Set_Path_B_Proc" },
+    "Set_Path_B_Proc": { "type": "SetAttribute", "attribute": "pna_has_proc", "value": false, "direct_transition": "Set_Path_B_Meds" },
+    "Set_Path_B_Meds": { "type": "SetAttribute", "attribute": "pna_has_meds", "value": true, "direct_transition": "Choose_Subtype" },
+    "Set_Path_C": { "type": "SetAttribute", "remarks": ["TRICKY: antibiotic without pneumonia dx (cross-indication)"], "attribute": "pna_has_dx", "value": false, "direct_transition": "Set_Path_C_Proc" },
+    "Set_Path_C_Proc": { "type": "SetAttribute", "attribute": "pna_has_proc", "value": false, "direct_transition": "Set_Path_C_Meds" },
+    "Set_Path_C_Meds": { "type": "SetAttribute", "attribute": "pna_has_meds", "value": true, "direct_transition": "Choose_Subtype" },
+
+    "Choose_Subtype": {
+      "type": "Simple",
+      "distributed_transition": [
+        { "transition": "Set_Subtype_PNA", "distribution": 0.35 },
+        { "transition": "Set_Subtype_CAP", "distribution": 0.30 },
+        { "transition": "Set_Subtype_Bact", "distribution": 0.15 },
+        { "transition": "Set_Subtype_Viral", "distribution": 0.10 },
+        { "transition": "Set_Subtype_Nosoc", "distribution": 0.10 }
+      ]
+    },
+    "Set_Subtype_PNA": { "type": "SetAttribute", "attribute": "pna_subtype", "value": "pna", "direct_transition": "Choose_Med" },
+    "Set_Subtype_CAP": { "type": "SetAttribute", "attribute": "pna_subtype", "value": "cap", "direct_transition": "Choose_Med" },
+    "Set_Subtype_Bact": { "type": "SetAttribute", "attribute": "pna_subtype", "value": "bact", "direct_transition": "Choose_Med" },
+    "Set_Subtype_Viral": { "type": "SetAttribute", "attribute": "pna_subtype", "value": "viral", "direct_transition": "Choose_Med" },
+    "Set_Subtype_Nosoc": { "type": "SetAttribute", "attribute": "pna_subtype", "value": "nosoc", "direct_transition": "Choose_Med" },
+
+    "Choose_Med": {
+      "type": "Simple",
+      "distributed_transition": [
+        { "transition": "Set_Med_Azithromycin", "distribution": 0.30 },
+        { "transition": "Set_Med_Ceftriaxone", "distribution": 0.20 },
+        { "transition": "Set_Med_Amoxicillin", "distribution": 0.20 },
+        { "transition": "Set_Med_Levofloxacin", "distribution": 0.15 },
+        { "transition": "Set_Med_Doxycycline", "distribution": 0.15 }
+      ]
+    },
+    "Set_Med_Azithromycin": { "type": "SetAttribute", "attribute": "pna_med", "value": "azithromycin", "direct_transition": "Set_Needs_First_Visit" },
+    "Set_Med_Ceftriaxone": { "type": "SetAttribute", "attribute": "pna_med", "value": "ceftriaxone", "direct_transition": "Set_Needs_First_Visit" },
+    "Set_Med_Amoxicillin": { "type": "SetAttribute", "attribute": "pna_med", "value": "amoxicillin", "direct_transition": "Set_Needs_First_Visit" },
+    "Set_Med_Levofloxacin": { "type": "SetAttribute", "attribute": "pna_med", "value": "levofloxacin", "direct_transition": "Set_Needs_First_Visit" },
+    "Set_Med_Doxycycline": { "type": "SetAttribute", "attribute": "pna_med", "value": "doxycycline", "direct_transition": "Set_Needs_First_Visit" },
+
+    "Set_Needs_First_Visit": { "type": "SetAttribute", "attribute": "pna_needs_first_visit", "value": true, "direct_transition": "Wellness_Encounter" },
+    "Wellness_Encounter": { "type": "Encounter", "wellness": true, "direct_transition": "Check_First_Visit" },
+    "Check_First_Visit": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "pna_needs_first_visit", "operator": "==", "value": true }, "transition": "Check_Has_Diagnosis" },
+        { "transition": "End_Wellness_Encounter" }
+      ]
+    },
+    "Check_Has_Diagnosis": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "pna_has_dx", "operator": "==", "value": true }, "transition": "Route_By_Subtype" },
+        { "transition": "Route_Med_NoDx" }
+      ]
+    },
+    "Route_By_Subtype": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "pna_subtype", "operator": "==", "value": "pna" }, "transition": "Diagnose_PNA" },
+        { "condition": { "condition_type": "Attribute", "attribute": "pna_subtype", "operator": "==", "value": "cap" }, "transition": "Diagnose_CAP" },
+        { "condition": { "condition_type": "Attribute", "attribute": "pna_subtype", "operator": "==", "value": "bact" }, "transition": "Diagnose_Bact" },
+        { "condition": { "condition_type": "Attribute", "attribute": "pna_subtype", "operator": "==", "value": "viral" }, "transition": "Diagnose_Viral" },
+        { "transition": "Diagnose_Nosoc" }
+      ]
+    },
+    "Diagnose_PNA": { "type": "ConditionOnset", "assign_to_attribute": "pna_condition", "codes": [{ "system": "SNOMED-CT", "code": "233604007", "display": "Pneumonia" }], "direct_transition": "Route_Med_WithDx" },
+    "Diagnose_CAP": { "type": "ConditionOnset", "assign_to_attribute": "pna_condition", "codes": [{ "system": "SNOMED-CT", "code": "385093006", "display": "Community acquired pneumonia" }], "direct_transition": "Route_Med_WithDx" },
+    "Diagnose_Bact": { "type": "ConditionOnset", "assign_to_attribute": "pna_condition", "codes": [{ "system": "SNOMED-CT", "code": "53084003", "display": "Bacterial pneumonia" }], "direct_transition": "Route_Med_WithDx" },
+    "Diagnose_Viral": { "type": "ConditionOnset", "assign_to_attribute": "pna_condition", "codes": [{ "system": "SNOMED-CT", "code": "75570004", "display": "Viral pneumonia" }], "direct_transition": "Route_Med_WithDx" },
+    "Diagnose_Nosoc": { "type": "ConditionOnset", "assign_to_attribute": "pna_condition", "codes": [{ "system": "SNOMED-CT", "code": "425464007", "display": "Nosocomial pneumonia" }], "direct_transition": "Route_Med_WithDx" },
+
+    "Route_Med_WithDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "pna_med", "operator": "==", "value": "azithromycin" }, "transition": "Prescribe_Azithromycin_WithDx" },
+        { "condition": { "condition_type": "Attribute", "attribute": "pna_med", "operator": "==", "value": "ceftriaxone" }, "transition": "Prescribe_Ceftriaxone_WithDx" },
+        { "condition": { "condition_type": "Attribute", "attribute": "pna_med", "operator": "==", "value": "amoxicillin" }, "transition": "Prescribe_Amoxicillin_WithDx" },
+        { "condition": { "condition_type": "Attribute", "attribute": "pna_med", "operator": "==", "value": "levofloxacin" }, "transition": "Prescribe_Levofloxacin_WithDx" },
+        { "transition": "Prescribe_Doxycycline_WithDx" }
+      ]
+    },
+    "Prescribe_Azithromycin_WithDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "18631", "display": "azithromycin" }], "reason": "pna_condition", "direct_transition": "Check_Procedure_WithDx" },
+    "Prescribe_Ceftriaxone_WithDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "2193", "display": "ceftriaxone" }], "reason": "pna_condition", "direct_transition": "Check_Procedure_WithDx" },
+    "Prescribe_Amoxicillin_WithDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "723", "display": "amoxicillin" }], "reason": "pna_condition", "direct_transition": "Check_Procedure_WithDx" },
+    "Prescribe_Levofloxacin_WithDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "82122", "display": "levofloxacin" }], "reason": "pna_condition", "direct_transition": "Check_Procedure_WithDx" },
+    "Prescribe_Doxycycline_WithDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "3640", "display": "doxycycline" }], "reason": "pna_condition", "direct_transition": "Check_Procedure_WithDx" },
+
+    "Check_Procedure_WithDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "pna_has_proc", "operator": "==", "value": true }, "transition": "Imaging_Encounter_WithDx" },
+        { "transition": "Clear_First_Visit_Flag" }
+      ]
+    },
+    "Imaging_Encounter_WithDx": {
+      "type": "Encounter",
+      "encounter_class": "ambulatory",
+      "reason": "pna_condition",
+      "codes": [{ "system": "SNOMED-CT", "code": "440655000", "display": "Outpatient procedure encounter (procedure)" }],
+      "direct_transition": "Procedure_CXR_WithDx"
+    },
+    "Procedure_CXR_WithDx": {
+      "type": "Procedure",
+      "reason": "pna_condition",
+      "codes": [{ "system": "SNOMED-CT", "code": "399208008", "display": "Plain X-ray of chest (procedure)" }],
+      "duration": { "low": 10, "high": 20, "unit": "minutes" },
+      "direct_transition": "End_Imaging_Encounter_WithDx"
+    },
+    "End_Imaging_Encounter_WithDx": { "type": "EncounterEnd", "direct_transition": "Clear_First_Visit_Flag" },
+
+    "Route_Med_NoDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "pna_med", "operator": "==", "value": "azithromycin" }, "transition": "Prescribe_Azithromycin_NoDx" },
+        { "condition": { "condition_type": "Attribute", "attribute": "pna_med", "operator": "==", "value": "ceftriaxone" }, "transition": "Prescribe_Ceftriaxone_NoDx" },
+        { "condition": { "condition_type": "Attribute", "attribute": "pna_med", "operator": "==", "value": "amoxicillin" }, "transition": "Prescribe_Amoxicillin_NoDx" },
+        { "condition": { "condition_type": "Attribute", "attribute": "pna_med", "operator": "==", "value": "levofloxacin" }, "transition": "Prescribe_Levofloxacin_NoDx" },
+        { "transition": "Prescribe_Doxycycline_NoDx" }
+      ]
+    },
+    "Prescribe_Azithromycin_NoDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "18631", "display": "azithromycin" }], "direct_transition": "Clear_First_Visit_Flag" },
+    "Prescribe_Ceftriaxone_NoDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "2193", "display": "ceftriaxone" }], "direct_transition": "Clear_First_Visit_Flag" },
+    "Prescribe_Amoxicillin_NoDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "723", "display": "amoxicillin" }], "direct_transition": "Clear_First_Visit_Flag" },
+    "Prescribe_Levofloxacin_NoDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "82122", "display": "levofloxacin" }], "direct_transition": "Clear_First_Visit_Flag" },
+    "Prescribe_Doxycycline_NoDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "3640", "display": "doxycycline" }], "direct_transition": "Clear_First_Visit_Flag" },
+
+    "Clear_First_Visit_Flag": { "type": "SetAttribute", "attribute": "pna_needs_first_visit", "value": false, "direct_transition": "End_Wellness_Encounter" },
+    "End_Wellness_Encounter": { "type": "EncounterEnd", "direct_transition": "Followup_Delay" },
+    "Followup_Delay": { "type": "Delay", "range": { "low": 6, "high": 12, "unit": "months" }, "direct_transition": "Wellness_Encounter" }
+  },
+  "gmf_version": 2
+}

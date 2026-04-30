@@ -1,7 +1,7 @@
 ---
 name: fhir_server_introspection
 description: Teaches the LLM how to introspect a FHIR server's capabilities, loaded profiles, and valueset bindings to construct accurate queries. Used in agentic evaluation mode where the LLM has tool access.
-allowed-tools: Read, Bash, Glob, Grep, mcp__nih-umls__search_umls, mcp__nih-umls__get_concept, mcp__nih-umls__crosswalk_codes, mcp__nih-umls__get_source_concept
+allowed-tools: Read, Bash, Glob, Grep, mcp__nih-umls__search_umls, mcp__nih-umls__get_concept, mcp__nih-umls__crosswalk_codes, mcp__nih-umls__get_source_concept, mcp__nih-umls__search_value_sets, mcp__nih-umls__expand_value_set, mcp__nih-umls__validate_code_in_value_set, mcp__nih-umls__lookup_code, mcp__nih-umls__check_code_subsumption
 ---
 
 # FHIR Server Introspection Skill
@@ -12,9 +12,11 @@ This skill teaches an LLM how an experienced FHIR developer approaches querying 
 
 1. **Introspect** the server's capabilities
 2. **Identify** which profiles and implementation guides are in use
-3. **Look up** valueset bindings from those profiles
+3. **Look up** valueset bindings from those profiles (including VSAC expansion)
 4. **Verify** codes using UMLS
-5. **Construct** queries using the right codes for THIS server
+5. **Check** code hierarchy via subsumption
+6. **Sample** actual server data to confirm code systems
+7. **Construct** queries using the right codes for THIS server
 
 ## The Problem This Solves
 
@@ -112,6 +114,26 @@ Key valueset bindings for US Core:
 | `Observation.value[x]` | (varies by observation type) | - | Units from UCUM |
 | `MedicationRequest.medication[x]` | US Core Medication Codes | extensible | RxNorm (required) |
 
+#### Dynamic Valueset Lookup via VSAC
+
+Instead of (or in addition to) reading pre-downloaded valueset files, you can query VSAC directly to get the current expansion of any valueset:
+
+```
+# Find the value set used by US Core for Condition.code
+search_value_sets(title="Condition Code")
+
+# Expand it to see all member codes
+expand_value_set(oid="<oid from search>")
+
+# Validate that a specific code is in the value set
+validate_code_in_value_set(oid="...", code="44054006", system="http://snomed.info/sct")
+```
+
+This is particularly valuable when:
+- The pre-downloaded profile data doesn't include the full valueset expansion
+- You need to check if a specific code qualifies under the profile's binding
+- The valueset references external terminologies that need runtime expansion
+
 ### Step 4: Verify Codes via UMLS
 
 Once you know which code systems the server uses, verify specific codes:
@@ -130,7 +152,30 @@ search_umls(query="metformin", search_type="exact")
 # → RxNorm 6809 (ingredient) or 860975 (SCD, depends on what server has)
 ```
 
-### Step 5: Check What's Actually in the Data
+You can also use `lookup_code` for FHIR-native code lookups using standard FHIR system URIs:
+```
+lookup_code(system="http://snomed.info/sct", code="44054006")
+lookup_code(system="http://loinc.org", code="4548-4")
+lookup_code(system="http://www.nlm.nih.gov/research/umls/rxnorm", code="6809")
+```
+This uses FHIR URIs directly — no need to translate to UMLS abbreviations like `SNOMEDCT_US`.
+
+### Step 5: Check Code Hierarchy (SNOMED)
+
+For SNOMED-coded elements, use subsumption checking to understand code relationships:
+
+```
+# Is "Type 2 diabetes" (44054006) a subtype of "Diabetes mellitus" (73211009)?
+check_code_subsumption(system="http://snomed.info/sct", code_a="73211009", code_b="44054006")
+# Result: "subsumes" — querying with 73211009 would also match 44054006
+```
+
+This helps you decide the right code level for queries:
+- Use a **broad parent code** if the server supports subsumption-aware search (`:below` modifier)
+- Use **specific child codes** if the server does exact-match only
+- Check the CapabilityStatement for `_filter` or `:below` support
+
+### Step 6: Check What's Actually in the Data
 
 Before constructing your query, sample the data to confirm code systems:
 
@@ -153,12 +198,12 @@ This step is critical because:
 - The profile may ALLOW ingredient-level RxNorm, but Synthea generates SCD-level codes
 - Some servers have data from multiple sources with mixed code systems
 
-### Step 6: Construct the Query
+### Step 7: Construct the Query
 
 Now you have everything needed:
 - Which search parameters the server supports (from Step 1)
 - Which code systems are appropriate (from Steps 2-3)
-- The exact codes to use (from Steps 4-5)
+- The exact codes to use (from Steps 4-6)
 
 ---
 
@@ -230,10 +275,11 @@ For Tier 2 and 3 evaluation, the LLM needs to execute this skill as part of its 
 User Prompt → LLM Agent
                 ├→ [Step 1] Query /metadata (Bash tool)
                 ├→ [Step 2] Identify IG from profiles
-                ├→ [Step 3] Read pre-downloaded profile data (Read tool)
-                ├→ [Step 4] Verify codes via UMLS MCP
-                ├→ [Step 5] Sample actual data (Bash/curl)
-                └→ [Step 6] Construct and return FHIR query
+                ├→ [Step 3] Read profiles + expand VSAC value sets
+                ├→ [Step 4] Verify codes via UMLS MCP + lookup_code
+                ├→ [Step 5] Check SNOMED hierarchy via subsumption
+                ├→ [Step 6] Sample actual data (Bash/curl)
+                └→ [Step 7] Construct and return FHIR query
 ```
 
 ### Implementation Options
@@ -256,6 +302,7 @@ User Prompt → LLM Agent
 | **Server introspection** | Did it check /metadata before querying? |
 | **Code verification** | Did it verify codes via UMLS before using them? |
 | **Profile awareness** | Did it check which IG/profiles are in use? |
+| **Value set awareness** | Did it look up relevant VSAC value sets to find comprehensive code lists? |
 
 ---
 

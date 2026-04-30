@@ -1,0 +1,151 @@
+{
+  "id": "phekb-stroke-comprehensive",
+  "source": "phekb",
+  "source_id": "stroke",
+  "name": "Stroke - Comprehensive Provider Query (Multi-Resource)",
+  "description": "Provider-level query identifying all stroke patients via Condition (stroke dx) + MedicationRequest (alteplase or antiplatelets). Path C captures patients on antiplatelets without coded stroke dx (primary prevention or undocumented TIA).",
+  "prompt": "I need to identify my complete stroke patient population for a stroke quality initiative. Some patients have a coded cerebral infarction or CVA diagnosis. Others are on aspirin or clopidogrel without a formal stroke diagnosis — typically primary cardiovascular prevention or undocumented TIAs. Run multiple FHIR queries — diagnosis and stroke-relevant medications — and union the patient sets.",
+  "prompts": {
+    "naive": "Find all my stroke patients.",
+    "broad": "Find all stroke patients — by diagnosis, by alteplase (acute thrombolysis), or by antiplatelet medications. Run multiple queries and union the patient sets.",
+    "expert": "Run two queries. (1) Condition?code=http://snomed.info/sct|432504007,http://snomed.info/sct|230690007 — stroke/CVA dx. (2) MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|8410,http://www.nlm.nih.gov/research/umls/rxnorm|1191,http://www.nlm.nih.gov/research/umls/rxnorm|32968 — alteplase + antiplatelets. Union the patient IDs."
+  },
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "algorithm_path": "comprehensive-provider-query",
+    "algorithm_path_description": "Multi-query union: Condition + MedicationRequest. Tests cross-resource reasoning for stroke.",
+    "code_systems": [
+      "SNOMED CT",
+      "RxNorm"
+    ],
+    "required_codes": [
+      {
+        "system": "http://snomed.info/sct",
+        "code": "432504007",
+        "display": "Cerebral infarction",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "230690007",
+        "display": "Cerebrovascular accident",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "8410",
+        "display": "alteplase",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "1191",
+        "display": "aspirin",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "32968",
+        "display": "clopidogrel",
+        "source": "UMLS verified"
+      }
+    ],
+    "complexity": "expert",
+    "tags": [
+      "multi-query",
+      "comprehensive",
+      "neurology",
+      "cerebrovascular",
+      "stroke"
+    ],
+    "multi_query": true,
+    "expected_queries": [
+      "Condition?code=http://snomed.info/sct|432504007,http://snomed.info/sct|230690007",
+      "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|8410,http://www.nlm.nih.gov/research/umls/rxnorm|1191,http://www.nlm.nih.gov/research/umls/rxnorm|32968"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "multi",
+    "parameters": {},
+    "url": "Condition?code=http://snomed.info/sct|432504007,http://snomed.info/sct|230690007"
+  },
+  "test_data": {
+    "resources": [
+      "synthea/output/stroke/positive/fhir/",
+      "synthea/output/stroke/control/fhir/"
+    ],
+    "expected_result_count": 67,
+    "expected_resource_ids": [],
+    "expected_patient_ids": [
+      "095f2a19-2209-88ec-6844-d44ee3cebfcd",
+      "13ebd338-44a2-8fe3-3c61-76af69bfefb8",
+      "1562c403-ab4a-18b3-b5df-5013db340e7d",
+      "15d9cb1e-164a-baf7-6d55-647e08a60ea7",
+      "19f57e0d-7e58-0ff2-9f75-40fb959b2d1c",
+      "1f819e5b-bff1-5a0c-3cbb-c03bd79ab6da",
+      "228f729d-dda2-a6b0-20cb-3df0399248e8",
+      "236a6919-a75c-3879-ca78-72cead977d8d",
+      "23d220eb-7794-f486-fef6-5e59dccb14a5",
+      "26d4db42-2832-1e96-8fc8-72f5495c53c4",
+      "273561fb-274a-1806-a19f-0c1361d810f8",
+      "2c3d39aa-4e23-28e2-d3c0-e37c7ddb90c5",
+      "303d17ff-a40c-9ae2-a4a8-9199ca15fb56",
+      "3151cc51-a0e4-0858-3083-5f3e72be9ebb",
+      "33b79024-6347-e8e9-5193-66d87a67e04b",
+      "37075b69-89b8-f159-edc6-373012a90735",
+      "3963fdf2-f6fb-d97b-f88e-1144b3fbb667",
+      "3aaa77a1-a730-d5b8-9404-cf3d949bb5bd",
+      "3b44cccf-4ca3-2357-b102-f3a8ec663016",
+      "3c6f2337-5482-9c33-8965-c3d4d42d2104",
+      "3e400a4e-a543-5391-d4fc-be2a218fe981",
+      "4235587d-5232-cec6-dd9f-b6119b094edb",
+      "464e74bd-a5a8-df65-4ea8-7c757c8cca08",
+      "5233a06f-6c38-264b-f5a3-e782b042f90a",
+      "5656845b-cbb3-4430-ff01-431f3a4b3174",
+      "59023463-3d19-6752-ed83-e5b3f116b2ab",
+      "5d6150d8-e20b-c495-9f10-7cfc79f9e4ca",
+      "5ffb5100-5ddb-dbbc-b6fa-e550af71c767",
+      "61226119-0e5c-f14f-aa13-5fbe6b2f0dd2",
+      "65c371f7-5da4-c62c-d66e-ca8f2e568b1d",
+      "6d8d8b11-39cb-3587-271b-9941b349afe0",
+      "6f662b89-48ea-3ee1-da8a-a95456cbcfc4",
+      "6fbbf2e0-3bbe-6647-b32e-8ca686d0afff",
+      "71c51e57-07cf-b768-6f4e-bcee08969c91",
+      "768ff7a7-153b-2798-706b-9eb16883e15d",
+      "7af4f0b7-c533-a68f-505e-12b1284be5c5",
+      "7cd2a07f-eff7-9040-79aa-abcefc60f200",
+      "7e6fc8bd-3e1e-d026-4c38-4e441087acc4",
+      "802504f8-7e36-74a4-dc79-ea83ef74fef4",
+      "815ecbf5-f11c-aefe-f2aa-2683a5bffa00",
+      "8493f414-216f-0c0a-6942-de11d1c26f1e",
+      "85d5c45e-8e24-1ae3-fd20-831303ab9c9e",
+      "886c77fb-d5e6-5e72-6f31-d93131eb6b51",
+      "88b55b8d-1726-074c-8e62-16266caf77da",
+      "8c29dffb-0a04-01c7-2343-51a40ccb63e1",
+      "8fe434c2-1c2a-0e7e-53ff-0b23a2285aac",
+      "9d2fcbba-ac72-8e66-3fb9-dcea94b25925",
+      "9d9cd709-b83b-d83b-0776-9c7008de8e8b",
+      "a62d8546-cfb0-6b20-13f5-f84e7fd4d040",
+      "b80364b4-0214-14d6-93f1-b2be96e71ba9",
+      "bd3bb445-14a8-62e4-2618-9dac5a04e2a7",
+      "bfbecba4-547a-d225-ab87-51011f804add",
+      "c03afb41-6311-0125-af87-3ee0d9588b26",
+      "c18e7670-7971-651f-a8f0-67d974324ac5",
+      "c42fe579-3707-d9a3-1807-f176e0ba78d1",
+      "c49744c0-d4a2-602b-0818-692f2e1aff53",
+      "c7eb1b99-6e29-ffc5-cea1-c0fb4087e135",
+      "d2cfa618-963b-8168-0934-ecbcbd4d1fe9",
+      "d75da076-6ce6-29e5-36b8-f0cb9a408c53",
+      "d83b357c-7217-4e81-1481-06c6cd76b2ed",
+      "d9f66f97-e1dc-709c-a33c-1909faa6d98b",
+      "da305384-8c48-b54a-5e55-12da649c976e",
+      "da8ecbed-b594-9bfd-90a3-a4912530f977",
+      "ec7b08fc-118e-c15a-ae5c-2b649fb09791",
+      "f2386c83-9961-fdcf-b1f1-849ae2475dc8",
+      "f38f691a-fb7c-329a-64bf-05480e1405ac",
+      "fede6ffc-1a0a-6245-2439-5473234f2e22"
+    ]
+  },
+  "created_at": "2026-04-29T00:00:00.000000Z",
+  "updated_at": "2026-04-27T00:00:00.000000Z"
+}

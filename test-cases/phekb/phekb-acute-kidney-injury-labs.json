@@ -1,0 +1,71 @@
+{
+  "id": "phekb-acute-kidney-injury-labs",
+  "source": "phekb",
+  "source_id": "acute-kidney-injury",
+  "name": "AKI - Elevated Creatinine Lab Query",
+  "description": "Tests ability to find AKI patients via elevated serum creatinine. KDIGO criteria use creatinine elevation from baseline; for this test we use absolute threshold ≥1.5 mg/dL as a proxy (covers the typical AKI cutoff range).",
+  "prompt": "Find patients with elevated serum creatinine results at or above 1.5 mg/dL.",
+  "prompts": {
+    "naive": "Find patients with high creatinine.",
+    "broad": "Find patients with serum creatinine measurements at or above 1.5 mg/dL — reflective of impaired kidney function or acute kidney injury.",
+    "expert": "Search Observation resources with LOINC 2160-0 (Creatinine in Serum) where value-quantity ≥ 1.5 mg/dL. Query: Observation?code=http://loinc.org|2160-0&value-quantity=ge1.5||mg/dL"
+  },
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "algorithm_path": "labs-path",
+    "algorithm_path_description": "Patients with elevated creatinine. Includes Path D (no formal AKI dx).",
+    "code_systems": [
+      "LOINC"
+    ],
+    "required_codes": [
+      {
+        "system": "http://loinc.org",
+        "code": "2160-0",
+        "display": "Creatinine [Mass/volume] in Serum or Plasma",
+        "source": "UMLS verified"
+      }
+    ],
+    "complexity": "hard",
+    "tags": [
+      "observation",
+      "nephrology",
+      "aki",
+      "creatinine",
+      "value-quantity"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "Observation",
+    "parameters": {
+      "code": "http://loinc.org|2160-0",
+      "value-quantity": "ge1.5||mg/dL"
+    },
+    "url": "Observation?code=http://loinc.org|2160-0&value-quantity=ge1.5||mg/dL"
+  },
+  "test_data": {
+    "resources": [
+      "synthea/output/acute-kidney-injury/positive/fhir/",
+      "synthea/output/acute-kidney-injury/control/fhir/"
+    ],
+    "expected_result_count": 14,
+    "expected_resource_ids": [],
+    "expected_patient_ids": [
+      "2c167999-289d-95fa-5c27-7d8b8d35348c",
+      "35b353dd-402b-571a-d67a-af0a104d0854",
+      "46ee9d82-b52c-856d-069b-5064ff052225",
+      "4f083ce3-f12b-bb4b-7353-e17f0cd55b0a",
+      "62f60bdb-cc5c-8305-b98b-f2b229a55eca",
+      "6fbddf55-7096-b883-7cd3-260f27953080",
+      "9661a432-4630-2cd9-142c-386845fae837",
+      "982750f4-569b-5949-196b-60699bdda3fb",
+      "aa616abe-1761-0c9a-7959-07544679dafd",
+      "ba419d35-0dfe-8af7-347c-eebf02485a56",
+      "bff9d9d5-ee3d-d852-9c67-36d8361a4a4a",
+      "c86c400e-ff88-a1e3-2e23-caa4d8311f47",
+      "e74367bd-7385-97dc-2c7f-251b4cd9fe29",
+      "eb5910f1-26e6-bc6f-b300-716eae678d6f"
+    ]
+  },
+  "created_at": "2026-04-29T00:00:00.000000Z",
+  "updated_at": "2026-04-27T00:00:00.000000Z"
+}

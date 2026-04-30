@@ -1,0 +1,79 @@
+{
+  "id": "phekb-acute-kidney-injury-comprehensive",
+  "source": "phekb",
+  "source_id": "acute-kidney-injury",
+  "name": "AKI - Comprehensive Provider Query (Multi-Resource)",
+  "description": "Provider-level query identifying AKI patients via Condition (AKI dx) + Observation (elevated creatinine).",
+  "prompt": "I need to identify my complete AKI patient population. Some patients have a coded AKI diagnosis. Others have only a documented elevated creatinine without yet getting a formal AKI diagnosis. Run multiple FHIR queries — diagnosis and creatinine — and union the patient sets.",
+  "prompts": {
+    "naive": "Find all my AKI patients.",
+    "broad": "Find all AKI patients — by diagnosis or by elevated creatinine (≥1.5 mg/dL). Run multiple queries and union the patient sets.",
+    "expert": "Run two queries. (1) Condition?code=http://snomed.info/sct|14669001 — AKI dx. (2) Observation?code=http://loinc.org|2160-0&value-quantity=ge1.5||mg/dL — elevated creatinine. Union the patient IDs."
+  },
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "algorithm_path": "comprehensive-provider-query",
+    "algorithm_path_description": "Multi-query union: Condition + Observation for AKI.",
+    "code_systems": [
+      "SNOMED CT",
+      "LOINC"
+    ],
+    "required_codes": [
+      {
+        "system": "http://snomed.info/sct",
+        "code": "14669001",
+        "display": "Acute kidney injury",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://loinc.org",
+        "code": "2160-0",
+        "display": "Creatinine [Mass/volume] in Serum or Plasma",
+        "source": "UMLS verified"
+      }
+    ],
+    "complexity": "expert",
+    "tags": [
+      "multi-query",
+      "comprehensive",
+      "nephrology",
+      "aki"
+    ],
+    "multi_query": true,
+    "expected_queries": [
+      "Condition?code=http://snomed.info/sct|14669001",
+      "Observation?code=http://loinc.org|2160-0&value-quantity=ge1.5||mg/dL"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "multi",
+    "parameters": {},
+    "url": "Condition?code=http://snomed.info/sct|14669001"
+  },
+  "test_data": {
+    "resources": [
+      "synthea/output/acute-kidney-injury/positive/fhir/",
+      "synthea/output/acute-kidney-injury/control/fhir/"
+    ],
+    "expected_result_count": 14,
+    "expected_resource_ids": [],
+    "expected_patient_ids": [
+      "2c167999-289d-95fa-5c27-7d8b8d35348c",
+      "35b353dd-402b-571a-d67a-af0a104d0854",
+      "46ee9d82-b52c-856d-069b-5064ff052225",
+      "4f083ce3-f12b-bb4b-7353-e17f0cd55b0a",
+      "62f60bdb-cc5c-8305-b98b-f2b229a55eca",
+      "6fbddf55-7096-b883-7cd3-260f27953080",
+      "9661a432-4630-2cd9-142c-386845fae837",
+      "982750f4-569b-5949-196b-60699bdda3fb",
+      "aa616abe-1761-0c9a-7959-07544679dafd",
+      "ba419d35-0dfe-8af7-347c-eebf02485a56",
+      "bff9d9d5-ee3d-d852-9c67-36d8361a4a4a",
+      "c86c400e-ff88-a1e3-2e23-caa4d8311f47",
+      "e74367bd-7385-97dc-2c7f-251b4cd9fe29",
+      "eb5910f1-26e6-bc6f-b300-716eae678d6f"
+    ]
+  },
+  "created_at": "2026-04-29T00:00:00.000000Z",
+  "updated_at": "2026-04-27T00:00:00.000000Z"
+}

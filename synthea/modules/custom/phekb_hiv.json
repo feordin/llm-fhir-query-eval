@@ -1,0 +1,199 @@
+{
+  "name": "PheKB HIV",
+  "remarks": [
+    "Custom Synthea module for HIV infection.",
+    "Modern HIV management: lifelong continuous suppressive ART (unlike HCV's curative DAAs).",
+    "",
+    "Generates FOUR patient paths:",
+    "  Path A (50%): Diagnosis + ART + low CD4 historical — full presentation",
+    "  Path B (25%): Diagnosis + ART, no AIDS-defining CD4 (well-controlled)",
+    "  Path C (10%): ART ONLY, NO HIV dx (rare — PrEP, recent dx not coded)",
+    "  Path D (15%): Low CD4 ONLY, NO dx, NO ART (rare — unscreened, lab artifact)",
+    "",
+    "Diagnosis SNOMED variation (Paths A + B):",
+    "  40% HIV infection (86406008) — parent",
+    "  25% AIDS (62479008) — advanced",
+    "  20% Acute HIV (111880001)",
+    "  15% HIV detected (165816005) — finding code",
+    "",
+    "ART variation (5 modern combination tablets — Paths A + B + C):",
+    "  20% Complera (1147334)",
+    "  20% Stribild (1306292)",
+    "  25% Triumeq (1546888)",
+    "  20% Genvoya (1721613)",
+    "  15% Odefsey (1741733)",
+    "",
+    "Lab values (Path A + Path D get low CD4):",
+    "  CD4 case range: 30 - 195 cells/uL (below AIDS threshold of 200)"
+  ],
+  "states": {
+    "Initial": { "type": "Initial", "direct_transition": "Age_Guard" },
+    "Age_Guard": { "type": "Guard", "allow": { "condition_type": "Age", "operator": ">=", "quantity": 25, "unit": "years" }, "direct_transition": "Set_HIV_Flag" },
+    "Set_HIV_Flag": { "type": "SetAttribute", "attribute": "hiv_positive", "value": true, "direct_transition": "Choose_Patient_Path" },
+    "Choose_Patient_Path": {
+      "type": "Simple",
+      "distributed_transition": [
+        { "transition": "Set_Path_A", "distribution": 0.50 },
+        { "transition": "Set_Path_B", "distribution": 0.25 },
+        { "transition": "Set_Path_C", "distribution": 0.10 },
+        { "transition": "Set_Path_D", "distribution": 0.15 }
+      ]
+    },
+    "Set_Path_A": { "type": "SetAttribute", "attribute": "hiv_has_dx", "value": true, "direct_transition": "Set_Path_A_Labs" },
+    "Set_Path_A_Labs": { "type": "SetAttribute", "attribute": "hiv_has_low_cd4", "value": true, "direct_transition": "Set_Path_A_Meds" },
+    "Set_Path_A_Meds": { "type": "SetAttribute", "attribute": "hiv_has_meds", "value": true, "direct_transition": "Choose_Subtype" },
+
+    "Set_Path_B": { "type": "SetAttribute", "attribute": "hiv_has_dx", "value": true, "direct_transition": "Set_Path_B_Labs" },
+    "Set_Path_B_Labs": { "type": "SetAttribute", "attribute": "hiv_has_low_cd4", "value": false, "direct_transition": "Set_Path_B_Meds" },
+    "Set_Path_B_Meds": { "type": "SetAttribute", "attribute": "hiv_has_meds", "value": true, "direct_transition": "Choose_Subtype" },
+
+    "Set_Path_C": { "type": "SetAttribute", "remarks": ["TRICKY: ART without HIV dx"], "attribute": "hiv_has_dx", "value": false, "direct_transition": "Set_Path_C_Labs" },
+    "Set_Path_C_Labs": { "type": "SetAttribute", "attribute": "hiv_has_low_cd4", "value": false, "direct_transition": "Set_Path_C_Meds" },
+    "Set_Path_C_Meds": { "type": "SetAttribute", "attribute": "hiv_has_meds", "value": true, "direct_transition": "Choose_Subtype" },
+
+    "Set_Path_D": { "type": "SetAttribute", "remarks": ["TRICKY: low CD4 only, no dx"], "attribute": "hiv_has_dx", "value": false, "direct_transition": "Set_Path_D_Labs" },
+    "Set_Path_D_Labs": { "type": "SetAttribute", "attribute": "hiv_has_low_cd4", "value": true, "direct_transition": "Set_Path_D_Meds" },
+    "Set_Path_D_Meds": { "type": "SetAttribute", "attribute": "hiv_has_meds", "value": false, "direct_transition": "Choose_Subtype" },
+
+    "Choose_Subtype": {
+      "type": "Simple",
+      "distributed_transition": [
+        { "transition": "Set_Subtype_HIV", "distribution": 0.40 },
+        { "transition": "Set_Subtype_AIDS", "distribution": 0.25 },
+        { "transition": "Set_Subtype_Acute", "distribution": 0.20 },
+        { "transition": "Set_Subtype_Detected", "distribution": 0.15 }
+      ]
+    },
+    "Set_Subtype_HIV": { "type": "SetAttribute", "attribute": "hiv_subtype", "value": "hiv", "direct_transition": "Choose_Med" },
+    "Set_Subtype_AIDS": { "type": "SetAttribute", "attribute": "hiv_subtype", "value": "aids", "direct_transition": "Choose_Med" },
+    "Set_Subtype_Acute": { "type": "SetAttribute", "attribute": "hiv_subtype", "value": "acute", "direct_transition": "Choose_Med" },
+    "Set_Subtype_Detected": { "type": "SetAttribute", "attribute": "hiv_subtype", "value": "detected", "direct_transition": "Choose_Med" },
+
+    "Choose_Med": {
+      "type": "Simple",
+      "distributed_transition": [
+        { "transition": "Set_Med_Complera", "distribution": 0.20 },
+        { "transition": "Set_Med_Stribild", "distribution": 0.20 },
+        { "transition": "Set_Med_Triumeq", "distribution": 0.25 },
+        { "transition": "Set_Med_Genvoya", "distribution": 0.20 },
+        { "transition": "Set_Med_Odefsey", "distribution": 0.15 }
+      ]
+    },
+    "Set_Med_Complera": { "type": "SetAttribute", "attribute": "hiv_med", "value": "complera", "direct_transition": "Set_Needs_First_Visit" },
+    "Set_Med_Stribild": { "type": "SetAttribute", "attribute": "hiv_med", "value": "stribild", "direct_transition": "Set_Needs_First_Visit" },
+    "Set_Med_Triumeq": { "type": "SetAttribute", "attribute": "hiv_med", "value": "triumeq", "direct_transition": "Set_Needs_First_Visit" },
+    "Set_Med_Genvoya": { "type": "SetAttribute", "attribute": "hiv_med", "value": "genvoya", "direct_transition": "Set_Needs_First_Visit" },
+    "Set_Med_Odefsey": { "type": "SetAttribute", "attribute": "hiv_med", "value": "odefsey", "direct_transition": "Set_Needs_First_Visit" },
+
+    "Set_Needs_First_Visit": { "type": "SetAttribute", "attribute": "hiv_needs_first_visit", "value": true, "direct_transition": "Wellness_Encounter" },
+    "Wellness_Encounter": { "type": "Encounter", "wellness": true, "direct_transition": "Check_First_Visit" },
+    "Check_First_Visit": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "hiv_needs_first_visit", "operator": "==", "value": true }, "transition": "Check_Has_Diagnosis" },
+        { "transition": "End_Wellness_Encounter" }
+      ]
+    },
+    "Check_Has_Diagnosis": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "hiv_has_dx", "operator": "==", "value": true }, "transition": "Route_By_Subtype" },
+        { "transition": "Check_Labs_NoDx" }
+      ]
+    },
+    "Route_By_Subtype": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "hiv_subtype", "operator": "==", "value": "hiv" }, "transition": "Diagnose_HIV" },
+        { "condition": { "condition_type": "Attribute", "attribute": "hiv_subtype", "operator": "==", "value": "aids" }, "transition": "Diagnose_AIDS" },
+        { "condition": { "condition_type": "Attribute", "attribute": "hiv_subtype", "operator": "==", "value": "acute" }, "transition": "Diagnose_Acute" },
+        { "transition": "Diagnose_Detected" }
+      ]
+    },
+    "Diagnose_HIV": { "type": "ConditionOnset", "assign_to_attribute": "hiv_condition", "codes": [{ "system": "SNOMED-CT", "code": "86406008", "display": "Human immunodeficiency virus infection" }], "direct_transition": "Check_Labs_WithDx" },
+    "Diagnose_AIDS": { "type": "ConditionOnset", "assign_to_attribute": "hiv_condition", "codes": [{ "system": "SNOMED-CT", "code": "62479008", "display": "Acquired immune deficiency syndrome" }], "direct_transition": "Check_Labs_WithDx" },
+    "Diagnose_Acute": { "type": "ConditionOnset", "assign_to_attribute": "hiv_condition", "codes": [{ "system": "SNOMED-CT", "code": "111880001", "display": "Acute human immunodeficiency virus infection" }], "direct_transition": "Check_Labs_WithDx" },
+    "Diagnose_Detected": { "type": "ConditionOnset", "assign_to_attribute": "hiv_condition", "codes": [{ "system": "SNOMED-CT", "code": "165816005", "display": "Human immunodeficiency virus detected" }], "direct_transition": "Check_Labs_WithDx" },
+
+    "Check_Labs_WithDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "hiv_has_low_cd4", "operator": "==", "value": true }, "transition": "Record_Low_CD4_WithDx" },
+        { "transition": "Check_Meds_WithDx" }
+      ]
+    },
+    "Record_Low_CD4_WithDx": {
+      "type": "Observation",
+      "category": "laboratory",
+      "unit": "{cells}/uL",
+      "codes": [{ "system": "LOINC", "code": "24467-3", "display": "CD3+CD4+ (T4 helper) cells [#/volume] in Blood" }],
+      "range": { "low": 30, "high": 195 },
+      "direct_transition": "Check_Meds_WithDx"
+    },
+    "Check_Meds_WithDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "hiv_has_meds", "operator": "==", "value": true }, "transition": "Route_Med_WithDx" },
+        { "transition": "Clear_First_Visit_Flag" }
+      ]
+    },
+    "Route_Med_WithDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "hiv_med", "operator": "==", "value": "complera" }, "transition": "Prescribe_Complera_WithDx" },
+        { "condition": { "condition_type": "Attribute", "attribute": "hiv_med", "operator": "==", "value": "stribild" }, "transition": "Prescribe_Stribild_WithDx" },
+        { "condition": { "condition_type": "Attribute", "attribute": "hiv_med", "operator": "==", "value": "triumeq" }, "transition": "Prescribe_Triumeq_WithDx" },
+        { "condition": { "condition_type": "Attribute", "attribute": "hiv_med", "operator": "==", "value": "genvoya" }, "transition": "Prescribe_Genvoya_WithDx" },
+        { "transition": "Prescribe_Odefsey_WithDx" }
+      ]
+    },
+    "Prescribe_Complera_WithDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "1147334", "display": "Complera" }], "reason": "hiv_condition", "direct_transition": "Clear_First_Visit_Flag" },
+    "Prescribe_Stribild_WithDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "1306292", "display": "Stribild" }], "reason": "hiv_condition", "direct_transition": "Clear_First_Visit_Flag" },
+    "Prescribe_Triumeq_WithDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "1546888", "display": "Triumeq" }], "reason": "hiv_condition", "direct_transition": "Clear_First_Visit_Flag" },
+    "Prescribe_Genvoya_WithDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "1721613", "display": "Genvoya" }], "reason": "hiv_condition", "direct_transition": "Clear_First_Visit_Flag" },
+    "Prescribe_Odefsey_WithDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "1741733", "display": "Odefsey" }], "reason": "hiv_condition", "direct_transition": "Clear_First_Visit_Flag" },
+
+    "Check_Labs_NoDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "hiv_has_low_cd4", "operator": "==", "value": true }, "transition": "Record_Low_CD4_NoDx" },
+        { "transition": "Check_Meds_NoDx" }
+      ]
+    },
+    "Record_Low_CD4_NoDx": {
+      "type": "Observation",
+      "category": "laboratory",
+      "unit": "{cells}/uL",
+      "codes": [{ "system": "LOINC", "code": "24467-3", "display": "CD3+CD4+ (T4 helper) cells [#/volume] in Blood" }],
+      "range": { "low": 50, "high": 190 },
+      "direct_transition": "Check_Meds_NoDx"
+    },
+    "Check_Meds_NoDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "hiv_has_meds", "operator": "==", "value": true }, "transition": "Route_Med_NoDx" },
+        { "transition": "Clear_First_Visit_Flag" }
+      ]
+    },
+    "Route_Med_NoDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "hiv_med", "operator": "==", "value": "complera" }, "transition": "Prescribe_Complera_NoDx" },
+        { "condition": { "condition_type": "Attribute", "attribute": "hiv_med", "operator": "==", "value": "stribild" }, "transition": "Prescribe_Stribild_NoDx" },
+        { "condition": { "condition_type": "Attribute", "attribute": "hiv_med", "operator": "==", "value": "triumeq" }, "transition": "Prescribe_Triumeq_NoDx" },
+        { "condition": { "condition_type": "Attribute", "attribute": "hiv_med", "operator": "==", "value": "genvoya" }, "transition": "Prescribe_Genvoya_NoDx" },
+        { "transition": "Prescribe_Odefsey_NoDx" }
+      ]
+    },
+    "Prescribe_Complera_NoDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "1147334", "display": "Complera" }], "direct_transition": "Clear_First_Visit_Flag" },
+    "Prescribe_Stribild_NoDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "1306292", "display": "Stribild" }], "direct_transition": "Clear_First_Visit_Flag" },
+    "Prescribe_Triumeq_NoDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "1546888", "display": "Triumeq" }], "direct_transition": "Clear_First_Visit_Flag" },
+    "Prescribe_Genvoya_NoDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "1721613", "display": "Genvoya" }], "direct_transition": "Clear_First_Visit_Flag" },
+    "Prescribe_Odefsey_NoDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "1741733", "display": "Odefsey" }], "direct_transition": "Clear_First_Visit_Flag" },
+
+    "Clear_First_Visit_Flag": { "type": "SetAttribute", "attribute": "hiv_needs_first_visit", "value": false, "direct_transition": "End_Wellness_Encounter" },
+    "End_Wellness_Encounter": { "type": "EncounterEnd", "direct_transition": "Followup_Delay" },
+    "Followup_Delay": { "type": "Delay", "range": { "low": 3, "high": 6, "unit": "months" }, "direct_transition": "Wellness_Encounter" }
+  },
+  "gmf_version": 2
+}

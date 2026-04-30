@@ -1,0 +1,116 @@
+{
+  "id": "phekb-autism-dx",
+  "source": "phekb",
+  "source_id": "autism",
+  "name": "Autism Spectrum Disorder - Diagnosis Code Query",
+  "description": "Tests ability to find ASD patients by searching for autism spectrum disorder diagnosis codes. Covers the primary inclusion criteria of the PheKB autism algorithm: patients with ICD-9 codes 299.0, 299.80, 299.9 (mapped to ICD-10/SNOMED). The SNOMED code 35919005 (Autism spectrum disorder) is the broadest parent concept encompassing autistic disorder, Asperger syndrome, and PDD-NOS.",
+  "prompt": "Find all patients diagnosed with autism spectrum disorder.",
+  "prompts": {
+    "naive": "Find all patients diagnosed with autism spectrum disorder.",
+    "expert": "I need to identify patients with an autism spectrum disorder diagnosis. ASD encompasses what were previously separate diagnoses -- autistic disorder, Asperger syndrome, and pervasive developmental disorder not otherwise specified (PDD-NOS) -- which are now unified under the autism spectrum disorder umbrella in SNOMED CT. The query should search Condition resources for the ASD code. In neurodevelopmental phenotyping, some patients may have been diagnosed under older terminology (especially Asperger syndrome) that maps to different ICD codes but should be captured under the broader SNOMED ASD concept. The PheKB algorithm uses ICD-9 codes 299.0, 299.80, and 299.9 which all map to the SNOMED ASD parent concept."
+  },
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "algorithm_path": "inclusion-criteria",
+    "algorithm_path_description": "Patients with ASD diagnosis codes (ICD-9 299.0/299.80/299.9 mapped to SNOMED). These patients have Condition resources with autism spectrum disorder codes.",
+    "code_systems": [
+      "SNOMED CT"
+    ],
+    "required_codes": [
+      {
+        "system": "http://snomed.info/sct",
+        "code": "35919005",
+        "display": "Pervasive developmental disorder",
+        "source": "UMLS verified, code variation"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "408856003",
+        "display": "Autistic disorder",
+        "source": "UMLS verified, code variation"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "23560001",
+        "display": "Asperger's disorder",
+        "source": "UMLS verified, code variation"
+      }
+    ],
+    "complexity": "easy",
+    "tags": [
+      "condition",
+      "neurodevelopmental",
+      "autism",
+      "diagnosis-code"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "Condition",
+    "parameters": {
+      "code": "http://snomed.info/sct|35919005,http://snomed.info/sct|408856003,http://snomed.info/sct|23560001"
+    },
+    "url": "Condition?code=http://snomed.info/sct|35919005,http://snomed.info/sct|408856003,http://snomed.info/sct|23560001"
+  },
+  "test_data": {
+    "resources": [
+      "synthea/output/autism/positive/fhir/",
+      "synthea/output/autism/control/fhir/"
+    ],
+    "expected_result_count": 50,
+    "expected_resource_ids": [],
+    "expected_patient_ids": [
+      "133f7826-1dc7-cc89-6eaf-55536bfe39df",
+      "1749a84f-ad9f-4a12-e7c3-f60b9c4b22f6",
+      "1a9eb9b3-94cf-3b61-c19c-a4716c73d8f9",
+      "22059e0d-f31a-f7e0-b534-0191124ef316",
+      "22e8443e-cf30-c4f3-b29c-395f78a2f3b5",
+      "2c167999-289d-95fa-5c27-7d8b8d35348c",
+      "3113a4fd-4276-2f47-defa-c81d35187825",
+      "35b353dd-402b-571a-d67a-af0a104d0854",
+      "36ca7109-727a-8d02-3bf5-9ac2bb82923f",
+      "41f6aea1-d937-de78-89d3-00346e9c0501",
+      "43f81732-4942-ee4d-5662-4302c509bfcc",
+      "46976cf7-b0bf-be20-39a5-9f425a52886d",
+      "46ee9d82-b52c-856d-069b-5064ff052225",
+      "47c4a086-57b8-a4ba-cb59-6525a0a2f05a",
+      "48bbf044-f1bd-32d2-6efc-d7f15390672f",
+      "4af47a2d-b628-1db1-628d-434603eadc59",
+      "4d82ce2c-d108-38ea-930e-a213fb97bf07",
+      "4f083ce3-f12b-bb4b-7353-e17f0cd55b0a",
+      "596f9472-a30c-e938-6b06-644a871ea0d2",
+      "5b381ff5-acf8-0d85-250b-8b1a4014ba50",
+      "5e688e99-61b3-5c88-3f60-21df8aaced27",
+      "5e6d6cf9-b20d-5ec4-feb1-892f03592418",
+      "62f60bdb-cc5c-8305-b98b-f2b229a55eca",
+      "6fbddf55-7096-b883-7cd3-260f27953080",
+      "7235809d-cf97-8940-b9ca-5e42f7dd56af",
+      "7cc55167-6c55-efcd-f5e0-54d3a9ff321f",
+      "7cf65bca-7d16-ca27-6e95-2073ec4b10f1",
+      "7f3d14ad-a010-df39-9c8e-d367c723b11e",
+      "9661a432-4630-2cd9-142c-386845fae837",
+      "98836612-a985-636a-48dc-c5e663c5c2b2",
+      "9dd93ce3-89fe-9099-5150-71740a649a71",
+      "a32449bd-4395-9294-e97e-90b58dfc6ba4",
+      "aa616abe-1761-0c9a-7959-07544679dafd",
+      "acf1dbf7-f024-fb7d-4d18-375dfc0ef14d",
+      "ba419d35-0dfe-8af7-347c-eebf02485a56",
+      "bee2c35b-9858-537d-0db2-667bb8310116",
+      "c13ed7eb-7c2a-9067-8052-fd52fb11f3f7",
+      "c1fa1563-da91-73c4-7d75-44dcf92e247d",
+      "c953d5fa-f001-58a7-8419-72a2639e9c98",
+      "caa076ea-2110-0e75-c633-a8acb1750b1e",
+      "cbcfdf2d-12e2-3723-eadc-9dcfbbf97bd8",
+      "cc608d62-86e3-83d5-a817-defb72e267ba",
+      "cc894554-39ff-6132-8490-6e693c030764",
+      "d05fddb0-49fc-b1e0-a11e-896d8cf4b9fe",
+      "d1fd6d70-ae99-1a66-5cfa-41f7464f77a8",
+      "dc83c613-e20c-73fb-18b7-5d050fc93339",
+      "eb409851-4fbd-3a4a-da4c-926e5be68df5",
+      "eb5910f1-26e6-bc6f-b300-716eae678d6f",
+      "edb40e8e-2385-ec64-8b55-4c0cc3288d1d",
+      "f88bcb3a-efc9-d7da-51ab-8747215d126e"
+    ]
+  },
+  "created_at": "2026-03-15T00:00:00.000000Z",
+  "updated_at": "2026-04-27T00:00:00.000000Z"
+}

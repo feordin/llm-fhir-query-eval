@@ -1,0 +1,131 @@
+{
+  "id": "phekb-crohns-disease-biologic-without-dx",
+  "source": "phekb",
+  "source_id": "crohns-disease",
+  "name": "Crohn's Disease - Biologic WITHOUT Diagnosis (Negation / RA Contamination)",
+  "description": "**Negation test for cross-indication detection.** Find patients prescribed anti-TNF biologics (infliximab, adalimumab) or ustekinumab who do NOT have a Crohn's disease diagnosis. These are typically rheumatoid arthritis or psoriasis patients on the same biologics. This is the OPPOSITE of `phekb-crohns-disease-biologic-disambig` — that test finds the intersection (Crohn's-on-biologic), this test finds the difference (non-Crohn's on the SAME biologic). Important for pharmacovigilance: if an adverse event is reported for adalimumab, you need to know whether the affected patient is on it for Crohn's, RA, or psoriasis.",
+  "prompt": "Find patients prescribed Crohn's-class biologics (infliximab, adalimumab, ustekinumab) who do NOT have a Crohn's disease diagnosis. These are typically rheumatoid arthritis or psoriasis patients on the same biologics — important to identify when conducting drug safety surveillance.",
+  "prompts": {
+    "naive": "Find biologic patients without Crohn's.",
+    "broad": "Find patients prescribed anti-TNF biologics (infliximab, adalimumab) or ustekinumab who do NOT have a Crohn's disease diagnosis. The expected population is mostly rheumatoid arthritis patients (anti-TNFs are first-line for RA). Use a two-query subtraction approach since FHIR does not support negative chains.",
+    "expert": "I need set difference: MedicationRequest patients on biologics MINUS Condition patients with Crohn's diagnoses. FHIR R4 doesn't support `NOT EXISTS` natively. Two queries: (1) `MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|191831,327361,847083` for biologic Rx, (2) `Condition?code=http://snomed.info/sct|34000006,7620006,196977009,1197732001,1197733006` for Crohn's dx. Return query 1 patients MINUS query 2 patients. The remaining patients are mostly RA-on-biologics (cross-indication contamination)."
+  },
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "multi_query": true,
+    "negation": true,
+    "algorithm_path": "negation-via-subtraction",
+    "algorithm_path_description": "Set difference (biologic Rx patients) MINUS (Crohn's-diagnosed patients). The result is the cross-indicated population (RA-on-biologic, etc).",
+    "expected_queries": [
+      "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|191831,http://www.nlm.nih.gov/research/umls/rxnorm|327361,http://www.nlm.nih.gov/research/umls/rxnorm|847083",
+      "Condition?code=http://snomed.info/sct|34000006,http://snomed.info/sct|7620006,http://snomed.info/sct|196977009,http://snomed.info/sct|1197732001,http://snomed.info/sct|1197733006"
+    ],
+    "negation_operation": "query[0]_patients - query[1]_patients",
+    "code_systems": [
+      "RxNorm",
+      "SNOMED CT"
+    ],
+    "required_codes": [
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "191831",
+        "display": "infliximab",
+        "source": "RxNav verified"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "327361",
+        "display": "adalimumab",
+        "source": "RxNav verified"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "847083",
+        "display": "ustekinumab",
+        "source": "RxNav verified"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "34000006",
+        "display": "Crohn's disease",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "7620006",
+        "display": "Crohn's disease of large bowel",
+        "source": "VSAC"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "196977009",
+        "display": "Crohn's disease of terminal ileum",
+        "source": "VSAC"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "1197732001",
+        "display": "Crohn disease of colon and rectum",
+        "source": "VSAC"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "1197733006",
+        "display": "Crohn disease of jejunum and ileum",
+        "source": "VSAC"
+      }
+    ],
+    "complexity": "expert",
+    "tags": [
+      "negation",
+      "set-difference",
+      "two-query",
+      "cross-indication-contamination",
+      "gastroenterology",
+      "crohns-disease",
+      "ibd",
+      "ra-overlap",
+      "pharmacovigilance"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "MedicationRequest",
+    "parameters": {
+      "code": "http://www.nlm.nih.gov/research/umls/rxnorm|191831,http://www.nlm.nih.gov/research/umls/rxnorm|327361,http://www.nlm.nih.gov/research/umls/rxnorm|847083"
+    },
+    "url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|191831,http://www.nlm.nih.gov/research/umls/rxnorm|327361,http://www.nlm.nih.gov/research/umls/rxnorm|847083"
+  },
+  "test_data": {
+    "resources": [
+      "synthea/output/crohns-disease/positive/fhir/",
+      "synthea/output/crohns-disease/control/fhir/",
+      "synthea/output/rheumatoid-arthritis/positive/fhir/",
+      "synthea/output/rheumatoid-arthritis/control/fhir/"
+    ],
+    "expected_result_count": 19,
+    "expected_resource_ids": [],
+    "expected_patient_ids": [
+      "09278a56-0541-6d95-b59b-2212f90e7614",
+      "0f321eb0-3fe3-e648-803c-66a0b357edf7",
+      "101ab214-653c-62d8-5c62-ece990be8837",
+      "2017daab-c1bc-808d-bed8-3b352a2c5cdc",
+      "2d318d7b-5641-1d14-373e-752dbce289fa",
+      "385beedc-af48-5e72-4c16-065356f72ecb",
+      "3ed9f977-3713-3382-9245-9322cd5545f4",
+      "447c2bc0-98ef-3674-0938-e820e50c0729",
+      "749c03e5-67d5-cc3d-0d95-e526c7d431b4",
+      "8ae0d313-4083-1efe-ef7a-190898515f70",
+      "8ba37d8a-ff07-e229-4028-0a273a8bca35",
+      "8da5c2a4-ace9-253e-3ad5-2e9597ebedd8",
+      "a7b5693a-3b2d-89c3-b632-c19b837e2cb6",
+      "a831b3d1-f6e8-960c-c6ea-9a0e4e989b43",
+      "cf2dbefe-3aab-0ee7-f1bf-a7dce531b6c6",
+      "d5ca1c3e-abb0-e9b3-a5b9-7a58b46fd5f6",
+      "d6bc2a3c-f643-db37-108b-ef44c367d0f6",
+      "e397d112-37ab-7240-d142-81a8a86b9ad2",
+      "edf28f19-c11a-567f-3627-c8f8149c8b19"
+    ]
+  },
+  "created_at": "2026-04-28T00:00:00.000000Z",
+  "updated_at": "2026-04-28T00:00:00.000000Z"
+}

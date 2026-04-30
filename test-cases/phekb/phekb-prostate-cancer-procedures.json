@@ -1,0 +1,59 @@
+{
+  "id": "phekb-prostate-cancer-procedures",
+  "source": "phekb",
+  "source_id": "prostate-cancer",
+  "name": "Prostate Cancer - Biopsy Procedure Query",
+  "description": "**Fourth Procedure-resource phenotype.** Tests ability to find prostate cancer patients via prostate biopsy. Tests whether LLM correctly queries Procedure resources for diagnostic biopsies (different from screening colonoscopy or therapeutic CABG/PCI).",
+  "prompt": "Find patients who have undergone a prostate biopsy procedure.",
+  "prompts": {
+    "naive": "Find patients with prostate biopsies.",
+    "broad": "Find Procedure resources for prostate biopsy — the diagnostic procedure used for prostate cancer detection after elevated PSA or abnormal DRE.",
+    "expert": "I need Procedure resources for prostate biopsy. Use SNOMED code 65575008 (Biopsy of prostate). Query: Procedure?code=http://snomed.info/sct|65575008"
+  },
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "algorithm_path": "procedure-path",
+    "algorithm_path_description": "Patients with prostate biopsy. **Fourth Procedure-resource phenotype** in suite (after CHD, Sleep Apnea, CRC). First diagnostic biopsy procedure type.",
+    "code_systems": [
+      "SNOMED CT"
+    ],
+    "required_codes": [
+      {
+        "system": "http://snomed.info/sct",
+        "code": "65575008",
+        "display": "Biopsy of prostate (procedure)",
+        "source": "UMLS verified"
+      }
+    ],
+    "complexity": "medium",
+    "tags": [
+      "procedure",
+      "oncology",
+      "prostate-cancer",
+      "biopsy",
+      "fourth-procedure-test",
+      "male-specific"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "Procedure",
+    "parameters": {
+      "code": "http://snomed.info/sct|65575008"
+    },
+    "url": "Procedure?code=http://snomed.info/sct|65575008"
+  },
+  "test_data": {
+    "resources": [
+      "synthea/output/prostate-cancer/positive/fhir/",
+      "synthea/output/prostate-cancer/control/fhir/"
+    ],
+    "expected_result_count": 2,
+    "expected_resource_ids": [],
+    "expected_patient_ids": [
+      "79f68bd1-f7bb-443e-a986-a73f364451b4",
+      "ed18aa0c-db22-2aa7-54f3-ec2fbc62a90c"
+    ]
+  },
+  "created_at": "2026-04-28T00:00:00.000000Z",
+  "updated_at": "2026-04-27T00:00:00.000000Z"
+}

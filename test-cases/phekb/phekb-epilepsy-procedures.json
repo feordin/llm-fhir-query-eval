@@ -1,0 +1,66 @@
+{
+  "id": "phekb-epilepsy-procedures",
+  "source": "phekb",
+  "source_id": "epilepsy",
+  "name": "Epilepsy - EEG Procedure Query",
+  "description": "**Fifth Procedure-resource phenotype.** Tests ability to find epilepsy patients via electroencephalogram (EEG) — the standard diagnostic test for seizure disorders. EEG is non-invasive (different from biopsy in PCa, polysomnography in OSA, colonoscopy in CRC, and CABG/PCI in CHD).",
+  "prompt": "Find patients who have undergone an electroencephalogram (EEG) procedure.",
+  "prompts": {
+    "naive": "Find patients with EEGs.",
+    "broad": "Find Procedure resources for electroencephalogram (EEG) — the diagnostic test that records electrical activity in the brain, used to diagnose epilepsy and other seizure disorders.",
+    "expert": "I need Procedure resources for EEG. Use SNOMED code 54550000 (Electroencephalogram). Query: Procedure?code=http://snomed.info/sct|54550000"
+  },
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "algorithm_path": "procedure-path",
+    "algorithm_path_description": "Patients with EEG. **Fifth Procedure-resource phenotype** in suite (after CHD revasc, sleep apnea polysomnography, CRC colonoscopy, prostate biopsy). Non-invasive diagnostic test.",
+    "code_systems": [
+      "SNOMED CT"
+    ],
+    "required_codes": [
+      {
+        "system": "http://snomed.info/sct",
+        "code": "54550000",
+        "display": "Electroencephalogram (procedure)",
+        "source": "UMLS verified"
+      }
+    ],
+    "complexity": "medium",
+    "tags": [
+      "procedure",
+      "neurology",
+      "epilepsy",
+      "eeg",
+      "fifth-procedure-test",
+      "non-invasive"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "Procedure",
+    "parameters": {
+      "code": "http://snomed.info/sct|54550000"
+    },
+    "url": "Procedure?code=http://snomed.info/sct|54550000"
+  },
+  "test_data": {
+    "resources": [
+      "synthea/output/epilepsy/positive/fhir/",
+      "synthea/output/epilepsy/control/fhir/"
+    ],
+    "expected_result_count": 9,
+    "expected_resource_ids": [],
+    "expected_patient_ids": [
+      "2bc94e59-b14d-478c-a834-09895414dc91",
+      "304a988f-dd36-fa85-a7b9-ad78fdc490de",
+      "5a70ab7c-4d35-483f-7e63-51fba0edc61f",
+      "9e2acbc1-bc64-66c5-b9af-f0859dd6334b",
+      "aa2e84c5-49b1-74a6-1d80-e57493f10e78",
+      "ac0386bf-8642-65d7-590b-847508ddcf01",
+      "ba97358c-5823-e8f6-1673-d965a39bad4a",
+      "c1d1f1e7-cbd3-31f1-3432-c0070e8ac469",
+      "fe2a6c22-99fa-bc46-f1b9-150307e76fd5"
+    ]
+  },
+  "created_at": "2026-04-28T00:00:00.000000Z",
+  "updated_at": "2026-04-27T00:00:00.000000Z"
+}

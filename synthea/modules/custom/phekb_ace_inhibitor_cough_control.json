@@ -1,0 +1,152 @@
+{
+  "name": "PheKB ACE Inhibitor Cough Control (No ACEi, No Cough)",
+  "remarks": [
+    "Control module for ACE inhibitor-induced cough phenotype testing",
+    "Generates patients who should NOT match ACEi-cough criteria",
+    "",
+    "Control Criteria:",
+    "- No ACE inhibitor medications",
+    "- No cough diagnosis",
+    "- May have hypertension treated with non-ACEi medications (ARBs, CCBs)",
+    "- May have other unrelated conditions",
+    "",
+    "Uses 'wellness: true' encounter pattern to produce FHIR resources.",
+    "These patients should NOT be returned by ACEi medication or cough queries.",
+    "",
+    "Codes verified via NIH UMLS MCP (2025AB):",
+    "  SNOMED 38341003 (Hypertensive disorder), 55822004 (Hyperlipidemia)",
+    "  RxNorm SCD: 979485 (losartan 25mg), 197361 (amlodipine 5mg)"
+  ],
+  "states": {
+    "Initial": {
+      "type": "Initial",
+      "direct_transition": "Age_Guard"
+    },
+
+    "Age_Guard": {
+      "type": "Guard",
+      "allow": {
+        "condition_type": "Age",
+        "operator": ">=",
+        "quantity": 18,
+        "unit": "years"
+      },
+      "direct_transition": "Set_Control_Flag"
+    },
+
+    "Set_Control_Flag": {
+      "type": "SetAttribute",
+      "attribute": "acei_cough_control",
+      "value": true,
+      "direct_transition": "Wellness_Encounter"
+    },
+
+    "Wellness_Encounter": {
+      "type": "Encounter",
+      "wellness": true,
+      "direct_transition": "Check_Conditions"
+    },
+
+    "Check_Conditions": {
+      "type": "Simple",
+      "remarks": ["Some control patients have non-ACEi conditions for variety"],
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Hypertension_ARB",
+          "distribution": 0.30
+        },
+        {
+          "transition": "Diagnose_Hypertension_CCB",
+          "distribution": 0.25
+        },
+        {
+          "transition": "Diagnose_Hyperlipidemia",
+          "distribution": 0.20
+        },
+        {
+          "transition": "End_Wellness_Encounter",
+          "distribution": 0.25
+        }
+      ]
+    },
+
+    "Diagnose_Hypertension_ARB": {
+      "type": "ConditionOnset",
+      "assign_to_attribute": "hypertension_ctrl",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": "38341003",
+          "display": "Hypertensive disorder"
+        }
+      ],
+      "remarks": ["Hypertension treated with ARB (not ACEi) - should not match ACEi queries"],
+      "direct_transition": "Prescribe_Losartan"
+    },
+
+    "Prescribe_Losartan": {
+      "type": "MedicationOrder",
+      "codes": [
+        {
+          "system": "RxNorm",
+          "code": "979485",
+          "display": "losartan potassium 25 MG Oral Tablet"
+        }
+      ],
+      "reason": "hypertension_ctrl",
+      "direct_transition": "End_Wellness_Encounter"
+    },
+
+    "Diagnose_Hypertension_CCB": {
+      "type": "ConditionOnset",
+      "assign_to_attribute": "hypertension_ctrl",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": "38341003",
+          "display": "Hypertensive disorder"
+        }
+      ],
+      "remarks": ["Hypertension treated with calcium channel blocker (not ACEi)"],
+      "direct_transition": "Prescribe_Amlodipine"
+    },
+
+    "Prescribe_Amlodipine": {
+      "type": "MedicationOrder",
+      "codes": [
+        {
+          "system": "RxNorm",
+          "code": "197361",
+          "display": "amlodipine 5 MG Oral Tablet"
+        }
+      ],
+      "reason": "hypertension_ctrl",
+      "direct_transition": "End_Wellness_Encounter"
+    },
+
+    "Diagnose_Hyperlipidemia": {
+      "type": "ConditionOnset",
+      "assign_to_attribute": "hyperlipidemia_ctrl",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": "55822004",
+          "display": "Hyperlipidemia"
+        }
+      ],
+      "remarks": ["Non-cardiovascular medication condition for variety"],
+      "direct_transition": "End_Wellness_Encounter"
+    },
+
+    "End_Wellness_Encounter": {
+      "type": "EncounterEnd",
+      "direct_transition": "Terminal_Control"
+    },
+
+    "Terminal_Control": {
+      "type": "Terminal",
+      "remarks": ["Control patient - should NOT be found by ACEi medication or cough queries"]
+    }
+  },
+  "gmf_version": 2
+}

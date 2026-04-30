@@ -1,0 +1,159 @@
+{
+  "name": "PheKB Acute Kidney Injury Control (No AKI)",
+  "remarks": [
+    "Control module for AKI phenotype testing",
+    "Generates patients who should NOT match AKI criteria",
+    "",
+    "Control Criteria (exclusion from AKI):",
+    "- No AKI diagnosis codes",
+    "- Normal serum creatinine levels (0.6 - 1.2 mg/dL)",
+    "- Normal BUN levels (7 - 20 mg/dL)",
+    "",
+    "Some control patients have non-AKI conditions for variety:",
+    "- Hypertension (30%)",
+    "- Urinary tract infection (25%)",
+    "- No additional conditions (45%)",
+    "",
+    "Uses 'wellness: true' encounter pattern to produce FHIR resources.",
+    "These patients should NOT be returned by AKI queries."
+  ],
+  "states": {
+    "Initial": {
+      "type": "Initial",
+      "direct_transition": "Age_Guard"
+    },
+
+    "Age_Guard": {
+      "type": "Guard",
+      "allow": {
+        "condition_type": "Age",
+        "operator": ">=",
+        "quantity": 18,
+        "unit": "years"
+      },
+      "direct_transition": "Set_Control_Flag"
+    },
+
+    "Set_Control_Flag": {
+      "type": "SetAttribute",
+      "attribute": "aki_control",
+      "value": true,
+      "direct_transition": "Wellness_Encounter"
+    },
+
+    "Wellness_Encounter": {
+      "type": "Encounter",
+      "wellness": true,
+      "direct_transition": "Record_Normal_Creatinine"
+    },
+
+    "Record_Normal_Creatinine": {
+      "type": "Observation",
+      "category": "laboratory",
+      "unit": "mg/dL",
+      "codes": [
+        {
+          "system": "LOINC",
+          "code": "2160-0",
+          "display": "Creatinine [Mass/volume] in Serum or Plasma"
+        }
+      ],
+      "range": {
+        "low": 0.6,
+        "high": 1.2
+      },
+      "remarks": ["Normal serum creatinine 0.6-1.2 mg/dL"],
+      "direct_transition": "Record_Normal_BUN"
+    },
+
+    "Record_Normal_BUN": {
+      "type": "Observation",
+      "category": "laboratory",
+      "unit": "mg/dL",
+      "codes": [
+        {
+          "system": "LOINC",
+          "code": "3094-0",
+          "display": "Urea nitrogen [Mass/volume] in Serum or Plasma"
+        }
+      ],
+      "range": {
+        "low": 7,
+        "high": 20
+      },
+      "remarks": ["Normal BUN 7-20 mg/dL"],
+      "direct_transition": "Check_Other_Conditions"
+    },
+
+    "Check_Other_Conditions": {
+      "type": "Simple",
+      "remarks": ["Some control patients have non-AKI conditions for variety"],
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Hypertension",
+          "distribution": 0.30
+        },
+        {
+          "transition": "Diagnose_UTI",
+          "distribution": 0.25
+        },
+        {
+          "transition": "End_Wellness_Encounter",
+          "distribution": 0.45
+        }
+      ]
+    },
+
+    "Diagnose_Hypertension": {
+      "type": "ConditionOnset",
+      "assign_to_attribute": "hypertension",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": "38341003",
+          "display": "Hypertensive disorder"
+        }
+      ],
+      "remarks": ["Non-AKI condition for control population variety"],
+      "direct_transition": "Prescribe_Antihypertensive"
+    },
+
+    "Prescribe_Antihypertensive": {
+      "type": "MedicationOrder",
+      "codes": [
+        {
+          "system": "RxNorm",
+          "code": "314076",
+          "display": "lisinopril 10 MG Oral Tablet"
+        }
+      ],
+      "reason": "hypertension",
+      "direct_transition": "End_Wellness_Encounter"
+    },
+
+    "Diagnose_UTI": {
+      "type": "ConditionOnset",
+      "assign_to_attribute": "uti",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": "68566005",
+          "display": "Urinary tract infectious disease"
+        }
+      ],
+      "remarks": ["Non-AKI condition - UTI is common in hospital settings"],
+      "direct_transition": "End_Wellness_Encounter"
+    },
+
+    "End_Wellness_Encounter": {
+      "type": "EncounterEnd",
+      "direct_transition": "Terminal_Control"
+    },
+
+    "Terminal_Control": {
+      "type": "Terminal",
+      "remarks": ["Control patient - should NOT be found by AKI phenotype query"]
+    }
+  },
+  "gmf_version": 2
+}

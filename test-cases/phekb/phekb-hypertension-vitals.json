@@ -1,0 +1,63 @@
+{
+  "id": "phekb-hypertension-vitals",
+  "source": "phekb",
+  "source_id": "hypertension",
+  "name": "Hypertension - Elevated Blood Pressure Vital Signs Query",
+  "description": "Tests ability to find hypertension patients via elevated blood pressure measurements. The PheKB resistant-hypertension algorithm uses SBP > 140 mmHg or DBP > 90 mmHg on at least two outpatient measurements. This is the **first vital-signs-driven test case** in the suite — exercising LOINC codes for BP that are reported as Observation resources but at vital-signs not laboratory category. Tests whether LLM knows BP LOINC codes (8480-6 for SBP, 8462-4 for DBP) and the 140/90 threshold.",
+  "prompt": "Find vital-signs observations for systolic blood pressure measurements where the value is greater than 140 mmHg, indicating hypertension.",
+  "prompts": {
+    "naive": "Find patients with high blood pressure readings.",
+    "broad": "Find Observation resources for systolic blood pressure measurements where the value is greater than 140 mmHg. Sustained SBP > 140 (or DBP > 90) on multiple outpatient measurements meets standard hypertension diagnostic criteria.",
+    "expert": "I need Observation resources for elevated systolic blood pressure. Use LOINC 8480-6 (Systolic blood pressure). Apply a value-quantity filter with the gt prefix at threshold 140, unit mm[Hg]. The query should look like: Observation?code=http://loinc.org|8480-6&value-quantity=gt140. Note that BP is also stored as a panel observation with components — this query targets the standalone systolic component code. Diastolic BP would use LOINC 8462-4 with threshold > 90."
+  },
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "algorithm_path": "vital-signs-path",
+    "algorithm_path_description": "Patients with elevated SBP measurements (Paths A and D). The PheKB resistant-HTN algorithm requires SBP > 140 or DBP > 90 on at least two outpatient measurements. This test case exercises vital-signs Observation queries — distinct from lab Observation queries used by other phenotypes.",
+    "code_systems": [
+      "LOINC"
+    ],
+    "required_codes": [
+      {
+        "system": "http://loinc.org",
+        "code": "8480-6",
+        "display": "Systolic blood pressure",
+        "source": "UMLS verified"
+      }
+    ],
+    "complexity": "hard",
+    "tags": [
+      "observation",
+      "cardiology",
+      "hypertension",
+      "value-quantity",
+      "vital-signs",
+      "blood-pressure"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "Observation",
+    "parameters": {
+      "code": "http://loinc.org|8480-6",
+      "value-quantity": "gt140"
+    },
+    "url": "Observation?code=http://loinc.org|8480-6&value-quantity=gt140"
+  },
+  "test_data": {
+    "resources": [
+      "synthea/output/hypertension/positive/fhir/",
+      "synthea/output/hypertension/control/fhir/"
+    ],
+    "expected_result_count": 5,
+    "expected_resource_ids": [],
+    "expected_patient_ids": [
+      "0e23b16e-9a88-4e66-1043-d93e66649417",
+      "3979423a-1644-616d-ff03-95515c7367d4",
+      "4221a6e1-e146-26e5-810d-e34d1c9253c0",
+      "4b929ea0-70ae-dc07-53a3-4c4d5df7ab36",
+      "aa5c421c-6b45-f51f-7085-830f1409dffc"
+    ]
+  },
+  "created_at": "2026-04-27T00:00:00.000000Z",
+  "updated_at": "2026-04-27T00:00:00.000000Z"
+}

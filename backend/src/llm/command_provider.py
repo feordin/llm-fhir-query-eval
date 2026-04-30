@@ -1,5 +1,5 @@
 import subprocess
-from .provider import LLMProvider, FHIR_SYSTEM_PROMPT, parse_fhir_query_from_text
+from .provider import LLMProvider, FHIR_SYSTEM_PROMPT, parse_fhir_query_from_text, parse_fhir_queries_from_text
 
 import sys
 from pathlib import Path
@@ -22,18 +22,26 @@ class CommandProvider(LLMProvider):
 
         try:
             result = subprocess.run(
-                self.command, input=full_prompt, shell=True,
-                capture_output=True, text=True, timeout=120
+                self.command, input=full_prompt.encode("utf-8"), shell=True,
+                capture_output=True, timeout=120
             )
             if result.returncode != 0:
-                raise RuntimeError(f"Command failed (exit {result.returncode}): {result.stderr[:500]}")
+                stderr = result.stderr.decode("utf-8", errors="replace")
+                raise RuntimeError(f"Command failed (exit {result.returncode}): {stderr[:500]}")
 
-            raw_text = result.stdout.strip()
+            raw_text = result.stdout.decode("utf-8", errors="replace").strip()
             if not raw_text:
                 raise RuntimeError("Command returned empty output")
 
-            parsed = parse_fhir_query_from_text(raw_text)
-            return GeneratedQuery(raw_response=raw_text, parsed_query=parsed)
+            # Try to parse all queries (supports multi-query responses)
+            all_parsed = parse_fhir_queries_from_text(raw_text)
+            if all_parsed:
+                parsed = all_parsed[0]
+                additional = all_parsed[1:]
+            else:
+                parsed = parse_fhir_query_from_text(raw_text)
+                additional = []
+            return GeneratedQuery(raw_response=raw_text, parsed_query=parsed, additional_queries=additional)
         except FileNotFoundError:
             raise RuntimeError(f"Command not found: {self.command}")
         except subprocess.TimeoutExpired:

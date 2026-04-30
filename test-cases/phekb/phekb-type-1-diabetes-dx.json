@@ -1,0 +1,122 @@
+{
+  "id": "phekb-type-1-diabetes-dx",
+  "source": "phekb",
+  "source_id": "type-1-diabetes",
+  "name": "Type 1 Diabetes - Diagnosis Code Query (Multi-Subtype, T1-vs-T2 Distinction)",
+  "description": "Tests ability to find Type 1 diabetes patients via diagnosis codes — distinct from Type 2 diabetes (already in suite). T1D is autoimmune, requires insulin from onset; T2D is insulin-resistance-based, often managed without insulin initially. Tests whether LLM correctly distinguishes T1D SNOMED 46635009 from T2D SNOMED 44054006. Patients in EHRs are sometimes miscoded between the two — this is the FIRST subtype-vs-subtype test in the suite.",
+  "prompt": "Find all patients with a diagnosis of type 1 diabetes mellitus, including insulin-dependent diabetes mellitus (IDDM) variants.",
+  "prompts": {
+    "naive": "Find all patients with type 1 diabetes.",
+    "broad": "Find all patients diagnosed with type 1 diabetes mellitus (T1DM) — including insulin-dependent diabetes mellitus type IA, T1D with ulcer, pre-existing T1D, and T1D without retinopathy. NOT type 2 diabetes — these are distinct conditions with different SNOMED codes.",
+    "expert": "I need to identify all type 1 diabetes patients. T1D is documented under multiple SNOMED codes: Diabetes mellitus type 1 (46635009) is the parent, with subtype variants Insulin dependent diabetes mellitus type IA (23045005), Type I diabetes mellitus with ulcer (190368000), Pre-existing type 1 diabetes mellitus (199229001), and Diabetes mellitus type 1 without retinopathy (31321000119102). Important: T1D and T2D are distinct conditions with different SNOMED codes — T2D parent is 44054006, NOT 46635009. Search Condition resources for the T1D codes only."
+  },
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "algorithm_path": "diagnosis-path",
+    "algorithm_path_description": "Patients with T1D diagnosis codes (Paths A and B). Tests subtype distinction from T2D — an LLM that uses T2D codes will return zero T1D patients.",
+    "code_systems": [
+      "SNOMED CT",
+      "ICD-10-CM"
+    ],
+    "required_codes": [
+      {
+        "system": "http://snomed.info/sct",
+        "code": "46635009",
+        "display": "Diabetes mellitus type 1",
+        "source": "UMLS verified, parent concept"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "23045005",
+        "display": "Insulin dependent diabetes mellitus type IA",
+        "source": "UMLS verified, B.well VSAC"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "190368000",
+        "display": "Type I diabetes mellitus with ulcer",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "199229001",
+        "display": "Pre-existing type 1 diabetes mellitus",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "31321000119102",
+        "display": "Diabetes mellitus type 1 without retinopathy",
+        "source": "UMLS verified"
+      }
+    ],
+    "complexity": "medium",
+    "tags": [
+      "condition",
+      "endocrinology",
+      "type-1-diabetes",
+      "diagnosis-code",
+      "multi-subtype",
+      "code-variation",
+      "subtype-distinction",
+      "autoimmune"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "Condition",
+    "parameters": {
+      "code": "http://snomed.info/sct|46635009,http://snomed.info/sct|23045005,http://snomed.info/sct|190368000,http://snomed.info/sct|199229001,http://snomed.info/sct|31321000119102"
+    },
+    "url": "Condition?code=http://snomed.info/sct|46635009,http://snomed.info/sct|23045005,http://snomed.info/sct|190368000,http://snomed.info/sct|199229001,http://snomed.info/sct|31321000119102"
+  },
+  "test_data": {
+    "resources": [
+      "synthea/output/type-1-diabetes/positive/fhir/",
+      "synthea/output/type-1-diabetes/control/fhir/"
+    ],
+    "expected_result_count": 38,
+    "expected_resource_ids": [],
+    "expected_patient_ids": [
+      "101bc200-cfa8-da28-2fd4-abcf40f79002",
+      "11aeaba7-b5d5-65f5-ba42-6811b802d410",
+      "15cc6042-f5b1-f9c1-77af-f8fc09c70e11",
+      "1855182e-44e6-fa3a-d70a-6bbf8ebd77e0",
+      "1bb6e3b9-540e-0ece-f06d-7c5f4f9907fd",
+      "265b637d-5a62-9b4c-e9ca-83c16e3b460b",
+      "2694941f-b838-561a-d47c-7093ce0eaa01",
+      "2ccf50c1-31c5-b3d9-dc49-fb54764d05ce",
+      "307d60b8-7927-f86d-f480-f496dc704023",
+      "311ef754-3781-b2e9-ff36-807d17fd695b",
+      "3a62ae3f-83e2-7d7b-4fa4-188dce1df480",
+      "4f6939fd-8d36-688c-e840-2fbce2a5a406",
+      "5bc23987-a99f-9d2e-89d4-9cc7e3e3d9cb",
+      "607c28c3-567e-8e26-80a8-cd1fb951db0d",
+      "62c8c02f-5aba-0377-2071-dbae43714659",
+      "68807bc3-3d09-ebbb-3044-748368951ac8",
+      "691abf55-43fc-faaf-8cef-eaf94ce36bc5",
+      "6d3c3956-c08e-a4f7-e59b-7fc51a50727e",
+      "6f7e4e7b-1817-aeaa-141b-e0b323e73ea5",
+      "93dfb1c1-5f99-718e-8a58-849f48e2be75",
+      "9538d7b1-5eec-226b-0d76-fb1ffb10da9d",
+      "9962293c-6c25-e78e-6902-994cffd4258c",
+      "9b45cc89-4cd1-b0bb-7c13-18496b5b2cfe",
+      "a681b246-8e8c-e001-a255-9b6ab138f91b",
+      "a858ec8e-9fd9-6bad-04c3-c95c5c2b8a4e",
+      "a9831973-1245-a6b7-b3b1-c3fcd4e41aa9",
+      "b7b5297d-6556-d74d-c5a1-1ac2b86c7f70",
+      "c8064c2f-ad9d-0b76-02bd-cf9032f9f93f",
+      "c8a0b7d8-9f6d-7524-3e77-485a596e8b53",
+      "cdb32db9-abc7-76d5-a3ea-3a970665450f",
+      "d6f6c70b-d83b-97e4-4a8c-b5c18480b356",
+      "da255dad-f84f-e117-4eec-f68bf707b7da",
+      "dd6278b7-45e4-ad9a-3bcd-f3fc30e89a3a",
+      "e0e1c949-d33e-5bf2-caf9-eddc5b11ac12",
+      "e0f557a5-d7b6-f443-5dfc-ecf8f3c08cf5",
+      "e63d02ea-5753-145b-10f1-97d30275a83c",
+      "e92c22c5-81d6-9f20-d040-1785d840a77a",
+      "f769f4ee-289c-5ec7-a123-b76320dae0b0"
+    ]
+  },
+  "created_at": "2026-04-27T00:00:00.000000Z",
+  "updated_at": "2026-04-27T00:00:00.000000Z"
+}

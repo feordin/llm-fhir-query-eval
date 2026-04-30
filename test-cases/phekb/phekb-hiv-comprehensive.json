@@ -1,0 +1,143 @@
+{
+  "id": "phekb-hiv-comprehensive",
+  "source": "phekb",
+  "source_id": "hiv",
+  "name": "HIV - Comprehensive Provider Query",
+  "description": "Simulates an infectious disease or HIV clinic provider identifying their complete HIV patient population for ART adherence and viral suppression initiatives. Modern HIV care: lifelong suppressive ART, regular CD4 monitoring, viral load tracking. Identification combines diagnosis codes, ART prescriptions, and CD4 lab tracking.",
+  "prompt": "I need to identify my complete HIV patient population for an ART adherence and viral suppression quality initiative. From clinical experience, HIV patients are documented in different ways: most have a formal HIV diagnosis (HIV infection, AIDS, or acute HIV), nearly all engaged-in-care patients are on antiretroviral therapy (ART), and most have regular CD4 monitoring with at least some low CD4 results historically.\n\nPlease run multiple FHIR queries to capture the full population:\n1. Patients with any HIV diagnosis (HIV infection, AIDS, acute HIV, or HIV detected)\n2. Patients prescribed ART combination tablets (Triumeq, Genvoya, Odefsey, Stribild, or Complera)\n3. Patients with CD4 cell counts below 200 cells per microliter (AIDS-defining historical results)\n\nFor each query, return the matching resources. I want the union of all patients found.",
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "multi_query": true,
+    "algorithm_path": "comprehensive",
+    "algorithm_path_description": "Union of HIV dx codes, ART Rx, and AIDS-defining CD4 counts. Tests comprehensive identification across diagnosis, treatment, and lab evidence streams.",
+    "expected_queries": [
+      "Condition?code=http://snomed.info/sct|86406008,http://snomed.info/sct|62479008,http://snomed.info/sct|111880001,http://snomed.info/sct|165816005",
+      "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1147334,http://www.nlm.nih.gov/research/umls/rxnorm|1306292,http://www.nlm.nih.gov/research/umls/rxnorm|1546888,http://www.nlm.nih.gov/research/umls/rxnorm|1721613,http://www.nlm.nih.gov/research/umls/rxnorm|1741733",
+      "Observation?code=http://loinc.org|24467-3&value-quantity=lt200"
+    ],
+    "code_systems": [
+      "SNOMED CT",
+      "RxNorm",
+      "LOINC"
+    ],
+    "required_codes": [
+      {
+        "system": "http://snomed.info/sct",
+        "code": "86406008",
+        "display": "HIV infection",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "62479008",
+        "display": "AIDS",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "111880001",
+        "display": "Acute HIV infection",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "165816005",
+        "display": "HIV detected",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "1147334",
+        "display": "Complera",
+        "source": "VSAC HIV ARV Combination"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "1306292",
+        "display": "Stribild",
+        "source": "VSAC HIV ARV Combination"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "1546888",
+        "display": "Triumeq",
+        "source": "VSAC HIV ARV Combination"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "1721613",
+        "display": "Genvoya",
+        "source": "VSAC HIV ARV Combination"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "1741733",
+        "display": "Odefsey",
+        "source": "VSAC HIV ARV Combination"
+      },
+      {
+        "system": "http://loinc.org",
+        "code": "24467-3",
+        "display": "CD3+CD4+ (T4 helper) cells [#/volume] in Blood",
+        "source": "UMLS verified"
+      }
+    ],
+    "complexity": "expert",
+    "tags": [
+      "multi-query",
+      "infectious-disease",
+      "hiv",
+      "comprehensive",
+      "cross-resource"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "Patient",
+    "parameters": {},
+    "url": "Condition?code=http://snomed.info/sct|86406008,http://snomed.info/sct|62479008,http://snomed.info/sct|111880001,http://snomed.info/sct|165816005"
+  },
+  "test_data": {
+    "resources": [
+      "synthea/output/hiv/positive/fhir/",
+      "synthea/output/hiv/control/fhir/"
+    ],
+    "expected_result_count": 32,
+    "expected_resource_ids": [],
+    "expected_patient_ids": [
+      "00733216-5d9a-3afe-5745-58aacc30af02",
+      "06366e5e-6a73-6163-4ba6-a46d8a175537",
+      "0b1a0672-da4d-9e79-20e3-5bce3b2142bb",
+      "13421019-ed8b-a7d3-64e2-35a446b937a0",
+      "15e13141-f895-9df5-9e8b-4e1ec859e4ce",
+      "1e43292a-80eb-cf2b-97f1-2b8f5286b21a",
+      "2e4547d4-da21-857a-bfbc-014f03570abd",
+      "322f884a-f447-b612-4403-b45d821b49dc",
+      "3686252b-f4f7-f5ce-3f78-b34779678cae",
+      "36c509d1-45c5-671a-9156-a263fd7d500d",
+      "41d5046d-cd22-2fef-277f-3be54b5bdca1",
+      "49de3732-9f69-862e-29a5-23d701af2948",
+      "59de16c5-db5c-05c8-ae93-ca56fa3a3dcc",
+      "5da2d776-828a-5d25-fc2b-4ba7a4486977",
+      "742be271-63f1-fe1d-26ef-810196c538cf",
+      "97fc02bf-31bb-8a70-6e90-8a6f6e805fce",
+      "a0953adc-b7d1-0b95-9da5-3ecf8aa94e56",
+      "a1a506a2-a0d4-2147-d24c-7405b10195c3",
+      "b6b82376-6449-5e44-bce0-16dff4222a34",
+      "b903d9fa-dc82-3a6e-2ca7-f912e5cddc85",
+      "baab49de-364b-39b7-9d66-4681f5781f95",
+      "c2481dc2-3222-53a0-7465-bc88cb646e02",
+      "ca8bb2bb-4081-8bdb-33d2-e6f224dc95c8",
+      "cdc151d2-80c6-0e7e-f83c-fb57be4658d0",
+      "d8dd9cad-9c74-bb21-e494-2c51b32d1d7a",
+      "de4367b0-00cb-1330-6752-85d463358b3c",
+      "dfd65005-f936-cc1e-e121-d4decf4ede4a",
+      "e55e1674-f10d-9f16-3050-2c2bed3a61a7",
+      "e6cb2959-ab20-5136-06eb-ee230a906ef3",
+      "ec02bf54-6838-92ac-6405-ad824e9fe9a1",
+      "f827c444-4688-ad35-0609-4fc5793aed8c",
+      "ff451a64-b8e1-b94c-4ca5-f5ae7536f6f4"
+    ]
+  },
+  "created_at": "2026-04-27T00:00:00.000000Z",
+  "updated_at": "2026-04-27T00:00:00.000000Z"
+}

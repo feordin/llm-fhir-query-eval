@@ -1,0 +1,62 @@
+{
+  "id": "phekb-crohns-disease-labs",
+  "source": "phekb",
+  "source_id": "crohns-disease",
+  "name": "Crohn's Disease - Fecal Calprotectin Lab Query (Elevated)",
+  "description": "Tests ability to find Crohn's patients via elevated fecal calprotectin. Calprotectin is a neutrophil-derived protein elevated in active intestinal inflammation. The clinical cutoff for active IBD is typically >250 mcg/g (some labs use >150). The Synthea module generates calprotectin >500 mcg/g for active Crohn's patients.",
+  "prompt": "Find patients with elevated fecal calprotectin lab results greater than 250 micrograms per gram of stool — the clinical threshold suggesting active inflammatory bowel disease.",
+  "prompts": {
+    "naive": "Find patients with high calprotectin.",
+    "broad": "Find patients with elevated fecal calprotectin (a stool marker of intestinal inflammation) — values greater than 250 mcg/g of stool, suggesting active IBD.",
+    "expert": "I need Observation resources with elevated fecal calprotectin. Use LOINC code 38445-3 (Calprotectin [Mass/mass] in Stool). Filter by value-quantity greater than 250 mcg/g. Query: Observation?code=http://loinc.org|38445-3&value-quantity=gt250||ug/g"
+  },
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "algorithm_path": "labs-path",
+    "algorithm_path_description": "Patients with elevated fecal calprotectin suggesting active IBD. Sensitive but used to differentiate IBD from IBS.",
+    "code_systems": [
+      "LOINC"
+    ],
+    "required_codes": [
+      {
+        "system": "http://loinc.org",
+        "code": "38445-3",
+        "display": "Calprotectin [Mass/mass] in Stool",
+        "source": "UMLS verified"
+      }
+    ],
+    "complexity": "hard",
+    "tags": [
+      "observation",
+      "lab",
+      "gastroenterology",
+      "crohns-disease",
+      "ibd",
+      "calprotectin",
+      "value-quantity"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "Observation",
+    "parameters": {
+      "code": "http://loinc.org|38445-3",
+      "value-quantity": "gt250||ug/g"
+    },
+    "url": "Observation?code=http://loinc.org|38445-3&value-quantity=gt250||ug/g"
+  },
+  "test_data": {
+    "resources": [
+      "synthea/output/crohns-disease/positive/fhir/",
+      "synthea/output/crohns-disease/control/fhir/"
+    ],
+    "expected_result_count": 3,
+    "expected_resource_ids": [],
+    "expected_patient_ids": [
+      "1e3ea149-2e3d-b55b-e2b0-f99dab19b95f",
+      "3a7ec0bd-27f9-b4b8-7240-832f702d40dc",
+      "8db81725-9d4d-3a90-d942-5b740bdbaec3"
+    ]
+  },
+  "created_at": "2026-04-27T00:00:00.000000Z",
+  "updated_at": "2026-04-27T00:00:00.000000Z"
+}

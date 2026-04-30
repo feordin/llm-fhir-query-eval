@@ -1,0 +1,130 @@
+{
+  "id": "phekb-heart-failure-comprehensive",
+  "source": "phekb",
+  "source_id": "heart-failure",
+  "name": "Heart Failure - Comprehensive Provider Query",
+  "description": "Simulates a cardiologist identifying their complete heart failure population for a quality improvement initiative. The PheKB HF algorithm requires evidence from three orthogonal sources: ICD diagnosis codes, structured/NLP problem list mentions, and ejection fraction measurements (categorizes definite, probable, possible HF). Real-world identification primarily uses the union of: HF diagnosis codes, GDMT prescriptions, and EF<50% on echo. A Condition-only query underestimates the population.",
+  "prompt": "I need to identify my complete heart failure patient population for a guideline-directed medical therapy (GDMT) optimization initiative. From clinical experience, I know HF patients are documented in different ways: some have a formal diagnosis code (CHF, HFrEF, HFpEF), some are on classic HF medications (loop diuretics, ARNi, SGLT2 inhibitors, MRAs) without a formal HF diagnosis, and some have a documented reduced ejection fraction on echo.\n\nPlease run multiple FHIR queries to capture the full population:\n1. Patients with any heart failure diagnosis (CHF, HFrEF, HFpEF, or general heart failure)\n2. Patients prescribed HF medications (sacubitril/valsartan, carvedilol, spironolactone, empagliflozin, furosemide)\n3. Patients with echocardiogram ejection fraction measurements below 50 percent\n\nFor each query, return the matching resources. I want the union of all patients found across these three approaches.",
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "multi_query": true,
+    "algorithm_path": "comprehensive",
+    "algorithm_path_description": "Union of HF dx codes (Paths A+B), HF GDMT (Paths A+C), and reduced-EF observations (Paths A+D for HFrEF). Tests provider-level identification across orthogonal evidence streams. The PheKB algorithm's 'definite/probable/possible' classification is operationalized here as union of evidence.",
+    "expected_queries": [
+      "Condition?code=http://snomed.info/sct|84114007,http://snomed.info/sct|42343007,http://snomed.info/sct|88805009,http://snomed.info/sct|703272007,http://snomed.info/sct|446221000",
+      "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|4603,http://www.nlm.nih.gov/research/umls/rxnorm|20352,http://www.nlm.nih.gov/research/umls/rxnorm|9997,http://www.nlm.nih.gov/research/umls/rxnorm|1656339,http://www.nlm.nih.gov/research/umls/rxnorm|1545653",
+      "Observation?code=http://loinc.org|8806-2&value-quantity=lt50"
+    ],
+    "code_systems": [
+      "SNOMED CT",
+      "RxNorm",
+      "LOINC"
+    ],
+    "required_codes": [
+      {
+        "system": "http://snomed.info/sct",
+        "code": "84114007",
+        "display": "Heart failure",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "42343007",
+        "display": "Congestive heart failure",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "88805009",
+        "display": "Chronic congestive heart failure",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "703272007",
+        "display": "Heart failure with reduced ejection fraction",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "446221000",
+        "display": "Heart failure with normal ejection fraction",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "4603",
+        "display": "furosemide",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "20352",
+        "display": "carvedilol",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "9997",
+        "display": "spironolactone",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "1656339",
+        "display": "sacubitril / valsartan",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "1545653",
+        "display": "empagliflozin",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://loinc.org",
+        "code": "8806-2",
+        "display": "Left ventricular Ejection fraction by 2D echo",
+        "source": "UMLS verified"
+      }
+    ],
+    "complexity": "expert",
+    "tags": [
+      "multi-query",
+      "cardiology",
+      "heart-failure",
+      "comprehensive",
+      "cross-resource"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "Patient",
+    "parameters": {},
+    "url": "Condition?code=http://snomed.info/sct|84114007,http://snomed.info/sct|42343007,http://snomed.info/sct|88805009,http://snomed.info/sct|703272007,http://snomed.info/sct|446221000"
+  },
+  "test_data": {
+    "resources": [
+      "synthea/output/heart-failure/positive/fhir/",
+      "synthea/output/heart-failure/control/fhir/"
+    ],
+    "expected_result_count": 13,
+    "expected_resource_ids": [],
+    "expected_patient_ids": [
+      "080b069b-5108-46b6-ecef-6aacd3b9ef3f",
+      "2c167999-289d-95fa-5c27-7d8b8d35348c",
+      "322ab5c6-5846-ac1e-38cc-48b8cb441e20",
+      "35b353dd-402b-571a-d67a-af0a104d0854",
+      "5e7ebf2c-22ec-a89b-53ab-38edddd81be9",
+      "62f60bdb-cc5c-8305-b98b-f2b229a55eca",
+      "7811dc30-8c86-8164-6c33-6b6f464745ef",
+      "a2fb233f-60e0-b477-cd38-af3923f792a3",
+      "aa616abe-1761-0c9a-7959-07544679dafd",
+      "ba419d35-0dfe-8af7-347c-eebf02485a56",
+      "bff9d9d5-ee3d-d852-9c67-36d8361a4a4a",
+      "c86c400e-ff88-a1e3-2e23-caa4d8311f47",
+      "d57841fa-c9e2-a3d1-0e78-09bdbe4eed66"
+    ]
+  },
+  "created_at": "2026-04-27T00:00:00.000000Z",
+  "updated_at": "2026-04-27T00:00:00.000000Z"
+}

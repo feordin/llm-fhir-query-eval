@@ -1,0 +1,73 @@
+{
+  "id": "phekb-sickle-cell-disease-meds",
+  "source": "phekb",
+  "source_id": "sickle-cell-disease",
+  "name": "Sickle Cell Disease - Medication Query (Hydroxyurea)",
+  "description": "Tests ability to find SCD patients by searching for hydroxyurea prescriptions. Finds patients from Path A (dx + meds) AND Path C (meds only, no diagnosis). This is an important test because 11 of the 26 patients with hydroxyurea have NO SCD diagnosis code — they can ONLY be found through medication evidence.",
+  "prompt": "Find all patients who have been prescribed hydroxyurea, which is the standard disease-modifying treatment for sickle cell disease.",
+  "prompts": {
+    "naive": "Find all patients prescribed hydroxyurea.",
+    "expert": "I need to identify patients receiving hydroxyurea therapy, the primary disease-modifying treatment for sickle cell disease. Hydroxyurea reduces the frequency of painful crises by increasing fetal hemoglobin production. Search MedicationRequest resources for hydroxyurea. Note that some patients on hydroxyurea may not have a formal SCD diagnosis in their Condition resources — the medication may have been started by an outside hematologist."
+  },
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "algorithm_path": "medication-path",
+    "algorithm_path_description": "Patients with hydroxyurea prescriptions (Paths A and C). Includes 'tricky' Path C patients who have medications but NO SCD Condition resource.",
+    "code_systems": ["RxNorm"],
+    "required_codes": [
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "5552",
+        "display": "hydroxyurea",
+        "source": "VSAC OID 2.16.840.1.113762.1.4.1290.22"
+      }
+    ],
+    "complexity": "easy",
+    "tags": ["medication", "hematology", "sickle-cell-disease", "hydroxyurea"]
+  },
+  "expected_query": {
+    "resource_type": "MedicationRequest",
+    "parameters": {
+      "code": "http://www.nlm.nih.gov/research/umls/rxnorm|5552"
+    },
+    "url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|5552"
+  },
+  "test_data": {
+    "resources": [
+      "synthea/output/sickle-cell-disease/positive/fhir/",
+      "synthea/output/sickle-cell-disease/control/fhir/"
+    ],
+    "expected_result_count": 26,
+    "expected_resource_ids": [],
+    "expected_patient_ids": [
+      "0a9c433f-8013-842e-4ef9-bae5315b5f43",
+      "1087850f-2489-a52f-08f1-f0059270e45a",
+      "166a8705-5db9-872b-05fd-4dd69b3aa393",
+      "22ad8d2c-efb4-8d71-f34c-9a45759f60f6",
+      "2a1f1639-553d-5aa1-fbdc-003ab77ea30d",
+      "35e5febc-4d94-90ce-01b5-11db30c83ffd",
+      "4dd002ab-0992-962d-8395-5abeda94124a",
+      "4f07a9a2-2b4d-491d-1035-59d1b787cce0",
+      "51076b8c-3f7d-e693-a195-896bea314f02",
+      "54248190-2b0f-bb6e-6a36-a287f93556a2",
+      "57af63ef-dc01-69f1-e88d-4705716ca82a",
+      "5f5fff20-bc4c-7893-ccd5-07cf71cc435f",
+      "6f78c39c-7e98-25bf-94a5-681a91eee546",
+      "75920eec-62c8-228b-89d2-8cc13dafcf37",
+      "8dd97f76-7844-ff38-a117-d6722877273c",
+      "9b949d39-921e-c9fd-88f7-91a4c700f262",
+      "bb553e71-2818-60dd-8e12-52ce980d729f",
+      "bfd3131d-6c20-24b8-1795-8db6fc0557f9",
+      "c67c95dc-6430-31f0-3719-12e153753faf",
+      "dfe8dc02-f081-9dad-2257-df020bed7363",
+      "e8876905-3db5-9d36-0748-0d7803b6a625",
+      "e973b5a5-232a-db46-32ae-eefac0c3f7ef",
+      "eebcaba3-2fb7-2e18-c992-5c8dc817c0eb",
+      "f0f8f5c7-5d45-3af1-c5d4-01188a7f22c4",
+      "f20509b7-673c-515f-51ca-7edeb931b29e",
+      "fa566323-8e1f-522d-ffd6-41460ca878fc"
+    ]
+  },
+  "created_at": "2026-04-14T00:00:00.000000Z",
+  "updated_at": "2026-04-14T00:00:00.000000Z"
+}

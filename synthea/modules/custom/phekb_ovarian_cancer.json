@@ -1,0 +1,267 @@
+{
+  "name": "PheKB Ovarian Cancer",
+  "remarks": [
+    "Custom Synthea module for ovarian cancer.",
+    "**First female-specific (female-only) phenotype** in suite (counterpart to male-only PCa). **Eighth Procedure-resource phenotype** (oophorectomy/hysterectomy).",
+    "**Third 4-resource-type comprehensive query** (Condition + MedicationRequest + Procedure + Observation).",
+    "",
+    "Generates FOUR patient paths:",
+    "  Path A (50%): Ovarian dx + chemo + oophorectomy + elevated CA-125",
+    "  Path B (15%): Ovarian dx + chemo, no recent surgery/CA-125",
+    "  Path C (20%): Surgery + elevated CA-125, no ovarian dx (benign mass — TAH-BSO for fibroids/endometriosis)",
+    "  Path D (15%): Elevated CA-125 only, no dx/surgery/chemo (early presentation or false positive)",
+    "",
+    "All paths require: gender == F (sex guard).",
+    "",
+    "Diagnosis SNOMED variation (Paths A + B):",
+    "  35% Malignant neoplasm of ovary (363443007) — parent",
+    "  25% Primary malignant neoplasm of ovary (93934004)",
+    "  15% Neoplasm of ovary (123843001) — broader",
+    "  15% Serous papillary cystadenocarcinoma (254850005)",
+    "  10% Endometrioid carcinoma ovary (254852002)",
+    "",
+    "Chemo variation (Paths A + B — 5 ingredients):",
+    "  35% Carboplatin (40048) — first-line platinum",
+    "  30% Paclitaxel (56946) — first-line taxane",
+    "  15% Cisplatin (2555) — older platinum",
+    "  10% Gemcitabine (12574) — recurrence",
+    "  10% Olaparib (1597582) — PARP inhibitor for BRCA"
+  ],
+  "states": {
+    "Initial": { "type": "Initial", "direct_transition": "Sex_Guard" },
+    "Sex_Guard": { "type": "Guard", "allow": { "condition_type": "Gender", "gender": "F" }, "direct_transition": "Age_Guard" },
+    "Age_Guard": { "type": "Guard", "allow": { "condition_type": "Age", "operator": ">=", "quantity": 45, "unit": "years" }, "direct_transition": "Set_OvCa_Flag" },
+    "Set_OvCa_Flag": { "type": "SetAttribute", "attribute": "ovca_positive", "value": true, "direct_transition": "Choose_Patient_Path" },
+    "Choose_Patient_Path": {
+      "type": "Simple",
+      "distributed_transition": [
+        { "transition": "Set_Path_A", "distribution": 0.50 },
+        { "transition": "Set_Path_B", "distribution": 0.15 },
+        { "transition": "Set_Path_C", "distribution": 0.20 },
+        { "transition": "Set_Path_D", "distribution": 0.15 }
+      ]
+    },
+    "Set_Path_A": { "type": "SetAttribute", "attribute": "ovca_has_dx", "value": true, "direct_transition": "Set_Path_A_Proc" },
+    "Set_Path_A_Proc": { "type": "SetAttribute", "attribute": "ovca_has_proc", "value": true, "direct_transition": "Set_Path_A_Lab" },
+    "Set_Path_A_Lab": { "type": "SetAttribute", "attribute": "ovca_has_high_ca125", "value": true, "direct_transition": "Set_Path_A_Meds" },
+    "Set_Path_A_Meds": { "type": "SetAttribute", "attribute": "ovca_has_meds", "value": true, "direct_transition": "Choose_Subtype" },
+
+    "Set_Path_B": { "type": "SetAttribute", "attribute": "ovca_has_dx", "value": true, "direct_transition": "Set_Path_B_Proc" },
+    "Set_Path_B_Proc": { "type": "SetAttribute", "attribute": "ovca_has_proc", "value": false, "direct_transition": "Set_Path_B_Lab" },
+    "Set_Path_B_Lab": { "type": "SetAttribute", "attribute": "ovca_has_high_ca125", "value": false, "direct_transition": "Set_Path_B_Meds" },
+    "Set_Path_B_Meds": { "type": "SetAttribute", "attribute": "ovca_has_meds", "value": true, "direct_transition": "Choose_Subtype" },
+
+    "Set_Path_C": { "type": "SetAttribute", "remarks": ["TRICKY: surgery + CA-125 without ovarian cancer dx"], "attribute": "ovca_has_dx", "value": false, "direct_transition": "Set_Path_C_Proc" },
+    "Set_Path_C_Proc": { "type": "SetAttribute", "attribute": "ovca_has_proc", "value": true, "direct_transition": "Set_Path_C_Lab" },
+    "Set_Path_C_Lab": { "type": "SetAttribute", "attribute": "ovca_has_high_ca125", "value": true, "direct_transition": "Set_Path_C_Meds" },
+    "Set_Path_C_Meds": { "type": "SetAttribute", "attribute": "ovca_has_meds", "value": false, "direct_transition": "Choose_Subtype" },
+
+    "Set_Path_D": { "type": "SetAttribute", "remarks": ["TRICKY: elevated CA-125 only"], "attribute": "ovca_has_dx", "value": false, "direct_transition": "Set_Path_D_Proc" },
+    "Set_Path_D_Proc": { "type": "SetAttribute", "attribute": "ovca_has_proc", "value": false, "direct_transition": "Set_Path_D_Lab" },
+    "Set_Path_D_Lab": { "type": "SetAttribute", "attribute": "ovca_has_high_ca125", "value": true, "direct_transition": "Set_Path_D_Meds" },
+    "Set_Path_D_Meds": { "type": "SetAttribute", "attribute": "ovca_has_meds", "value": false, "direct_transition": "Choose_Subtype" },
+
+    "Choose_Subtype": {
+      "type": "Simple",
+      "distributed_transition": [
+        { "transition": "Set_Subtype_OvCa", "distribution": 0.35 },
+        { "transition": "Set_Subtype_Primary", "distribution": 0.25 },
+        { "transition": "Set_Subtype_Neoplasm", "distribution": 0.15 },
+        { "transition": "Set_Subtype_Serous", "distribution": 0.15 },
+        { "transition": "Set_Subtype_Endometrioid", "distribution": 0.10 }
+      ]
+    },
+    "Set_Subtype_OvCa": { "type": "SetAttribute", "attribute": "ovca_subtype", "value": "ovca", "direct_transition": "Choose_Med" },
+    "Set_Subtype_Primary": { "type": "SetAttribute", "attribute": "ovca_subtype", "value": "primary", "direct_transition": "Choose_Med" },
+    "Set_Subtype_Neoplasm": { "type": "SetAttribute", "attribute": "ovca_subtype", "value": "neoplasm", "direct_transition": "Choose_Med" },
+    "Set_Subtype_Serous": { "type": "SetAttribute", "attribute": "ovca_subtype", "value": "serous", "direct_transition": "Choose_Med" },
+    "Set_Subtype_Endometrioid": { "type": "SetAttribute", "attribute": "ovca_subtype", "value": "endometrioid", "direct_transition": "Choose_Med" },
+
+    "Choose_Med": {
+      "type": "Simple",
+      "distributed_transition": [
+        { "transition": "Set_Med_Carboplatin", "distribution": 0.35 },
+        { "transition": "Set_Med_Paclitaxel", "distribution": 0.30 },
+        { "transition": "Set_Med_Cisplatin", "distribution": 0.15 },
+        { "transition": "Set_Med_Gemcitabine", "distribution": 0.10 },
+        { "transition": "Set_Med_Olaparib", "distribution": 0.10 }
+      ]
+    },
+    "Set_Med_Carboplatin": { "type": "SetAttribute", "attribute": "ovca_med", "value": "carboplatin", "direct_transition": "Choose_Proc" },
+    "Set_Med_Paclitaxel": { "type": "SetAttribute", "attribute": "ovca_med", "value": "paclitaxel", "direct_transition": "Choose_Proc" },
+    "Set_Med_Cisplatin": { "type": "SetAttribute", "attribute": "ovca_med", "value": "cisplatin", "direct_transition": "Choose_Proc" },
+    "Set_Med_Gemcitabine": { "type": "SetAttribute", "attribute": "ovca_med", "value": "gemcitabine", "direct_transition": "Choose_Proc" },
+    "Set_Med_Olaparib": { "type": "SetAttribute", "attribute": "ovca_med", "value": "olaparib", "direct_transition": "Choose_Proc" },
+
+    "Choose_Proc": {
+      "type": "Simple",
+      "distributed_transition": [
+        { "transition": "Set_Proc_Oophorectomy", "distribution": 0.50 },
+        { "transition": "Set_Proc_Hysterectomy", "distribution": 0.50 }
+      ]
+    },
+    "Set_Proc_Oophorectomy": { "type": "SetAttribute", "attribute": "ovca_proc", "value": "oophorectomy", "direct_transition": "Set_Needs_First_Visit" },
+    "Set_Proc_Hysterectomy": { "type": "SetAttribute", "attribute": "ovca_proc", "value": "hysterectomy", "direct_transition": "Set_Needs_First_Visit" },
+
+    "Set_Needs_First_Visit": { "type": "SetAttribute", "attribute": "ovca_needs_first_visit", "value": true, "direct_transition": "Wellness_Encounter" },
+    "Wellness_Encounter": { "type": "Encounter", "wellness": true, "direct_transition": "Check_First_Visit" },
+    "Check_First_Visit": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "ovca_needs_first_visit", "operator": "==", "value": true }, "transition": "Check_Has_Diagnosis" },
+        { "transition": "End_Wellness_Encounter" }
+      ]
+    },
+    "Check_Has_Diagnosis": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "ovca_has_dx", "operator": "==", "value": true }, "transition": "Route_By_Subtype" },
+        { "transition": "Check_Lab_NoDx" }
+      ]
+    },
+    "Route_By_Subtype": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "ovca_subtype", "operator": "==", "value": "ovca" }, "transition": "Diagnose_OvCa" },
+        { "condition": { "condition_type": "Attribute", "attribute": "ovca_subtype", "operator": "==", "value": "primary" }, "transition": "Diagnose_Primary" },
+        { "condition": { "condition_type": "Attribute", "attribute": "ovca_subtype", "operator": "==", "value": "neoplasm" }, "transition": "Diagnose_Neoplasm" },
+        { "condition": { "condition_type": "Attribute", "attribute": "ovca_subtype", "operator": "==", "value": "serous" }, "transition": "Diagnose_Serous" },
+        { "transition": "Diagnose_Endometrioid" }
+      ]
+    },
+    "Diagnose_OvCa": { "type": "ConditionOnset", "assign_to_attribute": "ovca_condition", "codes": [{ "system": "SNOMED-CT", "code": "363443007", "display": "Malignant neoplasm of ovary" }], "direct_transition": "Check_Lab_WithDx" },
+    "Diagnose_Primary": { "type": "ConditionOnset", "assign_to_attribute": "ovca_condition", "codes": [{ "system": "SNOMED-CT", "code": "93934004", "display": "Primary malignant neoplasm of ovary" }], "direct_transition": "Check_Lab_WithDx" },
+    "Diagnose_Neoplasm": { "type": "ConditionOnset", "assign_to_attribute": "ovca_condition", "codes": [{ "system": "SNOMED-CT", "code": "123843001", "display": "Neoplasm of ovary" }], "direct_transition": "Check_Lab_WithDx" },
+    "Diagnose_Serous": { "type": "ConditionOnset", "assign_to_attribute": "ovca_condition", "codes": [{ "system": "SNOMED-CT", "code": "254850005", "display": "Serous papillary cystadenocarcinoma ovary" }], "direct_transition": "Check_Lab_WithDx" },
+    "Diagnose_Endometrioid": { "type": "ConditionOnset", "assign_to_attribute": "ovca_condition", "codes": [{ "system": "SNOMED-CT", "code": "254852002", "display": "Endometrioid carcinoma ovary" }], "direct_transition": "Check_Lab_WithDx" },
+
+    "Check_Lab_WithDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "ovca_has_high_ca125", "operator": "==", "value": true }, "transition": "Record_High_CA125_WithDx" },
+        { "transition": "Check_Meds_WithDx" }
+      ]
+    },
+    "Record_High_CA125_WithDx": {
+      "type": "Observation",
+      "category": "laboratory",
+      "unit": "U/mL",
+      "codes": [{ "system": "LOINC", "code": "10334-1", "display": "Cancer Ag 125 [Units/volume] in Serum or Plasma" }],
+      "range": { "low": 100, "high": 1000 },
+      "direct_transition": "Check_Meds_WithDx"
+    },
+    "Check_Meds_WithDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "ovca_has_meds", "operator": "==", "value": true }, "transition": "Route_Med_WithDx" },
+        { "transition": "Check_Procedure_WithDx" }
+      ]
+    },
+    "Route_Med_WithDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "ovca_med", "operator": "==", "value": "carboplatin" }, "transition": "Prescribe_Carboplatin_WithDx" },
+        { "condition": { "condition_type": "Attribute", "attribute": "ovca_med", "operator": "==", "value": "paclitaxel" }, "transition": "Prescribe_Paclitaxel_WithDx" },
+        { "condition": { "condition_type": "Attribute", "attribute": "ovca_med", "operator": "==", "value": "cisplatin" }, "transition": "Prescribe_Cisplatin_WithDx" },
+        { "condition": { "condition_type": "Attribute", "attribute": "ovca_med", "operator": "==", "value": "gemcitabine" }, "transition": "Prescribe_Gemcitabine_WithDx" },
+        { "transition": "Prescribe_Olaparib_WithDx" }
+      ]
+    },
+    "Prescribe_Carboplatin_WithDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "40048", "display": "carboplatin" }], "reason": "ovca_condition", "direct_transition": "Check_Procedure_WithDx" },
+    "Prescribe_Paclitaxel_WithDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "56946", "display": "paclitaxel" }], "reason": "ovca_condition", "direct_transition": "Check_Procedure_WithDx" },
+    "Prescribe_Cisplatin_WithDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "2555", "display": "cisplatin" }], "reason": "ovca_condition", "direct_transition": "Check_Procedure_WithDx" },
+    "Prescribe_Gemcitabine_WithDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "12574", "display": "gemcitabine" }], "reason": "ovca_condition", "direct_transition": "Check_Procedure_WithDx" },
+    "Prescribe_Olaparib_WithDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "1597582", "display": "olaparib" }], "reason": "ovca_condition", "direct_transition": "Check_Procedure_WithDx" },
+
+    "Check_Procedure_WithDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "ovca_has_proc", "operator": "==", "value": true }, "transition": "Surgery_Encounter_WithDx" },
+        { "transition": "Clear_First_Visit_Flag" }
+      ]
+    },
+    "Surgery_Encounter_WithDx": {
+      "type": "Encounter",
+      "encounter_class": "ambulatory",
+      "reason": "ovca_condition",
+      "codes": [{ "system": "SNOMED-CT", "code": "440655000", "display": "Outpatient procedure encounter (procedure)" }],
+      "direct_transition": "Route_Procedure_WithDx"
+    },
+    "Route_Procedure_WithDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "ovca_proc", "operator": "==", "value": "oophorectomy" }, "transition": "Procedure_Oophorectomy_WithDx" },
+        { "transition": "Procedure_Hysterectomy_WithDx" }
+      ]
+    },
+    "Procedure_Oophorectomy_WithDx": {
+      "type": "Procedure",
+      "reason": "ovca_condition",
+      "codes": [{ "system": "SNOMED-CT", "code": "83152002", "display": "Oophorectomy (procedure)" }],
+      "duration": { "low": 90, "high": 180, "unit": "minutes" },
+      "direct_transition": "End_Surgery_Encounter_WithDx"
+    },
+    "Procedure_Hysterectomy_WithDx": {
+      "type": "Procedure",
+      "reason": "ovca_condition",
+      "codes": [{ "system": "SNOMED-CT", "code": "236886002", "display": "Hysterectomy (procedure)" }],
+      "duration": { "low": 90, "high": 180, "unit": "minutes" },
+      "direct_transition": "End_Surgery_Encounter_WithDx"
+    },
+    "End_Surgery_Encounter_WithDx": { "type": "EncounterEnd", "direct_transition": "Clear_First_Visit_Flag" },
+
+    "Check_Lab_NoDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "ovca_has_high_ca125", "operator": "==", "value": true }, "transition": "Record_High_CA125_NoDx" },
+        { "transition": "Check_Procedure_NoDx" }
+      ]
+    },
+    "Record_High_CA125_NoDx": {
+      "type": "Observation",
+      "category": "laboratory",
+      "unit": "U/mL",
+      "codes": [{ "system": "LOINC", "code": "10334-1", "display": "Cancer Ag 125 [Units/volume] in Serum or Plasma" }],
+      "range": { "low": 50, "high": 200 },
+      "direct_transition": "Check_Procedure_NoDx"
+    },
+    "Check_Procedure_NoDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "ovca_has_proc", "operator": "==", "value": true }, "transition": "Surgery_Encounter_NoDx" },
+        { "transition": "Clear_First_Visit_Flag" }
+      ]
+    },
+    "Surgery_Encounter_NoDx": {
+      "type": "Encounter",
+      "encounter_class": "ambulatory",
+      "codes": [{ "system": "SNOMED-CT", "code": "440655000", "display": "Outpatient procedure encounter (procedure)" }],
+      "direct_transition": "Route_Procedure_NoDx"
+    },
+    "Route_Procedure_NoDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "ovca_proc", "operator": "==", "value": "oophorectomy" }, "transition": "Procedure_Oophorectomy_NoDx" },
+        { "transition": "Procedure_Hysterectomy_NoDx" }
+      ]
+    },
+    "Procedure_Oophorectomy_NoDx": {
+      "type": "Procedure",
+      "codes": [{ "system": "SNOMED-CT", "code": "83152002", "display": "Oophorectomy (procedure)" }],
+      "duration": { "low": 90, "high": 180, "unit": "minutes" },
+      "direct_transition": "End_Surgery_Encounter_NoDx"
+    },
+    "Procedure_Hysterectomy_NoDx": {
+      "type": "Procedure",
+      "codes": [{ "system": "SNOMED-CT", "code": "236886002", "display": "Hysterectomy (procedure)" }],
+      "duration": { "low": 90, "high": 180, "unit": "minutes" },
+      "direct_transition": "End_Surgery_Encounter_NoDx"
+    },
+    "End_Surgery_Encounter_NoDx": { "type": "EncounterEnd", "direct_transition": "Clear_First_Visit_Flag" },
+
+    "Clear_First_Visit_Flag": { "type": "SetAttribute", "attribute": "ovca_needs_first_visit", "value": false, "direct_transition": "End_Wellness_Encounter" },
+    "End_Wellness_Encounter": { "type": "EncounterEnd", "direct_transition": "Followup_Delay" },
+    "Followup_Delay": { "type": "Delay", "range": { "low": 6, "high": 12, "unit": "months" }, "direct_transition": "Wellness_Encounter" }
+  },
+  "gmf_version": 2
+}

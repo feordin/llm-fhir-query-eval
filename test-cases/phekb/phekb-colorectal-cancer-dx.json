@@ -1,0 +1,104 @@
+{
+  "id": "phekb-colorectal-cancer-dx",
+  "source": "phekb",
+  "source_id": "colorectal-cancer",
+  "name": "Colorectal Cancer - Diagnosis Code Query (Multi-Anatomic-Site)",
+  "description": "Tests ability to find colorectal cancer patients via diagnosis codes. CRC is documented under multiple SNOMED codes by anatomic location: colon (parent), cecum, rectum, primary colon, descending colon. Synthea distributes patients across these location-specific codes.",
+  "prompt": "Find all patients with a diagnosis of colorectal cancer, including malignant neoplasm of colon, cecum, rectum, and any anatomic subtype.",
+  "prompts": {
+    "naive": "Find all patients with colorectal cancer.",
+    "broad": "Find all patients diagnosed with any form of colorectal cancer — including malignant neoplasm of the colon (parent), cecum, rectum and rectosigmoid junction, primary malignant neoplasm of colon, and primary malignant neoplasm of descending colon.",
+    "expert": "I need to identify all colorectal cancer patients. CRC is documented under multiple SNOMED codes from the ASCO Colorectal Cancer VSAC (OID 2.16.840.1.113883.3.1444.3.215): Malignant neoplasm of colon (363406005) is the parent concept, with anatomic-location variants Malignant neoplasm of cecum (363350007), Malignant neoplasm of rectum (187760008), Primary malignant neoplasm of colon (93761005), and Primary malignant neoplasm of descending colon (93771007). Search Condition resources for all five codes."
+  },
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "algorithm_path": "diagnosis-path",
+    "algorithm_path_description": "Patients with CRC diagnosis codes. Tests anatomic-location code variation for cancer.",
+    "code_systems": [
+      "SNOMED CT"
+    ],
+    "required_codes": [
+      {
+        "system": "http://snomed.info/sct",
+        "code": "363406005",
+        "display": "Malignant neoplasm of colon",
+        "source": "UMLS verified, parent"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "363350007",
+        "display": "Malignant neoplasm of cecum",
+        "source": "VSAC"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "187760008",
+        "display": "Malignant neoplasm of rectum, rectosigmoid junction and anus",
+        "source": "VSAC"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "93761005",
+        "display": "Primary malignant neoplasm of colon",
+        "source": "VSAC"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "93771007",
+        "display": "Primary malignant neoplasm of descending colon",
+        "source": "VSAC"
+      }
+    ],
+    "complexity": "medium",
+    "tags": [
+      "condition",
+      "oncology",
+      "colorectal-cancer",
+      "crc",
+      "diagnosis-code",
+      "multi-subtype",
+      "anatomic-variation"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "Condition",
+    "parameters": {
+      "code": "http://snomed.info/sct|363406005,http://snomed.info/sct|363350007,http://snomed.info/sct|187760008,http://snomed.info/sct|93761005,http://snomed.info/sct|93771007"
+    },
+    "url": "Condition?code=http://snomed.info/sct|363406005,http://snomed.info/sct|363350007,http://snomed.info/sct|187760008,http://snomed.info/sct|93761005,http://snomed.info/sct|93771007"
+  },
+  "test_data": {
+    "resources": [
+      "synthea/output/colorectal-cancer/positive/fhir/",
+      "synthea/output/colorectal-cancer/control/fhir/"
+    ],
+    "expected_result_count": 22,
+    "expected_resource_ids": [],
+    "expected_patient_ids": [
+      "17ee2187-c202-177f-44c2-81ac3831e36d",
+      "1d9ffc46-32c4-e0c9-6e18-b53ec7d596d1",
+      "1f003b79-2f94-8ee4-036b-a43df99c6cd6",
+      "1fe77ca3-dabc-c812-cc01-0bcecc3176ca",
+      "4a053f10-8ccb-e5a9-3bb0-99b02b6fa949",
+      "5b5f8fb7-933e-cd3d-2cfa-4aba695e2bce",
+      "84e09a74-cde4-b2b1-d014-da78725da38d",
+      "8dc89e4f-64ec-85ec-862a-8fc0d9b37106",
+      "8dcf2434-47d7-adf3-028f-3dae0e99263c",
+      "90282499-eda8-e860-fd59-11c0af3e902c",
+      "9aaff10b-648e-2504-4b2a-0d57a5672c87",
+      "a55d8008-d033-0bb2-96e3-e88deb4e24cc",
+      "aec18803-a81b-6921-29e7-20990a856c52",
+      "b2dbbfc5-292b-f56d-d3a2-7abca5c4de6d",
+      "bfaba47c-0ead-0249-69df-2725cb97b7bc",
+      "d96ec67a-4f99-7f77-5552-5617da791b7a",
+      "db2a077d-f846-c38f-0ef0-2d2cb772e8ab",
+      "dd4e5339-4386-d2d3-1007-58905fdd0fa1",
+      "eeea0e35-9e20-bb28-1c8d-758834d97be0",
+      "ef291c0b-6fc6-d40e-6d18-97157f26698e",
+      "f9460d85-6c92-f0ee-539e-c1611ecdbaf7",
+      "fe5cab90-f77b-cf4c-c461-a4aa51538874"
+    ]
+  },
+  "created_at": "2026-04-28T00:00:00.000000Z",
+  "updated_at": "2026-04-27T00:00:00.000000Z"
+}

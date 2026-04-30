@@ -1,0 +1,191 @@
+{
+  "name": "PheKB Hepatitis C",
+  "remarks": [
+    "Custom Synthea module for PheKB phenotype: hepatitis C virus (HCV) infection",
+    "",
+    "HCV diagnosis requires two-step workup: antibody screening then RNA confirmation.",
+    "Modern treatment: direct-acting antivirals (DAAs) achieve >95% cure rates.",
+    "",
+    "Generates FOUR patient paths:",
+    "  Path A (50%): Diagnosis + DAA treatment + Ab+ — full treated/cured",
+    "  Path B (25%): Diagnosis + Ab+, no DAA yet (untreated, awaiting access or ineligible)",
+    "  Path C (10%): DAA ONLY, NO HCV diagnosis (rare — recently dx not coded, or rare ribavirin off-label)",
+    "  Path D (15%): Ab+ only, NO dx, NO meds (resolved/cured infection or unscreened-confirmed)",
+    "",
+    "Diagnosis SNOMED variation (Paths A + B):",
+    "  40% Viral hepatitis type C (50711007) — generic parent",
+    "  50% Chronic hepatitis C (128302006) — most common diagnosed form",
+    "  10% Acute hepatitis C (235866006)",
+    "",
+    "Medication ingredient variation (Paths A + C):",
+    "  35% Sofosbuvir (1484911) — Sovaldi",
+    "  30% Ledipasvir (1591922) — combined with sofosbuvir as Harvoni",
+    "  20% Simeprevir (1482790) — older protease inhibitor",
+    "  15% Ribavirin 100 MG (108766) — older nucleoside, often combined",
+    "",
+    "Lab values (Paths A + B + D get Ab+):",
+    "  HCV antibody: positive presence (categorical)",
+    "",
+    "Codes verified via CSTE Acute Hepatitis C VSAC (OID 2.16.840.1.113762.1.4.1146.2679) and HCV Treatment VSAC."
+  ],
+  "states": {
+    "Initial": { "type": "Initial", "direct_transition": "Age_Guard" },
+    "Age_Guard": { "type": "Guard", "allow": { "condition_type": "Age", "operator": ">=", "quantity": 25, "unit": "years" }, "direct_transition": "Set_HCV_Flag" },
+    "Set_HCV_Flag": { "type": "SetAttribute", "attribute": "hcv_positive", "value": true, "direct_transition": "Choose_Patient_Path" },
+    "Choose_Patient_Path": {
+      "type": "Simple",
+      "distributed_transition": [
+        { "transition": "Set_Path_A", "distribution": 0.50 },
+        { "transition": "Set_Path_B", "distribution": 0.25 },
+        { "transition": "Set_Path_C", "distribution": 0.10 },
+        { "transition": "Set_Path_D", "distribution": 0.15 }
+      ]
+    },
+    "Set_Path_A": { "type": "SetAttribute", "attribute": "hcv_has_dx", "value": true, "direct_transition": "Set_Path_A_Labs" },
+    "Set_Path_A_Labs": { "type": "SetAttribute", "attribute": "hcv_has_ab", "value": true, "direct_transition": "Set_Path_A_Meds" },
+    "Set_Path_A_Meds": { "type": "SetAttribute", "attribute": "hcv_has_meds", "value": true, "direct_transition": "Choose_Subtype" },
+
+    "Set_Path_B": { "type": "SetAttribute", "attribute": "hcv_has_dx", "value": true, "direct_transition": "Set_Path_B_Labs" },
+    "Set_Path_B_Labs": { "type": "SetAttribute", "attribute": "hcv_has_ab", "value": true, "direct_transition": "Set_Path_B_Meds" },
+    "Set_Path_B_Meds": { "type": "SetAttribute", "attribute": "hcv_has_meds", "value": false, "direct_transition": "Choose_Subtype" },
+
+    "Set_Path_C": { "type": "SetAttribute", "remarks": ["TRICKY: DAA without HCV dx — rare"], "attribute": "hcv_has_dx", "value": false, "direct_transition": "Set_Path_C_Labs" },
+    "Set_Path_C_Labs": { "type": "SetAttribute", "attribute": "hcv_has_ab", "value": false, "direct_transition": "Set_Path_C_Meds" },
+    "Set_Path_C_Meds": { "type": "SetAttribute", "attribute": "hcv_has_meds", "value": true, "direct_transition": "Choose_Subtype" },
+
+    "Set_Path_D": { "type": "SetAttribute", "remarks": ["TRICKY: Ab+ only — resolved or unconfirmed infection"], "attribute": "hcv_has_dx", "value": false, "direct_transition": "Set_Path_D_Labs" },
+    "Set_Path_D_Labs": { "type": "SetAttribute", "attribute": "hcv_has_ab", "value": true, "direct_transition": "Set_Path_D_Meds" },
+    "Set_Path_D_Meds": { "type": "SetAttribute", "attribute": "hcv_has_meds", "value": false, "direct_transition": "Choose_Subtype" },
+
+    "Choose_Subtype": {
+      "type": "Simple",
+      "distributed_transition": [
+        { "transition": "Set_Subtype_HCV", "distribution": 0.40 },
+        { "transition": "Set_Subtype_Chronic", "distribution": 0.50 },
+        { "transition": "Set_Subtype_Acute", "distribution": 0.10 }
+      ]
+    },
+    "Set_Subtype_HCV": { "type": "SetAttribute", "attribute": "hcv_subtype", "value": "hcv", "direct_transition": "Choose_Med" },
+    "Set_Subtype_Chronic": { "type": "SetAttribute", "attribute": "hcv_subtype", "value": "chronic", "direct_transition": "Choose_Med" },
+    "Set_Subtype_Acute": { "type": "SetAttribute", "attribute": "hcv_subtype", "value": "acute", "direct_transition": "Choose_Med" },
+
+    "Choose_Med": {
+      "type": "Simple",
+      "distributed_transition": [
+        { "transition": "Set_Med_Sofosbuvir", "distribution": 0.35 },
+        { "transition": "Set_Med_Ledipasvir", "distribution": 0.30 },
+        { "transition": "Set_Med_Simeprevir", "distribution": 0.20 },
+        { "transition": "Set_Med_Ribavirin", "distribution": 0.15 }
+      ]
+    },
+    "Set_Med_Sofosbuvir": { "type": "SetAttribute", "attribute": "hcv_med", "value": "sofosbuvir", "direct_transition": "Set_Needs_First_Visit" },
+    "Set_Med_Ledipasvir": { "type": "SetAttribute", "attribute": "hcv_med", "value": "ledipasvir", "direct_transition": "Set_Needs_First_Visit" },
+    "Set_Med_Simeprevir": { "type": "SetAttribute", "attribute": "hcv_med", "value": "simeprevir", "direct_transition": "Set_Needs_First_Visit" },
+    "Set_Med_Ribavirin": { "type": "SetAttribute", "attribute": "hcv_med", "value": "ribavirin", "direct_transition": "Set_Needs_First_Visit" },
+
+    "Set_Needs_First_Visit": { "type": "SetAttribute", "attribute": "hcv_needs_first_visit", "value": true, "direct_transition": "Wellness_Encounter" },
+    "Wellness_Encounter": { "type": "Encounter", "wellness": true, "direct_transition": "Check_First_Visit" },
+    "Check_First_Visit": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "hcv_needs_first_visit", "operator": "==", "value": true }, "transition": "Check_Has_Diagnosis" },
+        { "transition": "End_Wellness_Encounter" }
+      ]
+    },
+    "Check_Has_Diagnosis": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "hcv_has_dx", "operator": "==", "value": true }, "transition": "Route_By_Subtype" },
+        { "transition": "Check_Labs_NoDx" }
+      ]
+    },
+    "Route_By_Subtype": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "hcv_subtype", "operator": "==", "value": "hcv" }, "transition": "Diagnose_HCV" },
+        { "condition": { "condition_type": "Attribute", "attribute": "hcv_subtype", "operator": "==", "value": "chronic" }, "transition": "Diagnose_Chronic" },
+        { "transition": "Diagnose_Acute" }
+      ]
+    },
+    "Diagnose_HCV": { "type": "ConditionOnset", "assign_to_attribute": "hcv_condition", "codes": [{ "system": "SNOMED-CT", "code": "50711007", "display": "Viral hepatitis type C" }], "direct_transition": "Check_Labs_WithDx" },
+    "Diagnose_Chronic": { "type": "ConditionOnset", "assign_to_attribute": "hcv_condition", "codes": [{ "system": "SNOMED-CT", "code": "128302006", "display": "Chronic hepatitis C" }], "direct_transition": "Check_Labs_WithDx" },
+    "Diagnose_Acute": { "type": "ConditionOnset", "assign_to_attribute": "hcv_condition", "codes": [{ "system": "SNOMED-CT", "code": "235866006", "display": "Acute hepatitis C" }], "direct_transition": "Check_Labs_WithDx" },
+
+    "Check_Labs_WithDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "hcv_has_ab", "operator": "==", "value": true }, "transition": "Record_HCV_Ab_WithDx" },
+        { "transition": "Check_Meds_WithDx" }
+      ]
+    },
+    "Record_HCV_Ab_WithDx": {
+      "type": "Observation",
+      "category": "laboratory",
+      "unit": "{nominal}",
+      "codes": [{ "system": "LOINC", "code": "13955-0", "display": "Hepatitis C virus Ab [Presence] in Serum or Plasma by Immunoassay" }],
+      "range": { "low": 1, "high": 1 },
+      "direct_transition": "Check_Meds_WithDx"
+    },
+    "Check_Meds_WithDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "hcv_has_meds", "operator": "==", "value": true }, "transition": "Route_Med_WithDx" },
+        { "transition": "Clear_First_Visit_Flag" }
+      ]
+    },
+    "Route_Med_WithDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "hcv_med", "operator": "==", "value": "sofosbuvir" }, "transition": "Prescribe_Sofosbuvir_WithDx" },
+        { "condition": { "condition_type": "Attribute", "attribute": "hcv_med", "operator": "==", "value": "ledipasvir" }, "transition": "Prescribe_Ledipasvir_WithDx" },
+        { "condition": { "condition_type": "Attribute", "attribute": "hcv_med", "operator": "==", "value": "simeprevir" }, "transition": "Prescribe_Simeprevir_WithDx" },
+        { "transition": "Prescribe_Ribavirin_WithDx" }
+      ]
+    },
+    "Prescribe_Sofosbuvir_WithDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "1484911", "display": "sofosbuvir" }], "reason": "hcv_condition", "direct_transition": "Clear_First_Visit_Flag" },
+    "Prescribe_Ledipasvir_WithDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "1591922", "display": "ledipasvir" }], "reason": "hcv_condition", "direct_transition": "Clear_First_Visit_Flag" },
+    "Prescribe_Simeprevir_WithDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "1482790", "display": "simeprevir" }], "reason": "hcv_condition", "direct_transition": "Clear_First_Visit_Flag" },
+    "Prescribe_Ribavirin_WithDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "108766", "display": "ribavirin 100 MG Oral Capsule" }], "reason": "hcv_condition", "direct_transition": "Clear_First_Visit_Flag" },
+
+    "Check_Labs_NoDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "hcv_has_ab", "operator": "==", "value": true }, "transition": "Record_HCV_Ab_NoDx" },
+        { "transition": "Check_Meds_NoDx" }
+      ]
+    },
+    "Record_HCV_Ab_NoDx": {
+      "type": "Observation",
+      "category": "laboratory",
+      "unit": "{nominal}",
+      "codes": [{ "system": "LOINC", "code": "13955-0", "display": "Hepatitis C virus Ab [Presence] in Serum or Plasma by Immunoassay" }],
+      "range": { "low": 1, "high": 1 },
+      "direct_transition": "Check_Meds_NoDx"
+    },
+    "Check_Meds_NoDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "hcv_has_meds", "operator": "==", "value": true }, "transition": "Route_Med_NoDx" },
+        { "transition": "Clear_First_Visit_Flag" }
+      ]
+    },
+    "Route_Med_NoDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "hcv_med", "operator": "==", "value": "sofosbuvir" }, "transition": "Prescribe_Sofosbuvir_NoDx" },
+        { "condition": { "condition_type": "Attribute", "attribute": "hcv_med", "operator": "==", "value": "ledipasvir" }, "transition": "Prescribe_Ledipasvir_NoDx" },
+        { "condition": { "condition_type": "Attribute", "attribute": "hcv_med", "operator": "==", "value": "simeprevir" }, "transition": "Prescribe_Simeprevir_NoDx" },
+        { "transition": "Prescribe_Ribavirin_NoDx" }
+      ]
+    },
+    "Prescribe_Sofosbuvir_NoDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "1484911", "display": "sofosbuvir" }], "direct_transition": "Clear_First_Visit_Flag" },
+    "Prescribe_Ledipasvir_NoDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "1591922", "display": "ledipasvir" }], "direct_transition": "Clear_First_Visit_Flag" },
+    "Prescribe_Simeprevir_NoDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "1482790", "display": "simeprevir" }], "direct_transition": "Clear_First_Visit_Flag" },
+    "Prescribe_Ribavirin_NoDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "108766", "display": "ribavirin 100 MG Oral Capsule" }], "direct_transition": "Clear_First_Visit_Flag" },
+
+    "Clear_First_Visit_Flag": { "type": "SetAttribute", "attribute": "hcv_needs_first_visit", "value": false, "direct_transition": "End_Wellness_Encounter" },
+    "End_Wellness_Encounter": { "type": "EncounterEnd", "direct_transition": "Followup_Delay" },
+    "Followup_Delay": { "type": "Delay", "range": { "low": 6, "high": 12, "unit": "months" }, "direct_transition": "Wellness_Encounter" }
+  },
+  "gmf_version": 2
+}

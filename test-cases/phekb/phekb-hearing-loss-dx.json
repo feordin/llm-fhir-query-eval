@@ -1,0 +1,103 @@
+{
+  "id": "phekb-hearing-loss-dx",
+  "source": "phekb",
+  "source_id": "hearing-loss",
+  "name": "Hearing Loss - Diagnosis Code Query (Multi-Type)",
+  "description": "Tests ability to find hearing loss patients across sensorineural, conductive, and broader 'partial deafness' SNOMED variants. First sensory disorder phenotype.",
+  "prompt": "Find all patients with a diagnosis of hearing loss, including sensorineural and conductive types.",
+  "prompts": {
+    "naive": "Find patients with hearing loss.",
+    "broad": "Find patients diagnosed with any form of hearing loss — including sensorineural (most common, age-related/noise-induced), conductive (outer/middle ear cause), and the broader partial deafness concept.",
+    "expert": "Search Condition resources for SNOMED codes Sensorineural hearing loss (60700002), Conductive hearing loss (44057004), and Partial deafness (343087000). Query: Condition?code=http://snomed.info/sct|60700002,http://snomed.info/sct|44057004,http://snomed.info/sct|343087000"
+  },
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "algorithm_path": "diagnosis-path",
+    "algorithm_path_description": "Patients with hearing loss dx (sensorineural, conductive, broader). First sensory disorder phenotype.",
+    "code_systems": [
+      "SNOMED CT"
+    ],
+    "required_codes": [
+      {
+        "system": "http://snomed.info/sct",
+        "code": "60700002",
+        "display": "Sensorineural hearing loss",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "44057004",
+        "display": "Conductive hearing loss",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "343087000",
+        "display": "Partial deafness",
+        "source": "UMLS verified"
+      }
+    ],
+    "complexity": "medium",
+    "tags": [
+      "condition",
+      "ent",
+      "audiology",
+      "hearing-loss",
+      "diagnosis-code",
+      "multi-type",
+      "sensory-disorder"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "Condition",
+    "parameters": {
+      "code": "http://snomed.info/sct|60700002,http://snomed.info/sct|44057004,http://snomed.info/sct|343087000"
+    },
+    "url": "Condition?code=http://snomed.info/sct|60700002,http://snomed.info/sct|44057004,http://snomed.info/sct|343087000"
+  },
+  "test_data": {
+    "resources": [
+      "synthea/output/hearing-loss/positive/fhir/",
+      "synthea/output/hearing-loss/control/fhir/"
+    ],
+    "expected_result_count": 33,
+    "expected_resource_ids": [],
+    "expected_patient_ids": [
+      "0e47651a-d877-3313-ce49-725f54b0aebd",
+      "1b3bb044-e4f5-9f26-571f-6e1f154f4bb7",
+      "2647bfab-31a0-ca09-ee1a-17727b08d168",
+      "28492c81-e3f7-8404-3c74-879f6045fb0d",
+      "2bfd9676-789e-e281-4888-863bfe03bd55",
+      "2c68b39e-d5b7-d96f-33dd-046937ad11fb",
+      "31f86787-60e3-c4e4-c3c0-d6262e9bbccf",
+      "38d5121d-8f12-d8dd-7fbd-5158feaa04fb",
+      "3c215229-9c69-bb87-bd48-780d53a45ce7",
+      "40ebbd9f-dbdd-edbc-bd3f-5295bd2eaf97",
+      "49f4a699-32de-7aaf-60c6-e06e6e569960",
+      "51b4777f-f259-4489-f9cf-b91d01d32ee0",
+      "58b55e2d-baf3-17b7-d0d5-134c3aa14031",
+      "60262b09-5c69-ba47-a6a8-34b2392e397b",
+      "661ed9bb-6f4f-c5d1-19f7-10e020b50845",
+      "6f880156-43a9-db1b-40fa-01478c1827e3",
+      "767d13e5-5120-7967-8c65-ec1433464b75",
+      "7a05635f-04b4-e6d4-587f-98b12fbf75c9",
+      "80bda8b1-fb2f-67c5-d29b-1de3ef7aba67",
+      "81ddaccb-617e-2ed2-026b-5a39e37329de",
+      "99e65097-8a06-09fd-cebc-9bbd295c94ff",
+      "b3ba7dff-b304-aea6-9f91-3a47747ba2e5",
+      "b4386db4-09fc-671c-5eba-c1c1e46025ef",
+      "b6e47501-bceb-cc8a-cd78-f38981040aa5",
+      "b78ecd3c-1fb6-e4a0-c22f-6456c030233b",
+      "b7eecf98-9cf7-42d6-dbe1-0cf07ea897ed",
+      "cc0cd663-a106-7a05-eacb-c58feb459b9f",
+      "cc1930c7-4aeb-6bd4-2ff6-5f08b8b77af3",
+      "db028154-37dd-6eb5-5af5-957b775a9acd",
+      "dd817a29-8a05-a695-b57c-a8e3a4a5c591",
+      "e6db84a2-4264-b4e5-22be-07ca0ad310c9",
+      "ed493b03-4990-4bae-24a8-28e3d3448096",
+      "f964c8d2-d131-4b51-5c14-f4a965d0b531"
+    ]
+  },
+  "created_at": "2026-04-29T00:00:00.000000Z",
+  "updated_at": "2026-04-27T00:00:00.000000Z"
+}

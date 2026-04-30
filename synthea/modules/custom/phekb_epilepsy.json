@@ -1,0 +1,186 @@
+{
+  "name": "PheKB Epilepsy",
+  "remarks": [
+    "Custom Synthea module for epilepsy.",
+    "First seizure disorder phenotype. **Fifth Procedure-resource phenotype** (EEG).",
+    "",
+    "Generates THREE patient paths:",
+    "  Path A (60%): Epilepsy dx + AED + EEG",
+    "  Path B (20%): Epilepsy dx + AED, no EEG on record",
+    "  Path D (20%): EEG only, NO epilepsy dx (negative study)",
+    "",
+    "Diagnosis SNOMED variation (Paths A + B):",
+    "  35% Epilepsy (84757009) — parent",
+    "  20% Generalized epilepsy (19598007)",
+    "  25% Seizure disorder (128613002)",
+    "  10% Status epilepticus (230456007) — emergency",
+    "  10% Epileptic seizure (313307000) — finding-level",
+    "",
+    "AED variation (Paths A + B — 5 ingredients):",
+    "  35% Levetiracetam (114477) — most prescribed modern AED",
+    "  20% Valproate (40254)",
+    "  15% Lamotrigine (28439)",
+    "  15% Carbamazepine (2002)",
+    "  15% Phenytoin (8183) — older but still used"
+  ],
+  "states": {
+    "Initial": { "type": "Initial", "direct_transition": "Age_Guard" },
+    "Age_Guard": { "type": "Guard", "allow": { "condition_type": "Age", "operator": ">=", "quantity": 18, "unit": "years" }, "direct_transition": "Set_Epilepsy_Flag" },
+    "Set_Epilepsy_Flag": { "type": "SetAttribute", "attribute": "epi_positive", "value": true, "direct_transition": "Choose_Patient_Path" },
+    "Choose_Patient_Path": {
+      "type": "Simple",
+      "distributed_transition": [
+        { "transition": "Set_Path_A", "distribution": 0.60 },
+        { "transition": "Set_Path_B", "distribution": 0.20 },
+        { "transition": "Set_Path_D", "distribution": 0.20 }
+      ]
+    },
+    "Set_Path_A": { "type": "SetAttribute", "attribute": "epi_has_dx", "value": true, "direct_transition": "Set_Path_A_Proc" },
+    "Set_Path_A_Proc": { "type": "SetAttribute", "attribute": "epi_has_proc", "value": true, "direct_transition": "Set_Path_A_Meds" },
+    "Set_Path_A_Meds": { "type": "SetAttribute", "attribute": "epi_has_meds", "value": true, "direct_transition": "Choose_Subtype" },
+
+    "Set_Path_B": { "type": "SetAttribute", "attribute": "epi_has_dx", "value": true, "direct_transition": "Set_Path_B_Proc" },
+    "Set_Path_B_Proc": { "type": "SetAttribute", "attribute": "epi_has_proc", "value": false, "direct_transition": "Set_Path_B_Meds" },
+    "Set_Path_B_Meds": { "type": "SetAttribute", "attribute": "epi_has_meds", "value": true, "direct_transition": "Choose_Subtype" },
+
+    "Set_Path_D": { "type": "SetAttribute", "remarks": ["TRICKY: EEG without epilepsy dx (negative study)"], "attribute": "epi_has_dx", "value": false, "direct_transition": "Set_Path_D_Proc" },
+    "Set_Path_D_Proc": { "type": "SetAttribute", "attribute": "epi_has_proc", "value": true, "direct_transition": "Set_Path_D_Meds" },
+    "Set_Path_D_Meds": { "type": "SetAttribute", "attribute": "epi_has_meds", "value": false, "direct_transition": "Choose_Subtype" },
+
+    "Choose_Subtype": {
+      "type": "Simple",
+      "distributed_transition": [
+        { "transition": "Set_Subtype_Epilepsy", "distribution": 0.35 },
+        { "transition": "Set_Subtype_Generalized", "distribution": 0.20 },
+        { "transition": "Set_Subtype_SeizureDis", "distribution": 0.25 },
+        { "transition": "Set_Subtype_Status", "distribution": 0.10 },
+        { "transition": "Set_Subtype_Seizure", "distribution": 0.10 }
+      ]
+    },
+    "Set_Subtype_Epilepsy": { "type": "SetAttribute", "attribute": "epi_subtype", "value": "epilepsy", "direct_transition": "Choose_Med" },
+    "Set_Subtype_Generalized": { "type": "SetAttribute", "attribute": "epi_subtype", "value": "generalized", "direct_transition": "Choose_Med" },
+    "Set_Subtype_SeizureDis": { "type": "SetAttribute", "attribute": "epi_subtype", "value": "seizuredis", "direct_transition": "Choose_Med" },
+    "Set_Subtype_Status": { "type": "SetAttribute", "attribute": "epi_subtype", "value": "status", "direct_transition": "Choose_Med" },
+    "Set_Subtype_Seizure": { "type": "SetAttribute", "attribute": "epi_subtype", "value": "seizure", "direct_transition": "Choose_Med" },
+
+    "Choose_Med": {
+      "type": "Simple",
+      "distributed_transition": [
+        { "transition": "Set_Med_Levetiracetam", "distribution": 0.35 },
+        { "transition": "Set_Med_Valproate", "distribution": 0.20 },
+        { "transition": "Set_Med_Lamotrigine", "distribution": 0.15 },
+        { "transition": "Set_Med_Carbamazepine", "distribution": 0.15 },
+        { "transition": "Set_Med_Phenytoin", "distribution": 0.15 }
+      ]
+    },
+    "Set_Med_Levetiracetam": { "type": "SetAttribute", "attribute": "epi_med", "value": "levetiracetam", "direct_transition": "Set_Needs_First_Visit" },
+    "Set_Med_Valproate": { "type": "SetAttribute", "attribute": "epi_med", "value": "valproate", "direct_transition": "Set_Needs_First_Visit" },
+    "Set_Med_Lamotrigine": { "type": "SetAttribute", "attribute": "epi_med", "value": "lamotrigine", "direct_transition": "Set_Needs_First_Visit" },
+    "Set_Med_Carbamazepine": { "type": "SetAttribute", "attribute": "epi_med", "value": "carbamazepine", "direct_transition": "Set_Needs_First_Visit" },
+    "Set_Med_Phenytoin": { "type": "SetAttribute", "attribute": "epi_med", "value": "phenytoin", "direct_transition": "Set_Needs_First_Visit" },
+
+    "Set_Needs_First_Visit": { "type": "SetAttribute", "attribute": "epi_needs_first_visit", "value": true, "direct_transition": "Wellness_Encounter" },
+    "Wellness_Encounter": { "type": "Encounter", "wellness": true, "direct_transition": "Check_First_Visit" },
+    "Check_First_Visit": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "epi_needs_first_visit", "operator": "==", "value": true }, "transition": "Check_Has_Diagnosis" },
+        { "transition": "End_Wellness_Encounter" }
+      ]
+    },
+    "Check_Has_Diagnosis": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "epi_has_dx", "operator": "==", "value": true }, "transition": "Route_By_Subtype" },
+        { "transition": "Check_Procedure_NoDx" }
+      ]
+    },
+    "Route_By_Subtype": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "epi_subtype", "operator": "==", "value": "epilepsy" }, "transition": "Diagnose_Epilepsy" },
+        { "condition": { "condition_type": "Attribute", "attribute": "epi_subtype", "operator": "==", "value": "generalized" }, "transition": "Diagnose_Generalized" },
+        { "condition": { "condition_type": "Attribute", "attribute": "epi_subtype", "operator": "==", "value": "seizuredis" }, "transition": "Diagnose_SeizureDis" },
+        { "condition": { "condition_type": "Attribute", "attribute": "epi_subtype", "operator": "==", "value": "status" }, "transition": "Diagnose_Status" },
+        { "transition": "Diagnose_Seizure" }
+      ]
+    },
+    "Diagnose_Epilepsy": { "type": "ConditionOnset", "assign_to_attribute": "epi_condition", "codes": [{ "system": "SNOMED-CT", "code": "84757009", "display": "Epilepsy" }], "direct_transition": "Check_Meds_WithDx" },
+    "Diagnose_Generalized": { "type": "ConditionOnset", "assign_to_attribute": "epi_condition", "codes": [{ "system": "SNOMED-CT", "code": "19598007", "display": "Generalized epilepsy" }], "direct_transition": "Check_Meds_WithDx" },
+    "Diagnose_SeizureDis": { "type": "ConditionOnset", "assign_to_attribute": "epi_condition", "codes": [{ "system": "SNOMED-CT", "code": "128613002", "display": "Seizure disorder" }], "direct_transition": "Check_Meds_WithDx" },
+    "Diagnose_Status": { "type": "ConditionOnset", "assign_to_attribute": "epi_condition", "codes": [{ "system": "SNOMED-CT", "code": "230456007", "display": "Status epilepticus" }], "direct_transition": "Check_Meds_WithDx" },
+    "Diagnose_Seizure": { "type": "ConditionOnset", "assign_to_attribute": "epi_condition", "codes": [{ "system": "SNOMED-CT", "code": "313307000", "display": "Epileptic seizure" }], "direct_transition": "Check_Meds_WithDx" },
+
+    "Check_Meds_WithDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "epi_has_meds", "operator": "==", "value": true }, "transition": "Route_Med_WithDx" },
+        { "transition": "Check_Procedure_WithDx" }
+      ]
+    },
+    "Route_Med_WithDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "epi_med", "operator": "==", "value": "levetiracetam" }, "transition": "Prescribe_Levetiracetam_WithDx" },
+        { "condition": { "condition_type": "Attribute", "attribute": "epi_med", "operator": "==", "value": "valproate" }, "transition": "Prescribe_Valproate_WithDx" },
+        { "condition": { "condition_type": "Attribute", "attribute": "epi_med", "operator": "==", "value": "lamotrigine" }, "transition": "Prescribe_Lamotrigine_WithDx" },
+        { "condition": { "condition_type": "Attribute", "attribute": "epi_med", "operator": "==", "value": "carbamazepine" }, "transition": "Prescribe_Carbamazepine_WithDx" },
+        { "transition": "Prescribe_Phenytoin_WithDx" }
+      ]
+    },
+    "Prescribe_Levetiracetam_WithDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "114477", "display": "levetiracetam" }], "reason": "epi_condition", "direct_transition": "Check_Procedure_WithDx" },
+    "Prescribe_Valproate_WithDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "40254", "display": "valproate" }], "reason": "epi_condition", "direct_transition": "Check_Procedure_WithDx" },
+    "Prescribe_Lamotrigine_WithDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "28439", "display": "lamotrigine" }], "reason": "epi_condition", "direct_transition": "Check_Procedure_WithDx" },
+    "Prescribe_Carbamazepine_WithDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "2002", "display": "carbamazepine" }], "reason": "epi_condition", "direct_transition": "Check_Procedure_WithDx" },
+    "Prescribe_Phenytoin_WithDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "8183", "display": "phenytoin" }], "reason": "epi_condition", "direct_transition": "Check_Procedure_WithDx" },
+
+    "Check_Procedure_WithDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "epi_has_proc", "operator": "==", "value": true }, "transition": "Neuro_Encounter_WithDx" },
+        { "transition": "Clear_First_Visit_Flag" }
+      ]
+    },
+    "Neuro_Encounter_WithDx": {
+      "type": "Encounter",
+      "encounter_class": "ambulatory",
+      "reason": "epi_condition",
+      "codes": [{ "system": "SNOMED-CT", "code": "440655000", "display": "Outpatient procedure encounter (procedure)" }],
+      "direct_transition": "Procedure_EEG_WithDx"
+    },
+    "Procedure_EEG_WithDx": {
+      "type": "Procedure",
+      "reason": "epi_condition",
+      "codes": [{ "system": "SNOMED-CT", "code": "54550000", "display": "Electroencephalogram (procedure)" }],
+      "duration": { "low": 30, "high": 60, "unit": "minutes" },
+      "direct_transition": "End_Neuro_Encounter_WithDx"
+    },
+    "End_Neuro_Encounter_WithDx": { "type": "EncounterEnd", "direct_transition": "Clear_First_Visit_Flag" },
+
+    "Check_Procedure_NoDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "epi_has_proc", "operator": "==", "value": true }, "transition": "Neuro_Encounter_NoDx" },
+        { "transition": "Clear_First_Visit_Flag" }
+      ]
+    },
+    "Neuro_Encounter_NoDx": {
+      "type": "Encounter",
+      "encounter_class": "ambulatory",
+      "codes": [{ "system": "SNOMED-CT", "code": "440655000", "display": "Outpatient procedure encounter (procedure)" }],
+      "direct_transition": "Procedure_EEG_NoDx"
+    },
+    "Procedure_EEG_NoDx": {
+      "type": "Procedure",
+      "codes": [{ "system": "SNOMED-CT", "code": "54550000", "display": "Electroencephalogram (procedure)" }],
+      "duration": { "low": 30, "high": 60, "unit": "minutes" },
+      "direct_transition": "End_Neuro_Encounter_NoDx"
+    },
+    "End_Neuro_Encounter_NoDx": { "type": "EncounterEnd", "direct_transition": "Clear_First_Visit_Flag" },
+
+    "Clear_First_Visit_Flag": { "type": "SetAttribute", "attribute": "epi_needs_first_visit", "value": false, "direct_transition": "End_Wellness_Encounter" },
+    "End_Wellness_Encounter": { "type": "EncounterEnd", "direct_transition": "Followup_Delay" },
+    "Followup_Delay": { "type": "Delay", "range": { "low": 6, "high": 12, "unit": "months" }, "direct_transition": "Wellness_Encounter" }
+  },
+  "gmf_version": 2
+}

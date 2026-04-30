@@ -1,0 +1,99 @@
+{
+  "id": "phekb-glaucoma-meds",
+  "source": "phekb",
+  "source_id": "glaucoma",
+  "name": "Glaucoma - Topical Beta-Blocker Eye Drop Query",
+  "description": "Tests ability to find glaucoma patients via timolol prescriptions. First eye-drop medication phenotype. Timolol is also used systemically for hypertension/migraine — high cross-indication.",
+  "prompt": "Find patients prescribed timolol for intraocular pressure lowering.",
+  "prompts": {
+    "naive": "Find patients on timolol.",
+    "broad": "Find patients prescribed timolol — a beta-blocker commonly used as eye drops to lower intraocular pressure in glaucoma, but also used systemically for hypertension and migraine prophylaxis.",
+    "expert": "Search MedicationRequest with RxNorm 10600 (timolol). Note: cross-indicated with HTN and migraine. Query: MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|10600"
+  },
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "algorithm_path": "medication-path",
+    "algorithm_path_description": "Patients on timolol. Cross-indicated with HTN/migraine.",
+    "code_systems": [
+      "RxNorm"
+    ],
+    "required_codes": [
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "10600",
+        "display": "timolol",
+        "source": "UMLS verified"
+      }
+    ],
+    "complexity": "medium",
+    "tags": [
+      "medication",
+      "ophthalmology",
+      "glaucoma",
+      "timolol",
+      "beta-blocker"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "MedicationRequest",
+    "parameters": {
+      "code": "http://www.nlm.nih.gov/research/umls/rxnorm|10600"
+    },
+    "url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|10600"
+  },
+  "test_data": {
+    "resources": [
+      "synthea/output/glaucoma/positive/fhir/",
+      "synthea/output/glaucoma/control/fhir/"
+    ],
+    "expected_result_count": 43,
+    "expected_resource_ids": [],
+    "expected_patient_ids": [
+      "03a177da-cca7-1a2a-914e-d1534f727eef",
+      "0cff3ab2-53e5-f029-a947-cd0f40d4a997",
+      "13c3b9ee-d2d5-9c9f-2929-d50f31ab69b7",
+      "1a314026-bf42-1e30-8828-c5f9ed3a1283",
+      "1f5c6df0-df89-f980-c6a9-0f8ef85dcc06",
+      "237c1c94-38fe-fd59-19d4-735ec9449cd4",
+      "27fd5238-9b8a-5189-76e9-fa27548f61d5",
+      "31287e56-ca09-45d5-8e59-d6110ddd2f1c",
+      "317a0b1c-96e6-23c0-3af8-04c0f7342a67",
+      "47a968f0-1e24-4c2f-38b9-b8b0dbd82911",
+      "492949f7-9180-16f7-3514-1ae4b90792e9",
+      "4bc5d96b-9130-f251-0b96-ffcae0f13093",
+      "4c3f7a70-610f-2f70-85b2-30f821c0ae3b",
+      "60deeaa2-4a2c-086d-8bd0-4114ae03d430",
+      "63f35888-5227-8d5d-24c4-03e4177eb669",
+      "66701cbd-5ade-dc78-4823-04a29906f348",
+      "685ed6dc-1203-d461-cd68-6db2bd97aef5",
+      "6be9fac1-79f1-8d47-91ed-bec901b40ec6",
+      "790f4a08-748d-0713-9f5d-a06881619165",
+      "90a7196e-7409-507e-edf9-00b19deddff2",
+      "9685aca2-d75c-18b0-3f23-4bad52cc4c2f",
+      "9a9e1db2-d7ee-90f4-1094-c775f4e1ad2f",
+      "9f9e69a3-5fe1-bb70-b0b6-dc3e107fcf71",
+      "a219f564-bb5f-8c82-0ca7-a300ee5d7464",
+      "a7531885-235c-5d89-dabe-49d33e52ab40",
+      "a78d0153-33ce-f9f0-4250-1991a62be972",
+      "b1ea2179-3e45-a71b-784b-9c9649803148",
+      "b23ab899-18c4-97f0-0ae4-fc174e318648",
+      "b2f43da8-b6f1-3792-76fc-3f8bb27269ff",
+      "b46af7c5-6c85-6652-927b-71723a2d3e0f",
+      "ba7ba75d-1197-ea14-0935-ca6abdc46d0a",
+      "bbc9234d-15d3-0d2b-7cb5-c57360fd2797",
+      "be8a0abb-e198-bbd7-b0be-dac314156bff",
+      "bedf704d-1756-75b4-17c1-f136b1098e31",
+      "c50e59d4-c4ad-98ba-9bd9-205347418e82",
+      "c8009ab4-acb7-3b09-ef4b-f68e67275f39",
+      "cbc8986c-9163-3353-f686-75326f80d73d",
+      "cfc8704d-9614-0920-3288-d306d0a8f4cf",
+      "d250c1bc-e16d-4095-7e4b-bc61a4e0cf9d",
+      "d320cd53-197f-030d-00a4-b974cd9b148f",
+      "ee8a8c2f-57ae-08eb-55b9-46f752f3aecf",
+      "f5d8ddc4-5617-04f9-ac15-48321d015a91",
+      "fa422d94-244d-8539-3752-cfbb059bbddb"
+    ]
+  },
+  "created_at": "2026-04-29T00:00:00.000000Z",
+  "updated_at": "2026-04-27T00:00:00.000000Z"
+}

@@ -1,0 +1,100 @@
+{
+  "id": "phekb-coronary-heart-disease-revinclude-bundle",
+  "source": "phekb",
+  "source_id": "coronary-heart-disease",
+  "name": "CHD - Patient Bundle via _revinclude (Complete Clinical Context)",
+  "description": "**FHIR _revinclude test.** Find CHD patients and pull their complete clinical context — Conditions, MedicationRequests, and Procedures — in a single bundle. The `_revinclude` parameter follows references in reverse — resources whose .subject or .patient points TO a Patient. Tests whether LLM understands `_revinclude` as the mechanism for chart-style assembly when the goal is downstream analysis on related resources.",
+  "prompt": "Find coronary heart disease patients and pull their complete clinical context in one query — including their conditions, medication prescriptions, and procedures. The intent is a chart-review-style retrieval where the patient is identified by diagnosis but the result should bundle all their clinically relevant resources together.",
+  "prompts": {
+    "naive": "Get CHD patients with all their data.",
+    "broad": "Find Patient resources who have a coronary heart disease Condition, and use FHIR `_revinclude` to also return their MedicationRequest, Condition, and Procedure resources in the same bundle. This is one round-trip retrieval of full clinical context for a CHD cohort.",
+    "expert": "I need a Patient bundle scoped to CHD patients, with reverse-chained related resources. Start with `Patient?_has:Condition:patient:code=...CHD codes...` to identify the cohort, then add three `_revinclude` parameters to pull related resources: `_revinclude=Condition:patient`, `_revinclude=MedicationRequest:patient`, `_revinclude=Procedure:patient`. The bundle will contain Patient resources (search.mode=match) plus all their Conditions, MedicationRequests, and Procedures (search.mode=include)."
+  },
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "algorithm_path": "_revinclude-reverse-chain",
+    "algorithm_path_description": "FHIR `_revinclude` reverse chaining to pull related Conditions, Medications, and Procedures alongside a Patient cohort in one bundle.",
+    "code_systems": [
+      "SNOMED CT"
+    ],
+    "required_codes": [
+      {
+        "system": "http://snomed.info/sct",
+        "code": "53741008",
+        "display": "Coronary arteriosclerosis",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "414545008",
+        "display": "Ischemic heart disease",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "233817007",
+        "display": "Triple vessel disease of the heart",
+        "source": "VSAC"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "371803003",
+        "display": "Multi vessel coronary artery disease",
+        "source": "VSAC"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "371804009",
+        "display": "Left main coronary artery disease",
+        "source": "VSAC"
+      }
+    ],
+    "complexity": "expert",
+    "tags": [
+      "_revinclude",
+      "_has",
+      "reverse-chain",
+      "patient-bundle",
+      "chart-review",
+      "cardiology",
+      "coronary-heart-disease"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "Patient",
+    "parameters": {
+      "_has:Condition:patient:code": "http://snomed.info/sct|53741008,http://snomed.info/sct|414545008,http://snomed.info/sct|233817007,http://snomed.info/sct|371803003,http://snomed.info/sct|371804009",
+      "_revinclude": [
+        "Condition:patient",
+        "MedicationRequest:patient",
+        "Procedure:patient"
+      ]
+    },
+    "url": "Patient?_has:Condition:patient:code=http://snomed.info/sct|53741008,http://snomed.info/sct|414545008,http://snomed.info/sct|233817007,http://snomed.info/sct|371803003,http://snomed.info/sct|371804009&_revinclude=Condition:patient&_revinclude=MedicationRequest:patient&_revinclude=Procedure:patient"
+  },
+  "test_data": {
+    "resources": [
+      "synthea/output/coronary-heart-disease/positive/fhir/",
+      "synthea/output/coronary-heart-disease/control/fhir/"
+    ],
+    "expected_result_count": 13,
+    "expected_resource_ids": [],
+    "expected_patient_ids": [
+      "2a45ba61-bf92-8edf-7e79-96d43a42bf15",
+      "3e400a4e-a543-5391-d4fc-be2a218fe981",
+      "4235587d-5232-cec6-dd9f-b6119b094edb",
+      "52b9f450-88b5-38d2-06ab-3557df1497d9",
+      "7ae0f7a3-c0bc-5600-7189-3788a3e75685",
+      "8021abf5-23d4-244f-857f-c560f94806eb",
+      "88b55b8d-1726-074c-8e62-16266caf77da",
+      "a455f58f-0920-dcea-4971-130e5e771d0f",
+      "b84db720-fc92-d33d-8745-279482f6d8dc",
+      "c49744c0-d4a2-602b-0818-692f2e1aff53",
+      "da8ecbed-b594-9bfd-90a3-a4912530f977",
+      "db2cafb6-46ae-f342-5636-e20ca4a04a07",
+      "ec7b08fc-118e-c15a-ae5c-2b649fb09791"
+    ]
+  },
+  "created_at": "2026-04-27T00:00:00.000000Z",
+  "updated_at": "2026-04-27T00:00:00.000000Z"
+}

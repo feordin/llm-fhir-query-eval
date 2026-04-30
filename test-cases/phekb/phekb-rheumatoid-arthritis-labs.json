@@ -1,0 +1,61 @@
+{
+  "id": "phekb-rheumatoid-arthritis-labs",
+  "source": "phekb",
+  "source_id": "rheumatoid-arthritis",
+  "name": "Rheumatoid Arthritis - Positive Rheumatoid Factor Lab Query",
+  "description": "Tests ability to find rheumatoid arthritis patients via positive rheumatoid factor (RF). The Harvard eMERGE RA algorithm includes RA_COD_LAB_RFpos1 as a feature with high beta weight (1.639), so a positive RF strongly increases the predicted RA probability. The standard upper limit of normal for RF is approximately 14 IU/mL. This test exercises Observation queries with value-quantity filters using a greater-than threshold.",
+  "prompt": "Find laboratory observations for rheumatoid factor tests where the result was greater than 14 IU/mL, indicating positive RF and supporting a diagnosis of seropositive rheumatoid arthritis.",
+  "prompts": {
+    "naive": "Find patients with positive rheumatoid factor.",
+    "broad": "Find lab observations for rheumatoid factor (RF) where the value is above the upper limit of normal — typically greater than 14 international units per milliliter (IU/mL). A positive RF is one of the classification criteria for seropositive rheumatoid arthritis.",
+    "expert": "I need Observation resources for elevated rheumatoid factor. Use LOINC 11572-5 (Rheumatoid factor [Units/volume] in Serum or Plasma). Apply a value-quantity filter with the gt prefix at threshold 14, unit IU/mL. The query should look like: Observation?code=http://loinc.org|11572-5&value-quantity=gt14. The PheKB algorithm uses a binary RF positive/negative feature with no specific cutoff, but 14 IU/mL is the standard ULN for most assays."
+  },
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "algorithm_path": "lab-path",
+    "algorithm_path_description": "Patients with positive RF labs (high-weight feature in PheKB ML algorithm). Most RF-positive patients are also RA cases (high specificity), but some seropositive controls exist. Tests value-quantity filtering on a less common LOINC.",
+    "code_systems": [
+      "LOINC"
+    ],
+    "required_codes": [
+      {
+        "system": "http://loinc.org",
+        "code": "11572-5",
+        "display": "Rheumatoid factor [Units/volume] in Serum or Plasma",
+        "source": "UMLS verified, RA algorithm feature"
+      }
+    ],
+    "complexity": "hard",
+    "tags": [
+      "observation",
+      "rheumatology",
+      "rheumatoid-arthritis",
+      "value-quantity",
+      "lab-threshold",
+      "rheumatoid-factor"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "Observation",
+    "parameters": {
+      "code": "http://loinc.org|11572-5",
+      "value-quantity": "gt14"
+    },
+    "url": "Observation?code=http://loinc.org|11572-5&value-quantity=gt14"
+  },
+  "test_data": {
+    "resources": [
+      "synthea/output/rheumatoid-arthritis/positive/fhir/",
+      "synthea/output/rheumatoid-arthritis/control/fhir/"
+    ],
+    "expected_result_count": 3,
+    "expected_resource_ids": [],
+    "expected_patient_ids": [
+      "749c03e5-67d5-cc3d-0d95-e526c7d431b4",
+      "c106918a-8cbc-3fd3-0a11-64c313392dd6",
+      "edf28f19-c11a-567f-3627-c8f8149c8b19"
+    ]
+  },
+  "created_at": "2026-04-27T00:00:00.000000Z",
+  "updated_at": "2026-04-27T00:00:00.000000Z"
+}

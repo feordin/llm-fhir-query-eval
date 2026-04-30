@@ -1,0 +1,88 @@
+{
+  "id": "phekb-ckd-dx",
+  "source": "phekb",
+  "source_id": "ckd",
+  "name": "Chronic Kidney Disease - Diagnosis Code Query (Multi-Stage)",
+  "description": "Tests ability to find chronic kidney disease patients via diagnosis codes. The Columbia CKD phenotype algorithm stages CKD by eGFR (G1-G5) with corresponding SNOMED codes for each stage. Synthea distributes patients across stage-specific codes (Stage 2, 3A, 3B, 3, 4) plus the parent CKD concept. An LLM querying only the parent code (709044004) or only one specific stage will miss patients coded with other stages.",
+  "prompt": "Find all patients with a diagnosis of chronic kidney disease, including any of the disease stages — Stage 2, Stage 3, Stage 3A, Stage 3B, or Stage 4.",
+  "prompts": {
+    "naive": "Find all patients with chronic kidney disease.",
+    "broad": "Find all patients diagnosed with any stage of chronic kidney disease (CKD), including the parent CKD concept and the KDIGO stages 2 through 4 (Stage 2 with eGFR 60-89, Stage 3 with eGFR 30-59, with substages 3A and 3B, and Stage 4 with eGFR 15-29).",
+    "expert": "I need to identify all CKD patients in our population. CKD is documented under multiple SNOMED codes by KDIGO stage: Chronic kidney disease (709044004) is the parent concept, with stage-specific codes Chronic kidney disease stage 2 (431856006), Chronic kidney disease stage 3 (433144002), Chronic kidney disease stage 3A (700378005), and Chronic kidney disease stage 4 (431857002). Search Condition resources for all five codes. ICD-10 alternates would include N18.2 (stage 2), N18.30/31/32 (stage 3 and substages), N18.4 (stage 4), but Synthea data uses SNOMED only."
+  },
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "algorithm_path": "diagnosis-path",
+    "algorithm_path_description": "Patients with CKD diagnosis codes (Paths A and B). Maps to the dx.ckd.snomed coding variable in the Columbia CKD V4.2 algorithm. Does NOT find Path C patients (low eGFR with no diagnosis code — undiagnosed CKD by labs only).",
+    "code_systems": [
+      "SNOMED CT",
+      "ICD-10-CM"
+    ],
+    "required_codes": [
+      {
+        "system": "http://snomed.info/sct",
+        "code": "709044004",
+        "display": "Chronic kidney disease",
+        "source": "UMLS verified, parent concept"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "431856006",
+        "display": "Chronic kidney disease stage 2",
+        "source": "VSAC value set 2.16.840.1.113762.1.4.1251.39"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "433144002",
+        "display": "Chronic kidney disease stage 3",
+        "source": "VSAC value set"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "700378005",
+        "display": "Chronic kidney disease stage 3A",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "431857002",
+        "display": "Chronic kidney disease stage 4",
+        "source": "VSAC value set"
+      }
+    ],
+    "complexity": "medium",
+    "tags": [
+      "condition",
+      "nephrology",
+      "ckd",
+      "diagnosis-code",
+      "multi-stage",
+      "code-variation"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "Condition",
+    "parameters": {
+      "code": "http://snomed.info/sct|709044004,http://snomed.info/sct|431856006,http://snomed.info/sct|433144002,http://snomed.info/sct|700378005,http://snomed.info/sct|431857002"
+    },
+    "url": "Condition?code=http://snomed.info/sct|709044004,http://snomed.info/sct|431856006,http://snomed.info/sct|433144002,http://snomed.info/sct|700378005,http://snomed.info/sct|431857002"
+  },
+  "test_data": {
+    "resources": [
+      "synthea/output/ckd/positive/fhir/",
+      "synthea/output/ckd/control/fhir/"
+    ],
+    "expected_result_count": 6,
+    "expected_resource_ids": [],
+    "expected_patient_ids": [
+      "b58b78aa-37be-b013-ba51-98bdebc4947b",
+      "bb024f09-4e20-6f91-df71-6cb5485ac045",
+      "c4a42722-b087-3935-fbe1-9cc0cf276d40",
+      "db6190a3-ceb6-3e39-87aa-8eccec442d6a",
+      "e306284b-aaa3-5279-8b2b-530fdb5853d4",
+      "fa04876c-372c-ad66-4fa7-c8bcce305712"
+    ]
+  },
+  "created_at": "2026-04-27T00:00:00.000000Z",
+  "updated_at": "2026-04-27T00:00:00.000000Z"
+}

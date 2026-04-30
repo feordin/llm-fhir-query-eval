@@ -1,0 +1,170 @@
+{
+  "name": "PheKB Appendicitis",
+  "remarks": [
+    "Custom Synthea module from PheKB phenotype: appendicitis",
+    "Based on Synthea's built-in appendicitis module pattern for encounter/procedure structure",
+    "",
+    "Generates TWO types of positive patients:",
+    "  Path A (70%): Acute appendicitis diagnosis + appendectomy procedure",
+    "  Path B (30%): Appendectomy procedure ONLY (no diagnosis code)",
+    "",
+    "Path B simulates patients who went directly to surgery without a formal",
+    "appendicitis diagnosis code being recorded, testing the comprehensive query.",
+    "",
+    "Uses encounter_class: emergency (matching Synthea built-in pattern)",
+    "and target_encounter for condition-encounter linking."
+  ],
+  "states": {
+    "Initial": {
+      "type": "Initial",
+      "direct_transition": "Age_Guard"
+    },
+    "Age_Guard": {
+      "type": "Guard",
+      "allow": {
+        "condition_type": "Age",
+        "operator": ">=",
+        "quantity": 5,
+        "unit": "years"
+      },
+      "direct_transition": "Case_Path_Selection"
+    },
+    "Case_Path_Selection": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Appendicitis_Dx_Onset",
+          "distribution": 0.7
+        },
+        {
+          "transition": "Surgery_Encounter_No_Dx",
+          "distribution": 0.3
+        }
+      ]
+    },
+    "Appendicitis_Dx_Onset": {
+      "type": "Simple",
+      "remarks": [
+        "Path A: condition onset with target_encounter linking (built-in pattern)",
+        "Distributes patients across SNOMED variants for code-variation testing."
+      ],
+      "distributed_transition": [
+        {
+          "transition": "Appendicitis_Dx_Onset__variant_0",
+          "distribution": 0.7
+        },
+        {
+          "transition": "Appendicitis_Dx_Onset__variant_1",
+          "distribution": 0.3
+        }
+      ]
+    },
+    "Surgery_Encounter_With_Dx": {
+      "type": "Encounter",
+      "encounter_class": "emergency",
+      "reason": "Appendicitis_Dx_Onset",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": "50849002",
+          "display": "Emergency room admission (procedure)"
+        }
+      ],
+      "direct_transition": "Appendectomy_With_Dx"
+    },
+    "Appendectomy_With_Dx": {
+      "type": "Procedure",
+      "reason": "Appendicitis_Dx_Onset",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": "80146002",
+          "display": "Excision of appendix (procedure)"
+        }
+      ],
+      "duration": {
+        "low": 40,
+        "high": 70,
+        "unit": "minutes"
+      },
+      "direct_transition": "End_Surgery_With_Dx"
+    },
+    "End_Surgery_With_Dx": {
+      "type": "EncounterEnd",
+      "direct_transition": "Recovery_Delay"
+    },
+    "Surgery_Encounter_No_Dx": {
+      "type": "Encounter",
+      "encounter_class": "emergency",
+      "remarks": [
+        "Path B: appendectomy only, no formal appendicitis diagnosis"
+      ],
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": "50849002",
+          "display": "Emergency room admission (procedure)"
+        }
+      ],
+      "direct_transition": "Appendectomy_No_Dx"
+    },
+    "Appendectomy_No_Dx": {
+      "type": "Procedure",
+      "remarks": [
+        "Appendectomy without diagnosis code - tests comprehensive query"
+      ],
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": "80146002",
+          "display": "Excision of appendix (procedure)"
+        }
+      ],
+      "duration": {
+        "low": 40,
+        "high": 70,
+        "unit": "minutes"
+      },
+      "direct_transition": "End_Surgery_No_Dx"
+    },
+    "End_Surgery_No_Dx": {
+      "type": "EncounterEnd",
+      "direct_transition": "Recovery_Delay"
+    },
+    "Recovery_Delay": {
+      "type": "Delay",
+      "range": {
+        "low": 1,
+        "high": 4,
+        "unit": "weeks"
+      },
+      "direct_transition": "Terminal_Appendicitis"
+    },
+    "Terminal_Appendicitis": {
+      "type": "Terminal"
+    },
+    "Appendicitis_Dx_Onset__variant_0": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": "85189001",
+          "display": "Acute appendicitis"
+        }
+      ],
+      "direct_transition": "Surgery_Encounter_With_Dx"
+    },
+    "Appendicitis_Dx_Onset__variant_1": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": "74400008",
+          "display": "Appendicitis"
+        }
+      ],
+      "direct_transition": "Surgery_Encounter_With_Dx"
+    }
+  },
+  "gmf_version": 2
+}

@@ -1,0 +1,80 @@
+{
+  "id": "phekb-osteoporosis-labs",
+  "source": "phekb",
+  "source_id": "osteoporosis",
+  "name": "Osteoporosis - Low DEXA T-score Query (≤ -2.5)",
+  "description": "Tests ability to find osteoporosis patients via DEXA bone density scan T-score ≤ -2.5 (the WHO criterion for osteoporosis). First DEXA T-score lab phenotype. Includes Path D patients (low T-score without formal osteoporosis diagnosis — undiagnosed disease).",
+  "prompt": "Find patients with DEXA bone density T-scores at or below -2.5.",
+  "prompts": {
+    "naive": "Find patients with low bone density.",
+    "broad": "Find patients with bone density T-score at or below -2.5 — the WHO diagnostic criterion for osteoporosis on DEXA bone density scan.",
+    "expert": "Search Observation resources with LOINC 38265-5 (DXA T-score) where value-quantity ≤ -2.5. Query: Observation?code=http://loinc.org|38265-5&value-quantity=le-2.5"
+  },
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "algorithm_path": "labs-path",
+    "algorithm_path_description": "Patients with low DEXA T-score Observations (osteoporotic range). Includes Path D (no formal dx).",
+    "code_systems": [
+      "LOINC"
+    ],
+    "required_codes": [
+      {
+        "system": "http://loinc.org",
+        "code": "38265-5",
+        "display": "DXA Radius and Ulna [T-score] Bone density",
+        "source": "UMLS verified"
+      }
+    ],
+    "complexity": "hard",
+    "tags": [
+      "observation",
+      "endocrinology",
+      "bone-disease",
+      "osteoporosis",
+      "dexa",
+      "t-score",
+      "value-quantity"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "Observation",
+    "parameters": {
+      "code": "http://loinc.org|38265-5",
+      "value-quantity": "le-2.5"
+    },
+    "url": "Observation?code=http://loinc.org|38265-5&value-quantity=le-2.5"
+  },
+  "test_data": {
+    "resources": [
+      "synthea/output/osteoporosis/positive/fhir/",
+      "synthea/output/osteoporosis/control/fhir/"
+    ],
+    "expected_result_count": 21,
+    "expected_resource_ids": [],
+    "expected_patient_ids": [
+      "0178e2b1-1e34-2061-da30-72b88c2686ea",
+      "10890d84-5e7a-9904-b664-ffec94da452e",
+      "1496235d-bcee-60d3-9ac6-5e8f102b6368",
+      "182a5010-f1dd-1b6d-0873-c238cd7d8804",
+      "1a2c650c-7ba3-94db-ff05-97dc3959a31b",
+      "20db4d45-2941-3954-7415-2c4b36158400",
+      "2d235b27-453c-6d14-164d-0b07e7e5c897",
+      "2fa3d862-2e03-5c89-23f0-0ef700ba317e",
+      "34ee9ce3-d1de-8fef-4ebd-c1b92084ecb2",
+      "866f678f-fc87-3c98-be32-e1335c014006",
+      "afcfb7bb-00b3-b5f9-13ad-c39cf658366a",
+      "c16ce8a6-3f33-515e-845d-4d937acac5b6",
+      "c36d60ee-ea3a-3307-417c-538771091397",
+      "c7cdee36-b92c-2ca9-127a-bda8c2ea4568",
+      "cc36fb65-8c4c-e79f-db0f-89841a46b907",
+      "cede04b6-8577-9ba0-83eb-a9373106c5b4",
+      "cee9bfd3-9899-a1ec-75e2-7ae7e2fa2ca6",
+      "d265e882-b379-4491-5e19-3cd001b7df13",
+      "e3b0636f-c890-e73d-405f-16a1b68c6230",
+      "ec2c1de0-9cfd-1388-fee0-c8b069a3a934",
+      "f1efe6a2-0b43-5c3b-814a-fa397a29cabb"
+    ]
+  },
+  "created_at": "2026-04-29T00:00:00.000000Z",
+  "updated_at": "2026-04-27T00:00:00.000000Z"
+}

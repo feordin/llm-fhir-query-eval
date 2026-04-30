@@ -1,0 +1,129 @@
+{
+  "id": "phekb-hypothyroidism-comprehensive",
+  "source": "phekb",
+  "source_id": "hypothyroidism",
+  "name": "Hypothyroidism - Comprehensive Provider Query",
+  "description": "Simulates an endocrinologist identifying their complete hypothyroidism population. Requires multiple FHIR queries because the PheKB algorithm allows three independent identification routes: diagnosis codes, thyroid replacement medications, or abnormal TSH labs. An LLM that only searches Condition resources will miss substantial subsets (Path C meds-only and Path D labs-only patients). The most complete answer requires unioning results from three queries across three resource types.",
+  "prompt": "I need to identify my complete hypothyroidism patient population for a quality improvement initiative. From experience, I know these patients show up in our records in different ways: some have a formal diagnosis code on their problem list, some are on chronic levothyroxine without the diagnosis being formally documented (often started by an outside endocrinologist), and some have biochemical evidence (elevated TSH) without yet being treated.\n\nPlease run multiple FHIR queries to capture the full population:\n1. Patients with any hypothyroidism diagnosis (acquired, autoimmune, Hashimoto's, etc.)\n2. Patients prescribed levothyroxine or other thyroid replacement therapy\n3. Patients with elevated TSH lab values above 5 mIU/L\n\nFor each query, return the matching resources. I want the union of all patients found across these three approaches.",
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "multi_query": true,
+    "algorithm_path": "comprehensive",
+    "algorithm_path_description": "Union of all identification paths: diagnosis codes (Paths A+B), levothyroxine prescriptions (Paths A+B+C), and abnormal TSH (Paths A+D). An LLM must run all three queries and union the results to achieve 100% recall.",
+    "expected_queries": [
+      "Condition?code=http://snomed.info/sct|40930008,http://snomed.info/sct|111566002,http://snomed.info/sct|83664006,http://snomed.info/sct|237519003,http://snomed.info/sct|237520009",
+      "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|966222,http://www.nlm.nih.gov/research/umls/rxnorm|966224,http://www.nlm.nih.gov/research/umls/rxnorm|966247,http://www.nlm.nih.gov/research/umls/rxnorm|966189",
+      "Observation?code=http://loinc.org|3016-3&value-quantity=gt5"
+    ],
+    "code_systems": [
+      "SNOMED CT",
+      "RxNorm",
+      "LOINC"
+    ],
+    "required_codes": [
+      {
+        "system": "http://snomed.info/sct",
+        "code": "40930008",
+        "display": "Hypothyroidism (disorder)",
+        "source": "VSAC OID 2.16.840.1.113762.1.4.1222.744"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "111566002",
+        "display": "Acquired hypothyroidism (disorder)",
+        "source": "VSAC OID 2.16.840.1.113762.1.4.1222.744"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "83664006",
+        "display": "Idiopathic atrophic hypothyroidism (disorder)",
+        "source": "Synthea built-in module"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "237519003",
+        "display": "Autoimmune hypothyroidism (disorder)",
+        "source": "VSAC OID 2.16.840.1.113762.1.4.1222.744"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "237520009",
+        "display": "Hypothyroidism due to Hashimoto's thyroiditis (disorder)",
+        "source": "VSAC OID 2.16.840.1.113762.1.4.1222.744"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "966222",
+        "display": "Levothyroxine Sodium 0.075 MG Oral Tablet",
+        "source": "Synthea built-in module"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "966224",
+        "display": "Levothyroxine Sodium 0.125 MG Oral Tablet",
+        "source": "RxNorm SCD"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "966247",
+        "display": "Levothyroxine Sodium 0.05 MG Oral Tablet [Synthroid]",
+        "source": "RxNorm SCD"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "966189",
+        "display": "Levothyroxine Sodium 0.125 MG Oral Tablet [Levotabs]",
+        "source": "RxNorm SCD"
+      },
+      {
+        "system": "http://loinc.org",
+        "code": "3016-3",
+        "display": "Thyrotropin [Units/volume] in Serum or Plasma",
+        "source": "Synthea built-in module"
+      }
+    ],
+    "complexity": "expert",
+    "tags": [
+      "multi-query",
+      "endocrinology",
+      "hypothyroidism",
+      "comprehensive",
+      "cross-resource"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "Patient",
+    "parameters": {},
+    "url": "Condition?code=http://snomed.info/sct|40930008,http://snomed.info/sct|111566002,http://snomed.info/sct|83664006,http://snomed.info/sct|237519003,http://snomed.info/sct|237520009"
+  },
+  "test_data": {
+    "resources": [
+      "synthea/output/hypothyroidism/positive/fhir/",
+      "synthea/output/hypothyroidism/control/fhir/"
+    ],
+    "expected_result_count": 18,
+    "expected_resource_ids": [],
+    "expected_patient_ids": [
+      "080b069b-5108-46b6-ecef-6aacd3b9ef3f",
+      "2c167999-289d-95fa-5c27-7d8b8d35348c",
+      "35b353dd-402b-571a-d67a-af0a104d0854",
+      "62f60bdb-cc5c-8305-b98b-f2b229a55eca",
+      "6aed9210-c500-4375-b0fc-3374c40b8591",
+      "6fbddf55-7096-b883-7cd3-260f27953080",
+      "922fb35e-148d-9e82-7e65-bfa05e3b3515",
+      "9661a432-4630-2cd9-142c-386845fae837",
+      "982750f4-569b-5949-196b-60699bdda3fb",
+      "aa616abe-1761-0c9a-7959-07544679dafd",
+      "b6a1cac9-8873-36a7-e726-4aad8a07d44d",
+      "ba419d35-0dfe-8af7-347c-eebf02485a56",
+      "bff9d9d5-ee3d-d852-9c67-36d8361a4a4a",
+      "c0a47dee-cc72-29ce-df5a-ea6d306c36a4",
+      "c86c400e-ff88-a1e3-2e23-caa4d8311f47",
+      "e74367bd-7385-97dc-2c7f-251b4cd9fe29",
+      "eb5910f1-26e6-bc6f-b300-716eae678d6f",
+      "f95a6723-14a5-c4b6-78df-fa97f7ab361c"
+    ]
+  },
+  "created_at": "2026-04-25T00:00:00.000000Z",
+  "updated_at": "2026-04-25T00:00:00.000000Z"
+}

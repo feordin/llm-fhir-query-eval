@@ -1,0 +1,148 @@
+{
+  "id": "phekb-asthma-meds",
+  "source": "phekb",
+  "source_id": "asthma",
+  "name": "Asthma - Medication Query",
+  "description": "Tests ability to find asthma patients by searching for asthma medication prescriptions. This is critical for patients who have been prescribed asthma medications but may not have a formal asthma diagnosis code in their chart. Covers rescue inhalers (albuterol), inhaled corticosteroids (fluticasone, budesonide), and leukotriene modifiers (montelukast).",
+  "prompt": "Find all medication orders for asthma medications including albuterol, fluticasone, budesonide, and montelukast.",
+  "prompts": {
+    "naive": "Find all medication orders for asthma medications including albuterol, fluticasone, budesonide, and montelukast.",
+    "expert": "I need to find patients prescribed medications used for asthma management. The key medication classes include short-acting beta-agonists (rescue inhalers) like albuterol, which nearly all asthma patients will have; inhaled corticosteroids (controller medications) such as fluticasone propionate metered dose inhalers and budesonide inhalation suspensions; and leukotriene receptor antagonists like montelukast (Singulair). Search MedicationRequest resources for the specific RxNorm product codes for these formulations. Some patients may be on inhalers prescribed by a pulmonologist or allergist without a formal asthma diagnosis documented in our primary care system, making the medication query essential for complete population capture."
+  },
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "algorithm_path": "medication-path",
+    "algorithm_path_description": "Patients with asthma medication prescriptions. Some patients have ONLY medications and no diagnosis code. This tests whether LLMs search MedicationRequest, not just Condition.",
+    "code_systems": [
+      "RxNorm"
+    ],
+    "required_codes": [
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "245314",
+        "display": "albuterol 5 MG/ML Inhalation Solution",
+        "source": "document"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "895994",
+        "display": "120 ACTUAT fluticasone propionate 0.044 MG/ACTUAT Metered Dose Inhaler",
+        "source": "document"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "351109",
+        "display": "budesonide 0.25 MG/ML Inhalation Suspension",
+        "source": "document"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "200224",
+        "display": "montelukast 10 MG Oral Tablet",
+        "source": "document"
+      }
+    ],
+    "complexity": "medium",
+    "tags": [
+      "medication",
+      "respiratory",
+      "asthma",
+      "rxnorm"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "MedicationRequest",
+    "parameters": {
+      "code": "http://www.nlm.nih.gov/research/umls/rxnorm|245314,http://www.nlm.nih.gov/research/umls/rxnorm|895994,http://www.nlm.nih.gov/research/umls/rxnorm|351109,http://www.nlm.nih.gov/research/umls/rxnorm|200224"
+    },
+    "url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|245314,http://www.nlm.nih.gov/research/umls/rxnorm|895994,http://www.nlm.nih.gov/research/umls/rxnorm|351109,http://www.nlm.nih.gov/research/umls/rxnorm|200224"
+  },
+  "test_data": {
+    "resources": [
+      "synthea/output/asthma/positive/fhir/",
+      "synthea/output/asthma/control/fhir/"
+    ],
+    "expected_result_count": 76,
+    "expected_resource_ids": [],
+    "expected_patient_ids": [
+      "018828d2-c352-a220-5c0e-3049b2a29ba4",
+      "05f8225b-deab-0f68-2ebe-49a40fc81612",
+      "09e45895-45e2-413a-400e-2dc4de4cc2af",
+      "0ccfb77a-0df5-3cbe-3166-586e98e5f9c9",
+      "1ab05679-c631-5882-9950-3d06d9ae83be",
+      "1c27600e-a274-84b5-af37-c33e76d3129d",
+      "22b9d93a-c14b-9ab4-1c88-2d1588cb75da",
+      "240cb31a-7761-d877-8bfe-379035f50610",
+      "26a39e24-cf58-e98b-c309-b157608c0494",
+      "287ef2bf-89ee-9183-f3a2-569596fa7edd",
+      "28c91d35-7c1d-1683-11f2-bcae902c1203",
+      "2c167999-289d-95fa-5c27-7d8b8d35348c",
+      "2d68ad16-268a-478c-1f84-d0f1976e1a46",
+      "35438f3e-2142-e027-9b77-5dc70d926f7e",
+      "35b353dd-402b-571a-d67a-af0a104d0854",
+      "3b0de415-1f5b-c226-608b-4fbafa1dc3d5",
+      "3c372428-ec43-1148-e88f-881d46bf5e77",
+      "43be5242-8a72-d574-ebff-51f63b3beb26",
+      "44b6b964-c970-b524-bd50-0fbc717a4272",
+      "46976cf7-b0bf-be20-39a5-9f425a52886d",
+      "46ee9d82-b52c-856d-069b-5064ff052225",
+      "474c2b80-fce1-d897-622c-fbbd77fa4846",
+      "4e27c009-c739-49d3-6864-316277161c23",
+      "4eb6c600-8c5f-8855-8bf8-920508828408",
+      "4f083ce3-f12b-bb4b-7353-e17f0cd55b0a",
+      "4f978056-9a02-9495-c9e8-4f499130df30",
+      "505455ba-4b62-97e5-60ad-bacd3edd7c25",
+      "53ebd09d-d3c5-5bc0-9a8f-abd9c9a74ed4",
+      "544d3cc2-28b4-637c-3dcc-d278ef1270aa",
+      "56da4816-8ff8-88b4-93e2-c96e44566054",
+      "5c3d0aab-2489-05c9-5f8a-20b6d7c5ec38",
+      "5e688e99-61b3-5c88-3f60-21df8aaced27",
+      "62f60bdb-cc5c-8305-b98b-f2b229a55eca",
+      "639e08a6-a9a0-a8a5-d50c-4df6a0d45b40",
+      "64e282fd-a2be-6096-3ccc-3226ceead242",
+      "64ed4bdb-3d23-c209-9d0d-d2bd89c747fa",
+      "6682c2a1-928a-0fa9-ee2e-6ccb656bca64",
+      "66ffc6d9-439e-924a-476f-0ed1362c9bb2",
+      "6fbddf55-7096-b883-7cd3-260f27953080",
+      "7220666d-c0b1-6e5f-3797-034702221362",
+      "76b20010-c318-5754-8c85-983aa538522f",
+      "78b613fe-4642-e7a0-008f-2274a866617f",
+      "7bfbd573-805a-bb20-c60f-9dffd9a51771",
+      "7c06fb90-1006-aff9-c7f1-ec048222f8e3",
+      "85e3d1c0-46b2-ea32-f9ac-87053f999ab8",
+      "8defd783-be20-9441-e475-9cc208b0c768",
+      "9661a432-4630-2cd9-142c-386845fae837",
+      "982750f4-569b-5949-196b-60699bdda3fb",
+      "a75779dd-9635-3268-3667-25d92879f0f0",
+      "aa616abe-1761-0c9a-7959-07544679dafd",
+      "aee7bbe1-0c45-c028-1e62-1f4cdb30c273",
+      "afb526fa-12e1-9b2a-e153-e058fe2f7dc9",
+      "b334cd5b-88e4-0b2d-420e-5368629f285c",
+      "b5e8b3d8-2bd8-f2ae-5469-28745348fc61",
+      "ba31ce75-a32f-00ee-b352-be6f5ea1dc54",
+      "ba419d35-0dfe-8af7-347c-eebf02485a56",
+      "be87c944-c27a-659b-7256-4fcbdf32fbb9",
+      "bfc0e5c2-71fa-43fd-85d6-2b0443362b3d",
+      "bff9d9d5-ee3d-d852-9c67-36d8361a4a4a",
+      "c86c400e-ff88-a1e3-2e23-caa4d8311f47",
+      "ca1dc0b6-2f0a-a264-eb0a-047c8b88c835",
+      "d3727ff2-5d7b-347f-d78c-edc4323cf890",
+      "d8ce06c6-b634-1c4f-7a4b-ace30a4d0e16",
+      "dc83b603-fd78-01b6-a151-d31db0a3f5ad",
+      "de6010ff-f9d2-88e2-71c1-65f6e88f3df2",
+      "dfa1fc65-51e6-b774-7e56-e70fffbe8238",
+      "e003ecfa-c1ea-2dfe-d5ee-1a4f2972afbf",
+      "e5dd3621-f6d7-90c0-fdb0-55d197cf5b89",
+      "e74367bd-7385-97dc-2c7f-251b4cd9fe29",
+      "eb5910f1-26e6-bc6f-b300-716eae678d6f",
+      "ebdd8478-e380-a58e-618f-568d9a8cc46c",
+      "ee0c7da2-c8c8-1ae1-5494-632e246eb2c8",
+      "f3293316-9c80-dbac-6cb7-e45df142ecff",
+      "fb92141d-d576-36bf-fa92-c1cc605b2a1f",
+      "fd00981a-a7b4-f864-ca0a-bbe685c1e61f",
+      "fec17b2c-a1ab-1239-4bc9-e72ecb8b2f8c"
+    ]
+  },
+  "created_at": "2026-03-15T00:00:00.000000Z",
+  "updated_at": "2026-04-27T00:00:00.000000Z"
+}

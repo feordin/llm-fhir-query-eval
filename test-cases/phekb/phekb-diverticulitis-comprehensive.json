@@ -1,0 +1,111 @@
+{
+  "id": "phekb-diverticulitis-comprehensive",
+  "source": "phekb",
+  "source_id": "diverticulitis",
+  "name": "Diverticulitis - Comprehensive Provider Query (Multi-Resource)",
+  "description": "Provider-level query identifying all diverticulitis patients using Condition (diverticulitis dx) + MedicationRequest (cipro/metro). Path C patients have cipro+metro without diverticulitis dx (likely treated empirically for intra-abdominal infection or unconfirmed UTI/IAI).",
+  "prompt": "I need to identify my complete diverticulitis patient population for a colorectal quality initiative. Some patients have a coded diverticulitis diagnosis. Others were prescribed ciprofloxacin and metronidazole empirically for suspected intra-abdominal infection without ever getting a formal diverticulitis diagnosis. Run multiple FHIR queries — diagnosis and antibiotic medications — and union the patient sets.",
+  "prompts": {
+    "naive": "Find all patients with diverticulitis or on cipro/metro.",
+    "broad": "Find all diverticulitis patients — by diagnosis or by ciprofloxacin/metronidazole antibiotic regimen. Run multiple queries and union the patient sets.",
+    "expert": "Run two queries. (1) Condition?code=http://snomed.info/sct|307496006 — diverticulitis dx. (2) MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|2551,http://www.nlm.nih.gov/research/umls/rxnorm|6922 — cipro+metro. Union the patient IDs."
+  },
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "algorithm_path": "comprehensive-provider-query",
+    "algorithm_path_description": "Multi-query union: Condition + MedicationRequest.",
+    "code_systems": [
+      "SNOMED CT",
+      "RxNorm"
+    ],
+    "required_codes": [
+      {
+        "system": "http://snomed.info/sct",
+        "code": "307496006",
+        "display": "Diverticulitis",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "2551",
+        "display": "ciprofloxacin",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "6922",
+        "display": "metronidazole",
+        "source": "UMLS verified"
+      }
+    ],
+    "complexity": "expert",
+    "tags": [
+      "multi-query",
+      "comprehensive",
+      "gi",
+      "diverticulitis"
+    ],
+    "multi_query": true,
+    "expected_queries": [
+      "Condition?code=http://snomed.info/sct|307496006",
+      "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|2551,http://www.nlm.nih.gov/research/umls/rxnorm|6922"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "multi",
+    "parameters": {},
+    "url": "Condition?code=http://snomed.info/sct|307496006"
+  },
+  "test_data": {
+    "resources": [
+      "synthea/output/diverticulitis/positive/fhir/",
+      "synthea/output/diverticulitis/control/fhir/"
+    ],
+    "expected_result_count": 40,
+    "expected_resource_ids": [],
+    "expected_patient_ids": [
+      "0543b04a-da3b-b944-e273-2885f1c83d65",
+      "09f4fbad-6ba4-1fbe-4cc1-2c0d899655fe",
+      "0bd0c66c-db27-d241-717c-df63f24bc9cb",
+      "0feae702-00bf-2d99-53b6-f9e285972b03",
+      "12346816-27cf-e822-0f23-fc6e94ff1e80",
+      "13024d58-2ee9-1ac5-8230-191925c35d10",
+      "296319ad-f5a2-bcde-4aa3-45c3be3e7cbb",
+      "313b9fc1-f977-cc6a-9b0b-43ffafefea43",
+      "3221a102-445c-7b46-7e33-4f0d472b6ecb",
+      "339e2a54-3dec-7347-7650-83b23f464761",
+      "3c95b079-2cab-0e78-bd17-666a55dfb2cf",
+      "3da97c46-d2be-803e-9cfe-d81a45a462f3",
+      "4424ce57-619f-4ccf-8c51-6ec2898ced1a",
+      "46c61b90-ea81-6f3e-1261-4e2e8e8bc495",
+      "4b1fec75-ba0b-4cc7-af68-540cc1e99a14",
+      "4cded429-2e9d-3973-96c9-ece25ac57386",
+      "5270cc1c-d63a-d98c-e6b5-2a34efbb8003",
+      "53be4000-71f4-1a7b-8a97-15073c2e4f4c",
+      "55f60d3d-8246-7068-89ba-a034a611c985",
+      "83143a5e-aa8b-c379-cb5e-b43ee1c11c21",
+      "844853af-d6d0-5894-3b5d-3ec9c6d8b725",
+      "850e0e8d-eec5-334b-9b78-6b008cf1af63",
+      "8a5cc612-75c6-9878-14ab-d9a99916000e",
+      "9021a60a-6dcf-e08b-82c3-a638e2b11b82",
+      "9039a4f2-4ea1-408d-7164-9ecaab6ec155",
+      "9eae283f-51f3-7fae-687f-048512aee685",
+      "a23e61e8-2019-93e9-a94f-a835ea5b5b39",
+      "a8539264-7779-57bb-5180-97014f5856d7",
+      "ab6f3f33-20bc-7f6f-491d-237c4f499c11",
+      "bf8188ad-d52d-c5b1-f852-27eeaeaeaf1d",
+      "c1a425a1-0c0e-617c-e4b4-39d79b2938b4",
+      "c40fa8de-04d6-aa9f-c487-cdc0cb417280",
+      "c43a4fb4-da8a-514e-4aa7-b2da5c208e00",
+      "e6790d99-c5e6-ab77-4582-67aef69fa330",
+      "e7dba35b-db2f-eaad-f410-c491f0f1e894",
+      "ebcb0391-2fc9-3f31-8c8f-2ac000241edc",
+      "f6de8ac7-1ee8-842f-7526-e7d4e8c5c8ff",
+      "fac12889-72ff-f15c-521f-5d6f9fa7c71a",
+      "fac1f628-73ca-9303-5b2a-7a99a75eadb8",
+      "fda184d7-453a-79ad-7790-64c282a2b1c3"
+    ]
+  },
+  "created_at": "2026-04-28T00:00:00.000000Z",
+  "updated_at": "2026-04-27T00:00:00.000000Z"
+}

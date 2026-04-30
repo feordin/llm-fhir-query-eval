@@ -1,0 +1,65 @@
+{
+  "id": "phekb-ace-inhibitor-cough-dx",
+  "source": "phekb",
+  "source_id": "ace-inhibitor-ace-i-induced-cough",
+  "name": "ACE Inhibitor Cough - Cough Diagnosis Query",
+  "description": "Tests ability to find patients with a documented cough diagnosis. In the PheKB ACE inhibitor-induced cough algorithm, cough noted as an adverse event or allergy associated with ACE inhibitor use identifies cases. Since FHIR Condition resources capture documented diagnoses, this test queries for cough using the SNOMED CT code. Patients found here who also have ACEi prescriptions are potential ACEi-induced cough cases.",
+  "prompt": "Find all patients who have a documented diagnosis of cough.",
+  "prompts": {
+    "naive": "Find all patients who have a documented diagnosis of cough.",
+    "expert": "I need to find patients with a documented cough diagnosis as part of a medication safety investigation into ACE inhibitor-induced cough. Cough is a well-known class effect of ACE inhibitors, occurring in 5-20% of patients on these medications. The query should search Condition resources for the cough diagnosis code. Keep in mind that cough may be coded as a symptom finding rather than a disease diagnosis, so use the appropriate SNOMED clinical finding code. This query is the first step -- the results will later be cross-referenced with ACE inhibitor prescription records to identify likely drug-induced cases."
+  },
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "algorithm_path": "case-cough-identification",
+    "algorithm_path_description": "Identifies patients with documented cough diagnosis. In the ACEi-induced cough phenotype, cases have cough noted as an adverse event of ACE inhibitor therapy. This single-resource query tests whether LLMs choose the correct SNOMED code for cough.",
+    "code_systems": [
+      "SNOMED CT"
+    ],
+    "required_codes": [
+      {
+        "system": "http://snomed.info/sct",
+        "code": "49727002",
+        "display": "Cough",
+        "source": "umls"
+      }
+    ],
+    "complexity": "medium",
+    "tags": [
+      "condition",
+      "pulmonology",
+      "adverse-event",
+      "ace-inhibitor",
+      "snomed"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "Condition",
+    "parameters": {
+      "code": "http://snomed.info/sct|49727002"
+    },
+    "url": "Condition?code=http://snomed.info/sct|49727002"
+  },
+  "test_data": {
+    "resources": [
+      "synthea/output/ace-inhibitor-cough/positive/fhir/",
+      "synthea/output/ace-inhibitor-cough/control/fhir/"
+    ],
+    "expected_result_count": 10,
+    "expected_resource_ids": [],
+    "expected_patient_ids": [
+      "2c167999-289d-95fa-5c27-7d8b8d35348c",
+      "46ee9d82-b52c-856d-069b-5064ff052225",
+      "4f083ce3-f12b-bb4b-7353-e17f0cd55b0a",
+      "62f60bdb-cc5c-8305-b98b-f2b229a55eca",
+      "6fbddf55-7096-b883-7cd3-260f27953080",
+      "aa616abe-1761-0c9a-7959-07544679dafd",
+      "ba419d35-0dfe-8af7-347c-eebf02485a56",
+      "bff9d9d5-ee3d-d852-9c67-36d8361a4a4a",
+      "e74367bd-7385-97dc-2c7f-251b4cd9fe29",
+      "eb5910f1-26e6-bc6f-b300-716eae678d6f"
+    ]
+  },
+  "created_at": "2026-03-15T12:00:00.000000Z",
+  "updated_at": "2026-04-27T00:00:00.000000Z"
+}

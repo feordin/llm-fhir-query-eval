@@ -1,0 +1,134 @@
+{
+  "id": "phekb-severe-childhood-obesity-dx",
+  "source": "phekb",
+  "source_id": "severe-childhood-obesity",
+  "name": "Severe Childhood Obesity - Diagnosis Code Query (Pediatric)",
+  "description": "**First pediatric phenotype.** Tests ability to find children with severe obesity via diagnosis codes. Pediatric obesity is documented under multiple SNOMED codes by severity level: parent obesity, morbid obesity, obese class II, obese (finding), and BMI≥40 severely obese. The Synthea module restricts to pediatric ages (5-17 years). **The query MUST include a Patient.birthdate filter** (FHIR has no direct Patient.age search parameter) — without it, the query over-recalls adult obesity patients with the same SNOMED codes. Reference date 2026-04-28 → ages 5-17 = birthdate in (2008-04-28, 2021-04-28].",
+  "prompt": "Find pediatric patients (ages 5-17) with a diagnosis of severe obesity, including the parent obesity concept, morbid obesity, obese class II, and BMI≥40 severe obesity.",
+  "prompts": {
+    "naive": "Find children with obesity.",
+    "broad": "Find pediatric patients (ages 5-17) diagnosed with any form of severe obesity — including the parent obesity concept, morbid obesity, obese class II (BMI 35-40), obese (finding-level), and BMI≥40 severely obese (the most severe class).",
+    "expert": "I need to identify pediatric severe obesity patients. The condition is documented under multiple SNOMED codes by severity: Obesity (414916001) is the parent disorder, Morbid obesity (238136002), Obese class II (443381000124105), Obese finding-level (414915002), and BMI 40+ severely obese (408512008). Search Condition resources for these codes. Note this phenotype is age-restricted to pediatric (5-17 years)."
+  },
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "algorithm_path": "diagnosis-path",
+    "algorithm_path_description": "Patients with severe obesity diagnosis codes. **First pediatric phenotype** (age 5-17 only).",
+    "code_systems": [
+      "SNOMED CT"
+    ],
+    "required_codes": [
+      {
+        "system": "http://snomed.info/sct",
+        "code": "414916001",
+        "display": "Obesity",
+        "source": "UMLS verified, parent"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "238136002",
+        "display": "Morbid obesity",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "443381000124105",
+        "display": "Obese class II",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "414915002",
+        "display": "Obese (finding)",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "408512008",
+        "display": "Body mass index 40+ - severely obese",
+        "source": "UMLS verified"
+      }
+    ],
+    "complexity": "medium",
+    "tags": [
+      "condition",
+      "pediatric",
+      "obesity",
+      "severe-obesity",
+      "diagnosis-code",
+      "first-pediatric",
+      "age-restricted",
+      "patient-birthdate-filter"
+    ],
+    "patient_filters": {
+      "min_age_years": 5,
+      "max_age_years": 17,
+      "reference_date": "2026-04-28"
+    }
+  },
+  "expected_query": {
+    "resource_type": "Condition",
+    "parameters": {
+      "code": "http://snomed.info/sct|414916001,http://snomed.info/sct|238136002,http://snomed.info/sct|443381000124105,http://snomed.info/sct|414915002,http://snomed.info/sct|408512008",
+      "patient.birthdate": [
+        "gt2008-04-28",
+        "le2021-04-28"
+      ]
+    },
+    "url": "Condition?code=http://snomed.info/sct|414916001,http://snomed.info/sct|238136002,http://snomed.info/sct|443381000124105,http://snomed.info/sct|414915002,http://snomed.info/sct|408512008&patient.birthdate=gt2008-04-28&patient.birthdate=le2021-04-28"
+  },
+  "test_data": {
+    "resources": [
+      "synthea/output/severe-childhood-obesity/positive/fhir/",
+      "synthea/output/severe-childhood-obesity/control/fhir/"
+    ],
+    "expected_result_count": 42,
+    "expected_resource_ids": [],
+    "expected_patient_ids": [
+      "0bf196ca-7be9-977c-f8b1-306b41eaff83",
+      "0fd16b67-5610-fe31-c018-919d62820a0e",
+      "1044c2fa-4fa2-819d-f953-bcdd83ed4ad7",
+      "14f6d989-2947-44f4-657f-7da8c15f6f51",
+      "18dc29a6-7d6c-052a-5e58-fa8e2627cdc0",
+      "20ac2ade-11da-b7cb-3390-de70ce2481ef",
+      "29c2c3ed-77f9-3c36-5649-ae7e14b95463",
+      "3ad97201-1ae2-75b4-c729-071ae3c8b845",
+      "484e292d-e2fc-65a0-58db-02b67cae20fa",
+      "49c88183-ccc2-fac5-1fa5-792b7cf980be",
+      "4c87443e-d7f9-773a-7adc-3f0ba004a022",
+      "4d55c2da-eedc-61c4-6779-1e73ccf5d65e",
+      "4e1828fe-cdb0-e3f9-0fe4-bd2fe4229b68",
+      "56e23076-a425-f6e3-83bc-e491bad016e2",
+      "5f261e4c-de09-5967-3e7b-e82bc9a75b44",
+      "659812a7-6065-0968-db96-d6339f477595",
+      "774477ec-10a0-82b3-24d6-fbe2bc3cb906",
+      "793bd860-1a6f-bd7e-9c05-07a80330f52e",
+      "815158db-cd7a-e017-43d8-dc743dcf498d",
+      "843e36e1-0458-34d1-8905-291974878ad7",
+      "84dd3295-1648-c08b-78f0-a8d91c1e2339",
+      "87b10ebe-d8c0-1cb4-5f9b-86dcd9929bc7",
+      "8982d047-95ee-09e4-8b95-8ba6f3f8a609",
+      "95280422-f8dc-7601-3cc4-1464f75c8626",
+      "95ea5440-b883-9d80-f5f6-bf26ce3dadc2",
+      "a0933c74-f9dd-f174-5a0f-b9142a567284",
+      "a1b01c01-d55d-64f4-c1de-aedc64b80a71",
+      "a486f0d7-ceb0-499e-0eef-6f7668279fbd",
+      "a5138ec2-32e6-14c8-7da0-b5d799e1c939",
+      "b64d2cf2-c9ab-749a-9930-2de8a0575406",
+      "be2734e9-528f-1c83-52e2-a347e3f298f7",
+      "c27e65a9-9570-5aa6-7d78-c8e8fa8310af",
+      "c519f9bf-dd22-e281-c93a-adc7b6765bf1",
+      "c573d66d-e385-73ad-aed1-84d31983d6c4",
+      "cb5afc4d-90a4-86dd-90c3-dc41ee7cfacc",
+      "cf31fe6e-5e77-4509-2498-54de629b3a4e",
+      "da44c062-d510-28f4-e0aa-a4a52500e69a",
+      "e46b5d27-70e0-27d5-81eb-8141b727d7f9",
+      "eb6d5c7e-cf39-1f7a-67cc-c92d452b5342",
+      "f430b7bc-dc6e-102a-2f8f-c8ef860cd495",
+      "f5d6e14b-2380-e34a-2edb-2ad4265b7847",
+      "f8d533a2-0568-7dad-4710-3a6fca605ed0"
+    ]
+  },
+  "created_at": "2026-04-28T00:00:00.000000Z",
+  "updated_at": "2026-04-27T00:00:00.000000Z"
+}

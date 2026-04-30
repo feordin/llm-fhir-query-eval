@@ -1,0 +1,111 @@
+{
+  "id": "phekb-rheumatoid-arthritis-meds",
+  "source": "phekb",
+  "source_id": "rheumatoid-arthritis",
+  "name": "Rheumatoid Arthritis - DMARD/Biologic Medication Query",
+  "description": "Tests ability to find rheumatoid arthritis patients via disease-modifying antirheumatic drug (DMARD) and biologic prescriptions. RA management uses a step-up approach: conventional synthetic DMARDs (csDMARDs — methotrexate, hydroxychloroquine, sulfasalazine) as first-line, then biologic DMARDs (TNF inhibitors — adalimumab, infliximab) for inadequate responders. Synthea distributes patients across these two tiers. An LLM querying only methotrexate will miss the substantial fraction of patients on biologics-only or other csDMARDs.",
+  "prompt": "Find patients prescribed disease-modifying antirheumatic drugs (DMARDs) used to treat rheumatoid arthritis, including methotrexate, hydroxychloroquine, sulfasalazine, and biologic DMARDs such as adalimumab and infliximab.",
+  "prompts": {
+    "naive": "Find patients on rheumatoid arthritis medications.",
+    "broad": "Find patients prescribed disease-modifying antirheumatic drugs used in rheumatoid arthritis treatment: conventional DMARDs such as methotrexate, hydroxychloroquine, or sulfasalazine; or biologic TNF inhibitors such as adalimumab or infliximab.",
+    "expert": "I need MedicationRequest resources for any DMARD class used in RA. Use these RxNorm ingredient codes: 6851 (methotrexate, anchor csDMARD), 5521 (hydroxychloroquine), 9524 (sulfasalazine), 327361 (adalimumab, anti-TNF biologic), 191831 (infliximab, anti-TNF biologic). Combine in a single comma-separated code search."
+  },
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "algorithm_path": "medication-path",
+    "algorithm_path_description": "Patients with DMARD/biologic medication orders (Paths A and C). Captures both diagnosed RA patients and Path C tricky patients on DMARDs without an RA diagnosis (e.g., methotrexate for psoriasis, hydroxychloroquine for lupus, sulfasalazine for IBD).",
+    "code_systems": [
+      "RxNorm"
+    ],
+    "required_codes": [
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "6851",
+        "display": "methotrexate",
+        "source": "UMLS verified, RxNorm ingredient"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "5521",
+        "display": "hydroxychloroquine",
+        "source": "UMLS verified, RxNorm ingredient"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "9524",
+        "display": "sulfasalazine",
+        "source": "UMLS verified, RxNorm ingredient"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "327361",
+        "display": "adalimumab",
+        "source": "UMLS verified, RxNorm ingredient"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "191831",
+        "display": "infliximab",
+        "source": "UMLS verified, RxNorm ingredient"
+      }
+    ],
+    "complexity": "medium",
+    "tags": [
+      "medication",
+      "rheumatology",
+      "rheumatoid-arthritis",
+      "dmard",
+      "biologic",
+      "multi-class",
+      "code-variation"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "MedicationRequest",
+    "parameters": {
+      "code": "http://www.nlm.nih.gov/research/umls/rxnorm|6851,http://www.nlm.nih.gov/research/umls/rxnorm|5521,http://www.nlm.nih.gov/research/umls/rxnorm|9524,http://www.nlm.nih.gov/research/umls/rxnorm|327361,http://www.nlm.nih.gov/research/umls/rxnorm|191831"
+    },
+    "url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6851,http://www.nlm.nih.gov/research/umls/rxnorm|5521,http://www.nlm.nih.gov/research/umls/rxnorm|9524,http://www.nlm.nih.gov/research/umls/rxnorm|327361,http://www.nlm.nih.gov/research/umls/rxnorm|191831"
+  },
+  "test_data": {
+    "resources": [
+      "synthea/output/rheumatoid-arthritis/positive/fhir/",
+      "synthea/output/rheumatoid-arthritis/control/fhir/"
+    ],
+    "expected_result_count": 29,
+    "expected_resource_ids": [],
+    "expected_patient_ids": [
+      "09278a56-0541-6d95-b59b-2212f90e7614",
+      "0aa2e661-c0c3-a298-9666-cd112a38668e",
+      "0f321eb0-3fe3-e648-803c-66a0b357edf7",
+      "101ab214-653c-62d8-5c62-ece990be8837",
+      "1425765a-7ecf-c957-d4cc-3ed75a98cbad",
+      "14cd5a2b-c703-6204-e1cd-5c598f0d0b48",
+      "2017daab-c1bc-808d-bed8-3b352a2c5cdc",
+      "23be6240-c487-fd38-9323-89bdf3b53130",
+      "3ed9f977-3713-3382-9245-9322cd5545f4",
+      "433922c6-e082-42d1-6d0a-ee37b9b58c09",
+      "5a0bbc65-9779-6eba-456c-06f74fb015b8",
+      "5b897894-d747-42f9-1ee4-629a282a39d5",
+      "6acd5d2d-7d4d-1aad-3d3e-1d36ae43c340",
+      "749c03e5-67d5-cc3d-0d95-e526c7d431b4",
+      "881b42b8-a663-b348-72df-0dfbc68eca98",
+      "8ae0d313-4083-1efe-ef7a-190898515f70",
+      "a7b5693a-3b2d-89c3-b632-c19b837e2cb6",
+      "a93ab8fc-0fd8-4571-9806-41b39edd279c",
+      "c3e22793-0a42-74af-19a3-c1db0bfea0fa",
+      "c5d7e9c3-5c55-79db-23e6-92eb2a7820fe",
+      "c75b28c5-4f2d-932d-e336-a0dcff10452e",
+      "d4b816e8-6cd3-b35c-66db-3214e47b77f1",
+      "d5ca1c3e-abb0-e9b3-a5b9-7a58b46fd5f6",
+      "d5d36dea-9eff-9649-6649-fa0262630098",
+      "d6bc2a3c-f643-db37-108b-ef44c367d0f6",
+      "e1073fe9-ab54-8401-a0e7-78e9cc6509c5",
+      "e397d112-37ab-7240-d142-81a8a86b9ad2",
+      "edf28f19-c11a-567f-3627-c8f8149c8b19",
+      "f2822830-ed9d-8eb8-15ac-ecc67f540e5c"
+    ]
+  },
+  "created_at": "2026-04-27T00:00:00.000000Z",
+  "updated_at": "2026-04-27T00:00:00.000000Z"
+}

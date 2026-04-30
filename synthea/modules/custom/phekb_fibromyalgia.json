@@ -1,0 +1,112 @@
+{
+  "name": "PheKB Fibromyalgia",
+  "remarks": [
+    "Custom Synthea module for fibromyalgia.",
+    "First chronic pain syndrome phenotype.",
+    "Heavy cross-indication on meds path: duloxetine (also depression/anxiety/diabetic neuropathy), gabapentin (also epilepsy/neuropathic pain), amitriptyline (also depression/migraine prophylaxis/insomnia).",
+    "",
+    "Generates THREE patient paths:",
+    "  Path A (60%): Fibromyalgia dx + medication",
+    "  Path B (20%): Fibromyalgia dx, no medication (newly dx, lifestyle-only mgmt)",
+    "  Path C (20%): Med only, no fibromyalgia dx (TRICKY — these are mostly depression/neuropathic pain patients)",
+    "",
+    "Medication distribution (Paths A + C):",
+    "  40% Duloxetine (RxNorm 72625) — SNRI, FDA-approved for fibromyalgia",
+    "  35% Gabapentin (RxNorm 25480) — gabapentinoid",
+    "  25% Amitriptyline (RxNorm 704) — TCA, off-label but classic",
+    "",
+    "Age guard: >=18."
+  ],
+  "states": {
+    "Initial": { "type": "Initial", "direct_transition": "Age_Guard" },
+    "Age_Guard": { "type": "Guard", "allow": { "condition_type": "Age", "operator": ">=", "quantity": 18, "unit": "years" }, "direct_transition": "Set_FM_Flag" },
+    "Set_FM_Flag": { "type": "SetAttribute", "attribute": "fm_positive", "value": true, "direct_transition": "Choose_Patient_Path" },
+    "Choose_Patient_Path": {
+      "type": "Simple",
+      "distributed_transition": [
+        { "transition": "Set_Path_A", "distribution": 0.60 },
+        { "transition": "Set_Path_B", "distribution": 0.20 },
+        { "transition": "Set_Path_C", "distribution": 0.20 }
+      ]
+    },
+    "Set_Path_A": { "type": "SetAttribute", "attribute": "fm_has_dx", "value": true, "direct_transition": "Set_Path_A_Med" },
+    "Set_Path_A_Med": { "type": "SetAttribute", "attribute": "fm_has_med", "value": true, "direct_transition": "Choose_Med" },
+    "Set_Path_B": { "type": "SetAttribute", "attribute": "fm_has_dx", "value": true, "direct_transition": "Set_Path_B_Med" },
+    "Set_Path_B_Med": { "type": "SetAttribute", "attribute": "fm_has_med", "value": false, "direct_transition": "Choose_Med" },
+    "Set_Path_C": { "type": "SetAttribute", "remarks": ["TRICKY: med only, no FM dx"], "attribute": "fm_has_dx", "value": false, "direct_transition": "Set_Path_C_Med" },
+    "Set_Path_C_Med": { "type": "SetAttribute", "attribute": "fm_has_med", "value": true, "direct_transition": "Choose_Med" },
+
+    "Choose_Med": {
+      "type": "Simple",
+      "distributed_transition": [
+        { "transition": "Set_Med_Duloxetine", "distribution": 0.40 },
+        { "transition": "Set_Med_Gabapentin", "distribution": 0.35 },
+        { "transition": "Set_Med_Amitriptyline", "distribution": 0.25 }
+      ]
+    },
+    "Set_Med_Duloxetine": { "type": "SetAttribute", "attribute": "fm_med", "value": "duloxetine", "direct_transition": "Set_Needs_First_Visit" },
+    "Set_Med_Gabapentin": { "type": "SetAttribute", "attribute": "fm_med", "value": "gabapentin", "direct_transition": "Set_Needs_First_Visit" },
+    "Set_Med_Amitriptyline": { "type": "SetAttribute", "attribute": "fm_med", "value": "amitriptyline", "direct_transition": "Set_Needs_First_Visit" },
+
+    "Set_Needs_First_Visit": { "type": "SetAttribute", "attribute": "fm_needs_first_visit", "value": true, "direct_transition": "Wellness_Encounter" },
+    "Wellness_Encounter": { "type": "Encounter", "wellness": true, "direct_transition": "Check_First_Visit" },
+    "Check_First_Visit": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "fm_needs_first_visit", "operator": "==", "value": true }, "transition": "Check_Has_Diagnosis" },
+        { "transition": "End_Wellness_Encounter" }
+      ]
+    },
+    "Check_Has_Diagnosis": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "fm_has_dx", "operator": "==", "value": true }, "transition": "Diagnose_FM" },
+        { "transition": "Check_Med_NoDx" }
+      ]
+    },
+    "Diagnose_FM": { "type": "ConditionOnset", "assign_to_attribute": "fm_condition", "codes": [{ "system": "SNOMED-CT", "code": "24693007", "display": "Fibromyositis" }], "direct_transition": "Check_Med_WithDx" },
+
+    "Check_Med_WithDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "fm_has_med", "operator": "==", "value": true }, "transition": "Route_Med_WithDx" },
+        { "transition": "Clear_First_Visit_Flag" }
+      ]
+    },
+    "Route_Med_WithDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "fm_med", "operator": "==", "value": "duloxetine" }, "transition": "Prescribe_Duloxetine_WithDx" },
+        { "condition": { "condition_type": "Attribute", "attribute": "fm_med", "operator": "==", "value": "gabapentin" }, "transition": "Prescribe_Gabapentin_WithDx" },
+        { "transition": "Prescribe_Amitriptyline_WithDx" }
+      ]
+    },
+    "Prescribe_Duloxetine_WithDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "72625", "display": "duloxetine" }], "reason": "fm_condition", "direct_transition": "Clear_First_Visit_Flag" },
+    "Prescribe_Gabapentin_WithDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "25480", "display": "gabapentin" }], "reason": "fm_condition", "direct_transition": "Clear_First_Visit_Flag" },
+    "Prescribe_Amitriptyline_WithDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "704", "display": "amitriptyline" }], "reason": "fm_condition", "direct_transition": "Clear_First_Visit_Flag" },
+
+    "Check_Med_NoDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "fm_has_med", "operator": "==", "value": true }, "transition": "Route_Med_NoDx" },
+        { "transition": "Clear_First_Visit_Flag" }
+      ]
+    },
+    "Route_Med_NoDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "fm_med", "operator": "==", "value": "duloxetine" }, "transition": "Prescribe_Duloxetine_NoDx" },
+        { "condition": { "condition_type": "Attribute", "attribute": "fm_med", "operator": "==", "value": "gabapentin" }, "transition": "Prescribe_Gabapentin_NoDx" },
+        { "transition": "Prescribe_Amitriptyline_NoDx" }
+      ]
+    },
+    "Prescribe_Duloxetine_NoDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "72625", "display": "duloxetine" }], "direct_transition": "Clear_First_Visit_Flag" },
+    "Prescribe_Gabapentin_NoDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "25480", "display": "gabapentin" }], "direct_transition": "Clear_First_Visit_Flag" },
+    "Prescribe_Amitriptyline_NoDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "704", "display": "amitriptyline" }], "direct_transition": "Clear_First_Visit_Flag" },
+
+    "Clear_First_Visit_Flag": { "type": "SetAttribute", "attribute": "fm_needs_first_visit", "value": false, "direct_transition": "End_Wellness_Encounter" },
+    "End_Wellness_Encounter": { "type": "EncounterEnd", "direct_transition": "Followup_Delay" },
+    "Followup_Delay": { "type": "Delay", "range": { "low": 3, "high": 6, "unit": "months" }, "direct_transition": "Wellness_Encounter" }
+  },
+  "gmf_version": 2
+}

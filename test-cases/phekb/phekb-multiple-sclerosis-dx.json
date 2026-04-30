@@ -1,0 +1,122 @@
+{
+  "id": "phekb-multiple-sclerosis-dx",
+  "source": "phekb",
+  "source_id": "multiple-sclerosis",
+  "name": "Multiple Sclerosis - Diagnosis Code Query (Multi-Subtype)",
+  "description": "Tests ability to find multiple sclerosis patients via diagnosis codes. The PheKB MS algorithm requires either 2+ ICD-9 340 codes (Type 1 definitive) OR demyelinating disease codes plus MS-specific medications and keywords (Type 2). MS has well-defined clinical subtypes by disease course: Relapsing-Remitting MS (RRMS, ~85% of cases), Secondary Progressive MS (SPMS), Primary Progressive MS (PPMS, ~10-15%). Synthea distributes patients across these subtype codes plus the parent and an anatomic variant. An LLM querying only the parent code (24700007) will miss patients coded with the more specific course-based codes — which are increasingly preferred in modern neurology documentation.",
+  "prompt": "Find all patients with a diagnosis of multiple sclerosis, including relapsing-remitting MS, secondary progressive MS, and primary progressive MS.",
+  "prompts": {
+    "naive": "Find all patients with multiple sclerosis.",
+    "broad": "Find all patients diagnosed with any form of multiple sclerosis (MS) — including the general parent concept and the specific clinical courses: relapsing-remitting MS (RRMS, the most common form), secondary progressive MS (SPMS, evolution from RRMS), primary progressive MS (PPMS, gradual onset), and anatomic variants such as MS of the spinal cord.",
+    "expert": "I need to identify all multiple sclerosis patients. MS is documented under multiple SNOMED codes by clinical course: Multiple sclerosis (24700007) is the parent, with course-based subtypes Relapsing remitting multiple sclerosis (426373005, ~85% of cases), Secondary progressive multiple sclerosis (425500002), Primary progressive multiple sclerosis (428700003, ~10-15%), and anatomic variant Multiple sclerosis of the spinal cord (192927008). All five appear in the CSTE 'Multiple Sclerosis (Disorders) (SNOMED)' VSAC (OID 2.16.840.1.113762.1.4.1146.3257). Search Condition resources for all five codes."
+  },
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "algorithm_path": "diagnosis-path",
+    "algorithm_path_description": "Patients with MS diagnosis codes (Paths A and B). Maps to PheKB MS Type 1 definitive case definition: 2+ ICD-9 340 codes. Does NOT find Path C patients (on MS DMTs without dx — uncommon since DMTs are highly specific to MS).",
+    "code_systems": [
+      "SNOMED CT",
+      "ICD-10-CM"
+    ],
+    "required_codes": [
+      {
+        "system": "http://snomed.info/sct",
+        "code": "24700007",
+        "display": "Multiple sclerosis",
+        "source": "UMLS verified, parent concept"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "426373005",
+        "display": "Relapsing remitting multiple sclerosis",
+        "source": "VSAC CSTE Multiple Sclerosis"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "425500002",
+        "display": "Secondary progressive multiple sclerosis",
+        "source": "VSAC CSTE Multiple Sclerosis"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "428700003",
+        "display": "Primary progressive multiple sclerosis",
+        "source": "VSAC CSTE Multiple Sclerosis"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "192927008",
+        "display": "Multiple sclerosis of the spinal cord",
+        "source": "VSAC CSTE Multiple Sclerosis"
+      }
+    ],
+    "complexity": "medium",
+    "tags": [
+      "condition",
+      "neurology",
+      "multiple-sclerosis",
+      "diagnosis-code",
+      "multi-subtype",
+      "code-variation",
+      "demyelinating"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "Condition",
+    "parameters": {
+      "code": "http://snomed.info/sct|24700007,http://snomed.info/sct|426373005,http://snomed.info/sct|425500002,http://snomed.info/sct|428700003,http://snomed.info/sct|192927008"
+    },
+    "url": "Condition?code=http://snomed.info/sct|24700007,http://snomed.info/sct|426373005,http://snomed.info/sct|425500002,http://snomed.info/sct|428700003,http://snomed.info/sct|192927008"
+  },
+  "test_data": {
+    "resources": [
+      "synthea/output/multiple-sclerosis/positive/fhir/",
+      "synthea/output/multiple-sclerosis/control/fhir/"
+    ],
+    "expected_result_count": 39,
+    "expected_resource_ids": [],
+    "expected_patient_ids": [
+      "025e04e3-3431-9a30-9bba-2c841529ffab",
+      "060516d3-ccfc-15ad-ebe0-2319147e172d",
+      "0c7637b9-6f5f-8e52-4611-1e6b9bbfe7b4",
+      "0d05a491-8bf3-dbdc-aae3-10402f8d6db5",
+      "216c6dca-9697-9b00-fd8f-aa4d36400746",
+      "29034c02-93f7-a6db-aa63-ffdb59e1687e",
+      "293847e3-c422-c139-7b2c-fe2fae8525ac",
+      "30402368-6ac1-69b1-6f98-8f7746b3a39e",
+      "30993558-1fea-728c-6c6b-cbfe94b49e54",
+      "364e2103-71dc-57c7-d091-81b66c8aafbe",
+      "4390047f-5261-3de2-222f-cfa3cbab02b6",
+      "4492e120-f378-7ec0-cce8-7cb58a493d38",
+      "45bc6d1e-741b-4d2b-b314-2bf5fa5145c3",
+      "48b47fbf-5c88-8016-596f-2cf2c3c96546",
+      "5597ffc8-4eef-2200-a854-d9767b61fa0b",
+      "6799114f-c978-b725-185a-83cd81401710",
+      "6d99bd1f-b130-a235-5899-9d3166841dd3",
+      "7cb807d1-3ff0-f04f-e69c-a2d37d29b9ae",
+      "879390ce-6588-cec5-4653-1565293d6dd7",
+      "87ca3c29-2837-3b39-95fb-79810db0382c",
+      "89a4ba02-c39c-b4fa-9ff8-d8a64dbe8885",
+      "97cb011b-c256-68a7-3c30-5083580e09cc",
+      "9a78d7b4-dee2-0dda-b051-b0bdb714444a",
+      "9fe57634-70b9-62a8-bef7-cc9ecec38739",
+      "a4cf3221-e62c-e064-4eaf-66d6d5a9b583",
+      "aa144843-f8d8-19e0-27c5-2a8a1bb2a882",
+      "b3d227a3-10c6-f3c1-3fa6-5d4e42018f2c",
+      "b45b8c12-4a44-70a5-889b-2d4a9dd8b46a",
+      "ba244295-665b-0516-e660-a1596c88f8d1",
+      "bc6f4d63-e457-53bd-8cc9-a163b8ae9109",
+      "bf2dc17f-3af8-fb35-af76-5d927b1734d3",
+      "c316cb9f-8dc1-5854-6ea6-bc39e048b4aa",
+      "cd83edf5-1d19-5bbf-8753-a349cc5c2c16",
+      "cdc04d5c-3391-231a-4035-04f61e35696e",
+      "df37067b-a3ca-5b2b-d287-4d82df3daf65",
+      "dfa30d1d-835d-5070-449b-33a64ffc0b36",
+      "e8dbf8b0-d2ff-ebc5-3589-bc9512ce1160",
+      "faeddb54-a28c-2f0a-1be3-6fe22f759295",
+      "fc9d766d-329e-eb05-1fda-c7eebe43255b"
+    ]
+  },
+  "created_at": "2026-04-27T00:00:00.000000Z",
+  "updated_at": "2026-04-27T00:00:00.000000Z"
+}

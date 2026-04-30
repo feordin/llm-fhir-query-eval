@@ -1,0 +1,227 @@
+{
+  "name": "PheKB Colorectal Cancer",
+  "remarks": [
+    "Custom Synthea module for colorectal cancer (CRC).",
+    "**Third Procedure-resource phenotype** (after CHD revascularization and Sleep Apnea polysomnography).",
+    "First **four-resource-type union** test in the comprehensive case (Condition + MedicationRequest + Procedure + Observation).",
+    "",
+    "Generates FOUR patient paths:",
+    "  Path A (50%): CRC dx + chemo + colonoscopy + elevated CEA",
+    "  Path B (15%): CRC dx + chemo, no colonoscopy on record (treated elsewhere)",
+    "  Path C (20%): Colonoscopy only, NO CRC dx (screening for risk patients — negative result)",
+    "  Path D (15%): Elevated CEA only, NO dx and NO chemo (early presentation, undiagnosed)",
+    "",
+    "Diagnosis SNOMED variation (Paths A + B):",
+    "  35% Malignant neoplasm of colon (363406005) — parent",
+    "  15% Malignant neoplasm of cecum (363350007)",
+    "  20% Malignant neoplasm of rectum (187760008)",
+    "  15% Primary malignant neoplasm of colon (93761005)",
+    "  15% Primary malignant neoplasm of descending colon (93771007)",
+    "",
+    "Chemo variation (Paths A + B — 5 ingredients):",
+    "  25% Fluorouracil (4492)",
+    "  20% Capecitabine (194000)",
+    "  20% Oxaliplatin (32592)",
+    "  15% Irinotecan (51499)",
+    "  20% Leucovorin (6313)"
+  ],
+  "states": {
+    "Initial": { "type": "Initial", "direct_transition": "Age_Guard" },
+    "Age_Guard": { "type": "Guard", "allow": { "condition_type": "Age", "operator": ">=", "quantity": 45, "unit": "years" }, "direct_transition": "Set_CRC_Flag" },
+    "Set_CRC_Flag": { "type": "SetAttribute", "attribute": "crc_positive", "value": true, "direct_transition": "Choose_Patient_Path" },
+    "Choose_Patient_Path": {
+      "type": "Simple",
+      "distributed_transition": [
+        { "transition": "Set_Path_A", "distribution": 0.50 },
+        { "transition": "Set_Path_B", "distribution": 0.15 },
+        { "transition": "Set_Path_C", "distribution": 0.20 },
+        { "transition": "Set_Path_D", "distribution": 0.15 }
+      ]
+    },
+    "Set_Path_A": { "type": "SetAttribute", "attribute": "crc_has_dx", "value": true, "direct_transition": "Set_Path_A_Proc" },
+    "Set_Path_A_Proc": { "type": "SetAttribute", "attribute": "crc_has_proc", "value": true, "direct_transition": "Set_Path_A_Lab" },
+    "Set_Path_A_Lab": { "type": "SetAttribute", "attribute": "crc_has_high_cea", "value": true, "direct_transition": "Set_Path_A_Meds" },
+    "Set_Path_A_Meds": { "type": "SetAttribute", "attribute": "crc_has_meds", "value": true, "direct_transition": "Choose_Subtype" },
+
+    "Set_Path_B": { "type": "SetAttribute", "attribute": "crc_has_dx", "value": true, "direct_transition": "Set_Path_B_Proc" },
+    "Set_Path_B_Proc": { "type": "SetAttribute", "attribute": "crc_has_proc", "value": false, "direct_transition": "Set_Path_B_Lab" },
+    "Set_Path_B_Lab": { "type": "SetAttribute", "attribute": "crc_has_high_cea", "value": false, "direct_transition": "Set_Path_B_Meds" },
+    "Set_Path_B_Meds": { "type": "SetAttribute", "attribute": "crc_has_meds", "value": true, "direct_transition": "Choose_Subtype" },
+
+    "Set_Path_C": { "type": "SetAttribute", "remarks": ["TRICKY: colonoscopy without CRC dx (screening with negative result)"], "attribute": "crc_has_dx", "value": false, "direct_transition": "Set_Path_C_Proc" },
+    "Set_Path_C_Proc": { "type": "SetAttribute", "attribute": "crc_has_proc", "value": true, "direct_transition": "Set_Path_C_Lab" },
+    "Set_Path_C_Lab": { "type": "SetAttribute", "attribute": "crc_has_high_cea", "value": false, "direct_transition": "Set_Path_C_Meds" },
+    "Set_Path_C_Meds": { "type": "SetAttribute", "attribute": "crc_has_meds", "value": false, "direct_transition": "Choose_Subtype" },
+
+    "Set_Path_D": { "type": "SetAttribute", "remarks": ["TRICKY: elevated CEA without dx, proc, or chemo"], "attribute": "crc_has_dx", "value": false, "direct_transition": "Set_Path_D_Proc" },
+    "Set_Path_D_Proc": { "type": "SetAttribute", "attribute": "crc_has_proc", "value": false, "direct_transition": "Set_Path_D_Lab" },
+    "Set_Path_D_Lab": { "type": "SetAttribute", "attribute": "crc_has_high_cea", "value": true, "direct_transition": "Set_Path_D_Meds" },
+    "Set_Path_D_Meds": { "type": "SetAttribute", "attribute": "crc_has_meds", "value": false, "direct_transition": "Choose_Subtype" },
+
+    "Choose_Subtype": {
+      "type": "Simple",
+      "distributed_transition": [
+        { "transition": "Set_Subtype_Colon", "distribution": 0.35 },
+        { "transition": "Set_Subtype_Cecum", "distribution": 0.15 },
+        { "transition": "Set_Subtype_Rectum", "distribution": 0.20 },
+        { "transition": "Set_Subtype_PrimaryColon", "distribution": 0.15 },
+        { "transition": "Set_Subtype_Descending", "distribution": 0.15 }
+      ]
+    },
+    "Set_Subtype_Colon": { "type": "SetAttribute", "attribute": "crc_subtype", "value": "colon", "direct_transition": "Choose_Med" },
+    "Set_Subtype_Cecum": { "type": "SetAttribute", "attribute": "crc_subtype", "value": "cecum", "direct_transition": "Choose_Med" },
+    "Set_Subtype_Rectum": { "type": "SetAttribute", "attribute": "crc_subtype", "value": "rectum", "direct_transition": "Choose_Med" },
+    "Set_Subtype_PrimaryColon": { "type": "SetAttribute", "attribute": "crc_subtype", "value": "primarycolon", "direct_transition": "Choose_Med" },
+    "Set_Subtype_Descending": { "type": "SetAttribute", "attribute": "crc_subtype", "value": "descending", "direct_transition": "Choose_Med" },
+
+    "Choose_Med": {
+      "type": "Simple",
+      "distributed_transition": [
+        { "transition": "Set_Med_5FU", "distribution": 0.25 },
+        { "transition": "Set_Med_Cape", "distribution": 0.20 },
+        { "transition": "Set_Med_Oxali", "distribution": 0.20 },
+        { "transition": "Set_Med_Irino", "distribution": 0.15 },
+        { "transition": "Set_Med_Leuco", "distribution": 0.20 }
+      ]
+    },
+    "Set_Med_5FU": { "type": "SetAttribute", "attribute": "crc_med", "value": "fluorouracil", "direct_transition": "Set_Needs_First_Visit" },
+    "Set_Med_Cape": { "type": "SetAttribute", "attribute": "crc_med", "value": "capecitabine", "direct_transition": "Set_Needs_First_Visit" },
+    "Set_Med_Oxali": { "type": "SetAttribute", "attribute": "crc_med", "value": "oxaliplatin", "direct_transition": "Set_Needs_First_Visit" },
+    "Set_Med_Irino": { "type": "SetAttribute", "attribute": "crc_med", "value": "irinotecan", "direct_transition": "Set_Needs_First_Visit" },
+    "Set_Med_Leuco": { "type": "SetAttribute", "attribute": "crc_med", "value": "leucovorin", "direct_transition": "Set_Needs_First_Visit" },
+
+    "Set_Needs_First_Visit": { "type": "SetAttribute", "attribute": "crc_needs_first_visit", "value": true, "direct_transition": "Wellness_Encounter" },
+    "Wellness_Encounter": { "type": "Encounter", "wellness": true, "direct_transition": "Check_First_Visit" },
+    "Check_First_Visit": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "crc_needs_first_visit", "operator": "==", "value": true }, "transition": "Check_Has_Diagnosis" },
+        { "transition": "End_Wellness_Encounter" }
+      ]
+    },
+    "Check_Has_Diagnosis": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "crc_has_dx", "operator": "==", "value": true }, "transition": "Route_By_Subtype" },
+        { "transition": "Check_Lab_NoDx" }
+      ]
+    },
+    "Route_By_Subtype": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "crc_subtype", "operator": "==", "value": "colon" }, "transition": "Diagnose_Colon" },
+        { "condition": { "condition_type": "Attribute", "attribute": "crc_subtype", "operator": "==", "value": "cecum" }, "transition": "Diagnose_Cecum" },
+        { "condition": { "condition_type": "Attribute", "attribute": "crc_subtype", "operator": "==", "value": "rectum" }, "transition": "Diagnose_Rectum" },
+        { "condition": { "condition_type": "Attribute", "attribute": "crc_subtype", "operator": "==", "value": "primarycolon" }, "transition": "Diagnose_PrimaryColon" },
+        { "transition": "Diagnose_Descending" }
+      ]
+    },
+    "Diagnose_Colon": { "type": "ConditionOnset", "assign_to_attribute": "crc_condition", "codes": [{ "system": "SNOMED-CT", "code": "363406005", "display": "Malignant neoplasm of colon" }], "direct_transition": "Check_Lab_WithDx" },
+    "Diagnose_Cecum": { "type": "ConditionOnset", "assign_to_attribute": "crc_condition", "codes": [{ "system": "SNOMED-CT", "code": "363350007", "display": "Malignant neoplasm of cecum" }], "direct_transition": "Check_Lab_WithDx" },
+    "Diagnose_Rectum": { "type": "ConditionOnset", "assign_to_attribute": "crc_condition", "codes": [{ "system": "SNOMED-CT", "code": "187760008", "display": "Malignant neoplasm of rectum, rectosigmoid junction and anus" }], "direct_transition": "Check_Lab_WithDx" },
+    "Diagnose_PrimaryColon": { "type": "ConditionOnset", "assign_to_attribute": "crc_condition", "codes": [{ "system": "SNOMED-CT", "code": "93761005", "display": "Primary malignant neoplasm of colon" }], "direct_transition": "Check_Lab_WithDx" },
+    "Diagnose_Descending": { "type": "ConditionOnset", "assign_to_attribute": "crc_condition", "codes": [{ "system": "SNOMED-CT", "code": "93771007", "display": "Primary malignant neoplasm of descending colon" }], "direct_transition": "Check_Lab_WithDx" },
+
+    "Check_Lab_WithDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "crc_has_high_cea", "operator": "==", "value": true }, "transition": "Record_High_CEA_WithDx" },
+        { "transition": "Check_Meds_WithDx" }
+      ]
+    },
+    "Record_High_CEA_WithDx": {
+      "type": "Observation",
+      "category": "laboratory",
+      "unit": "ng/mL",
+      "codes": [{ "system": "LOINC", "code": "2039-6", "display": "Carcinoembryonic Ag [Mass/volume] in Serum or Plasma" }],
+      "range": { "low": 10, "high": 50 },
+      "direct_transition": "Check_Meds_WithDx"
+    },
+    "Check_Meds_WithDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "crc_has_meds", "operator": "==", "value": true }, "transition": "Route_Med_WithDx" },
+        { "transition": "Check_Procedure_WithDx" }
+      ]
+    },
+    "Route_Med_WithDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "crc_med", "operator": "==", "value": "fluorouracil" }, "transition": "Prescribe_5FU_WithDx" },
+        { "condition": { "condition_type": "Attribute", "attribute": "crc_med", "operator": "==", "value": "capecitabine" }, "transition": "Prescribe_Cape_WithDx" },
+        { "condition": { "condition_type": "Attribute", "attribute": "crc_med", "operator": "==", "value": "oxaliplatin" }, "transition": "Prescribe_Oxali_WithDx" },
+        { "condition": { "condition_type": "Attribute", "attribute": "crc_med", "operator": "==", "value": "irinotecan" }, "transition": "Prescribe_Irino_WithDx" },
+        { "transition": "Prescribe_Leuco_WithDx" }
+      ]
+    },
+    "Prescribe_5FU_WithDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "4492", "display": "fluorouracil" }], "reason": "crc_condition", "direct_transition": "Check_Procedure_WithDx" },
+    "Prescribe_Cape_WithDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "194000", "display": "capecitabine" }], "reason": "crc_condition", "direct_transition": "Check_Procedure_WithDx" },
+    "Prescribe_Oxali_WithDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "32592", "display": "oxaliplatin" }], "reason": "crc_condition", "direct_transition": "Check_Procedure_WithDx" },
+    "Prescribe_Irino_WithDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "51499", "display": "irinotecan" }], "reason": "crc_condition", "direct_transition": "Check_Procedure_WithDx" },
+    "Prescribe_Leuco_WithDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "6313", "display": "leucovorin" }], "reason": "crc_condition", "direct_transition": "Check_Procedure_WithDx" },
+
+    "Check_Procedure_WithDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "crc_has_proc", "operator": "==", "value": true }, "transition": "GI_Lab_Encounter_WithDx" },
+        { "transition": "Clear_First_Visit_Flag" }
+      ]
+    },
+    "GI_Lab_Encounter_WithDx": {
+      "type": "Encounter",
+      "encounter_class": "ambulatory",
+      "reason": "crc_condition",
+      "codes": [{ "system": "SNOMED-CT", "code": "440655000", "display": "Outpatient procedure encounter (procedure)" }],
+      "direct_transition": "Procedure_Colonoscopy_WithDx"
+    },
+    "Procedure_Colonoscopy_WithDx": {
+      "type": "Procedure",
+      "reason": "crc_condition",
+      "codes": [{ "system": "SNOMED-CT", "code": "73761001", "display": "Colonoscopy (procedure)" }],
+      "duration": { "low": 30, "high": 60, "unit": "minutes" },
+      "direct_transition": "End_GI_Lab_Encounter_WithDx"
+    },
+    "End_GI_Lab_Encounter_WithDx": { "type": "EncounterEnd", "direct_transition": "Clear_First_Visit_Flag" },
+
+    "Check_Lab_NoDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "crc_has_high_cea", "operator": "==", "value": true }, "transition": "Record_High_CEA_NoDx" },
+        { "transition": "Check_Procedure_NoDx" }
+      ]
+    },
+    "Record_High_CEA_NoDx": {
+      "type": "Observation",
+      "category": "laboratory",
+      "unit": "ng/mL",
+      "codes": [{ "system": "LOINC", "code": "2039-6", "display": "Carcinoembryonic Ag [Mass/volume] in Serum or Plasma" }],
+      "range": { "low": 6, "high": 15 },
+      "direct_transition": "Check_Procedure_NoDx"
+    },
+    "Check_Procedure_NoDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "crc_has_proc", "operator": "==", "value": true }, "transition": "GI_Lab_Encounter_NoDx" },
+        { "transition": "Clear_First_Visit_Flag" }
+      ]
+    },
+    "GI_Lab_Encounter_NoDx": {
+      "type": "Encounter",
+      "encounter_class": "ambulatory",
+      "codes": [{ "system": "SNOMED-CT", "code": "440655000", "display": "Outpatient procedure encounter (procedure)" }],
+      "direct_transition": "Procedure_Colonoscopy_NoDx"
+    },
+    "Procedure_Colonoscopy_NoDx": {
+      "type": "Procedure",
+      "codes": [{ "system": "SNOMED-CT", "code": "73761001", "display": "Colonoscopy (procedure)" }],
+      "duration": { "low": 30, "high": 60, "unit": "minutes" },
+      "direct_transition": "End_GI_Lab_Encounter_NoDx"
+    },
+    "End_GI_Lab_Encounter_NoDx": { "type": "EncounterEnd", "direct_transition": "Clear_First_Visit_Flag" },
+
+    "Clear_First_Visit_Flag": { "type": "SetAttribute", "attribute": "crc_needs_first_visit", "value": false, "direct_transition": "End_Wellness_Encounter" },
+    "End_Wellness_Encounter": { "type": "EncounterEnd", "direct_transition": "Followup_Delay" },
+    "Followup_Delay": { "type": "Delay", "range": { "low": 6, "high": 12, "unit": "months" }, "direct_transition": "Wellness_Encounter" }
+  },
+  "gmf_version": 2
+}

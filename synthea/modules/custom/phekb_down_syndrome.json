@@ -1,0 +1,29 @@
+{
+  "name": "PheKB Down Syndrome",
+  "remarks": [
+    "Custom Synthea module for Down syndrome (Trisomy 21).",
+    "First chromosomal abnormality phenotype. Lifelong genetic condition.",
+    "Single-path: 100% have Down syndrome dx (chromosomal — present from birth).",
+    "",
+    "Age guard: >=1 (typically diagnosed at birth or in early infancy)."
+  ],
+  "states": {
+    "Initial": { "type": "Initial", "direct_transition": "Age_Guard" },
+    "Age_Guard": { "type": "Guard", "allow": { "condition_type": "Age", "operator": ">=", "quantity": 1, "unit": "years" }, "direct_transition": "Set_DS_Flag" },
+    "Set_DS_Flag": { "type": "SetAttribute", "attribute": "ds_positive", "value": true, "direct_transition": "Set_Needs_First_Visit" },
+    "Set_Needs_First_Visit": { "type": "SetAttribute", "attribute": "ds_needs_first_visit", "value": true, "direct_transition": "Wellness_Encounter" },
+    "Wellness_Encounter": { "type": "Encounter", "wellness": true, "direct_transition": "Check_First_Visit" },
+    "Check_First_Visit": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "ds_needs_first_visit", "operator": "==", "value": true }, "transition": "Diagnose_DS" },
+        { "transition": "End_Wellness_Encounter" }
+      ]
+    },
+    "Diagnose_DS": { "type": "ConditionOnset", "assign_to_attribute": "ds_condition", "codes": [{ "system": "SNOMED-CT", "code": "41040004", "display": "Complete trisomy 21 syndrome" }], "direct_transition": "Clear_First_Visit_Flag" },
+    "Clear_First_Visit_Flag": { "type": "SetAttribute", "attribute": "ds_needs_first_visit", "value": false, "direct_transition": "End_Wellness_Encounter" },
+    "End_Wellness_Encounter": { "type": "EncounterEnd", "direct_transition": "Followup_Delay" },
+    "Followup_Delay": { "type": "Delay", "range": { "low": 6, "high": 12, "unit": "months" }, "direct_transition": "Wellness_Encounter" }
+  },
+  "gmf_version": 2
+}

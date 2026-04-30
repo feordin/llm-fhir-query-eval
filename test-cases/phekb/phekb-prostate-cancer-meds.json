@@ -1,0 +1,87 @@
+{
+  "id": "phekb-prostate-cancer-meds",
+  "source": "phekb",
+  "source_id": "prostate-cancer",
+  "name": "Prostate Cancer - Androgen Deprivation Therapy Query",
+  "description": "Tests ability to find prostate cancer patients via androgen deprivation therapy (ADT) and anti-androgens. ADT is highly prostate-specific: leuprolide (GnRH agonist), bicalutamide (anti-androgen), enzalutamide (next-gen anti-androgen), abiraterone (CYP17 inhibitor), degarelix (GnRH antagonist). All five drugs are essentially male-PCa-only.",
+  "prompt": "Find patients prescribed prostate cancer hormonal therapy including leuprolide, bicalutamide, enzalutamide, abiraterone, or degarelix.",
+  "prompts": {
+    "naive": "Find patients on prostate cancer drugs.",
+    "broad": "Find patients prescribed androgen deprivation therapy or anti-androgens for prostate cancer — GnRH agonists (leuprolide), GnRH antagonists (degarelix), first-generation anti-androgens (bicalutamide), and next-generation anti-androgens (enzalutamide, abiraterone).",
+    "expert": "I need MedicationRequest resources for any prostate cancer hormonal therapy. Use these RxNorm ingredient codes: 42375 (leuprolide, GnRH agonist), 83008 (bicalutamide, anti-androgen), 1307298 (enzalutamide), 1100072 (abiraterone), 475230 (degarelix, GnRH antagonist). Combine in a single comma-separated code search. These drugs are essentially PCa-specific — minimal cross-indication."
+  },
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "algorithm_path": "medication-path",
+    "algorithm_path_description": "Patients with ADT/anti-androgen orders. High prostate-specificity drug class.",
+    "code_systems": [
+      "RxNorm"
+    ],
+    "required_codes": [
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "42375",
+        "display": "leuprolide",
+        "source": "RxNav verified"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "83008",
+        "display": "bicalutamide",
+        "source": "RxNav verified"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "1307298",
+        "display": "enzalutamide",
+        "source": "RxNav verified"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "1100072",
+        "display": "abiraterone",
+        "source": "RxNav verified"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "475230",
+        "display": "degarelix",
+        "source": "RxNav verified"
+      }
+    ],
+    "complexity": "medium",
+    "tags": [
+      "medication",
+      "oncology",
+      "prostate-cancer",
+      "adt",
+      "androgen-deprivation",
+      "high-specificity"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "MedicationRequest",
+    "parameters": {
+      "code": "http://www.nlm.nih.gov/research/umls/rxnorm|42375,http://www.nlm.nih.gov/research/umls/rxnorm|83008,http://www.nlm.nih.gov/research/umls/rxnorm|1307298,http://www.nlm.nih.gov/research/umls/rxnorm|1100072,http://www.nlm.nih.gov/research/umls/rxnorm|475230"
+    },
+    "url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|42375,http://www.nlm.nih.gov/research/umls/rxnorm|83008,http://www.nlm.nih.gov/research/umls/rxnorm|1307298,http://www.nlm.nih.gov/research/umls/rxnorm|1100072,http://www.nlm.nih.gov/research/umls/rxnorm|475230"
+  },
+  "test_data": {
+    "resources": [
+      "synthea/output/prostate-cancer/positive/fhir/",
+      "synthea/output/prostate-cancer/control/fhir/"
+    ],
+    "expected_result_count": 6,
+    "expected_resource_ids": [],
+    "expected_patient_ids": [
+      "04361431-ab75-3fa9-5616-00548b219024",
+      "390a3fad-08db-baa0-7e83-3571bc82aaba",
+      "79f68bd1-f7bb-443e-a986-a73f364451b4",
+      "7d03dc4f-bd78-fcdc-1cee-17fc2b0d7da3",
+      "92907ddf-ffae-cf3d-9c6c-ad5ce2d8329d",
+      "a2035979-78c8-ea3c-9a16-91a8e1990a82"
+    ]
+  },
+  "created_at": "2026-04-28T00:00:00.000000Z",
+  "updated_at": "2026-04-27T00:00:00.000000Z"
+}

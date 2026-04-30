@@ -1,0 +1,106 @@
+{
+  "id": "phekb-peripheral-arterial-disease-dx",
+  "source": "phekb",
+  "source_id": "peripheral-arterial-disease",
+  "name": "PAD - Diagnosis Code Query (Multi-Form)",
+  "description": "Tests ability to find PAD patients via diagnosis codes. PAD is documented under multiple SNOMED codes by clinical pattern: parent peripheral vascular disease, peripheral arterial occlusive disease, intermittent claudication (characteristic finding), and diabetic-specific peripheral angiopathy variants. Synthea distributes patients across these forms.",
+  "prompt": "Find all patients with a diagnosis of peripheral arterial disease, including peripheral vascular disease, peripheral arterial occlusive disease, intermittent claudication, and diabetic peripheral angiopathy.",
+  "prompts": {
+    "naive": "Find all patients with peripheral arterial disease.",
+    "broad": "Find all patients diagnosed with any form of peripheral arterial disease — including peripheral vascular disease (parent), peripheral arterial occlusive disease, intermittent claudication (the characteristic exertional leg pain), and diabetic-specific peripheral angiopathy variants.",
+    "expert": "I need to identify all PAD patients. PAD is documented under multiple SNOMED codes from the AIR Atherosclerosis and PAD VSAC: Peripheral vascular disease (400047006) is the broader parent, with Peripheral arterial occlusive disease (399957001), Intermittent claudication finding (63491006) — the symptomatic variant, Peripheral angiopathy due to T2DM (314902007), and Peripheral vascular disorder due to DM (421895002). Search Condition resources for all five codes."
+  },
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "algorithm_path": "diagnosis-path",
+    "algorithm_path_description": "Patients with PAD diagnosis codes. **First peripheral vascular phenotype** (distinct from coronary CHD or venous VTE).",
+    "code_systems": [
+      "SNOMED CT"
+    ],
+    "required_codes": [
+      {
+        "system": "http://snomed.info/sct",
+        "code": "400047006",
+        "display": "Peripheral vascular disease",
+        "source": "UMLS verified, parent"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "399957001",
+        "display": "Peripheral arterial occlusive disease",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "63491006",
+        "display": "Intermittent claudication",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "314902007",
+        "display": "Peripheral angiopathy due to type 2 diabetes mellitus",
+        "source": "VSAC"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "421895002",
+        "display": "Peripheral vascular disorder due to diabetes mellitus",
+        "source": "VSAC"
+      }
+    ],
+    "complexity": "medium",
+    "tags": [
+      "condition",
+      "vascular",
+      "peripheral-arterial-disease",
+      "pad",
+      "claudication",
+      "diagnosis-code",
+      "first-peripheral-vascular"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "Condition",
+    "parameters": {
+      "code": "http://snomed.info/sct|400047006,http://snomed.info/sct|399957001,http://snomed.info/sct|63491006,http://snomed.info/sct|314902007,http://snomed.info/sct|421895002"
+    },
+    "url": "Condition?code=http://snomed.info/sct|400047006,http://snomed.info/sct|399957001,http://snomed.info/sct|63491006,http://snomed.info/sct|314902007,http://snomed.info/sct|421895002"
+  },
+  "test_data": {
+    "resources": [
+      "synthea/output/peripheral-arterial-disease/positive/fhir/",
+      "synthea/output/peripheral-arterial-disease/control/fhir/"
+    ],
+    "expected_result_count": 24,
+    "expected_resource_ids": [],
+    "expected_patient_ids": [
+      "09f3b8ba-3a42-0a91-f0e9-87716b03670a",
+      "160ca513-26e6-3922-827f-230c861bfaaf",
+      "1801cc07-195a-ffb0-a099-be4100c5b919",
+      "19f57e0d-7e58-0ff2-9f75-40fb959b2d1c",
+      "3963fdf2-f6fb-d97b-f88e-1144b3fbb667",
+      "4d4f9e9b-54ae-88c6-8d74-b680eb6f97ec",
+      "536aaf75-5327-465a-af0c-f0016cab3411",
+      "6d27dcfd-f640-3b21-e94b-6c1fbde4cf66",
+      "6d8d8b11-39cb-3587-271b-9941b349afe0",
+      "6e0a3cc0-e275-ce24-f817-fc6d27995be6",
+      "7a684205-861c-9dc8-a32f-de0444571878",
+      "8493f414-216f-0c0a-6942-de11d1c26f1e",
+      "85d5c45e-8e24-1ae3-fd20-831303ab9c9e",
+      "8810b045-4d6c-8ade-760f-88501cf70cf1",
+      "98b58cbe-9f6a-deb5-c6ef-e9ba574fd203",
+      "b8814e37-b4db-7f89-a3d9-324e33869570",
+      "b8ab0c34-d867-0ca7-12ce-002ed693059e",
+      "cc91fceb-afd8-1e93-01b4-4cacdd4446e4",
+      "d642981b-a457-45d9-6c82-8b3bf0e8ac2f",
+      "dd02525a-3d76-1d9d-048c-aac3295ba3c0",
+      "e9026439-14e6-0353-085c-ce6dbceac5cb",
+      "f2386c83-9961-fdcf-b1f1-849ae2475dc8",
+      "f38f691a-fb7c-329a-64bf-05480e1405ac",
+      "f8dffb42-abfa-d04d-4148-6a2e90d1d61d"
+    ]
+  },
+  "created_at": "2026-04-28T00:00:00.000000Z",
+  "updated_at": "2026-04-27T00:00:00.000000Z"
+}

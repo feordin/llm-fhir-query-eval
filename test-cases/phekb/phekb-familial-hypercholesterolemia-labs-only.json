@@ -1,0 +1,63 @@
+{
+  "id": "phekb-familial-hypercholesterolemia-labs-only",
+  "source": "phekb",
+  "source_id": "familial-hypercholesterolemia",
+  "name": "Familial Hypercholesterolemia - Untreated/Undiagnosed FH (Lab-Only Path D)",
+  "description": "Tricky test case: finds patients with LDL ≥ 190 mg/dL but NO familial hypercholesterolemia diagnosis AND NO statin therapy (Path D). FH is **massively underdiagnosed** — studies estimate only 10% of FH patients are correctly identified. Many patients have severely elevated LDL but no FH diagnosis (might be coded as generic 'hyperlipidemia' or not at all) and may not yet be on statins. This is the most diagnostic test case for FH — it isolates the population that genetic screening campaigns should target.",
+  "prompt": "Are there any patients in our system who have very high LDL cholesterol values (above 190 mg/dL) suggesting possible familial hypercholesterolemia, but have not been formally diagnosed with FH and are not on statin therapy? I want to identify potential cases for genetic testing referral.",
+  "prompts": {
+    "naive": "Find patients with high LDL but no FH diagnosis or statin therapy.",
+    "expert": "I need to identify the dominant FH underdiagnosis pattern: patients with biochemical evidence of severe hyperlipidemia who lack both an FH Condition and statin therapy. Three-step approach: first find Observations with LOINC 2089-1 (LDL) value-quantity ge 190, then exclude any patient with a Condition for FH (398036000, 238079002, 238078005, 403829002, 403830007), then exclude any patient with a MedicationRequest for any statin (RxNorm 83367, 36567, 301542, 42463, 6472). The remaining patients are candidates for FH genetic testing referral."
+  },
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "algorithm_path": "labs-only-path",
+    "algorithm_path_description": "Path D 'tricky' patients: have LDL ≥ 190 but NO FH dx AND NO statin therapy. The Synthea module weights this path moderately (~20%) because real-world FH underdiagnosis is severe.",
+    "code_systems": [
+      "LOINC",
+      "SNOMED CT",
+      "RxNorm"
+    ],
+    "required_codes": [
+      {
+        "system": "http://loinc.org",
+        "code": "2089-1",
+        "display": "Cholesterol in LDL [Mass/volume] in Serum or Plasma",
+        "source": "UMLS verified"
+      }
+    ],
+    "complexity": "hard",
+    "tags": [
+      "observation",
+      "cardiology",
+      "familial-hypercholesterolemia",
+      "tricky",
+      "labs-only",
+      "value-quantity",
+      "cross-resource",
+      "underdiagnosed-fh"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "Observation",
+    "parameters": {
+      "code": "http://loinc.org|2089-1",
+      "value-quantity": "ge190"
+    },
+    "url": "Observation?code=http://loinc.org|2089-1&value-quantity=ge190"
+  },
+  "test_data": {
+    "resources": [
+      "synthea/output/familial-hypercholesterolemia/positive/fhir/",
+      "synthea/output/familial-hypercholesterolemia/control/fhir/"
+    ],
+    "expected_result_count": 2,
+    "expected_resource_ids": [],
+    "expected_patient_ids": [
+      "38621d08-b1b1-a7a4-f149-5741c923fc27",
+      "95120fa4-48ec-52b0-535e-58e8e001bb50"
+    ]
+  },
+  "created_at": "2026-04-27T00:00:00.000000Z",
+  "updated_at": "2026-04-27T00:00:00.000000Z"
+}

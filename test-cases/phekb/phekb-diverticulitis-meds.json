@@ -1,0 +1,94 @@
+{
+  "id": "phekb-diverticulitis-meds",
+  "source": "phekb",
+  "source_id": "diverticulitis",
+  "name": "Diverticulitis - Antibiotic Regimen Query (Cipro + Metro)",
+  "description": "Tests ability to find diverticulitis patients via the standard antibiotic regimen — ciprofloxacin + metronidazole. High cross-indication: cipro is also for UTI/respiratory; metronidazole for C. diff/anaerobic infections. The combination is more specific to intra-abdominal infections than either alone.",
+  "prompt": "Find patients prescribed both ciprofloxacin and metronidazole — the standard outpatient antibiotic regimen for diverticulitis.",
+  "prompts": {
+    "naive": "Find patients on cipro and metronidazole.",
+    "broad": "Find patients prescribed ciprofloxacin or metronidazole — the standard outpatient antibiotic regimen for uncomplicated diverticulitis (also used for other intra-abdominal infections).",
+    "expert": "Search MedicationRequest with RxNorm codes for ciprofloxacin (2551) and metronidazole (6922). Query: MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|2551,http://www.nlm.nih.gov/research/umls/rxnorm|6922"
+  },
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "algorithm_path": "medication-path",
+    "algorithm_path_description": "Patients on cipro/metro antibiotic regimen. Cross-indication with other infections.",
+    "code_systems": [
+      "RxNorm"
+    ],
+    "required_codes": [
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "2551",
+        "display": "ciprofloxacin",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "6922",
+        "display": "metronidazole",
+        "source": "UMLS verified"
+      }
+    ],
+    "complexity": "medium",
+    "tags": [
+      "medication",
+      "gi",
+      "diverticulitis",
+      "antibiotic",
+      "ciprofloxacin",
+      "metronidazole"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "MedicationRequest",
+    "parameters": {
+      "code": "http://www.nlm.nih.gov/research/umls/rxnorm|2551,http://www.nlm.nih.gov/research/umls/rxnorm|6922"
+    },
+    "url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|2551,http://www.nlm.nih.gov/research/umls/rxnorm|6922"
+  },
+  "test_data": {
+    "resources": [
+      "synthea/output/diverticulitis/positive/fhir/",
+      "synthea/output/diverticulitis/control/fhir/"
+    ],
+    "expected_result_count": 31,
+    "expected_resource_ids": [],
+    "expected_patient_ids": [
+      "09f4fbad-6ba4-1fbe-4cc1-2c0d899655fe",
+      "0bd0c66c-db27-d241-717c-df63f24bc9cb",
+      "0feae702-00bf-2d99-53b6-f9e285972b03",
+      "12346816-27cf-e822-0f23-fc6e94ff1e80",
+      "13024d58-2ee9-1ac5-8230-191925c35d10",
+      "313b9fc1-f977-cc6a-9b0b-43ffafefea43",
+      "3221a102-445c-7b46-7e33-4f0d472b6ecb",
+      "339e2a54-3dec-7347-7650-83b23f464761",
+      "3c95b079-2cab-0e78-bd17-666a55dfb2cf",
+      "3da97c46-d2be-803e-9cfe-d81a45a462f3",
+      "4424ce57-619f-4ccf-8c51-6ec2898ced1a",
+      "46c61b90-ea81-6f3e-1261-4e2e8e8bc495",
+      "4b1fec75-ba0b-4cc7-af68-540cc1e99a14",
+      "4cded429-2e9d-3973-96c9-ece25ac57386",
+      "83143a5e-aa8b-c379-cb5e-b43ee1c11c21",
+      "844853af-d6d0-5894-3b5d-3ec9c6d8b725",
+      "850e0e8d-eec5-334b-9b78-6b008cf1af63",
+      "8a5cc612-75c6-9878-14ab-d9a99916000e",
+      "9021a60a-6dcf-e08b-82c3-a638e2b11b82",
+      "9039a4f2-4ea1-408d-7164-9ecaab6ec155",
+      "a23e61e8-2019-93e9-a94f-a835ea5b5b39",
+      "a8539264-7779-57bb-5180-97014f5856d7",
+      "ab6f3f33-20bc-7f6f-491d-237c4f499c11",
+      "bf8188ad-d52d-c5b1-f852-27eeaeaeaf1d",
+      "c1a425a1-0c0e-617c-e4b4-39d79b2938b4",
+      "c40fa8de-04d6-aa9f-c487-cdc0cb417280",
+      "c43a4fb4-da8a-514e-4aa7-b2da5c208e00",
+      "e7dba35b-db2f-eaad-f410-c491f0f1e894",
+      "ebcb0391-2fc9-3f31-8c8f-2ac000241edc",
+      "fac12889-72ff-f15c-521f-5d6f9fa7c71a",
+      "fda184d7-453a-79ad-7790-64c282a2b1c3"
+    ]
+  },
+  "created_at": "2026-04-28T00:00:00.000000Z",
+  "updated_at": "2026-04-27T00:00:00.000000Z"
+}

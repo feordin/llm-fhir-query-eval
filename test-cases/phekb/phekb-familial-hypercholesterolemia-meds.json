@@ -1,0 +1,104 @@
+{
+  "id": "phekb-familial-hypercholesterolemia-meds",
+  "source": "phekb",
+  "source_id": "familial-hypercholesterolemia",
+  "name": "Familial Hypercholesterolemia - Statin Therapy Query",
+  "description": "Tests ability to find FH patients via statin (HMG-CoA reductase inhibitor) prescriptions. The PheKB FH algorithm uses a 30% LDL reduction adjustment for patients on lipid-lowering therapy. High-intensity statins (atorvastatin 40-80mg, rosuvastatin 20-40mg) are first-line for FH. Synthea distributes patients across 5 statins. An LLM querying only atorvastatin will miss patients on simvastatin/rosuvastatin/pravastatin/lovastatin.",
+  "prompt": "Find patients prescribed statin medications used for cholesterol management, including atorvastatin, simvastatin, rosuvastatin, pravastatin, or lovastatin.",
+  "prompts": {
+    "naive": "Find patients on statins.",
+    "broad": "Find patients prescribed any HMG-CoA reductase inhibitor (statin) for cholesterol management — atorvastatin, simvastatin, rosuvastatin, pravastatin, or lovastatin.",
+    "expert": "I need MedicationRequest resources for any statin. Use these RxNorm ingredient codes: 83367 (atorvastatin), 36567 (simvastatin), 301542 (rosuvastatin), 42463 (pravastatin), 6472 (lovastatin). Combine in a single comma-separated code search."
+  },
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "algorithm_path": "medication-path",
+    "algorithm_path_description": "Patients with statin orders (Paths A and C). Statins have heavy cross-indication use beyond FH — they're first-line for general high cholesterol, secondary prevention after MI, and primary prevention based on ASCVD risk. Path C (statins for non-FH) is therefore very large.",
+    "code_systems": [
+      "RxNorm"
+    ],
+    "required_codes": [
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "83367",
+        "display": "atorvastatin",
+        "source": "UMLS verified, RxNorm ingredient"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "36567",
+        "display": "simvastatin",
+        "source": "UMLS verified, RxNorm ingredient"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "301542",
+        "display": "rosuvastatin",
+        "source": "UMLS verified, RxNorm ingredient"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "42463",
+        "display": "pravastatin",
+        "source": "UMLS verified, RxNorm ingredient"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "6472",
+        "display": "lovastatin",
+        "source": "UMLS verified, RxNorm ingredient"
+      }
+    ],
+    "complexity": "medium",
+    "tags": [
+      "medication",
+      "cardiology",
+      "familial-hypercholesterolemia",
+      "statin",
+      "multi-class",
+      "code-variation"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "MedicationRequest",
+    "parameters": {
+      "code": "http://www.nlm.nih.gov/research/umls/rxnorm|83367,http://www.nlm.nih.gov/research/umls/rxnorm|36567,http://www.nlm.nih.gov/research/umls/rxnorm|301542,http://www.nlm.nih.gov/research/umls/rxnorm|42463,http://www.nlm.nih.gov/research/umls/rxnorm|6472"
+    },
+    "url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|83367,http://www.nlm.nih.gov/research/umls/rxnorm|36567,http://www.nlm.nih.gov/research/umls/rxnorm|301542,http://www.nlm.nih.gov/research/umls/rxnorm|42463,http://www.nlm.nih.gov/research/umls/rxnorm|6472"
+  },
+  "test_data": {
+    "resources": [
+      "synthea/output/familial-hypercholesterolemia/positive/fhir/",
+      "synthea/output/familial-hypercholesterolemia/control/fhir/"
+    ],
+    "expected_result_count": 23,
+    "expected_resource_ids": [],
+    "expected_patient_ids": [
+      "1c994f96-4fce-1821-125f-30debf9300d3",
+      "1d6f5e73-7b70-7d66-22b8-0ec459f4cd3d",
+      "1f6f3dc3-3996-86cc-8c27-d20846f9a20a",
+      "278f6908-aeef-5e63-13d3-9298b3005334",
+      "29b181f9-470e-0ccd-4de5-31c0d9a7aff3",
+      "3d088973-ac76-8e5f-ea61-10bc9aa2a909",
+      "495abe3a-ac3d-d18e-6d12-85cae79062fe",
+      "5a4a8e9c-87c7-db1f-60d1-a9c342fb1e06",
+      "6479950d-2fcb-5253-41e3-db18f35af27e",
+      "723ad5b6-850f-799e-99b4-60e38ea93791",
+      "96ddb8cf-a9da-b40a-cb29-58bef0190cc4",
+      "9e9e9306-e659-6cf3-2238-05fe9ad1c7d2",
+      "a7417f1f-fd80-d9fa-71d8-069a5233364d",
+      "a9901a83-5fbe-0482-f53d-65c43e0b8f6a",
+      "aad5814e-e8e9-febc-befc-e30d27002abe",
+      "aaec3845-7eeb-b765-9e2c-d5cbdf6796df",
+      "bdbb4551-9771-52a6-3f2f-1f0c2e81b85f",
+      "c5c269e4-8d56-3485-873b-cfd889593ec1",
+      "c9a9f060-a150-fc08-3a60-9669597db06d",
+      "cca32f1b-3c66-0629-a648-c3632ea9ab8e",
+      "de39f1c7-a011-b054-9b3d-17b8703b02e6",
+      "ded32913-7700-d6d7-bff7-89bdcde1505f",
+      "e1eab7bd-39c0-2cc0-c002-c2eaff965bfa"
+    ]
+  },
+  "created_at": "2026-04-27T00:00:00.000000Z",
+  "updated_at": "2026-04-27T00:00:00.000000Z"
+}

@@ -1,0 +1,124 @@
+{
+  "name": "PheKB Osteoporosis",
+  "remarks": [
+    "Custom Synthea module for osteoporosis.",
+    "First bone disease phenotype. First DEXA T-score lab phenotype. First bisphosphonate medication class.",
+    "",
+    "Generates THREE patient paths:",
+    "  Path A (50%): Osteoporosis dx + bisphosphonate Rx + low DEXA T-score (≤ -2.5)",
+    "  Path B (30%): Osteoporosis dx + low T-score, no bisphosphonate (newly diagnosed or intolerant)",
+    "  Path D (20%): Low DEXA T-score (≤ -2.5) without formal osteoporosis dx (TRICKY — undiagnosed)",
+    "",
+    "Bisphosphonate distribution (Paths A only):",
+    "  60% Risedronate (RxNorm 73056)",
+    "  40% Zoledronic acid (RxNorm 77655)",
+    "",
+    "DEXA T-score range -2.5 to -4.0 (osteoporosis range; ≤-2.5 is the WHO criterion).",
+    "",
+    "Age guard: >=50."
+  ],
+  "states": {
+    "Initial": { "type": "Initial", "direct_transition": "Age_Guard" },
+    "Age_Guard": { "type": "Guard", "allow": { "condition_type": "Age", "operator": ">=", "quantity": 50, "unit": "years" }, "direct_transition": "Set_Osteo_Flag" },
+    "Set_Osteo_Flag": { "type": "SetAttribute", "attribute": "osteo_positive", "value": true, "direct_transition": "Choose_Patient_Path" },
+    "Choose_Patient_Path": {
+      "type": "Simple",
+      "distributed_transition": [
+        { "transition": "Set_Path_A", "distribution": 0.50 },
+        { "transition": "Set_Path_B", "distribution": 0.30 },
+        { "transition": "Set_Path_D", "distribution": 0.20 }
+      ]
+    },
+    "Set_Path_A": { "type": "SetAttribute", "attribute": "osteo_has_dx", "value": true, "direct_transition": "Set_Path_A_Med" },
+    "Set_Path_A_Med": { "type": "SetAttribute", "attribute": "osteo_has_med", "value": true, "direct_transition": "Set_Path_A_Lab" },
+    "Set_Path_A_Lab": { "type": "SetAttribute", "attribute": "osteo_has_lab", "value": true, "direct_transition": "Choose_Med" },
+    "Set_Path_B": { "type": "SetAttribute", "attribute": "osteo_has_dx", "value": true, "direct_transition": "Set_Path_B_Med" },
+    "Set_Path_B_Med": { "type": "SetAttribute", "attribute": "osteo_has_med", "value": false, "direct_transition": "Set_Path_B_Lab" },
+    "Set_Path_B_Lab": { "type": "SetAttribute", "attribute": "osteo_has_lab", "value": true, "direct_transition": "Choose_Med" },
+    "Set_Path_D": { "type": "SetAttribute", "remarks": ["TRICKY: low DEXA T-score, no dx"], "attribute": "osteo_has_dx", "value": false, "direct_transition": "Set_Path_D_Med" },
+    "Set_Path_D_Med": { "type": "SetAttribute", "attribute": "osteo_has_med", "value": false, "direct_transition": "Set_Path_D_Lab" },
+    "Set_Path_D_Lab": { "type": "SetAttribute", "attribute": "osteo_has_lab", "value": true, "direct_transition": "Choose_Med" },
+
+    "Choose_Med": {
+      "type": "Simple",
+      "distributed_transition": [
+        { "transition": "Set_Med_Risedronate", "distribution": 0.60 },
+        { "transition": "Set_Med_Zoledronate", "distribution": 0.40 }
+      ]
+    },
+    "Set_Med_Risedronate": { "type": "SetAttribute", "attribute": "osteo_med", "value": "risedronate", "direct_transition": "Set_Needs_First_Visit" },
+    "Set_Med_Zoledronate": { "type": "SetAttribute", "attribute": "osteo_med", "value": "zoledronate", "direct_transition": "Set_Needs_First_Visit" },
+
+    "Set_Needs_First_Visit": { "type": "SetAttribute", "attribute": "osteo_needs_first_visit", "value": true, "direct_transition": "Wellness_Encounter" },
+    "Wellness_Encounter": { "type": "Encounter", "wellness": true, "direct_transition": "Check_First_Visit" },
+    "Check_First_Visit": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "osteo_needs_first_visit", "operator": "==", "value": true }, "transition": "Check_Has_Diagnosis" },
+        { "transition": "End_Wellness_Encounter" }
+      ]
+    },
+    "Check_Has_Diagnosis": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "osteo_has_dx", "operator": "==", "value": true }, "transition": "Diagnose_Osteoporosis" },
+        { "transition": "Check_Lab_NoDx" }
+      ]
+    },
+    "Diagnose_Osteoporosis": { "type": "ConditionOnset", "assign_to_attribute": "osteo_condition", "codes": [{ "system": "SNOMED-CT", "code": "64859006", "display": "Osteoporosis" }], "direct_transition": "Check_Med_WithDx" },
+
+    "Check_Med_WithDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "osteo_has_med", "operator": "==", "value": true }, "transition": "Route_Med_WithDx" },
+        { "transition": "Check_Lab_WithDx" }
+      ]
+    },
+    "Route_Med_WithDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "osteo_med", "operator": "==", "value": "risedronate" }, "transition": "Prescribe_Risedronate_WithDx" },
+        { "transition": "Prescribe_Zoledronate_WithDx" }
+      ]
+    },
+    "Prescribe_Risedronate_WithDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "73056", "display": "risedronate" }], "reason": "osteo_condition", "direct_transition": "Check_Lab_WithDx" },
+    "Prescribe_Zoledronate_WithDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "77655", "display": "zoledronic acid" }], "reason": "osteo_condition", "direct_transition": "Check_Lab_WithDx" },
+
+    "Check_Lab_WithDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "osteo_has_lab", "operator": "==", "value": true }, "transition": "Record_DEXA_WithDx" },
+        { "transition": "Clear_First_Visit_Flag" }
+      ]
+    },
+    "Record_DEXA_WithDx": {
+      "type": "Observation",
+      "category": "laboratory",
+      "unit": "{T-score}",
+      "codes": [{ "system": "LOINC", "code": "38265-5", "display": "DXA Radius and Ulna [T-score] Bone density" }],
+      "range": { "low": -4.0, "high": -2.5 },
+      "direct_transition": "Clear_First_Visit_Flag"
+    },
+
+    "Check_Lab_NoDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "osteo_has_lab", "operator": "==", "value": true }, "transition": "Record_DEXA_NoDx" },
+        { "transition": "Clear_First_Visit_Flag" }
+      ]
+    },
+    "Record_DEXA_NoDx": {
+      "type": "Observation",
+      "category": "laboratory",
+      "unit": "{T-score}",
+      "codes": [{ "system": "LOINC", "code": "38265-5", "display": "DXA Radius and Ulna [T-score] Bone density" }],
+      "range": { "low": -4.0, "high": -2.5 },
+      "direct_transition": "Clear_First_Visit_Flag"
+    },
+
+    "Clear_First_Visit_Flag": { "type": "SetAttribute", "attribute": "osteo_needs_first_visit", "value": false, "direct_transition": "End_Wellness_Encounter" },
+    "End_Wellness_Encounter": { "type": "EncounterEnd", "direct_transition": "Followup_Delay" },
+    "Followup_Delay": { "type": "Delay", "range": { "low": 12, "high": 24, "unit": "months" }, "direct_transition": "Wellness_Encounter" }
+  },
+  "gmf_version": 2
+}

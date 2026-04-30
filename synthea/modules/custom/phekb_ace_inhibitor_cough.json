@@ -1,0 +1,271 @@
+{
+  "name": "PheKB ACE Inhibitor-Induced Cough",
+  "remarks": [
+    "Custom Synthea module for PheKB phenotype: ace-inhibitor-ace-i-induced-cough",
+    "Based on PheKB ACE Inhibitor (ACEi) Induced Cough algorithm",
+    "",
+    "Generates TWO types of positive patients:",
+    "  Type A (70%): ACEi medication + cough diagnosis (clear adverse event cases)",
+    "  Type B (30%): ACEi medication only, no cough (controls on ACEi without cough)",
+    "",
+    "Type A patients represent cases where cough is documented as an adverse",
+    "event of ACE inhibitor therapy. Type B patients represent the base ACEi",
+    "population without the adverse event.",
+    "",
+    "ACEi medications are distributed across 4 common drugs:",
+    "  lisinopril, enalapril, ramipril, benazepril",
+    "",
+    "All patients have a hypertension diagnosis as the indication for ACEi.",
+    "",
+    "Codes verified via NIH UMLS MCP (2025AB):",
+    "  SNOMED 49727002 (Cough), 38341003 (Hypertensive disorder)",
+    "  RxNorm SCD: 314076 (lisinopril 10mg), 314077 (lisinopril 20mg),",
+    "             858817 (enalapril 10mg), 198189 (ramipril 5mg),",
+    "             898687 (benazepril 10mg)"
+  ],
+  "states": {
+    "Initial": {
+      "type": "Initial",
+      "direct_transition": "Age_Guard"
+    },
+
+    "Age_Guard": {
+      "type": "Guard",
+      "allow": {
+        "condition_type": "Age",
+        "operator": ">=",
+        "quantity": 18,
+        "unit": "years"
+      },
+      "direct_transition": "Set_Hypertension_Flag"
+    },
+
+    "Set_Hypertension_Flag": {
+      "type": "SetAttribute",
+      "attribute": "acei_has_hypertension",
+      "value": true,
+      "direct_transition": "Wait_For_Hypertension"
+    },
+
+    "Wait_For_Hypertension": {
+      "type": "Delay",
+      "range": { "low": 1, "high": 5, "unit": "years" },
+      "direct_transition": "Choose_Patient_Path"
+    },
+
+    "Choose_Patient_Path": {
+      "type": "Simple",
+      "remarks": [
+        "Split patients into two groups:",
+        "  70% get ACEi + cough diagnosis (adverse event cases)",
+        "  30% get ACEi only, no cough (ACEi patients without adverse event)"
+      ],
+      "distributed_transition": [
+        {
+          "transition": "Set_Path_With_Cough",
+          "distribution": 0.7
+        },
+        {
+          "transition": "Set_Path_No_Cough",
+          "distribution": 0.3
+        }
+      ]
+    },
+
+    "Set_Path_With_Cough": {
+      "type": "SetAttribute",
+      "attribute": "acei_has_cough",
+      "value": true,
+      "direct_transition": "Set_Needs_First_Visit"
+    },
+
+    "Set_Path_No_Cough": {
+      "type": "SetAttribute",
+      "remarks": ["ACEi patient without cough adverse event"],
+      "attribute": "acei_has_cough",
+      "value": false,
+      "direct_transition": "Set_Needs_First_Visit"
+    },
+
+    "Set_Needs_First_Visit": {
+      "type": "SetAttribute",
+      "attribute": "acei_needs_first_visit",
+      "value": true,
+      "direct_transition": "Wellness_Encounter"
+    },
+
+    "Wellness_Encounter": {
+      "type": "Encounter",
+      "wellness": true,
+      "direct_transition": "Check_First_Visit"
+    },
+
+    "Check_First_Visit": {
+      "type": "Simple",
+      "conditional_transition": [
+        {
+          "condition": {
+            "condition_type": "Attribute",
+            "attribute": "acei_needs_first_visit",
+            "operator": "==",
+            "value": true
+          },
+          "transition": "Diagnose_Hypertension"
+        },
+        {
+          "transition": "End_Wellness_Encounter"
+        }
+      ]
+    },
+
+    "Diagnose_Hypertension": {
+      "type": "ConditionOnset",
+      "remarks": ["All positive patients have hypertension as indication for ACEi"],
+      "assign_to_attribute": "hypertension_condition",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": "38341003",
+          "display": "Hypertensive disorder"
+        }
+      ],
+      "direct_transition": "Choose_ACEi_Medication"
+    },
+
+    "Choose_ACEi_Medication": {
+      "type": "Simple",
+      "remarks": ["Distribute across common ACE inhibitor medications"],
+      "distributed_transition": [
+        { "transition": "Prescribe_Lisinopril_10", "distribution": 0.30 },
+        { "transition": "Prescribe_Lisinopril_20", "distribution": 0.20 },
+        { "transition": "Prescribe_Enalapril", "distribution": 0.20 },
+        { "transition": "Prescribe_Ramipril", "distribution": 0.15 },
+        { "transition": "Prescribe_Benazepril", "distribution": 0.15 }
+      ]
+    },
+
+    "Prescribe_Lisinopril_10": {
+      "type": "MedicationOrder",
+      "codes": [
+        {
+          "system": "RxNorm",
+          "code": "314076",
+          "display": "lisinopril 10 MG Oral Tablet"
+        }
+      ],
+      "reason": "hypertension_condition",
+      "direct_transition": "Route_After_ACEi"
+    },
+
+    "Prescribe_Lisinopril_20": {
+      "type": "MedicationOrder",
+      "codes": [
+        {
+          "system": "RxNorm",
+          "code": "314077",
+          "display": "lisinopril 20 MG Oral Tablet"
+        }
+      ],
+      "reason": "hypertension_condition",
+      "direct_transition": "Route_After_ACEi"
+    },
+
+    "Prescribe_Enalapril": {
+      "type": "MedicationOrder",
+      "codes": [
+        {
+          "system": "RxNorm",
+          "code": "858817",
+          "display": "enalapril maleate 10 MG Oral Tablet"
+        }
+      ],
+      "reason": "hypertension_condition",
+      "direct_transition": "Route_After_ACEi"
+    },
+
+    "Prescribe_Ramipril": {
+      "type": "MedicationOrder",
+      "codes": [
+        {
+          "system": "RxNorm",
+          "code": "198189",
+          "display": "ramipril 5 MG Oral Capsule"
+        }
+      ],
+      "reason": "hypertension_condition",
+      "direct_transition": "Route_After_ACEi"
+    },
+
+    "Prescribe_Benazepril": {
+      "type": "MedicationOrder",
+      "codes": [
+        {
+          "system": "RxNorm",
+          "code": "898687",
+          "display": "benazepril hydrochloride 10 MG Oral Tablet"
+        }
+      ],
+      "reason": "hypertension_condition",
+      "direct_transition": "Route_After_ACEi"
+    },
+
+    "Route_After_ACEi": {
+      "type": "Simple",
+      "remarks": ["Route to cough diagnosis or skip based on patient path"],
+      "conditional_transition": [
+        {
+          "condition": {
+            "condition_type": "Attribute",
+            "attribute": "acei_has_cough",
+            "operator": "==",
+            "value": true
+          },
+          "transition": "Wait_For_Cough_Onset"
+        },
+        {
+          "transition": "Clear_First_Visit_Flag"
+        }
+      ]
+    },
+
+    "Wait_For_Cough_Onset": {
+      "type": "Delay",
+      "remarks": ["ACEi-induced cough typically develops within weeks to months of starting therapy"],
+      "range": { "low": 1, "high": 8, "unit": "weeks" },
+      "direct_transition": "Diagnose_Cough"
+    },
+
+    "Diagnose_Cough": {
+      "type": "ConditionOnset",
+      "remarks": ["Cough documented as adverse event of ACE inhibitor therapy"],
+      "assign_to_attribute": "cough_condition",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": "49727002",
+          "display": "Cough"
+        }
+      ],
+      "direct_transition": "Clear_First_Visit_Flag"
+    },
+
+    "Clear_First_Visit_Flag": {
+      "type": "SetAttribute",
+      "attribute": "acei_needs_first_visit",
+      "value": false,
+      "direct_transition": "End_Wellness_Encounter"
+    },
+
+    "End_Wellness_Encounter": {
+      "type": "EncounterEnd",
+      "direct_transition": "Followup_Delay"
+    },
+
+    "Followup_Delay": {
+      "type": "Delay",
+      "range": { "low": 3, "high": 6, "unit": "months" },
+      "direct_transition": "Wellness_Encounter"
+    }
+  },
+  "gmf_version": 2
+}

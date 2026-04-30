@@ -1,0 +1,91 @@
+{
+  "id": "phekb-hepatitis-c-dx",
+  "source": "phekb",
+  "source_id": "hepatitis-c",
+  "name": "Hepatitis C - Diagnosis Code Query (Acute + Chronic)",
+  "description": "Tests ability to find hepatitis C virus (HCV) infection patients via diagnosis codes. HCV is documented under multiple SNOMED codes by acuity: Viral hepatitis C (parent), Acute hepatitis C, Chronic hepatitis C. Most diagnosed cases are chronic (>80%) since acute HCV is often asymptomatic and undetected. Synthea distributes patients across these codes. An LLM querying only the parent will miss patients coded with the acuity-specific subtypes.",
+  "prompt": "Find all patients with a diagnosis of hepatitis C virus infection, including acute and chronic forms.",
+  "prompts": {
+    "naive": "Find all patients with hepatitis C.",
+    "broad": "Find all patients diagnosed with hepatitis C virus (HCV) infection — including the parent viral hepatitis C concept, acute hepatitis C, and chronic hepatitis C. Most diagnosed HCV is chronic.",
+    "expert": "I need to identify all hepatitis C patients. HCV is documented under multiple SNOMED codes by acuity: Viral hepatitis type C (50711007) is the parent, with subtype variants Chronic hepatitis C (128302006) and Acute hepatitis C (235866006). The CSTE 'Acute Hepatitis C Virus Infection (Disorders)' VSAC (OID 2.16.840.1.113762.1.4.1146.2679) documents the acute codes. Search Condition resources for all three codes."
+  },
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "algorithm_path": "diagnosis-path",
+    "algorithm_path_description": "Patients with HCV diagnosis codes (Paths A and B). The parent + acuity subtypes pattern is common for infectious diseases.",
+    "code_systems": [
+      "SNOMED CT",
+      "ICD-10-CM"
+    ],
+    "required_codes": [
+      {
+        "system": "http://snomed.info/sct",
+        "code": "50711007",
+        "display": "Viral hepatitis type C",
+        "source": "UMLS verified, parent concept"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "128302006",
+        "display": "Chronic hepatitis C",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "235866006",
+        "display": "Acute hepatitis C",
+        "source": "CSTE VSAC verified"
+      }
+    ],
+    "complexity": "easy",
+    "tags": [
+      "condition",
+      "infectious-disease",
+      "hepatitis-c",
+      "diagnosis-code",
+      "code-variation",
+      "viral-hepatitis"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "Condition",
+    "parameters": {
+      "code": "http://snomed.info/sct|50711007,http://snomed.info/sct|128302006,http://snomed.info/sct|235866006"
+    },
+    "url": "Condition?code=http://snomed.info/sct|50711007,http://snomed.info/sct|128302006,http://snomed.info/sct|235866006"
+  },
+  "test_data": {
+    "resources": [
+      "synthea/output/hepatitis-c/positive/fhir/",
+      "synthea/output/hepatitis-c/control/fhir/"
+    ],
+    "expected_result_count": 21,
+    "expected_resource_ids": [],
+    "expected_patient_ids": [
+      "0170c5ec-ac6a-e3fb-7c4e-a193cf7d62e3",
+      "026d955a-59d6-c929-2b68-d0b1ca78e94d",
+      "1068af52-2083-6616-3b1a-a2bf3dd4d886",
+      "114b3097-f259-d915-9d79-8276b7c57e65",
+      "152eab27-7dd8-c0b8-c85e-37634dbe3d03",
+      "1e899a04-f489-a4fe-a9ad-78b69ac5a583",
+      "22867eeb-ef45-a60e-67a4-961973304d40",
+      "35b1094a-c017-9aeb-9b73-cb11a8095a82",
+      "3fc9d15b-d93e-5f83-f3fa-8ec7a7f6fc59",
+      "5aecc878-faf8-c900-e77f-9dabbc4a1020",
+      "5e84d377-2de4-2aec-f96c-78c1018c28f2",
+      "796cc791-428f-3e2a-ca0e-3f678ebd7040",
+      "809a8137-b3fb-70f4-0704-5939446fff3a",
+      "84137e50-6e01-9d54-e2ba-0111f19ac7ed",
+      "9d3974e2-d258-ec51-4eef-8bc4318a9dc9",
+      "bace836a-990f-73f8-2137-6f4b9dd28693",
+      "c0f9210f-da2a-dd30-010e-1284f5a0d867",
+      "c7ce7487-ca57-f520-5f57-82548f9e9238",
+      "cafc828c-eadb-2d3b-c75f-d28d3a972896",
+      "daab7292-bbdb-3fa0-ef77-e949dfcfc762",
+      "f06cea72-c9c1-c4ab-4f62-d822f0929117"
+    ]
+  },
+  "created_at": "2026-04-27T00:00:00.000000Z",
+  "updated_at": "2026-04-27T00:00:00.000000Z"
+}

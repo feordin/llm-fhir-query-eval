@@ -1,0 +1,105 @@
+{
+  "id": "phekb-gerd-meds-only",
+  "source": "phekb",
+  "source_id": "gerd",
+  "name": "GERD - PPI-Only Patients (No Diagnosis) — DOMINANT Path C",
+  "description": "THE flagship Path C test case. PPIs are arguably the most cross-prescribed and over-prescribed drug class in primary care. Real-world reasons for a PPI prescription without a GERD diagnosis: dyspepsia (functional), NSAID-associated gastritis prophylaxis, H. pylori eradication regimen, prophylaxis in critically ill or anticoagulated patients, empirical relief of upper GI symptoms, even routine prescription with chronic anti-platelet therapy. Studies estimate 40-60% of PPI prescriptions lack a documented GI diagnosis. The Synthea module weights this path very heavily (~50%) to make this the most diagnostic Path C test in the suite.",
+  "prompt": "I want to find patients in our system who are taking proton pump inhibitors but don't have a formal GERD diagnosis on their problem list. PPIs are commonly prescribed empirically for dyspepsia, NSAID gastritis prophylaxis, or other reasons without a formal reflux diagnosis being coded.",
+  "prompts": {
+    "naive": "Find patients on PPIs without a GERD diagnosis.",
+    "expert": "I need to identify the dominant PPI-without-dx pattern. Two-step approach: first find patients with MedicationRequest for any PPI ingredient (RxNorm 7646 omeprazole, 40790 pantoprazole, 17128 lansoprazole, 283742 esomeprazole, 114979 rabeprazole), then exclude patients with a Condition for GERD-family codes (235595009, 698065002, 16331000). The remaining group represents PPI use without coded reflux — typically dyspepsia, NSAID prophylaxis, or empirical prescribing."
+  },
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "algorithm_path": "meds-only-path",
+    "algorithm_path_description": "Path C 'tricky' patients: have PPIs but NO GERD Condition resource. The Synthea module weights this path very heavily (~50%) — this is the largest Path C in the entire suite, reflecting real-world PPI over-prescribing for dyspepsia, NSAID prophylaxis, etc.",
+    "code_systems": [
+      "RxNorm",
+      "SNOMED CT"
+    ],
+    "required_codes": [
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "7646",
+        "display": "omeprazole",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "40790",
+        "display": "pantoprazole",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "17128",
+        "display": "lansoprazole",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "283742",
+        "display": "esomeprazole",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "114979",
+        "display": "rabeprazole",
+        "source": "UMLS verified"
+      }
+    ],
+    "complexity": "hard",
+    "tags": [
+      "medication",
+      "gastroenterology",
+      "gerd",
+      "tricky",
+      "meds-only",
+      "cross-resource",
+      "ppi-overprescribing",
+      "flagship-path-c"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "MedicationRequest",
+    "parameters": {
+      "code": "http://www.nlm.nih.gov/research/umls/rxnorm|7646,http://www.nlm.nih.gov/research/umls/rxnorm|40790,http://www.nlm.nih.gov/research/umls/rxnorm|17128,http://www.nlm.nih.gov/research/umls/rxnorm|283742,http://www.nlm.nih.gov/research/umls/rxnorm|114979"
+    },
+    "url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|7646,http://www.nlm.nih.gov/research/umls/rxnorm|40790,http://www.nlm.nih.gov/research/umls/rxnorm|17128,http://www.nlm.nih.gov/research/umls/rxnorm|283742,http://www.nlm.nih.gov/research/umls/rxnorm|114979"
+  },
+  "test_data": {
+    "resources": [
+      "synthea/output/gerd/positive/fhir/",
+      "synthea/output/gerd/control/fhir/"
+    ],
+    "expected_result_count": 22,
+    "expected_resource_ids": [],
+    "expected_patient_ids": [
+      "0a8dfb7c-e26a-3516-d8d2-f2af15e6d66d",
+      "0ab61c39-9847-32f2-c47e-3dba59c1f84f",
+      "21e9cc36-12a9-4689-d28b-a2613a0f47cf",
+      "4c05b4d9-fc30-54e3-e9c6-5262e323a644",
+      "51cdf3f0-4026-ca00-bb81-f5c6c534c285",
+      "67fca239-e00a-08d7-e856-7ff2bf881ebd",
+      "7679787c-d95a-0555-6f73-70a8da1490c1",
+      "7bbab65b-3727-3891-a7d6-8d3a15dfd635",
+      "917452cf-b109-ecef-4206-bd8ed617c9b3",
+      "9208f814-a67c-0db0-6708-a554e5154d9b",
+      "970448fc-d9ce-de24-13e3-be4e9b8dfd22",
+      "a2f9f259-a73b-b830-96e0-5a47b4eed51f",
+      "a34e3b46-68d6-2cf4-b28c-3c21503ef937",
+      "ae2996a7-a71b-44e3-71ec-93f57344b56c",
+      "bcf8913c-15d9-38b2-caa5-217d6968bd0f",
+      "bf263f4c-b743-1c94-d29e-da7575dd1ef4",
+      "c427e2e9-3e1c-670a-e897-3bea7598d797",
+      "d7d02a2e-a104-ed7b-7801-575fe3a6cb1e",
+      "e7da0918-d8fd-db40-23a9-8153eddeeebc",
+      "e995d27e-9cb5-fe91-9694-defa1ad4385d",
+      "f3ce6281-44ab-6e66-694b-d6d1cca75a84",
+      "f5a486e6-661f-93ed-8e5d-3ea97da173f4"
+    ]
+  },
+  "created_at": "2026-04-27T00:00:00.000000Z",
+  "updated_at": "2026-04-27T00:00:00.000000Z"
+}

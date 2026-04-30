@@ -1,0 +1,213 @@
+{
+  "name": "PheKB Multiple Sclerosis",
+  "remarks": [
+    "Custom Synthea module for PheKB phenotype: multiple sclerosis",
+    "Based on PheKB MS Demonstration Project algorithm (08/03/21)",
+    "",
+    "PheKB algorithm: Type 1 definitive case requires 2+ ICD-9 340 codes;",
+    "  Type 2 definitive case requires demyelinating disease codes + MS-specific medications + MS keywords.",
+    "",
+    "Generates THREE patient paths:",
+    "  Path A (60%): Diagnosis + DMT — full presentation, treated MS",
+    "  Path B (30%): Diagnosis only, no DMT (newly diagnosed, treatment refused, or burnt-out disease)",
+    "  Path C (10%): DMT ONLY, NO diagnosis (rare — alemtuzumab for CLL, recent MS dx not yet coded)",
+    "",
+    "Path C is intentionally small because MS DMTs are highly specific to MS — UNLIKE GERD's PPI Path C.",
+    "This makes MS the inverse phenotype to test medication-class-specificity reasoning.",
+    "",
+    "Diagnosis SNOMED variation (Paths A + B):",
+    "  15% Multiple sclerosis (24700007) — generic parent",
+    "  50% Relapsing remitting MS (426373005) — RRMS, most common form",
+    "  15% Secondary progressive MS (425500002)",
+    "  15% Primary progressive MS (428700003) — PPMS",
+    "  5% Multiple sclerosis of the spinal cord (192927008) — anatomic variant",
+    "",
+    "Medication ingredient variation (Paths A + C):",
+    "  20% Natalizumab (354770) — Tysabri",
+    "  15% Alemtuzumab (117055) — Lemtrada (also CLL — main Path C source)",
+    "  25% Ocrelizumab (1876366) — Ocrevus, B-cell depleter",
+    "  25% Dimethyl fumarate (1373478) — Tecfidera, oral DMT",
+    "  15% Gilenya/Fingolimod (1012896) — oral DMT",
+    "",
+    "Codes verified via NIH UMLS MCP and CSTE Multiple Sclerosis VSAC (OID 2.16.840.1.113762.1.4.1146.3257)."
+  ],
+  "states": {
+    "Initial": { "type": "Initial", "direct_transition": "Age_Guard" },
+
+    "Age_Guard": {
+      "type": "Guard",
+      "allow": { "condition_type": "Age", "operator": ">=", "quantity": 20, "unit": "years" },
+      "direct_transition": "Set_MS_Flag"
+    },
+
+    "Set_MS_Flag": { "type": "SetAttribute", "attribute": "ms_positive", "value": true, "direct_transition": "Choose_Patient_Path" },
+
+    "Choose_Patient_Path": {
+      "type": "Simple",
+      "distributed_transition": [
+        { "transition": "Set_Path_A", "distribution": 0.60 },
+        { "transition": "Set_Path_B", "distribution": 0.30 },
+        { "transition": "Set_Path_C", "distribution": 0.10 }
+      ]
+    },
+
+    "Set_Path_A": { "type": "SetAttribute", "attribute": "ms_has_dx", "value": true, "direct_transition": "Set_Path_A_Meds" },
+    "Set_Path_A_Meds": { "type": "SetAttribute", "attribute": "ms_has_meds", "value": true, "direct_transition": "Choose_Subtype" },
+
+    "Set_Path_B": { "type": "SetAttribute", "attribute": "ms_has_dx", "value": true, "direct_transition": "Set_Path_B_Meds" },
+    "Set_Path_B_Meds": { "type": "SetAttribute", "attribute": "ms_has_meds", "value": false, "direct_transition": "Choose_Subtype" },
+
+    "Set_Path_C": { "type": "SetAttribute", "remarks": ["TRICKY: DMT without MS dx — typically alemtuzumab for CLL or recent dx not coded"], "attribute": "ms_has_dx", "value": false, "direct_transition": "Set_Path_C_Meds" },
+    "Set_Path_C_Meds": { "type": "SetAttribute", "attribute": "ms_has_meds", "value": true, "direct_transition": "Choose_Subtype" },
+
+    "Choose_Subtype": {
+      "type": "Simple",
+      "distributed_transition": [
+        { "transition": "Set_Subtype_Parent", "distribution": 0.15 },
+        { "transition": "Set_Subtype_RRMS", "distribution": 0.50 },
+        { "transition": "Set_Subtype_SPMS", "distribution": 0.15 },
+        { "transition": "Set_Subtype_PPMS", "distribution": 0.15 },
+        { "transition": "Set_Subtype_SpinalCord", "distribution": 0.05 }
+      ]
+    },
+
+    "Set_Subtype_Parent": { "type": "SetAttribute", "attribute": "ms_subtype", "value": "parent", "direct_transition": "Choose_Med" },
+    "Set_Subtype_RRMS": { "type": "SetAttribute", "attribute": "ms_subtype", "value": "rrms", "direct_transition": "Choose_Med" },
+    "Set_Subtype_SPMS": { "type": "SetAttribute", "attribute": "ms_subtype", "value": "spms", "direct_transition": "Choose_Med" },
+    "Set_Subtype_PPMS": { "type": "SetAttribute", "attribute": "ms_subtype", "value": "ppms", "direct_transition": "Choose_Med" },
+    "Set_Subtype_SpinalCord": { "type": "SetAttribute", "attribute": "ms_subtype", "value": "spinalcord", "direct_transition": "Choose_Med" },
+
+    "Choose_Med": {
+      "type": "Simple",
+      "distributed_transition": [
+        { "transition": "Set_Med_Natalizumab", "distribution": 0.20 },
+        { "transition": "Set_Med_Alemtuzumab", "distribution": 0.15 },
+        { "transition": "Set_Med_Ocrelizumab", "distribution": 0.25 },
+        { "transition": "Set_Med_DMF", "distribution": 0.25 },
+        { "transition": "Set_Med_Fingolimod", "distribution": 0.15 }
+      ]
+    },
+
+    "Set_Med_Natalizumab": { "type": "SetAttribute", "attribute": "ms_med", "value": "natalizumab", "direct_transition": "Set_Needs_First_Visit" },
+    "Set_Med_Alemtuzumab": { "type": "SetAttribute", "attribute": "ms_med", "value": "alemtuzumab", "direct_transition": "Set_Needs_First_Visit" },
+    "Set_Med_Ocrelizumab": { "type": "SetAttribute", "attribute": "ms_med", "value": "ocrelizumab", "direct_transition": "Set_Needs_First_Visit" },
+    "Set_Med_DMF": { "type": "SetAttribute", "attribute": "ms_med", "value": "dmf", "direct_transition": "Set_Needs_First_Visit" },
+    "Set_Med_Fingolimod": { "type": "SetAttribute", "attribute": "ms_med", "value": "fingolimod", "direct_transition": "Set_Needs_First_Visit" },
+
+    "Set_Needs_First_Visit": { "type": "SetAttribute", "attribute": "ms_needs_first_visit", "value": true, "direct_transition": "Wellness_Encounter" },
+
+    "Wellness_Encounter": { "type": "Encounter", "wellness": true, "direct_transition": "Check_First_Visit" },
+
+    "Check_First_Visit": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "ms_needs_first_visit", "operator": "==", "value": true }, "transition": "Check_Has_Diagnosis" },
+        { "transition": "End_Wellness_Encounter" }
+      ]
+    },
+
+    "Check_Has_Diagnosis": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "ms_has_dx", "operator": "==", "value": true }, "transition": "Route_By_Subtype" },
+        { "transition": "Route_Med_NoDx" }
+      ]
+    },
+
+    "Route_By_Subtype": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "ms_subtype", "operator": "==", "value": "parent" }, "transition": "Diagnose_Parent" },
+        { "condition": { "condition_type": "Attribute", "attribute": "ms_subtype", "operator": "==", "value": "rrms" }, "transition": "Diagnose_RRMS" },
+        { "condition": { "condition_type": "Attribute", "attribute": "ms_subtype", "operator": "==", "value": "spms" }, "transition": "Diagnose_SPMS" },
+        { "condition": { "condition_type": "Attribute", "attribute": "ms_subtype", "operator": "==", "value": "ppms" }, "transition": "Diagnose_PPMS" },
+        { "transition": "Diagnose_SpinalCord" }
+      ]
+    },
+
+    "Diagnose_Parent": {
+      "type": "ConditionOnset",
+      "assign_to_attribute": "ms_condition",
+      "codes": [{ "system": "SNOMED-CT", "code": "24700007", "display": "Multiple sclerosis" }],
+      "direct_transition": "Check_Meds_WithDx"
+    },
+    "Diagnose_RRMS": {
+      "type": "ConditionOnset",
+      "assign_to_attribute": "ms_condition",
+      "codes": [{ "system": "SNOMED-CT", "code": "426373005", "display": "Relapsing remitting multiple sclerosis" }],
+      "direct_transition": "Check_Meds_WithDx"
+    },
+    "Diagnose_SPMS": {
+      "type": "ConditionOnset",
+      "assign_to_attribute": "ms_condition",
+      "codes": [{ "system": "SNOMED-CT", "code": "425500002", "display": "Secondary progressive multiple sclerosis" }],
+      "direct_transition": "Check_Meds_WithDx"
+    },
+    "Diagnose_PPMS": {
+      "type": "ConditionOnset",
+      "assign_to_attribute": "ms_condition",
+      "codes": [{ "system": "SNOMED-CT", "code": "428700003", "display": "Primary progressive multiple sclerosis" }],
+      "direct_transition": "Check_Meds_WithDx"
+    },
+    "Diagnose_SpinalCord": {
+      "type": "ConditionOnset",
+      "assign_to_attribute": "ms_condition",
+      "codes": [{ "system": "SNOMED-CT", "code": "192927008", "display": "Multiple sclerosis of the spinal cord" }],
+      "direct_transition": "Check_Meds_WithDx"
+    },
+
+    "Check_Meds_WithDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "ms_has_meds", "operator": "==", "value": true }, "transition": "Route_Med_WithDx" },
+        { "transition": "Clear_First_Visit_Flag" }
+      ]
+    },
+
+    "Route_Med_WithDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "ms_med", "operator": "==", "value": "natalizumab" }, "transition": "Prescribe_Natalizumab_WithDx" },
+        { "condition": { "condition_type": "Attribute", "attribute": "ms_med", "operator": "==", "value": "alemtuzumab" }, "transition": "Prescribe_Alemtuzumab_WithDx" },
+        { "condition": { "condition_type": "Attribute", "attribute": "ms_med", "operator": "==", "value": "ocrelizumab" }, "transition": "Prescribe_Ocrelizumab_WithDx" },
+        { "condition": { "condition_type": "Attribute", "attribute": "ms_med", "operator": "==", "value": "dmf" }, "transition": "Prescribe_DMF_WithDx" },
+        { "transition": "Prescribe_Fingolimod_WithDx" }
+      ]
+    },
+
+    "Prescribe_Natalizumab_WithDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "354770", "display": "natalizumab" }], "reason": "ms_condition", "direct_transition": "Clear_First_Visit_Flag" },
+    "Prescribe_Alemtuzumab_WithDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "117055", "display": "alemtuzumab" }], "reason": "ms_condition", "direct_transition": "Clear_First_Visit_Flag" },
+    "Prescribe_Ocrelizumab_WithDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "1876366", "display": "ocrelizumab" }], "reason": "ms_condition", "direct_transition": "Clear_First_Visit_Flag" },
+    "Prescribe_DMF_WithDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "1373478", "display": "dimethyl fumarate" }], "reason": "ms_condition", "direct_transition": "Clear_First_Visit_Flag" },
+    "Prescribe_Fingolimod_WithDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "1012896", "display": "Gilenya" }], "reason": "ms_condition", "direct_transition": "Clear_First_Visit_Flag" },
+
+    "Route_Med_NoDx": {
+      "type": "Simple",
+      "remarks": ["Path C: DMT without MS dx — small population (alemtuzumab for CLL, etc.)"],
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "ms_med", "operator": "==", "value": "natalizumab" }, "transition": "Prescribe_Natalizumab_NoDx" },
+        { "condition": { "condition_type": "Attribute", "attribute": "ms_med", "operator": "==", "value": "alemtuzumab" }, "transition": "Prescribe_Alemtuzumab_NoDx" },
+        { "condition": { "condition_type": "Attribute", "attribute": "ms_med", "operator": "==", "value": "ocrelizumab" }, "transition": "Prescribe_Ocrelizumab_NoDx" },
+        { "condition": { "condition_type": "Attribute", "attribute": "ms_med", "operator": "==", "value": "dmf" }, "transition": "Prescribe_DMF_NoDx" },
+        { "transition": "Prescribe_Fingolimod_NoDx" }
+      ]
+    },
+
+    "Prescribe_Natalizumab_NoDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "354770", "display": "natalizumab" }], "direct_transition": "Clear_First_Visit_Flag" },
+    "Prescribe_Alemtuzumab_NoDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "117055", "display": "alemtuzumab" }], "direct_transition": "Clear_First_Visit_Flag" },
+    "Prescribe_Ocrelizumab_NoDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "1876366", "display": "ocrelizumab" }], "direct_transition": "Clear_First_Visit_Flag" },
+    "Prescribe_DMF_NoDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "1373478", "display": "dimethyl fumarate" }], "direct_transition": "Clear_First_Visit_Flag" },
+    "Prescribe_Fingolimod_NoDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "1012896", "display": "Gilenya" }], "direct_transition": "Clear_First_Visit_Flag" },
+
+    "Clear_First_Visit_Flag": { "type": "SetAttribute", "attribute": "ms_needs_first_visit", "value": false, "direct_transition": "End_Wellness_Encounter" },
+
+    "End_Wellness_Encounter": { "type": "EncounterEnd", "direct_transition": "Followup_Delay" },
+
+    "Followup_Delay": {
+      "type": "Delay",
+      "range": { "low": 3, "high": 6, "unit": "months" },
+      "direct_transition": "Wellness_Encounter"
+    }
+  },
+  "gmf_version": 2
+}

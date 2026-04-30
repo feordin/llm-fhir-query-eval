@@ -1,0 +1,131 @@
+{
+  "id": "phekb-carotid-atherosclerosis-meds",
+  "source": "phekb",
+  "source_id": "carotid-atherosclerosis",
+  "name": "Carotid Atherosclerosis - Antiplatelet + Statin Query",
+  "description": "Tests ability to find CAAD patients via medication codes — antiplatelets (aspirin, clopidogrel) and statins (atorvastatin). Heavy cross-indication with CHD/PAD — same drug class is used for any atherosclerotic vascular disease. This test will over-recall against the broader cardiovascular population.",
+  "prompt": "Find patients prescribed antiplatelet medications (aspirin or clopidogrel) or atorvastatin for cardiovascular risk reduction.",
+  "prompts": {
+    "naive": "Find patients on antiplatelets and statins.",
+    "broad": "Find patients prescribed aspirin, clopidogrel, or atorvastatin — antiplatelet and statin therapy commonly used for atherosclerotic vascular disease prevention.",
+    "expert": "Search MedicationRequest with RxNorm codes for aspirin (1191), clopidogrel (32968), atorvastatin (83367). Note: these meds are heavily shared across CHD, PAD, and CAAD populations. Query: MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1191,http://www.nlm.nih.gov/research/umls/rxnorm|32968,http://www.nlm.nih.gov/research/umls/rxnorm|83367"
+  },
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "algorithm_path": "medication-path",
+    "algorithm_path_description": "Patients on antiplatelet/statin therapy. Heavy cross-indication with CHD/PAD.",
+    "code_systems": [
+      "RxNorm"
+    ],
+    "required_codes": [
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "1191",
+        "display": "aspirin",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "32968",
+        "display": "clopidogrel",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "83367",
+        "display": "atorvastatin",
+        "source": "UMLS verified"
+      }
+    ],
+    "complexity": "medium",
+    "tags": [
+      "medication",
+      "vascular",
+      "cerebrovascular",
+      "caad",
+      "antiplatelet",
+      "statin",
+      "high-cross-indication"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "MedicationRequest",
+    "parameters": {
+      "code": "http://www.nlm.nih.gov/research/umls/rxnorm|1191,http://www.nlm.nih.gov/research/umls/rxnorm|32968,http://www.nlm.nih.gov/research/umls/rxnorm|83367"
+    },
+    "url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1191,http://www.nlm.nih.gov/research/umls/rxnorm|32968,http://www.nlm.nih.gov/research/umls/rxnorm|83367"
+  },
+  "test_data": {
+    "resources": [
+      "synthea/output/carotid-atherosclerosis/positive/fhir/",
+      "synthea/output/carotid-atherosclerosis/control/fhir/"
+    ],
+    "expected_result_count": 61,
+    "expected_resource_ids": [],
+    "expected_patient_ids": [
+      "08b8026b-da1a-e2c1-e36a-11de3b8d0665",
+      "0f3e9e5c-c40e-cbb7-7e1b-1c32200f2c1e",
+      "14e9dbb1-1d4f-b7b4-70a0-7e72583b0e1d",
+      "1801cc07-195a-ffb0-a099-be4100c5b919",
+      "19f57e0d-7e58-0ff2-9f75-40fb959b2d1c",
+      "1c994f96-4fce-1821-125f-30debf9300d3",
+      "1d6f5e73-7b70-7d66-22b8-0ec459f4cd3d",
+      "1e5c1424-9788-52ce-c997-c13fceaf9495",
+      "228f729d-dda2-a6b0-20cb-3df0399248e8",
+      "303d17ff-a40c-9ae2-a4a8-9199ca15fb56",
+      "33b79024-6347-e8e9-5193-66d87a67e04b",
+      "3963fdf2-f6fb-d97b-f88e-1144b3fbb667",
+      "3aaa77a1-a730-d5b8-9404-cf3d949bb5bd",
+      "3c6f2337-5482-9c33-8965-c3d4d42d2104",
+      "3d088973-ac76-8e5f-ea61-10bc9aa2a909",
+      "3e400a4e-a543-5391-d4fc-be2a218fe981",
+      "4235587d-5232-cec6-dd9f-b6119b094edb",
+      "464e74bd-a5a8-df65-4ea8-7c757c8cca08",
+      "5656845b-cbb3-4430-ff01-431f3a4b3174",
+      "5a4a8e9c-87c7-db1f-60d1-a9c342fb1e06",
+      "5d6150d8-e20b-c495-9f10-7cfc79f9e4ca",
+      "5ffb5100-5ddb-dbbc-b6fa-e550af71c767",
+      "61226119-0e5c-f14f-aa13-5fbe6b2f0dd2",
+      "65c371f7-5da4-c62c-d66e-ca8f2e568b1d",
+      "686283ea-1798-9825-7ead-4e0b725f1f89",
+      "6d8d8b11-39cb-3587-271b-9941b349afe0",
+      "6fbbf2e0-3bbe-6647-b32e-8ca686d0afff",
+      "6ff2fb56-da97-232a-b0d6-a8a697d6a565",
+      "70aad539-c616-abd6-0a57-1394525199db",
+      "723ad5b6-850f-799e-99b4-60e38ea93791",
+      "7ae0f7a3-c0bc-5600-7189-3788a3e75685",
+      "7af4f0b7-c533-a68f-505e-12b1284be5c5",
+      "7cd2a07f-eff7-9040-79aa-abcefc60f200",
+      "8493f414-216f-0c0a-6942-de11d1c26f1e",
+      "85d5c45e-8e24-1ae3-fd20-831303ab9c9e",
+      "88b55b8d-1726-074c-8e62-16266caf77da",
+      "8a7b2e91-49ea-e76d-530e-16b66f7d8ad9",
+      "8cb47e8e-9134-f40e-f54c-c20fd8f70ed6",
+      "8d5e5438-39df-0870-628c-d3321ea16aa2",
+      "9494a412-6347-3e37-881b-2f063d397b40",
+      "96ddb8cf-a9da-b40a-cb29-58bef0190cc4",
+      "9d7ac27f-acaa-58dd-94e6-1c6b67891adc",
+      "9d9cd709-b83b-d83b-0776-9c7008de8e8b",
+      "a7417f1f-fd80-d9fa-71d8-069a5233364d",
+      "a9901a83-5fbe-0482-f53d-65c43e0b8f6a",
+      "b02b9069-986a-187e-2d6f-2aef16867450",
+      "bdbb4551-9771-52a6-3f2f-1f0c2e81b85f",
+      "c03afb41-6311-0125-af87-3ee0d9588b26",
+      "c49744c0-d4a2-602b-0818-692f2e1aff53",
+      "c7eb1b99-6e29-ffc5-cea1-c0fb4087e135",
+      "cc91fceb-afd8-1e93-01b4-4cacdd4446e4",
+      "d2cfa618-963b-8168-0934-ecbcbd4d1fe9",
+      "d642981b-a457-45d9-6c82-8b3bf0e8ac2f",
+      "d75da076-6ce6-29e5-36b8-f0cb9a408c53",
+      "da8ecbed-b594-9bfd-90a3-a4912530f977",
+      "e9026439-14e6-0353-085c-ce6dbceac5cb",
+      "ec7b08fc-118e-c15a-ae5c-2b649fb09791",
+      "f2386c83-9961-fdcf-b1f1-849ae2475dc8",
+      "f38f691a-fb7c-329a-64bf-05480e1405ac",
+      "f51f1d1c-dbe5-f7ad-556e-46af618ec10b",
+      "f81b8262-d360-80a0-9f9c-8a69dcaa8a21"
+    ]
+  },
+  "created_at": "2026-04-28T00:00:00.000000Z",
+  "updated_at": "2026-04-27T00:00:00.000000Z"
+}

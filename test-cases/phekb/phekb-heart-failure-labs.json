@@ -1,0 +1,62 @@
+{
+  "id": "phekb-heart-failure-labs",
+  "source": "phekb",
+  "source_id": "heart-failure",
+  "name": "Heart Failure - Reduced Ejection Fraction (HFrEF) Echo Query",
+  "description": "Tests ability to find heart failure patients via reduced ejection fraction on echocardiogram. The PheKB HF algorithm uses an EF cutoff of 50% to distinguish HFrEF (EF<50%) from HFpEF (EF>=50%). This test case targets HFrEF specifically — patients with measured EF < 50%. This exercises the value-quantity filter pattern with a less-than threshold (lt50) rather than the more common greater-than threshold seen in lab-based phenotypes like hypothyroidism (TSH>5) or T2DM (HbA1c>=6.5).",
+  "prompt": "Find echocardiogram observations for left ventricular ejection fraction where the value is below 50 percent, indicating heart failure with reduced ejection fraction (HFrEF).",
+  "prompts": {
+    "naive": "Find patients with low ejection fraction on echo.",
+    "broad": "Find Observation resources for left ventricular ejection fraction measurements where the value is less than 50 percent. EF below 50 percent defines heart failure with reduced ejection fraction (HFrEF, also called systolic heart failure).",
+    "expert": "I need Observation resources for left ventricular ejection fraction with EF < 50%. Use LOINC 8806-2 (Left ventricular Ejection fraction by 2D echo). Apply a value-quantity filter with the lt prefix at threshold 50, unit percent. The query should look like: Observation?code=http://loinc.org|8806-2&value-quantity=lt50. Note that percent encoding may be required on some servers (lt50||%25) but plain lt50 works for HAPI."
+  },
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "algorithm_path": "lab-path",
+    "algorithm_path_description": "Patients with reduced EF on echo (Paths A and D for HFrEF). The PheKB algorithm uses 'lowest EF measured 0-182 days after HF date' to classify HF type. This test exercises the less-than value-quantity filter pattern.",
+    "code_systems": [
+      "LOINC"
+    ],
+    "required_codes": [
+      {
+        "system": "http://loinc.org",
+        "code": "8806-2",
+        "display": "Left ventricular Ejection fraction by 2D echo",
+        "source": "UMLS verified"
+      }
+    ],
+    "complexity": "hard",
+    "tags": [
+      "observation",
+      "cardiology",
+      "heart-failure",
+      "value-quantity",
+      "less-than-threshold",
+      "ejection-fraction",
+      "hfref"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "Observation",
+    "parameters": {
+      "code": "http://loinc.org|8806-2",
+      "value-quantity": "lt50"
+    },
+    "url": "Observation?code=http://loinc.org|8806-2&value-quantity=lt50"
+  },
+  "test_data": {
+    "resources": [
+      "synthea/output/heart-failure/positive/fhir/",
+      "synthea/output/heart-failure/control/fhir/"
+    ],
+    "expected_result_count": 3,
+    "expected_resource_ids": [],
+    "expected_patient_ids": [
+      "080b069b-5108-46b6-ecef-6aacd3b9ef3f",
+      "2c167999-289d-95fa-5c27-7d8b8d35348c",
+      "7811dc30-8c86-8164-6c33-6b6f464745ef"
+    ]
+  },
+  "created_at": "2026-04-27T00:00:00.000000Z",
+  "updated_at": "2026-04-27T00:00:00.000000Z"
+}

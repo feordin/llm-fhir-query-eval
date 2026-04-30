@@ -1,0 +1,105 @@
+{
+  "name": "PheKB Peanut Allergy",
+  "remarks": [
+    "Custom Synthea module for peanut allergy.",
+    "Second pediatric phenotype (after SECO). First allergy/immunology phenotype.",
+    "Tests reuse of PatientFilters age-restriction schema (ages 1-17).",
+    "",
+    "Generates THREE patient paths:",
+    "  Path A (50%): Peanut allergy dx + peanut-IgE + epinephrine Rx",
+    "  Path B (30%): Peanut allergy dx + peanut-IgE, no epinephrine prescribed (mild)",
+    "  Path C (20%): Peanut-IgE positive only, no formal dx (TRICKY — sensitized but not coded)",
+    "",
+    "Peanut IgE elevation: range 1-100 kU/L (>0.35 = sensitization, >14 = high-probability clinical reaction)",
+    "Epinephrine prescribed: 1 ML epinephrine 1 MG/ML Injection (RxNorm 1660014, auto-injector class)"
+  ],
+  "states": {
+    "Initial": { "type": "Initial", "direct_transition": "Age_Guard_Min" },
+    "Age_Guard_Min": { "type": "Guard", "allow": { "condition_type": "Age", "operator": ">=", "quantity": 1, "unit": "years" }, "direct_transition": "Age_Guard_Max" },
+    "Age_Guard_Max": { "type": "Guard", "allow": { "condition_type": "Age", "operator": "<=", "quantity": 17, "unit": "years" }, "direct_transition": "Set_Peanut_Flag" },
+    "Set_Peanut_Flag": { "type": "SetAttribute", "attribute": "peanut_positive", "value": true, "direct_transition": "Choose_Patient_Path" },
+    "Choose_Patient_Path": {
+      "type": "Simple",
+      "distributed_transition": [
+        { "transition": "Set_Path_A", "distribution": 0.50 },
+        { "transition": "Set_Path_B", "distribution": 0.30 },
+        { "transition": "Set_Path_C", "distribution": 0.20 }
+      ]
+    },
+    "Set_Path_A": { "type": "SetAttribute", "attribute": "peanut_has_dx", "value": true, "direct_transition": "Set_Path_A_Lab" },
+    "Set_Path_A_Lab": { "type": "SetAttribute", "attribute": "peanut_has_lab", "value": true, "direct_transition": "Set_Path_A_Med" },
+    "Set_Path_A_Med": { "type": "SetAttribute", "attribute": "peanut_has_med", "value": true, "direct_transition": "Set_Needs_First_Visit" },
+
+    "Set_Path_B": { "type": "SetAttribute", "attribute": "peanut_has_dx", "value": true, "direct_transition": "Set_Path_B_Lab" },
+    "Set_Path_B_Lab": { "type": "SetAttribute", "attribute": "peanut_has_lab", "value": true, "direct_transition": "Set_Path_B_Med" },
+    "Set_Path_B_Med": { "type": "SetAttribute", "attribute": "peanut_has_med", "value": false, "direct_transition": "Set_Needs_First_Visit" },
+
+    "Set_Path_C": { "type": "SetAttribute", "remarks": ["TRICKY: peanut-IgE positive without formal dx"], "attribute": "peanut_has_dx", "value": false, "direct_transition": "Set_Path_C_Lab" },
+    "Set_Path_C_Lab": { "type": "SetAttribute", "attribute": "peanut_has_lab", "value": true, "direct_transition": "Set_Path_C_Med" },
+    "Set_Path_C_Med": { "type": "SetAttribute", "attribute": "peanut_has_med", "value": false, "direct_transition": "Set_Needs_First_Visit" },
+
+    "Set_Needs_First_Visit": { "type": "SetAttribute", "attribute": "peanut_needs_first_visit", "value": true, "direct_transition": "Wellness_Encounter" },
+    "Wellness_Encounter": { "type": "Encounter", "wellness": true, "direct_transition": "Check_First_Visit" },
+    "Check_First_Visit": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "peanut_needs_first_visit", "operator": "==", "value": true }, "transition": "Check_Has_Diagnosis" },
+        { "transition": "End_Wellness_Encounter" }
+      ]
+    },
+    "Check_Has_Diagnosis": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "peanut_has_dx", "operator": "==", "value": true }, "transition": "Diagnose_Peanut_Allergy" },
+        { "transition": "Check_Lab_NoDx" }
+      ]
+    },
+    "Diagnose_Peanut_Allergy": { "type": "ConditionOnset", "assign_to_attribute": "peanut_condition", "codes": [{ "system": "SNOMED-CT", "code": "91935009", "display": "Allergy to peanut" }], "direct_transition": "Check_Lab_WithDx" },
+
+    "Check_Lab_WithDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "peanut_has_lab", "operator": "==", "value": true }, "transition": "Record_Peanut_IgE_WithDx" },
+        { "transition": "Check_Med_WithDx" }
+      ]
+    },
+    "Record_Peanut_IgE_WithDx": {
+      "type": "Observation",
+      "category": "laboratory",
+      "unit": "kU/L",
+      "codes": [{ "system": "LOINC", "code": "6206-7", "display": "Peanut IgE Ab [Units/volume] in Serum" }],
+      "range": { "low": 1, "high": 100 },
+      "direct_transition": "Check_Med_WithDx"
+    },
+
+    "Check_Med_WithDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "peanut_has_med", "operator": "==", "value": true }, "transition": "Prescribe_Epinephrine_WithDx" },
+        { "transition": "Clear_First_Visit_Flag" }
+      ]
+    },
+    "Prescribe_Epinephrine_WithDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "1660014", "display": "1 ML epinephrine 1 MG/ML Injection" }], "reason": "peanut_condition", "direct_transition": "Clear_First_Visit_Flag" },
+
+    "Check_Lab_NoDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "peanut_has_lab", "operator": "==", "value": true }, "transition": "Record_Peanut_IgE_NoDx" },
+        { "transition": "Clear_First_Visit_Flag" }
+      ]
+    },
+    "Record_Peanut_IgE_NoDx": {
+      "type": "Observation",
+      "category": "laboratory",
+      "unit": "kU/L",
+      "codes": [{ "system": "LOINC", "code": "6206-7", "display": "Peanut IgE Ab [Units/volume] in Serum" }],
+      "range": { "low": 1, "high": 100 },
+      "direct_transition": "Clear_First_Visit_Flag"
+    },
+
+    "Clear_First_Visit_Flag": { "type": "SetAttribute", "attribute": "peanut_needs_first_visit", "value": false, "direct_transition": "End_Wellness_Encounter" },
+    "End_Wellness_Encounter": { "type": "EncounterEnd", "direct_transition": "Followup_Delay" },
+    "Followup_Delay": { "type": "Delay", "range": { "low": 6, "high": 12, "unit": "months" }, "direct_transition": "Wellness_Encounter" }
+  },
+  "gmf_version": 2
+}

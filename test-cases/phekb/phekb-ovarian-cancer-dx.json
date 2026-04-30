@@ -1,0 +1,108 @@
+{
+  "id": "phekb-ovarian-cancer-dx",
+  "source": "phekb",
+  "source_id": "ovarian-cancer",
+  "name": "Ovarian Cancer - Diagnosis Code Query (Multi-Histology, Female-Specific)",
+  "description": "**First female-specific cancer phenotype** (counterpart to male-only Prostate Cancer). Tests ability to find ovarian cancer patients via diagnosis codes by histology: parent ovarian malignancy, primary, neoplasm (broader), serous papillary cystadenocarcinoma (most common epithelial), and endometrioid carcinoma. All patients in expected results are female.",
+  "prompt": "Find all female patients with a diagnosis of ovarian cancer, including primary malignancy of ovary, serous papillary cystadenocarcinoma, mucinous cystadenocarcinoma, and endometrioid carcinoma of ovary.",
+  "prompts": {
+    "naive": "Find all patients with ovarian cancer.",
+    "broad": "Find all patients diagnosed with ovarian cancer — including the parent malignant neoplasm of ovary, primary malignant neoplasm of ovary, neoplasm of ovary (broader), serous papillary cystadenocarcinoma (most common epithelial subtype), and endometrioid carcinoma of ovary.",
+    "expert": "I need to identify all ovarian cancer patients. Ovarian cancer is documented under multiple SNOMED codes from the ASCO Epithelial Ovarian Cancer VSAC: Malignant neoplasm of ovary (363443007) is the parent, Primary malignant neoplasm of ovary (93934004), Neoplasm of ovary (123843001) — broader, Serous papillary cystadenocarcinoma ovary (254850005), and Endometrioid carcinoma ovary (254852002). Search Condition resources for all five codes. Note this phenotype is female-only — male patients should not appear in expected results."
+  },
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "algorithm_path": "diagnosis-path",
+    "algorithm_path_description": "Patients with ovarian cancer diagnosis codes. **First female-specific phenotype.** Tests histology code variation.",
+    "code_systems": [
+      "SNOMED CT"
+    ],
+    "required_codes": [
+      {
+        "system": "http://snomed.info/sct",
+        "code": "363443007",
+        "display": "Malignant neoplasm of ovary",
+        "source": "UMLS verified, parent"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "93934004",
+        "display": "Primary malignant neoplasm of ovary",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "123843001",
+        "display": "Neoplasm of ovary",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "254850005",
+        "display": "Serous papillary cystadenocarcinoma ovary",
+        "source": "VSAC"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "254852002",
+        "display": "Endometrioid carcinoma ovary",
+        "source": "VSAC"
+      }
+    ],
+    "complexity": "medium",
+    "tags": [
+      "condition",
+      "oncology",
+      "ovarian-cancer",
+      "female-specific",
+      "diagnosis-code",
+      "multi-histology",
+      "first-female-specific-cancer"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "Condition",
+    "parameters": {
+      "code": "http://snomed.info/sct|363443007,http://snomed.info/sct|93934004,http://snomed.info/sct|123843001,http://snomed.info/sct|254850005,http://snomed.info/sct|254852002"
+    },
+    "url": "Condition?code=http://snomed.info/sct|363443007,http://snomed.info/sct|93934004,http://snomed.info/sct|123843001,http://snomed.info/sct|254850005,http://snomed.info/sct|254852002"
+  },
+  "test_data": {
+    "resources": [
+      "synthea/output/ovarian-cancer/positive/fhir/",
+      "synthea/output/ovarian-cancer/control/fhir/"
+    ],
+    "expected_result_count": 26,
+    "expected_resource_ids": [],
+    "expected_patient_ids": [
+      "1d1493df-fdc9-0324-8c0c-3b55320d2e67",
+      "20501287-bd5e-7dd2-5a46-1dfcc14d9765",
+      "2682880e-8828-e009-88a9-d4d89ab1b079",
+      "38959bab-fe18-a541-4a7c-6d9ffadaa0d7",
+      "39043527-78be-fdd6-4d33-fb0fa88f0f0a",
+      "44e32d89-2470-972b-9165-5ed00012b52d",
+      "50636104-1a06-4d16-e850-b4e5c0f15109",
+      "5912d7df-7f66-a918-3241-e06b38d7cf83",
+      "60430c01-4964-519d-f2e9-681a71345d01",
+      "73d3c8cc-5371-ca25-42f1-f6216664c8b2",
+      "78cf5477-1706-2de8-a10d-83e7ccc49247",
+      "7ad48085-20c5-8bfb-d6eb-21455272a1aa",
+      "7d6e9972-3edb-3c28-1faf-5ee69df1ad03",
+      "85f740b2-480a-4ed0-8134-e8e22219167a",
+      "86076c4c-86a5-2d02-5874-599269de2d94",
+      "8e32acb0-a66d-a2cb-6ce9-b44603e7f6b7",
+      "974abc2d-d80c-8a18-b264-f8707b2c848e",
+      "98c95ddf-9ce6-063c-7af4-3d448f0dcdf1",
+      "b54eb1e8-296a-1e86-0e5a-1f2f8aa7705f",
+      "baf3ebde-5210-1314-71cf-a8c2f0273838",
+      "c850bdd2-4374-b633-3d33-4c3d4d4e99e6",
+      "caafbea2-99f7-b3b6-be2d-a7d579d10bc8",
+      "d7cfe075-97d8-78b0-0410-3020efb76660",
+      "dbe5fd18-8de5-194e-5fc3-d8c1593805c1",
+      "df78a347-4fdb-3ae8-c5eb-83a4850c0dd8",
+      "efdceef1-6b9b-546e-fa29-10860b0b1f16"
+    ]
+  },
+  "created_at": "2026-04-28T00:00:00.000000Z",
+  "updated_at": "2026-04-27T00:00:00.000000Z"
+}

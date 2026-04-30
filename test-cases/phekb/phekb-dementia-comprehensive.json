@@ -1,0 +1,154 @@
+{
+  "id": "phekb-dementia-comprehensive",
+  "source": "phekb",
+  "source_id": "dementia",
+  "name": "Dementia - Comprehensive Provider Query",
+  "description": "Simulates a memory clinic identifying their complete dementia population. The PheKB algorithm explicitly defines the cohort as the union of (≥5 visits with dementia ICD codes) OR (≥1 dementia drug fill). An LLM that searches only Condition resources will miss Path C patients (meds-only). The most complete answer requires unioning two queries across two resource types and querying ALL dementia subtype codes plus all dementia drug variants.",
+  "prompt": "I need to identify my complete dementia patient population for a quality improvement initiative on caregiver support resources. From the PheKB phenotype definition, the algorithm identifies dementia patients via either dementia diagnosis codes (across many subtypes — Alzheimer's, vascular, Lewy body, frontotemporal, etc.) OR via prescriptions for dementia-specific medications (cholinesterase inhibitors and memantine). Some of my patients have one but not the other.\n\nPlease run multiple FHIR queries to capture the full population:\n1. Patients with any dementia diagnosis (across all subtypes)\n2. Patients prescribed dementia medications (donepezil, galantamine, memantine, or combination products)\n\nFor each query, return the matching resources. I want the union of all patients found across both approaches.",
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "multi_query": true,
+    "algorithm_path": "comprehensive",
+    "algorithm_path_description": "Union of both PheKB algorithm criteria: dementia ICD codes (Paths A+B) and dementia drug fills (Paths A+C). The PheKB definition is explicitly an OR — both criteria are independently sufficient. An LLM must run both queries and union the results.",
+    "expected_queries": [
+      "Condition?code=http://snomed.info/sct|26929004,http://snomed.info/sct|429998004,http://snomed.info/sct|312991009,http://snomed.info/sct|230270009,http://snomed.info/sct|52448006",
+      "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|997223,http://www.nlm.nih.gov/research/umls/rxnorm|1100184,http://www.nlm.nih.gov/research/umls/rxnorm|310436,http://www.nlm.nih.gov/research/umls/rxnorm|996740,http://www.nlm.nih.gov/research/umls/rxnorm|1599803"
+    ],
+    "code_systems": [
+      "SNOMED CT",
+      "RxNorm"
+    ],
+    "required_codes": [
+      {
+        "system": "http://snomed.info/sct",
+        "code": "26929004",
+        "display": "Alzheimer's disease",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "429998004",
+        "display": "Vascular dementia",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "312991009",
+        "display": "Late onset dementia due to Lewy body disease",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "230270009",
+        "display": "Frontotemporal dementia",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "52448006",
+        "display": "Dementia",
+        "source": "UMLS verified, parent concept"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "997223",
+        "display": "Donepezil hydrochloride 10 MG Oral Tablet",
+        "source": "Synthea built-in dementia module"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "1100184",
+        "display": "Donepezil hydrochloride 23 MG Oral Tablet",
+        "source": "Synthea built-in dementia module"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "310436",
+        "display": "Galantamine 4 MG Oral Tablet",
+        "source": "Synthea built-in dementia module"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "996740",
+        "display": "Memantine hydrochloride 2 MG/ML Oral Solution",
+        "source": "Synthea built-in dementia module"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "1599803",
+        "display": "24 HR Donepezil 10 MG / Memantine 28 MG ER Oral Capsule",
+        "source": "Synthea built-in dementia module"
+      }
+    ],
+    "complexity": "expert",
+    "tags": [
+      "multi-query",
+      "neurology",
+      "dementia",
+      "comprehensive",
+      "cross-resource"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "Patient",
+    "parameters": {},
+    "url": "Condition?code=http://snomed.info/sct|26929004,http://snomed.info/sct|429998004,http://snomed.info/sct|312991009,http://snomed.info/sct|230270009,http://snomed.info/sct|52448006"
+  },
+  "test_data": {
+    "resources": [
+      "synthea/output/dementia/positive/fhir/",
+      "synthea/output/dementia/control/fhir/"
+    ],
+    "expected_result_count": 45,
+    "expected_resource_ids": [],
+    "expected_patient_ids": [
+      "09278a56-0541-6d95-b59b-2212f90e7614",
+      "0f321eb0-3fe3-e648-803c-66a0b357edf7",
+      "14cd5a2b-c703-6204-e1cd-5c598f0d0b48",
+      "2017daab-c1bc-808d-bed8-3b352a2c5cdc",
+      "2a4d9d5b-fec0-4a16-43e7-c6965b6ca17b",
+      "3a09b303-45d6-d544-bc0c-e74e551ab28f",
+      "3ed9f977-3713-3382-9245-9322cd5545f4",
+      "3f3eb144-2570-245d-965a-40aeb8e50b2a",
+      "3f753e95-1db1-f0bf-3b94-5770f0937f2e",
+      "40ab6d85-6067-6da0-2bcf-3dbfd04cd107",
+      "486c49f5-1086-54f8-208d-729581d16600",
+      "48bf6ebc-b754-b7c5-248f-870d48c12542",
+      "4e5e84ea-ec03-ef23-ccfe-719257d59a42",
+      "54e82802-0a04-8d4f-07a7-b769e04b00da",
+      "59ce1274-1db7-9389-c91d-a75da40be80d",
+      "5b897894-d747-42f9-1ee4-629a282a39d5",
+      "6b20f9fb-e318-b6ae-65b5-1eae81c039ec",
+      "6b815db1-d138-8b50-abc5-b1ce85ac67a5",
+      "74a89a95-0cd5-0eb9-a2c6-d0a052202284",
+      "7f8b7232-2086-8d42-4dc7-cff6069b6d9f",
+      "881b42b8-a663-b348-72df-0dfbc68eca98",
+      "89c7d417-f506-ecfd-e530-b5537d39e9c3",
+      "8ae0d313-4083-1efe-ef7a-190898515f70",
+      "8cdd61b1-c746-068f-080d-d50cf76debbf",
+      "9095f2e4-4b47-b0f7-0fbe-0080a3dd07bb",
+      "93e4c3ca-d318-c6f4-4079-852ecd8c2991",
+      "97b232fc-deb2-e526-9346-759ce0c21ef6",
+      "9aa3b49c-f51b-a242-b251-d78fb27f0de5",
+      "a09de125-08f9-dcdb-8811-8236a06e6b76",
+      "a29023a1-2cbf-0f67-e9d2-763c05b3437a",
+      "a7b5693a-3b2d-89c3-b632-c19b837e2cb6",
+      "a93ab8fc-0fd8-4571-9806-41b39edd279c",
+      "b2e88ff8-aae6-f90c-1a6c-054a83cb0e89",
+      "b595d199-4fb9-fbb9-d3dd-67a7743169c9",
+      "b9e0c2d4-23f7-29b9-b563-ce4b89636b71",
+      "ba3bbe48-52dd-d697-9203-f6d7f360bdc8",
+      "c5d7e9c3-5c55-79db-23e6-92eb2a7820fe",
+      "c9cf5b3b-d231-18e0-bc0b-bddff94ee60b",
+      "d6bc2a3c-f643-db37-108b-ef44c367d0f6",
+      "d962ad1d-4e81-94b1-f36d-423eeefd5c48",
+      "e1073fe9-ab54-8401-a0e7-78e9cc6509c5",
+      "e4f2487c-098d-f0b9-71cc-e435aa8c0464",
+      "e9a1681b-3a7a-34e4-1ebd-135387fbdbc8",
+      "ebf6a3f5-2477-aa44-86fc-a3e2362b5075",
+      "f1636daf-0022-3707-b936-afc4993138cf"
+    ]
+  },
+  "created_at": "2026-04-25T00:00:00.000000Z",
+  "updated_at": "2026-04-25T00:00:00.000000Z"
+}

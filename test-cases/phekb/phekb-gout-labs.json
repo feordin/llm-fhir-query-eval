@@ -1,0 +1,72 @@
+{
+  "id": "phekb-gout-labs",
+  "source": "phekb",
+  "source_id": "gout",
+  "name": "Gout - Elevated Urate Lab Query",
+  "description": "Tests ability to find gout patients via elevated serum urate (>7 mg/dL = hyperuricemia threshold). First uric acid lab test. Includes Path D (asymptomatic hyperuricemia without formal gout dx).",
+  "prompt": "Find patients with elevated serum urate (uric acid) results greater than 7 mg/dL.",
+  "prompts": {
+    "naive": "Find patients with high uric acid.",
+    "broad": "Find patients with serum urate (uric acid) measurements above 7 mg/dL — the threshold for hyperuricemia and gout risk.",
+    "expert": "Search Observation resources with LOINC 3084-1 (Urate in Serum) where value-quantity > 7 mg/dL. Query: Observation?code=http://loinc.org|3084-1&value-quantity=gt7||mg/dL"
+  },
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "algorithm_path": "labs-path",
+    "algorithm_path_description": "Patients with elevated urate. Includes Path D (asymptomatic hyperuricemia).",
+    "code_systems": [
+      "LOINC"
+    ],
+    "required_codes": [
+      {
+        "system": "http://loinc.org",
+        "code": "3084-1",
+        "display": "Urate [Mass/volume] in Serum or Plasma",
+        "source": "UMLS verified"
+      }
+    ],
+    "complexity": "hard",
+    "tags": [
+      "observation",
+      "rheumatology",
+      "gout",
+      "urate",
+      "hyperuricemia",
+      "value-quantity"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "Observation",
+    "parameters": {
+      "code": "http://loinc.org|3084-1",
+      "value-quantity": "gt7||mg/dL"
+    },
+    "url": "Observation?code=http://loinc.org|3084-1&value-quantity=gt7||mg/dL"
+  },
+  "test_data": {
+    "resources": [
+      "synthea/output/gout/positive/fhir/",
+      "synthea/output/gout/control/fhir/"
+    ],
+    "expected_result_count": 14,
+    "expected_resource_ids": [],
+    "expected_patient_ids": [
+      "04786bbd-2882-e67a-f5bd-4d120089220b",
+      "07b51d43-92fa-9e7a-ef49-4ad08949a8ca",
+      "342558d7-7860-e3c9-049e-37ac80404b25",
+      "39c4b31e-5a39-3a61-eca7-14c4933c7c3b",
+      "666389b5-cdbe-c1a3-2c59-0811d16bc203",
+      "6a9749f9-5ed3-5c2c-a153-f9e0fda2d3a2",
+      "6db9df95-ce42-5a64-8e4d-89dd02c7ce14",
+      "71161a5d-9496-f0eb-f317-d7376b833add",
+      "99a00e4b-1dcd-6d90-40fe-3a3299901c64",
+      "b2129dab-e000-710c-b018-cb4cd3442562",
+      "bed009f1-66b4-5720-83cf-4ddddc8a83c3",
+      "c4fe8de5-5ff7-ee6f-b236-ea8ca0906700",
+      "f5307fef-2154-f816-a9ab-ca0f0d75a7cc",
+      "f5a62ae0-8719-87e1-f79f-ad7cdc2117bc"
+    ]
+  },
+  "created_at": "2026-04-29T00:00:00.000000Z",
+  "updated_at": "2026-04-27T00:00:00.000000Z"
+}

@@ -1,0 +1,93 @@
+{
+  "id": "phekb-cataracts-comprehensive",
+  "source": "phekb",
+  "source_id": "cataracts",
+  "name": "Cataracts - Comprehensive Provider Query (DX + Procedures)",
+  "description": "Simulates an ophthalmologist identifying their complete cataract patient population. Combines: cataract diagnosis codes (multi-type) and cataract surgery procedures. Tests Condition + Procedure cross-resource union for lens disorder.",
+  "prompt": "I need to identify my complete cataract patient population for a quality improvement initiative on surgical timing and post-op outcomes. From clinical experience, cataract patients are documented in different ways: most have a formal cataract diagnosis (parent cataract, bilateral, unilateral, or nuclear cataract), and many have undergone cataract surgery.\n\nPlease run multiple FHIR queries to capture the full population:\n1. Patients with any cataract diagnosis\n2. Patients who have undergone cataract surgery\n\nFor each query, return the matching resources. I want the union of all patients found.",
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "multi_query": true,
+    "algorithm_path": "comprehensive",
+    "algorithm_path_description": "Union of cataract dx + cataract surgery Procedure. Tests Condition + Procedure cross-resource union for lens disorder.",
+    "expected_queries": [
+      "Condition?code=http://snomed.info/sct|193570009,http://snomed.info/sct|95722004,http://snomed.info/sct|95721006,http://snomed.info/sct|53889007",
+      "Procedure?code=http://snomed.info/sct|110473004"
+    ],
+    "code_systems": [
+      "SNOMED CT"
+    ],
+    "required_codes": [
+      {
+        "system": "http://snomed.info/sct",
+        "code": "193570009",
+        "display": "Cataract",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "95722004",
+        "display": "Bilateral cataracts",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "95721006",
+        "display": "Unilateral cataract",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "53889007",
+        "display": "Nuclear cataract",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "110473004",
+        "display": "Cataract surgery",
+        "source": "UMLS verified"
+      }
+    ],
+    "complexity": "expert",
+    "tags": [
+      "multi-query",
+      "ophthalmology",
+      "cataracts",
+      "comprehensive",
+      "cross-resource"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "Patient",
+    "parameters": {},
+    "url": "Condition?code=http://snomed.info/sct|193570009,http://snomed.info/sct|95722004,http://snomed.info/sct|95721006,http://snomed.info/sct|53889007"
+  },
+  "test_data": {
+    "resources": [
+      "synthea/output/cataracts/positive/fhir/",
+      "synthea/output/cataracts/control/fhir/"
+    ],
+    "expected_result_count": 15,
+    "expected_resource_ids": [],
+    "expected_patient_ids": [
+      "05a64a1c-5d3b-4c48-e1d8-d6be0ec25080",
+      "1624578c-d202-a7c6-3f47-a6bf9a3c5e40",
+      "2e263873-1632-735a-7c82-4eca149981c2",
+      "32d4caec-7231-52af-48e8-6dccf03fbda0",
+      "456f6a01-2df9-3d6d-87ab-9a958df3bb01",
+      "4e294ee0-e087-da9e-e89d-53592d461b16",
+      "6606fabe-0bc9-a611-21f0-674f9dc2d588",
+      "700a59ec-4b38-567c-2b5c-b7f514a8425e",
+      "7303af97-f37f-8841-8d2b-a1badbfbc63e",
+      "75e1af42-393d-079d-c9d7-d6e08b835d22",
+      "9a3c42a8-aa9b-07cf-a319-53b28af10798",
+      "a8267180-fb19-2a50-c005-225e3ac18938",
+      "b1fbf52b-4b28-3858-53ed-1c4505625cb4",
+      "d7d749f1-8662-798c-7b54-3cad7cd0904e",
+      "f7b31361-2bd5-366e-e955-ef2de95b9b9e"
+    ]
+  },
+  "created_at": "2026-04-28T00:00:00.000000Z",
+  "updated_at": "2026-04-27T00:00:00.000000Z"
+}

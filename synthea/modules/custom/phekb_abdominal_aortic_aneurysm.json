@@ -1,17 +1,23 @@
 {
   "name": "PheKB Abdominal Aortic Aneurysm (AAA)",
   "remarks": [
-    "Auto-generated Synthea module from PheKB phenotype: abdominal-aortic-aneurysm-aaa",
+    "Synthea module from PheKB phenotype: abdominal-aortic-aneurysm-aaa",
     "Based on Geisinger/eMERGE AAA algorithm",
     "Generates patients matching AAA phenotype criteria for FHIR query evaluation",
     "",
     "Case Types:",
-    "- Case Type 1: AAA repair procedure (CPT codes 34800-35132)",
-    "- Case Type 2: >= 1 vascular clinic visit with ruptured AAA (ICD-9 441.3)",
-    "- Case Type 3: >= 2 vascular clinic visits with unruptured AAA (ICD-9 441.4)",
+    "- Case Type 1: AAA repair procedure (EVAR or open surgical repair)",
+    "- Case Type 2: >= 1 vascular clinic visit with ruptured AAA (ICD-10 I71.3 / SNOMED 14336007)",
+    "- Case Type 3: >= 2 vascular clinic visits with unruptured AAA (ICD-10 I71.4 / SNOMED 233985008)",
     "",
     "Age requirement: 40-89 years",
-    "Exclusions: Marfan syndrome, Ehlers-Danlos, thoracic aneurysms, Moyamoya, fibromuscular dysplasia"
+    "Exclusions: Marfan syndrome, Ehlers-Danlos, thoracic aneurysms, Moyamoya, fibromuscular dysplasia",
+    "",
+    "SNOMED codes verified via UMLS 2025AB:",
+    "- 233985008 = Abdominal aortic aneurysm (general/unruptured)",
+    "- 14336007 = Ruptured abdominal aortic aneurysm (crosswalks to ICD-10 I71.3)",
+    "- 441788006 = Endovascular repair of abdominal aortic aneurysm",
+    "- 24165007 = Open repair of abdominal aortic aneurysm with graft"
   ],
   "states": {
     "Initial": {
@@ -41,21 +47,28 @@
       ],
       "distributed_transition": [
         {
-          "transition": "AAA_Diagnosis_Unruptured",
+          "transition": "Wellness_Encounter_Type1",
           "distribution": 0.40,
           "remarks": ["40% Case Type 1: AAA repair procedure (with unruptured diagnosis)"]
         },
         {
-          "transition": "AAA_Diagnosis_Ruptured",
+          "transition": "Wellness_Encounter_Type2",
           "distribution": 0.25,
           "remarks": ["25% Case Type 2: ruptured AAA diagnosis"]
         },
         {
-          "transition": "AAA_Diagnosis_Unruptured_Type3",
+          "transition": "Wellness_Encounter_Type3_First",
           "distribution": 0.35,
           "remarks": ["35% Case Type 3: multiple unruptured AAA encounters"]
         }
       ]
+    },
+
+    "Wellness_Encounter_Type1": {
+      "type": "Encounter",
+      "wellness": true,
+      "remarks": ["Wellness encounter for Case Type 1 - diagnosis then repair"],
+      "direct_transition": "AAA_Diagnosis_Unruptured"
     },
 
     "AAA_Diagnosis_Unruptured": {
@@ -67,105 +80,31 @@
           "system": "SNOMED-CT",
           "code": "233985008",
           "display": "Abdominal aortic aneurysm"
-        },
-        {
-          "system": "ICD-10-CM",
-          "code": "I71.4",
-          "display": "Abdominal aortic aneurysm, without rupture"
-        },
-        {
-          "system": "ICD-9-CM",
-          "code": "441.4",
-          "display": "Abdominal aortic aneurysm without mention of rupture"
         }
       ],
-      "direct_transition": "Vascular_Clinic_Encounter_1"
+      "direct_transition": "End_Encounter_Type1"
     },
 
-    "AAA_Diagnosis_Ruptured": {
-      "type": "ConditionOnset",
-      "remarks": ["Ruptured AAA diagnosis for Case Type 2 patients"],
-      "assign_to_attribute": "aaa_condition",
-      "codes": [
-        {
-          "system": "SNOMED-CT",
-          "code": "233985008",
-          "display": "Abdominal aortic aneurysm"
-        },
-        {
-          "system": "SNOMED-CT",
-          "code": "262684007",
-          "display": "Ruptured abdominal aortic aneurysm"
-        },
-        {
-          "system": "ICD-10-CM",
-          "code": "I71.3",
-          "display": "Abdominal aortic aneurysm, ruptured"
-        },
-        {
-          "system": "ICD-9-CM",
-          "code": "441.3",
-          "display": "Abdominal aortic aneurysm, ruptured"
-        }
-      ],
-      "direct_transition": "Emergency_Encounter_Ruptured"
+    "End_Encounter_Type1": {
+      "type": "EncounterEnd",
+      "direct_transition": "Delay_Before_Repair"
     },
 
-    "AAA_Diagnosis_Unruptured_Type3": {
-      "type": "ConditionOnset",
-      "remarks": ["Unruptured AAA for Case Type 3 - multiple vascular clinic visits"],
-      "assign_to_attribute": "aaa_condition",
-      "codes": [
-        {
-          "system": "SNOMED-CT",
-          "code": "233985008",
-          "display": "Abdominal aortic aneurysm"
-        },
-        {
-          "system": "ICD-10-CM",
-          "code": "I71.4",
-          "display": "Abdominal aortic aneurysm, without rupture"
-        },
-        {
-          "system": "ICD-9-CM",
-          "code": "441.4",
-          "display": "Abdominal aortic aneurysm without mention of rupture"
-        }
-      ],
-      "direct_transition": "Vascular_Encounter_Type3_First"
-    },
-
-    "Vascular_Clinic_Encounter_1": {
-      "type": "Encounter",
-      "encounter_class": "ambulatory",
-      "reason": "aaa_condition",
-      "remarks": ["Vascular clinic encounter for Case Type 1 - leads to repair"],
-      "codes": [
-        {
-          "system": "SNOMED-CT",
-          "code": "185347001",
-          "display": "Encounter for problem"
-        }
-      ],
-      "direct_transition": "Imaging_CT_Angiography"
-    },
-
-    "Imaging_CT_Angiography": {
-      "type": "Observation",
-      "category": "imaging",
-      "unit": "cm",
-      "remarks": ["Aortic diameter measurement - AAA defined as >= 3.0 cm"],
-      "codes": [
-        {
-          "system": "LOINC",
-          "code": "LP6617-7",
-          "display": "Abdominal aorta Diameter"
-        }
-      ],
+    "Delay_Before_Repair": {
+      "type": "Delay",
       "range": {
-        "low": 4.0,
-        "high": 7.5
+        "low": 1,
+        "high": 6,
+        "unit": "months"
       },
+      "direct_transition": "Repair_Encounter"
+    },
+
+    "Repair_Encounter": {
+      "type": "Encounter",
+      "wellness": true,
+      "reason": "aaa_condition",
+      "remarks": ["Surgical encounter for AAA repair - wellness:true for FHIR export"],
       "direct_transition": "AAA_Repair_Type_Selection"
     },
 
@@ -189,52 +128,42 @@
     "Endovascular_Repair_EVAR": {
       "type": "Procedure",
       "reason": "aaa_condition",
-      "remarks": ["Endovascular AAA repair - CPT 34800-34805"],
+      "remarks": ["Endovascular AAA repair (EVAR)"],
       "codes": [
         {
           "system": "SNOMED-CT",
           "code": "441788006",
           "display": "Endovascular repair of abdominal aortic aneurysm"
-        },
-        {
-          "system": "CPT",
-          "code": "34800",
-          "display": "Endovascular repair of infrarenal abdominal aortic aneurysm; using aorto-aortic tube prosthesis"
-        },
-        {
-          "system": "CPT",
-          "code": "34802",
-          "display": "Endovascular repair of infrarenal abdominal aortic aneurysm; using modular bifurcated prosthesis"
         }
       ],
-      "direct_transition": "End_Vascular_Encounter_1"
+      "duration": {
+        "low": 90,
+        "high": 180,
+        "unit": "minutes"
+      },
+      "direct_transition": "End_Repair_Encounter"
     },
 
     "Open_Surgical_Repair": {
       "type": "Procedure",
       "reason": "aaa_condition",
-      "remarks": ["Open AAA repair - CPT 35081-35103"],
+      "remarks": ["Open AAA repair with graft"],
       "codes": [
         {
           "system": "SNOMED-CT",
           "code": "24165007",
           "display": "Open repair of abdominal aortic aneurysm with graft"
-        },
-        {
-          "system": "CPT",
-          "code": "35081",
-          "display": "Direct repair of aneurysm, abdominal aorta"
-        },
-        {
-          "system": "CPT",
-          "code": "35102",
-          "display": "Direct repair of aneurysm, abdominal aorta involving iliac vessels"
         }
       ],
-      "direct_transition": "End_Vascular_Encounter_1"
+      "duration": {
+        "low": 120,
+        "high": 240,
+        "unit": "minutes"
+      },
+      "direct_transition": "End_Repair_Encounter"
     },
 
-    "End_Vascular_Encounter_1": {
+    "End_Repair_Encounter": {
       "type": "EncounterEnd",
       "direct_transition": "Post_Repair_Followup_Delay"
     },
@@ -260,25 +189,6 @@
           "display": "Encounter for problem"
         }
       ],
-      "direct_transition": "Followup_Imaging"
-    },
-
-    "Followup_Imaging": {
-      "type": "Observation",
-      "category": "imaging",
-      "unit": "cm",
-      "remarks": ["Post-repair surveillance imaging"],
-      "codes": [
-        {
-          "system": "LOINC",
-          "code": "LP6617-7",
-          "display": "Abdominal aorta Diameter"
-        }
-      ],
-      "range": {
-        "low": 3.0,
-        "high": 5.0
-      },
       "direct_transition": "End_Followup_Encounter"
     },
 
@@ -287,16 +197,22 @@
       "direct_transition": "Terminal_AAA_Case"
     },
 
-    "Emergency_Encounter_Ruptured": {
+    "Wellness_Encounter_Type2": {
       "type": "Encounter",
-      "encounter_class": "emergency",
-      "reason": "aaa_condition",
-      "remarks": ["Emergency encounter for ruptured AAA - Case Type 2"],
+      "wellness": true,
+      "remarks": ["Encounter for ruptured AAA - Case Type 2. Uses wellness:true for FHIR export."],
+      "direct_transition": "AAA_Diagnosis_Ruptured"
+    },
+
+    "AAA_Diagnosis_Ruptured": {
+      "type": "ConditionOnset",
+      "remarks": ["Ruptured AAA diagnosis for Case Type 2 patients. SNOMED 14336007 verified via UMLS crosswalk from ICD-10 I71.3"],
+      "assign_to_attribute": "aaa_condition",
       "codes": [
         {
           "system": "SNOMED-CT",
-          "code": "50849002",
-          "display": "Emergency room admission"
+          "code": "14336007",
+          "display": "Ruptured abdominal aortic aneurysm"
         }
       ],
       "direct_transition": "Emergency_Repair"
@@ -311,18 +227,13 @@
           "system": "SNOMED-CT",
           "code": "441788006",
           "display": "Endovascular repair of abdominal aortic aneurysm"
-        },
-        {
-          "system": "CPT",
-          "code": "34800",
-          "display": "Endovascular repair of infrarenal abdominal aortic aneurysm; using aorto-aortic tube prosthesis"
-        },
-        {
-          "system": "CPT",
-          "code": "35082",
-          "display": "Direct repair for ruptured aneurysm, abdominal aorta"
         }
       ],
+      "duration": {
+        "low": 90,
+        "high": 180,
+        "unit": "minutes"
+      },
       "direct_transition": "End_Emergency_Encounter"
     },
 
@@ -360,37 +271,24 @@
       "direct_transition": "Terminal_AAA_Case"
     },
 
-    "Vascular_Encounter_Type3_First": {
+    "Wellness_Encounter_Type3_First": {
       "type": "Encounter",
-      "encounter_class": "ambulatory",
-      "reason": "aaa_condition",
-      "remarks": ["First vascular clinic visit for Case Type 3"],
+      "wellness": true,
+      "remarks": ["First vascular clinic visit for Case Type 3 - uses wellness encounter"],
+      "direct_transition": "AAA_Diagnosis_Unruptured_Type3"
+    },
+
+    "AAA_Diagnosis_Unruptured_Type3": {
+      "type": "ConditionOnset",
+      "remarks": ["Unruptured AAA for Case Type 3 - multiple vascular clinic visits"],
+      "assign_to_attribute": "aaa_condition",
       "codes": [
         {
           "system": "SNOMED-CT",
-          "code": "185347001",
-          "display": "Encounter for problem"
+          "code": "233985008",
+          "display": "Abdominal aortic aneurysm"
         }
       ],
-      "direct_transition": "Initial_Imaging_Type3"
-    },
-
-    "Initial_Imaging_Type3": {
-      "type": "Observation",
-      "category": "imaging",
-      "unit": "cm",
-      "remarks": ["Aortic diameter measurement at first vascular visit"],
-      "codes": [
-        {
-          "system": "LOINC",
-          "code": "LP6617-7",
-          "display": "Abdominal aorta Diameter"
-        }
-      ],
-      "range": {
-        "low": 3.0,
-        "high": 5.4
-      },
       "direct_transition": "End_Type3_First_Encounter"
     },
 
@@ -422,36 +320,17 @@
           "display": "Encounter for problem"
         }
       ],
-      "direct_transition": "Surveillance_Imaging_Type3"
-    },
-
-    "Surveillance_Imaging_Type3": {
-      "type": "Observation",
-      "category": "imaging",
-      "unit": "cm",
-      "remarks": ["Follow-up aortic diameter measurement"],
-      "codes": [
-        {
-          "system": "LOINC",
-          "code": "LP6617-7",
-          "display": "Abdominal aorta Diameter"
-        }
-      ],
-      "range": {
-        "low": 3.2,
-        "high": 5.5
-      },
       "direct_transition": "Prescribe_Antihypertensive_AAA"
     },
 
     "Prescribe_Antihypertensive_AAA": {
       "type": "MedicationOrder",
-      "remarks": ["Beta-blockers commonly prescribed for AAA management"],
+      "remarks": ["Beta-blockers commonly prescribed for AAA management - SCD code"],
       "codes": [
         {
           "system": "RxNorm",
-          "code": "6918",
-          "display": "Metoprolol"
+          "code": "866514",
+          "display": "metoprolol tartrate 50 MG Oral Tablet"
         }
       ],
       "reason": "aaa_condition",
@@ -460,12 +339,12 @@
 
     "Prescribe_Statin_AAA": {
       "type": "MedicationOrder",
-      "remarks": ["Statins for cardiovascular risk reduction in AAA patients"],
+      "remarks": ["Statins for cardiovascular risk reduction - SCD code"],
       "codes": [
         {
           "system": "RxNorm",
-          "code": "36567",
-          "display": "Atorvastatin"
+          "code": "259255",
+          "display": "atorvastatin 20 MG Oral Tablet"
         }
       ],
       "reason": "aaa_condition",

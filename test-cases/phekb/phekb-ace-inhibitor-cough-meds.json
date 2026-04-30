@@ -1,0 +1,93 @@
+{
+  "id": "phekb-ace-inhibitor-cough-meds",
+  "source": "phekb",
+  "source_id": "ace-inhibitor-ace-i-induced-cough",
+  "name": "ACE Inhibitor Cough - ACEi Medication Query",
+  "description": "Tests ability to find patients prescribed ACE inhibitor medications. This is the first step in the PheKB ACE inhibitor-induced cough phenotype algorithm: identifying patients who are currently on ACE inhibitors. The algorithm then looks for cough as an adverse event in this population. This test focuses on the MedicationRequest resource type with RxNorm codes for common ACE inhibitors.",
+  "prompt": "Find all patients prescribed ACE inhibitor medications such as lisinopril, enalapril, ramipril, or benazepril.",
+  "prompts": {
+    "naive": "Find all patients prescribed ACE inhibitor medications such as lisinopril, enalapril, ramipril, or benazepril.",
+    "expert": "I need to identify all patients who have been prescribed ACE inhibitor (angiotensin-converting enzyme inhibitor) medications. Common ACE inhibitors include lisinopril (the most widely prescribed), enalapril, ramipril, and benazepril. Each of these comes in various dosage forms and strengths, so the query should include the specific RxNorm SCD (semantic clinical drug) codes for the formulations in our formulary. Search MedicationRequest resources. Note that patients may have been prescribed multiple different ACE inhibitors over time, or may have been switched between agents, so all common ACE inhibitors should be included in the search."
+  },
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "algorithm_path": "case-identification",
+    "algorithm_path_description": "Identifies the base population of patients on ACE inhibitor medications. Both cases (patients with ACEi-induced cough) and controls (patients on ACEi without cough) will have ACEi prescriptions. This tests whether LLMs can identify the correct RxNorm SCD codes for common ACE inhibitors.",
+    "code_systems": [
+      "RxNorm"
+    ],
+    "required_codes": [
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "314076",
+        "display": "lisinopril 10 MG Oral Tablet",
+        "source": "umls"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "314077",
+        "display": "lisinopril 20 MG Oral Tablet",
+        "source": "umls"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "858817",
+        "display": "enalapril maleate 10 MG Oral Tablet",
+        "source": "umls"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "198189",
+        "display": "ramipril 5 MG Oral Capsule",
+        "source": "umls"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "898687",
+        "display": "benazepril hydrochloride 10 MG Oral Tablet",
+        "source": "umls"
+      }
+    ],
+    "complexity": "medium",
+    "tags": [
+      "medication",
+      "cardiology",
+      "adverse-event",
+      "ace-inhibitor",
+      "rxnorm"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "MedicationRequest",
+    "parameters": {
+      "code": "http://www.nlm.nih.gov/research/umls/rxnorm|314076,http://www.nlm.nih.gov/research/umls/rxnorm|314077,http://www.nlm.nih.gov/research/umls/rxnorm|858817,http://www.nlm.nih.gov/research/umls/rxnorm|198189,http://www.nlm.nih.gov/research/umls/rxnorm|898687"
+    },
+    "url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|314076,http://www.nlm.nih.gov/research/umls/rxnorm|314077,http://www.nlm.nih.gov/research/umls/rxnorm|858817,http://www.nlm.nih.gov/research/umls/rxnorm|198189,http://www.nlm.nih.gov/research/umls/rxnorm|898687"
+  },
+  "test_data": {
+    "resources": [
+      "synthea/output/ace-inhibitor-cough/positive/fhir/",
+      "synthea/output/ace-inhibitor-cough/control/fhir/"
+    ],
+    "expected_result_count": 14,
+    "expected_resource_ids": [],
+    "expected_patient_ids": [
+      "2c167999-289d-95fa-5c27-7d8b8d35348c",
+      "35b353dd-402b-571a-d67a-af0a104d0854",
+      "46ee9d82-b52c-856d-069b-5064ff052225",
+      "4f083ce3-f12b-bb4b-7353-e17f0cd55b0a",
+      "62f60bdb-cc5c-8305-b98b-f2b229a55eca",
+      "6fbddf55-7096-b883-7cd3-260f27953080",
+      "9661a432-4630-2cd9-142c-386845fae837",
+      "982750f4-569b-5949-196b-60699bdda3fb",
+      "aa616abe-1761-0c9a-7959-07544679dafd",
+      "ba419d35-0dfe-8af7-347c-eebf02485a56",
+      "bff9d9d5-ee3d-d852-9c67-36d8361a4a4a",
+      "c86c400e-ff88-a1e3-2e23-caa4d8311f47",
+      "e74367bd-7385-97dc-2c7f-251b4cd9fe29",
+      "eb5910f1-26e6-bc6f-b300-716eae678d6f"
+    ]
+  },
+  "created_at": "2026-03-15T12:00:00.000000Z",
+  "updated_at": "2026-04-27T00:00:00.000000Z"
+}

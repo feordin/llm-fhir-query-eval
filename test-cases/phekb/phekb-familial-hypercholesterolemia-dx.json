@@ -1,0 +1,101 @@
+{
+  "id": "phekb-familial-hypercholesterolemia-dx",
+  "source": "phekb",
+  "source_id": "familial-hypercholesterolemia",
+  "name": "Familial Hypercholesterolemia - Diagnosis Code Query (Multi-Subtype)",
+  "description": "Tests ability to find familial hypercholesterolemia (FH) patients via diagnosis codes. The Geisinger PheKB FH algorithm uses Dutch Lipid Clinic Network (DLCN) criteria scoring, with specific FH SNOMED codes. Synthea distributes patients across the FH SNOMED family: parent FH, FH-homozygous (most severe), FH-heterozygous (most common), and the LDL receptor mutation subtypes. An LLM querying only the parent code (398036000) will miss patients coded with the genetically-specific subtypes.",
+  "prompt": "Find all patients with a diagnosis of familial hypercholesterolemia, including heterozygous and homozygous forms.",
+  "prompts": {
+    "naive": "Find all patients with familial hypercholesterolemia.",
+    "broad": "Find all patients diagnosed with any form of familial hypercholesterolemia (FH) — the parent FH concept, the heterozygous form (one defective LDL receptor allele, the most common), the homozygous form (two defective alleles, severe), and FH variants caused by specific LDL receptor mutations or apolipoprotein B defects.",
+    "expert": "I need to identify all FH patients. FH is documented under multiple SNOMED codes from AIR Steward's 'Familial Hypercholesterolemia' VSAC (OID 2.16.840.1.113762.1.4.1047.85): Familial hypercholesterolemia (398036000) is the parent, with subtype variants Familial hypercholesterolemia - heterozygous (238079002), Familial hypercholesterolemia - homozygous (238078005), FH due to heterozygous LDL receptor mutation (403829002), and FH due to homozygous LDL receptor mutation (403830007). Search Condition resources for all five codes."
+  },
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "algorithm_path": "diagnosis-path",
+    "algorithm_path_description": "Patients with FH diagnosis codes (Paths A and B). Maps to Geisinger PheKB FH algorithm Stage II case definition (DLCN score >= 6).",
+    "code_systems": [
+      "SNOMED CT",
+      "ICD-10-CM"
+    ],
+    "required_codes": [
+      {
+        "system": "http://snomed.info/sct",
+        "code": "398036000",
+        "display": "Familial hypercholesterolemia",
+        "source": "AIR VSAC, parent concept"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "238079002",
+        "display": "Familial hypercholesterolemia - heterozygous",
+        "source": "AIR VSAC"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "238078005",
+        "display": "Familial hypercholesterolemia - homozygous",
+        "source": "AIR VSAC"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "403829002",
+        "display": "Familial hypercholesterolemia due to heterozygous low density lipoprotein receptor mutation",
+        "source": "AIR VSAC"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "403830007",
+        "display": "Familial hypercholesterolemia due to homozygous low density lipoprotein receptor mutation",
+        "source": "AIR VSAC"
+      }
+    ],
+    "complexity": "medium",
+    "tags": [
+      "condition",
+      "cardiology",
+      "familial-hypercholesterolemia",
+      "fh",
+      "diagnosis-code",
+      "multi-subtype",
+      "code-variation",
+      "genetic"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "Condition",
+    "parameters": {
+      "code": "http://snomed.info/sct|398036000,http://snomed.info/sct|238079002,http://snomed.info/sct|238078005,http://snomed.info/sct|403829002,http://snomed.info/sct|403830007"
+    },
+    "url": "Condition?code=http://snomed.info/sct|398036000,http://snomed.info/sct|238079002,http://snomed.info/sct|238078005,http://snomed.info/sct|403829002,http://snomed.info/sct|403830007"
+  },
+  "test_data": {
+    "resources": [
+      "synthea/output/familial-hypercholesterolemia/positive/fhir/",
+      "synthea/output/familial-hypercholesterolemia/control/fhir/"
+    ],
+    "expected_result_count": 17,
+    "expected_resource_ids": [],
+    "expected_patient_ids": [
+      "1d6f5e73-7b70-7d66-22b8-0ec459f4cd3d",
+      "1f6f3dc3-3996-86cc-8c27-d20846f9a20a",
+      "278f6908-aeef-5e63-13d3-9298b3005334",
+      "29b181f9-470e-0ccd-4de5-31c0d9a7aff3",
+      "495abe3a-ac3d-d18e-6d12-85cae79062fe",
+      "5a4a8e9c-87c7-db1f-60d1-a9c342fb1e06",
+      "6479950d-2fcb-5253-41e3-db18f35af27e",
+      "723ad5b6-850f-799e-99b4-60e38ea93791",
+      "96ddb8cf-a9da-b40a-cb29-58bef0190cc4",
+      "9e9e9306-e659-6cf3-2238-05fe9ad1c7d2",
+      "a9901a83-5fbe-0482-f53d-65c43e0b8f6a",
+      "aad5814e-e8e9-febc-befc-e30d27002abe",
+      "bdbb4551-9771-52a6-3f2f-1f0c2e81b85f",
+      "c5c269e4-8d56-3485-873b-cfd889593ec1",
+      "c9a9f060-a150-fc08-3a60-9669597db06d",
+      "ded32913-7700-d6d7-bff7-89bdcde1505f",
+      "e1eab7bd-39c0-2cc0-c002-c2eaff965bfa"
+    ]
+  },
+  "created_at": "2026-04-27T00:00:00.000000Z",
+  "updated_at": "2026-04-27T00:00:00.000000Z"
+}

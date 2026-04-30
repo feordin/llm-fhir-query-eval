@@ -1,0 +1,71 @@
+{
+  "id": "phekb-ovarian-cancer-procedures",
+  "source": "phekb",
+  "source_id": "ovarian-cancer",
+  "name": "Ovarian Cancer - Oophorectomy/Hysterectomy Procedure Query",
+  "description": "**Eighth Procedure-resource phenotype.** Tests ability to find ovarian cancer patients via surgical procedures: oophorectomy (ovary removal) and hysterectomy (uterus removal, often combined as TAH-BSO for ovarian cancer staging).",
+  "prompt": "Find patients who have undergone oophorectomy or hysterectomy procedures.",
+  "prompts": {
+    "naive": "Find patients with ovary surgery.",
+    "broad": "Find Procedure resources for oophorectomy (ovary removal) or hysterectomy (uterus removal) — the surgical procedures used for ovarian cancer staging and treatment, often performed together as total abdominal hysterectomy with bilateral salpingo-oophorectomy (TAH-BSO).",
+    "expert": "I need Procedure resources for ovarian/uterine surgical procedures. Use SNOMED codes 83152002 (Oophorectomy) and 236886002 (Hysterectomy). Query: Procedure?code=http://snomed.info/sct|83152002,http://snomed.info/sct|236886002"
+  },
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "algorithm_path": "procedure-path",
+    "algorithm_path_description": "Patients with oophorectomy or hysterectomy. **Eighth Procedure-resource phenotype.** First gynecologic-surgical procedure.",
+    "code_systems": [
+      "SNOMED CT"
+    ],
+    "required_codes": [
+      {
+        "system": "http://snomed.info/sct",
+        "code": "83152002",
+        "display": "Oophorectomy (procedure)",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "236886002",
+        "display": "Hysterectomy (procedure)",
+        "source": "UMLS verified"
+      }
+    ],
+    "complexity": "medium",
+    "tags": [
+      "procedure",
+      "oncology",
+      "gynecology",
+      "ovarian-cancer",
+      "oophorectomy",
+      "hysterectomy",
+      "eighth-procedure-test",
+      "female-specific"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "Procedure",
+    "parameters": {
+      "code": "http://snomed.info/sct|83152002,http://snomed.info/sct|236886002"
+    },
+    "url": "Procedure?code=http://snomed.info/sct|83152002,http://snomed.info/sct|236886002"
+  },
+  "test_data": {
+    "resources": [
+      "synthea/output/ovarian-cancer/positive/fhir/",
+      "synthea/output/ovarian-cancer/control/fhir/"
+    ],
+    "expected_result_count": 6,
+    "expected_resource_ids": [],
+    "expected_patient_ids": [
+      "38959bab-fe18-a541-4a7c-6d9ffadaa0d7",
+      "4eefd533-f086-99bb-a7a3-58fde98fbaf3",
+      "50636104-1a06-4d16-e850-b4e5c0f15109",
+      "86076c4c-86a5-2d02-5874-599269de2d94",
+      "974abc2d-d80c-8a18-b264-f8707b2c848e",
+      "98c95ddf-9ce6-063c-7af4-3d448f0dcdf1"
+    ]
+  },
+  "created_at": "2026-04-28T00:00:00.000000Z",
+  "updated_at": "2026-04-27T00:00:00.000000Z"
+}

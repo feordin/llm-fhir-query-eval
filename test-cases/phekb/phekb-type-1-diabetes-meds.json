@@ -1,0 +1,124 @@
+{
+  "id": "phekb-type-1-diabetes-meds",
+  "source": "phekb",
+  "source_id": "type-1-diabetes",
+  "name": "Type 1 Diabetes - Insulin-Only Therapy Query",
+  "description": "Tests ability to find type 1 diabetes patients via insulin prescriptions. T1D management requires insulin from disease onset (lifelong). Unlike T2D where metformin is first-line, T1D patients are NEVER on metformin/sulfonylureas/DPP4 inhibitors as primary therapy — only insulin formulations. Synthea distributes patients across insulin types: regular human insulin, glargine (long-acting), aspart protamine (intermediate), and the parent insulin ingredient. An LLM that searches for metformin will return zero T1D patients.",
+  "prompt": "Find patients prescribed insulin formulations used to treat type 1 diabetes, including regular human insulin, insulin glargine, and other insulin variants.",
+  "prompts": {
+    "naive": "Find patients on insulin.",
+    "broad": "Find patients prescribed any insulin formulation — including regular human insulin, insulin glargine (long-acting), insulin aspart protamine (intermediate-acting), or the parent insulin concept. Type 1 diabetes patients require insulin therapy from disease onset.",
+    "expert": "I need MedicationRequest resources for any insulin product. Use these RxNorm codes: 5856 (insulin parent ingredient), 253182 (insulin regular human ingredient), 274783 (insulin glargine ingredient), 575068 (insulin aspart protamine ingredient), 311036 (Humulin R 100 UNT/mL Injectable Solution SCD). Important: do NOT include metformin (RxNorm 6809) or other oral antidiabetics — those are T2D-specific and would not appear in T1D patients."
+  },
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "algorithm_path": "medication-path",
+    "algorithm_path_description": "Patients with insulin medication orders. Insulin Path C is small because insulin is highly specific to diabetes (T1D and insulin-treated T2D, gestational DM, hospital-only-protocols). Tests whether LLM correctly identifies insulin-only therapy as the T1D signature.",
+    "code_systems": [
+      "RxNorm"
+    ],
+    "required_codes": [
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "5856",
+        "display": "Insulin",
+        "source": "UMLS verified, parent ingredient"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "253182",
+        "display": "insulin, regular, human",
+        "source": "UMLS verified, RxNorm ingredient"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "274783",
+        "display": "insulin glargine",
+        "source": "UMLS verified, RxNorm ingredient"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "575068",
+        "display": "insulin aspart protamine, human",
+        "source": "UMLS verified, RxNorm ingredient"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "311036",
+        "display": "insulin, regular, human 100 UNT/ML Injectable Solution [Humulin R]",
+        "source": "UMLS verified, RxNorm SCD"
+      }
+    ],
+    "complexity": "medium",
+    "tags": [
+      "medication",
+      "endocrinology",
+      "type-1-diabetes",
+      "insulin",
+      "multi-class",
+      "code-variation",
+      "subtype-distinction"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "MedicationRequest",
+    "parameters": {
+      "code": "http://www.nlm.nih.gov/research/umls/rxnorm|5856,http://www.nlm.nih.gov/research/umls/rxnorm|253182,http://www.nlm.nih.gov/research/umls/rxnorm|274783,http://www.nlm.nih.gov/research/umls/rxnorm|575068,http://www.nlm.nih.gov/research/umls/rxnorm|311036"
+    },
+    "url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|5856,http://www.nlm.nih.gov/research/umls/rxnorm|253182,http://www.nlm.nih.gov/research/umls/rxnorm|274783,http://www.nlm.nih.gov/research/umls/rxnorm|575068,http://www.nlm.nih.gov/research/umls/rxnorm|311036"
+  },
+  "test_data": {
+    "resources": [
+      "synthea/output/type-1-diabetes/positive/fhir/",
+      "synthea/output/type-1-diabetes/control/fhir/"
+    ],
+    "expected_result_count": 42,
+    "expected_resource_ids": [],
+    "expected_patient_ids": [
+      "101bc200-cfa8-da28-2fd4-abcf40f79002",
+      "11aeaba7-b5d5-65f5-ba42-6811b802d410",
+      "15cc6042-f5b1-f9c1-77af-f8fc09c70e11",
+      "1855182e-44e6-fa3a-d70a-6bbf8ebd77e0",
+      "1bb6e3b9-540e-0ece-f06d-7c5f4f9907fd",
+      "265b637d-5a62-9b4c-e9ca-83c16e3b460b",
+      "2694941f-b838-561a-d47c-7093ce0eaa01",
+      "2ccf50c1-31c5-b3d9-dc49-fb54764d05ce",
+      "307d60b8-7927-f86d-f480-f496dc704023",
+      "311ef754-3781-b2e9-ff36-807d17fd695b",
+      "3a62ae3f-83e2-7d7b-4fa4-188dce1df480",
+      "3ba88562-0b82-743c-ba3b-390aada6f4a6",
+      "41d50827-ecdf-986a-bfbe-f98be63e15ab",
+      "4f6939fd-8d36-688c-e840-2fbce2a5a406",
+      "5bc23987-a99f-9d2e-89d4-9cc7e3e3d9cb",
+      "607c28c3-567e-8e26-80a8-cd1fb951db0d",
+      "62c8c02f-5aba-0377-2071-dbae43714659",
+      "68807bc3-3d09-ebbb-3044-748368951ac8",
+      "691abf55-43fc-faaf-8cef-eaf94ce36bc5",
+      "6d3c3956-c08e-a4f7-e59b-7fc51a50727e",
+      "6f7e4e7b-1817-aeaa-141b-e0b323e73ea5",
+      "8dd98c94-1e34-c6aa-db4c-e617081bc16a",
+      "93dfb1c1-5f99-718e-8a58-849f48e2be75",
+      "9538d7b1-5eec-226b-0d76-fb1ffb10da9d",
+      "9962293c-6c25-e78e-6902-994cffd4258c",
+      "9b45cc89-4cd1-b0bb-7c13-18496b5b2cfe",
+      "a681b246-8e8c-e001-a255-9b6ab138f91b",
+      "a858ec8e-9fd9-6bad-04c3-c95c5c2b8a4e",
+      "a9831973-1245-a6b7-b3b1-c3fcd4e41aa9",
+      "b7b5297d-6556-d74d-c5a1-1ac2b86c7f70",
+      "bac8a47d-ddee-bf98-71a7-2164bcb74c05",
+      "c8064c2f-ad9d-0b76-02bd-cf9032f9f93f",
+      "c8a0b7d8-9f6d-7524-3e77-485a596e8b53",
+      "cdb32db9-abc7-76d5-a3ea-3a970665450f",
+      "d6f6c70b-d83b-97e4-4a8c-b5c18480b356",
+      "da255dad-f84f-e117-4eec-f68bf707b7da",
+      "dd6278b7-45e4-ad9a-3bcd-f3fc30e89a3a",
+      "e0e1c949-d33e-5bf2-caf9-eddc5b11ac12",
+      "e0f557a5-d7b6-f443-5dfc-ecf8f3c08cf5",
+      "e63d02ea-5753-145b-10f1-97d30275a83c",
+      "e92c22c5-81d6-9f20-d040-1785d840a77a",
+      "f769f4ee-289c-5ec7-a123-b76320dae0b0"
+    ]
+  },
+  "created_at": "2026-04-27T00:00:00.000000Z",
+  "updated_at": "2026-04-27T00:00:00.000000Z"
+}

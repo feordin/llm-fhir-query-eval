@@ -1,0 +1,162 @@
+{
+  "id": "phekb-ovarian-cancer-comprehensive",
+  "source": "phekb",
+  "source_id": "ovarian-cancer",
+  "name": "Ovarian Cancer - Comprehensive Provider Query (DX + Meds + Labs + Procedures)",
+  "description": "Simulates a gyn-oncologist identifying their complete ovarian cancer patient population. Combines: ovarian cancer diagnosis codes, chemotherapy + PARP inhibitor, elevated CA-125, and oophorectomy/hysterectomy procedures. **Third 4-resource-type comprehensive query** in the suite (after CRC and Prostate Cancer).",
+  "prompt": "I need to identify my complete ovarian cancer patient population for a quality improvement initiative on chemotherapy adherence and CA-125 surveillance. From clinical experience, ovarian cancer patients are documented in different ways: most have a formal ovarian cancer diagnosis (often histology-specific), most are on chemotherapy (carboplatin, paclitaxel, cisplatin, gemcitabine, or olaparib), most have undergone oophorectomy or hysterectomy, and most have elevated CA-125.\n\nPlease run multiple FHIR queries to capture the full population:\n1. Patients with any ovarian cancer diagnosis\n2. Patients prescribed ovarian cancer chemotherapy\n3. Patients who have undergone oophorectomy or hysterectomy\n4. Patients with elevated CA-125 (>35 U/mL)\n\nFor each query, return the matching resources. I want the union of all patients found. Note: this is a female-only population.",
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "multi_query": true,
+    "algorithm_path": "comprehensive",
+    "algorithm_path_description": "Union of ovarian cancer dx + chemo Rx + surgical Procedures + elevated CA-125. **Third 4-resource-type union test** in the suite (after CRC and Prostate).",
+    "expected_queries": [
+      "Condition?code=http://snomed.info/sct|363443007,http://snomed.info/sct|93934004,http://snomed.info/sct|123843001,http://snomed.info/sct|254850005,http://snomed.info/sct|254852002",
+      "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|40048,http://www.nlm.nih.gov/research/umls/rxnorm|56946,http://www.nlm.nih.gov/research/umls/rxnorm|2555,http://www.nlm.nih.gov/research/umls/rxnorm|12574,http://www.nlm.nih.gov/research/umls/rxnorm|1597582",
+      "Procedure?code=http://snomed.info/sct|83152002,http://snomed.info/sct|236886002",
+      "Observation?code=http://loinc.org|10334-1&value-quantity=gt35||U/mL"
+    ],
+    "code_systems": [
+      "SNOMED CT",
+      "RxNorm",
+      "LOINC"
+    ],
+    "required_codes": [
+      {
+        "system": "http://snomed.info/sct",
+        "code": "363443007",
+        "display": "Malignant neoplasm of ovary",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "93934004",
+        "display": "Primary malignant neoplasm of ovary",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "123843001",
+        "display": "Neoplasm of ovary",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "254850005",
+        "display": "Serous papillary cystadenocarcinoma ovary",
+        "source": "VSAC"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "254852002",
+        "display": "Endometrioid carcinoma ovary",
+        "source": "VSAC"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "40048",
+        "display": "carboplatin",
+        "source": "RxNav"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "56946",
+        "display": "paclitaxel",
+        "source": "RxNav"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "2555",
+        "display": "cisplatin",
+        "source": "RxNav"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "12574",
+        "display": "gemcitabine",
+        "source": "RxNav"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "1597582",
+        "display": "olaparib",
+        "source": "RxNav"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "83152002",
+        "display": "Oophorectomy",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "236886002",
+        "display": "Hysterectomy",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://loinc.org",
+        "code": "10334-1",
+        "display": "CA-125",
+        "source": "UMLS verified"
+      }
+    ],
+    "complexity": "expert",
+    "tags": [
+      "multi-query",
+      "oncology",
+      "gynecology",
+      "ovarian-cancer",
+      "comprehensive",
+      "cross-resource",
+      "female-specific",
+      "four-resource-types"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "Patient",
+    "parameters": {},
+    "url": "Condition?code=http://snomed.info/sct|363443007,http://snomed.info/sct|93934004,http://snomed.info/sct|123843001,http://snomed.info/sct|254850005,http://snomed.info/sct|254852002"
+  },
+  "test_data": {
+    "resources": [
+      "synthea/output/ovarian-cancer/positive/fhir/",
+      "synthea/output/ovarian-cancer/control/fhir/"
+    ],
+    "expected_result_count": 29,
+    "expected_resource_ids": [],
+    "expected_patient_ids": [
+      "1ad3377b-f500-f643-9e9b-e1e690db5947",
+      "1d1493df-fdc9-0324-8c0c-3b55320d2e67",
+      "20501287-bd5e-7dd2-5a46-1dfcc14d9765",
+      "2682880e-8828-e009-88a9-d4d89ab1b079",
+      "38959bab-fe18-a541-4a7c-6d9ffadaa0d7",
+      "39043527-78be-fdd6-4d33-fb0fa88f0f0a",
+      "44e32d89-2470-972b-9165-5ed00012b52d",
+      "4eefd533-f086-99bb-a7a3-58fde98fbaf3",
+      "50636104-1a06-4d16-e850-b4e5c0f15109",
+      "5912d7df-7f66-a918-3241-e06b38d7cf83",
+      "60430c01-4964-519d-f2e9-681a71345d01",
+      "73d3c8cc-5371-ca25-42f1-f6216664c8b2",
+      "73f5213f-ddaa-f7b7-810d-67b389a6b07d",
+      "78cf5477-1706-2de8-a10d-83e7ccc49247",
+      "7ad48085-20c5-8bfb-d6eb-21455272a1aa",
+      "7d6e9972-3edb-3c28-1faf-5ee69df1ad03",
+      "85f740b2-480a-4ed0-8134-e8e22219167a",
+      "86076c4c-86a5-2d02-5874-599269de2d94",
+      "8e32acb0-a66d-a2cb-6ce9-b44603e7f6b7",
+      "974abc2d-d80c-8a18-b264-f8707b2c848e",
+      "98c95ddf-9ce6-063c-7af4-3d448f0dcdf1",
+      "b54eb1e8-296a-1e86-0e5a-1f2f8aa7705f",
+      "baf3ebde-5210-1314-71cf-a8c2f0273838",
+      "c850bdd2-4374-b633-3d33-4c3d4d4e99e6",
+      "caafbea2-99f7-b3b6-be2d-a7d579d10bc8",
+      "d7cfe075-97d8-78b0-0410-3020efb76660",
+      "dbe5fd18-8de5-194e-5fc3-d8c1593805c1",
+      "df78a347-4fdb-3ae8-c5eb-83a4850c0dd8",
+      "efdceef1-6b9b-546e-fa29-10860b0b1f16"
+    ]
+  },
+  "created_at": "2026-04-28T00:00:00.000000Z",
+  "updated_at": "2026-04-27T00:00:00.000000Z"
+}

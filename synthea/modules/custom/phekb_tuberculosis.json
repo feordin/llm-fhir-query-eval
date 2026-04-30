@@ -1,0 +1,100 @@
+{
+  "name": "PheKB Tuberculosis",
+  "remarks": [
+    "Custom Synthea module for tuberculosis (TB).",
+    "First chronic bacterial infection requiring multi-drug therapy.",
+    "First multi-drug regimen phenotype — RIPE (rifampin + isoniazid + pyrazinamide + ethambutol). For this module we use rifampin + isoniazid (the two RxNorm codes verified).",
+    "",
+    "Generates THREE patient paths:",
+    "  Path A (50%): TB dx + rifampin + isoniazid (active TB on combination therapy)",
+    "  Path B (30%): TB dx + isoniazid only (latent TB infection — INH monotherapy)",
+    "  Path C (20%): Rifampin + isoniazid without TB dx (TRICKY — empirical/contact-prophylaxis)",
+    "",
+    "Diagnosis SNOMED variation:",
+    "  60% Pulmonary TB (154283005)",
+    "  40% Tuberculosis (56717001) — broader",
+    "",
+    "Age guard: >=18 (adult TB)."
+  ],
+  "states": {
+    "Initial": { "type": "Initial", "direct_transition": "Age_Guard" },
+    "Age_Guard": { "type": "Guard", "allow": { "condition_type": "Age", "operator": ">=", "quantity": 18, "unit": "years" }, "direct_transition": "Set_TB_Flag" },
+    "Set_TB_Flag": { "type": "SetAttribute", "attribute": "tb_positive", "value": true, "direct_transition": "Choose_Patient_Path" },
+    "Choose_Patient_Path": {
+      "type": "Simple",
+      "distributed_transition": [
+        { "transition": "Set_Path_A", "distribution": 0.50 },
+        { "transition": "Set_Path_B", "distribution": 0.30 },
+        { "transition": "Set_Path_C", "distribution": 0.20 }
+      ]
+    },
+    "Set_Path_A": { "type": "SetAttribute", "attribute": "tb_has_dx", "value": true, "direct_transition": "Set_Path_A_Combo" },
+    "Set_Path_A_Combo": { "type": "SetAttribute", "attribute": "tb_combo_therapy", "value": true, "direct_transition": "Choose_Subtype" },
+    "Set_Path_B": { "type": "SetAttribute", "attribute": "tb_has_dx", "value": true, "direct_transition": "Set_Path_B_Combo" },
+    "Set_Path_B_Combo": { "type": "SetAttribute", "attribute": "tb_combo_therapy", "value": false, "direct_transition": "Choose_Subtype" },
+    "Set_Path_C": { "type": "SetAttribute", "remarks": ["TRICKY: rifampin+isoniazid without TB dx"], "attribute": "tb_has_dx", "value": false, "direct_transition": "Set_Path_C_Combo" },
+    "Set_Path_C_Combo": { "type": "SetAttribute", "attribute": "tb_combo_therapy", "value": true, "direct_transition": "Choose_Subtype" },
+
+    "Choose_Subtype": {
+      "type": "Simple",
+      "distributed_transition": [
+        { "transition": "Set_Subtype_Pulmonary", "distribution": 0.60 },
+        { "transition": "Set_Subtype_TB", "distribution": 0.40 }
+      ]
+    },
+    "Set_Subtype_Pulmonary": { "type": "SetAttribute", "attribute": "tb_subtype", "value": "pulmonary", "direct_transition": "Set_Needs_First_Visit" },
+    "Set_Subtype_TB": { "type": "SetAttribute", "attribute": "tb_subtype", "value": "tb", "direct_transition": "Set_Needs_First_Visit" },
+
+    "Set_Needs_First_Visit": { "type": "SetAttribute", "attribute": "tb_needs_first_visit", "value": true, "direct_transition": "Wellness_Encounter" },
+    "Wellness_Encounter": { "type": "Encounter", "wellness": true, "direct_transition": "Check_First_Visit" },
+    "Check_First_Visit": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "tb_needs_first_visit", "operator": "==", "value": true }, "transition": "Check_Has_Diagnosis" },
+        { "transition": "End_Wellness_Encounter" }
+      ]
+    },
+    "Check_Has_Diagnosis": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "tb_has_dx", "operator": "==", "value": true }, "transition": "Route_By_Subtype" },
+        { "transition": "Check_Combo_NoDx" }
+      ]
+    },
+    "Route_By_Subtype": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "tb_subtype", "operator": "==", "value": "pulmonary" }, "transition": "Diagnose_Pulmonary_TB" },
+        { "transition": "Diagnose_TB" }
+      ]
+    },
+    "Diagnose_Pulmonary_TB": { "type": "ConditionOnset", "assign_to_attribute": "tb_condition", "codes": [{ "system": "SNOMED-CT", "code": "154283005", "display": "Pulmonary tuberculosis" }], "direct_transition": "Check_Meds_WithDx" },
+    "Diagnose_TB": { "type": "ConditionOnset", "assign_to_attribute": "tb_condition", "codes": [{ "system": "SNOMED-CT", "code": "56717001", "display": "Tuberculosis" }], "direct_transition": "Check_Meds_WithDx" },
+
+    "Check_Meds_WithDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "tb_combo_therapy", "operator": "==", "value": true }, "transition": "Prescribe_Rifampin_WithDx" },
+        { "transition": "Prescribe_Isoniazid_WithDx_Solo" }
+      ]
+    },
+    "Prescribe_Rifampin_WithDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "9384", "display": "rifampin" }], "reason": "tb_condition", "direct_transition": "Prescribe_Isoniazid_WithDx_Combo" },
+    "Prescribe_Isoniazid_WithDx_Combo": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "6038", "display": "isoniazid" }], "reason": "tb_condition", "direct_transition": "Clear_First_Visit_Flag" },
+    "Prescribe_Isoniazid_WithDx_Solo": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "6038", "display": "isoniazid" }], "reason": "tb_condition", "direct_transition": "Clear_First_Visit_Flag" },
+
+    "Check_Combo_NoDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "tb_combo_therapy", "operator": "==", "value": true }, "transition": "Prescribe_Rifampin_NoDx" },
+        { "transition": "Clear_First_Visit_Flag" }
+      ]
+    },
+    "Prescribe_Rifampin_NoDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "9384", "display": "rifampin" }], "direct_transition": "Prescribe_Isoniazid_NoDx" },
+    "Prescribe_Isoniazid_NoDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "6038", "display": "isoniazid" }], "direct_transition": "Clear_First_Visit_Flag" },
+
+    "Clear_First_Visit_Flag": { "type": "SetAttribute", "attribute": "tb_needs_first_visit", "value": false, "direct_transition": "End_Wellness_Encounter" },
+    "End_Wellness_Encounter": { "type": "EncounterEnd", "direct_transition": "Followup_Delay" },
+    "Followup_Delay": { "type": "Delay", "range": { "low": 6, "high": 12, "unit": "months" }, "direct_transition": "Wellness_Encounter" }
+  },
+  "gmf_version": 2
+}

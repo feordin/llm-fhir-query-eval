@@ -1,0 +1,201 @@
+{
+  "name": "PheKB Systemic Lupus Erythematosus",
+  "remarks": [
+    "Custom Synthea module for SLE.",
+    "First systemic autoimmune phenotype with multi-organ involvement.",
+    "",
+    "Generates FOUR patient paths:",
+    "  Path A (50%): SLE dx + immunomodulator + positive ANA",
+    "  Path B (15%): SLE dx + immunomodulator, no ANA recorded",
+    "  Path C (20%): Immunomodulator only, NO SLE dx (RA/Crohn's/transplant — heavy cross-indication)",
+    "  Path D (15%): Positive ANA only, NO dx and NO meds (undiagnosed presentation or other autoimmune)",
+    "",
+    "Diagnosis SNOMED variation (Paths A + B):",
+    "  35% SLE (55464009) — parent",
+    "  20% SLE with multisystem involvement (239890001)",
+    "  20% SLE with organ/system involvement (239887007)",
+    "  15% Lupus nephropathy (295101000119105)",
+    "  10% SLE with pericarditis (309762007)",
+    "",
+    "Immunomodulator variation (Paths A + B + C — 5 ingredients):",
+    "  35% Hydroxychloroquine (5521) — first-line, SLE-specific",
+    "  25% Prednisone (8640) — corticosteroid",
+    "  15% Methotrexate (6851)",
+    "  15% Azathioprine (1256)",
+    "  10% Mycophenolate (265323)"
+  ],
+  "states": {
+    "Initial": { "type": "Initial", "direct_transition": "Age_Guard" },
+    "Age_Guard": { "type": "Guard", "allow": { "condition_type": "Age", "operator": ">=", "quantity": 18, "unit": "years" }, "direct_transition": "Set_SLE_Flag" },
+    "Set_SLE_Flag": { "type": "SetAttribute", "attribute": "sle_positive", "value": true, "direct_transition": "Choose_Patient_Path" },
+    "Choose_Patient_Path": {
+      "type": "Simple",
+      "distributed_transition": [
+        { "transition": "Set_Path_A", "distribution": 0.50 },
+        { "transition": "Set_Path_B", "distribution": 0.15 },
+        { "transition": "Set_Path_C", "distribution": 0.20 },
+        { "transition": "Set_Path_D", "distribution": 0.15 }
+      ]
+    },
+    "Set_Path_A": { "type": "SetAttribute", "attribute": "sle_has_dx", "value": true, "direct_transition": "Set_Path_A_Lab" },
+    "Set_Path_A_Lab": { "type": "SetAttribute", "attribute": "sle_has_high_ana", "value": true, "direct_transition": "Set_Path_A_Meds" },
+    "Set_Path_A_Meds": { "type": "SetAttribute", "attribute": "sle_has_meds", "value": true, "direct_transition": "Choose_Subtype" },
+
+    "Set_Path_B": { "type": "SetAttribute", "attribute": "sle_has_dx", "value": true, "direct_transition": "Set_Path_B_Lab" },
+    "Set_Path_B_Lab": { "type": "SetAttribute", "attribute": "sle_has_high_ana", "value": false, "direct_transition": "Set_Path_B_Meds" },
+    "Set_Path_B_Meds": { "type": "SetAttribute", "attribute": "sle_has_meds", "value": true, "direct_transition": "Choose_Subtype" },
+
+    "Set_Path_C": { "type": "SetAttribute", "remarks": ["TRICKY: immunomodulators without SLE dx (cross-indication)"], "attribute": "sle_has_dx", "value": false, "direct_transition": "Set_Path_C_Lab" },
+    "Set_Path_C_Lab": { "type": "SetAttribute", "attribute": "sle_has_high_ana", "value": false, "direct_transition": "Set_Path_C_Meds" },
+    "Set_Path_C_Meds": { "type": "SetAttribute", "attribute": "sle_has_meds", "value": true, "direct_transition": "Choose_Subtype" },
+
+    "Set_Path_D": { "type": "SetAttribute", "remarks": ["TRICKY: positive ANA without dx or meds (undiagnosed)"], "attribute": "sle_has_dx", "value": false, "direct_transition": "Set_Path_D_Lab" },
+    "Set_Path_D_Lab": { "type": "SetAttribute", "attribute": "sle_has_high_ana", "value": true, "direct_transition": "Set_Path_D_Meds" },
+    "Set_Path_D_Meds": { "type": "SetAttribute", "attribute": "sle_has_meds", "value": false, "direct_transition": "Choose_Subtype" },
+
+    "Choose_Subtype": {
+      "type": "Simple",
+      "distributed_transition": [
+        { "transition": "Set_Subtype_SLE", "distribution": 0.35 },
+        { "transition": "Set_Subtype_Multisystem", "distribution": 0.20 },
+        { "transition": "Set_Subtype_OrganSystem", "distribution": 0.20 },
+        { "transition": "Set_Subtype_Nephropathy", "distribution": 0.15 },
+        { "transition": "Set_Subtype_Pericarditis", "distribution": 0.10 }
+      ]
+    },
+    "Set_Subtype_SLE": { "type": "SetAttribute", "attribute": "sle_subtype", "value": "sle", "direct_transition": "Choose_Med" },
+    "Set_Subtype_Multisystem": { "type": "SetAttribute", "attribute": "sle_subtype", "value": "multisystem", "direct_transition": "Choose_Med" },
+    "Set_Subtype_OrganSystem": { "type": "SetAttribute", "attribute": "sle_subtype", "value": "organsystem", "direct_transition": "Choose_Med" },
+    "Set_Subtype_Nephropathy": { "type": "SetAttribute", "attribute": "sle_subtype", "value": "nephropathy", "direct_transition": "Choose_Med" },
+    "Set_Subtype_Pericarditis": { "type": "SetAttribute", "attribute": "sle_subtype", "value": "pericarditis", "direct_transition": "Choose_Med" },
+
+    "Choose_Med": {
+      "type": "Simple",
+      "distributed_transition": [
+        { "transition": "Set_Med_HCQ", "distribution": 0.35 },
+        { "transition": "Set_Med_Prednisone", "distribution": 0.25 },
+        { "transition": "Set_Med_MTX", "distribution": 0.15 },
+        { "transition": "Set_Med_AZA", "distribution": 0.15 },
+        { "transition": "Set_Med_MMF", "distribution": 0.10 }
+      ]
+    },
+    "Set_Med_HCQ": { "type": "SetAttribute", "attribute": "sle_med", "value": "hydroxychloroquine", "direct_transition": "Set_Needs_First_Visit" },
+    "Set_Med_Prednisone": { "type": "SetAttribute", "attribute": "sle_med", "value": "prednisone", "direct_transition": "Set_Needs_First_Visit" },
+    "Set_Med_MTX": { "type": "SetAttribute", "attribute": "sle_med", "value": "methotrexate", "direct_transition": "Set_Needs_First_Visit" },
+    "Set_Med_AZA": { "type": "SetAttribute", "attribute": "sle_med", "value": "azathioprine", "direct_transition": "Set_Needs_First_Visit" },
+    "Set_Med_MMF": { "type": "SetAttribute", "attribute": "sle_med", "value": "mycophenolate", "direct_transition": "Set_Needs_First_Visit" },
+
+    "Set_Needs_First_Visit": { "type": "SetAttribute", "attribute": "sle_needs_first_visit", "value": true, "direct_transition": "Wellness_Encounter" },
+    "Wellness_Encounter": { "type": "Encounter", "wellness": true, "direct_transition": "Check_First_Visit" },
+    "Check_First_Visit": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "sle_needs_first_visit", "operator": "==", "value": true }, "transition": "Check_Has_Diagnosis" },
+        { "transition": "End_Wellness_Encounter" }
+      ]
+    },
+    "Check_Has_Diagnosis": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "sle_has_dx", "operator": "==", "value": true }, "transition": "Route_By_Subtype" },
+        { "transition": "Check_Lab_NoDx" }
+      ]
+    },
+    "Route_By_Subtype": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "sle_subtype", "operator": "==", "value": "sle" }, "transition": "Diagnose_SLE" },
+        { "condition": { "condition_type": "Attribute", "attribute": "sle_subtype", "operator": "==", "value": "multisystem" }, "transition": "Diagnose_Multisystem" },
+        { "condition": { "condition_type": "Attribute", "attribute": "sle_subtype", "operator": "==", "value": "organsystem" }, "transition": "Diagnose_OrganSystem" },
+        { "condition": { "condition_type": "Attribute", "attribute": "sle_subtype", "operator": "==", "value": "nephropathy" }, "transition": "Diagnose_Nephropathy" },
+        { "transition": "Diagnose_Pericarditis" }
+      ]
+    },
+    "Diagnose_SLE": { "type": "ConditionOnset", "assign_to_attribute": "sle_condition", "codes": [{ "system": "SNOMED-CT", "code": "55464009", "display": "Systemic lupus erythematosus" }], "direct_transition": "Check_Lab_WithDx" },
+    "Diagnose_Multisystem": { "type": "ConditionOnset", "assign_to_attribute": "sle_condition", "codes": [{ "system": "SNOMED-CT", "code": "239890001", "display": "Systemic lupus erythematosus with multisystem involvement" }], "direct_transition": "Check_Lab_WithDx" },
+    "Diagnose_OrganSystem": { "type": "ConditionOnset", "assign_to_attribute": "sle_condition", "codes": [{ "system": "SNOMED-CT", "code": "239887007", "display": "Systemic lupus erythematosus with organ/system involvement" }], "direct_transition": "Check_Lab_WithDx" },
+    "Diagnose_Nephropathy": { "type": "ConditionOnset", "assign_to_attribute": "sle_condition", "codes": [{ "system": "SNOMED-CT", "code": "295101000119105", "display": "Nephropathy co-occurrent and due to systemic lupus erythematosus" }], "direct_transition": "Check_Lab_WithDx" },
+    "Diagnose_Pericarditis": { "type": "ConditionOnset", "assign_to_attribute": "sle_condition", "codes": [{ "system": "SNOMED-CT", "code": "309762007", "display": "Systemic lupus erythematosus with pericarditis" }], "direct_transition": "Check_Lab_WithDx" },
+
+    "Check_Lab_WithDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "sle_has_high_ana", "operator": "==", "value": true }, "transition": "Record_High_ANA_WithDx" },
+        { "transition": "Check_Meds_WithDx" }
+      ]
+    },
+    "Record_High_ANA_WithDx": {
+      "type": "Observation",
+      "category": "laboratory",
+      "unit": "{titer}",
+      "codes": [{ "system": "LOINC", "code": "5048-4", "display": "Nuclear Ab [Titer] in Serum by Immunofluorescence" }],
+      "range": { "low": 320, "high": 1280 },
+      "direct_transition": "Check_Meds_WithDx"
+    },
+    "Check_Meds_WithDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "sle_has_meds", "operator": "==", "value": true }, "transition": "Route_Med_WithDx" },
+        { "transition": "Clear_First_Visit_Flag" }
+      ]
+    },
+    "Route_Med_WithDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "sle_med", "operator": "==", "value": "hydroxychloroquine" }, "transition": "Prescribe_HCQ_WithDx" },
+        { "condition": { "condition_type": "Attribute", "attribute": "sle_med", "operator": "==", "value": "prednisone" }, "transition": "Prescribe_Prednisone_WithDx" },
+        { "condition": { "condition_type": "Attribute", "attribute": "sle_med", "operator": "==", "value": "methotrexate" }, "transition": "Prescribe_MTX_WithDx" },
+        { "condition": { "condition_type": "Attribute", "attribute": "sle_med", "operator": "==", "value": "azathioprine" }, "transition": "Prescribe_AZA_WithDx" },
+        { "transition": "Prescribe_MMF_WithDx" }
+      ]
+    },
+    "Prescribe_HCQ_WithDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "5521", "display": "hydroxychloroquine" }], "reason": "sle_condition", "direct_transition": "Clear_First_Visit_Flag" },
+    "Prescribe_Prednisone_WithDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "8640", "display": "prednisone" }], "reason": "sle_condition", "direct_transition": "Clear_First_Visit_Flag" },
+    "Prescribe_MTX_WithDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "6851", "display": "methotrexate" }], "reason": "sle_condition", "direct_transition": "Clear_First_Visit_Flag" },
+    "Prescribe_AZA_WithDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "1256", "display": "azathioprine" }], "reason": "sle_condition", "direct_transition": "Clear_First_Visit_Flag" },
+    "Prescribe_MMF_WithDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "265323", "display": "mycophenolate" }], "reason": "sle_condition", "direct_transition": "Clear_First_Visit_Flag" },
+
+    "Check_Lab_NoDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "sle_has_high_ana", "operator": "==", "value": true }, "transition": "Record_High_ANA_NoDx" },
+        { "transition": "Check_Meds_NoDx" }
+      ]
+    },
+    "Record_High_ANA_NoDx": {
+      "type": "Observation",
+      "category": "laboratory",
+      "unit": "{titer}",
+      "codes": [{ "system": "LOINC", "code": "5048-4", "display": "Nuclear Ab [Titer] in Serum by Immunofluorescence" }],
+      "range": { "low": 160, "high": 640 },
+      "direct_transition": "Check_Meds_NoDx"
+    },
+    "Check_Meds_NoDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "sle_has_meds", "operator": "==", "value": true }, "transition": "Route_Med_NoDx" },
+        { "transition": "Clear_First_Visit_Flag" }
+      ]
+    },
+    "Route_Med_NoDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "sle_med", "operator": "==", "value": "hydroxychloroquine" }, "transition": "Prescribe_HCQ_NoDx" },
+        { "condition": { "condition_type": "Attribute", "attribute": "sle_med", "operator": "==", "value": "prednisone" }, "transition": "Prescribe_Prednisone_NoDx" },
+        { "condition": { "condition_type": "Attribute", "attribute": "sle_med", "operator": "==", "value": "methotrexate" }, "transition": "Prescribe_MTX_NoDx" },
+        { "condition": { "condition_type": "Attribute", "attribute": "sle_med", "operator": "==", "value": "azathioprine" }, "transition": "Prescribe_AZA_NoDx" },
+        { "transition": "Prescribe_MMF_NoDx" }
+      ]
+    },
+    "Prescribe_HCQ_NoDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "5521", "display": "hydroxychloroquine" }], "direct_transition": "Clear_First_Visit_Flag" },
+    "Prescribe_Prednisone_NoDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "8640", "display": "prednisone" }], "direct_transition": "Clear_First_Visit_Flag" },
+    "Prescribe_MTX_NoDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "6851", "display": "methotrexate" }], "direct_transition": "Clear_First_Visit_Flag" },
+    "Prescribe_AZA_NoDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "1256", "display": "azathioprine" }], "direct_transition": "Clear_First_Visit_Flag" },
+    "Prescribe_MMF_NoDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "265323", "display": "mycophenolate" }], "direct_transition": "Clear_First_Visit_Flag" },
+
+    "Clear_First_Visit_Flag": { "type": "SetAttribute", "attribute": "sle_needs_first_visit", "value": false, "direct_transition": "End_Wellness_Encounter" },
+    "End_Wellness_Encounter": { "type": "EncounterEnd", "direct_transition": "Followup_Delay" },
+    "Followup_Delay": { "type": "Delay", "range": { "low": 6, "high": 12, "unit": "months" }, "direct_transition": "Wellness_Encounter" }
+  },
+  "gmf_version": 2
+}

@@ -1,0 +1,127 @@
+{
+  "id": "phekb-epilepsy-dx",
+  "source": "phekb",
+  "source_id": "epilepsy",
+  "name": "Epilepsy - Diagnosis Code Query (Multi-Subtype)",
+  "description": "Tests ability to find epilepsy patients via diagnosis codes. Epilepsy is documented under multiple SNOMED codes by clinical pattern: parent epilepsy, generalized epilepsy, seizure disorder, status epilepticus, and the broader epileptic seizure finding. Synthea distributes patients across these subtypes.",
+  "prompt": "Find all patients diagnosed with epilepsy, including generalized epilepsy, seizure disorder, status epilepticus, and epileptic seizure findings.",
+  "prompts": {
+    "naive": "Find all patients with epilepsy.",
+    "broad": "Find all patients diagnosed with any form of epilepsy or seizure disorder — including the parent epilepsy concept, generalized epilepsy, seizure disorder, status epilepticus (a neurological emergency), and the broader epileptic seizure finding.",
+    "expert": "I need to identify all epilepsy patients. Epilepsy is documented under multiple SNOMED codes: Epilepsy (84757009) is the parent concept, with subtype-specific Generalized epilepsy (19598007), Seizure disorder (128613002), Status epilepticus (230456007), and the finding-level Epileptic seizure (313307000). Search Condition resources for all five codes."
+  },
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "algorithm_path": "diagnosis-path",
+    "algorithm_path_description": "Patients with epilepsy diagnosis codes. Tests subtype variation including emergency presentation (status epilepticus).",
+    "code_systems": [
+      "SNOMED CT"
+    ],
+    "required_codes": [
+      {
+        "system": "http://snomed.info/sct",
+        "code": "84757009",
+        "display": "Epilepsy",
+        "source": "UMLS verified, parent"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "19598007",
+        "display": "Generalized epilepsy",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "128613002",
+        "display": "Seizure disorder",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "230456007",
+        "display": "Status epilepticus",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "313307000",
+        "display": "Epileptic seizure",
+        "source": "UMLS verified"
+      }
+    ],
+    "complexity": "medium",
+    "tags": [
+      "condition",
+      "neurology",
+      "epilepsy",
+      "seizure-disorder",
+      "diagnosis-code",
+      "multi-subtype"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "Condition",
+    "parameters": {
+      "code": "http://snomed.info/sct|84757009,http://snomed.info/sct|19598007,http://snomed.info/sct|128613002,http://snomed.info/sct|230456007,http://snomed.info/sct|313307000"
+    },
+    "url": "Condition?code=http://snomed.info/sct|84757009,http://snomed.info/sct|19598007,http://snomed.info/sct|128613002,http://snomed.info/sct|230456007,http://snomed.info/sct|313307000"
+  },
+  "test_data": {
+    "resources": [
+      "synthea/output/epilepsy/positive/fhir/",
+      "synthea/output/epilepsy/control/fhir/"
+    ],
+    "expected_result_count": 46,
+    "expected_resource_ids": [],
+    "expected_patient_ids": [
+      "01c22a1a-98e6-b619-bf72-4ff83c3f4c9a",
+      "02ddc803-ee5e-5567-68c0-abf0f7e967bf",
+      "0648dcff-3fc3-a540-10ca-caefe53f945b",
+      "0a8927da-e7a5-ccbd-3216-a6d9c533d12d",
+      "0ccf7e03-cb1e-e028-ebf8-d3bf332ad966",
+      "0e56b55f-d391-f2f1-5f16-6189d0f061b2",
+      "1e2d1c03-37a8-cc23-68da-8b5c255be35e",
+      "2bc94e59-b14d-478c-a834-09895414dc91",
+      "314cd58e-c094-f7e6-eda8-9948ef002b87",
+      "31751640-f231-9441-4edc-84676cbba6a9",
+      "31a7834f-9056-1fe3-e81c-d61a66062d7f",
+      "354e716d-e872-8fd5-fbeb-418f340a145a",
+      "37f83733-9446-045b-0d11-db7558a3f833",
+      "4023ff84-b7b2-16ff-91b1-a6788e8e6875",
+      "4cdf9dfd-95d2-4e9b-2f7c-723df50b9ff9",
+      "50c4052f-85a4-5c54-2e87-6c1828774e94",
+      "53b4163b-f77d-3b87-0869-da32ad87be4c",
+      "54515ae7-8ef5-4748-7bca-35af0b9d09d0",
+      "5a70ab7c-4d35-483f-7e63-51fba0edc61f",
+      "6ddeea75-5d43-9fba-44db-99f98e65007f",
+      "75a48feb-7113-7571-dc11-b0b519a52f74",
+      "7ce34e95-598a-7946-da5e-1d078ef50f42",
+      "7dddf90b-dcf8-1efa-b23b-6bb5282a62e9",
+      "8a26deb1-0518-f842-d613-871fe7c8de6a",
+      "8c9ac103-a99f-2fd9-25a5-31c4fb3dfa4e",
+      "92ad7228-4687-737c-0509-e12d1ae17350",
+      "98fe6219-0674-5de0-105a-a90ee5acf659",
+      "a160094b-a1be-13f5-0c18-b2b0e4c8498f",
+      "a95ba0c8-4865-3f58-ea62-1fce45707658",
+      "ab75696f-0c92-f7a3-c4ec-a8a36449378b",
+      "abeaf6e8-3f3b-4f7f-2123-2140bcf7e978",
+      "ac0386bf-8642-65d7-590b-847508ddcf01",
+      "ad3b76e6-c575-d023-9dd9-a8e15fa13f65",
+      "b1a47172-63e8-325f-c64e-b59b6e3fff28",
+      "ba97358c-5823-e8f6-1673-d965a39bad4a",
+      "bb51304b-89d9-0c76-defa-dd50e51f2752",
+      "bb646d0d-a8fb-b229-d694-c2bc805a67b1",
+      "cf1d757a-ca94-6151-c570-f0aeaf4717f5",
+      "de5a4b5d-3c50-5015-27fc-40fb435e6e83",
+      "de6aebbd-c8cc-748f-50d9-9fcd0fffcee6",
+      "e4564bd8-1c45-df69-b7e5-b01b4458a379",
+      "f4729d33-d050-6072-7e54-a88e1099a7b9",
+      "f55e6676-a7dd-97dd-d624-96cb0e514738",
+      "f67bfc9e-9d5f-b74b-929f-5d8e87ab4174",
+      "f76ddbab-0dca-fd97-2447-dbebe9a1b999",
+      "fe2a6c22-99fa-bc46-f1b9-150307e76fd5"
+    ]
+  },
+  "created_at": "2026-04-28T00:00:00.000000Z",
+  "updated_at": "2026-04-27T00:00:00.000000Z"
+}

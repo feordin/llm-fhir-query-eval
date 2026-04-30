@@ -1,0 +1,74 @@
+{
+  "name": "PheKB Herpes Zoster",
+  "remarks": [
+    "Custom Synthea module for Herpes Zoster (Shingles).",
+    "First vaccine-preventable phenotype. First antiviral medication phenotype.",
+    "",
+    "Generates THREE patient paths:",
+    "  Path A (60%): Zoster dx + acyclovir Rx (typical episode)",
+    "  Path B (25%): Zoster dx, no antiviral (mild self-limited)",
+    "  Path C (15%): Acyclovir Rx without zoster dx (TRICKY — empirical for HSV vs VZV ambiguity, or genital HSV, or prophylaxis)",
+    "",
+    "Age guard: >=50 (zoster reactivation risk increases with age)."
+  ],
+  "states": {
+    "Initial": { "type": "Initial", "direct_transition": "Age_Guard" },
+    "Age_Guard": { "type": "Guard", "allow": { "condition_type": "Age", "operator": ">=", "quantity": 50, "unit": "years" }, "direct_transition": "Set_HZ_Flag" },
+    "Set_HZ_Flag": { "type": "SetAttribute", "attribute": "hz_positive", "value": true, "direct_transition": "Choose_Patient_Path" },
+    "Choose_Patient_Path": {
+      "type": "Simple",
+      "distributed_transition": [
+        { "transition": "Set_Path_A", "distribution": 0.60 },
+        { "transition": "Set_Path_B", "distribution": 0.25 },
+        { "transition": "Set_Path_C", "distribution": 0.15 }
+      ]
+    },
+    "Set_Path_A": { "type": "SetAttribute", "attribute": "hz_has_dx", "value": true, "direct_transition": "Set_Path_A_Med" },
+    "Set_Path_A_Med": { "type": "SetAttribute", "attribute": "hz_has_med", "value": true, "direct_transition": "Set_Needs_First_Visit" },
+    "Set_Path_B": { "type": "SetAttribute", "attribute": "hz_has_dx", "value": true, "direct_transition": "Set_Path_B_Med" },
+    "Set_Path_B_Med": { "type": "SetAttribute", "attribute": "hz_has_med", "value": false, "direct_transition": "Set_Needs_First_Visit" },
+    "Set_Path_C": { "type": "SetAttribute", "remarks": ["TRICKY: acyclovir Rx without zoster dx"], "attribute": "hz_has_dx", "value": false, "direct_transition": "Set_Path_C_Med" },
+    "Set_Path_C_Med": { "type": "SetAttribute", "attribute": "hz_has_med", "value": true, "direct_transition": "Set_Needs_First_Visit" },
+
+    "Set_Needs_First_Visit": { "type": "SetAttribute", "attribute": "hz_needs_first_visit", "value": true, "direct_transition": "Wellness_Encounter" },
+    "Wellness_Encounter": { "type": "Encounter", "wellness": true, "direct_transition": "Check_First_Visit" },
+    "Check_First_Visit": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "hz_needs_first_visit", "operator": "==", "value": true }, "transition": "Check_Has_Diagnosis" },
+        { "transition": "End_Wellness_Encounter" }
+      ]
+    },
+    "Check_Has_Diagnosis": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "hz_has_dx", "operator": "==", "value": true }, "transition": "Diagnose_HZ" },
+        { "transition": "Check_Med_NoDx" }
+      ]
+    },
+    "Diagnose_HZ": { "type": "ConditionOnset", "assign_to_attribute": "hz_condition", "codes": [{ "system": "SNOMED-CT", "code": "4740000", "display": "Herpes zoster" }], "direct_transition": "Check_Med_WithDx" },
+
+    "Check_Med_WithDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "hz_has_med", "operator": "==", "value": true }, "transition": "Prescribe_Acyclovir_WithDx" },
+        { "transition": "Clear_First_Visit_Flag" }
+      ]
+    },
+    "Prescribe_Acyclovir_WithDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "281", "display": "acyclovir" }], "reason": "hz_condition", "direct_transition": "Clear_First_Visit_Flag" },
+
+    "Check_Med_NoDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "hz_has_med", "operator": "==", "value": true }, "transition": "Prescribe_Acyclovir_NoDx" },
+        { "transition": "Clear_First_Visit_Flag" }
+      ]
+    },
+    "Prescribe_Acyclovir_NoDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "281", "display": "acyclovir" }], "direct_transition": "Clear_First_Visit_Flag" },
+
+    "Clear_First_Visit_Flag": { "type": "SetAttribute", "attribute": "hz_needs_first_visit", "value": false, "direct_transition": "End_Wellness_Encounter" },
+    "End_Wellness_Encounter": { "type": "EncounterEnd", "direct_transition": "Followup_Delay" },
+    "Followup_Delay": { "type": "Delay", "range": { "low": 6, "high": 12, "unit": "months" }, "direct_transition": "Wellness_Encounter" }
+  },
+  "gmf_version": 2
+}

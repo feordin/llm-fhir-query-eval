@@ -1,0 +1,96 @@
+{
+  "id": "phekb-coronary-heart-disease-dx",
+  "source": "phekb",
+  "source_id": "coronary-heart-disease",
+  "name": "Coronary Heart Disease - Diagnosis Code Query (Multi-Vessel)",
+  "description": "Tests ability to find coronary heart disease patients via diagnosis codes. CHD is documented under multiple SNOMED codes by extent of disease: parent coronary arteriosclerosis, ischemic heart disease, single/double/triple vessel disease, and left main disease (highest risk). Synthea distributes patients across these severity codes. An LLM querying only one code will miss the substantial fraction with extent-specific documentation.",
+  "prompt": "Find all patients with a diagnosis of coronary heart disease, including coronary arteriosclerosis, ischemic heart disease, multi-vessel disease, and left main coronary artery disease.",
+  "prompts": {
+    "naive": "Find all patients with coronary artery disease.",
+    "broad": "Find all patients diagnosed with coronary heart disease (CHD), also called coronary artery disease (CAD) — including the parent concepts coronary arteriosclerosis and ischemic heart disease, plus extent-specific variants like triple vessel disease, multi-vessel coronary disease, and left main coronary artery disease.",
+    "expert": "I need to identify all coronary heart disease patients. CHD is documented under multiple SNOMED codes from Optum's 'Atherosclerotic coronary artery disease SCT' VSAC (OID 2.16.840.1.113762.1.4.1078.1269): Coronary arteriosclerosis (53741008) and Ischemic heart disease (414545008) are the parent concepts, with extent-specific variants Triple vessel disease of the heart (233817007), Multi vessel coronary artery disease (371803003), and Left main coronary artery disease (371804009). Search Condition resources for all five codes."
+  },
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "algorithm_path": "diagnosis-path",
+    "algorithm_path_description": "Patients with CHD diagnosis codes (Paths A and B). Tests extent-of-disease code variation.",
+    "code_systems": [
+      "SNOMED CT",
+      "ICD-10-CM"
+    ],
+    "required_codes": [
+      {
+        "system": "http://snomed.info/sct",
+        "code": "53741008",
+        "display": "Coronary arteriosclerosis",
+        "source": "UMLS verified, parent concept"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "414545008",
+        "display": "Ischemic heart disease",
+        "source": "UMLS verified, parent concept"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "233817007",
+        "display": "Triple vessel disease of the heart",
+        "source": "Optum VSAC"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "371803003",
+        "display": "Multi vessel coronary artery disease",
+        "source": "Optum VSAC"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "371804009",
+        "display": "Left main coronary artery disease",
+        "source": "Optum VSAC"
+      }
+    ],
+    "complexity": "medium",
+    "tags": [
+      "condition",
+      "cardiology",
+      "coronary-heart-disease",
+      "chd",
+      "diagnosis-code",
+      "multi-subtype",
+      "code-variation"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "Condition",
+    "parameters": {
+      "code": "http://snomed.info/sct|53741008,http://snomed.info/sct|414545008,http://snomed.info/sct|233817007,http://snomed.info/sct|371803003,http://snomed.info/sct|371804009"
+    },
+    "url": "Condition?code=http://snomed.info/sct|53741008,http://snomed.info/sct|414545008,http://snomed.info/sct|233817007,http://snomed.info/sct|371803003,http://snomed.info/sct|371804009"
+  },
+  "test_data": {
+    "resources": [
+      "synthea/output/coronary-heart-disease/positive/fhir/",
+      "synthea/output/coronary-heart-disease/control/fhir/"
+    ],
+    "expected_result_count": 13,
+    "expected_resource_ids": [],
+    "expected_patient_ids": [
+      "2a45ba61-bf92-8edf-7e79-96d43a42bf15",
+      "3e400a4e-a543-5391-d4fc-be2a218fe981",
+      "4235587d-5232-cec6-dd9f-b6119b094edb",
+      "52b9f450-88b5-38d2-06ab-3557df1497d9",
+      "7ae0f7a3-c0bc-5600-7189-3788a3e75685",
+      "8021abf5-23d4-244f-857f-c560f94806eb",
+      "88b55b8d-1726-074c-8e62-16266caf77da",
+      "a455f58f-0920-dcea-4971-130e5e771d0f",
+      "b84db720-fc92-d33d-8745-279482f6d8dc",
+      "c49744c0-d4a2-602b-0818-692f2e1aff53",
+      "da8ecbed-b594-9bfd-90a3-a4912530f977",
+      "db2cafb6-46ae-f342-5636-e20ca4a04a07",
+      "ec7b08fc-118e-c15a-ae5c-2b649fb09791"
+    ]
+  },
+  "created_at": "2026-04-27T00:00:00.000000Z",
+  "updated_at": "2026-04-27T00:00:00.000000Z"
+}

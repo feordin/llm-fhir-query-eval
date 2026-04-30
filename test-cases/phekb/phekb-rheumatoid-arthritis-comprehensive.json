@@ -1,0 +1,147 @@
+{
+  "id": "phekb-rheumatoid-arthritis-comprehensive",
+  "source": "phekb",
+  "source_id": "rheumatoid-arthritis",
+  "name": "Rheumatoid Arthritis - Comprehensive Provider Query",
+  "description": "Simulates a rheumatologist identifying their complete RA patient population. The Harvard eMERGE PheKB RA algorithm uses a logistic regression model combining RA diagnosis count (high positive weight 1.937), positive RF lab (weight 1.639), lupus diagnoses (negative weight -0.529), and psoriatic arthritis (negative weight -0.122). For comprehensive identification, real-world rheumatology unions: RA diagnosis codes, DMARD/biologic prescriptions, and positive RF labs — though all three have cross-indication noise (DMARDs for non-RA conditions, RF positivity in other autoimmune diseases).",
+  "prompt": "I need to identify my complete rheumatoid arthritis patient population for a treat-to-target quality initiative. From clinical experience, RA patients are documented in different ways: some have a formal diagnosis code (any RA SNOMED code), some are on DMARDs or biologics (methotrexate, hydroxychloroquine, sulfasalazine, adalimumab, infliximab), and some have positive rheumatoid factor on labs.\n\nPlease run multiple FHIR queries to capture the full population:\n1. Patients with any rheumatoid arthritis diagnosis (parent RA, seropositive, joint-specific, or in remission)\n2. Patients prescribed DMARDs or biologic anti-TNF agents\n3. Patients with positive rheumatoid factor lab results (>14 IU/mL)\n\nFor each query, return the matching resources. I want the union of all patients found across these three approaches. Note that the union will overcount because DMARDs are used for many non-RA indications and RF can be positive in lupus and other conditions — but it provides the screening pool for chart review.",
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "multi_query": true,
+    "algorithm_path": "comprehensive",
+    "algorithm_path_description": "Union of RA dx codes (Paths A+B), DMARD/biologic Rx (Paths A+C), and positive RF labs. Provider-realistic screening with known cross-indication noise. The Harvard eMERGE PheKB algorithm refines this pool with ML weights — Path C alone (DMARDs without dx) is unreliable for true RA classification.",
+    "expected_queries": [
+      "Condition?code=http://snomed.info/sct|69896004,http://snomed.info/sct|11055151000119108,http://snomed.info/sct|201766009,http://snomed.info/sct|1073811000119102,http://snomed.info/sct|143441000119108",
+      "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6851,http://www.nlm.nih.gov/research/umls/rxnorm|5521,http://www.nlm.nih.gov/research/umls/rxnorm|9524,http://www.nlm.nih.gov/research/umls/rxnorm|327361,http://www.nlm.nih.gov/research/umls/rxnorm|191831",
+      "Observation?code=http://loinc.org|11572-5&value-quantity=gt14"
+    ],
+    "code_systems": [
+      "SNOMED CT",
+      "RxNorm",
+      "LOINC"
+    ],
+    "required_codes": [
+      {
+        "system": "http://snomed.info/sct",
+        "code": "69896004",
+        "display": "Rheumatoid arthritis",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "11055151000119108",
+        "display": "Seropositive rheumatoid arthritis of multiple joints",
+        "source": "VSAC value set"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "201766009",
+        "display": "Rheumatoid arthritis of shoulder",
+        "source": "VSAC value set"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "1073811000119102",
+        "display": "Rheumatoid arthritis of right knee",
+        "source": "VSAC value set"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "143441000119108",
+        "display": "Rheumatoid arthritis in remission",
+        "source": "VSAC value set"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "6851",
+        "display": "methotrexate",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "5521",
+        "display": "hydroxychloroquine",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "9524",
+        "display": "sulfasalazine",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "327361",
+        "display": "adalimumab",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "191831",
+        "display": "infliximab",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://loinc.org",
+        "code": "11572-5",
+        "display": "Rheumatoid factor [Units/volume] in Serum or Plasma",
+        "source": "UMLS verified"
+      }
+    ],
+    "complexity": "expert",
+    "tags": [
+      "multi-query",
+      "rheumatology",
+      "rheumatoid-arthritis",
+      "comprehensive",
+      "cross-resource"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "Patient",
+    "parameters": {},
+    "url": "Condition?code=http://snomed.info/sct|69896004,http://snomed.info/sct|11055151000119108,http://snomed.info/sct|201766009,http://snomed.info/sct|1073811000119102,http://snomed.info/sct|143441000119108"
+  },
+  "test_data": {
+    "resources": [
+      "synthea/output/rheumatoid-arthritis/positive/fhir/",
+      "synthea/output/rheumatoid-arthritis/control/fhir/"
+    ],
+    "expected_result_count": 30,
+    "expected_resource_ids": [],
+    "expected_patient_ids": [
+      "09278a56-0541-6d95-b59b-2212f90e7614",
+      "0aa2e661-c0c3-a298-9666-cd112a38668e",
+      "0f321eb0-3fe3-e648-803c-66a0b357edf7",
+      "101ab214-653c-62d8-5c62-ece990be8837",
+      "1425765a-7ecf-c957-d4cc-3ed75a98cbad",
+      "14cd5a2b-c703-6204-e1cd-5c598f0d0b48",
+      "2017daab-c1bc-808d-bed8-3b352a2c5cdc",
+      "23be6240-c487-fd38-9323-89bdf3b53130",
+      "3ed9f977-3713-3382-9245-9322cd5545f4",
+      "433922c6-e082-42d1-6d0a-ee37b9b58c09",
+      "5a0bbc65-9779-6eba-456c-06f74fb015b8",
+      "5b897894-d747-42f9-1ee4-629a282a39d5",
+      "6acd5d2d-7d4d-1aad-3d3e-1d36ae43c340",
+      "749c03e5-67d5-cc3d-0d95-e526c7d431b4",
+      "881b42b8-a663-b348-72df-0dfbc68eca98",
+      "8ae0d313-4083-1efe-ef7a-190898515f70",
+      "a7b5693a-3b2d-89c3-b632-c19b837e2cb6",
+      "a93ab8fc-0fd8-4571-9806-41b39edd279c",
+      "c106918a-8cbc-3fd3-0a11-64c313392dd6",
+      "c3e22793-0a42-74af-19a3-c1db0bfea0fa",
+      "c5d7e9c3-5c55-79db-23e6-92eb2a7820fe",
+      "c75b28c5-4f2d-932d-e336-a0dcff10452e",
+      "d4b816e8-6cd3-b35c-66db-3214e47b77f1",
+      "d5ca1c3e-abb0-e9b3-a5b9-7a58b46fd5f6",
+      "d5d36dea-9eff-9649-6649-fa0262630098",
+      "d6bc2a3c-f643-db37-108b-ef44c367d0f6",
+      "e1073fe9-ab54-8401-a0e7-78e9cc6509c5",
+      "e397d112-37ab-7240-d142-81a8a86b9ad2",
+      "edf28f19-c11a-567f-3627-c8f8149c8b19",
+      "f2822830-ed9d-8eb8-15ac-ecc67f540e5c"
+    ]
+  },
+  "created_at": "2026-04-27T00:00:00.000000Z",
+  "updated_at": "2026-04-27T00:00:00.000000Z"
+}

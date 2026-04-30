@@ -1,0 +1,78 @@
+{
+  "id": "phekb-sickle-cell-disease-dx",
+  "source": "phekb",
+  "source_id": "sickle-cell-disease",
+  "name": "Sickle Cell Disease - Diagnosis Code Query",
+  "description": "Tests ability to find sickle cell disease patients by searching for diagnosis codes. The PheKB SCD algorithm identifies patients via qualifying ICD codes for SCD subtypes (HbSS, HbSC, sickle cell-thalassemia). Synthea data uses SNOMED codes 127040003 (HbSS), 35434009 (HbSC), 36472007 (SCD-thalassemia). Note: 11 of 30 positive patients have hydroxyurea but NO diagnosis code — a diagnosis-only query will miss them.",
+  "prompt": "Find all patients with a diagnosis of sickle cell disease, including all subtypes such as hemoglobin SS disease, sickle cell-hemoglobin C disease, and sickle cell-thalassemia.",
+  "prompts": {
+    "naive": "Find all patients with a diagnosis of sickle cell disease.",
+    "expert": "I need to identify patients with sickle cell disease by searching their documented diagnoses. SCD encompasses several subtypes: hemoglobin SS disease (HbSS, the most common and severe form), sickle cell-hemoglobin C disease (HbSC), and sickle cell-thalassemia. Each subtype has a distinct SNOMED code. Search Condition resources for all SCD subtype codes. Note that the general 'sickling disorder due to hemoglobin S' parent concept may or may not subsume all subtypes depending on server configuration, so querying the specific subtype codes may be more reliable."
+  },
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "algorithm_path": "diagnosis-path",
+    "algorithm_path_description": "Patients with SCD diagnosis codes (Paths A and B). These patients have Condition resources with SCD SNOMED codes. Does NOT find Path C patients who have only hydroxyurea and no diagnosis.",
+    "code_systems": ["SNOMED CT"],
+    "required_codes": [
+      {
+        "system": "http://snomed.info/sct",
+        "code": "127040003",
+        "display": "Sickle cell-hemoglobin SS disease",
+        "source": "VSAC 2.16.840.1.113762.1.4.1242.2"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "35434009",
+        "display": "Sickle cell-hemoglobin C disease",
+        "source": "VSAC 2.16.840.1.113762.1.4.1242.2"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "36472007",
+        "display": "Sickle cell-thalassemia disease",
+        "source": "VSAC 2.16.840.1.113762.1.4.1242.2"
+      }
+    ],
+    "complexity": "medium",
+    "tags": ["condition", "hematology", "sickle-cell-disease", "diagnosis-code", "multi-subtype"]
+  },
+  "expected_query": {
+    "resource_type": "Condition",
+    "parameters": {
+      "code": "http://snomed.info/sct|127040003,http://snomed.info/sct|35434009,http://snomed.info/sct|36472007"
+    },
+    "url": "Condition?code=http://snomed.info/sct|127040003,http://snomed.info/sct|35434009,http://snomed.info/sct|36472007"
+  },
+  "test_data": {
+    "resources": [
+      "synthea/output/sickle-cell-disease/positive/fhir/",
+      "synthea/output/sickle-cell-disease/control/fhir/"
+    ],
+    "expected_result_count": 19,
+    "expected_resource_ids": [],
+    "expected_patient_ids": [
+      "1087850f-2489-a52f-08f1-f0059270e45a",
+      "166a8705-5db9-872b-05fd-4dd69b3aa393",
+      "22ad8d2c-efb4-8d71-f34c-9a45759f60f6",
+      "296551f3-e2f3-8ea8-42bc-e6ffb0a0941d",
+      "35e5febc-4d94-90ce-01b5-11db30c83ffd",
+      "37972f54-c379-677c-24e9-24a147aba016",
+      "4dd002ab-0992-962d-8395-5abeda94124a",
+      "4f07a9a2-2b4d-491d-1035-59d1b787cce0",
+      "54248190-2b0f-bb6e-6a36-a287f93556a2",
+      "57af63ef-dc01-69f1-e88d-4705716ca82a",
+      "5a139aed-b31b-c2a4-aa5b-0dec7e3d680c",
+      "662c35f3-2534-9e2e-8fcb-85fe1b3296b0",
+      "6f78c39c-7e98-25bf-94a5-681a91eee546",
+      "75920eec-62c8-228b-89d2-8cc13dafcf37",
+      "bb553e71-2818-60dd-8e12-52ce980d729f",
+      "bfd3131d-6c20-24b8-1795-8db6fc0557f9",
+      "c67c95dc-6430-31f0-3719-12e153753faf",
+      "dfe8dc02-f081-9dad-2257-df020bed7363",
+      "fa566323-8e1f-522d-ffd6-41460ca878fc"
+    ]
+  },
+  "created_at": "2026-04-14T00:00:00.000000Z",
+  "updated_at": "2026-04-14T00:00:00.000000Z"
+}

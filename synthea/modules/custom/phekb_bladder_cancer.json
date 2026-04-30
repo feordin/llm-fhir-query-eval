@@ -1,0 +1,31 @@
+{
+  "name": "PheKB Bladder Cancer",
+  "remarks": [
+    "Custom Synthea module for bladder cancer.",
+    "Ninth cancer phenotype. Second urological-cancer (after PCa). Bladder cancer has 3-4× higher male incidence (smoking + occupational exposures).",
+    "Single-path: 100% have bladder cancer dx.",
+    "",
+    "Age guard: >=50 (bladder cancer rare under 50)."
+  ],
+  "states": {
+    "Initial": { "type": "Initial", "direct_transition": "Age_Guard" },
+    "Age_Guard": { "type": "Guard", "allow": { "condition_type": "Age", "operator": ">=", "quantity": 50, "unit": "years" }, "direct_transition": "Set_Bladder_Flag" },
+    "Set_Bladder_Flag": { "type": "SetAttribute", "attribute": "bladder_positive", "value": true, "direct_transition": "Set_Needs_First_Visit" },
+
+    "Set_Needs_First_Visit": { "type": "SetAttribute", "attribute": "bladder_needs_first_visit", "value": true, "direct_transition": "Wellness_Encounter" },
+    "Wellness_Encounter": { "type": "Encounter", "wellness": true, "direct_transition": "Check_First_Visit" },
+    "Check_First_Visit": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "bladder_needs_first_visit", "operator": "==", "value": true }, "transition": "Diagnose_Bladder" },
+        { "transition": "End_Wellness_Encounter" }
+      ]
+    },
+    "Diagnose_Bladder": { "type": "ConditionOnset", "assign_to_attribute": "bladder_condition", "codes": [{ "system": "SNOMED-CT", "code": "399326009", "display": "Malignant neoplasm of urinary bladder" }], "direct_transition": "Clear_First_Visit_Flag" },
+
+    "Clear_First_Visit_Flag": { "type": "SetAttribute", "attribute": "bladder_needs_first_visit", "value": false, "direct_transition": "End_Wellness_Encounter" },
+    "End_Wellness_Encounter": { "type": "EncounterEnd", "direct_transition": "Followup_Delay" },
+    "Followup_Delay": { "type": "Delay", "range": { "low": 6, "high": 12, "unit": "months" }, "direct_transition": "Wellness_Encounter" }
+  },
+  "gmf_version": 2
+}

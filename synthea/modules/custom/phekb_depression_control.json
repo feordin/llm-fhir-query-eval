@@ -1,0 +1,117 @@
+{
+  "name": "PheKB Depression Control",
+  "remarks": [
+    "Control module for PheKB depression phenotype.",
+    "Generates patients who do NOT have depression.",
+    "",
+    "Controls per PheKB algorithm must:",
+    "  - Have no depression diagnosis codes",
+    "  - Have no antidepressant medication fills",
+    "  - Be adults (age-matched to cases)",
+    "",
+    "Some controls receive other (non-depression) diagnoses common in primary care",
+    "to mimic real adult patients but no depression-spectrum codes."
+  ],
+  "states": {
+    "Initial": {
+      "type": "Initial",
+      "direct_transition": "Age_Guard"
+    },
+
+    "Age_Guard": {
+      "type": "Guard",
+      "allow": {
+        "condition_type": "Age",
+        "operator": ">=",
+        "quantity": 18,
+        "unit": "years"
+      },
+      "direct_transition": "Set_Control_Flag"
+    },
+
+    "Set_Control_Flag": {
+      "type": "SetAttribute",
+      "attribute": "dep_positive",
+      "value": false,
+      "direct_transition": "Set_Needs_First_Visit"
+    },
+
+    "Set_Needs_First_Visit": {
+      "type": "SetAttribute",
+      "attribute": "dep_needs_first_visit",
+      "value": true,
+      "direct_transition": "Wellness_Encounter"
+    },
+
+    "Wellness_Encounter": {
+      "type": "Encounter",
+      "wellness": true,
+      "direct_transition": "Check_First_Visit"
+    },
+
+    "Check_First_Visit": {
+      "type": "Simple",
+      "conditional_transition": [
+        {
+          "condition": {
+            "condition_type": "Attribute",
+            "attribute": "dep_needs_first_visit",
+            "operator": "==",
+            "value": true
+          },
+          "transition": "Maybe_Other_Condition"
+        },
+        {
+          "transition": "End_Wellness_Encounter"
+        }
+      ]
+    },
+
+    "Maybe_Other_Condition": {
+      "type": "Simple",
+      "remarks": ["Some controls get a non-depression condition for realism"],
+      "distributed_transition": [
+        { "transition": "Diagnose_Hypertension", "distribution": 0.30 },
+        { "transition": "Diagnose_Hyperlipidemia", "distribution": 0.25 },
+        { "transition": "Clear_First_Visit_Flag", "distribution": 0.45 }
+      ]
+    },
+
+    "Diagnose_Hypertension": {
+      "type": "ConditionOnset",
+      "assign_to_attribute": "control_condition",
+      "codes": [
+        { "system": "SNOMED-CT", "code": "59621000", "display": "Essential hypertension (disorder)" }
+      ],
+      "direct_transition": "Clear_First_Visit_Flag"
+    },
+
+    "Diagnose_Hyperlipidemia": {
+      "type": "ConditionOnset",
+      "assign_to_attribute": "control_condition",
+      "codes": [
+        { "system": "SNOMED-CT", "code": "55822004", "display": "Hyperlipidemia (disorder)" }
+      ],
+      "direct_transition": "Clear_First_Visit_Flag"
+    },
+
+    "Clear_First_Visit_Flag": {
+      "type": "SetAttribute",
+      "attribute": "dep_needs_first_visit",
+      "value": false,
+      "direct_transition": "End_Wellness_Encounter"
+    },
+
+    "End_Wellness_Encounter": {
+      "type": "EncounterEnd",
+      "direct_transition": "Followup_Delay"
+    },
+
+    "Followup_Delay": {
+      "type": "Delay",
+      "range": { "low": 6, "high": 18, "unit": "months" },
+      "direct_transition": "Wellness_Encounter"
+    }
+  },
+  "gmf_version": 2
+}

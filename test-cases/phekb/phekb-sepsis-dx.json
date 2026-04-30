@@ -1,0 +1,135 @@
+{
+  "id": "phekb-sepsis-dx",
+  "source": "phekb",
+  "source_id": "sepsis",
+  "name": "Sepsis - Diagnosis Code Query (Multi-Type)",
+  "description": "Tests ability to find sepsis patients across general sepsis, bacterial sepsis, and septic shock SNOMED variants. First septicemia phenotype.",
+  "prompt": "Find all patients with a diagnosis of sepsis, including bacterial sepsis and septic shock.",
+  "prompts": {
+    "naive": "Find patients with sepsis.",
+    "broad": "Find patients diagnosed with sepsis — including general sepsis, bacterial sepsis, and septic shock (the most severe form with hemodynamic compromise).",
+    "expert": "Search Condition resources for SNOMED codes Sepsis (91302008), Bacterial sepsis (10001005), and Septic shock (76571007). Query: Condition?code=http://snomed.info/sct|91302008,http://snomed.info/sct|10001005,http://snomed.info/sct|76571007"
+  },
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "algorithm_path": "diagnosis-path",
+    "algorithm_path_description": "Patients with sepsis dx (3 SNOMED variants). First septicemia phenotype.",
+    "code_systems": [
+      "SNOMED CT"
+    ],
+    "required_codes": [
+      {
+        "system": "http://snomed.info/sct",
+        "code": "91302008",
+        "display": "Sepsis",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "10001005",
+        "display": "Bacterial sepsis",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "76571007",
+        "display": "Septic shock",
+        "source": "UMLS verified"
+      }
+    ],
+    "complexity": "medium",
+    "tags": [
+      "condition",
+      "infectious",
+      "sepsis",
+      "septic-shock",
+      "diagnosis-code",
+      "multi-type"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "Condition",
+    "parameters": {
+      "code": "http://snomed.info/sct|91302008,http://snomed.info/sct|10001005,http://snomed.info/sct|76571007"
+    },
+    "url": "Condition?code=http://snomed.info/sct|91302008,http://snomed.info/sct|10001005,http://snomed.info/sct|76571007"
+  },
+  "test_data": {
+    "resources": [
+      "synthea/output/sepsis/positive/fhir/",
+      "synthea/output/sepsis/control/fhir/"
+    ],
+    "expected_result_count": 66,
+    "expected_resource_ids": [],
+    "expected_patient_ids": [
+      "00eefabe-1e0e-bc5e-5bc0-8b8506ca41a7",
+      "041697c5-aaef-e1f4-c5b6-f6cbdb77561b",
+      "0722f30c-2084-bfa8-7875-0b9de3f0bfe4",
+      "0c0a549d-fae7-68cc-4554-47d0b00e3f33",
+      "129113c7-cf75-35e2-1338-7e6dad537380",
+      "19ee99f0-a6fa-1820-fc9e-7f9b86f2adc0",
+      "1fcca9e4-2846-e91a-1713-81e725935708",
+      "23ddc2cf-f382-6e70-0886-27c3470c28fa",
+      "2596902e-72b4-9b29-a410-a415f165b37a",
+      "274f4f05-f1c5-99bc-93e0-cbcccb8ff666",
+      "27b2e1c9-3893-1121-12f0-695410b659ee",
+      "2ecc82d2-7819-47f3-07d7-bb11431bfcc7",
+      "304aef29-f2a3-c908-a97b-bd7d4280d1a4",
+      "407b37ec-9fe5-3512-4f9d-6310b61b0463",
+      "41ba29c4-7683-0a3c-be70-041a6a452108",
+      "494f82bb-0b3d-524b-c49e-8a380b8091b5",
+      "4afb4711-753d-ccf6-990e-e4c0abe59971",
+      "4d075bfc-26a5-2c4a-3fd0-94d3fc84c4ca",
+      "4dc8e63e-d41a-6f6d-4a98-5ec2aeeaea63",
+      "524ed329-31f1-d9aa-b744-0103c34e8dd5",
+      "5810875e-e19f-e745-f224-85c5869d2096",
+      "59b34415-10cc-b754-4613-d476bc137c88",
+      "5e1622e8-882c-6869-1713-ff9862598901",
+      "5e3a11ff-d4bf-252c-0fd3-c97e57b480c7",
+      "66763049-fd00-6697-28b8-b7e98add79a2",
+      "6abd6e95-ca24-39ef-dd22-cbf371540e5f",
+      "6e2e3427-b351-89ca-1f8c-7a3a93316a64",
+      "6ff30515-6d08-579c-4e4c-8db8b7fb6df4",
+      "72dc2568-9dcf-c716-96b0-18e88e3c29b8",
+      "740c9299-cf9a-b3e9-8c2c-7a4067e69be4",
+      "76955e4b-f39b-5c6a-9bdf-4d9b94ddbe7b",
+      "7bdfdcad-12a1-d238-8ce3-7125fc3f69c6",
+      "8be504dd-293b-2109-58df-4fadbb77ca11",
+      "8d9437f2-1159-7a41-9a63-f6a884b5a429",
+      "8faa3fcc-8b1e-8de7-5ea3-6ecc76d3aad9",
+      "90e8c99f-70e8-764b-2de6-c942b67e6631",
+      "95d6e6db-a7e6-7f40-990f-ab474ffcab36",
+      "98e2733f-0153-a8ad-8ddb-b05f40f3077c",
+      "9e4af8c7-48cc-1f88-c0c8-2ec43e75d354",
+      "a0836e1f-d78d-56c2-4fc1-27d13d13a36b",
+      "a35ec8ad-eaa0-acc1-fc84-d3a855557ec8",
+      "a752f189-71df-4f5d-98f5-a073c8a68ebd",
+      "a8441080-ed57-dde4-02d5-fba126cd8f10",
+      "ac0643ab-f8d9-c421-a204-97bc95a0268c",
+      "af7192bc-0442-96e6-fe8c-6cd1128b271f",
+      "b007f8f9-cd64-01b4-1077-67b0fed4b2ef",
+      "b091dd12-8beb-35e2-97be-f5f44d7ebb8e",
+      "b747abba-92f9-c225-f6dd-3dc68aadf729",
+      "b9473983-a598-22ca-01d8-ebd7cd2f978c",
+      "bbd507a8-8562-453e-3aea-964803e3d70b",
+      "c1ff8231-364e-68f3-3cbf-a0c886fde770",
+      "c2009dcd-ac61-f921-f454-d6a2514798f3",
+      "c7e0d3a5-d440-a40b-38b8-1ececf7a611e",
+      "d0d2ef29-d0f5-0a19-8068-efce93c86657",
+      "d11578ff-7448-98a8-5332-58347432ad77",
+      "d75290e5-4b7a-65ed-70cc-ada051073a89",
+      "db0175a2-2f7f-d9cd-4b0b-c90c41dd55c3",
+      "dcf4b0ae-c368-f991-de39-f3ad2301a949",
+      "dd7e8bb1-2809-9c15-f44f-5a1c292a4990",
+      "e56b9b1a-ca76-ddd1-93c4-497ac7ddfd10",
+      "ef253638-060d-fcd0-feb0-7535e620240a",
+      "ef6b6f0f-6bb1-f913-bf67-27c953425ddc",
+      "f4280575-a109-8f6e-12d0-aa7db93e0ac6",
+      "f5b6d4d6-3049-3a07-3d96-2cadea5e61e8",
+      "fd167389-73ff-4c12-ee83-669fb559b8f5",
+      "fe41118d-8b72-ed8f-a677-b80c925c603a"
+    ]
+  },
+  "created_at": "2026-04-29T00:00:00.000000Z",
+  "updated_at": "2026-04-27T00:00:00.000000Z"
+}

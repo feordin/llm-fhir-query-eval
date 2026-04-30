@@ -1,0 +1,140 @@
+{
+  "id": "phekb-depression-comprehensive",
+  "source": "phekb",
+  "source_id": "depression",
+  "name": "Depression - Comprehensive Provider Query",
+  "description": "Simulates a primary care provider identifying their complete depression population. The PheKB algorithm uses four longitudinal data sources: diagnoses, antidepressant medications, depression scale measures (PHQ-9), and psychotherapy records. Real-world identification primarily uses the union of diagnosis codes and antidepressant prescriptions. The Path C heavy distribution (~40% meds without dx) makes this query especially important — a Condition-only query will dramatically underestimate the depression-treated population.",
+  "prompt": "I need to identify my complete depression patient population for a quality improvement initiative on PHQ-9 screening. From clinical experience, I know depression patients are documented in different ways: some have a formal diagnosis code (MDD, recurrent depression, dysthymia), and a substantial number are on antidepressants — particularly SSRIs — without a depression diagnosis ever being formally coded. Many SSRI prescriptions are written empirically for symptoms (low mood, anxiety, insomnia) without a definitive diagnosis.\n\nPlease run multiple FHIR queries to capture the full population:\n1. Patients with any depression diagnosis (MDD, recurrent depression, dysthymia, or unspecified depressive disorder)\n2. Patients prescribed antidepressants (SSRIs, SNRIs, atypicals)\n\nFor each query, return the matching resources. I want the union of all patients found across both approaches.",
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "multi_query": true,
+    "algorithm_path": "comprehensive",
+    "algorithm_path_description": "Union of depression dx codes (Paths A+B) and antidepressant Rx (Paths A+C). Path C is especially heavy in this phenotype because SSRI prescribing without formal dx is common in primary care. An LLM that only queries Condition will substantially underestimate the population.",
+    "expected_queries": [
+      "Condition?code=http://snomed.info/sct|370143000,http://snomed.info/sct|36923009,http://snomed.info/sct|66344007,http://snomed.info/sct|78667006,http://snomed.info/sct|35489007",
+      "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|312938,http://www.nlm.nih.gov/research/umls/rxnorm|310385,http://www.nlm.nih.gov/research/umls/rxnorm|351250,http://www.nlm.nih.gov/research/umls/rxnorm|200371,http://www.nlm.nih.gov/research/umls/rxnorm|313580,http://www.nlm.nih.gov/research/umls/rxnorm|993537"
+    ],
+    "code_systems": [
+      "SNOMED CT",
+      "RxNorm"
+    ],
+    "required_codes": [
+      {
+        "system": "http://snomed.info/sct",
+        "code": "370143000",
+        "display": "Major depressive disorder",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "36923009",
+        "display": "Major depression, single episode (disorder)",
+        "source": "Synthea built-in"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "66344007",
+        "display": "Recurrent major depression",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "78667006",
+        "display": "Dysthymia",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "35489007",
+        "display": "Depressive disorder",
+        "source": "UMLS verified, parent concept"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "312938",
+        "display": "Sertraline 100 MG Oral Tablet",
+        "source": "Synthea built-in"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "310385",
+        "display": "Fluoxetine 20 MG Oral Capsule",
+        "source": "Synthea built-in"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "351250",
+        "display": "Escitalopram 20 MG Oral Tablet",
+        "source": "RxNorm SCD"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "200371",
+        "display": "Citalopram 20 MG Oral Tablet",
+        "source": "RxNorm SCD"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "313580",
+        "display": "Venlafaxine 100 MG Oral Tablet",
+        "source": "RxNorm SCD"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "993537",
+        "display": "12 HR bupropion hydrochloride 200 MG Extended Release Oral Tablet [Wellbutrin]",
+        "source": "RxNorm SCD"
+      }
+    ],
+    "complexity": "expert",
+    "tags": [
+      "multi-query",
+      "psychiatry",
+      "depression",
+      "comprehensive",
+      "cross-resource"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "Patient",
+    "parameters": {},
+    "url": "Condition?code=http://snomed.info/sct|370143000,http://snomed.info/sct|36923009,http://snomed.info/sct|66344007,http://snomed.info/sct|78667006,http://snomed.info/sct|35489007"
+  },
+  "test_data": {
+    "resources": [
+      "synthea/output/depression/positive/fhir/",
+      "synthea/output/depression/control/fhir/"
+    ],
+    "expected_result_count": 25,
+    "expected_resource_ids": [],
+    "expected_patient_ids": [
+      "01821618-1e31-7b68-1d62-64911414f4f9",
+      "21fa6ecc-518a-31ad-7921-0ef5e498bdde",
+      "596c786c-2c66-6caa-ee67-945053156ab1",
+      "71cb9d93-0fbd-7471-a2b2-7428ef9df756",
+      "7e0e7cc6-84d7-e8f2-2ec0-33248785c5d9",
+      "8acc4a22-fcb6-089b-1ce6-0cc4de491542",
+      "8c47c6f2-1bd6-a45a-b784-5907d63a23de",
+      "976f568d-7841-b1b0-0c26-904ced33d8cc",
+      "a20c2b61-8891-c883-ff01-9bddcdf8220a",
+      "a277aa9c-e9e1-8eb5-1303-7ebcee5c27e3",
+      "a714119a-c214-2162-8060-394901e90a85",
+      "b3534d9f-dac0-f51e-75bd-ce4775a78f47",
+      "b949ae0b-4fb7-fde2-9452-274b77ccb1ff",
+      "ba1e63a7-ab3a-50b6-b2ed-d11276127475",
+      "bb024f09-4e20-6f91-df71-6cb5485ac045",
+      "bf8b1ab3-301f-a005-4701-86ed1ff71667",
+      "c4a42722-b087-3935-fbe1-9cc0cf276d40",
+      "d7022824-a930-89ac-2586-594a17e14019",
+      "df299005-16dc-7f0f-ce17-50277d84553f",
+      "e306284b-aaa3-5279-8b2b-530fdb5853d4",
+      "ed5eba29-a875-120a-7b04-a42034975276",
+      "ed6c03e1-f389-2b3d-35c0-260b184d5ab0",
+      "f883a494-f578-ca8b-b985-772f0c65680a",
+      "fa04876c-372c-ad66-4fa7-c8bcce305712",
+      "fa05ed8a-d01c-016e-7e8d-9cc291645259"
+    ]
+  },
+  "created_at": "2026-04-25T00:00:00.000000Z",
+  "updated_at": "2026-04-25T00:00:00.000000Z"
+}

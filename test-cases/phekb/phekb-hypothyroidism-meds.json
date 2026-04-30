@@ -1,0 +1,90 @@
+{
+  "id": "phekb-hypothyroidism-meds",
+  "source": "phekb",
+  "source_id": "hypothyroidism",
+  "name": "Hypothyroidism - Thyroid Replacement Medication Query",
+  "description": "Tests ability to find hypothyroidism patients via thyroid replacement medications. The PheKB algorithm requires medication use as a defining criterion. Synthea distributes patients across multiple levothyroxine SCD doses (0.05, 0.075, 0.125 MG variants and Synthroid/Levotabs branded forms). An LLM that queries only one dose will miss patients on other doses. Returns Path A and Path B (with-dx) plus Path C (meds-only, no-dx) patients.",
+  "prompt": "Retrieve medication orders for patients prescribed levothyroxine or other thyroid hormone replacement therapy.",
+  "prompts": {
+    "naive": "Find patients on levothyroxine.",
+    "broad": "Find patients prescribed thyroid replacement therapy. The most common medication is levothyroxine (also marketed as Synthroid, Levoxyl, Unithroid, and Levotabs), available in multiple dosages from 0.025 MG to 0.3 MG oral tablets.",
+    "expert": "I need to find all patients on chronic thyroid hormone replacement therapy. Levothyroxine is the standard of care and Synthea generates this at the SCD level (specific dose strengths), not the ingredient level. Search MedicationRequest resources for all common levothyroxine SCD codes: 966222 (0.075 MG generic), 966224 (0.125 MG generic), 966247 (0.05 MG Synthroid), and 966189 (0.125 MG Levotabs). Note that querying the ingredient code 10582 (levothyroxine) will NOT match SCD-coded prescriptions on most FHIR servers — you must query the specific SCD codes."
+  },
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "algorithm_path": "medication-path",
+    "algorithm_path_description": "Patients on thyroid replacement medications (Paths A, B, and C). Includes Path C tricky patients who are on levothyroxine but have no formal hypothyroidism diagnosis.",
+    "code_systems": [
+      "RxNorm"
+    ],
+    "required_codes": [
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "966222",
+        "display": "Levothyroxine Sodium 0.075 MG Oral Tablet",
+        "source": "Synthea built-in module"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "966224",
+        "display": "Levothyroxine Sodium 0.125 MG Oral Tablet",
+        "source": "RxNorm SCD"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "966247",
+        "display": "Levothyroxine Sodium 0.05 MG Oral Tablet [Synthroid]",
+        "source": "RxNorm SCD"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "966189",
+        "display": "Levothyroxine Sodium 0.125 MG Oral Tablet [Levotabs]",
+        "source": "RxNorm SCD"
+      }
+    ],
+    "complexity": "medium",
+    "tags": [
+      "medication",
+      "endocrinology",
+      "hypothyroidism",
+      "rxnorm-scd",
+      "code-variation"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "MedicationRequest",
+    "parameters": {
+      "code": "http://www.nlm.nih.gov/research/umls/rxnorm|966222,http://www.nlm.nih.gov/research/umls/rxnorm|966224,http://www.nlm.nih.gov/research/umls/rxnorm|966247,http://www.nlm.nih.gov/research/umls/rxnorm|966189"
+    },
+    "url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|966222,http://www.nlm.nih.gov/research/umls/rxnorm|966224,http://www.nlm.nih.gov/research/umls/rxnorm|966247,http://www.nlm.nih.gov/research/umls/rxnorm|966189"
+  },
+  "test_data": {
+    "resources": [
+      "synthea/output/hypothyroidism/positive/fhir/",
+      "synthea/output/hypothyroidism/control/fhir/"
+    ],
+    "expected_result_count": 16,
+    "expected_resource_ids": [],
+    "expected_patient_ids": [
+      "080b069b-5108-46b6-ecef-6aacd3b9ef3f",
+      "2c167999-289d-95fa-5c27-7d8b8d35348c",
+      "35b353dd-402b-571a-d67a-af0a104d0854",
+      "6aed9210-c500-4375-b0fc-3374c40b8591",
+      "6fbddf55-7096-b883-7cd3-260f27953080",
+      "922fb35e-148d-9e82-7e65-bfa05e3b3515",
+      "9661a432-4630-2cd9-142c-386845fae837",
+      "982750f4-569b-5949-196b-60699bdda3fb",
+      "aa616abe-1761-0c9a-7959-07544679dafd",
+      "b6a1cac9-8873-36a7-e726-4aad8a07d44d",
+      "ba419d35-0dfe-8af7-347c-eebf02485a56",
+      "bff9d9d5-ee3d-d852-9c67-36d8361a4a4a",
+      "c86c400e-ff88-a1e3-2e23-caa4d8311f47",
+      "e74367bd-7385-97dc-2c7f-251b4cd9fe29",
+      "eb5910f1-26e6-bc6f-b300-716eae678d6f",
+      "f95a6723-14a5-c4b6-78df-fa97f7ab361c"
+    ]
+  },
+  "created_at": "2026-04-25T00:00:00.000000Z",
+  "updated_at": "2026-04-25T00:00:00.000000Z"
+}

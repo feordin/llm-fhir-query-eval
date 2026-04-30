@@ -1,0 +1,76 @@
+{
+  "id": "phekb-anxiety-dx",
+  "source": "phekb",
+  "source_id": "anxiety-algorithm",
+  "name": "Anxiety Disorder - Diagnosis Code Query",
+  "description": "Tests ability to find anxiety disorder patients by searching for diagnosis codes. Covers the PheKB anxiety algorithm case definition requiring 2+ anxiety-related ICD codes on different days. Patients may have generalized anxiety disorder, panic disorder, or unspecified anxiety disorder recorded as Condition resources.",
+  "prompt": "Find all patients diagnosed with an anxiety disorder.",
+  "prompts": {
+    "naive": "Find all patients diagnosed with an anxiety disorder.",
+    "expert": "I need to identify patients with anxiety disorder diagnoses in their records. Anxiety disorders encompass several distinct conditions that may be coded separately -- generalized anxiety disorder, panic disorder, and unspecified anxiety disorder are the most common. The query should search Condition resources and include SNOMED codes for all of these variants, since a patient chart may use any of them. In psychiatric phenotyping, the PheKB algorithm requires anxiety-related ICD codes from two or more visits on different days to establish a case, but for the FHIR query we need to first find all Condition resources with these codes."
+  },
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "algorithm_path": "case-diagnosis",
+    "algorithm_path_description": "Patients with anxiety disorder diagnosis codes (SNOMED). These patients have Condition resources with anxiety disorder codes. The PheKB algorithm requires 2+ anxiety-related ICD codes on different days, but a single SNOMED-coded Condition query is the standard FHIR approach.",
+    "code_systems": [
+      "SNOMED CT"
+    ],
+    "required_codes": [
+      {
+        "system": "http://snomed.info/sct",
+        "code": "21897009",
+        "display": "Generalized anxiety disorder",
+        "source": "umls"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "371631005",
+        "display": "Panic disorder",
+        "source": "umls"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "197480006",
+        "display": "Anxiety disorder",
+        "source": "umls"
+      }
+    ],
+    "complexity": "easy",
+    "tags": [
+      "condition",
+      "psychiatry",
+      "anxiety",
+      "diagnosis-code"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "Condition",
+    "parameters": {
+      "code": "http://snomed.info/sct|21897009,http://snomed.info/sct|371631005,http://snomed.info/sct|197480006"
+    },
+    "url": "Condition?code=http://snomed.info/sct|21897009,http://snomed.info/sct|371631005,http://snomed.info/sct|197480006"
+  },
+  "test_data": {
+    "resources": [
+      "synthea/output/anxiety/positive/fhir/",
+      "synthea/output/anxiety/control/fhir/"
+    ],
+    "expected_result_count": 10,
+    "expected_resource_ids": [],
+    "expected_patient_ids": [
+      "35b353dd-402b-571a-d67a-af0a104d0854",
+      "46976cf7-b0bf-be20-39a5-9f425a52886d",
+      "4f083ce3-f12b-bb4b-7353-e17f0cd55b0a",
+      "6fbddf55-7096-b883-7cd3-260f27953080",
+      "982750f4-569b-5949-196b-60699bdda3fb",
+      "aa616abe-1761-0c9a-7959-07544679dafd",
+      "bff9d9d5-ee3d-d852-9c67-36d8361a4a4a",
+      "c86c400e-ff88-a1e3-2e23-caa4d8311f47",
+      "e74367bd-7385-97dc-2c7f-251b4cd9fe29",
+      "eb5910f1-26e6-bc6f-b300-716eae678d6f"
+    ]
+  },
+  "created_at": "2026-03-15T12:00:00.000000Z",
+  "updated_at": "2026-04-27T00:00:00.000000Z"
+}

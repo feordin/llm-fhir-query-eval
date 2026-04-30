@@ -1,0 +1,103 @@
+{
+  "id": "phekb-bph-dx",
+  "source": "phekb",
+  "source_id": "bph",
+  "name": "BPH (Benign Prostatic Hyperplasia) - Diagnosis Code Query (Male, Age 40+)",
+  "description": "Tests ability to find BPH patients via diagnosis codes with sex (Male) and age (>=40) restrictions. Second prostate phenotype (after PCa) — tests differential dx with non-malignant counterpart. The expected query uses the new PatientFilters schema and chained patient.birthdate filter.",
+  "prompt": "Find male patients age 40 and older with a diagnosis of benign prostatic hyperplasia.",
+  "prompts": {
+    "naive": "Find men with BPH.",
+    "broad": "Find male patients age 40 and older with a diagnosis of benign prostatic hyperplasia (BPH) — also known as prostate enlargement. This is a non-malignant condition distinct from prostate cancer.",
+    "expert": "I need male patients age 40+ with BPH. SNOMED 266569009 (Benign prostatic hyperplasia) covers the condition. FHIR has no patient.age search parameter, so use chained search with patient.birthdate <= (today - 40 years). With reference date 2026-04-28, that means patient.birthdate <= 1986-04-28. Add patient.gender=male via chained search. Query: Condition?code=http://snomed.info/sct|266569009&patient.birthdate=le1986-04-28&patient.gender=male"
+  },
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "algorithm_path": "diagnosis-path",
+    "algorithm_path_description": "Male patients age 40+ with BPH diagnosis. Tests sex + age restrictions via PatientFilters schema.",
+    "code_systems": [
+      "SNOMED CT"
+    ],
+    "required_codes": [
+      {
+        "system": "http://snomed.info/sct",
+        "code": "266569009",
+        "display": "Benign prostatic hyperplasia",
+        "source": "UMLS verified"
+      }
+    ],
+    "complexity": "hard",
+    "tags": [
+      "condition",
+      "urology",
+      "bph",
+      "prostate",
+      "male-only",
+      "age-restricted",
+      "diagnosis-code",
+      "patient-filters"
+    ],
+    "patient_filters": {
+      "min_age_years": 40,
+      "sex": "male",
+      "reference_date": "2026-04-28"
+    }
+  },
+  "expected_query": {
+    "resource_type": "Condition",
+    "parameters": {
+      "code": "http://snomed.info/sct|266569009",
+      "patient.birthdate": "le1986-04-28",
+      "patient.gender": "male"
+    },
+    "url": "Condition?code=http://snomed.info/sct|266569009&patient.birthdate=le1986-04-28&patient.gender=male"
+  },
+  "test_data": {
+    "resources": [
+      "synthea/output/bph/positive/fhir/",
+      "synthea/output/bph/control/fhir/"
+    ],
+    "expected_result_count": 37,
+    "expected_resource_ids": [],
+    "expected_patient_ids": [
+      "030c2dd6-4e1c-c5a7-b847-6f8c4585691d",
+      "0d722f36-1c10-b86e-d21c-ca9b5cbe213b",
+      "29f53aec-2ba1-7e72-d6e7-5aa48f0a981e",
+      "3368718b-1e85-049b-9f78-7874222fdc5f",
+      "3985ec7b-0a1f-d921-8745-7f4aef7a687f",
+      "4e0286db-b0c2-3f09-9609-e282f5a61f5b",
+      "4ee77763-b0fb-269a-7470-149be5ca273f",
+      "52d8871a-cf69-2989-0ec4-0d09fdadf748",
+      "551c1013-f715-be47-3e21-a31d7894a36e",
+      "5ac86c4a-8e5d-4b39-633c-2c5f5986a319",
+      "5c44c9b1-b379-2f33-08c0-5efba97ad3ba",
+      "6c5314a8-c977-f5dd-64e6-5328b299dd10",
+      "6caf4e77-24d8-7b1d-7384-92af624f1e5f",
+      "6e18d891-5728-6f45-15f7-0207968c58b1",
+      "6eeae50c-b880-e1f4-d4e4-a9a8ea5b0c34",
+      "716d5005-724e-780e-8cf1-d99936c1035b",
+      "74a36370-9449-9958-9007-9f60643cb683",
+      "84334bd2-6ad1-8669-fc68-84765c68c885",
+      "8b95be51-499c-3557-6f32-48772e4716ca",
+      "8bae0f8e-5ba8-4a08-682e-fdad4213a631",
+      "8bbb51cc-9b92-7bb0-d805-77ecb2b397ba",
+      "8d87a74d-721c-ec3c-b8e7-29d86f5ba5ee",
+      "91749fec-4c12-097e-67da-8b27ae984316",
+      "a5e97125-1b11-96af-d815-70bd85467573",
+      "ab9e2e40-df38-c2d6-4ff8-683334e6323d",
+      "b984f81e-169a-17b7-cdc8-ae2f6ec624d8",
+      "c5a95662-f695-7009-60c8-63820bdfd939",
+      "c7dead18-cbf9-9887-d378-936e1990fd4e",
+      "ca269e31-3f74-7057-9f8e-d07d03d03ed6",
+      "d0a00a23-93a9-36b4-7e2b-279f871e3568",
+      "dc851416-9d6f-29cd-9ce5-8d4b131af9cf",
+      "e1865d75-b747-6dc9-aa7c-b2c7cd31910d",
+      "e7acf662-328d-7586-3135-e7a792aad427",
+      "e7f9b1a1-cf33-188a-2ba4-6a7ff0433f66",
+      "e95d61c5-fe6a-19c8-b786-6d1630037787",
+      "f8ad527a-7f96-b2e9-a616-aacdcc2033d8",
+      "fba60e2f-a39c-f95d-98cc-adcab975f82f"
+    ]
+  },
+  "created_at": "2026-04-28T00:00:00.000000Z",
+  "updated_at": "2026-04-27T00:00:00.000000Z"
+}

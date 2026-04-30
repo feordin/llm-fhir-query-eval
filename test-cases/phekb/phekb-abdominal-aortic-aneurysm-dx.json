@@ -1,0 +1,71 @@
+{
+  "id": "phekb-abdominal-aortic-aneurysm-dx",
+  "source": "phekb",
+  "source_id": "abdominal-aortic-aneurysm",
+  "name": "Abdominal Aortic Aneurysm (AAA) - Diagnosis Code Query",
+  "description": "Tests ability to find AAA patients via diagnosis codes including unruptured (most common) and ruptured (acute emergency) variants.",
+  "prompt": "Find all patients with a diagnosis of abdominal aortic aneurysm, including ruptured AAA.",
+  "prompts": {
+    "naive": "Find patients with AAA.",
+    "broad": "Find patients diagnosed with abdominal aortic aneurysm, including both unruptured and ruptured cases.",
+    "expert": "Search Condition resources with SNOMED 233985008 (Abdominal aortic aneurysm) and 14336007 (Ruptured abdominal aortic aneurysm). Query: Condition?code=http://snomed.info/sct|233985008,http://snomed.info/sct|14336007"
+  },
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "algorithm_path": "diagnosis-path",
+    "algorithm_path_description": "Patients with AAA dx (unruptured + ruptured variants).",
+    "code_systems": [
+      "SNOMED CT"
+    ],
+    "required_codes": [
+      {
+        "system": "http://snomed.info/sct",
+        "code": "233985008",
+        "display": "Abdominal aortic aneurysm",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "14336007",
+        "display": "Ruptured abdominal aortic aneurysm",
+        "source": "UMLS verified"
+      }
+    ],
+    "complexity": "easy",
+    "tags": [
+      "condition",
+      "vascular",
+      "aaa",
+      "diagnosis-code"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "Condition",
+    "parameters": {
+      "code": "http://snomed.info/sct|233985008,http://snomed.info/sct|14336007"
+    },
+    "url": "Condition?code=http://snomed.info/sct|233985008,http://snomed.info/sct|14336007"
+  },
+  "test_data": {
+    "resources": [
+      "synthea/output/abdominal-aortic-aneurysm/positive/fhir/",
+      "synthea/output/abdominal-aortic-aneurysm/control/fhir/"
+    ],
+    "expected_result_count": 10,
+    "expected_resource_ids": [],
+    "expected_patient_ids": [
+      "2c167999-289d-95fa-5c27-7d8b8d35348c",
+      "35b353dd-402b-571a-d67a-af0a104d0854",
+      "62f60bdb-cc5c-8305-b98b-f2b229a55eca",
+      "6fbddf55-7096-b883-7cd3-260f27953080",
+      "9661a432-4630-2cd9-142c-386845fae837",
+      "aa616abe-1761-0c9a-7959-07544679dafd",
+      "ba419d35-0dfe-8af7-347c-eebf02485a56",
+      "bff9d9d5-ee3d-d852-9c67-36d8361a4a4a",
+      "c86c400e-ff88-a1e3-2e23-caa4d8311f47",
+      "e74367bd-7385-97dc-2c7f-251b4cd9fe29"
+    ]
+  },
+  "created_at": "2026-04-29T00:00:00.000000Z",
+  "updated_at": "2026-04-27T00:00:00.000000Z"
+}

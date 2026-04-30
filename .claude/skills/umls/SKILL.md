@@ -1,7 +1,7 @@
 ---
 name: umls
-description: Look up clinical codes and map between code systems (SNOMED, ICD-10, LOINC, RxNorm) using the NIH UMLS MCP server. Use when you need authoritative clinical codes for FHIR queries, Synthea modules, or test cases.
-allowed-tools: mcp__nih-umls__search_umls, mcp__nih-umls__get_concept, mcp__nih-umls__get_concept_relations, mcp__nih-umls__get_definitions, mcp__nih-umls__get_source_concept, mcp__nih-umls__crosswalk_codes, Read, Glob
+description: "Look up clinical codes, map between code systems (SNOMED, ICD-10, LOINC, RxNorm), search VSAC value sets, and check code subsumption using the NIH UMLS MCP server."
+allowed-tools: mcp__nih-umls__search_umls, mcp__nih-umls__get_concept, mcp__nih-umls__get_concept_relations, mcp__nih-umls__get_definitions, mcp__nih-umls__get_source_concept, mcp__nih-umls__crosswalk_codes, mcp__nih-umls__search_value_sets, mcp__nih-umls__get_value_set, mcp__nih-umls__expand_value_set, mcp__nih-umls__validate_code_in_value_set, mcp__nih-umls__lookup_code, mcp__nih-umls__check_code_subsumption, Read, Glob
 ---
 
 # UMLS Code Lookup Skill
@@ -20,6 +20,10 @@ allowed-tools: mcp__nih-umls__search_umls, mcp__nih-umls__get_concept, mcp__nih-
 | `crosswalk <system> <code>` | Map a code to other code systems |
 | `codes-for <term>` | Get all FHIR-relevant codes for a concept (SNOMED, ICD-10, LOINC, RxNorm) |
 | `validate <system> <code>` | Check if a code exists and get its display name |
+| `valueset <term>` | Search VSAC for curated value sets by name |
+| `expand <oid>` | Expand a value set to see all member codes |
+| `validate-in-vs <oid> <system> <code>` | Check if a code belongs to a value set |
+| `subsumes <system> <code_a> <code_b>` | Check hierarchical code relationships (e.g., SNOMED parent/child) |
 
 ## Instructions for Claude
 
@@ -32,6 +36,11 @@ The UMLS MCP server provides five tools. Use them in this order for best results
 3. **`get_definitions`** - Get clinical definitions (useful for disambiguation)
 4. **`crosswalk_codes`** - Map between code systems via a known code
 5. **`get_source_concept`** - Get details about a specific code in a specific system
+6. **`search_value_sets`** - Search VSAC for curated value sets (quality measure code lists, CMS groupings)
+7. **`expand_value_set`** - Get all codes in a value set (replaces manual crosswalking for known value sets)
+8. **`validate_code_in_value_set`** - Check if a code belongs to a standard value set
+9. **`lookup_code`** - Look up code details using FHIR-native system URIs (no UMLS abbreviation translation needed)
+10. **`check_code_subsumption`** - Check parent/child relationships in hierarchical systems like SNOMED CT
 
 ### For `lookup <term>`:
 
@@ -117,6 +126,19 @@ This is the most common use case — getting all FHIR-relevant codes for a clini
 
    c. If crosswalks return empty, search UMLS directly with target system filter.
 
+   3b. **Alternative: Use VSAC value sets** for comprehensive code lists.
+
+   For well-known clinical concepts, VSAC value sets provide pre-curated, authoritative code lists:
+   ```
+   search_value_sets(title="<term>")
+   expand_value_set(oid="<oid from search>")
+   ```
+
+   This is especially useful for:
+   - Quality measure code lists (CMS, HEDIS, NCQA)
+   - Conditions with many ICD-10 subtypes (e.g., diabetes E11.0-E11.9)
+   - Getting ALL valid codes including ones that crosswalk might miss
+
 4. **Present results as a table:**
 
    ```
@@ -141,6 +163,81 @@ This is the most common use case — getting all FHIR-relevant codes for a clini
    ```
 
 2. **Report** whether the code exists, its display name, and whether it's obsolete.
+
+### For `valueset <term>`:
+
+1. **Search VSAC** for value sets matching the term:
+   ```
+   search_value_sets(title="<term>")
+   ```
+
+2. **Present results** as a table:
+   | OID | Title | Publisher | Status |
+
+3. **Suggest next steps**: Use `/umls expand <oid>` to see all codes in a value set.
+
+**When to use value sets vs crosswalk:**
+- Use **value sets** when you need a comprehensive grouping of codes for a clinical concept (e.g., "all diabetes codes" for quality reporting)
+- Use **crosswalk** when you need exact concept-level equivalence between two specific codes
+- Value sets may include codes from multiple UMLS concepts (e.g., a "Diabetes" value set includes Type 1, Type 2, gestational, etc.)
+
+### For `expand <oid>`:
+
+1. **Expand the value set:**
+   ```
+   expand_value_set(oid="<oid>", count=100)
+   ```
+
+2. **Present results** grouped by code system:
+   ```
+   Value Set: <title> (<oid>)
+   Total codes: <count>
+
+   SNOMED CT:
+   | Code | Display |
+   |------|---------|
+   | ...  | ...     |
+
+   ICD-10-CM:
+   | Code | Display |
+   |------|---------|
+   | ...  | ...     |
+   ```
+
+3. **For large value sets** (100+ codes), note that pagination is available:
+   ```
+   expand_value_set(oid="<oid>", count=100, offset=100)
+   ```
+
+4. **Include FHIR query examples** showing how to use the codes.
+
+### For `validate-in-vs <oid> <system> <code>`:
+
+1. **Validate the code:**
+   ```
+   validate_code_in_value_set(oid="<oid>", code="<code>", system="<system>")
+   ```
+   System uses FHIR URIs (e.g., `http://snomed.info/sct`, `http://hl7.org/fhir/sid/icd-10-cm`).
+
+2. **Report** whether the code is a member and its display name.
+
+### For `subsumes <system> <code_a> <code_b>`:
+
+1. **Check subsumption:**
+   ```
+   check_code_subsumption(system="<system>", code_a="<code_a>", code_b="<code_b>")
+   ```
+   System uses FHIR URIs (e.g., `http://snomed.info/sct`).
+
+2. **Interpret the result:**
+   - `subsumes` — code_a is an ancestor of code_b (code_a is broader)
+   - `subsumed-by` — code_a is a descendant of code_b (code_a is narrower)
+   - `equivalent` — both codes represent the same concept
+   - `not-subsumed` — no hierarchical relationship
+
+3. **Explain in clinical context:** For example, "SNOMED 73211009 (Diabetes mellitus) subsumes 44054006 (Type 2 diabetes mellitus), meaning a query for the broader code would also match the narrower one if the server supports `:below` modifier."
+
+4. **Note:** Subsumption checking is primarily useful for hierarchical code systems like SNOMED CT. It is not applicable to flat code systems like ICD-10-CM or LOINC.
 
 ---
 
@@ -176,6 +273,23 @@ SNOMED regularly retires codes. The crosswalk may return obsolete codes (marked 
 ### Multiple Codes per Concept
 
 Many conditions have multiple valid codes in the same system (e.g., ICD-10 has `I48.0` paroxysmal, `I48.1` persistent, `I48.2` chronic, `I48.91` unspecified for atrial fibrillation). For FHIR queries that should catch all variants, consider using multiple codes or the unspecified/general code.
+
+### VSAC Value Sets vs UMLS Crosswalk
+
+These are complementary approaches for finding codes:
+
+| Approach | Best For | How It Works |
+|----------|----------|-------------|
+| **UMLS Crosswalk** | Exact concept equivalence | Finds codes sharing the same CUI (concept-level mapping) |
+| **VSAC Value Sets** | Comprehensive clinical groupings | Curated collections maintained by organizations (NCQA, CMS) |
+
+Key differences:
+- A **crosswalk** for "Type 2 diabetes" finds the exact equivalent codes in other systems
+- A **value set** for "Diabetes" may include Type 1, Type 2, gestational, and other subtypes
+- Value sets are authoritative for quality reporting and are regularly updated
+- Crosswalk may miss codes that are semantically related but have different CUIs
+
+**Recommendation:** Use VSAC value sets when available for the clinical concept. Fall back to crosswalk for niche concepts not covered by standard value sets.
 
 ---
 
@@ -223,4 +337,57 @@ Claude: Finding all codes for "hemoglobin A1c"...
 | LOINC | 4549-2 | Hemoglobin A1c/Hemoglobin.total in Blood by Electrophoresis | http://loinc.org |
 
 FHIR query: Observation?code=http://loinc.org|4548-4
+```
+
+```
+User: /umls valueset diabetes
+
+Claude: Searching VSAC for "diabetes" value sets...
+
+Found 15 value sets. Top results:
+| OID | Title | Publisher |
+|-----|-------|-----------|
+| 2.16.840.1.113883.3.464.1003.103.12.1001 | Diabetes | NCQA |
+| 2.16.840.1.113883.3.464.1003.103.12.1020 | Type 1 Diabetes | NCQA |
+| ... | ... | ... |
+
+Use `/umls expand <oid>` to see all codes in a value set.
+```
+
+```
+User: /umls expand 2.16.840.1.113883.3.464.1003.103.12.1001
+
+Claude: Expanding value set "Diabetes" (2.16.840.1.113883.3.464.1003.103.12.1001)...
+
+Total codes: 47
+
+SNOMED CT (http://snomed.info/sct):
+| Code | Display |
+|------|---------|
+| 44054006 | Type 2 diabetes mellitus |
+| 46635009 | Type 1 diabetes mellitus |
+| ... | ... |
+
+ICD-10-CM (http://hl7.org/fhir/sid/icd-10-cm):
+| Code | Display |
+|------|---------|
+| E11 | Type 2 diabetes mellitus |
+| E11.9 | Type 2 diabetes mellitus without complications |
+| E10 | Type 1 diabetes mellitus |
+| ... | ... |
+```
+
+```
+User: /umls subsumes http://snomed.info/sct 73211009 44054006
+
+Claude: Checking subsumption in SNOMED CT...
+
+Result: **subsumes**
+
+73211009 (Diabetes mellitus) is an ancestor of 44054006 (Type 2 diabetes mellitus).
+
+This means:
+- A FHIR query using code 73211009 with the `:below` modifier would match patients coded with 44054006
+- Use the broader code (73211009) if you want ALL diabetes types
+- Use the narrower code (44054006) if you want only Type 2
 ```

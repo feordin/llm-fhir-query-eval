@@ -1,0 +1,141 @@
+{
+  "id": "phekb-gout-comprehensive",
+  "source": "phekb",
+  "source_id": "gout",
+  "name": "Gout - Comprehensive Provider Query (Multi-Resource)",
+  "description": "Provider-level query identifying gout patients via Condition + MedicationRequest + Observation (urate). Path D captures asymptomatic hyperuricemia.",
+  "prompt": "I need to identify my complete gout patient population. Some patients have a coded gout diagnosis. Others have only allopurinol or colchicine prescriptions, and some have only a documented elevated urate without a formal gout diagnosis. Run multiple FHIR queries — diagnosis, medications, and urate labs — and union the patient sets.",
+  "prompts": {
+    "naive": "Find all gout patients.",
+    "broad": "Find all gout patients — by diagnosis, allopurinol/colchicine medications, or elevated urate (>7 mg/dL). Run multiple queries and union the patient sets.",
+    "expert": "Run three queries. (1) Condition?code=http://snomed.info/sct|90560007 — gout dx. (2) MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|519,http://www.nlm.nih.gov/research/umls/rxnorm|2683 — allopurinol+colchicine. (3) Observation?code=http://loinc.org|3084-1&value-quantity=gt7||mg/dL — elevated urate. Union the patient IDs."
+  },
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "algorithm_path": "comprehensive-provider-query",
+    "algorithm_path_description": "Multi-query union: Condition + MedicationRequest + Observation for gout.",
+    "code_systems": [
+      "SNOMED CT",
+      "RxNorm",
+      "LOINC"
+    ],
+    "required_codes": [
+      {
+        "system": "http://snomed.info/sct",
+        "code": "90560007",
+        "display": "Gout",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "519",
+        "display": "allopurinol",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "2683",
+        "display": "colchicine",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://loinc.org",
+        "code": "3084-1",
+        "display": "Urate [Mass/volume] in Serum or Plasma",
+        "source": "UMLS verified"
+      }
+    ],
+    "complexity": "expert",
+    "tags": [
+      "multi-query",
+      "comprehensive",
+      "rheumatology",
+      "gout"
+    ],
+    "multi_query": true,
+    "expected_queries": [
+      "Condition?code=http://snomed.info/sct|90560007",
+      "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|519,http://www.nlm.nih.gov/research/umls/rxnorm|2683",
+      "Observation?code=http://loinc.org|3084-1&value-quantity=gt7||mg/dL"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "multi",
+    "parameters": {},
+    "url": "Condition?code=http://snomed.info/sct|90560007"
+  },
+  "test_data": {
+    "resources": [
+      "synthea/output/gout/positive/fhir/",
+      "synthea/output/gout/control/fhir/"
+    ],
+    "expected_result_count": 62,
+    "expected_resource_ids": [],
+    "expected_patient_ids": [
+      "029c97e8-f7ff-670c-b134-d3352b41c4f5",
+      "02b4a363-a296-27e0-d86d-33bf2cae497c",
+      "030b0d0a-65e6-29cb-3da1-157323bcdbfb",
+      "04786bbd-2882-e67a-f5bd-4d120089220b",
+      "07b51d43-92fa-9e7a-ef49-4ad08949a8ca",
+      "17010c65-57fc-1515-85c2-7a2168bf0e32",
+      "20b97589-1177-ab8d-5769-babe74f37ee2",
+      "2b2210e1-d5c8-0827-89ef-e3b24ccffdc0",
+      "3015c080-9d21-52fd-dde9-e965e1a7a677",
+      "342558d7-7860-e3c9-049e-37ac80404b25",
+      "367948e0-2cf2-c638-cb8e-360c2c010684",
+      "39c4b31e-5a39-3a61-eca7-14c4933c7c3b",
+      "3dae1003-0515-9f19-e132-8a1680ae48b1",
+      "3dd9c880-f665-b307-f3e2-4ccab68dc0c2",
+      "408ddcde-3170-8597-7c41-8ae1c40406bd",
+      "4af1d40a-12a1-b67a-bdae-8816e94702c9",
+      "4c5d5c2b-51aa-dd75-6164-9a385d0c3397",
+      "4ee9613c-779f-433a-e31a-a1c0e8022264",
+      "513bfa9a-847a-fada-addc-87874c8c27fa",
+      "52824d09-4fed-f76e-2f56-7c9d66d08991",
+      "5705f8f4-1419-3e91-ab83-7785f2cdba5e",
+      "5d45ff3b-daf1-7ad2-a974-dc4a9f2e74b1",
+      "60c986f1-d327-45fe-4150-e0ba8da392ec",
+      "666389b5-cdbe-c1a3-2c59-0811d16bc203",
+      "6a9749f9-5ed3-5c2c-a153-f9e0fda2d3a2",
+      "6db9df95-ce42-5a64-8e4d-89dd02c7ce14",
+      "71161a5d-9496-f0eb-f317-d7376b833add",
+      "7a5ee348-fd37-2f63-a6b6-9e7bd24d055f",
+      "7ba40df8-1220-8175-4eed-6dcd66ad9e06",
+      "812a63bf-1c18-8317-864f-5c4385f64fcd",
+      "83687181-2332-a97f-c18d-e3d9b86dfd9e",
+      "86da0dc1-4f56-f934-6717-c2f490a4fb73",
+      "8782e3bb-ddd0-f5bb-4c85-7b0ba4b21f50",
+      "8c52feeb-65a6-aa7c-8d57-3ea9d4ee1ca1",
+      "918d34fc-438e-b8fa-303f-294c1db04f99",
+      "99a00e4b-1dcd-6d90-40fe-3a3299901c64",
+      "9ad66e8c-7b27-9201-a93a-1f2b17a6ac0b",
+      "9b778420-bae1-598d-e203-78ea32bdd56a",
+      "9ba0bae1-c44f-fedf-df42-f022dfa97e1b",
+      "9c398cb5-8106-c139-b3e9-987c6f832008",
+      "9d849d6a-e01a-4911-790b-4db4222c88cf",
+      "a0e4b6dc-d81e-4ba8-4206-3e83e624269e",
+      "a164ee81-c35b-999f-f89a-b3c411d73ee6",
+      "b1e5efc8-9a93-957e-8538-c0ec5a6287ef",
+      "b2129dab-e000-710c-b018-cb4cd3442562",
+      "ba1bdd59-bfae-6bb6-5241-ec29ec8f2ac9",
+      "bed009f1-66b4-5720-83cf-4ddddc8a83c3",
+      "c2c9e410-bc5c-b920-896e-bd8ea0706beb",
+      "c4fe8de5-5ff7-ee6f-b236-ea8ca0906700",
+      "c63ef6f0-1bfe-09a1-4b86-185316e2b9f8",
+      "c6790f63-ce6f-1332-3960-35d1fc325f49",
+      "c81ba905-04c9-5d55-7de1-4a86668d2779",
+      "cd172b32-197d-2184-0fd8-876e8b3de22f",
+      "da49974a-037d-2132-4106-ebd3cf83c98f",
+      "db1b057c-ad1c-c169-f771-78bb9ec3436d",
+      "deaf3175-de18-2279-4e2a-303e7ca5dc6c",
+      "e0f08f7a-8d7a-05cf-4871-d48a939e5e28",
+      "e4aa03a1-2be9-a706-9c5b-92309e206c73",
+      "e9719aef-2808-bc97-c67b-26d13494ec33",
+      "f5307fef-2154-f816-a9ab-ca0f0d75a7cc",
+      "f5a62ae0-8719-87e1-f79f-ad7cdc2117bc",
+      "f7dfcd9c-5043-75c9-d8e4-db4e8dc6ad53"
+    ]
+  },
+  "created_at": "2026-04-29T00:00:00.000000Z",
+  "updated_at": "2026-04-27T00:00:00.000000Z"
+}

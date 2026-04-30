@@ -1,0 +1,130 @@
+{
+  "name": "PheKB Cataracts",
+  "remarks": [
+    "Custom Synthea module for cataracts.",
+    "**First standalone lens disorder phenotype**. **Ninth Procedure-resource phenotype** (cataract surgery — first ophthalmologic-surgical).",
+    "",
+    "Generates THREE patient paths:",
+    "  Path A (60%): Cataract dx + cataract surgery",
+    "  Path B (20%): Cataract dx, no surgery (early/observational)",
+    "  Path D (20%): Cataract surgery without cataract dx coded yet (rare — usually for traumatic lens removal)",
+    "",
+    "Diagnosis SNOMED variation (Paths A + B):",
+    "  35% Cataract (193570009) — parent",
+    "  30% Bilateral cataracts (95722004) — most common",
+    "  20% Unilateral cataract (95721006)",
+    "  15% Nuclear cataract (53889007) — most common age-related morphology"
+  ],
+  "states": {
+    "Initial": { "type": "Initial", "direct_transition": "Age_Guard" },
+    "Age_Guard": { "type": "Guard", "allow": { "condition_type": "Age", "operator": ">=", "quantity": 60, "unit": "years" }, "direct_transition": "Set_Cataract_Flag" },
+    "Set_Cataract_Flag": { "type": "SetAttribute", "attribute": "cat_positive", "value": true, "direct_transition": "Choose_Patient_Path" },
+    "Choose_Patient_Path": {
+      "type": "Simple",
+      "distributed_transition": [
+        { "transition": "Set_Path_A", "distribution": 0.60 },
+        { "transition": "Set_Path_B", "distribution": 0.20 },
+        { "transition": "Set_Path_D", "distribution": 0.20 }
+      ]
+    },
+    "Set_Path_A": { "type": "SetAttribute", "attribute": "cat_has_dx", "value": true, "direct_transition": "Set_Path_A_Proc" },
+    "Set_Path_A_Proc": { "type": "SetAttribute", "attribute": "cat_has_proc", "value": true, "direct_transition": "Choose_Subtype" },
+    "Set_Path_B": { "type": "SetAttribute", "attribute": "cat_has_dx", "value": true, "direct_transition": "Set_Path_B_Proc" },
+    "Set_Path_B_Proc": { "type": "SetAttribute", "attribute": "cat_has_proc", "value": false, "direct_transition": "Choose_Subtype" },
+    "Set_Path_D": { "type": "SetAttribute", "remarks": ["TRICKY: cataract surgery without cataract dx (rare — traumatic)"], "attribute": "cat_has_dx", "value": false, "direct_transition": "Set_Path_D_Proc" },
+    "Set_Path_D_Proc": { "type": "SetAttribute", "attribute": "cat_has_proc", "value": true, "direct_transition": "Choose_Subtype" },
+
+    "Choose_Subtype": {
+      "type": "Simple",
+      "distributed_transition": [
+        { "transition": "Set_Subtype_Cat", "distribution": 0.35 },
+        { "transition": "Set_Subtype_Bilat", "distribution": 0.30 },
+        { "transition": "Set_Subtype_Unilat", "distribution": 0.20 },
+        { "transition": "Set_Subtype_Nuclear", "distribution": 0.15 }
+      ]
+    },
+    "Set_Subtype_Cat": { "type": "SetAttribute", "attribute": "cat_subtype", "value": "cat", "direct_transition": "Set_Needs_First_Visit" },
+    "Set_Subtype_Bilat": { "type": "SetAttribute", "attribute": "cat_subtype", "value": "bilat", "direct_transition": "Set_Needs_First_Visit" },
+    "Set_Subtype_Unilat": { "type": "SetAttribute", "attribute": "cat_subtype", "value": "unilat", "direct_transition": "Set_Needs_First_Visit" },
+    "Set_Subtype_Nuclear": { "type": "SetAttribute", "attribute": "cat_subtype", "value": "nuclear", "direct_transition": "Set_Needs_First_Visit" },
+
+    "Set_Needs_First_Visit": { "type": "SetAttribute", "attribute": "cat_needs_first_visit", "value": true, "direct_transition": "Wellness_Encounter" },
+    "Wellness_Encounter": { "type": "Encounter", "wellness": true, "direct_transition": "Check_First_Visit" },
+    "Check_First_Visit": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "cat_needs_first_visit", "operator": "==", "value": true }, "transition": "Check_Has_Diagnosis" },
+        { "transition": "End_Wellness_Encounter" }
+      ]
+    },
+    "Check_Has_Diagnosis": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "cat_has_dx", "operator": "==", "value": true }, "transition": "Route_By_Subtype" },
+        { "transition": "Check_Procedure_NoDx" }
+      ]
+    },
+    "Route_By_Subtype": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "cat_subtype", "operator": "==", "value": "cat" }, "transition": "Diagnose_Cat" },
+        { "condition": { "condition_type": "Attribute", "attribute": "cat_subtype", "operator": "==", "value": "bilat" }, "transition": "Diagnose_Bilat" },
+        { "condition": { "condition_type": "Attribute", "attribute": "cat_subtype", "operator": "==", "value": "unilat" }, "transition": "Diagnose_Unilat" },
+        { "transition": "Diagnose_Nuclear" }
+      ]
+    },
+    "Diagnose_Cat": { "type": "ConditionOnset", "assign_to_attribute": "cat_condition", "codes": [{ "system": "SNOMED-CT", "code": "193570009", "display": "Cataract" }], "direct_transition": "Check_Procedure_WithDx" },
+    "Diagnose_Bilat": { "type": "ConditionOnset", "assign_to_attribute": "cat_condition", "codes": [{ "system": "SNOMED-CT", "code": "95722004", "display": "Bilateral cataracts" }], "direct_transition": "Check_Procedure_WithDx" },
+    "Diagnose_Unilat": { "type": "ConditionOnset", "assign_to_attribute": "cat_condition", "codes": [{ "system": "SNOMED-CT", "code": "95721006", "display": "Unilateral cataract" }], "direct_transition": "Check_Procedure_WithDx" },
+    "Diagnose_Nuclear": { "type": "ConditionOnset", "assign_to_attribute": "cat_condition", "codes": [{ "system": "SNOMED-CT", "code": "53889007", "display": "Nuclear cataract" }], "direct_transition": "Check_Procedure_WithDx" },
+
+    "Check_Procedure_WithDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "cat_has_proc", "operator": "==", "value": true }, "transition": "Eye_Surgery_Encounter_WithDx" },
+        { "transition": "Clear_First_Visit_Flag" }
+      ]
+    },
+    "Eye_Surgery_Encounter_WithDx": {
+      "type": "Encounter",
+      "encounter_class": "ambulatory",
+      "reason": "cat_condition",
+      "codes": [{ "system": "SNOMED-CT", "code": "440655000", "display": "Outpatient procedure encounter (procedure)" }],
+      "direct_transition": "Procedure_Cat_Surgery_WithDx"
+    },
+    "Procedure_Cat_Surgery_WithDx": {
+      "type": "Procedure",
+      "reason": "cat_condition",
+      "codes": [{ "system": "SNOMED-CT", "code": "110473004", "display": "Cataract surgery (procedure)" }],
+      "duration": { "low": 30, "high": 60, "unit": "minutes" },
+      "direct_transition": "End_Eye_Surgery_Encounter_WithDx"
+    },
+    "End_Eye_Surgery_Encounter_WithDx": { "type": "EncounterEnd", "direct_transition": "Clear_First_Visit_Flag" },
+
+    "Check_Procedure_NoDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "cat_has_proc", "operator": "==", "value": true }, "transition": "Eye_Surgery_Encounter_NoDx" },
+        { "transition": "Clear_First_Visit_Flag" }
+      ]
+    },
+    "Eye_Surgery_Encounter_NoDx": {
+      "type": "Encounter",
+      "encounter_class": "ambulatory",
+      "codes": [{ "system": "SNOMED-CT", "code": "440655000", "display": "Outpatient procedure encounter (procedure)" }],
+      "direct_transition": "Procedure_Cat_Surgery_NoDx"
+    },
+    "Procedure_Cat_Surgery_NoDx": {
+      "type": "Procedure",
+      "codes": [{ "system": "SNOMED-CT", "code": "110473004", "display": "Cataract surgery (procedure)" }],
+      "duration": { "low": 30, "high": 60, "unit": "minutes" },
+      "direct_transition": "End_Eye_Surgery_Encounter_NoDx"
+    },
+    "End_Eye_Surgery_Encounter_NoDx": { "type": "EncounterEnd", "direct_transition": "Clear_First_Visit_Flag" },
+
+    "Clear_First_Visit_Flag": { "type": "SetAttribute", "attribute": "cat_needs_first_visit", "value": false, "direct_transition": "End_Wellness_Encounter" },
+    "End_Wellness_Encounter": { "type": "EncounterEnd", "direct_transition": "Followup_Delay" },
+    "Followup_Delay": { "type": "Delay", "range": { "low": 6, "high": 12, "unit": "months" }, "direct_transition": "Wellness_Encounter" }
+  },
+  "gmf_version": 2
+}

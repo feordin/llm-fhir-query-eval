@@ -1,0 +1,742 @@
+{
+  "name": "PheKB Hypothyroidism",
+  "remarks": [
+    "Custom Synthea module for PheKB phenotype: hypothyroidism",
+    "Based on PheKB Hypothyroidism algorithm (eMERGE Network supplemental, Group Health)",
+    "",
+    "PheKB algorithm: Case requires (1) ICD-9 hypothyroidism code OR abnormal TSH/FT4,",
+    "  (2) thyroid replacement medication use, (3) >= 2 instances over >= 3 months.",
+    "",
+    "Generates FOUR patient paths:",
+    "  Path A (35%): Diagnosis + abnormal TSH labs + levothyroxine — full presentation",
+    "  Path B (15%): Diagnosis + levothyroxine, no labs documented",
+    "  Path C (30%): Levothyroxine ONLY, NO diagnosis (tricky — outside Rx, undocumented dx)",
+    "  Path D (20%): Abnormal TSH ONLY, NO diagnosis, NO meds (tricky — untreated subclinical)",
+    "",
+    "Diagnosis SNOMED code variation (only Paths A + B get a Condition):",
+    "  35% Acquired hypothyroidism (111566002)",
+    "  15% Idiopathic atrophic hypothyroidism (83664006) — Synthea built-in code",
+    "  25% Hashimoto's thyroiditis (237520009)",
+    "  15% Autoimmune hypothyroidism (237519003)",
+    "  10% Hypothyroidism unspecified parent (40930008)",
+    "",
+    "Medication SCD variation (Paths A, B, C — anyone on meds):",
+    "  35% Levothyroxine 0.075 MG generic (966222) — Synthea built-in code",
+    "  25% Levothyroxine 0.05 MG Synthroid (966247)",
+    "  25% Levothyroxine 0.125 MG generic (966224)",
+    "  15% Levothyroxine 0.125 MG Levotabs (966189)",
+    "",
+    "Lab values (Path A and Path D get abnormal TSH):",
+    "  TSH case range: 5.5 - 25 mIU/L (above PheKB threshold of > 5)",
+    "  FT4 case range (Path A only): 0.2 - 0.5 ng/dL (below PheKB threshold of < 0.5)",
+    "",
+    "Codes verified via NIH UMLS MCP (2025AB) and VSAC OID 2.16.840.1.113762.1.4.1222.744 (HL7 Patient Care WG)."
+  ],
+  "states": {
+    "Initial": {
+      "type": "Initial",
+      "direct_transition": "Age_Guard"
+    },
+
+    "Age_Guard": {
+      "type": "Guard",
+      "allow": {
+        "condition_type": "Age",
+        "operator": ">=",
+        "quantity": 30,
+        "unit": "years"
+      },
+      "direct_transition": "Set_Hypo_Flag"
+    },
+
+    "Set_Hypo_Flag": {
+      "type": "SetAttribute",
+      "attribute": "hypo_positive",
+      "value": true,
+      "direct_transition": "Choose_Patient_Path"
+    },
+
+    "Choose_Patient_Path": {
+      "type": "Simple",
+      "remarks": [
+        "Four-way split:",
+        "  Path A (35%): Dx + labs + meds (full presentation)",
+        "  Path B (15%): Dx + meds, no labs",
+        "  Path C (30%): Meds only, NO dx (tricky)",
+        "  Path D (20%): Labs only, NO dx, NO meds (tricky — subclinical untreated)"
+      ],
+      "distributed_transition": [
+        { "transition": "Set_Path_A", "distribution": 0.35 },
+        { "transition": "Set_Path_B", "distribution": 0.15 },
+        { "transition": "Set_Path_C", "distribution": 0.30 },
+        { "transition": "Set_Path_D", "distribution": 0.20 }
+      ]
+    },
+
+    "Set_Path_A": {
+      "type": "SetAttribute",
+      "attribute": "hypo_has_dx",
+      "value": true,
+      "direct_transition": "Set_Path_A_Labs"
+    },
+    "Set_Path_A_Labs": {
+      "type": "SetAttribute",
+      "attribute": "hypo_has_labs",
+      "value": true,
+      "direct_transition": "Set_Path_A_Meds"
+    },
+    "Set_Path_A_Meds": {
+      "type": "SetAttribute",
+      "attribute": "hypo_has_meds",
+      "value": true,
+      "direct_transition": "Choose_Subtype"
+    },
+
+    "Set_Path_B": {
+      "type": "SetAttribute",
+      "attribute": "hypo_has_dx",
+      "value": true,
+      "direct_transition": "Set_Path_B_Labs"
+    },
+    "Set_Path_B_Labs": {
+      "type": "SetAttribute",
+      "attribute": "hypo_has_labs",
+      "value": false,
+      "direct_transition": "Set_Path_B_Meds"
+    },
+    "Set_Path_B_Meds": {
+      "type": "SetAttribute",
+      "attribute": "hypo_has_meds",
+      "value": true,
+      "direct_transition": "Choose_Subtype"
+    },
+
+    "Set_Path_C": {
+      "type": "SetAttribute",
+      "remarks": ["TRICKY: Meds only, no diagnosis code"],
+      "attribute": "hypo_has_dx",
+      "value": false,
+      "direct_transition": "Set_Path_C_Labs"
+    },
+    "Set_Path_C_Labs": {
+      "type": "SetAttribute",
+      "attribute": "hypo_has_labs",
+      "value": false,
+      "direct_transition": "Set_Path_C_Meds"
+    },
+    "Set_Path_C_Meds": {
+      "type": "SetAttribute",
+      "attribute": "hypo_has_meds",
+      "value": true,
+      "direct_transition": "Choose_Subtype"
+    },
+
+    "Set_Path_D": {
+      "type": "SetAttribute",
+      "remarks": ["TRICKY: Abnormal labs only, no diagnosis, no treatment"],
+      "attribute": "hypo_has_dx",
+      "value": false,
+      "direct_transition": "Set_Path_D_Labs"
+    },
+    "Set_Path_D_Labs": {
+      "type": "SetAttribute",
+      "attribute": "hypo_has_labs",
+      "value": true,
+      "direct_transition": "Set_Path_D_Meds"
+    },
+    "Set_Path_D_Meds": {
+      "type": "SetAttribute",
+      "attribute": "hypo_has_meds",
+      "value": false,
+      "direct_transition": "Choose_Subtype"
+    },
+
+    "Choose_Subtype": {
+      "type": "Simple",
+      "remarks": [
+        "Distribute across hypothyroidism SNOMED subtypes (only matters for Paths with dx):",
+        "  35% Acquired hypothyroidism",
+        "  15% Idiopathic atrophic hypothyroidism (Synthea built-in)",
+        "  25% Hashimoto's thyroiditis",
+        "  15% Autoimmune hypothyroidism",
+        "  10% Generic Hypothyroidism (parent code)"
+      ],
+      "distributed_transition": [
+        { "transition": "Set_Subtype_Acquired", "distribution": 0.35 },
+        { "transition": "Set_Subtype_Idiopathic", "distribution": 0.15 },
+        { "transition": "Set_Subtype_Hashimotos", "distribution": 0.25 },
+        { "transition": "Set_Subtype_Autoimmune", "distribution": 0.15 },
+        { "transition": "Set_Subtype_Generic", "distribution": 0.10 }
+      ]
+    },
+
+    "Set_Subtype_Acquired": {
+      "type": "SetAttribute",
+      "attribute": "hypo_subtype",
+      "value": "acquired",
+      "direct_transition": "Choose_Med"
+    },
+    "Set_Subtype_Idiopathic": {
+      "type": "SetAttribute",
+      "attribute": "hypo_subtype",
+      "value": "idiopathic",
+      "direct_transition": "Choose_Med"
+    },
+    "Set_Subtype_Hashimotos": {
+      "type": "SetAttribute",
+      "attribute": "hypo_subtype",
+      "value": "hashimotos",
+      "direct_transition": "Choose_Med"
+    },
+    "Set_Subtype_Autoimmune": {
+      "type": "SetAttribute",
+      "attribute": "hypo_subtype",
+      "value": "autoimmune",
+      "direct_transition": "Choose_Med"
+    },
+    "Set_Subtype_Generic": {
+      "type": "SetAttribute",
+      "attribute": "hypo_subtype",
+      "value": "generic",
+      "direct_transition": "Choose_Med"
+    },
+
+    "Choose_Med": {
+      "type": "Simple",
+      "remarks": [
+        "Distribute across levothyroxine SCD variants:",
+        "  35% Levothyroxine 0.075 MG generic",
+        "  25% Levothyroxine 0.05 MG Synthroid",
+        "  25% Levothyroxine 0.125 MG generic",
+        "  15% Levothyroxine 0.125 MG Levotabs"
+      ],
+      "distributed_transition": [
+        { "transition": "Set_Med_Generic_075", "distribution": 0.35 },
+        { "transition": "Set_Med_Synthroid_050", "distribution": 0.25 },
+        { "transition": "Set_Med_Generic_125", "distribution": 0.25 },
+        { "transition": "Set_Med_Levotabs_125", "distribution": 0.15 }
+      ]
+    },
+
+    "Set_Med_Generic_075": {
+      "type": "SetAttribute",
+      "attribute": "hypo_med",
+      "value": "generic_075",
+      "direct_transition": "Set_Needs_First_Visit"
+    },
+    "Set_Med_Synthroid_050": {
+      "type": "SetAttribute",
+      "attribute": "hypo_med",
+      "value": "synthroid_050",
+      "direct_transition": "Set_Needs_First_Visit"
+    },
+    "Set_Med_Generic_125": {
+      "type": "SetAttribute",
+      "attribute": "hypo_med",
+      "value": "generic_125",
+      "direct_transition": "Set_Needs_First_Visit"
+    },
+    "Set_Med_Levotabs_125": {
+      "type": "SetAttribute",
+      "attribute": "hypo_med",
+      "value": "levotabs_125",
+      "direct_transition": "Set_Needs_First_Visit"
+    },
+
+    "Set_Needs_First_Visit": {
+      "type": "SetAttribute",
+      "attribute": "hypo_needs_first_visit",
+      "value": true,
+      "direct_transition": "Wellness_Encounter"
+    },
+
+    "Wellness_Encounter": {
+      "type": "Encounter",
+      "wellness": true,
+      "direct_transition": "Check_First_Visit"
+    },
+
+    "Check_First_Visit": {
+      "type": "Simple",
+      "conditional_transition": [
+        {
+          "condition": {
+            "condition_type": "Attribute",
+            "attribute": "hypo_needs_first_visit",
+            "operator": "==",
+            "value": true
+          },
+          "transition": "Check_Has_Diagnosis"
+        },
+        {
+          "transition": "Followup_Labs_Branch"
+        }
+      ]
+    },
+
+    "Check_Has_Diagnosis": {
+      "type": "Simple",
+      "conditional_transition": [
+        {
+          "condition": {
+            "condition_type": "Attribute",
+            "attribute": "hypo_has_dx",
+            "operator": "==",
+            "value": true
+          },
+          "transition": "Route_By_Subtype"
+        },
+        {
+          "transition": "Check_Labs_NoDx"
+        }
+      ]
+    },
+
+    "Route_By_Subtype": {
+      "type": "Simple",
+      "conditional_transition": [
+        {
+          "condition": {
+            "condition_type": "Attribute",
+            "attribute": "hypo_subtype",
+            "operator": "==",
+            "value": "acquired"
+          },
+          "transition": "Diagnose_Acquired"
+        },
+        {
+          "condition": {
+            "condition_type": "Attribute",
+            "attribute": "hypo_subtype",
+            "operator": "==",
+            "value": "idiopathic"
+          },
+          "transition": "Diagnose_Idiopathic"
+        },
+        {
+          "condition": {
+            "condition_type": "Attribute",
+            "attribute": "hypo_subtype",
+            "operator": "==",
+            "value": "hashimotos"
+          },
+          "transition": "Diagnose_Hashimotos"
+        },
+        {
+          "condition": {
+            "condition_type": "Attribute",
+            "attribute": "hypo_subtype",
+            "operator": "==",
+            "value": "autoimmune"
+          },
+          "transition": "Diagnose_Autoimmune"
+        },
+        {
+          "transition": "Diagnose_Generic"
+        }
+      ]
+    },
+
+    "Diagnose_Acquired": {
+      "type": "ConditionOnset",
+      "assign_to_attribute": "hypo_condition",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": "111566002",
+          "display": "Acquired hypothyroidism (disorder)"
+        }
+      ],
+      "direct_transition": "Check_Labs_WithDx"
+    },
+    "Diagnose_Idiopathic": {
+      "type": "ConditionOnset",
+      "assign_to_attribute": "hypo_condition",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": "83664006",
+          "display": "Idiopathic atrophic hypothyroidism (disorder)"
+        }
+      ],
+      "direct_transition": "Check_Labs_WithDx"
+    },
+    "Diagnose_Hashimotos": {
+      "type": "ConditionOnset",
+      "assign_to_attribute": "hypo_condition",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": "237520009",
+          "display": "Hypothyroidism due to Hashimoto's thyroiditis (disorder)"
+        }
+      ],
+      "direct_transition": "Check_Labs_WithDx"
+    },
+    "Diagnose_Autoimmune": {
+      "type": "ConditionOnset",
+      "assign_to_attribute": "hypo_condition",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": "237519003",
+          "display": "Autoimmune hypothyroidism (disorder)"
+        }
+      ],
+      "direct_transition": "Check_Labs_WithDx"
+    },
+    "Diagnose_Generic": {
+      "type": "ConditionOnset",
+      "assign_to_attribute": "hypo_condition",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": "40930008",
+          "display": "Hypothyroidism (disorder)"
+        }
+      ],
+      "direct_transition": "Check_Labs_WithDx"
+    },
+
+    "Check_Labs_WithDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        {
+          "condition": {
+            "condition_type": "Attribute",
+            "attribute": "hypo_has_labs",
+            "operator": "==",
+            "value": true
+          },
+          "transition": "Record_Abnormal_TSH_WithDx"
+        },
+        {
+          "transition": "Check_Meds_WithDx"
+        }
+      ]
+    },
+
+    "Record_Abnormal_TSH_WithDx": {
+      "type": "Observation",
+      "category": "laboratory",
+      "unit": "m[IU]/L",
+      "codes": [
+        {
+          "system": "LOINC",
+          "code": "3016-3",
+          "display": "Thyrotropin [Units/volume] in Serum or Plasma"
+        }
+      ],
+      "range": { "low": 5.5, "high": 25.0 },
+      "direct_transition": "Record_Low_FT4_WithDx"
+    },
+
+    "Record_Low_FT4_WithDx": {
+      "type": "Observation",
+      "category": "laboratory",
+      "unit": "ng/dL",
+      "codes": [
+        {
+          "system": "LOINC",
+          "code": "3024-7",
+          "display": "Thyroxine (T4) free [Mass/volume] in Serum or Plasma"
+        }
+      ],
+      "range": { "low": 0.2, "high": 0.5 },
+      "direct_transition": "Check_Meds_WithDx"
+    },
+
+    "Check_Meds_WithDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        {
+          "condition": {
+            "condition_type": "Attribute",
+            "attribute": "hypo_has_meds",
+            "operator": "==",
+            "value": true
+          },
+          "transition": "Route_Med_WithDx"
+        },
+        {
+          "transition": "Clear_First_Visit_Flag"
+        }
+      ]
+    },
+
+    "Route_Med_WithDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        {
+          "condition": {
+            "condition_type": "Attribute",
+            "attribute": "hypo_med",
+            "operator": "==",
+            "value": "generic_075"
+          },
+          "transition": "Prescribe_Generic_075_WithDx"
+        },
+        {
+          "condition": {
+            "condition_type": "Attribute",
+            "attribute": "hypo_med",
+            "operator": "==",
+            "value": "synthroid_050"
+          },
+          "transition": "Prescribe_Synthroid_050_WithDx"
+        },
+        {
+          "condition": {
+            "condition_type": "Attribute",
+            "attribute": "hypo_med",
+            "operator": "==",
+            "value": "generic_125"
+          },
+          "transition": "Prescribe_Generic_125_WithDx"
+        },
+        {
+          "transition": "Prescribe_Levotabs_125_WithDx"
+        }
+      ]
+    },
+
+    "Prescribe_Generic_075_WithDx": {
+      "type": "MedicationOrder",
+      "codes": [
+        {
+          "system": "RxNorm",
+          "code": "966222",
+          "display": "Levothyroxine Sodium 0.075 MG Oral Tablet"
+        }
+      ],
+      "reason": "hypo_condition",
+      "direct_transition": "Clear_First_Visit_Flag"
+    },
+    "Prescribe_Synthroid_050_WithDx": {
+      "type": "MedicationOrder",
+      "codes": [
+        {
+          "system": "RxNorm",
+          "code": "966247",
+          "display": "Levothyroxine Sodium 0.05 MG Oral Tablet [Synthroid]"
+        }
+      ],
+      "reason": "hypo_condition",
+      "direct_transition": "Clear_First_Visit_Flag"
+    },
+    "Prescribe_Generic_125_WithDx": {
+      "type": "MedicationOrder",
+      "codes": [
+        {
+          "system": "RxNorm",
+          "code": "966224",
+          "display": "Levothyroxine Sodium 0.125 MG Oral Tablet"
+        }
+      ],
+      "reason": "hypo_condition",
+      "direct_transition": "Clear_First_Visit_Flag"
+    },
+    "Prescribe_Levotabs_125_WithDx": {
+      "type": "MedicationOrder",
+      "codes": [
+        {
+          "system": "RxNorm",
+          "code": "966189",
+          "display": "Levothyroxine Sodium 0.125 MG Oral Tablet [Levotabs]"
+        }
+      ],
+      "reason": "hypo_condition",
+      "direct_transition": "Clear_First_Visit_Flag"
+    },
+
+    "Check_Labs_NoDx": {
+      "type": "Simple",
+      "remarks": ["For Path C and Path D — no diagnosis branch"],
+      "conditional_transition": [
+        {
+          "condition": {
+            "condition_type": "Attribute",
+            "attribute": "hypo_has_labs",
+            "operator": "==",
+            "value": true
+          },
+          "transition": "Record_Abnormal_TSH_NoDx"
+        },
+        {
+          "transition": "Check_Meds_NoDx"
+        }
+      ]
+    },
+
+    "Record_Abnormal_TSH_NoDx": {
+      "type": "Observation",
+      "remarks": ["Path D: Abnormal TSH but no Condition resource for hypothyroidism"],
+      "category": "laboratory",
+      "unit": "m[IU]/L",
+      "codes": [
+        {
+          "system": "LOINC",
+          "code": "3016-3",
+          "display": "Thyrotropin [Units/volume] in Serum or Plasma"
+        }
+      ],
+      "range": { "low": 5.5, "high": 15.0 },
+      "direct_transition": "Check_Meds_NoDx"
+    },
+
+    "Check_Meds_NoDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        {
+          "condition": {
+            "condition_type": "Attribute",
+            "attribute": "hypo_has_meds",
+            "operator": "==",
+            "value": true
+          },
+          "transition": "Route_Med_NoDx"
+        },
+        {
+          "transition": "Clear_First_Visit_Flag"
+        }
+      ]
+    },
+
+    "Route_Med_NoDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        {
+          "condition": {
+            "condition_type": "Attribute",
+            "attribute": "hypo_med",
+            "operator": "==",
+            "value": "generic_075"
+          },
+          "transition": "Prescribe_Generic_075_NoDx"
+        },
+        {
+          "condition": {
+            "condition_type": "Attribute",
+            "attribute": "hypo_med",
+            "operator": "==",
+            "value": "synthroid_050"
+          },
+          "transition": "Prescribe_Synthroid_050_NoDx"
+        },
+        {
+          "condition": {
+            "condition_type": "Attribute",
+            "attribute": "hypo_med",
+            "operator": "==",
+            "value": "generic_125"
+          },
+          "transition": "Prescribe_Generic_125_NoDx"
+        },
+        {
+          "transition": "Prescribe_Levotabs_125_NoDx"
+        }
+      ]
+    },
+
+    "Prescribe_Generic_075_NoDx": {
+      "type": "MedicationOrder",
+      "remarks": ["Path C: levothyroxine without diagnosis — no 'reason' field"],
+      "codes": [
+        {
+          "system": "RxNorm",
+          "code": "966222",
+          "display": "Levothyroxine Sodium 0.075 MG Oral Tablet"
+        }
+      ],
+      "direct_transition": "Clear_First_Visit_Flag"
+    },
+    "Prescribe_Synthroid_050_NoDx": {
+      "type": "MedicationOrder",
+      "codes": [
+        {
+          "system": "RxNorm",
+          "code": "966247",
+          "display": "Levothyroxine Sodium 0.05 MG Oral Tablet [Synthroid]"
+        }
+      ],
+      "direct_transition": "Clear_First_Visit_Flag"
+    },
+    "Prescribe_Generic_125_NoDx": {
+      "type": "MedicationOrder",
+      "codes": [
+        {
+          "system": "RxNorm",
+          "code": "966224",
+          "display": "Levothyroxine Sodium 0.125 MG Oral Tablet"
+        }
+      ],
+      "direct_transition": "Clear_First_Visit_Flag"
+    },
+    "Prescribe_Levotabs_125_NoDx": {
+      "type": "MedicationOrder",
+      "codes": [
+        {
+          "system": "RxNorm",
+          "code": "966189",
+          "display": "Levothyroxine Sodium 0.125 MG Oral Tablet [Levotabs]"
+        }
+      ],
+      "direct_transition": "Clear_First_Visit_Flag"
+    },
+
+    "Clear_First_Visit_Flag": {
+      "type": "SetAttribute",
+      "attribute": "hypo_needs_first_visit",
+      "value": false,
+      "direct_transition": "End_Wellness_Encounter"
+    },
+
+    "Followup_Labs_Branch": {
+      "type": "Simple",
+      "remarks": [
+        "Followup TSH for patients with labs — slightly less abnormal (treated patients normalize)"
+      ],
+      "conditional_transition": [
+        {
+          "condition": {
+            "condition_type": "Attribute",
+            "attribute": "hypo_has_labs",
+            "operator": "==",
+            "value": true
+          },
+          "transition": "Record_Followup_TSH"
+        },
+        {
+          "transition": "End_Wellness_Encounter"
+        }
+      ]
+    },
+
+    "Record_Followup_TSH": {
+      "type": "Observation",
+      "category": "laboratory",
+      "unit": "m[IU]/L",
+      "codes": [
+        {
+          "system": "LOINC",
+          "code": "3016-3",
+          "display": "Thyrotropin [Units/volume] in Serum or Plasma"
+        }
+      ],
+      "range": { "low": 5.2, "high": 12.0 },
+      "direct_transition": "End_Wellness_Encounter"
+    },
+
+    "End_Wellness_Encounter": {
+      "type": "EncounterEnd",
+      "direct_transition": "Followup_Delay"
+    },
+
+    "Followup_Delay": {
+      "type": "Delay",
+      "range": { "low": 3, "high": 6, "unit": "months" },
+      "direct_transition": "Wellness_Encounter"
+    }
+  },
+  "gmf_version": 2
+}

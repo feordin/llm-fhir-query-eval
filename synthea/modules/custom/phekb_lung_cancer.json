@@ -1,0 +1,62 @@
+{
+  "name": "PheKB Lung Cancer",
+  "remarks": [
+    "Custom Synthea module for lung cancer.",
+    "Sixth cancer phenotype (after breast, CRC, prostate, ovarian, HCC).",
+    "Tests recognition across NSCLC/SCLC subtypes.",
+    "",
+    "Generates TWO patient paths:",
+    "  Path A (75%): Lung cancer dx (full diagnostic workup)",
+    "  Path B (25%): Suspicious workup without confirmed dx — captured via 'Malignant neoplasm of lung' broader code",
+    "",
+    "Diagnosis SNOMED variation:",
+    "  60% NSCLC (254637007) — most common type (~85% real-world)",
+    "  20% SCLC (254632001) — small cell variant",
+    "  20% Malignant neoplasm of lung (363358000) — broader/unspecified",
+    "",
+    "Age guard: >=50 (lung cancer rare under 50)."
+  ],
+  "states": {
+    "Initial": { "type": "Initial", "direct_transition": "Age_Guard" },
+    "Age_Guard": { "type": "Guard", "allow": { "condition_type": "Age", "operator": ">=", "quantity": 50, "unit": "years" }, "direct_transition": "Set_Lung_Flag" },
+    "Set_Lung_Flag": { "type": "SetAttribute", "attribute": "lung_positive", "value": true, "direct_transition": "Choose_Subtype" },
+
+    "Choose_Subtype": {
+      "type": "Simple",
+      "distributed_transition": [
+        { "transition": "Set_Subtype_NSCLC", "distribution": 0.60 },
+        { "transition": "Set_Subtype_SCLC", "distribution": 0.20 },
+        { "transition": "Set_Subtype_Lung", "distribution": 0.20 }
+      ]
+    },
+    "Set_Subtype_NSCLC": { "type": "SetAttribute", "attribute": "lung_subtype", "value": "nsclc", "direct_transition": "Set_Needs_First_Visit" },
+    "Set_Subtype_SCLC": { "type": "SetAttribute", "attribute": "lung_subtype", "value": "sclc", "direct_transition": "Set_Needs_First_Visit" },
+    "Set_Subtype_Lung": { "type": "SetAttribute", "attribute": "lung_subtype", "value": "lung", "direct_transition": "Set_Needs_First_Visit" },
+
+    "Set_Needs_First_Visit": { "type": "SetAttribute", "attribute": "lung_needs_first_visit", "value": true, "direct_transition": "Wellness_Encounter" },
+    "Wellness_Encounter": { "type": "Encounter", "wellness": true, "direct_transition": "Check_First_Visit" },
+    "Check_First_Visit": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "lung_needs_first_visit", "operator": "==", "value": true }, "transition": "Route_By_Subtype" },
+        { "transition": "End_Wellness_Encounter" }
+      ]
+    },
+    "Route_By_Subtype": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "lung_subtype", "operator": "==", "value": "nsclc" }, "transition": "Diagnose_NSCLC" },
+        { "condition": { "condition_type": "Attribute", "attribute": "lung_subtype", "operator": "==", "value": "sclc" }, "transition": "Diagnose_SCLC" },
+        { "transition": "Diagnose_Lung" }
+      ]
+    },
+    "Diagnose_NSCLC": { "type": "ConditionOnset", "assign_to_attribute": "lung_condition", "codes": [{ "system": "SNOMED-CT", "code": "254637007", "display": "Non-small cell lung cancer" }], "direct_transition": "Clear_First_Visit_Flag" },
+    "Diagnose_SCLC": { "type": "ConditionOnset", "assign_to_attribute": "lung_condition", "codes": [{ "system": "SNOMED-CT", "code": "254632001", "display": "Small cell carcinoma of lung" }], "direct_transition": "Clear_First_Visit_Flag" },
+    "Diagnose_Lung": { "type": "ConditionOnset", "assign_to_attribute": "lung_condition", "codes": [{ "system": "SNOMED-CT", "code": "363358000", "display": "Malignant neoplasm of lung" }], "direct_transition": "Clear_First_Visit_Flag" },
+
+    "Clear_First_Visit_Flag": { "type": "SetAttribute", "attribute": "lung_needs_first_visit", "value": false, "direct_transition": "End_Wellness_Encounter" },
+    "End_Wellness_Encounter": { "type": "EncounterEnd", "direct_transition": "Followup_Delay" },
+    "Followup_Delay": { "type": "Delay", "range": { "low": 6, "high": 12, "unit": "months" }, "direct_transition": "Wellness_Encounter" }
+  },
+  "gmf_version": 2
+}

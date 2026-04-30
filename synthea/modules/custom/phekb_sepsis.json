@@ -1,0 +1,167 @@
+{
+  "name": "PheKB Sepsis",
+  "remarks": [
+    "Custom Synthea module for sepsis.",
+    "First septicemia phenotype. Complex multi-system: dx + IV antibiotics + elevated lactate.",
+    "",
+    "Generates FOUR patient paths:",
+    "  Path A (50%): Sepsis dx + broad-spectrum antibiotics + elevated lactate (>2 mmol/L)",
+    "  Path B (20%): Sepsis dx + antibiotics, no lactate measured",
+    "  Path C (15%): Antibiotics only, no sepsis dx (TRICKY — empirical for any infection)",
+    "  Path D (15%): Elevated lactate without sepsis dx (TRICKY — septic-equivalent / cryptic shock)",
+    "",
+    "Diagnosis SNOMED variation:",
+    "  50% Sepsis (91302008) — primary",
+    "  30% Bacterial sepsis (10001005)",
+    "  20% Septic shock (76571007) — most severe",
+    "",
+    "Antibiotic distribution: 60% vancomycin (11124), 40% ceftriaxone (2193).",
+    "",
+    "Lactate range: 2.5-8 mmol/L (normal <2 mmol/L). Age guard: >=18."
+  ],
+  "states": {
+    "Initial": { "type": "Initial", "direct_transition": "Age_Guard" },
+    "Age_Guard": { "type": "Guard", "allow": { "condition_type": "Age", "operator": ">=", "quantity": 18, "unit": "years" }, "direct_transition": "Set_Sepsis_Flag" },
+    "Set_Sepsis_Flag": { "type": "SetAttribute", "attribute": "sepsis_positive", "value": true, "direct_transition": "Choose_Patient_Path" },
+    "Choose_Patient_Path": {
+      "type": "Simple",
+      "distributed_transition": [
+        { "transition": "Set_Path_A", "distribution": 0.50 },
+        { "transition": "Set_Path_B", "distribution": 0.20 },
+        { "transition": "Set_Path_C", "distribution": 0.15 },
+        { "transition": "Set_Path_D", "distribution": 0.15 }
+      ]
+    },
+    "Set_Path_A": { "type": "SetAttribute", "attribute": "sepsis_has_dx", "value": true, "direct_transition": "Set_Path_A_Med" },
+    "Set_Path_A_Med": { "type": "SetAttribute", "attribute": "sepsis_has_med", "value": true, "direct_transition": "Set_Path_A_Lab" },
+    "Set_Path_A_Lab": { "type": "SetAttribute", "attribute": "sepsis_has_lab", "value": true, "direct_transition": "Choose_Subtype" },
+    "Set_Path_B": { "type": "SetAttribute", "attribute": "sepsis_has_dx", "value": true, "direct_transition": "Set_Path_B_Med" },
+    "Set_Path_B_Med": { "type": "SetAttribute", "attribute": "sepsis_has_med", "value": true, "direct_transition": "Set_Path_B_Lab" },
+    "Set_Path_B_Lab": { "type": "SetAttribute", "attribute": "sepsis_has_lab", "value": false, "direct_transition": "Choose_Subtype" },
+    "Set_Path_C": { "type": "SetAttribute", "remarks": ["TRICKY: antibiotics only, no sepsis dx"], "attribute": "sepsis_has_dx", "value": false, "direct_transition": "Set_Path_C_Med" },
+    "Set_Path_C_Med": { "type": "SetAttribute", "attribute": "sepsis_has_med", "value": true, "direct_transition": "Set_Path_C_Lab" },
+    "Set_Path_C_Lab": { "type": "SetAttribute", "attribute": "sepsis_has_lab", "value": false, "direct_transition": "Choose_Subtype" },
+    "Set_Path_D": { "type": "SetAttribute", "remarks": ["TRICKY: elevated lactate, no sepsis dx"], "attribute": "sepsis_has_dx", "value": false, "direct_transition": "Set_Path_D_Med" },
+    "Set_Path_D_Med": { "type": "SetAttribute", "attribute": "sepsis_has_med", "value": false, "direct_transition": "Set_Path_D_Lab" },
+    "Set_Path_D_Lab": { "type": "SetAttribute", "attribute": "sepsis_has_lab", "value": true, "direct_transition": "Choose_Subtype" },
+
+    "Choose_Subtype": {
+      "type": "Simple",
+      "distributed_transition": [
+        { "transition": "Set_Subtype_Sepsis", "distribution": 0.50 },
+        { "transition": "Set_Subtype_BactSepsis", "distribution": 0.30 },
+        { "transition": "Set_Subtype_Shock", "distribution": 0.20 }
+      ]
+    },
+    "Set_Subtype_Sepsis": { "type": "SetAttribute", "attribute": "sepsis_subtype", "value": "sepsis", "direct_transition": "Choose_Med" },
+    "Set_Subtype_BactSepsis": { "type": "SetAttribute", "attribute": "sepsis_subtype", "value": "bact_sepsis", "direct_transition": "Choose_Med" },
+    "Set_Subtype_Shock": { "type": "SetAttribute", "attribute": "sepsis_subtype", "value": "shock", "direct_transition": "Choose_Med" },
+
+    "Choose_Med": {
+      "type": "Simple",
+      "distributed_transition": [
+        { "transition": "Set_Med_Vanc", "distribution": 0.60 },
+        { "transition": "Set_Med_Ceftriaxone", "distribution": 0.40 }
+      ]
+    },
+    "Set_Med_Vanc": { "type": "SetAttribute", "attribute": "sepsis_med", "value": "vancomycin", "direct_transition": "Set_Needs_First_Visit" },
+    "Set_Med_Ceftriaxone": { "type": "SetAttribute", "attribute": "sepsis_med", "value": "ceftriaxone", "direct_transition": "Set_Needs_First_Visit" },
+
+    "Set_Needs_First_Visit": { "type": "SetAttribute", "attribute": "sepsis_needs_first_visit", "value": true, "direct_transition": "Wellness_Encounter" },
+    "Wellness_Encounter": { "type": "Encounter", "wellness": true, "direct_transition": "Check_First_Visit" },
+    "Check_First_Visit": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "sepsis_needs_first_visit", "operator": "==", "value": true }, "transition": "Check_Has_Diagnosis" },
+        { "transition": "End_Wellness_Encounter" }
+      ]
+    },
+    "Check_Has_Diagnosis": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "sepsis_has_dx", "operator": "==", "value": true }, "transition": "Route_By_Subtype" },
+        { "transition": "Check_Med_NoDx" }
+      ]
+    },
+    "Route_By_Subtype": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "sepsis_subtype", "operator": "==", "value": "sepsis" }, "transition": "Diagnose_Sepsis" },
+        { "condition": { "condition_type": "Attribute", "attribute": "sepsis_subtype", "operator": "==", "value": "bact_sepsis" }, "transition": "Diagnose_BactSepsis" },
+        { "transition": "Diagnose_Shock" }
+      ]
+    },
+    "Diagnose_Sepsis": { "type": "ConditionOnset", "assign_to_attribute": "sepsis_condition", "codes": [{ "system": "SNOMED-CT", "code": "91302008", "display": "Sepsis" }], "direct_transition": "Check_Med_WithDx" },
+    "Diagnose_BactSepsis": { "type": "ConditionOnset", "assign_to_attribute": "sepsis_condition", "codes": [{ "system": "SNOMED-CT", "code": "10001005", "display": "Bacterial sepsis" }], "direct_transition": "Check_Med_WithDx" },
+    "Diagnose_Shock": { "type": "ConditionOnset", "assign_to_attribute": "sepsis_condition", "codes": [{ "system": "SNOMED-CT", "code": "76571007", "display": "Septic shock" }], "direct_transition": "Check_Med_WithDx" },
+
+    "Check_Med_WithDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "sepsis_has_med", "operator": "==", "value": true }, "transition": "Route_Med_WithDx" },
+        { "transition": "Check_Lab_WithDx" }
+      ]
+    },
+    "Route_Med_WithDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "sepsis_med", "operator": "==", "value": "vancomycin" }, "transition": "Prescribe_Vanc_WithDx" },
+        { "transition": "Prescribe_Ceftriaxone_WithDx" }
+      ]
+    },
+    "Prescribe_Vanc_WithDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "11124", "display": "vancomycin" }], "reason": "sepsis_condition", "direct_transition": "Check_Lab_WithDx" },
+    "Prescribe_Ceftriaxone_WithDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "2193", "display": "ceftriaxone" }], "reason": "sepsis_condition", "direct_transition": "Check_Lab_WithDx" },
+    "Check_Lab_WithDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "sepsis_has_lab", "operator": "==", "value": true }, "transition": "Record_Lactate_WithDx" },
+        { "transition": "Clear_First_Visit_Flag" }
+      ]
+    },
+    "Record_Lactate_WithDx": {
+      "type": "Observation",
+      "category": "laboratory",
+      "unit": "mmol/L",
+      "codes": [{ "system": "LOINC", "code": "2524-7", "display": "Lactate [Moles/volume] in Serum or Plasma" }],
+      "range": { "low": 2.5, "high": 8 },
+      "direct_transition": "Clear_First_Visit_Flag"
+    },
+
+    "Check_Med_NoDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "sepsis_has_med", "operator": "==", "value": true }, "transition": "Route_Med_NoDx" },
+        { "transition": "Check_Lab_NoDx" }
+      ]
+    },
+    "Route_Med_NoDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "sepsis_med", "operator": "==", "value": "vancomycin" }, "transition": "Prescribe_Vanc_NoDx" },
+        { "transition": "Prescribe_Ceftriaxone_NoDx" }
+      ]
+    },
+    "Prescribe_Vanc_NoDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "11124", "display": "vancomycin" }], "direct_transition": "Check_Lab_NoDx" },
+    "Prescribe_Ceftriaxone_NoDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "2193", "display": "ceftriaxone" }], "direct_transition": "Check_Lab_NoDx" },
+    "Check_Lab_NoDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "sepsis_has_lab", "operator": "==", "value": true }, "transition": "Record_Lactate_NoDx" },
+        { "transition": "Clear_First_Visit_Flag" }
+      ]
+    },
+    "Record_Lactate_NoDx": {
+      "type": "Observation",
+      "category": "laboratory",
+      "unit": "mmol/L",
+      "codes": [{ "system": "LOINC", "code": "2524-7", "display": "Lactate [Moles/volume] in Serum or Plasma" }],
+      "range": { "low": 2.5, "high": 8 },
+      "direct_transition": "Clear_First_Visit_Flag"
+    },
+
+    "Clear_First_Visit_Flag": { "type": "SetAttribute", "attribute": "sepsis_needs_first_visit", "value": false, "direct_transition": "End_Wellness_Encounter" },
+    "End_Wellness_Encounter": { "type": "EncounterEnd", "direct_transition": "Followup_Delay" },
+    "Followup_Delay": { "type": "Delay", "range": { "low": 6, "high": 12, "unit": "months" }, "direct_transition": "Wellness_Encounter" }
+  },
+  "gmf_version": 2
+}

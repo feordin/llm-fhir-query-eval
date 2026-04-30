@@ -1,0 +1,73 @@
+{
+  "id": "phekb-ckd-labs",
+  "source": "phekb",
+  "source_id": "ckd",
+  "name": "Chronic Kidney Disease - Reduced eGFR Lab Query",
+  "description": "Tests ability to find chronic kidney disease patients via reduced eGFR. The Columbia CKD V4.2 algorithm uses eGFR (CKD-EPI formula) as the primary staging variable: <60 mL/min/1.73 m² indicates CKD Stage 3 or worse. This test case uses a less-than threshold (lt60) and exercises the most quantitative phenotype in our suite, where staging is entirely lab-driven.",
+  "prompt": "Find laboratory observations for estimated glomerular filtration rate (eGFR) where the value is below 60 mL/min/1.73 m², indicating chronic kidney disease stage 3 or worse.",
+  "prompts": {
+    "naive": "Find patients with low eGFR.",
+    "broad": "Find Observation resources for estimated glomerular filtration rate (eGFR) measurements where the value is less than 60 mL/min/1.73 m². An eGFR below 60 sustained for at least 3 months meets KDIGO criteria for chronic kidney disease stage 3 or higher.",
+    "expert": "I need Observation resources for reduced eGFR. Use LOINC 62238-1 (Glomerular filtration rate by Creatinine-based formula CKD-EPI) — this is the algorithm-specified equation. Apply a value-quantity filter with the lt prefix at threshold 60. The query should look like: Observation?code=http://loinc.org|62238-1&value-quantity=lt60. Note that LOINC 33914-3 (eGFR by MDRD) and 48642-3/48643-1 (race-based variants) may also appear in some data; the CKD-EPI code is preferred per current KDIGO 2012 guidelines."
+  },
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "algorithm_path": "lab-path",
+    "algorithm_path_description": "Patients with reduced eGFR (Paths A and C). Tests the value-quantity less-than filter pattern with a quantitative threshold tied directly to disease staging. The eGFR < 60 cutoff is the binary threshold separating CKD Stage 1-2 from Stage 3-5.",
+    "code_systems": [
+      "LOINC"
+    ],
+    "required_codes": [
+      {
+        "system": "http://loinc.org",
+        "code": "62238-1",
+        "display": "Glomerular filtration rate [Volume Rate/Area] in Serum, Plasma or Blood by Creatinine-based formula (CKD-EPI)/1.73 sq M",
+        "source": "UMLS verified, CKD-EPI per algorithm"
+      }
+    ],
+    "complexity": "hard",
+    "tags": [
+      "observation",
+      "nephrology",
+      "ckd",
+      "value-quantity",
+      "less-than-threshold",
+      "egfr",
+      "ckd-epi"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "Observation",
+    "parameters": {
+      "code": "http://loinc.org|62238-1",
+      "value-quantity": "lt60"
+    },
+    "url": "Observation?code=http://loinc.org|62238-1&value-quantity=lt60"
+  },
+  "test_data": {
+    "resources": [
+      "synthea/output/ckd/positive/fhir/",
+      "synthea/output/ckd/control/fhir/"
+    ],
+    "expected_result_count": 14,
+    "expected_resource_ids": [],
+    "expected_patient_ids": [
+      "0822dbac-f57f-dede-d8ff-305618480e4a",
+      "3b560da4-c7fd-8008-04a5-1882e1c3f781",
+      "596c786c-2c66-6caa-ee67-945053156ab1",
+      "976f568d-7841-b1b0-0c26-904ced33d8cc",
+      "9f45ffe3-cbc4-a083-f52f-7f3ca865e449",
+      "a714119a-c214-2162-8060-394901e90a85",
+      "b58b78aa-37be-b013-ba51-98bdebc4947b",
+      "bb024f09-4e20-6f91-df71-6cb5485ac045",
+      "c4a42722-b087-3935-fbe1-9cc0cf276d40",
+      "db6190a3-ceb6-3e39-87aa-8eccec442d6a",
+      "e306284b-aaa3-5279-8b2b-530fdb5853d4",
+      "ed6c03e1-f389-2b3d-35c0-260b184d5ab0",
+      "f883a494-f578-ca8b-b985-772f0c65680a",
+      "fa04876c-372c-ad66-4fa7-c8bcce305712"
+    ]
+  },
+  "created_at": "2026-04-27T00:00:00.000000Z",
+  "updated_at": "2026-04-27T00:00:00.000000Z"
+}

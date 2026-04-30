@@ -1,0 +1,147 @@
+{
+  "name": "PheKB BPH (Benign Prostatic Hyperplasia)",
+  "remarks": [
+    "Custom Synthea module for BPH.",
+    "Second prostate phenotype (after PCa). Tests differential dx — same organ + sex but non-malignant.",
+    "First alpha-blocker / 5-ARI medication phenotype. **TENTH Procedure-resource phenotype** (TURP — first urologic-surgical, complementing PCa biopsy = urologic-diagnostic).",
+    "",
+    "Generates FOUR patient paths:",
+    "  Path A (30%): BPH dx + meds + TURP (severe symptomatic surgical)",
+    "  Path B (40%): BPH dx + meds, no TURP (typical medical management)",
+    "  Path C (20%): meds only, no dx (TRICKY — empirical alpha-blocker treatment)",
+    "  Path P (10%): BPH dx + TURP, no meds (rare early surgical)",
+    "",
+    "Medication distribution (Paths A + B + C):",
+    "  50% Tamsulosin (RxNorm 77492) — most common alpha-blocker",
+    "  30% Finasteride (RxNorm 25025) — most common 5-ARI",
+    "  20% Terazosin (RxNorm 37798) — older alpha-blocker",
+    "",
+    "Sex restriction: Male only. Age restriction: >=40."
+  ],
+  "states": {
+    "Initial": { "type": "Initial", "direct_transition": "Sex_Guard" },
+    "Sex_Guard": { "type": "Guard", "allow": { "condition_type": "Gender", "gender": "M" }, "direct_transition": "Age_Guard" },
+    "Age_Guard": { "type": "Guard", "allow": { "condition_type": "Age", "operator": ">=", "quantity": 40, "unit": "years" }, "direct_transition": "Set_BPH_Flag" },
+    "Set_BPH_Flag": { "type": "SetAttribute", "attribute": "bph_positive", "value": true, "direct_transition": "Choose_Patient_Path" },
+    "Choose_Patient_Path": {
+      "type": "Simple",
+      "distributed_transition": [
+        { "transition": "Set_Path_A", "distribution": 0.30 },
+        { "transition": "Set_Path_B", "distribution": 0.40 },
+        { "transition": "Set_Path_C", "distribution": 0.20 },
+        { "transition": "Set_Path_P", "distribution": 0.10 }
+      ]
+    },
+    "Set_Path_A": { "type": "SetAttribute", "attribute": "bph_has_dx", "value": true, "direct_transition": "Set_Path_A_Meds" },
+    "Set_Path_A_Meds": { "type": "SetAttribute", "attribute": "bph_has_meds", "value": true, "direct_transition": "Set_Path_A_Proc" },
+    "Set_Path_A_Proc": { "type": "SetAttribute", "attribute": "bph_has_proc", "value": true, "direct_transition": "Choose_Med" },
+
+    "Set_Path_B": { "type": "SetAttribute", "attribute": "bph_has_dx", "value": true, "direct_transition": "Set_Path_B_Meds" },
+    "Set_Path_B_Meds": { "type": "SetAttribute", "attribute": "bph_has_meds", "value": true, "direct_transition": "Set_Path_B_Proc" },
+    "Set_Path_B_Proc": { "type": "SetAttribute", "attribute": "bph_has_proc", "value": false, "direct_transition": "Choose_Med" },
+
+    "Set_Path_C": { "type": "SetAttribute", "remarks": ["TRICKY: meds only, no BPH dx"], "attribute": "bph_has_dx", "value": false, "direct_transition": "Set_Path_C_Meds" },
+    "Set_Path_C_Meds": { "type": "SetAttribute", "attribute": "bph_has_meds", "value": true, "direct_transition": "Set_Path_C_Proc" },
+    "Set_Path_C_Proc": { "type": "SetAttribute", "attribute": "bph_has_proc", "value": false, "direct_transition": "Choose_Med" },
+
+    "Set_Path_P": { "type": "SetAttribute", "attribute": "bph_has_dx", "value": true, "direct_transition": "Set_Path_P_Meds" },
+    "Set_Path_P_Meds": { "type": "SetAttribute", "attribute": "bph_has_meds", "value": false, "direct_transition": "Set_Path_P_Proc" },
+    "Set_Path_P_Proc": { "type": "SetAttribute", "attribute": "bph_has_proc", "value": true, "direct_transition": "Choose_Med" },
+
+    "Choose_Med": {
+      "type": "Simple",
+      "distributed_transition": [
+        { "transition": "Set_Med_Tamsulosin", "distribution": 0.50 },
+        { "transition": "Set_Med_Finasteride", "distribution": 0.30 },
+        { "transition": "Set_Med_Terazosin", "distribution": 0.20 }
+      ]
+    },
+    "Set_Med_Tamsulosin": { "type": "SetAttribute", "attribute": "bph_med", "value": "tamsulosin", "direct_transition": "Set_Needs_First_Visit" },
+    "Set_Med_Finasteride": { "type": "SetAttribute", "attribute": "bph_med", "value": "finasteride", "direct_transition": "Set_Needs_First_Visit" },
+    "Set_Med_Terazosin": { "type": "SetAttribute", "attribute": "bph_med", "value": "terazosin", "direct_transition": "Set_Needs_First_Visit" },
+
+    "Set_Needs_First_Visit": { "type": "SetAttribute", "attribute": "bph_needs_first_visit", "value": true, "direct_transition": "Wellness_Encounter" },
+    "Wellness_Encounter": { "type": "Encounter", "wellness": true, "direct_transition": "Check_First_Visit" },
+    "Check_First_Visit": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "bph_needs_first_visit", "operator": "==", "value": true }, "transition": "Check_Has_Diagnosis" },
+        { "transition": "End_Wellness_Encounter" }
+      ]
+    },
+    "Check_Has_Diagnosis": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "bph_has_dx", "operator": "==", "value": true }, "transition": "Diagnose_BPH" },
+        { "transition": "Check_Meds_NoDx" }
+      ]
+    },
+    "Diagnose_BPH": { "type": "ConditionOnset", "assign_to_attribute": "bph_condition", "codes": [{ "system": "SNOMED-CT", "code": "266569009", "display": "Benign prostatic hyperplasia" }], "direct_transition": "Check_Meds_WithDx" },
+
+    "Check_Meds_WithDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "bph_has_meds", "operator": "==", "value": true }, "transition": "Route_Med_WithDx" },
+        { "transition": "Check_Procedure_WithDx" }
+      ]
+    },
+    "Route_Med_WithDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "bph_med", "operator": "==", "value": "tamsulosin" }, "transition": "Prescribe_Tamsulosin_WithDx" },
+        { "condition": { "condition_type": "Attribute", "attribute": "bph_med", "operator": "==", "value": "finasteride" }, "transition": "Prescribe_Finasteride_WithDx" },
+        { "transition": "Prescribe_Terazosin_WithDx" }
+      ]
+    },
+    "Prescribe_Tamsulosin_WithDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "77492", "display": "tamsulosin" }], "reason": "bph_condition", "direct_transition": "Check_Procedure_WithDx" },
+    "Prescribe_Finasteride_WithDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "25025", "display": "finasteride" }], "reason": "bph_condition", "direct_transition": "Check_Procedure_WithDx" },
+    "Prescribe_Terazosin_WithDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "37798", "display": "terazosin" }], "reason": "bph_condition", "direct_transition": "Check_Procedure_WithDx" },
+
+    "Check_Procedure_WithDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "bph_has_proc", "operator": "==", "value": true }, "transition": "TURP_Encounter_WithDx" },
+        { "transition": "Clear_First_Visit_Flag" }
+      ]
+    },
+    "TURP_Encounter_WithDx": {
+      "type": "Encounter",
+      "encounter_class": "ambulatory",
+      "reason": "bph_condition",
+      "codes": [{ "system": "SNOMED-CT", "code": "440655000", "display": "Outpatient procedure encounter (procedure)" }],
+      "direct_transition": "Procedure_TURP_WithDx"
+    },
+    "Procedure_TURP_WithDx": {
+      "type": "Procedure",
+      "reason": "bph_condition",
+      "codes": [{ "system": "SNOMED-CT", "code": "90199006", "display": "Transurethral prostatectomy" }],
+      "duration": { "low": 60, "high": 120, "unit": "minutes" },
+      "direct_transition": "End_TURP_Encounter_WithDx"
+    },
+    "End_TURP_Encounter_WithDx": { "type": "EncounterEnd", "direct_transition": "Clear_First_Visit_Flag" },
+
+    "Check_Meds_NoDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "bph_has_meds", "operator": "==", "value": true }, "transition": "Route_Med_NoDx" },
+        { "transition": "Clear_First_Visit_Flag" }
+      ]
+    },
+    "Route_Med_NoDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "bph_med", "operator": "==", "value": "tamsulosin" }, "transition": "Prescribe_Tamsulosin_NoDx" },
+        { "condition": { "condition_type": "Attribute", "attribute": "bph_med", "operator": "==", "value": "finasteride" }, "transition": "Prescribe_Finasteride_NoDx" },
+        { "transition": "Prescribe_Terazosin_NoDx" }
+      ]
+    },
+    "Prescribe_Tamsulosin_NoDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "77492", "display": "tamsulosin" }], "direct_transition": "Clear_First_Visit_Flag" },
+    "Prescribe_Finasteride_NoDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "25025", "display": "finasteride" }], "direct_transition": "Clear_First_Visit_Flag" },
+    "Prescribe_Terazosin_NoDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "37798", "display": "terazosin" }], "direct_transition": "Clear_First_Visit_Flag" },
+
+    "Clear_First_Visit_Flag": { "type": "SetAttribute", "attribute": "bph_needs_first_visit", "value": false, "direct_transition": "End_Wellness_Encounter" },
+    "End_Wellness_Encounter": { "type": "EncounterEnd", "direct_transition": "Followup_Delay" },
+    "Followup_Delay": { "type": "Delay", "range": { "low": 6, "high": 12, "unit": "months" }, "direct_transition": "Wellness_Encounter" }
+  },
+  "gmf_version": 2
+}

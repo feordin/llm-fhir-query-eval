@@ -1,0 +1,334 @@
+{
+  "name": "PheKB Rheumatoid Arthritis",
+  "remarks": [
+    "Custom Synthea module for PheKB phenotype: rheumatoid arthritis",
+    "Based on Harvard eMERGE RA algorithm (V1.0.00-001, 19Dec2017)",
+    "",
+    "PheKB algorithm: Logistic regression model with features:",
+    "  - RA diagnosis count (beta=1.937, high positive)",
+    "  - Lupus diagnosis count (beta=-0.529, negative)",
+    "  - Psoriatic arthritis count (beta=-0.122, negative)",
+    "  - Positive RF lab (beta=1.639, high positive)",
+    "  - Total dx encounters (beta=-0.954, negative — adjusts for healthcare utilization)",
+    "Cases: predicted probability >= 0.632 (specificity 0.97).",
+    "",
+    "Generates FOUR patient paths:",
+    "  Path A (35%): Diagnosis + DMARDs + positive RF — full presentation",
+    "  Path B (20%): Diagnosis + DMARDs, no RF documented",
+    "  Path C (30%): DMARDs ONLY, NO diagnosis (tricky — cross-indication prescribing)",
+    "  Path D (15%): RF positive ONLY, NO diagnosis, NO meds (tricky — seropositive without RA)",
+    "",
+    "Diagnosis SNOMED variation (Paths A + B):",
+    "  30% Rheumatoid arthritis (69896004) — generic parent",
+    "  25% Seropositive RA of multiple joints (11055151000119108)",
+    "  15% RA of shoulder (201766009) — joint-specific",
+    "  20% RA of right knee (1073811000119102) — joint-specific",
+    "  10% RA in remission (143441000119108)",
+    "",
+    "Medication ingredient variation (Paths A, B, C):",
+    "  30% Methotrexate (6851) — anchor csDMARD",
+    "  20% Hydroxychloroquine (5521) — csDMARD",
+    "  15% Sulfasalazine (9524) — csDMARD",
+    "  20% Adalimumab (327361) — anti-TNF biologic",
+    "  15% Infliximab (191831) — anti-TNF biologic",
+    "",
+    "Lab values (Path A and Path D get positive RF):",
+    "  RF case range: 20 - 200 IU/mL (above ULN of 14)",
+    "",
+    "Codes verified via NIH UMLS MCP and VSAC OID 2.16.840.1.113883.3.464.1003.113.11.1081 (AIR Steward)."
+  ],
+  "states": {
+    "Initial": {
+      "type": "Initial",
+      "direct_transition": "Age_Guard"
+    },
+
+    "Age_Guard": {
+      "type": "Guard",
+      "allow": {
+        "condition_type": "Age",
+        "operator": ">=",
+        "quantity": 30,
+        "unit": "years"
+      },
+      "direct_transition": "Set_RA_Flag"
+    },
+
+    "Set_RA_Flag": {
+      "type": "SetAttribute",
+      "attribute": "ra_positive",
+      "value": true,
+      "direct_transition": "Choose_Patient_Path"
+    },
+
+    "Choose_Patient_Path": {
+      "type": "Simple",
+      "remarks": [
+        "Four-way split:",
+        "  Path A (35%): Dx + DMARDs + RF positive",
+        "  Path B (20%): Dx + DMARDs, no RF",
+        "  Path C (30%): DMARDs only, NO dx (cross-indication prescribing)",
+        "  Path D (15%): RF positive only, no dx, no meds (seropositive non-RA)"
+      ],
+      "distributed_transition": [
+        { "transition": "Set_Path_A", "distribution": 0.35 },
+        { "transition": "Set_Path_B", "distribution": 0.20 },
+        { "transition": "Set_Path_C", "distribution": 0.30 },
+        { "transition": "Set_Path_D", "distribution": 0.15 }
+      ]
+    },
+
+    "Set_Path_A": { "type": "SetAttribute", "attribute": "ra_has_dx", "value": true, "direct_transition": "Set_Path_A_Labs" },
+    "Set_Path_A_Labs": { "type": "SetAttribute", "attribute": "ra_has_labs", "value": true, "direct_transition": "Set_Path_A_Meds" },
+    "Set_Path_A_Meds": { "type": "SetAttribute", "attribute": "ra_has_meds", "value": true, "direct_transition": "Choose_Subtype" },
+
+    "Set_Path_B": { "type": "SetAttribute", "attribute": "ra_has_dx", "value": true, "direct_transition": "Set_Path_B_Labs" },
+    "Set_Path_B_Labs": { "type": "SetAttribute", "attribute": "ra_has_labs", "value": false, "direct_transition": "Set_Path_B_Meds" },
+    "Set_Path_B_Meds": { "type": "SetAttribute", "attribute": "ra_has_meds", "value": true, "direct_transition": "Choose_Subtype" },
+
+    "Set_Path_C": { "type": "SetAttribute", "remarks": ["TRICKY: DMARDs only, no diagnosis"], "attribute": "ra_has_dx", "value": false, "direct_transition": "Set_Path_C_Labs" },
+    "Set_Path_C_Labs": { "type": "SetAttribute", "attribute": "ra_has_labs", "value": false, "direct_transition": "Set_Path_C_Meds" },
+    "Set_Path_C_Meds": { "type": "SetAttribute", "attribute": "ra_has_meds", "value": true, "direct_transition": "Choose_Subtype" },
+
+    "Set_Path_D": { "type": "SetAttribute", "remarks": ["TRICKY: RF positive only, no dx, no meds"], "attribute": "ra_has_dx", "value": false, "direct_transition": "Set_Path_D_Labs" },
+    "Set_Path_D_Labs": { "type": "SetAttribute", "attribute": "ra_has_labs", "value": true, "direct_transition": "Set_Path_D_Meds" },
+    "Set_Path_D_Meds": { "type": "SetAttribute", "attribute": "ra_has_meds", "value": false, "direct_transition": "Choose_Subtype" },
+
+    "Choose_Subtype": {
+      "type": "Simple",
+      "distributed_transition": [
+        { "transition": "Set_Subtype_RA", "distribution": 0.30 },
+        { "transition": "Set_Subtype_Seropos", "distribution": 0.25 },
+        { "transition": "Set_Subtype_Shoulder", "distribution": 0.15 },
+        { "transition": "Set_Subtype_Knee", "distribution": 0.20 },
+        { "transition": "Set_Subtype_Remission", "distribution": 0.10 }
+      ]
+    },
+
+    "Set_Subtype_RA": { "type": "SetAttribute", "attribute": "ra_subtype", "value": "ra", "direct_transition": "Choose_Med" },
+    "Set_Subtype_Seropos": { "type": "SetAttribute", "attribute": "ra_subtype", "value": "seropos", "direct_transition": "Choose_Med" },
+    "Set_Subtype_Shoulder": { "type": "SetAttribute", "attribute": "ra_subtype", "value": "shoulder", "direct_transition": "Choose_Med" },
+    "Set_Subtype_Knee": { "type": "SetAttribute", "attribute": "ra_subtype", "value": "knee", "direct_transition": "Choose_Med" },
+    "Set_Subtype_Remission": { "type": "SetAttribute", "attribute": "ra_subtype", "value": "remission", "direct_transition": "Choose_Med" },
+
+    "Choose_Med": {
+      "type": "Simple",
+      "distributed_transition": [
+        { "transition": "Set_Med_Methotrexate", "distribution": 0.30 },
+        { "transition": "Set_Med_Hydroxychloroquine", "distribution": 0.20 },
+        { "transition": "Set_Med_Sulfasalazine", "distribution": 0.15 },
+        { "transition": "Set_Med_Adalimumab", "distribution": 0.20 },
+        { "transition": "Set_Med_Infliximab", "distribution": 0.15 }
+      ]
+    },
+
+    "Set_Med_Methotrexate": { "type": "SetAttribute", "attribute": "ra_med", "value": "methotrexate", "direct_transition": "Set_Needs_First_Visit" },
+    "Set_Med_Hydroxychloroquine": { "type": "SetAttribute", "attribute": "ra_med", "value": "hydroxychloroquine", "direct_transition": "Set_Needs_First_Visit" },
+    "Set_Med_Sulfasalazine": { "type": "SetAttribute", "attribute": "ra_med", "value": "sulfasalazine", "direct_transition": "Set_Needs_First_Visit" },
+    "Set_Med_Adalimumab": { "type": "SetAttribute", "attribute": "ra_med", "value": "adalimumab", "direct_transition": "Set_Needs_First_Visit" },
+    "Set_Med_Infliximab": { "type": "SetAttribute", "attribute": "ra_med", "value": "infliximab", "direct_transition": "Set_Needs_First_Visit" },
+
+    "Set_Needs_First_Visit": { "type": "SetAttribute", "attribute": "ra_needs_first_visit", "value": true, "direct_transition": "Wellness_Encounter" },
+
+    "Wellness_Encounter": { "type": "Encounter", "wellness": true, "direct_transition": "Check_First_Visit" },
+
+    "Check_First_Visit": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "ra_needs_first_visit", "operator": "==", "value": true }, "transition": "Check_Has_Diagnosis" },
+        { "transition": "End_Wellness_Encounter" }
+      ]
+    },
+
+    "Check_Has_Diagnosis": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "ra_has_dx", "operator": "==", "value": true }, "transition": "Route_By_Subtype" },
+        { "transition": "Check_Labs_NoDx" }
+      ]
+    },
+
+    "Route_By_Subtype": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "ra_subtype", "operator": "==", "value": "ra" }, "transition": "Diagnose_RA" },
+        { "condition": { "condition_type": "Attribute", "attribute": "ra_subtype", "operator": "==", "value": "seropos" }, "transition": "Diagnose_Seropos" },
+        { "condition": { "condition_type": "Attribute", "attribute": "ra_subtype", "operator": "==", "value": "shoulder" }, "transition": "Diagnose_Shoulder" },
+        { "condition": { "condition_type": "Attribute", "attribute": "ra_subtype", "operator": "==", "value": "knee" }, "transition": "Diagnose_Knee" },
+        { "transition": "Diagnose_Remission" }
+      ]
+    },
+
+    "Diagnose_RA": {
+      "type": "ConditionOnset",
+      "assign_to_attribute": "ra_condition",
+      "codes": [{ "system": "SNOMED-CT", "code": "69896004", "display": "Rheumatoid arthritis" }],
+      "direct_transition": "Check_Labs_WithDx"
+    },
+    "Diagnose_Seropos": {
+      "type": "ConditionOnset",
+      "assign_to_attribute": "ra_condition",
+      "codes": [{ "system": "SNOMED-CT", "code": "11055151000119108", "display": "Seropositive rheumatoid arthritis of multiple joints" }],
+      "direct_transition": "Check_Labs_WithDx"
+    },
+    "Diagnose_Shoulder": {
+      "type": "ConditionOnset",
+      "assign_to_attribute": "ra_condition",
+      "codes": [{ "system": "SNOMED-CT", "code": "201766009", "display": "Rheumatoid arthritis of shoulder" }],
+      "direct_transition": "Check_Labs_WithDx"
+    },
+    "Diagnose_Knee": {
+      "type": "ConditionOnset",
+      "assign_to_attribute": "ra_condition",
+      "codes": [{ "system": "SNOMED-CT", "code": "1073811000119102", "display": "Rheumatoid arthritis of right knee" }],
+      "direct_transition": "Check_Labs_WithDx"
+    },
+    "Diagnose_Remission": {
+      "type": "ConditionOnset",
+      "assign_to_attribute": "ra_condition",
+      "codes": [{ "system": "SNOMED-CT", "code": "143441000119108", "display": "Rheumatoid arthritis in remission" }],
+      "direct_transition": "Check_Labs_WithDx"
+    },
+
+    "Check_Labs_WithDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "ra_has_labs", "operator": "==", "value": true }, "transition": "Record_Positive_RF_WithDx" },
+        { "transition": "Check_Meds_WithDx" }
+      ]
+    },
+
+    "Record_Positive_RF_WithDx": {
+      "type": "Observation",
+      "category": "laboratory",
+      "unit": "[IU]/mL",
+      "codes": [{ "system": "LOINC", "code": "11572-5", "display": "Rheumatoid factor [Units/volume] in Serum or Plasma" }],
+      "range": { "low": 20, "high": 200 },
+      "direct_transition": "Check_Meds_WithDx"
+    },
+
+    "Check_Meds_WithDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "ra_has_meds", "operator": "==", "value": true }, "transition": "Route_Med_WithDx" },
+        { "transition": "Clear_First_Visit_Flag" }
+      ]
+    },
+
+    "Route_Med_WithDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "ra_med", "operator": "==", "value": "methotrexate" }, "transition": "Prescribe_Methotrexate_WithDx" },
+        { "condition": { "condition_type": "Attribute", "attribute": "ra_med", "operator": "==", "value": "hydroxychloroquine" }, "transition": "Prescribe_Hydroxychloroquine_WithDx" },
+        { "condition": { "condition_type": "Attribute", "attribute": "ra_med", "operator": "==", "value": "sulfasalazine" }, "transition": "Prescribe_Sulfasalazine_WithDx" },
+        { "condition": { "condition_type": "Attribute", "attribute": "ra_med", "operator": "==", "value": "adalimumab" }, "transition": "Prescribe_Adalimumab_WithDx" },
+        { "transition": "Prescribe_Infliximab_WithDx" }
+      ]
+    },
+
+    "Prescribe_Methotrexate_WithDx": {
+      "type": "MedicationOrder",
+      "codes": [{ "system": "RxNorm", "code": "6851", "display": "methotrexate" }],
+      "reason": "ra_condition",
+      "direct_transition": "Clear_First_Visit_Flag"
+    },
+    "Prescribe_Hydroxychloroquine_WithDx": {
+      "type": "MedicationOrder",
+      "codes": [{ "system": "RxNorm", "code": "5521", "display": "hydroxychloroquine" }],
+      "reason": "ra_condition",
+      "direct_transition": "Clear_First_Visit_Flag"
+    },
+    "Prescribe_Sulfasalazine_WithDx": {
+      "type": "MedicationOrder",
+      "codes": [{ "system": "RxNorm", "code": "9524", "display": "sulfasalazine" }],
+      "reason": "ra_condition",
+      "direct_transition": "Clear_First_Visit_Flag"
+    },
+    "Prescribe_Adalimumab_WithDx": {
+      "type": "MedicationOrder",
+      "codes": [{ "system": "RxNorm", "code": "327361", "display": "adalimumab" }],
+      "reason": "ra_condition",
+      "direct_transition": "Clear_First_Visit_Flag"
+    },
+    "Prescribe_Infliximab_WithDx": {
+      "type": "MedicationOrder",
+      "codes": [{ "system": "RxNorm", "code": "191831", "display": "infliximab" }],
+      "reason": "ra_condition",
+      "direct_transition": "Clear_First_Visit_Flag"
+    },
+
+    "Check_Labs_NoDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "ra_has_labs", "operator": "==", "value": true }, "transition": "Record_Positive_RF_NoDx" },
+        { "transition": "Check_Meds_NoDx" }
+      ]
+    },
+
+    "Record_Positive_RF_NoDx": {
+      "type": "Observation",
+      "remarks": ["Path D: Positive RF without RA Condition"],
+      "category": "laboratory",
+      "unit": "[IU]/mL",
+      "codes": [{ "system": "LOINC", "code": "11572-5", "display": "Rheumatoid factor [Units/volume] in Serum or Plasma" }],
+      "range": { "low": 18, "high": 60 },
+      "direct_transition": "Check_Meds_NoDx"
+    },
+
+    "Check_Meds_NoDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "ra_has_meds", "operator": "==", "value": true }, "transition": "Route_Med_NoDx" },
+        { "transition": "Clear_First_Visit_Flag" }
+      ]
+    },
+
+    "Route_Med_NoDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "ra_med", "operator": "==", "value": "methotrexate" }, "transition": "Prescribe_Methotrexate_NoDx" },
+        { "condition": { "condition_type": "Attribute", "attribute": "ra_med", "operator": "==", "value": "hydroxychloroquine" }, "transition": "Prescribe_Hydroxychloroquine_NoDx" },
+        { "condition": { "condition_type": "Attribute", "attribute": "ra_med", "operator": "==", "value": "sulfasalazine" }, "transition": "Prescribe_Sulfasalazine_NoDx" },
+        { "condition": { "condition_type": "Attribute", "attribute": "ra_med", "operator": "==", "value": "adalimumab" }, "transition": "Prescribe_Adalimumab_NoDx" },
+        { "transition": "Prescribe_Infliximab_NoDx" }
+      ]
+    },
+
+    "Prescribe_Methotrexate_NoDx": {
+      "type": "MedicationOrder",
+      "codes": [{ "system": "RxNorm", "code": "6851", "display": "methotrexate" }],
+      "direct_transition": "Clear_First_Visit_Flag"
+    },
+    "Prescribe_Hydroxychloroquine_NoDx": {
+      "type": "MedicationOrder",
+      "codes": [{ "system": "RxNorm", "code": "5521", "display": "hydroxychloroquine" }],
+      "direct_transition": "Clear_First_Visit_Flag"
+    },
+    "Prescribe_Sulfasalazine_NoDx": {
+      "type": "MedicationOrder",
+      "codes": [{ "system": "RxNorm", "code": "9524", "display": "sulfasalazine" }],
+      "direct_transition": "Clear_First_Visit_Flag"
+    },
+    "Prescribe_Adalimumab_NoDx": {
+      "type": "MedicationOrder",
+      "codes": [{ "system": "RxNorm", "code": "327361", "display": "adalimumab" }],
+      "direct_transition": "Clear_First_Visit_Flag"
+    },
+    "Prescribe_Infliximab_NoDx": {
+      "type": "MedicationOrder",
+      "codes": [{ "system": "RxNorm", "code": "191831", "display": "infliximab" }],
+      "direct_transition": "Clear_First_Visit_Flag"
+    },
+
+    "Clear_First_Visit_Flag": { "type": "SetAttribute", "attribute": "ra_needs_first_visit", "value": false, "direct_transition": "End_Wellness_Encounter" },
+
+    "End_Wellness_Encounter": { "type": "EncounterEnd", "direct_transition": "Followup_Delay" },
+
+    "Followup_Delay": {
+      "type": "Delay",
+      "range": { "low": 3, "high": 6, "unit": "months" },
+      "direct_transition": "Wellness_Encounter"
+    }
+  },
+  "gmf_version": 2
+}

@@ -1,0 +1,229 @@
+{
+  "name": "PheKB Prostate Cancer",
+  "remarks": [
+    "Custom Synthea module for prostate cancer.",
+    "**First sex-specific (male-only) phenotype** in suite. **Fourth Procedure-resource phenotype** (prostate biopsy).",
+    "",
+    "Generates FOUR patient paths:",
+    "  Path A (50%): PCa dx + ADT + biopsy + elevated PSA",
+    "  Path B (15%): PCa dx + ADT, no recent biopsy/PSA",
+    "  Path C (20%): Biopsy + elevated PSA, no PCa dx (tricky — negative biopsy result for screening patient)",
+    "  Path D (15%): Elevated PSA only, no dx/biopsy/meds (early presentation)",
+    "",
+    "All paths require: gender == M (sex guard).",
+    "",
+    "Diagnosis SNOMED variation (Paths A + B):",
+    "  35% Malignant neoplasm of prostate (399068003) — parent",
+    "  25% Primary malignant neoplasm of prostate (93974005)",
+    "  15% Metastatic malignant neoplasm to prostate (94503003)",
+    "  15% Neoplasm of prostate (126906006) — broader",
+    "  10% Malignant tumor by extension from bladder (369485004)",
+    "",
+    "ADT/anti-androgen variation (Paths A + B — 5 ingredients):",
+    "  35% Leuprolide (42375) — GnRH agonist, most common",
+    "  25% Bicalutamide (83008) — first-gen anti-androgen",
+    "  15% Enzalutamide (1307298) — next-gen anti-androgen",
+    "  15% Abiraterone (1100072) — CYP17 inhibitor",
+    "  10% Degarelix (475230) — GnRH antagonist"
+  ],
+  "states": {
+    "Initial": { "type": "Initial", "direct_transition": "Sex_Guard" },
+    "Sex_Guard": { "type": "Guard", "allow": { "condition_type": "Gender", "gender": "M" }, "direct_transition": "Age_Guard" },
+    "Age_Guard": { "type": "Guard", "allow": { "condition_type": "Age", "operator": ">=", "quantity": 50, "unit": "years" }, "direct_transition": "Set_PCa_Flag" },
+    "Set_PCa_Flag": { "type": "SetAttribute", "attribute": "pca_positive", "value": true, "direct_transition": "Choose_Patient_Path" },
+    "Choose_Patient_Path": {
+      "type": "Simple",
+      "distributed_transition": [
+        { "transition": "Set_Path_A", "distribution": 0.50 },
+        { "transition": "Set_Path_B", "distribution": 0.15 },
+        { "transition": "Set_Path_C", "distribution": 0.20 },
+        { "transition": "Set_Path_D", "distribution": 0.15 }
+      ]
+    },
+    "Set_Path_A": { "type": "SetAttribute", "attribute": "pca_has_dx", "value": true, "direct_transition": "Set_Path_A_Proc" },
+    "Set_Path_A_Proc": { "type": "SetAttribute", "attribute": "pca_has_proc", "value": true, "direct_transition": "Set_Path_A_Lab" },
+    "Set_Path_A_Lab": { "type": "SetAttribute", "attribute": "pca_has_high_psa", "value": true, "direct_transition": "Set_Path_A_Meds" },
+    "Set_Path_A_Meds": { "type": "SetAttribute", "attribute": "pca_has_meds", "value": true, "direct_transition": "Choose_Subtype" },
+
+    "Set_Path_B": { "type": "SetAttribute", "attribute": "pca_has_dx", "value": true, "direct_transition": "Set_Path_B_Proc" },
+    "Set_Path_B_Proc": { "type": "SetAttribute", "attribute": "pca_has_proc", "value": false, "direct_transition": "Set_Path_B_Lab" },
+    "Set_Path_B_Lab": { "type": "SetAttribute", "attribute": "pca_has_high_psa", "value": false, "direct_transition": "Set_Path_B_Meds" },
+    "Set_Path_B_Meds": { "type": "SetAttribute", "attribute": "pca_has_meds", "value": true, "direct_transition": "Choose_Subtype" },
+
+    "Set_Path_C": { "type": "SetAttribute", "remarks": ["TRICKY: biopsy + PSA without PCa dx (negative biopsy)"], "attribute": "pca_has_dx", "value": false, "direct_transition": "Set_Path_C_Proc" },
+    "Set_Path_C_Proc": { "type": "SetAttribute", "attribute": "pca_has_proc", "value": true, "direct_transition": "Set_Path_C_Lab" },
+    "Set_Path_C_Lab": { "type": "SetAttribute", "attribute": "pca_has_high_psa", "value": true, "direct_transition": "Set_Path_C_Meds" },
+    "Set_Path_C_Meds": { "type": "SetAttribute", "attribute": "pca_has_meds", "value": false, "direct_transition": "Choose_Subtype" },
+
+    "Set_Path_D": { "type": "SetAttribute", "remarks": ["TRICKY: elevated PSA only (early/undiagnosed)"], "attribute": "pca_has_dx", "value": false, "direct_transition": "Set_Path_D_Proc" },
+    "Set_Path_D_Proc": { "type": "SetAttribute", "attribute": "pca_has_proc", "value": false, "direct_transition": "Set_Path_D_Lab" },
+    "Set_Path_D_Lab": { "type": "SetAttribute", "attribute": "pca_has_high_psa", "value": true, "direct_transition": "Set_Path_D_Meds" },
+    "Set_Path_D_Meds": { "type": "SetAttribute", "attribute": "pca_has_meds", "value": false, "direct_transition": "Choose_Subtype" },
+
+    "Choose_Subtype": {
+      "type": "Simple",
+      "distributed_transition": [
+        { "transition": "Set_Subtype_PCa", "distribution": 0.35 },
+        { "transition": "Set_Subtype_Primary", "distribution": 0.25 },
+        { "transition": "Set_Subtype_Metastatic", "distribution": 0.15 },
+        { "transition": "Set_Subtype_Neoplasm", "distribution": 0.15 },
+        { "transition": "Set_Subtype_Extension", "distribution": 0.10 }
+      ]
+    },
+    "Set_Subtype_PCa": { "type": "SetAttribute", "attribute": "pca_subtype", "value": "pca", "direct_transition": "Choose_Med" },
+    "Set_Subtype_Primary": { "type": "SetAttribute", "attribute": "pca_subtype", "value": "primary", "direct_transition": "Choose_Med" },
+    "Set_Subtype_Metastatic": { "type": "SetAttribute", "attribute": "pca_subtype", "value": "metastatic", "direct_transition": "Choose_Med" },
+    "Set_Subtype_Neoplasm": { "type": "SetAttribute", "attribute": "pca_subtype", "value": "neoplasm", "direct_transition": "Choose_Med" },
+    "Set_Subtype_Extension": { "type": "SetAttribute", "attribute": "pca_subtype", "value": "extension", "direct_transition": "Choose_Med" },
+
+    "Choose_Med": {
+      "type": "Simple",
+      "distributed_transition": [
+        { "transition": "Set_Med_Leuprolide", "distribution": 0.35 },
+        { "transition": "Set_Med_Bicalutamide", "distribution": 0.25 },
+        { "transition": "Set_Med_Enzalutamide", "distribution": 0.15 },
+        { "transition": "Set_Med_Abiraterone", "distribution": 0.15 },
+        { "transition": "Set_Med_Degarelix", "distribution": 0.10 }
+      ]
+    },
+    "Set_Med_Leuprolide": { "type": "SetAttribute", "attribute": "pca_med", "value": "leuprolide", "direct_transition": "Set_Needs_First_Visit" },
+    "Set_Med_Bicalutamide": { "type": "SetAttribute", "attribute": "pca_med", "value": "bicalutamide", "direct_transition": "Set_Needs_First_Visit" },
+    "Set_Med_Enzalutamide": { "type": "SetAttribute", "attribute": "pca_med", "value": "enzalutamide", "direct_transition": "Set_Needs_First_Visit" },
+    "Set_Med_Abiraterone": { "type": "SetAttribute", "attribute": "pca_med", "value": "abiraterone", "direct_transition": "Set_Needs_First_Visit" },
+    "Set_Med_Degarelix": { "type": "SetAttribute", "attribute": "pca_med", "value": "degarelix", "direct_transition": "Set_Needs_First_Visit" },
+
+    "Set_Needs_First_Visit": { "type": "SetAttribute", "attribute": "pca_needs_first_visit", "value": true, "direct_transition": "Wellness_Encounter" },
+    "Wellness_Encounter": { "type": "Encounter", "wellness": true, "direct_transition": "Check_First_Visit" },
+    "Check_First_Visit": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "pca_needs_first_visit", "operator": "==", "value": true }, "transition": "Check_Has_Diagnosis" },
+        { "transition": "End_Wellness_Encounter" }
+      ]
+    },
+    "Check_Has_Diagnosis": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "pca_has_dx", "operator": "==", "value": true }, "transition": "Route_By_Subtype" },
+        { "transition": "Check_Lab_NoDx" }
+      ]
+    },
+    "Route_By_Subtype": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "pca_subtype", "operator": "==", "value": "pca" }, "transition": "Diagnose_PCa" },
+        { "condition": { "condition_type": "Attribute", "attribute": "pca_subtype", "operator": "==", "value": "primary" }, "transition": "Diagnose_Primary" },
+        { "condition": { "condition_type": "Attribute", "attribute": "pca_subtype", "operator": "==", "value": "metastatic" }, "transition": "Diagnose_Metastatic" },
+        { "condition": { "condition_type": "Attribute", "attribute": "pca_subtype", "operator": "==", "value": "neoplasm" }, "transition": "Diagnose_Neoplasm" },
+        { "transition": "Diagnose_Extension" }
+      ]
+    },
+    "Diagnose_PCa": { "type": "ConditionOnset", "assign_to_attribute": "pca_condition", "codes": [{ "system": "SNOMED-CT", "code": "399068003", "display": "Malignant neoplasm of prostate" }], "direct_transition": "Check_Lab_WithDx" },
+    "Diagnose_Primary": { "type": "ConditionOnset", "assign_to_attribute": "pca_condition", "codes": [{ "system": "SNOMED-CT", "code": "93974005", "display": "Primary malignant neoplasm of prostate" }], "direct_transition": "Check_Lab_WithDx" },
+    "Diagnose_Metastatic": { "type": "ConditionOnset", "assign_to_attribute": "pca_condition", "codes": [{ "system": "SNOMED-CT", "code": "94503003", "display": "Metastatic malignant neoplasm to prostate" }], "direct_transition": "Check_Lab_WithDx" },
+    "Diagnose_Neoplasm": { "type": "ConditionOnset", "assign_to_attribute": "pca_condition", "codes": [{ "system": "SNOMED-CT", "code": "126906006", "display": "Neoplasm of prostate" }], "direct_transition": "Check_Lab_WithDx" },
+    "Diagnose_Extension": { "type": "ConditionOnset", "assign_to_attribute": "pca_condition", "codes": [{ "system": "SNOMED-CT", "code": "369485004", "display": "Malignant tumor involving prostate by direct extension from bladder" }], "direct_transition": "Check_Lab_WithDx" },
+
+    "Check_Lab_WithDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "pca_has_high_psa", "operator": "==", "value": true }, "transition": "Record_High_PSA_WithDx" },
+        { "transition": "Check_Meds_WithDx" }
+      ]
+    },
+    "Record_High_PSA_WithDx": {
+      "type": "Observation",
+      "category": "laboratory",
+      "unit": "ng/mL",
+      "codes": [{ "system": "LOINC", "code": "2857-1", "display": "Prostate specific Ag [Mass/volume] in Serum or Plasma" }],
+      "range": { "low": 10, "high": 100 },
+      "direct_transition": "Check_Meds_WithDx"
+    },
+    "Check_Meds_WithDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "pca_has_meds", "operator": "==", "value": true }, "transition": "Route_Med_WithDx" },
+        { "transition": "Check_Procedure_WithDx" }
+      ]
+    },
+    "Route_Med_WithDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "pca_med", "operator": "==", "value": "leuprolide" }, "transition": "Prescribe_Leuprolide_WithDx" },
+        { "condition": { "condition_type": "Attribute", "attribute": "pca_med", "operator": "==", "value": "bicalutamide" }, "transition": "Prescribe_Bicalutamide_WithDx" },
+        { "condition": { "condition_type": "Attribute", "attribute": "pca_med", "operator": "==", "value": "enzalutamide" }, "transition": "Prescribe_Enzalutamide_WithDx" },
+        { "condition": { "condition_type": "Attribute", "attribute": "pca_med", "operator": "==", "value": "abiraterone" }, "transition": "Prescribe_Abiraterone_WithDx" },
+        { "transition": "Prescribe_Degarelix_WithDx" }
+      ]
+    },
+    "Prescribe_Leuprolide_WithDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "42375", "display": "leuprolide" }], "reason": "pca_condition", "direct_transition": "Check_Procedure_WithDx" },
+    "Prescribe_Bicalutamide_WithDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "83008", "display": "bicalutamide" }], "reason": "pca_condition", "direct_transition": "Check_Procedure_WithDx" },
+    "Prescribe_Enzalutamide_WithDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "1307298", "display": "enzalutamide" }], "reason": "pca_condition", "direct_transition": "Check_Procedure_WithDx" },
+    "Prescribe_Abiraterone_WithDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "1100072", "display": "abiraterone" }], "reason": "pca_condition", "direct_transition": "Check_Procedure_WithDx" },
+    "Prescribe_Degarelix_WithDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "475230", "display": "degarelix" }], "reason": "pca_condition", "direct_transition": "Check_Procedure_WithDx" },
+
+    "Check_Procedure_WithDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "pca_has_proc", "operator": "==", "value": true }, "transition": "Urology_Encounter_WithDx" },
+        { "transition": "Clear_First_Visit_Flag" }
+      ]
+    },
+    "Urology_Encounter_WithDx": {
+      "type": "Encounter",
+      "encounter_class": "ambulatory",
+      "reason": "pca_condition",
+      "codes": [{ "system": "SNOMED-CT", "code": "440655000", "display": "Outpatient procedure encounter (procedure)" }],
+      "direct_transition": "Procedure_Biopsy_WithDx"
+    },
+    "Procedure_Biopsy_WithDx": {
+      "type": "Procedure",
+      "reason": "pca_condition",
+      "codes": [{ "system": "SNOMED-CT", "code": "65575008", "display": "Biopsy of prostate (procedure)" }],
+      "duration": { "low": 30, "high": 60, "unit": "minutes" },
+      "direct_transition": "End_Urology_Encounter_WithDx"
+    },
+    "End_Urology_Encounter_WithDx": { "type": "EncounterEnd", "direct_transition": "Clear_First_Visit_Flag" },
+
+    "Check_Lab_NoDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "pca_has_high_psa", "operator": "==", "value": true }, "transition": "Record_High_PSA_NoDx" },
+        { "transition": "Check_Procedure_NoDx" }
+      ]
+    },
+    "Record_High_PSA_NoDx": {
+      "type": "Observation",
+      "category": "laboratory",
+      "unit": "ng/mL",
+      "codes": [{ "system": "LOINC", "code": "2857-1", "display": "Prostate specific Ag [Mass/volume] in Serum or Plasma" }],
+      "range": { "low": 5, "high": 12 },
+      "direct_transition": "Check_Procedure_NoDx"
+    },
+    "Check_Procedure_NoDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "pca_has_proc", "operator": "==", "value": true }, "transition": "Urology_Encounter_NoDx" },
+        { "transition": "Clear_First_Visit_Flag" }
+      ]
+    },
+    "Urology_Encounter_NoDx": {
+      "type": "Encounter",
+      "encounter_class": "ambulatory",
+      "codes": [{ "system": "SNOMED-CT", "code": "440655000", "display": "Outpatient procedure encounter (procedure)" }],
+      "direct_transition": "Procedure_Biopsy_NoDx"
+    },
+    "Procedure_Biopsy_NoDx": {
+      "type": "Procedure",
+      "codes": [{ "system": "SNOMED-CT", "code": "65575008", "display": "Biopsy of prostate (procedure)" }],
+      "duration": { "low": 30, "high": 60, "unit": "minutes" },
+      "direct_transition": "End_Urology_Encounter_NoDx"
+    },
+    "End_Urology_Encounter_NoDx": { "type": "EncounterEnd", "direct_transition": "Clear_First_Visit_Flag" },
+
+    "Clear_First_Visit_Flag": { "type": "SetAttribute", "attribute": "pca_needs_first_visit", "value": false, "direct_transition": "End_Wellness_Encounter" },
+    "End_Wellness_Encounter": { "type": "EncounterEnd", "direct_transition": "Followup_Delay" },
+    "Followup_Delay": { "type": "Delay", "range": { "low": 6, "high": 12, "unit": "months" }, "direct_transition": "Wellness_Encounter" }
+  },
+  "gmf_version": 2
+}

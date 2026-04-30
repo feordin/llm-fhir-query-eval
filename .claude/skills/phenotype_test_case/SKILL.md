@@ -1,7 +1,7 @@
 ---
 name: phenotype_test_case
 description: Create phenotype-based test cases for the FHIR query evaluation framework. Analyzes PheKB phenotype algorithms, generates per-path test case JSON files, and validates them against FHIR server data.
-allowed-tools: Read, Write, Edit, Bash, Glob, Grep, mcp__nih-umls__search_umls, mcp__nih-umls__get_concept, mcp__nih-umls__crosswalk_codes, mcp__nih-umls__get_source_concept, mcp__nih-umls__get_definitions
+allowed-tools: Read, Write, Edit, Bash, Glob, Grep, mcp__nih-umls__search_umls, mcp__nih-umls__get_concept, mcp__nih-umls__crosswalk_codes, mcp__nih-umls__get_source_concept, mcp__nih-umls__get_definitions, mcp__nih-umls__search_value_sets, mcp__nih-umls__expand_value_set, mcp__nih-umls__validate_code_in_value_set, mcp__nih-umls__lookup_code, mcp__nih-umls__check_code_subsumption
 ---
 
 # Phenotype Test Case Creation Skill
@@ -88,6 +88,26 @@ The goal is to read ALL available phenotype documents and produce a structured a
       ```
       Verify the display name matches the intended concept. Discard obsolete codes.
 
+   e. **Use VSAC value sets for comprehensive code lists (RECOMMENDED for well-known conditions):**
+
+      Many phenotype conditions have pre-curated VSAC value sets used in quality measures. These provide authoritative, complete code lists:
+      ```
+      search_value_sets(title="<condition name>")
+      expand_value_set(oid="<oid from search>")
+      ```
+
+      VSAC value sets are especially useful because:
+      - They include ALL relevant codes across code systems (SNOMED, ICD-10, ICD-9)
+      - They are maintained by authoritative organizations (NCQA, CMS)
+      - They capture subtypes that crosswalking might miss (e.g., E11.0-E11.9 for T2D)
+      - They can be used to validate codes: `validate_code_in_value_set(oid="...", code="...", system="...")`
+
+   f. **Use subsumption checking for SNOMED code validation:**
+      ```
+      check_code_subsumption(system="http://snomed.info/sct", code_a="73211009", code_b="44054006")
+      ```
+      This tells you whether a broader code (e.g., "Diabetes mellitus") subsumes a narrower one (e.g., "Type 2 diabetes mellitus"), helping you choose the right code level for queries.
+
    See the `/umls` skill for full details on crosswalk behavior and gotchas.
 
 4. **Output a structured analysis** summarizing:
@@ -119,11 +139,54 @@ Creates one or more test case JSON files. Each algorithm path that targets a dis
 
    | Test Case | Resource Type | What It Tests |
    |-----------|---------------|---------------|
-   | `<phenotype>-dx` | Condition | Finding patients by diagnosis codes |
+   | `<phenotype>-dx` | Condition | Finding patients by diagnosis codes (must use ALL subtype codes) |
    | `<phenotype>-meds` | MedicationRequest | Finding patients by medication orders |
    | `<phenotype>-labs` | Observation | Finding patients by lab values with thresholds |
-   | `<phenotype>-path4-meds-no-dx` | MedicationRequest/Patient | Subtle: patients identified by meds who have NO Condition |
+   | `<phenotype>-meds-only` | MedicationRequest | **TRICKY: patients on phenotype meds who have NO diagnosis code** |
+   | `<phenotype>-labs-only` | Observation | **TRICKY: patients with abnormal labs but NO diagnosis code** |
+   | `<phenotype>-procedures` | Procedure | **TRICKY: patients with defining procedure but NO diagnosis code** |
    | **`<phenotype>-comprehensive`** | **Multi-query** | **Provider-level: find ALL patients using multiple queries** |
+
+   Include ALL tricky test cases that apply to the phenotype:
+
+   | Tricky Path | When to Include | What It Tests |
+   |---|---|---|
+   | **Meds only, no dx** | Phenotype has characteristic medications | LLM searches MedicationRequest, not just Condition |
+   | **Labs only, no dx** | Phenotype has diagnostic lab thresholds | LLM searches Observation with value-quantity filters |
+   | **Meds + labs, no dx** | Both are relevant to phenotype | LLM combines evidence from two non-Condition resources |
+   | **Procedure only, no dx** | Phenotype has defining procedures | LLM searches Procedure resources |
+
+   **How tricky paths map to expected_patient_ids:**
+   - **`-dx`**: Only patients from Paths A and B (those WITH a Condition resource)
+   - **`-meds`**: Patients from Paths A and C (those WITH a MedicationRequest)
+   - **`-meds-only`**: ONLY Path C patients (meds but NO Condition — the tricky ones)
+   - **`-labs`**: Patients from Paths A and D (those WITH abnormal Observations)
+   - **`-labs-only`**: ONLY Path D patients (labs but NO Condition)
+   - **`-comprehensive`**: ALL positive patients (union of all paths)
+
+   #### Code Variation in Test Cases (CRITICAL)
+
+   The Synthea module generates patients with **varied SNOMED codes** across the phenotype's code family (e.g., dementia patients coded as Alzheimer's, vascular dementia, Lewy body, frontotemporal, or unspecified). The test cases must reflect this:
+
+   **For `-dx` test cases:**
+   - The `expected_query.url` must include ALL subtype SNOMED codes used in the module (comma-separated)
+   - The `metadata.required_codes` must list every code that appears in the generated data
+   - The prompt should mention the concept broadly (e.g., "dementia" not "Alzheimer's") to test whether the LLM knows to search for all subtypes
+
+   **For `-dx` prompts, use THREE levels of code-awareness testing:**
+   ```json
+   "prompts": {
+     "naive": "Find all patients with dementia.",
+     "broad": "Find all patients diagnosed with any form of dementia, including Alzheimer's disease, vascular dementia, Lewy body dementia, and frontotemporal dementia.",
+     "expert": "I need to identify all dementia patients. Dementia encompasses multiple subtypes, each with distinct SNOMED codes: Alzheimer's disease, vascular dementia, dementia with Lewy bodies, frontotemporal dementia, and unspecified dementia. The parent SNOMED concept may subsume subtypes on servers supporting the :below modifier, but explicitly querying all subtype codes is more reliable. Search Condition resources for all these codes."
+   }
+   ```
+
+   The `naive` prompt tests whether the LLM independently knows the code family. The `broad` prompt gives clinical hints. The `expert` prompt gives full guidance. Comparing scores across prompt levels reveals how much clinical code knowledge the LLM has built-in vs needs to be told.
+
+   **For `-meds` test cases with multiple medications:**
+   - If the module distributes patients across different meds (e.g., donepezil, galantamine, memantine), the expected query must include ALL medication codes
+   - An LLM that only queries for one medication will have lower recall
 
    For complex phenotypes with multiple paths, create path-specific test cases:
    - `phekb-<phenotype>-path1-<description>`
@@ -297,6 +360,9 @@ Creates one or more test case JSON files. Each algorithm path that targets a dis
    - `metadata.algorithm_path`: Which phenotype algorithm path this tests (e.g., "Path 2: T2DM dx + T2DM meds, no T1DM meds")
    - `metadata.complexity`: "easy" for straightforward single-code queries, "medium" for multi-code or multi-system, "hard" for value filters or subtle logic
    - `metadata.required_codes`: ALL codes that the expected query should use, verified via UMLS
+
+   > **Note for three-layer evaluation:** The `required_codes` array is critical for Layer 2 (Code System Accuracy) scoring. Include the PRIMARY code that Synthea generates (for strict matching) and any clinically equivalent alternatives (for lenient VSAC-based matching). Always verify codes via `/umls validate` before adding them.
+
    - `metadata.tags`: Include resource type, clinical domain, phenotype name, difficulty indicators
    - `test_data.expected_result_count` and `expected_resource_ids`: Populate after Synthea data is generated and loaded; leave as `null`/`[]` initially
 
@@ -422,6 +488,8 @@ ALWAYS verify codes before putting them in test cases. The `document_analysis.js
 - Codes at the wrong level (SCD instead of ingredient for RxNorm)
 - Obsolete or retired codes
 
+For well-known clinical concepts, prefer VSAC value sets over manual crosswalking. Use `search_value_sets(title="<condition>")` followed by `expand_value_set(oid="...")` to get authoritative, comprehensive code lists. These value sets are maintained by quality organizations (NCQA, CMS) and include codes that manual crosswalking often misses.
+
 Use the `/umls` skill to get authoritative codes. Key patterns:
 - **RxNorm ingredient codes** are preferred for FHIR queries (e.g., "6809" for Metformin) because they match any dose form or strength
 - **SNOMED codes** are the most interoperable and usually the best choice for Condition queries
@@ -497,8 +565,47 @@ Control patients may still have Observation resources (normal lab values) that c
 - Always run `fhir-eval load synthea -p <phenotype> --update-test-case` or use `/phenotype_test_case validate` after data generation
 - Some patients may be too young to have clinical data (Age_Guard filtering)
 
-### 7. Observation Queries Return Multiple Results Per Patient
+### 7. Use Synthea Patient UUIDs, Not Server-Assigned IDs
+CRITICAL: `expected_patient_ids` MUST use the stable UUIDs from the Synthea FHIR bundles (e.g., `922fb35e-148d-9e82-7e65-bfa05e3b3515`), NOT the numeric IDs assigned by fhir-candle on load (e.g., `1391`). Server-assigned IDs change every time data is reloaded, making test cases fragile. Synthea UUIDs are deterministic and stable across loads.
+
+To extract correct patient IDs, analyze the Synthea bundles directly:
+```python
+# Scan Synthea bundles for patients matching each test case path
+import json, glob
+for f in glob.glob('synthea/output/<phenotype>/positive/fhir/*.json'):
+    with open(f, encoding='utf-8') as fh:
+        bundle = json.load(fh)
+    for entry in bundle['entry']:
+        if entry['resource']['resourceType'] == 'Patient':
+            patient_id = entry['resource']['id']  # This is the stable UUID
+```
+
+### 8. Validate Expected Queries Against Actual Synthea Data
+Before finalizing test cases, ALWAYS scan the Synthea bundles to verify:
+- **Which codes are actually present** in the generated data (e.g., Synthea may use RxNorm SCD `310537` not `310539`)
+- **How many patients match** each path (dx, meds, labs, intersection, union)
+- **No code typos** — cross-check every code in `expected_query.url` against codes found in bundles
+- **Path 4 counts are correct** — path 4 patients = (meds AND labs) MINUS (dx patients)
+
+A common failure mode: manually entering codes in the expected query that don't match what Synthea generates (e.g., wrong RxNorm SCD code for glyburide: `310539` vs `310537`).
+
+### 9. Multi-Query Test Cases Need Consistent Structure
+For `multi_query: true` test cases:
+- `metadata.expected_queries` must list ALL queries the LLM should generate
+- `expected_query.url` should contain the minimum viable query (first/primary query)
+- `expected_query.notes` should explain the multi-query evaluation strategy
+- `test_data.expected_patient_ids` should be the UNION of all patients across all queries
+- `test_data.expected_result_count` should match `len(expected_patient_ids)`
+- `expected_resource_ids` should be empty `[]` for multi-query (patient-level evaluation)
+
+### 10. VSAC Value Sets vs Individual Code Lookup
+VSAC value sets (e.g., "Diabetes" OID 2.16.840.1.113883.3.464.1003.103.12.1001) contain comprehensive code lists maintained for quality reporting. When creating test cases for well-known conditions, expanding the relevant VSAC value set gives you ALL the codes that clinical systems recognize for that condition — far more complete than manual UMLS crosswalking. However, remember that Synthea only generates specific codes, so the test case `required_codes` should match what Synthea actually produces, not every code in the value set.
+
+### 11. Observation Queries Return Multiple Results Per Patient
 Unlike Condition (typically one per diagnosis), Observation queries may return MANY results per patient (every HbA1c reading at every visit). This is expected behavior. The evaluation compares resource IDs, so multiple observations per patient count individually.
+
+### 12. Required Codes Must Be Complete for Three-Layer Evaluation
+The `metadata.required_codes` array drives Layer 2 (Code System Accuracy) evaluation. Every clinical code the LLM is expected to discover should be listed here with its system URI, code value, and display name. If a test case targets multiple code systems (e.g., SNOMED for Synthea data + ICD-10 as a clinically valid alternative), list both — the strict evaluator will use the primary code and the lenient evaluator will accept either. Missing entries in `required_codes` will cause false negatives in Layer 2 scoring.
 
 ---
 
@@ -516,13 +623,85 @@ For Tier 2/3, see:
 - **`/fhir_server_introspection` skill** — teaches the LLM to query server capabilities, check profiles, and verify codes
 - **`docs/PLAN-AGENTIC-EVALUATION.md`** — full architecture for agentic evaluation with tool access
 
-### Dual Test Data Sets
+### Three-Layer Evaluation Metrics
 
-For each phenotype, we plan to generate TWO data variants:
+Each test case supports a three-layer evaluation decomposition that enables diagnostic analysis of where LLMs fail:
+
+| Layer | What It Measures | Test Case Fields Used |
+|-------|-----------------|----------------------|
+| **L1: Resource Type** | Did the LLM query the correct FHIR resource type? | `expected_query.resource_type` |
+| **L2: Code Accuracy** | Did the LLM select the correct clinical code system and code? | `metadata.required_codes[]` (system, code, display) |
+| **L3: Execution** | Does the generated query return the correct patient set? | `test_data.expected_patient_ids`, `expected_query.url` |
+
+**Layer 2 is our unique contribution** — neither FHIRPath-QA nor FHIR-AgentBench evaluate clinical code resolution from natural language. The delta between Tier 1 (no tools) and Tier 2 (UMLS MCP) on Layer 2 directly quantifies the value of clinical terminology tool access.
+
+When creating test cases, ensure `metadata.required_codes` is populated with ALL codes the LLM needs to discover. This field drives Layer 2 evaluation — without it, we can only measure Layer 1 and Layer 3.
+
+Layer 2 supports two scoring modes:
+- **Strict**: Exact match against `required_codes[].code` — tests whether the LLM finds the specific code in Synthea data
+- **Lenient**: VSAC value set membership — tests whether the LLM finds a clinically valid code (even if Synthea uses a different coding)
+
+See `docs/IMPLEMENTATION-ROADMAP.md` for the full three-layer evaluation specification.
+
+### Dual Test Data Sets (Synthea Variants)
+
+For each phenotype, we plan to generate TWO Synthea data variants:
 - **Generic (FHIR R4)**: Synthea default — SNOMED conditions, LOINC labs, RxNorm SCD meds
 - **US Core**: Adds ICD-10-CM codes alongside SNOMED, US Core categories, proper must-support elements
 
 This tests whether LLMs adapt their query strategy based on the server's profile/IG.
+
+### MIMIC-IV Evaluation Track (Track B)
+
+In addition to Synthea (Track A), test cases can be evaluated against **MIMIC-IV on FHIR Demo** (100 real de-identified patients). This requires additional ground truth data in each test case JSON.
+
+#### Adding MIMIC Ground Truth to a Test Case
+
+When creating or updating test cases for phenotypes that will be evaluated on MIMIC, add a `mimic_test_data` section:
+
+```json
+{
+  "mimic_test_data": {
+    "reference_query_url": "Condition?code=http://snomed.info/sct|44054006,http://hl7.org/fhir/sid/icd-10-cm|E11,http://hl7.org/fhir/sid/icd-10-cm|E11.9",
+    "reference_query_vsac_oids": ["2.16.840.1.113883.3.464.1003.103.12.1001"],
+    "expected_patient_ids": ["mimic-patient-id-1", "mimic-patient-id-2"],
+    "expected_result_count": null,
+    "validation_notes": "Manually validated 15/20 returned patients. All confirmed T2DM.",
+    "validated_date": "2026-04-01"
+  }
+}
+```
+
+#### Building the Comprehensive Reference Query
+
+The reference query must be **maximally inclusive** — it defines ground truth, so it must capture all valid patients:
+
+1. **Expand the VSAC value set** for the phenotype:
+   ```bash
+   /umls expand <OID>
+   ```
+2. **Collect ALL codes** across all code systems (SNOMED, ICD-10-CM, ICD-9-CM, etc.)
+3. **Build a single query** with all codes comma-separated in the `code` parameter
+4. **Execute against MIMIC FHIR server** and collect the patient set
+5. **Manually validate a sample** (10-20 patients) to confirm correctness
+6. **Store in `mimic_test_data`** with validation notes and date
+
+#### Why Track B Matters
+
+MIMIC uses multiple code systems for the same condition — unlike Synthea which is SNOMED-only. This means:
+- A generated query using ICD-10 `E11` will return **zero results on Synthea** but **real patients on MIMIC**
+- The dual-track reveals whether L3 failures are **data-mismatch** (clinically correct code, wrong code system for the data) vs **genuinely wrong**
+- Layer 2 scoring differs: Synthea uses **strict** mode (must match exact Synthea codes), MIMIC uses **lenient** mode (any code in the VSAC value set is valid)
+
+#### Priority Phenotypes for MIMIC Track
+
+Start with phenotypes where VSAC value sets are readily available:
+- Type 2 Diabetes (VSAC OID: `2.16.840.1.113883.3.464.1003.103.12.1001`)
+- Acute Kidney Injury
+- Asthma
+- Atrial Fibrillation
+
+See `docs/IMPLEMENTATION-ROADMAP.md` "Dual-Track Evaluation" for the full specification.
 
 ### IG Profile Data for Tier 3
 
