@@ -1,0 +1,514 @@
+{
+  "name": "PheKB ADHD",
+  "remarks": [
+    "Custom Synthea module for PheKB phenotype: ADHD",
+    "Based on eMERGE network ADHD phenotype algorithm",
+    "",
+    "Generates TWO types of positive patients:",
+    "  Type A (70%): Diagnosis + Medications (Algorithm Path 1: dx + meds)",
+    "  Type B (30%): Medications ONLY, NO diagnosis code (tests LLM med search)",
+    "",
+    "Case identification from PheKB:",
+    "  Path 1: Age 4+, ADHD ICD codes in 1+ visits + ADHD medications",
+    "  Path 2: Age 4+, ADHD ICD codes in 2+ visits on separate days (no meds required)",
+    "  For Synthea, we combine both into dx vs no-dx branching",
+    "",
+    "Codes verified via NIH UMLS MCP (2025AB):",
+    "  SNOMED 406506008 (ADHD)",
+    "  RxNorm SCD: 1091392 (Methylphenidate 20mg), 541892 (Mixed amphetamine salts 10mg),",
+    "              349594 (Atomoxetine 40mg), 854834 (Lisdexamfetamine 30mg)"
+  ],
+  "states": {
+    "Initial": {
+      "type": "Initial",
+      "direct_transition": "Age_Guard"
+    },
+    "Age_Guard": {
+      "type": "Guard",
+      "allow": {
+        "condition_type": "Age",
+        "operator": ">=",
+        "quantity": 4,
+        "unit": "years"
+      },
+      "direct_transition": "Set_ADHD_Risk"
+    },
+    "Set_ADHD_Risk": {
+      "type": "SetAttribute",
+      "attribute": "adhd_risk",
+      "value": true,
+      "direct_transition": "Wait_For_ADHD_Onset"
+    },
+    "Wait_For_ADHD_Onset": {
+      "type": "Delay",
+      "range": {
+        "low": 1,
+        "high": 4,
+        "unit": "years"
+      },
+      "direct_transition": "Choose_Patient_Path"
+    },
+    "Choose_Patient_Path": {
+      "type": "Simple",
+      "remarks": [
+        "Split patients into two groups:",
+        "  70% get a formal ADHD diagnosis + medications (Paths 1-2)",
+        "  30% have NO diagnosis - only medication evidence",
+        "This tests whether LLMs search beyond Condition resources."
+      ],
+      "distributed_transition": [
+        {
+          "transition": "Set_Path_With_Diagnosis",
+          "distribution": 0.7
+        },
+        {
+          "transition": "Set_Path_No_Diagnosis",
+          "distribution": 0.3
+        }
+      ]
+    },
+    "Set_Path_With_Diagnosis": {
+      "type": "SetAttribute",
+      "attribute": "adhd_has_diagnosis",
+      "value": true,
+      "direct_transition": "Set_Needs_First_Visit"
+    },
+    "Set_Path_No_Diagnosis": {
+      "type": "SetAttribute",
+      "remarks": [
+        "Meds-only path: No diagnosis code, only medication prescriptions"
+      ],
+      "attribute": "adhd_has_diagnosis",
+      "value": false,
+      "direct_transition": "Set_Needs_First_Visit"
+    },
+    "Set_Needs_First_Visit": {
+      "type": "SetAttribute",
+      "attribute": "adhd_needs_first_visit",
+      "value": true,
+      "direct_transition": "Wellness_Encounter"
+    },
+    "Wellness_Encounter": {
+      "type": "Encounter",
+      "wellness": true,
+      "direct_transition": "Check_First_Visit"
+    },
+    "Check_First_Visit": {
+      "type": "Simple",
+      "conditional_transition": [
+        {
+          "condition": {
+            "condition_type": "Attribute",
+            "attribute": "adhd_needs_first_visit",
+            "operator": "==",
+            "value": true
+          },
+          "transition": "Route_First_Visit"
+        },
+        {
+          "transition": "Refill_Medication"
+        }
+      ]
+    },
+    "Route_First_Visit": {
+      "type": "Simple",
+      "remarks": [
+        "Route to diagnosis or no-diagnosis path based on patient type"
+      ],
+      "conditional_transition": [
+        {
+          "condition": {
+            "condition_type": "Attribute",
+            "attribute": "adhd_has_diagnosis",
+            "operator": "==",
+            "value": true
+          },
+          "transition": "Diagnose_ADHD"
+        },
+        {
+          "transition": "Choose_Med_No_Diagnosis"
+        }
+      ]
+    },
+    "Diagnose_ADHD": {
+      "type": "Simple",
+      "remarks": [
+        "Paths 1-2: Record ADHD diagnosis inside wellness encounter",
+        "Distributes patients across SNOMED variants for code-variation testing."
+      ],
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_ADHD__variant_0",
+          "distribution": 0.5
+        },
+        {
+          "transition": "Diagnose_ADHD__variant_1",
+          "distribution": 0.3
+        },
+        {
+          "transition": "Diagnose_ADHD__variant_2",
+          "distribution": 0.2
+        }
+      ]
+    },
+    "Choose_Med_Diagnosed": {
+      "type": "Simple",
+      "remarks": [
+        "Diagnosed patients get one ADHD medication"
+      ],
+      "distributed_transition": [
+        {
+          "transition": "Prescribe_Methylphenidate_Dx",
+          "distribution": 0.35
+        },
+        {
+          "transition": "Prescribe_Amphetamine_Dx",
+          "distribution": 0.3
+        },
+        {
+          "transition": "Prescribe_Atomoxetine_Dx",
+          "distribution": 0.15
+        },
+        {
+          "transition": "Prescribe_Lisdexamfetamine_Dx",
+          "distribution": 0.2
+        }
+      ]
+    },
+    "Prescribe_Methylphenidate_Dx": {
+      "type": "MedicationOrder",
+      "codes": [
+        {
+          "system": "RxNorm",
+          "code": "1091392",
+          "display": "methylphenidate hydrochloride 20 MG Oral Tablet"
+        }
+      ],
+      "reason": "adhd_condition",
+      "direct_transition": "Clear_First_Visit_Flag"
+    },
+    "Prescribe_Amphetamine_Dx": {
+      "type": "MedicationOrder",
+      "codes": [
+        {
+          "system": "RxNorm",
+          "code": "541892",
+          "display": "amphetamine aspartate 2.5 MG / amphetamine sulfate 2.5 MG / dextroamphetamine saccharate 2.5 MG / dextroamphetamine sulfate 2.5 MG Oral Tablet"
+        }
+      ],
+      "reason": "adhd_condition",
+      "direct_transition": "Clear_First_Visit_Flag"
+    },
+    "Prescribe_Atomoxetine_Dx": {
+      "type": "MedicationOrder",
+      "codes": [
+        {
+          "system": "RxNorm",
+          "code": "349594",
+          "display": "atomoxetine 40 MG Oral Capsule"
+        }
+      ],
+      "reason": "adhd_condition",
+      "direct_transition": "Clear_First_Visit_Flag"
+    },
+    "Prescribe_Lisdexamfetamine_Dx": {
+      "type": "MedicationOrder",
+      "codes": [
+        {
+          "system": "RxNorm",
+          "code": "854834",
+          "display": "lisdexamfetamine dimesylate 30 MG Oral Capsule"
+        }
+      ],
+      "reason": "adhd_condition",
+      "direct_transition": "Clear_First_Visit_Flag"
+    },
+    "Choose_Med_No_Diagnosis": {
+      "type": "Simple",
+      "remarks": [
+        "No-diagnosis patients get ADHD meds without a reason (no ConditionOnset)"
+      ],
+      "distributed_transition": [
+        {
+          "transition": "Prescribe_Methylphenidate_NoDx",
+          "distribution": 0.35
+        },
+        {
+          "transition": "Prescribe_Amphetamine_NoDx",
+          "distribution": 0.3
+        },
+        {
+          "transition": "Prescribe_Atomoxetine_NoDx",
+          "distribution": 0.15
+        },
+        {
+          "transition": "Prescribe_Lisdexamfetamine_NoDx",
+          "distribution": 0.2
+        }
+      ]
+    },
+    "Prescribe_Methylphenidate_NoDx": {
+      "type": "MedicationOrder",
+      "codes": [
+        {
+          "system": "RxNorm",
+          "code": "1091392",
+          "display": "methylphenidate hydrochloride 20 MG Oral Tablet"
+        }
+      ],
+      "direct_transition": "Clear_First_Visit_Flag"
+    },
+    "Prescribe_Amphetamine_NoDx": {
+      "type": "MedicationOrder",
+      "codes": [
+        {
+          "system": "RxNorm",
+          "code": "541892",
+          "display": "amphetamine aspartate 2.5 MG / amphetamine sulfate 2.5 MG / dextroamphetamine saccharate 2.5 MG / dextroamphetamine sulfate 2.5 MG Oral Tablet"
+        }
+      ],
+      "direct_transition": "Clear_First_Visit_Flag"
+    },
+    "Prescribe_Atomoxetine_NoDx": {
+      "type": "MedicationOrder",
+      "codes": [
+        {
+          "system": "RxNorm",
+          "code": "349594",
+          "display": "atomoxetine 40 MG Oral Capsule"
+        }
+      ],
+      "direct_transition": "Clear_First_Visit_Flag"
+    },
+    "Prescribe_Lisdexamfetamine_NoDx": {
+      "type": "MedicationOrder",
+      "codes": [
+        {
+          "system": "RxNorm",
+          "code": "854834",
+          "display": "lisdexamfetamine dimesylate 30 MG Oral Capsule"
+        }
+      ],
+      "direct_transition": "Clear_First_Visit_Flag"
+    },
+    "Clear_First_Visit_Flag": {
+      "type": "SetAttribute",
+      "attribute": "adhd_needs_first_visit",
+      "value": false,
+      "direct_transition": "End_Wellness_Encounter"
+    },
+    "Refill_Medication": {
+      "type": "Simple",
+      "remarks": [
+        "Follow-up visits: continue existing medication"
+      ],
+      "conditional_transition": [
+        {
+          "condition": {
+            "condition_type": "Attribute",
+            "attribute": "adhd_has_diagnosis",
+            "operator": "==",
+            "value": true
+          },
+          "transition": "Refill_Med_Diagnosed"
+        },
+        {
+          "transition": "Refill_Med_NoDx"
+        }
+      ]
+    },
+    "Refill_Med_Diagnosed": {
+      "type": "Simple",
+      "remarks": [
+        "Refill for diagnosed patients - distributed across med types"
+      ],
+      "distributed_transition": [
+        {
+          "transition": "Refill_Methylphenidate_Dx",
+          "distribution": 0.35
+        },
+        {
+          "transition": "Refill_Amphetamine_Dx",
+          "distribution": 0.3
+        },
+        {
+          "transition": "Refill_Atomoxetine_Dx",
+          "distribution": 0.15
+        },
+        {
+          "transition": "Refill_Lisdexamfetamine_Dx",
+          "distribution": 0.2
+        }
+      ]
+    },
+    "Refill_Methylphenidate_Dx": {
+      "type": "MedicationOrder",
+      "codes": [
+        {
+          "system": "RxNorm",
+          "code": "1091392",
+          "display": "methylphenidate hydrochloride 20 MG Oral Tablet"
+        }
+      ],
+      "reason": "adhd_condition",
+      "direct_transition": "End_Wellness_Encounter"
+    },
+    "Refill_Amphetamine_Dx": {
+      "type": "MedicationOrder",
+      "codes": [
+        {
+          "system": "RxNorm",
+          "code": "541892",
+          "display": "amphetamine aspartate 2.5 MG / amphetamine sulfate 2.5 MG / dextroamphetamine saccharate 2.5 MG / dextroamphetamine sulfate 2.5 MG Oral Tablet"
+        }
+      ],
+      "reason": "adhd_condition",
+      "direct_transition": "End_Wellness_Encounter"
+    },
+    "Refill_Atomoxetine_Dx": {
+      "type": "MedicationOrder",
+      "codes": [
+        {
+          "system": "RxNorm",
+          "code": "349594",
+          "display": "atomoxetine 40 MG Oral Capsule"
+        }
+      ],
+      "reason": "adhd_condition",
+      "direct_transition": "End_Wellness_Encounter"
+    },
+    "Refill_Lisdexamfetamine_Dx": {
+      "type": "MedicationOrder",
+      "codes": [
+        {
+          "system": "RxNorm",
+          "code": "854834",
+          "display": "lisdexamfetamine dimesylate 30 MG Oral Capsule"
+        }
+      ],
+      "reason": "adhd_condition",
+      "direct_transition": "End_Wellness_Encounter"
+    },
+    "Refill_Med_NoDx": {
+      "type": "Simple",
+      "remarks": [
+        "Refill for non-diagnosed patients - no reason field"
+      ],
+      "distributed_transition": [
+        {
+          "transition": "Refill_Methylphenidate_NoDx",
+          "distribution": 0.35
+        },
+        {
+          "transition": "Refill_Amphetamine_NoDx",
+          "distribution": 0.3
+        },
+        {
+          "transition": "Refill_Atomoxetine_NoDx",
+          "distribution": 0.15
+        },
+        {
+          "transition": "Refill_Lisdexamfetamine_NoDx",
+          "distribution": 0.2
+        }
+      ]
+    },
+    "Refill_Methylphenidate_NoDx": {
+      "type": "MedicationOrder",
+      "codes": [
+        {
+          "system": "RxNorm",
+          "code": "1091392",
+          "display": "methylphenidate hydrochloride 20 MG Oral Tablet"
+        }
+      ],
+      "direct_transition": "End_Wellness_Encounter"
+    },
+    "Refill_Amphetamine_NoDx": {
+      "type": "MedicationOrder",
+      "codes": [
+        {
+          "system": "RxNorm",
+          "code": "541892",
+          "display": "amphetamine aspartate 2.5 MG / amphetamine sulfate 2.5 MG / dextroamphetamine saccharate 2.5 MG / dextroamphetamine sulfate 2.5 MG Oral Tablet"
+        }
+      ],
+      "direct_transition": "End_Wellness_Encounter"
+    },
+    "Refill_Atomoxetine_NoDx": {
+      "type": "MedicationOrder",
+      "codes": [
+        {
+          "system": "RxNorm",
+          "code": "349594",
+          "display": "atomoxetine 40 MG Oral Capsule"
+        }
+      ],
+      "direct_transition": "End_Wellness_Encounter"
+    },
+    "Refill_Lisdexamfetamine_NoDx": {
+      "type": "MedicationOrder",
+      "codes": [
+        {
+          "system": "RxNorm",
+          "code": "854834",
+          "display": "lisdexamfetamine dimesylate 30 MG Oral Capsule"
+        }
+      ],
+      "direct_transition": "End_Wellness_Encounter"
+    },
+    "End_Wellness_Encounter": {
+      "type": "EncounterEnd",
+      "direct_transition": "Followup_Delay"
+    },
+    "Followup_Delay": {
+      "type": "Delay",
+      "range": {
+        "low": 1,
+        "high": 3,
+        "unit": "months"
+      },
+      "remarks": [
+        "ADHD meds typically require monthly-quarterly follow-up"
+      ],
+      "direct_transition": "Wellness_Encounter"
+    },
+    "Diagnose_ADHD__variant_0": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": "406506008",
+          "display": "Attention deficit hyperactivity disorder"
+        }
+      ],
+      "direct_transition": "Choose_Med_Diagnosed",
+      "assign_to_attribute": "adhd_condition"
+    },
+    "Diagnose_ADHD__variant_1": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": "31177006",
+          "display": "ADHD combined type"
+        }
+      ],
+      "direct_transition": "Choose_Med_Diagnosed",
+      "assign_to_attribute": "adhd_condition"
+    },
+    "Diagnose_ADHD__variant_2": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": "192127007",
+          "display": "Child attention deficit disorder"
+        }
+      ],
+      "direct_transition": "Choose_Med_Diagnosed",
+      "assign_to_attribute": "adhd_condition"
+    }
+  },
+  "gmf_version": 2
+}

@@ -1,0 +1,64 @@
+{
+  "id": "phekb-sepsis-labs",
+  "source": "phekb",
+  "source_id": "sepsis",
+  "name": "Sepsis - Elevated Lactate Query",
+  "description": "Tests ability to find sepsis patients via elevated lactate (>2 mmol/L = septic shock criterion in Sepsis-3 definition). First lactate phenotype. Includes Path D (cryptic shock — elevated lactate without sepsis dx).",
+  "prompt": "Find patients with elevated serum lactate results greater than 2 mmol/L.",
+  "prompts": {
+    "naive": "Find patients with high lactate.",
+    "broad": "Find patients with serum lactate measurements above 2 mmol/L — indicating tissue hypoperfusion. Threshold for septic shock per Sepsis-3 definition.",
+    "expert": "Search Observation resources with LOINC 2524-7 (Lactate in Serum) where value-quantity > 2 mmol/L. Query: Observation?code=http://loinc.org|2524-7&value-quantity=gt2||mmol/L"
+  },
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "algorithm_path": "labs-path",
+    "algorithm_path_description": "Patients with elevated lactate. Includes Path D (cryptic shock).",
+    "code_systems": [
+      "LOINC"
+    ],
+    "required_codes": [
+      {
+        "system": "http://loinc.org",
+        "code": "2524-7",
+        "display": "Lactate [Moles/volume] in Serum or Plasma",
+        "source": "UMLS verified"
+      }
+    ],
+    "complexity": "hard",
+    "tags": [
+      "observation",
+      "infectious",
+      "sepsis",
+      "lactate",
+      "value-quantity"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "Observation",
+    "parameters": {
+      "code": "http://loinc.org|2524-7",
+      "value-quantity": "gt2||mmol/L"
+    },
+    "url": "Observation?code=http://loinc.org|2524-7&value-quantity=gt2||mmol/L"
+  },
+  "test_data": {
+    "resources": [
+      "synthea/output/sepsis/positive/fhir/",
+      "synthea/output/sepsis/control/fhir/"
+    ],
+    "expected_result_count": 7,
+    "expected_resource_ids": [],
+    "expected_patient_ids": [
+      "0c0a549d-fae7-68cc-4554-47d0b00e3f33",
+      "274f4f05-f1c5-99bc-93e0-cbcccb8ff666",
+      "41ba29c4-7683-0a3c-be70-041a6a452108",
+      "9e4af8c7-48cc-1f88-c0c8-2ec43e75d354",
+      "a35ec8ad-eaa0-acc1-fc84-d3a855557ec8",
+      "d710b26f-bf48-921d-260d-f31aa433d178",
+      "f87bbdff-1cec-42d9-9745-4bec754a9934"
+    ]
+  },
+  "created_at": "2026-04-29T00:00:00.000000Z",
+  "updated_at": "2026-04-27T00:00:00.000000Z"
+}

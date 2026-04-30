@@ -1,0 +1,189 @@
+{
+  "id": "phekb-systemic-lupus-erythematosus-comprehensive",
+  "source": "phekb",
+  "source_id": "systemic-lupus-erythematosus",
+  "name": "SLE - Comprehensive Provider Query (DX + Meds + Labs)",
+  "description": "Simulates a rheumatologist identifying their complete SLE patient population. Combines: SLE diagnosis codes (organ-involvement variants), immunomodulators, and positive ANA. Tests Condition + MedicationRequest + Observation resource union for systemic autoimmune disease.",
+  "prompt": "I need to identify my complete systemic lupus erythematosus patient population for a quality improvement initiative on hydroxychloroquine adherence and disease activity monitoring. From clinical experience, SLE patients are documented in different ways: most have a formal SLE diagnosis (often organ-specific like lupus nephropathy or SLE with multisystem involvement), most are on immunomodulators (hydroxychloroquine, prednisone, methotrexate, azathioprine, or mycophenolate), and most have positive ANA titer.\n\nPlease run multiple FHIR queries to capture the full population:\n1. Patients with any SLE diagnosis (parent SLE, multisystem, organ/system involvement, lupus nephropathy, lupus pericarditis)\n2. Patients prescribed SLE medications (hydroxychloroquine, prednisone, methotrexate, azathioprine, mycophenolate)\n3. Patients with positive ANA titer (≥160)\n\nFor each query, return the matching resources. I want the union of all patients found.",
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "multi_query": true,
+    "algorithm_path": "comprehensive",
+    "algorithm_path_description": "Union of SLE dx codes, immunomodulator Rx, and positive ANA Observation. Tests multi-resource union for systemic autoimmune disease.",
+    "expected_queries": [
+      "Condition?code=http://snomed.info/sct|55464009,http://snomed.info/sct|239890001,http://snomed.info/sct|239887007,http://snomed.info/sct|295101000119105,http://snomed.info/sct|309762007",
+      "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|5521,http://www.nlm.nih.gov/research/umls/rxnorm|8640,http://www.nlm.nih.gov/research/umls/rxnorm|6851,http://www.nlm.nih.gov/research/umls/rxnorm|1256,http://www.nlm.nih.gov/research/umls/rxnorm|265323",
+      "Observation?code=http://loinc.org|5048-4&value-quantity=ge160"
+    ],
+    "code_systems": [
+      "SNOMED CT",
+      "RxNorm",
+      "LOINC"
+    ],
+    "required_codes": [
+      {
+        "system": "http://snomed.info/sct",
+        "code": "55464009",
+        "display": "Systemic lupus erythematosus",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "239890001",
+        "display": "SLE with multisystem involvement",
+        "source": "VSAC"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "239887007",
+        "display": "SLE with organ/system involvement",
+        "source": "VSAC"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "295101000119105",
+        "display": "Lupus nephropathy",
+        "source": "VSAC"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "309762007",
+        "display": "SLE with pericarditis",
+        "source": "VSAC"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "5521",
+        "display": "hydroxychloroquine",
+        "source": "RxNav"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "8640",
+        "display": "prednisone",
+        "source": "RxNav"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "6851",
+        "display": "methotrexate",
+        "source": "RxNav"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "1256",
+        "display": "azathioprine",
+        "source": "RxNav"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "265323",
+        "display": "mycophenolate",
+        "source": "RxNav"
+      },
+      {
+        "system": "http://loinc.org",
+        "code": "5048-4",
+        "display": "ANA titer",
+        "source": "UMLS verified"
+      }
+    ],
+    "complexity": "expert",
+    "tags": [
+      "multi-query",
+      "rheumatology",
+      "systemic-lupus-erythematosus",
+      "sle",
+      "comprehensive",
+      "cross-resource",
+      "autoimmune-systemic"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "Patient",
+    "parameters": {},
+    "url": "Condition?code=http://snomed.info/sct|55464009,http://snomed.info/sct|239890001,http://snomed.info/sct|239887007,http://snomed.info/sct|295101000119105,http://snomed.info/sct|309762007"
+  },
+  "test_data": {
+    "resources": [
+      "synthea/output/systemic-lupus-erythematosus/positive/fhir/",
+      "synthea/output/systemic-lupus-erythematosus/control/fhir/"
+    ],
+    "expected_result_count": 70,
+    "expected_resource_ids": [],
+    "expected_patient_ids": [
+      "056ca2f6-8a94-cd90-04ae-7bb601194ff8",
+      "0aa2e661-c0c3-a298-9666-cd112a38668e",
+      "0b1bc4f8-f8aa-6c37-60fc-800f1ee7217c",
+      "110071e5-3eac-f581-1e25-df40993e81f6",
+      "133ca428-f9a3-ee3f-ee9e-bb8ee87808b6",
+      "1425765a-7ecf-c957-d4cc-3ed75a98cbad",
+      "14cd5a2b-c703-6204-e1cd-5c598f0d0b48",
+      "1fa11cad-e1ee-24c7-bac5-f39ba0fd9cc4",
+      "22a476e2-c98b-20e5-cd22-07b46f1083ce",
+      "231a7536-025c-5ba3-8a2f-dc7e1ec2f6fe",
+      "23be6240-c487-fd38-9323-89bdf3b53130",
+      "23f138d8-426d-b25c-6b3b-4d3963f4b5c3",
+      "2473e024-dd07-eb31-bd3f-4c71f4b750db",
+      "27e5d5ce-a8a5-671c-a05a-b5aeef1defd8",
+      "2a1be381-4dfb-856d-d79e-aa47b77859cc",
+      "2b117ed1-74c9-42ee-5f9b-a3d764cf5569",
+      "2db4f1c1-2258-4780-3e8a-6f80c531efde",
+      "34b1d2b8-8c91-f089-875a-e80e9d60d84d",
+      "3a7ec0bd-27f9-b4b8-7240-832f702d40dc",
+      "40d01b5b-e340-171c-89d6-5253207764e0",
+      "413f1018-1736-521a-2a21-d8abb55a6168",
+      "4264c319-6abd-2c5c-fee8-40b3d4cb748a",
+      "433922c6-e082-42d1-6d0a-ee37b9b58c09",
+      "47a4ae45-3119-c572-d37f-11c87d671b1f",
+      "4b830f5c-7c17-f5af-c445-250728da7e6f",
+      "4cf4f0cb-0703-8882-d2a4-8605fac25721",
+      "5598bc32-6378-a251-7307-63137d6f57d4",
+      "55de6113-f25d-60cf-53ac-ac74e75f38b1",
+      "5a0bbc65-9779-6eba-456c-06f74fb015b8",
+      "5aed615e-e2c3-616e-63ba-124db8eedd56",
+      "5b897894-d747-42f9-1ee4-629a282a39d5",
+      "5e631a79-2a7b-fe62-57ae-7b801be9a9a2",
+      "5ed151d6-a672-1597-5031-841b8ec6d53a",
+      "633c3d4a-64f9-f85c-1d7e-9d86da58a32d",
+      "639e7cb4-18ca-6d9f-91ae-23ead45955e8",
+      "6ba6af93-f068-ff56-fa93-91b9abb83293",
+      "7be03c9b-fb6f-ae44-62cc-6fcfd40c239c",
+      "7c2dffe1-b8b5-5d35-7edc-06e328ec4487",
+      "7c5153a8-37e0-905d-a189-dbfd90479fcc",
+      "81126b37-2e2b-9bdf-505b-c85606cc2522",
+      "843e66e4-4454-4f9e-4fcd-335c5c5a8678",
+      "85e732d2-0e0c-693d-fa5f-cfd8df0dd2cf",
+      "86cb0956-6073-1264-93b7-1c44ef9456bf",
+      "881b42b8-a663-b348-72df-0dfbc68eca98",
+      "8b70c49e-863e-9148-e8ec-e0925e5cb311",
+      "91aeebe0-1ec8-a949-e988-d4165f180103",
+      "9c4a632d-0a0f-5344-8e26-9722c405e5a1",
+      "9cab4904-5be1-2a5d-3e85-80f4472461ed",
+      "a1b364f6-026a-8137-392e-4031b3843f45",
+      "a505b075-2c17-7d1f-f8f4-74a76c5d6b48",
+      "a619de9a-291d-316e-2e9e-33b2dfa62e87",
+      "a8faf7a3-09c9-791f-2420-95b261211a92",
+      "a93ab8fc-0fd8-4571-9806-41b39edd279c",
+      "b872b397-249f-953e-5332-d1210b7ea9d7",
+      "bd8814c1-682e-5d15-ed9c-e6d92bafffba",
+      "c04c4bbc-af2a-5835-3b7e-4a66f27caed4",
+      "c3e22793-0a42-74af-19a3-c1db0bfea0fa",
+      "c5d7e9c3-5c55-79db-23e6-92eb2a7820fe",
+      "cb168867-890b-715a-9da1-34543f4fa41b",
+      "d4b816e8-6cd3-b35c-66db-3214e47b77f1",
+      "d53f7135-4f50-4605-da3a-ff63013e8812",
+      "d5d36dea-9eff-9649-6649-fa0262630098",
+      "e1073fe9-ab54-8401-a0e7-78e9cc6509c5",
+      "e994972d-a435-61cb-c0ce-e765fbc9c80c",
+      "ed8e090a-42fc-478c-52d7-a463a4c28dd0",
+      "f2822830-ed9d-8eb8-15ac-ecc67f540e5c",
+      "f37ebfab-16e5-cc17-daf3-b487176f40d7",
+      "f3801d6c-80bf-7cf2-d503-2b92be9f204c",
+      "f80b5620-a81b-252a-5093-2246e9d2dd80",
+      "ff9f54fb-83cf-f2a7-8b80-dadc367c9aad"
+    ]
+  },
+  "created_at": "2026-04-28T00:00:00.000000Z",
+  "updated_at": "2026-04-27T00:00:00.000000Z"
+}

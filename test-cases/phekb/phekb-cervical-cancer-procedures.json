@@ -1,0 +1,68 @@
+{
+  "id": "phekb-cervical-cancer-procedures",
+  "source": "phekb",
+  "source_id": "cervical-cancer",
+  "name": "Cervical Cancer - Hysterectomy Procedure Query",
+  "description": "Tests ability to find cervical cancer patients via hysterectomy. Note: hysterectomy is also done for benign indications (fibroids, prolapse, abnormal bleeding) — high cross-indication. Same procedure code reused from ovarian cancer module.",
+  "prompt": "Find female patients who have undergone hysterectomy.",
+  "prompts": {
+    "naive": "Find women with hysterectomy.",
+    "broad": "Find female patients who have undergone hysterectomy — performed for cervical cancer, ovarian cancer, fibroids, prolapse, or abnormal bleeding.",
+    "expert": "Search Procedure resources with SNOMED 236886002 (Hysterectomy). Query: Procedure?code=http://snomed.info/sct|236886002"
+  },
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "algorithm_path": "procedure-path",
+    "algorithm_path_description": "Patients who underwent hysterectomy. High cross-indication with ovarian cancer + benign gyn indications.",
+    "code_systems": [
+      "SNOMED CT"
+    ],
+    "required_codes": [
+      {
+        "system": "http://snomed.info/sct",
+        "code": "236886002",
+        "display": "Hysterectomy",
+        "source": "UMLS verified"
+      }
+    ],
+    "complexity": "medium",
+    "tags": [
+      "procedure",
+      "oncology",
+      "gynecology",
+      "cervical-cancer",
+      "hysterectomy"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "Procedure",
+    "parameters": {
+      "code": "http://snomed.info/sct|236886002"
+    },
+    "url": "Procedure?code=http://snomed.info/sct|236886002"
+  },
+  "test_data": {
+    "resources": [
+      "synthea/output/cervical-cancer/positive/fhir/",
+      "synthea/output/cervical-cancer/control/fhir/"
+    ],
+    "expected_result_count": 12,
+    "expected_resource_ids": [],
+    "expected_patient_ids": [
+      "241d2ecf-6146-5669-ebb3-5ba16fa04971",
+      "38959bab-fe18-a541-4a7c-6d9ffadaa0d7",
+      "392a861e-6420-0933-a7b2-f9afc45dba29",
+      "46906797-fd45-e493-5681-7cefcb29e73a",
+      "4eefd533-f086-99bb-a7a3-58fde98fbaf3",
+      "50636104-1a06-4d16-e850-b4e5c0f15109",
+      "71f74e80-7348-8e9a-05a7-b83f81ec59ab",
+      "7f577afb-05ac-5ae3-b2d8-1b5655ac698a",
+      "86076c4c-86a5-2d02-5874-599269de2d94",
+      "8967d4bf-de56-49a9-54bc-67bfebbaaf4d",
+      "b9013b30-db70-a3c2-db5a-4e8235961bb2",
+      "c45bbcb3-3e2f-d84f-b69e-8e439974392d"
+    ]
+  },
+  "created_at": "2026-04-29T00:00:00.000000Z",
+  "updated_at": "2026-04-27T00:00:00.000000Z"
+}

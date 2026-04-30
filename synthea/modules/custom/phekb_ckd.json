@@ -1,0 +1,250 @@
+{
+  "name": "PheKB Chronic Kidney Disease",
+  "remarks": [
+    "Custom Synthea module for PheKB phenotype: chronic kidney disease",
+    "Based on Columbia CKD V4.2 algorithm (December 2017)",
+    "",
+    "PheKB algorithm: KDIGO-aligned staging via eGFR (G-stage) and albuminuria (A-stage):",
+    "  G-staging: G1>=90, G2 60-89, G3a 45-59, G3b 30-44, G4 15-29, G5<15",
+    "  A-staging: A1<30 mg/g, A2 30-300 mg/g, A3>300 mg/g (UACR)",
+    "  Case definition: dx OR sustained eGFR<60 OR persistent A2/A3.",
+    "",
+    "Generates FOUR patient paths:",
+    "  Path A (30%): Diagnosis + reduced eGFR + elevated UACR — full presentation",
+    "  Path B (15%): Diagnosis + reduced eGFR, no UACR documented",
+    "  Path C (35%): Reduced eGFR ONLY, NO diagnosis (tricky — undiagnosed CKD by labs, very common)",
+    "  Path D (20%): Elevated UACR + normal eGFR, NO diagnosis (CKD Stage 1 by proteinuria, often missed)",
+    "",
+    "Diagnosis SNOMED variation (Paths A + B):",
+    "  20% Chronic kidney disease (709044004) — generic parent",
+    "  20% Chronic kidney disease stage 2 (431856006)",
+    "  20% Chronic kidney disease stage 3 (433144002)",
+    "  25% Chronic kidney disease stage 3A (700378005)",
+    "  15% Chronic kidney disease stage 4 (431857002)",
+    "",
+    "Lab values:",
+    "  eGFR case range (Paths A/B/C): 25 - 58 mL/min/1.73 m² (Stage 3-4)",
+    "  eGFR Path D: 90 - 120 mL/min/1.73 m² (normal)",
+    "  UACR case range (Paths A/D): 50 - 500 mg/g (A2-A3 albuminuria)",
+    "",
+    "Codes verified via NIH UMLS MCP and VSAC OID 2.16.840.1.113762.1.4.1251.39 (UTSW CKD value set).",
+    "No medications generated — CKD has no phenotype-specific drug class."
+  ],
+  "states": {
+    "Initial": { "type": "Initial", "direct_transition": "Age_Guard" },
+
+    "Age_Guard": {
+      "type": "Guard",
+      "allow": { "condition_type": "Age", "operator": ">=", "quantity": 50, "unit": "years" },
+      "direct_transition": "Set_CKD_Flag"
+    },
+
+    "Set_CKD_Flag": { "type": "SetAttribute", "attribute": "ckd_positive", "value": true, "direct_transition": "Choose_Patient_Path" },
+
+    "Choose_Patient_Path": {
+      "type": "Simple",
+      "remarks": [
+        "Four-way split:",
+        "  Path A (30%): Dx + reduced eGFR + UACR",
+        "  Path B (15%): Dx + reduced eGFR, no UACR",
+        "  Path C (35%): Reduced eGFR only, NO dx (undiagnosed CKD)",
+        "  Path D (20%): Elevated UACR + normal eGFR, NO dx (CKD Stage 1 by proteinuria)"
+      ],
+      "distributed_transition": [
+        { "transition": "Set_Path_A", "distribution": 0.30 },
+        { "transition": "Set_Path_B", "distribution": 0.15 },
+        { "transition": "Set_Path_C", "distribution": 0.35 },
+        { "transition": "Set_Path_D", "distribution": 0.20 }
+      ]
+    },
+
+    "Set_Path_A": { "type": "SetAttribute", "attribute": "ckd_has_dx", "value": true, "direct_transition": "Set_Path_A_Egfr" },
+    "Set_Path_A_Egfr": { "type": "SetAttribute", "attribute": "ckd_has_low_egfr", "value": true, "direct_transition": "Set_Path_A_Uacr" },
+    "Set_Path_A_Uacr": { "type": "SetAttribute", "attribute": "ckd_has_high_uacr", "value": true, "direct_transition": "Choose_Subtype" },
+
+    "Set_Path_B": { "type": "SetAttribute", "attribute": "ckd_has_dx", "value": true, "direct_transition": "Set_Path_B_Egfr" },
+    "Set_Path_B_Egfr": { "type": "SetAttribute", "attribute": "ckd_has_low_egfr", "value": true, "direct_transition": "Set_Path_B_Uacr" },
+    "Set_Path_B_Uacr": { "type": "SetAttribute", "attribute": "ckd_has_high_uacr", "value": false, "direct_transition": "Choose_Subtype" },
+
+    "Set_Path_C": {
+      "type": "SetAttribute",
+      "remarks": ["TRICKY: reduced eGFR only, no diagnosis"],
+      "attribute": "ckd_has_dx",
+      "value": false,
+      "direct_transition": "Set_Path_C_Egfr"
+    },
+    "Set_Path_C_Egfr": { "type": "SetAttribute", "attribute": "ckd_has_low_egfr", "value": true, "direct_transition": "Set_Path_C_Uacr" },
+    "Set_Path_C_Uacr": { "type": "SetAttribute", "attribute": "ckd_has_high_uacr", "value": false, "direct_transition": "Choose_Subtype" },
+
+    "Set_Path_D": {
+      "type": "SetAttribute",
+      "remarks": ["TRICKY: elevated UACR with normal eGFR, no diagnosis (CKD Stage 1 by proteinuria)"],
+      "attribute": "ckd_has_dx",
+      "value": false,
+      "direct_transition": "Set_Path_D_Egfr"
+    },
+    "Set_Path_D_Egfr": { "type": "SetAttribute", "attribute": "ckd_has_low_egfr", "value": false, "direct_transition": "Set_Path_D_Uacr" },
+    "Set_Path_D_Uacr": { "type": "SetAttribute", "attribute": "ckd_has_high_uacr", "value": true, "direct_transition": "Choose_Subtype" },
+
+    "Choose_Subtype": {
+      "type": "Simple",
+      "distributed_transition": [
+        { "transition": "Set_Subtype_CKD", "distribution": 0.20 },
+        { "transition": "Set_Subtype_Stage2", "distribution": 0.20 },
+        { "transition": "Set_Subtype_Stage3", "distribution": 0.20 },
+        { "transition": "Set_Subtype_Stage3A", "distribution": 0.25 },
+        { "transition": "Set_Subtype_Stage4", "distribution": 0.15 }
+      ]
+    },
+
+    "Set_Subtype_CKD": { "type": "SetAttribute", "attribute": "ckd_subtype", "value": "ckd", "direct_transition": "Set_Needs_First_Visit" },
+    "Set_Subtype_Stage2": { "type": "SetAttribute", "attribute": "ckd_subtype", "value": "stage2", "direct_transition": "Set_Needs_First_Visit" },
+    "Set_Subtype_Stage3": { "type": "SetAttribute", "attribute": "ckd_subtype", "value": "stage3", "direct_transition": "Set_Needs_First_Visit" },
+    "Set_Subtype_Stage3A": { "type": "SetAttribute", "attribute": "ckd_subtype", "value": "stage3a", "direct_transition": "Set_Needs_First_Visit" },
+    "Set_Subtype_Stage4": { "type": "SetAttribute", "attribute": "ckd_subtype", "value": "stage4", "direct_transition": "Set_Needs_First_Visit" },
+
+    "Set_Needs_First_Visit": { "type": "SetAttribute", "attribute": "ckd_needs_first_visit", "value": true, "direct_transition": "Wellness_Encounter" },
+
+    "Wellness_Encounter": { "type": "Encounter", "wellness": true, "direct_transition": "Check_First_Visit" },
+
+    "Check_First_Visit": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "ckd_needs_first_visit", "operator": "==", "value": true }, "transition": "Check_Has_Diagnosis" },
+        { "transition": "Followup_Labs_Branch" }
+      ]
+    },
+
+    "Check_Has_Diagnosis": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "ckd_has_dx", "operator": "==", "value": true }, "transition": "Route_By_Subtype" },
+        { "transition": "Record_eGFR_Branch" }
+      ]
+    },
+
+    "Route_By_Subtype": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "ckd_subtype", "operator": "==", "value": "ckd" }, "transition": "Diagnose_CKD" },
+        { "condition": { "condition_type": "Attribute", "attribute": "ckd_subtype", "operator": "==", "value": "stage2" }, "transition": "Diagnose_Stage2" },
+        { "condition": { "condition_type": "Attribute", "attribute": "ckd_subtype", "operator": "==", "value": "stage3" }, "transition": "Diagnose_Stage3" },
+        { "condition": { "condition_type": "Attribute", "attribute": "ckd_subtype", "operator": "==", "value": "stage3a" }, "transition": "Diagnose_Stage3A" },
+        { "transition": "Diagnose_Stage4" }
+      ]
+    },
+
+    "Diagnose_CKD": {
+      "type": "ConditionOnset",
+      "assign_to_attribute": "ckd_condition",
+      "codes": [{ "system": "SNOMED-CT", "code": "709044004", "display": "Chronic kidney disease" }],
+      "direct_transition": "Record_eGFR_Branch"
+    },
+    "Diagnose_Stage2": {
+      "type": "ConditionOnset",
+      "assign_to_attribute": "ckd_condition",
+      "codes": [{ "system": "SNOMED-CT", "code": "431856006", "display": "Chronic kidney disease stage 2" }],
+      "direct_transition": "Record_eGFR_Branch"
+    },
+    "Diagnose_Stage3": {
+      "type": "ConditionOnset",
+      "assign_to_attribute": "ckd_condition",
+      "codes": [{ "system": "SNOMED-CT", "code": "433144002", "display": "Chronic kidney disease stage 3" }],
+      "direct_transition": "Record_eGFR_Branch"
+    },
+    "Diagnose_Stage3A": {
+      "type": "ConditionOnset",
+      "assign_to_attribute": "ckd_condition",
+      "codes": [{ "system": "SNOMED-CT", "code": "700378005", "display": "Chronic kidney disease stage 3A" }],
+      "direct_transition": "Record_eGFR_Branch"
+    },
+    "Diagnose_Stage4": {
+      "type": "ConditionOnset",
+      "assign_to_attribute": "ckd_condition",
+      "codes": [{ "system": "SNOMED-CT", "code": "431857002", "display": "Chronic kidney disease stage 4" }],
+      "direct_transition": "Record_eGFR_Branch"
+    },
+
+    "Record_eGFR_Branch": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "ckd_has_low_egfr", "operator": "==", "value": true }, "transition": "Record_Low_eGFR" },
+        { "transition": "Record_Normal_eGFR_PathD" }
+      ]
+    },
+
+    "Record_Low_eGFR": {
+      "type": "Observation",
+      "category": "laboratory",
+      "unit": "mL/min/{1.73_m2}",
+      "codes": [{ "system": "LOINC", "code": "62238-1", "display": "Glomerular filtration rate [Volume Rate/Area] in Serum, Plasma or Blood by Creatinine-based formula (CKD-EPI)/1.73 sq M" }],
+      "range": { "low": 25, "high": 58 },
+      "direct_transition": "Record_UACR_Branch"
+    },
+
+    "Record_Normal_eGFR_PathD": {
+      "type": "Observation",
+      "category": "laboratory",
+      "unit": "mL/min/{1.73_m2}",
+      "codes": [{ "system": "LOINC", "code": "62238-1", "display": "Glomerular filtration rate [Volume Rate/Area] in Serum, Plasma or Blood by Creatinine-based formula (CKD-EPI)/1.73 sq M" }],
+      "range": { "low": 90, "high": 120 },
+      "direct_transition": "Record_UACR_Branch"
+    },
+
+    "Record_UACR_Branch": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "ckd_has_high_uacr", "operator": "==", "value": true }, "transition": "Record_High_UACR" },
+        { "transition": "Clear_First_Visit_Flag" }
+      ]
+    },
+
+    "Record_High_UACR": {
+      "type": "Observation",
+      "category": "laboratory",
+      "unit": "mg/g",
+      "codes": [{ "system": "LOINC", "code": "9318-7", "display": "Albumin/Creatinine [Mass Ratio] in Urine" }],
+      "range": { "low": 50, "high": 500 },
+      "direct_transition": "Clear_First_Visit_Flag"
+    },
+
+    "Clear_First_Visit_Flag": { "type": "SetAttribute", "attribute": "ckd_needs_first_visit", "value": false, "direct_transition": "End_Wellness_Encounter" },
+
+    "Followup_Labs_Branch": {
+      "type": "Simple",
+      "remarks": ["Followup lab tracking — patients with reduced eGFR get repeat eGFR; patients with proteinuria get repeat UACR"],
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "ckd_has_low_egfr", "operator": "==", "value": true }, "transition": "Record_Followup_Low_eGFR" },
+        { "condition": { "condition_type": "Attribute", "attribute": "ckd_has_high_uacr", "operator": "==", "value": true }, "transition": "Record_Followup_High_UACR" },
+        { "transition": "End_Wellness_Encounter" }
+      ]
+    },
+
+    "Record_Followup_Low_eGFR": {
+      "type": "Observation",
+      "category": "laboratory",
+      "unit": "mL/min/{1.73_m2}",
+      "codes": [{ "system": "LOINC", "code": "62238-1", "display": "Glomerular filtration rate [Volume Rate/Area] in Serum, Plasma or Blood by Creatinine-based formula (CKD-EPI)/1.73 sq M" }],
+      "range": { "low": 28, "high": 56 },
+      "direct_transition": "End_Wellness_Encounter"
+    },
+
+    "Record_Followup_High_UACR": {
+      "type": "Observation",
+      "category": "laboratory",
+      "unit": "mg/g",
+      "codes": [{ "system": "LOINC", "code": "9318-7", "display": "Albumin/Creatinine [Mass Ratio] in Urine" }],
+      "range": { "low": 45, "high": 400 },
+      "direct_transition": "End_Wellness_Encounter"
+    },
+
+    "End_Wellness_Encounter": { "type": "EncounterEnd", "direct_transition": "Followup_Delay" },
+
+    "Followup_Delay": {
+      "type": "Delay",
+      "range": { "low": 4, "high": 8, "unit": "months" },
+      "direct_transition": "Wellness_Encounter"
+    }
+  },
+  "gmf_version": 2
+}

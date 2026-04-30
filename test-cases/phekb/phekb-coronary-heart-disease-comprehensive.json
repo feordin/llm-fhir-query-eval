@@ -1,0 +1,176 @@
+{
+  "id": "phekb-coronary-heart-disease-comprehensive",
+  "source": "phekb",
+  "source_id": "coronary-heart-disease",
+  "name": "Coronary Heart Disease - Comprehensive Provider Query (DX + Meds + Procedures)",
+  "description": "Simulates a cardiologist identifying their complete CHD patient population. Real-world identification combines: CHD diagnosis codes, secondary prevention medications, and revascularization procedures. **First test case unioning Condition + MedicationRequest + Procedure resources.** Tests whether LLM correctly queries multiple FHIR resource types in a multi-query union.",
+  "prompt": "I need to identify my complete coronary heart disease patient population for a secondary prevention adherence quality initiative. From clinical experience, CHD patients are documented in different ways: most have a formal CHD diagnosis (coronary arteriosclerosis, ischemic heart disease, or extent-specific variants like multi-vessel disease), most are on secondary prevention medications (aspirin, clopidogrel, statins, beta blockers), and many have undergone revascularization procedures (CABG or PCI/stent placement).\n\nPlease run multiple FHIR queries to capture the full population:\n1. Patients with any CHD diagnosis (coronary arteriosclerosis, ischemic heart disease, triple vessel, multi-vessel, or left main disease)\n2. Patients prescribed secondary prevention medications (aspirin, clopidogrel, statins, or carvedilol)\n3. Patients who have undergone coronary revascularization procedures (CABG, PCI, stent placement, or balloon angioplasty)\n\nFor each query, return the matching resources. I want the union of all patients found.",
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "multi_query": true,
+    "algorithm_path": "comprehensive",
+    "algorithm_path_description": "Union of CHD dx codes, secondary prevention Rx, and revascularization Procedures. **First multi-query test combining Condition + MedicationRequest + Procedure resources.**",
+    "expected_queries": [
+      "Condition?code=http://snomed.info/sct|53741008,http://snomed.info/sct|414545008,http://snomed.info/sct|233817007,http://snomed.info/sct|371803003,http://snomed.info/sct|371804009",
+      "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1191,http://www.nlm.nih.gov/research/umls/rxnorm|32968,http://www.nlm.nih.gov/research/umls/rxnorm|83367,http://www.nlm.nih.gov/research/umls/rxnorm|36567,http://www.nlm.nih.gov/research/umls/rxnorm|20352",
+      "Procedure?code=http://snomed.info/sct|232717009,http://snomed.info/sct|415070008,http://snomed.info/sct|36969009,http://snomed.info/sct|68466008"
+    ],
+    "code_systems": [
+      "SNOMED CT",
+      "RxNorm"
+    ],
+    "required_codes": [
+      {
+        "system": "http://snomed.info/sct",
+        "code": "53741008",
+        "display": "Coronary arteriosclerosis",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "414545008",
+        "display": "Ischemic heart disease",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "233817007",
+        "display": "Triple vessel disease of the heart",
+        "source": "Optum VSAC"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "371803003",
+        "display": "Multi vessel coronary artery disease",
+        "source": "Optum VSAC"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "371804009",
+        "display": "Left main coronary artery disease",
+        "source": "Optum VSAC"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "1191",
+        "display": "aspirin",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "32968",
+        "display": "clopidogrel",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "83367",
+        "display": "atorvastatin",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "36567",
+        "display": "simvastatin",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "20352",
+        "display": "carvedilol",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "232717009",
+        "display": "Coronary artery bypass grafting",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "415070008",
+        "display": "Percutaneous transluminal coronary intervention",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "36969009",
+        "display": "Placement of stent in coronary artery",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "68466008",
+        "display": "Coronary balloon angioplasty",
+        "source": "UMLS verified"
+      }
+    ],
+    "complexity": "expert",
+    "tags": [
+      "multi-query",
+      "cardiology",
+      "coronary-heart-disease",
+      "comprehensive",
+      "cross-resource",
+      "procedure",
+      "first-procedure-multi-query"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "Patient",
+    "parameters": {},
+    "url": "Condition?code=http://snomed.info/sct|53741008,http://snomed.info/sct|414545008,http://snomed.info/sct|233817007,http://snomed.info/sct|371803003,http://snomed.info/sct|371804009"
+  },
+  "test_data": {
+    "resources": [
+      "synthea/output/coronary-heart-disease/positive/fhir/",
+      "synthea/output/coronary-heart-disease/control/fhir/"
+    ],
+    "expected_result_count": 40,
+    "expected_resource_ids": [],
+    "expected_patient_ids": [
+      "085dc5e7-9862-fec1-c319-d8d4e7bd84c1",
+      "1c994f96-4fce-1821-125f-30debf9300d3",
+      "1d6f5e73-7b70-7d66-22b8-0ec459f4cd3d",
+      "278f6908-aeef-5e63-13d3-9298b3005334",
+      "29b181f9-470e-0ccd-4de5-31c0d9a7aff3",
+      "2a45ba61-bf92-8edf-7e79-96d43a42bf15",
+      "322ab5c6-5846-ac1e-38cc-48b8cb441e20",
+      "3d088973-ac76-8e5f-ea61-10bc9aa2a909",
+      "3e400a4e-a543-5391-d4fc-be2a218fe981",
+      "4235587d-5232-cec6-dd9f-b6119b094edb",
+      "52b9f450-88b5-38d2-06ab-3557df1497d9",
+      "5a4a8e9c-87c7-db1f-60d1-a9c342fb1e06",
+      "6479950d-2fcb-5253-41e3-db18f35af27e",
+      "6fbbf2e0-3bbe-6647-b32e-8ca686d0afff",
+      "723ad5b6-850f-799e-99b4-60e38ea93791",
+      "7ae0f7a3-c0bc-5600-7189-3788a3e75685",
+      "8021abf5-23d4-244f-857f-c560f94806eb",
+      "88b55b8d-1726-074c-8e62-16266caf77da",
+      "94d39d3a-426d-2c17-7f72-8c538a2ceded",
+      "96ddb8cf-a9da-b40a-cb29-58bef0190cc4",
+      "a4355b98-5b93-0c58-0a72-00a86ef0d941",
+      "a455f58f-0920-dcea-4971-130e5e771d0f",
+      "a7417f1f-fd80-d9fa-71d8-069a5233364d",
+      "a9901a83-5fbe-0482-f53d-65c43e0b8f6a",
+      "aa5c421c-6b45-f51f-7085-830f1409dffc",
+      "b84db720-fc92-d33d-8745-279482f6d8dc",
+      "bac2c591-22ce-0b38-a7da-98326b8aafff",
+      "bdbb4551-9771-52a6-3f2f-1f0c2e81b85f",
+      "c49744c0-d4a2-602b-0818-692f2e1aff53",
+      "c5c269e4-8d56-3485-873b-cfd889593ec1",
+      "c78a2a67-b09d-080f-75c2-2395d62cd4d1",
+      "c9a9f060-a150-fc08-3a60-9669597db06d",
+      "d57841fa-c9e2-a3d1-0e78-09bdbe4eed66",
+      "da8ecbed-b594-9bfd-90a3-a4912530f977",
+      "db2cafb6-46ae-f342-5636-e20ca4a04a07",
+      "dc7c46a8-e3b0-c9a9-99f8-725ef3e08237",
+      "de39f1c7-a011-b054-9b3d-17b8703b02e6",
+      "e3042215-ec00-4d81-0103-101f3c7ad07f",
+      "e43a6be7-fdce-d308-08e4-3831c959d4e9",
+      "ec7b08fc-118e-c15a-ae5c-2b649fb09791"
+    ]
+  },
+  "created_at": "2026-04-27T00:00:00.000000Z",
+  "updated_at": "2026-04-27T00:00:00.000000Z"
+}

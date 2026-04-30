@@ -1,0 +1,325 @@
+{
+  "name": "PheKB Sickle Cell Disease",
+  "remarks": [
+    "Custom Synthea module for PheKB phenotype: sickle cell disease",
+    "Based on PheKB SCD algorithm (Michalik DE, Panepinto JA, Medical College of Wisconsin)",
+    "",
+    "PheKB algorithm: Qualifying ICD-9 codes (282.41-282.69, excluding trait 282.5)",
+    "  + evidence of ongoing care (2 outpatient visits >=30 days apart OR 1 hospitalization)",
+    "  + exclusion if trait diagnoses > disease diagnoses",
+    "",
+    "Generates THREE SCD subtypes distributed by clinical prevalence:",
+    "  HbSS (60%): Most common, sickle cell-hemoglobin SS disease (SNOMED 127040003)",
+    "  HbSC (25%): Sickle cell-hemoglobin C disease (SNOMED 35434009)",
+    "  Sickle cell-thalassemia (15%): (SNOMED 36472007)",
+    "",
+    "Patient paths (three-way split for tricky patient generation):",
+    "  Path A (50%): Diagnosis + Medication (hydroxyurea) — standard identification",
+    "  Path B (20%): Diagnosis only, no medication — tests dx-only detection",
+    "  Path C (30%): Medication only, NO diagnosis — the 'tricky' patients",
+    "    These patients have hydroxyurea but no SCD Condition resource.",
+    "    Tests whether LLMs search beyond Condition resources.",
+    "",
+    "All patients get multiple encounters (satisfies ongoing care criterion).",
+    "",
+    "Codes verified via NIH UMLS MCP (2025AB) and VSAC:",
+    "  SNOMED: 127040003 (HbSS), 35434009 (HbSC), 36472007 (SCD-thalassemia)",
+    "  ICD-10-CM: D57.1 (SCD without crisis), D57.20 (HbSC w/o crisis), D57.40 (SCD-thal w/o crisis)",
+    "  RxNorm: 5552 (hydroxyurea, from VSAC OID 2.16.840.1.113762.1.4.1290.22)",
+    "  VSAC dx value set: 2.16.840.1.113762.1.4.1242.2 (Sickle Cell Disease, 57 SNOMED codes)"
+  ],
+  "states": {
+    "Initial": {
+      "type": "Initial",
+      "direct_transition": "Age_Guard"
+    },
+
+    "Age_Guard": {
+      "type": "Guard",
+      "allow": {
+        "condition_type": "Age",
+        "operator": ">=",
+        "quantity": 1,
+        "unit": "years"
+      },
+      "direct_transition": "Set_SCD_Flag"
+    },
+
+    "Set_SCD_Flag": {
+      "type": "SetAttribute",
+      "attribute": "scd_positive",
+      "value": true,
+      "direct_transition": "Choose_Patient_Path"
+    },
+
+    "Choose_Patient_Path": {
+      "type": "Simple",
+      "remarks": [
+        "Three-way split:",
+        "  Path A (50%): Diagnosis + Medication (standard path)",
+        "  Path B (20%): Diagnosis only, no medication",
+        "  Path C (30%): Medication only, NO diagnosis (tricky patients)"
+      ],
+      "distributed_transition": [
+        { "transition": "Set_Path_A_Dx_Plus_Meds", "distribution": 0.50 },
+        { "transition": "Set_Path_B_Dx_Only", "distribution": 0.20 },
+        { "transition": "Set_Path_C_Meds_Only", "distribution": 0.30 }
+      ]
+    },
+
+    "Set_Path_A_Dx_Plus_Meds": {
+      "type": "SetAttribute",
+      "attribute": "scd_has_diagnosis",
+      "value": true,
+      "direct_transition": "Set_Path_A_Has_Meds"
+    },
+    "Set_Path_A_Has_Meds": {
+      "type": "SetAttribute",
+      "attribute": "scd_has_meds",
+      "value": true,
+      "direct_transition": "Choose_SCD_Subtype"
+    },
+
+    "Set_Path_B_Dx_Only": {
+      "type": "SetAttribute",
+      "attribute": "scd_has_diagnosis",
+      "value": true,
+      "direct_transition": "Set_Path_B_No_Meds"
+    },
+    "Set_Path_B_No_Meds": {
+      "type": "SetAttribute",
+      "attribute": "scd_has_meds",
+      "value": false,
+      "direct_transition": "Choose_SCD_Subtype"
+    },
+
+    "Set_Path_C_Meds_Only": {
+      "type": "SetAttribute",
+      "remarks": ["TRICKY: These patients get hydroxyurea but NO SCD diagnosis code"],
+      "attribute": "scd_has_diagnosis",
+      "value": false,
+      "direct_transition": "Set_Path_C_Has_Meds"
+    },
+    "Set_Path_C_Has_Meds": {
+      "type": "SetAttribute",
+      "attribute": "scd_has_meds",
+      "value": true,
+      "direct_transition": "Choose_SCD_Subtype"
+    },
+
+    "Choose_SCD_Subtype": {
+      "type": "Simple",
+      "remarks": [
+        "Distribute across SCD subtypes by clinical prevalence:",
+        "  60% HbSS (most common, most severe)",
+        "  25% HbSC",
+        "  15% Sickle cell-thalassemia"
+      ],
+      "distributed_transition": [
+        { "transition": "Set_Subtype_HbSS", "distribution": 0.60 },
+        { "transition": "Set_Subtype_HbSC", "distribution": 0.25 },
+        { "transition": "Set_Subtype_Thalassemia", "distribution": 0.15 }
+      ]
+    },
+
+    "Set_Subtype_HbSS": {
+      "type": "SetAttribute",
+      "attribute": "scd_subtype",
+      "value": "HbSS",
+      "direct_transition": "Set_Needs_First_Visit"
+    },
+
+    "Set_Subtype_HbSC": {
+      "type": "SetAttribute",
+      "attribute": "scd_subtype",
+      "value": "HbSC",
+      "direct_transition": "Set_Needs_First_Visit"
+    },
+
+    "Set_Subtype_Thalassemia": {
+      "type": "SetAttribute",
+      "attribute": "scd_subtype",
+      "value": "thalassemia",
+      "direct_transition": "Set_Needs_First_Visit"
+    },
+
+    "Set_Needs_First_Visit": {
+      "type": "SetAttribute",
+      "attribute": "scd_needs_first_visit",
+      "value": true,
+      "direct_transition": "Wellness_Encounter"
+    },
+
+    "Wellness_Encounter": {
+      "type": "Encounter",
+      "wellness": true,
+      "direct_transition": "Check_First_Visit"
+    },
+
+    "Check_First_Visit": {
+      "type": "Simple",
+      "conditional_transition": [
+        {
+          "condition": {
+            "condition_type": "Attribute",
+            "attribute": "scd_needs_first_visit",
+            "operator": "==",
+            "value": true
+          },
+          "transition": "Check_Has_Diagnosis"
+        },
+        {
+          "transition": "End_Wellness_Encounter"
+        }
+      ]
+    },
+
+    "Check_Has_Diagnosis": {
+      "type": "Simple",
+      "remarks": ["Route to diagnosis or meds-only path"],
+      "conditional_transition": [
+        {
+          "condition": {
+            "condition_type": "Attribute",
+            "attribute": "scd_has_diagnosis",
+            "operator": "==",
+            "value": true
+          },
+          "transition": "Route_By_Subtype_Dx"
+        },
+        {
+          "transition": "Prescribe_Hydroxyurea_NoDx"
+        }
+      ]
+    },
+
+    "Route_By_Subtype_Dx": {
+      "type": "Simple",
+      "conditional_transition": [
+        {
+          "condition": {
+            "condition_type": "Attribute",
+            "attribute": "scd_subtype",
+            "operator": "==",
+            "value": "HbSS"
+          },
+          "transition": "Diagnose_HbSS"
+        },
+        {
+          "condition": {
+            "condition_type": "Attribute",
+            "attribute": "scd_subtype",
+            "operator": "==",
+            "value": "HbSC"
+          },
+          "transition": "Diagnose_HbSC"
+        },
+        {
+          "transition": "Diagnose_Thalassemia"
+        }
+      ]
+    },
+
+    "Diagnose_HbSS": {
+      "type": "ConditionOnset",
+      "assign_to_attribute": "scd_condition",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": "127040003",
+          "display": "Sickle cell-hemoglobin SS disease"
+        }
+      ],
+      "direct_transition": "Check_Meds_After_Dx"
+    },
+
+    "Diagnose_HbSC": {
+      "type": "ConditionOnset",
+      "assign_to_attribute": "scd_condition",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": "35434009",
+          "display": "Sickle cell-hemoglobin C disease"
+        }
+      ],
+      "direct_transition": "Check_Meds_After_Dx"
+    },
+
+    "Diagnose_Thalassemia": {
+      "type": "ConditionOnset",
+      "assign_to_attribute": "scd_condition",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": "36472007",
+          "display": "Sickle cell-thalassemia disease"
+        }
+      ],
+      "direct_transition": "Check_Meds_After_Dx"
+    },
+
+    "Check_Meds_After_Dx": {
+      "type": "Simple",
+      "conditional_transition": [
+        {
+          "condition": {
+            "condition_type": "Attribute",
+            "attribute": "scd_has_meds",
+            "operator": "==",
+            "value": true
+          },
+          "transition": "Prescribe_Hydroxyurea_WithDx"
+        },
+        {
+          "transition": "Clear_First_Visit_Flag"
+        }
+      ]
+    },
+
+    "Prescribe_Hydroxyurea_WithDx": {
+      "type": "MedicationOrder",
+      "codes": [
+        {
+          "system": "RxNorm",
+          "code": "5552",
+          "display": "hydroxyurea"
+        }
+      ],
+      "reason": "scd_condition",
+      "direct_transition": "Clear_First_Visit_Flag"
+    },
+
+    "Prescribe_Hydroxyurea_NoDx": {
+      "type": "MedicationOrder",
+      "remarks": ["Path C: Medication without diagnosis — no 'reason' field since there's no condition"],
+      "codes": [
+        {
+          "system": "RxNorm",
+          "code": "5552",
+          "display": "hydroxyurea"
+        }
+      ],
+      "direct_transition": "Clear_First_Visit_Flag"
+    },
+
+    "Clear_First_Visit_Flag": {
+      "type": "SetAttribute",
+      "attribute": "scd_needs_first_visit",
+      "value": false,
+      "direct_transition": "End_Wellness_Encounter"
+    },
+
+    "End_Wellness_Encounter": {
+      "type": "EncounterEnd",
+      "direct_transition": "Followup_Delay"
+    },
+
+    "Followup_Delay": {
+      "type": "Delay",
+      "range": { "low": 2, "high": 6, "unit": "months" },
+      "direct_transition": "Wellness_Encounter"
+    }
+  },
+  "gmf_version": 2
+}

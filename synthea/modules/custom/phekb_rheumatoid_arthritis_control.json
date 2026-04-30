@@ -1,0 +1,69 @@
+{
+  "name": "PheKB Rheumatoid Arthritis Control",
+  "remarks": [
+    "Control module for PheKB rheumatoid arthritis phenotype.",
+    "Generates patients who do NOT have rheumatoid arthritis.",
+    "",
+    "Controls per Harvard eMERGE algorithm must:",
+    "  - Have no RA diagnosis",
+    "  - Have no DMARDs or biologics",
+    "  - Have RF below the upper limit of normal (typically <14 IU/mL)",
+    "",
+    "Lab values (intentionally below the case threshold of RF > 14):",
+    "  Control RF range: 2 - 12 IU/mL (well below ULN to avoid false positives)",
+    "",
+    "Controls get NO Condition resources for RA and NO RA medications."
+  ],
+  "states": {
+    "Initial": { "type": "Initial", "direct_transition": "Age_Guard" },
+
+    "Age_Guard": {
+      "type": "Guard",
+      "allow": { "condition_type": "Age", "operator": ">=", "quantity": 30, "unit": "years" },
+      "direct_transition": "Set_Control_Flag"
+    },
+
+    "Set_Control_Flag": { "type": "SetAttribute", "attribute": "ra_positive", "value": false, "direct_transition": "Set_Needs_First_Visit" },
+
+    "Set_Needs_First_Visit": { "type": "SetAttribute", "attribute": "ra_needs_first_visit", "value": true, "direct_transition": "Wellness_Encounter" },
+
+    "Wellness_Encounter": { "type": "Encounter", "wellness": true, "direct_transition": "Check_First_Visit" },
+
+    "Check_First_Visit": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "ra_needs_first_visit", "operator": "==", "value": true }, "transition": "Record_Negative_RF" },
+        { "transition": "Record_Followup_Negative_RF" }
+      ]
+    },
+
+    "Record_Negative_RF": {
+      "type": "Observation",
+      "category": "laboratory",
+      "unit": "[IU]/mL",
+      "codes": [{ "system": "LOINC", "code": "11572-5", "display": "Rheumatoid factor [Units/volume] in Serum or Plasma" }],
+      "range": { "low": 2, "high": 12 },
+      "direct_transition": "Clear_First_Visit_Flag"
+    },
+
+    "Clear_First_Visit_Flag": { "type": "SetAttribute", "attribute": "ra_needs_first_visit", "value": false, "direct_transition": "End_Wellness_Encounter" },
+
+    "Record_Followup_Negative_RF": {
+      "type": "Observation",
+      "category": "laboratory",
+      "unit": "[IU]/mL",
+      "codes": [{ "system": "LOINC", "code": "11572-5", "display": "Rheumatoid factor [Units/volume] in Serum or Plasma" }],
+      "range": { "low": 2, "high": 11 },
+      "direct_transition": "End_Wellness_Encounter"
+    },
+
+    "End_Wellness_Encounter": { "type": "EncounterEnd", "direct_transition": "Followup_Delay" },
+
+    "Followup_Delay": {
+      "type": "Delay",
+      "range": { "low": 12, "high": 24, "unit": "months" },
+      "direct_transition": "Wellness_Encounter"
+    }
+  },
+  "gmf_version": 2
+}

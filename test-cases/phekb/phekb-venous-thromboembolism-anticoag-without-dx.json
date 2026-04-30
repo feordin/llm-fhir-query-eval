@@ -1,0 +1,129 @@
+{
+  "id": "phekb-venous-thromboembolism-anticoag-without-dx",
+  "source": "phekb",
+  "source_id": "venous-thromboembolism",
+  "name": "VTE - Anticoagulant WITHOUT Diagnosis (Negation / AFib Cohort)",
+  "description": "**Negation test.** Find patients on therapeutic anticoagulants who do NOT have a venous thromboembolism diagnosis. These are typically patients on long-term anticoagulation for atrial fibrillation, mechanical valves, or post-op DVT prophylaxis — clinically distinct from VTE patients but carrying the same bleeding risk. FHIR R4 doesn't natively support `NOT EXISTS` in queries, so the canonical solution is a two-query subtraction: anticoag patients minus VTE-diagnosed patients. Tests whether LLM understands the FHIR negation idiom.",
+  "prompt": "Find patients prescribed anticoagulant medications (warfarin, apixaban, rivaroxaban, dabigatran, or enoxaparin) who do NOT have a formal venous thromboembolism diagnosis. The intent is to identify patients on long-term anticoagulation for non-VTE indications such as atrial fibrillation stroke prevention or mechanical heart valve prophylaxis.",
+  "prompts": {
+    "naive": "Find patients on blood thinners without a clot diagnosis.",
+    "broad": "Find patients prescribed therapeutic anticoagulants (warfarin, DOACs, LMWH) who do NOT have a venous thromboembolism diagnosis. FHIR R4 does not natively support negative chains, so this requires a two-query subtraction approach: patients on anticoagulants MINUS patients with VTE diagnoses.",
+    "expert": "I need set difference: MedicationRequest?code=anticoags MINUS Condition?code=VTE-codes (at the patient level). FHIR doesn't support `NOT EXISTS` natively, so two queries are required: (1) `MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|11289,1364430,1114195,1037042,67108` to get anticoag patients, (2) `Condition?code=http://snomed.info/sct|128053003,234044007,281595001,59282003,234049002` to get VTE-diagnosed patients, then return query 1 patient set MINUS query 2 patient set."
+  },
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "multi_query": true,
+    "negation": true,
+    "algorithm_path": "negation-via-subtraction",
+    "algorithm_path_description": "Set difference (medication patients) MINUS (diagnosed patients). FHIR R4 has no native NOT EXISTS — requires client-side two-query subtraction. Tests whether LLM recognizes this idiom.",
+    "expected_queries": [
+      "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|11289,http://www.nlm.nih.gov/research/umls/rxnorm|1364430,http://www.nlm.nih.gov/research/umls/rxnorm|1114195,http://www.nlm.nih.gov/research/umls/rxnorm|1037042,http://www.nlm.nih.gov/research/umls/rxnorm|67108",
+      "Condition?code=http://snomed.info/sct|128053003,http://snomed.info/sct|234044007,http://snomed.info/sct|281595001,http://snomed.info/sct|59282003,http://snomed.info/sct|234049002"
+    ],
+    "negation_operation": "query[0]_patients - query[1]_patients",
+    "code_systems": [
+      "RxNorm",
+      "SNOMED CT"
+    ],
+    "required_codes": [
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "11289",
+        "display": "warfarin",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "1364430",
+        "display": "apixaban",
+        "source": "VSAC"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "1114195",
+        "display": "rivaroxaban",
+        "source": "VSAC"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "1037042",
+        "display": "dabigatran etexilate",
+        "source": "VSAC"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "67108",
+        "display": "enoxaparin",
+        "source": "VSAC"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "128053003",
+        "display": "Deep venous thrombosis",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "234044007",
+        "display": "Iliofemoral DVT",
+        "source": "VSAC"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "281595001",
+        "display": "IVC thrombosis",
+        "source": "VSAC"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "59282003",
+        "display": "Pulmonary embolism",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "234049002",
+        "display": "Venous embolism",
+        "source": "VSAC"
+      }
+    ],
+    "complexity": "expert",
+    "tags": [
+      "negation",
+      "set-difference",
+      "two-query",
+      "no-not-exists",
+      "vascular",
+      "venous-thromboembolism",
+      "anticoagulant",
+      "atrial-fibrillation-cohort"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "MedicationRequest",
+    "parameters": {
+      "code": "http://www.nlm.nih.gov/research/umls/rxnorm|11289,http://www.nlm.nih.gov/research/umls/rxnorm|1364430,http://www.nlm.nih.gov/research/umls/rxnorm|1114195,http://www.nlm.nih.gov/research/umls/rxnorm|1037042,http://www.nlm.nih.gov/research/umls/rxnorm|67108"
+    },
+    "url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|11289,http://www.nlm.nih.gov/research/umls/rxnorm|1364430,http://www.nlm.nih.gov/research/umls/rxnorm|1114195,http://www.nlm.nih.gov/research/umls/rxnorm|1037042,http://www.nlm.nih.gov/research/umls/rxnorm|67108"
+  },
+  "test_data": {
+    "resources": [
+      "synthea/output/venous-thromboembolism/positive/fhir/",
+      "synthea/output/venous-thromboembolism/control/fhir/"
+    ],
+    "expected_result_count": 8,
+    "expected_resource_ids": [],
+    "expected_patient_ids": [
+      "0f6ff136-b44e-03c5-d7ed-a368168a4a69",
+      "4e71a082-772c-dc9a-4fca-e1e8052a259e",
+      "561614dd-3521-cb72-bd0b-f8400e900799",
+      "9cdf486e-8634-adbd-72ac-8ce62c315e62",
+      "b39887f3-49a6-2a39-9f68-5331622e5798",
+      "c2a1a7d7-64ca-3773-0f43-c921bde903c9",
+      "c491cb8b-130b-d80c-2f17-29b0eec7b30c",
+      "f1b76f27-3b7d-eef7-3def-1f70ae76e352"
+    ]
+  },
+  "created_at": "2026-04-28T00:00:00.000000Z",
+  "updated_at": "2026-04-28T00:00:00.000000Z"
+}

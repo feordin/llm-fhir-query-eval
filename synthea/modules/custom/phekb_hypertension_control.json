@@ -1,0 +1,32 @@
+{
+  "name": "PheKB Hypertension Control",
+  "remarks": [
+    "Control module for PheKB hypertension phenotype.",
+    "Generates patients who do NOT have hypertension.",
+    "",
+    "Controls per PheKB resistant-HTN algorithm must:",
+    "  - Have no HTN diagnosis",
+    "  - Have no antihypertensive medications",
+    "  - Have all BP measurements SBP < 135 mmHg and DBP < 90 mmHg",
+    "",
+    "Lab values (intentionally below the case threshold of SBP > 140):",
+    "  Control SBP range: 105-128 mmHg (well below 140)"
+  ],
+  "states": {
+    "Initial": { "type": "Initial", "direct_transition": "Age_Guard" },
+    "Age_Guard": { "type": "Guard", "allow": { "condition_type": "Age", "operator": ">=", "quantity": 35, "unit": "years" }, "direct_transition": "Set_Control_Flag" },
+    "Set_Control_Flag": { "type": "SetAttribute", "attribute": "htn_positive", "value": false, "direct_transition": "Wellness_Encounter" },
+    "Wellness_Encounter": { "type": "Encounter", "wellness": true, "direct_transition": "Record_Normal_SBP" },
+    "Record_Normal_SBP": {
+      "type": "Observation",
+      "category": "vital-signs",
+      "unit": "mm[Hg]",
+      "codes": [{ "system": "LOINC", "code": "8480-6", "display": "Systolic blood pressure" }],
+      "range": { "low": 105, "high": 128 },
+      "direct_transition": "End_Wellness_Encounter"
+    },
+    "End_Wellness_Encounter": { "type": "EncounterEnd", "direct_transition": "Followup_Delay" },
+    "Followup_Delay": { "type": "Delay", "range": { "low": 12, "high": 24, "unit": "months" }, "direct_transition": "Wellness_Encounter" }
+  },
+  "gmf_version": 2
+}

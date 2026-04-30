@@ -1,0 +1,97 @@
+{
+  "id": "phekb-breast-cancer-meds",
+  "source": "phekb",
+  "source_id": "breast-cancer",
+  "name": "Breast Cancer - Endocrine Therapy + HER2 Therapy Query",
+  "description": "Tests ability to find breast cancer patients via systemic adjuvant therapy. The PheKB breast cancer algorithm uses hormone therapy use after diagnosis as an alternative case-classifying signal when pathology is not available. Treatment depends on receptor status: hormone receptor-positive (~70% of cases) get tamoxifen (premenopausal) or aromatase inhibitors (postmenopausal — anastrozole, letrozole, exemestane); HER2-positive (~15-20%) get trastuzumab. Synthea distributes patients across these classes. An LLM querying only tamoxifen will miss the postmenopausal AI-treated population.",
+  "prompt": "Find patients prescribed adjuvant therapy for breast cancer, including hormonal therapy such as tamoxifen, aromatase inhibitors like anastrozole, letrozole, or exemestane, or HER2-targeted therapy such as trastuzumab.",
+  "prompts": {
+    "naive": "Find patients on breast cancer medications.",
+    "broad": "Find patients prescribed any breast cancer adjuvant therapy: tamoxifen (a SERM used in premenopausal hormone receptor-positive disease), aromatase inhibitors (anastrozole, letrozole, exemestane — used in postmenopausal hormone receptor-positive disease), or HER2-directed therapy such as trastuzumab.",
+    "expert": "I need MedicationRequest resources for any breast cancer adjuvant therapy. Use these codes: RxNorm 10324 (tamoxifen ingredient), 199224 (anastrozole 1 MG Oral Tablet SCD), 200064 (letrozole 2.5 MG Oral Tablet SCD), 310261 (exemestane 25 MG Oral Tablet SCD), 224905 (trastuzumab ingredient). The aromatase inhibitor codes appear in the AIR Steward 'Aromatase Inhibitors' VSAC (OID 2.16.840.1.113883.3.464.1003.196.11.1266)."
+  },
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "algorithm_path": "medication-path",
+    "algorithm_path_description": "Patients with breast cancer adjuvant therapy (Paths A and C). Captures both diagnosed patients on therapy and the rare Path C tricky case (tamoxifen for chemoprevention without breast cancer dx — high-risk patients with BRCA mutations or atypical hyperplasia).",
+    "code_systems": [
+      "RxNorm"
+    ],
+    "required_codes": [
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "10324",
+        "display": "tamoxifen",
+        "source": "UMLS verified, RxNorm ingredient"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "199224",
+        "display": "anastrozole 1 MG Oral Tablet",
+        "source": "VSAC Aromatase Inhibitors value set"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "200064",
+        "display": "letrozole 2.5 MG Oral Tablet",
+        "source": "VSAC Aromatase Inhibitors value set"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "310261",
+        "display": "exemestane 25 MG Oral Tablet",
+        "source": "VSAC Aromatase Inhibitors value set"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "224905",
+        "display": "trastuzumab",
+        "source": "UMLS verified, RxNorm ingredient"
+      }
+    ],
+    "complexity": "medium",
+    "tags": [
+      "medication",
+      "oncology",
+      "breast-cancer",
+      "endocrine-therapy",
+      "her2-targeted",
+      "multi-class",
+      "code-variation"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "MedicationRequest",
+    "parameters": {
+      "code": "http://www.nlm.nih.gov/research/umls/rxnorm|10324,http://www.nlm.nih.gov/research/umls/rxnorm|199224,http://www.nlm.nih.gov/research/umls/rxnorm|200064,http://www.nlm.nih.gov/research/umls/rxnorm|310261,http://www.nlm.nih.gov/research/umls/rxnorm|224905"
+    },
+    "url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|10324,http://www.nlm.nih.gov/research/umls/rxnorm|199224,http://www.nlm.nih.gov/research/umls/rxnorm|200064,http://www.nlm.nih.gov/research/umls/rxnorm|310261,http://www.nlm.nih.gov/research/umls/rxnorm|224905"
+  },
+  "test_data": {
+    "resources": [
+      "synthea/output/breast-cancer/positive/fhir/",
+      "synthea/output/breast-cancer/control/fhir/"
+    ],
+    "expected_result_count": 15,
+    "expected_resource_ids": [],
+    "expected_patient_ids": [
+      "157ef18c-208e-3e27-05d1-ba3d7af10aba",
+      "18fb1dd9-c6cd-2630-9891-e0c756ae00fc",
+      "2976dab9-dc5c-ce87-1393-47445d0f5208",
+      "41cc47e3-9883-b373-877c-534e405ea8ea",
+      "5b5456b4-945c-a3fa-f1b4-fcd3863a4f32",
+      "8c134c6b-b20f-99d3-f9e3-f3d829e8bac8",
+      "90fd40b5-2649-d413-4c97-e5689aabf617",
+      "ad35f856-856e-6757-6526-1eea11470b8c",
+      "ae4ca1b9-fa3e-0da2-870a-3723c29ad322",
+      "b136c08d-fc91-5523-a1fe-836d37248eb1",
+      "ba1884ba-f019-9c56-538d-2064caf29f17",
+      "c8374d67-93d2-2d1a-2432-6ab0c125e240",
+      "f1e7ab73-931e-2d5d-8d5d-9a367098acf2",
+      "f1fc0f13-1412-6ab5-edef-ffa63f39464b",
+      "f782a497-fab6-7145-c137-74aedb93eaca"
+    ]
+  },
+  "created_at": "2026-04-27T00:00:00.000000Z",
+  "updated_at": "2026-04-27T00:00:00.000000Z"
+}

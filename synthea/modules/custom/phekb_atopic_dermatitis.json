@@ -1,0 +1,340 @@
+{
+  "name": "PheKB Atopic Dermatitis",
+  "remarks": [
+    "Custom Synthea module for PheKB phenotype: atopic-dermatitis",
+    "Based on PheKB atopic dermatitis algorithm (2 identification paths)",
+    "",
+    "Generates TWO types of positive patients:",
+    "  Type A (70%): Diagnosis + Meds (Algorithm Path 1: 2+ visits + 2+ AD meds)",
+    "  Type B (30%): Meds ONLY, NO diagnosis code (managed by primary care)",
+    "",
+    "Path 1: Age >= 60 days, ICD-9 691.8 in 2+ visits + 2+ AD med prescriptions",
+    "Path 2: Age >= 60 days, ICD-9 691.8 in 3+ visits (no meds required)",
+    "Type B patients test whether LLMs search MedicationRequest, not just Condition.",
+    "",
+    "Exclusions (not modeled): scabies, Wiskott-Aldrich, ichthyosis, chromosomal anomalies",
+    "",
+    "Codes verified via NIH UMLS MCP (2025AB):",
+    "  SNOMED 24079001 (Atopic dermatitis), ICD-10-CM L20.x",
+    "  RxNorm SCD: 106258 (hydrocortisone cream), 1014678 (cetirizine),",
+    "             1049630 (diphenhydramine), 198145 (prednisone 10mg)"
+  ],
+  "states": {
+    "Initial": {
+      "type": "Initial",
+      "direct_transition": "Age_Guard"
+    },
+    "Age_Guard": {
+      "type": "Guard",
+      "allow": {
+        "condition_type": "Age",
+        "operator": ">=",
+        "quantity": 1,
+        "unit": "years"
+      },
+      "direct_transition": "Wait_For_AD_Onset"
+    },
+    "Wait_For_AD_Onset": {
+      "type": "Delay",
+      "range": {
+        "low": 1,
+        "high": 5,
+        "unit": "years"
+      },
+      "direct_transition": "Choose_Patient_Path"
+    },
+    "Choose_Patient_Path": {
+      "type": "Simple",
+      "remarks": [
+        "Split patients into two groups:",
+        "  70% get a formal AD diagnosis + meds (Paths 1-2)",
+        "  30% have NO diagnosis - only meds (managed by primary care with topicals)",
+        "This tests whether LLMs search beyond Condition resources."
+      ],
+      "distributed_transition": [
+        {
+          "transition": "Set_Path_With_Diagnosis",
+          "distribution": 0.7
+        },
+        {
+          "transition": "Set_Path_No_Diagnosis",
+          "distribution": 0.3
+        }
+      ]
+    },
+    "Set_Path_With_Diagnosis": {
+      "type": "SetAttribute",
+      "attribute": "ad_has_diagnosis",
+      "value": true,
+      "direct_transition": "Set_Needs_First_Visit"
+    },
+    "Set_Path_No_Diagnosis": {
+      "type": "SetAttribute",
+      "remarks": [
+        "Meds-only path: patient managed by primary care, no formal AD diagnosis"
+      ],
+      "attribute": "ad_has_diagnosis",
+      "value": false,
+      "direct_transition": "Set_Needs_First_Visit"
+    },
+    "Set_Needs_First_Visit": {
+      "type": "SetAttribute",
+      "attribute": "ad_needs_first_visit",
+      "value": true,
+      "direct_transition": "Wellness_Encounter"
+    },
+    "Wellness_Encounter": {
+      "type": "Encounter",
+      "wellness": true,
+      "direct_transition": "Check_First_Visit"
+    },
+    "Check_First_Visit": {
+      "type": "Simple",
+      "conditional_transition": [
+        {
+          "condition": {
+            "condition_type": "Attribute",
+            "attribute": "ad_needs_first_visit",
+            "operator": "==",
+            "value": true
+          },
+          "transition": "Route_First_Visit"
+        },
+        {
+          "transition": "End_Wellness_Encounter"
+        }
+      ]
+    },
+    "Route_First_Visit": {
+      "type": "Simple",
+      "remarks": [
+        "Route to diagnosis or no-diagnosis path based on patient type"
+      ],
+      "conditional_transition": [
+        {
+          "condition": {
+            "condition_type": "Attribute",
+            "attribute": "ad_has_diagnosis",
+            "operator": "==",
+            "value": true
+          },
+          "transition": "Diagnose_Atopic_Dermatitis"
+        },
+        {
+          "transition": "Choose_Meds_Only_Med"
+        }
+      ]
+    },
+    "Diagnose_Atopic_Dermatitis": {
+      "type": "Simple",
+      "remarks": [
+        "Paths 1-2: Record atopic dermatitis diagnosis inside wellness encounter",
+        "Distributes patients across SNOMED variants for code-variation testing."
+      ],
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Atopic_Dermatitis__variant_0",
+          "distribution": 0.7
+        },
+        {
+          "transition": "Diagnose_Atopic_Dermatitis__variant_1",
+          "distribution": 0.3
+        }
+      ]
+    },
+    "Prescribe_Hydrocortisone_Dx": {
+      "type": "MedicationOrder",
+      "codes": [
+        {
+          "system": "RxNorm",
+          "code": "106258",
+          "display": "hydrocortisone 10 MG/ML Topical Cream"
+        }
+      ],
+      "reason": "atopic_dermatitis_condition",
+      "direct_transition": "Choose_Second_Med_Diagnosed"
+    },
+    "Choose_Second_Med_Diagnosed": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Prescribe_Cetirizine_Dx",
+          "distribution": 0.35
+        },
+        {
+          "transition": "Prescribe_Diphenhydramine_Dx",
+          "distribution": 0.35
+        },
+        {
+          "transition": "Prescribe_Prednisone_Dx",
+          "distribution": 0.15
+        },
+        {
+          "transition": "Clear_First_Visit_Flag",
+          "distribution": 0.15
+        }
+      ]
+    },
+    "Prescribe_Cetirizine_Dx": {
+      "type": "MedicationOrder",
+      "codes": [
+        {
+          "system": "RxNorm",
+          "code": "1014678",
+          "display": "cetirizine hydrochloride 10 MG Oral Tablet"
+        }
+      ],
+      "reason": "atopic_dermatitis_condition",
+      "direct_transition": "Clear_First_Visit_Flag"
+    },
+    "Prescribe_Diphenhydramine_Dx": {
+      "type": "MedicationOrder",
+      "codes": [
+        {
+          "system": "RxNorm",
+          "code": "1049630",
+          "display": "diphenhydramine hydrochloride 25 MG Oral Tablet"
+        }
+      ],
+      "reason": "atopic_dermatitis_condition",
+      "direct_transition": "Clear_First_Visit_Flag"
+    },
+    "Prescribe_Prednisone_Dx": {
+      "type": "MedicationOrder",
+      "codes": [
+        {
+          "system": "RxNorm",
+          "code": "198145",
+          "display": "prednisone 10 MG Oral Tablet"
+        }
+      ],
+      "reason": "atopic_dermatitis_condition",
+      "direct_transition": "Clear_First_Visit_Flag"
+    },
+    "Choose_Meds_Only_Med": {
+      "type": "Simple",
+      "remarks": [
+        "Meds-only patients get AD meds without diagnosis (key evidence without diagnosis)"
+      ],
+      "distributed_transition": [
+        {
+          "transition": "Prescribe_Hydrocortisone_NoDoc",
+          "distribution": 0.4
+        },
+        {
+          "transition": "Prescribe_Cetirizine_NoDoc",
+          "distribution": 0.25
+        },
+        {
+          "transition": "Prescribe_Diphenhydramine_NoDoc",
+          "distribution": 0.2
+        },
+        {
+          "transition": "Prescribe_Prednisone_NoDoc",
+          "distribution": 0.15
+        }
+      ]
+    },
+    "Prescribe_Hydrocortisone_NoDoc": {
+      "type": "MedicationOrder",
+      "codes": [
+        {
+          "system": "RxNorm",
+          "code": "106258",
+          "display": "hydrocortisone 10 MG/ML Topical Cream"
+        }
+      ],
+      "direct_transition": "Choose_Second_Med_NoDoc"
+    },
+    "Choose_Second_Med_NoDoc": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Prescribe_Cetirizine_NoDoc",
+          "distribution": 0.5
+        },
+        {
+          "transition": "Prescribe_Diphenhydramine_NoDoc",
+          "distribution": 0.5
+        }
+      ]
+    },
+    "Prescribe_Cetirizine_NoDoc": {
+      "type": "MedicationOrder",
+      "codes": [
+        {
+          "system": "RxNorm",
+          "code": "1014678",
+          "display": "cetirizine hydrochloride 10 MG Oral Tablet"
+        }
+      ],
+      "direct_transition": "Clear_First_Visit_Flag"
+    },
+    "Prescribe_Diphenhydramine_NoDoc": {
+      "type": "MedicationOrder",
+      "codes": [
+        {
+          "system": "RxNorm",
+          "code": "1049630",
+          "display": "diphenhydramine hydrochloride 25 MG Oral Tablet"
+        }
+      ],
+      "direct_transition": "Clear_First_Visit_Flag"
+    },
+    "Prescribe_Prednisone_NoDoc": {
+      "type": "MedicationOrder",
+      "codes": [
+        {
+          "system": "RxNorm",
+          "code": "198145",
+          "display": "prednisone 10 MG Oral Tablet"
+        }
+      ],
+      "direct_transition": "Choose_Second_Med_NoDoc"
+    },
+    "Clear_First_Visit_Flag": {
+      "type": "SetAttribute",
+      "attribute": "ad_needs_first_visit",
+      "value": false,
+      "direct_transition": "End_Wellness_Encounter"
+    },
+    "End_Wellness_Encounter": {
+      "type": "EncounterEnd",
+      "direct_transition": "Followup_Delay"
+    },
+    "Followup_Delay": {
+      "type": "Delay",
+      "range": {
+        "low": 3,
+        "high": 12,
+        "unit": "months"
+      },
+      "direct_transition": "Wellness_Encounter"
+    },
+    "Diagnose_Atopic_Dermatitis__variant_0": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": "24079001",
+          "display": "Atopic dermatitis"
+        }
+      ],
+      "direct_transition": "Prescribe_Hydrocortisone_Dx",
+      "assign_to_attribute": "atopic_dermatitis_condition"
+    },
+    "Diagnose_Atopic_Dermatitis__variant_1": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": "43116000",
+          "display": "Eczema"
+        }
+      ],
+      "direct_transition": "Prescribe_Hydrocortisone_Dx",
+      "assign_to_attribute": "atopic_dermatitis_condition"
+    }
+  },
+  "gmf_version": 2
+}

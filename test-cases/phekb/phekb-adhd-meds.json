@@ -1,0 +1,146 @@
+{
+  "id": "phekb-adhd-meds",
+  "source": "phekb",
+  "source_id": "adhd-phenotype-algorithm",
+  "name": "ADHD - Medication Query",
+  "description": "Tests ability to find ADHD patients by searching for stimulant and non-stimulant medication prescriptions. This is critical for PheKB algorithm Path 1 where patients must have both ADHD diagnosis codes AND ADHD medications. Also catches the 30% of positive patients who have ADHD medications but NO formal diagnosis code, testing whether LLMs search MedicationRequest in addition to Condition.",
+  "prompt": "Find all medication orders for ADHD medications including methylphenidate, mixed amphetamine salts, atomoxetine, and lisdexamfetamine.",
+  "prompts": {
+    "naive": "Find all medication orders for ADHD medications including methylphenidate, mixed amphetamine salts, atomoxetine, and lisdexamfetamine.",
+    "expert": "I need to identify patients prescribed medications used to treat ADHD. The main medication classes include central nervous system stimulants -- methylphenidate (available in immediate and extended release formulations) and mixed amphetamine salts (a combination of amphetamine and dextroamphetamine salts) -- as well as non-stimulant options like atomoxetine (a selective norepinephrine reuptake inhibitor) and lisdexamfetamine (a prodrug stimulant). Each of these medications comes in multiple dosage forms. Search MedicationRequest resources for the specific drug product codes. Some patients on these medications may not have a formal ADHD diagnosis in our system, particularly those who were started on stimulants by an outside psychiatrist."
+  },
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "algorithm_path": "path-1-and-meds-only",
+    "algorithm_path_description": "Patients with ADHD medication prescriptions. Path 1 requires both diagnosis + meds. Some patients have ONLY medications and no diagnosis code, testing whether LLMs search beyond Condition resources.",
+    "code_systems": [
+      "RxNorm"
+    ],
+    "required_codes": [
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "1091392",
+        "display": "methylphenidate hydrochloride 20 MG Oral Tablet",
+        "source": "document"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "541892",
+        "display": "amphetamine aspartate 2.5 MG / amphetamine sulfate 2.5 MG / dextroamphetamine saccharate 2.5 MG / dextroamphetamine sulfate 2.5 MG Oral Tablet",
+        "source": "document"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "349594",
+        "display": "atomoxetine 40 MG Oral Capsule",
+        "source": "document"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "854834",
+        "display": "lisdexamfetamine dimesylate 30 MG Oral Capsule",
+        "source": "document"
+      }
+    ],
+    "complexity": "medium",
+    "tags": [
+      "medication",
+      "psychiatry",
+      "adhd",
+      "stimulant",
+      "rxnorm"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "MedicationRequest",
+    "parameters": {
+      "code": "http://www.nlm.nih.gov/research/umls/rxnorm|1091392,http://www.nlm.nih.gov/research/umls/rxnorm|541892,http://www.nlm.nih.gov/research/umls/rxnorm|349594,http://www.nlm.nih.gov/research/umls/rxnorm|854834"
+    },
+    "url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1091392,http://www.nlm.nih.gov/research/umls/rxnorm|541892,http://www.nlm.nih.gov/research/umls/rxnorm|349594,http://www.nlm.nih.gov/research/umls/rxnorm|854834"
+  },
+  "test_data": {
+    "resources": [
+      "synthea/output/adhd/positive/fhir/",
+      "synthea/output/adhd/control/fhir/"
+    ],
+    "expected_result_count": 73,
+    "expected_resource_ids": [],
+    "expected_patient_ids": [
+      "0aabc2e5-4fca-5210-f400-3b3c00d99848",
+      "0ec9ea30-9851-4aef-088e-10c8baee5cca",
+      "103e8409-f27e-bfe4-c1cc-8c40b370889d",
+      "11c39074-e91e-5e12-a7c2-1782a1c89907",
+      "1888b9a3-eebe-5d46-302d-f11551205b33",
+      "1909a88f-928a-cc3b-3b7d-ff6bb75f3ea6",
+      "1ad39008-28f5-92c2-24c5-c26d582c21d8",
+      "2237fd8c-9980-f84f-a362-4195db141580",
+      "2416932d-ef23-a494-ead3-3e8804b29770",
+      "2862878d-88ef-d5ac-f938-f7c1726c24c4",
+      "2c167999-289d-95fa-5c27-7d8b8d35348c",
+      "30f0e173-ca7f-3f5d-ae4f-2e83ce3b9d26",
+      "35b353dd-402b-571a-d67a-af0a104d0854",
+      "3d4f1a4b-e45b-c589-3589-416378574df9",
+      "41969296-e5e9-1785-6e28-fdc4ca8a5552",
+      "424b379f-edf2-79bb-18d3-398bf0edfb6d",
+      "42faffe2-bd3f-71c9-6115-5b5c5c9a9c78",
+      "45a72900-2a95-f054-3cb2-d04d98ab0b96",
+      "46976cf7-b0bf-be20-39a5-9f425a52886d",
+      "46ee9d82-b52c-856d-069b-5064ff052225",
+      "48bd46f1-a703-5f8f-9e2e-03be817fc13d",
+      "49f25839-2611-4992-7cee-0f945f2b9938",
+      "4f083ce3-f12b-bb4b-7353-e17f0cd55b0a",
+      "526792da-6a97-5311-da4d-8582f2986c25",
+      "539b0c23-b836-6665-ac71-f8447468837b",
+      "548e4bc1-e95b-a219-729d-b31d146374f5",
+      "55fbf6cf-a73b-cfab-5fe8-2402176c2152",
+      "5cf3e2f3-4ea0-d4d5-aad2-e9b8b72269ee",
+      "5e688e99-61b3-5c88-3f60-21df8aaced27",
+      "62f60bdb-cc5c-8305-b98b-f2b229a55eca",
+      "65a7f950-0807-f8d2-8c6c-3d13226937a6",
+      "696ed2ff-05ef-b41a-dc91-855b8b0e3a8e",
+      "6d1e7023-77dd-56b3-aebb-a2cd0c858caa",
+      "6fbddf55-7096-b883-7cd3-260f27953080",
+      "70966bf9-6249-1e3b-2c0c-adf0267fa23d",
+      "76b20010-c318-5754-8c85-983aa538522f",
+      "78f2f2b4-b0cc-12a4-def5-f2ae8a7de90c",
+      "9661a432-4630-2cd9-142c-386845fae837",
+      "9707caa0-c276-b37c-05ce-ed334961bc42",
+      "982750f4-569b-5949-196b-60699bdda3fb",
+      "992369f8-a16a-25b2-e5de-2976992a129b",
+      "9cebd2cb-6bbc-cc23-1da2-9357ba03b1aa",
+      "9fe78304-a0f6-1cb5-1d16-85298ef4b81c",
+      "a55abef3-3b54-87a7-6474-05fbe388e5d1",
+      "aa089c89-0de3-eaf1-3f73-20d1985d0c22",
+      "aa5cc22e-7ec8-c3b8-0194-1a4d3c416e23",
+      "aa616abe-1761-0c9a-7959-07544679dafd",
+      "ab981982-2518-5261-e5df-bd12bcc798a3",
+      "aee7bbe1-0c45-c028-1e62-1f4cdb30c273",
+      "b055d9f0-6f42-b64a-22f3-32d8d3a23de7",
+      "b567c016-3585-d502-4dec-3d7078cc9b17",
+      "ba419d35-0dfe-8af7-347c-eebf02485a56",
+      "bb555402-a37f-0f08-cc64-9129ea3be6ec",
+      "bff9d9d5-ee3d-d852-9c67-36d8361a4a4a",
+      "c0333065-72c9-299b-656c-6f2850da83e7",
+      "c4a3a9d4-feb2-b130-111a-01af498ed745",
+      "c86c400e-ff88-a1e3-2e23-caa4d8311f47",
+      "c9497d18-c44e-2be1-ac42-6899cae980ad",
+      "d0b6fc95-8d40-54cb-b591-20c4986f4367",
+      "d2ec9ddd-01c2-b332-186b-9aa3825b5be6",
+      "d355374f-9c1a-ac2b-a296-da7b5f3606af",
+      "d3727ff2-5d7b-347f-d78c-edc4323cf890",
+      "d76f5ffe-02cf-5a49-3579-0632f9cabd77",
+      "d881ee1a-69a9-fa41-de60-d64dd9e18ea0",
+      "de18a8c6-e59a-0aac-c25a-a043e6e88e3a",
+      "e19a3cda-6690-3bdf-452d-5fcf67cebcd9",
+      "e59dadf7-f512-afab-bddf-8dbf6e5404cf",
+      "e68bd318-35a0-ecf6-3fab-01cd411f95f6",
+      "e74367bd-7385-97dc-2c7f-251b4cd9fe29",
+      "eb5910f1-26e6-bc6f-b300-716eae678d6f",
+      "f41228f7-ec02-dae1-962e-99804738b94e",
+      "f890163e-206d-ca49-9691-33d92cedbc59",
+      "f9cafacc-09c3-47dd-0f86-e55109524bdf"
+    ]
+  },
+  "created_at": "2026-03-15T00:00:00.000000Z",
+  "updated_at": "2026-04-27T00:00:00.000000Z"
+}

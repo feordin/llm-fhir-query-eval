@@ -1,0 +1,63 @@
+{
+  "id": "phekb-ckd-albuminuria",
+  "source": "phekb",
+  "source_id": "ckd",
+  "name": "Chronic Kidney Disease - Albuminuria (UACR) Lab Query",
+  "description": "Tests ability to find chronic kidney disease patients via elevated urine albumin-to-creatinine ratio (UACR). The Columbia CKD V4.2 algorithm uses albuminuria for A-staging: A1 < 30 mg/g (normal), A2 30-300 mg/g (moderately increased), A3 > 300 mg/g (severely increased). The KDIGO 2012 guideline includes albuminuria as a kidney damage marker that can establish CKD even with normal eGFR (CKD Stage 1 by proteinuria). This test case uses UACR > 30 mg/g to capture A2 and A3 staging.",
+  "prompt": "Find laboratory observations for urine albumin-to-creatinine ratio (UACR) where the value is greater than 30 mg/g, indicating moderately or severely increased albuminuria.",
+  "prompts": {
+    "naive": "Find patients with proteinuria.",
+    "broad": "Find Observation resources for urine albumin-to-creatinine ratio (UACR) where the value is greater than 30 mg/g creatinine. UACR > 30 mg/g defines KDIGO A2 (moderately increased albuminuria, 30-300 mg/g) or A3 (severely increased albuminuria, > 300 mg/g) — both indicate kidney damage and can establish CKD even with normal eGFR.",
+    "expert": "I need Observation resources for elevated UACR. Use LOINC 9318-7 (Albumin/Creatinine [Mass Ratio] in Urine) — this is the standard random spot-urine UACR. Apply a value-quantity filter with the gt prefix at threshold 30. The query should look like: Observation?code=http://loinc.org|9318-7&value-quantity=gt30. The Columbia CKD algorithm also accepts LOINC 14959-1 (Microalbumin/Creatinine ratio) and 24-hour urine albumin (LOINC 1755-8, A24) but the spot UACR is most common."
+  },
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "algorithm_path": "lab-path",
+    "algorithm_path_description": "Patients with elevated UACR (Paths A and D). The KDIGO 2012 framework uses albuminuria as an independent kidney damage marker. Path D patients have UACR > 30 mg/g but normal eGFR — this is CKD Stage 1 by proteinuria, often missed by eGFR-only screening.",
+    "code_systems": [
+      "LOINC"
+    ],
+    "required_codes": [
+      {
+        "system": "http://loinc.org",
+        "code": "9318-7",
+        "display": "Albumin/Creatinine [Mass Ratio] in Urine",
+        "source": "UMLS verified, KDIGO A-staging"
+      }
+    ],
+    "complexity": "hard",
+    "tags": [
+      "observation",
+      "nephrology",
+      "ckd",
+      "value-quantity",
+      "albuminuria",
+      "uacr",
+      "kidney-damage-marker"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "Observation",
+    "parameters": {
+      "code": "http://loinc.org|9318-7",
+      "value-quantity": "gt30"
+    },
+    "url": "Observation?code=http://loinc.org|9318-7&value-quantity=gt30"
+  },
+  "test_data": {
+    "resources": [
+      "synthea/output/ckd/positive/fhir/",
+      "synthea/output/ckd/control/fhir/"
+    ],
+    "expected_result_count": 4,
+    "expected_resource_ids": [],
+    "expected_patient_ids": [
+      "b58b78aa-37be-b013-ba51-98bdebc4947b",
+      "c4a42722-b087-3935-fbe1-9cc0cf276d40",
+      "ed5eba29-a875-120a-7b04-a42034975276",
+      "fa04876c-372c-ad66-4fa7-c8bcce305712"
+    ]
+  },
+  "created_at": "2026-04-27T00:00:00.000000Z",
+  "updated_at": "2026-04-27T00:00:00.000000Z"
+}

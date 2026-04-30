@@ -1,0 +1,93 @@
+{
+  "id": "phekb-heart-failure-meds",
+  "source": "phekb",
+  "source_id": "heart-failure",
+  "name": "Heart Failure - Medication Query (GDMT)",
+  "description": "Tests ability to find heart failure patients via guideline-directed medical therapy (GDMT) prescriptions. The PheKB HF algorithm captures medications including ACE-I, ARB, beta blockers, and calcium channel blockers. Modern HFrEF GDMT consists of four pillars: ARNi (sacubitril/valsartan), beta blocker, MRA (spironolactone), and SGLT2 inhibitor — plus loop diuretics for symptom control. Synthea distributes patients across these classes. An LLM querying only one drug class (e.g., furosemide) will miss patients managed primarily on other GDMT pillars.",
+  "prompt": "Find patients prescribed medications used to treat heart failure, including loop diuretics like furosemide, beta blockers like carvedilol, mineralocorticoid receptor antagonists like spironolactone, ARNi combinations such as sacubitril/valsartan, and SGLT2 inhibitors like empagliflozin.",
+  "prompts": {
+    "naive": "Find patients on heart failure medications.",
+    "broad": "Find patients prescribed any of the guideline-directed heart failure therapies: loop diuretics (furosemide), beta blockers used for HF (carvedilol), mineralocorticoid receptor antagonists (spironolactone), ARNi (sacubitril/valsartan), or SGLT2 inhibitors (empagliflozin).",
+    "expert": "I need MedicationRequest resources for any of the four pillars of HFrEF GDMT plus loop diuretics for congestion. Use these RxNorm ingredient codes: 4603 (furosemide), 20352 (carvedilol), 9997 (spironolactone), 1656339 (sacubitril/valsartan combination), 1545653 (empagliflozin). Combine them in a single comma-separated code search."
+  },
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "algorithm_path": "medication-path",
+    "algorithm_path_description": "Patients with HF medication orders (Paths A and C). Captures both diagnosed patients on GDMT and Path C tricky patients on GDMT-class drugs without a formal HF diagnosis (common with diuretics, beta blockers used for hypertension or arrhythmia, etc).",
+    "code_systems": [
+      "RxNorm"
+    ],
+    "required_codes": [
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "4603",
+        "display": "furosemide",
+        "source": "UMLS verified, RxNorm ingredient"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "20352",
+        "display": "carvedilol",
+        "source": "UMLS verified, RxNorm ingredient"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "9997",
+        "display": "spironolactone",
+        "source": "UMLS verified, RxNorm ingredient"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "1656339",
+        "display": "sacubitril / valsartan",
+        "source": "UMLS verified, RxNorm ingredient combination"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "1545653",
+        "display": "empagliflozin",
+        "source": "UMLS verified, RxNorm ingredient"
+      }
+    ],
+    "complexity": "medium",
+    "tags": [
+      "medication",
+      "cardiology",
+      "heart-failure",
+      "gdmt",
+      "multi-class",
+      "code-variation"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "MedicationRequest",
+    "parameters": {
+      "code": "http://www.nlm.nih.gov/research/umls/rxnorm|4603,http://www.nlm.nih.gov/research/umls/rxnorm|20352,http://www.nlm.nih.gov/research/umls/rxnorm|9997,http://www.nlm.nih.gov/research/umls/rxnorm|1656339,http://www.nlm.nih.gov/research/umls/rxnorm|1545653"
+    },
+    "url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|4603,http://www.nlm.nih.gov/research/umls/rxnorm|20352,http://www.nlm.nih.gov/research/umls/rxnorm|9997,http://www.nlm.nih.gov/research/umls/rxnorm|1656339,http://www.nlm.nih.gov/research/umls/rxnorm|1545653"
+  },
+  "test_data": {
+    "resources": [
+      "synthea/output/heart-failure/positive/fhir/",
+      "synthea/output/heart-failure/control/fhir/"
+    ],
+    "expected_result_count": 12,
+    "expected_resource_ids": [],
+    "expected_patient_ids": [
+      "2c167999-289d-95fa-5c27-7d8b8d35348c",
+      "322ab5c6-5846-ac1e-38cc-48b8cb441e20",
+      "35b353dd-402b-571a-d67a-af0a104d0854",
+      "5e7ebf2c-22ec-a89b-53ab-38edddd81be9",
+      "62f60bdb-cc5c-8305-b98b-f2b229a55eca",
+      "7811dc30-8c86-8164-6c33-6b6f464745ef",
+      "a2fb233f-60e0-b477-cd38-af3923f792a3",
+      "aa616abe-1761-0c9a-7959-07544679dafd",
+      "ba419d35-0dfe-8af7-347c-eebf02485a56",
+      "bff9d9d5-ee3d-d852-9c67-36d8361a4a4a",
+      "c86c400e-ff88-a1e3-2e23-caa4d8311f47",
+      "d57841fa-c9e2-a3d1-0e78-09bdbe4eed66"
+    ]
+  },
+  "created_at": "2026-04-27T00:00:00.000000Z",
+  "updated_at": "2026-04-27T00:00:00.000000Z"
+}

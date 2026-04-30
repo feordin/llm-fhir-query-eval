@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from src.api.routes import test_cases
+from src.api.routes import results, test_cases
 from src.utils.config import settings
 
 app = FastAPI(
@@ -20,6 +20,7 @@ app.add_middleware(
 
 # Include routers
 app.include_router(test_cases.router, prefix="/api/test-cases", tags=["test-cases"])
+app.include_router(results.router, prefix="/api/results", tags=["results"])
 
 
 @app.get("/api/health")

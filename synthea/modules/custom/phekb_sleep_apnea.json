@@ -1,0 +1,138 @@
+{
+  "name": "PheKB Sleep Apnea",
+  "remarks": [
+    "Custom Synthea module for sleep apnea.",
+    "**Second module to use the Procedure FHIR resource pattern** (after CHD).",
+    "Uses the duration-field + non-wellness-Encounter pattern proven in CHD.",
+    "",
+    "Generates THREE patient paths:",
+    "  Path A (60%): Sleep apnea dx + polysomnography procedure",
+    "  Path B (15%): Sleep apnea dx, no polysomnography (clinical diagnosis only)",
+    "  Path D (25%): Polysomnography only, NO sleep apnea dx (negative study or CPAP failure)",
+    "",
+    "Diagnosis SNOMED variation (Paths A + B):",
+    "  20% Sleep apnea (73430006) — parent NOS",
+    "  40% Obstructive sleep apnea syndrome (78275009) — most common",
+    "  10% Central sleep apnea syndrome (27405005)",
+    "  20% Obstructive sleep apnea of adult (1101000119103)",
+    "  10% Mixed sleep apnea (230493001)"
+  ],
+  "states": {
+    "Initial": { "type": "Initial", "direct_transition": "Age_Guard" },
+    "Age_Guard": { "type": "Guard", "allow": { "condition_type": "Age", "operator": ">=", "quantity": 30, "unit": "years" }, "direct_transition": "Set_OSA_Flag" },
+    "Set_OSA_Flag": { "type": "SetAttribute", "attribute": "osa_positive", "value": true, "direct_transition": "Choose_Patient_Path" },
+    "Choose_Patient_Path": {
+      "type": "Simple",
+      "distributed_transition": [
+        { "transition": "Set_Path_A", "distribution": 0.60 },
+        { "transition": "Set_Path_B", "distribution": 0.15 },
+        { "transition": "Set_Path_D", "distribution": 0.25 }
+      ]
+    },
+    "Set_Path_A": { "type": "SetAttribute", "attribute": "osa_has_dx", "value": true, "direct_transition": "Set_Path_A_Proc" },
+    "Set_Path_A_Proc": { "type": "SetAttribute", "attribute": "osa_has_proc", "value": true, "direct_transition": "Choose_Subtype" },
+
+    "Set_Path_B": { "type": "SetAttribute", "attribute": "osa_has_dx", "value": true, "direct_transition": "Set_Path_B_Proc" },
+    "Set_Path_B_Proc": { "type": "SetAttribute", "attribute": "osa_has_proc", "value": false, "direct_transition": "Choose_Subtype" },
+
+    "Set_Path_D": { "type": "SetAttribute", "remarks": ["TRICKY: polysomnography without dx (negative study)"], "attribute": "osa_has_dx", "value": false, "direct_transition": "Set_Path_D_Proc" },
+    "Set_Path_D_Proc": { "type": "SetAttribute", "attribute": "osa_has_proc", "value": true, "direct_transition": "Choose_Subtype" },
+
+    "Choose_Subtype": {
+      "type": "Simple",
+      "distributed_transition": [
+        { "transition": "Set_Subtype_NOS", "distribution": 0.20 },
+        { "transition": "Set_Subtype_OSA", "distribution": 0.40 },
+        { "transition": "Set_Subtype_CSA", "distribution": 0.10 },
+        { "transition": "Set_Subtype_OSAAdult", "distribution": 0.20 },
+        { "transition": "Set_Subtype_Mixed", "distribution": 0.10 }
+      ]
+    },
+    "Set_Subtype_NOS": { "type": "SetAttribute", "attribute": "osa_subtype", "value": "nos", "direct_transition": "Set_Needs_First_Visit" },
+    "Set_Subtype_OSA": { "type": "SetAttribute", "attribute": "osa_subtype", "value": "osa", "direct_transition": "Set_Needs_First_Visit" },
+    "Set_Subtype_CSA": { "type": "SetAttribute", "attribute": "osa_subtype", "value": "csa", "direct_transition": "Set_Needs_First_Visit" },
+    "Set_Subtype_OSAAdult": { "type": "SetAttribute", "attribute": "osa_subtype", "value": "osaadult", "direct_transition": "Set_Needs_First_Visit" },
+    "Set_Subtype_Mixed": { "type": "SetAttribute", "attribute": "osa_subtype", "value": "mixed", "direct_transition": "Set_Needs_First_Visit" },
+
+    "Set_Needs_First_Visit": { "type": "SetAttribute", "attribute": "osa_needs_first_visit", "value": true, "direct_transition": "Wellness_Encounter" },
+    "Wellness_Encounter": { "type": "Encounter", "wellness": true, "direct_transition": "Check_First_Visit" },
+    "Check_First_Visit": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "osa_needs_first_visit", "operator": "==", "value": true }, "transition": "Check_Has_Diagnosis" },
+        { "transition": "End_Wellness_Encounter" }
+      ]
+    },
+    "Check_Has_Diagnosis": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "osa_has_dx", "operator": "==", "value": true }, "transition": "Route_By_Subtype" },
+        { "transition": "Check_Procedure_NoDx" }
+      ]
+    },
+    "Route_By_Subtype": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "osa_subtype", "operator": "==", "value": "nos" }, "transition": "Diagnose_NOS" },
+        { "condition": { "condition_type": "Attribute", "attribute": "osa_subtype", "operator": "==", "value": "osa" }, "transition": "Diagnose_OSA" },
+        { "condition": { "condition_type": "Attribute", "attribute": "osa_subtype", "operator": "==", "value": "csa" }, "transition": "Diagnose_CSA" },
+        { "condition": { "condition_type": "Attribute", "attribute": "osa_subtype", "operator": "==", "value": "osaadult" }, "transition": "Diagnose_OSAAdult" },
+        { "transition": "Diagnose_Mixed" }
+      ]
+    },
+    "Diagnose_NOS": { "type": "ConditionOnset", "assign_to_attribute": "osa_condition", "codes": [{ "system": "SNOMED-CT", "code": "73430006", "display": "Sleep apnea" }], "direct_transition": "Check_Procedure_WithDx" },
+    "Diagnose_OSA": { "type": "ConditionOnset", "assign_to_attribute": "osa_condition", "codes": [{ "system": "SNOMED-CT", "code": "78275009", "display": "Obstructive sleep apnea syndrome" }], "direct_transition": "Check_Procedure_WithDx" },
+    "Diagnose_CSA": { "type": "ConditionOnset", "assign_to_attribute": "osa_condition", "codes": [{ "system": "SNOMED-CT", "code": "27405005", "display": "Central sleep apnea syndrome" }], "direct_transition": "Check_Procedure_WithDx" },
+    "Diagnose_OSAAdult": { "type": "ConditionOnset", "assign_to_attribute": "osa_condition", "codes": [{ "system": "SNOMED-CT", "code": "1101000119103", "display": "Obstructive sleep apnea of adult" }], "direct_transition": "Check_Procedure_WithDx" },
+    "Diagnose_Mixed": { "type": "ConditionOnset", "assign_to_attribute": "osa_condition", "codes": [{ "system": "SNOMED-CT", "code": "230493001", "display": "Mixed sleep apnea" }], "direct_transition": "Check_Procedure_WithDx" },
+
+    "Check_Procedure_WithDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "osa_has_proc", "operator": "==", "value": true }, "transition": "Sleep_Lab_Encounter_WithDx" },
+        { "transition": "Clear_First_Visit_Flag" }
+      ]
+    },
+    "Sleep_Lab_Encounter_WithDx": {
+      "type": "Encounter",
+      "encounter_class": "ambulatory",
+      "reason": "osa_condition",
+      "codes": [{ "system": "SNOMED-CT", "code": "440655000", "display": "Outpatient procedure encounter (procedure)" }],
+      "direct_transition": "Procedure_Polysomnography_WithDx"
+    },
+    "Procedure_Polysomnography_WithDx": {
+      "type": "Procedure",
+      "reason": "osa_condition",
+      "codes": [{ "system": "SNOMED-CT", "code": "60554003", "display": "Polysomnography (procedure)" }],
+      "duration": { "low": 480, "high": 600, "unit": "minutes" },
+      "direct_transition": "End_Sleep_Lab_Encounter_WithDx"
+    },
+    "End_Sleep_Lab_Encounter_WithDx": { "type": "EncounterEnd", "direct_transition": "Clear_First_Visit_Flag" },
+
+    "Check_Procedure_NoDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "osa_has_proc", "operator": "==", "value": true }, "transition": "Sleep_Lab_Encounter_NoDx" },
+        { "transition": "Clear_First_Visit_Flag" }
+      ]
+    },
+    "Sleep_Lab_Encounter_NoDx": {
+      "type": "Encounter",
+      "encounter_class": "ambulatory",
+      "codes": [{ "system": "SNOMED-CT", "code": "440655000", "display": "Outpatient procedure encounter (procedure)" }],
+      "direct_transition": "Procedure_Polysomnography_NoDx"
+    },
+    "Procedure_Polysomnography_NoDx": {
+      "type": "Procedure",
+      "codes": [{ "system": "SNOMED-CT", "code": "60554003", "display": "Polysomnography (procedure)" }],
+      "duration": { "low": 480, "high": 600, "unit": "minutes" },
+      "direct_transition": "End_Sleep_Lab_Encounter_NoDx"
+    },
+    "End_Sleep_Lab_Encounter_NoDx": { "type": "EncounterEnd", "direct_transition": "Clear_First_Visit_Flag" },
+
+    "Clear_First_Visit_Flag": { "type": "SetAttribute", "attribute": "osa_needs_first_visit", "value": false, "direct_transition": "End_Wellness_Encounter" },
+    "End_Wellness_Encounter": { "type": "EncounterEnd", "direct_transition": "Followup_Delay" },
+    "Followup_Delay": { "type": "Delay", "range": { "low": 12, "high": 24, "unit": "months" }, "direct_transition": "Wellness_Encounter" }
+  },
+  "gmf_version": 2
+}

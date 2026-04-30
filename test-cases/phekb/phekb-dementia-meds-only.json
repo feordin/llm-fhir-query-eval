@@ -1,0 +1,103 @@
+{
+  "id": "phekb-dementia-meds-only",
+  "source": "phekb",
+  "source_id": "dementia",
+  "name": "Dementia - Medication-Only Patients (No Diagnosis)",
+  "description": "Tricky test case: finds patients on cognitive enhancer medications but with NO dementia diagnosis on the problem list (Path C). The PheKB algorithm explicitly allows this — a single dementia drug fill is sufficient. Real-world scenario: patient evaluated by outside neurologist who started donepezil empirically; the formal dementia diagnosis was never coded in the local EHR. Discoverable only by searching MedicationRequest.",
+  "prompt": "I want to identify patients in our system who are taking dementia medications but don't have a formal dementia diagnosis on their problem list. These may be patients diagnosed elsewhere or where the diagnosis hasn't been formally documented yet.",
+  "prompts": {
+    "naive": "Find patients on dementia medications who don't have a dementia diagnosis.",
+    "expert": "I need to find a documentation gap: patients on cognitive enhancer medications (cholinesterase inhibitors or NMDA antagonists) who lack a formal dementia Condition resource. Two-step approach: first find all patients with MedicationRequest for dementia drugs (donepezil 997223 and 1100184, galantamine 310436, memantine 996740, donepezil/memantine combo 1599803), then exclude those with a Condition for dementia subtypes (26929004 Alzheimer's, 429998004 Vascular, 312991009 Lewy body, 230270009 Frontotemporal, 52448006 Dementia)."
+  },
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "algorithm_path": "meds-only-path",
+    "algorithm_path_description": "Path C 'tricky' patients: have cognitive enhancer meds but NO dementia Condition resource. Tests cross-resource reasoning — the LLM must search MedicationRequest and recognize that the PheKB algorithm explicitly allows medication-only identification.",
+    "code_systems": [
+      "RxNorm",
+      "SNOMED CT"
+    ],
+    "required_codes": [
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "997223",
+        "display": "Donepezil hydrochloride 10 MG Oral Tablet",
+        "source": "Synthea built-in dementia module"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "1100184",
+        "display": "Donepezil hydrochloride 23 MG Oral Tablet",
+        "source": "Synthea built-in dementia module"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "310436",
+        "display": "Galantamine 4 MG Oral Tablet",
+        "source": "Synthea built-in dementia module"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "996740",
+        "display": "Memantine hydrochloride 2 MG/ML Oral Solution",
+        "source": "Synthea built-in dementia module"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "1599803",
+        "display": "24 HR Donepezil 10 MG / Memantine 28 MG ER Oral Capsule",
+        "source": "Synthea built-in dementia module"
+      }
+    ],
+    "complexity": "hard",
+    "tags": [
+      "medication",
+      "neurology",
+      "dementia",
+      "tricky",
+      "meds-only",
+      "cross-resource"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "MedicationRequest",
+    "parameters": {
+      "code": "http://www.nlm.nih.gov/research/umls/rxnorm|997223,http://www.nlm.nih.gov/research/umls/rxnorm|1100184,http://www.nlm.nih.gov/research/umls/rxnorm|310436,http://www.nlm.nih.gov/research/umls/rxnorm|996740,http://www.nlm.nih.gov/research/umls/rxnorm|1599803"
+    },
+    "url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|997223,http://www.nlm.nih.gov/research/umls/rxnorm|1100184,http://www.nlm.nih.gov/research/umls/rxnorm|310436,http://www.nlm.nih.gov/research/umls/rxnorm|996740,http://www.nlm.nih.gov/research/umls/rxnorm|1599803"
+  },
+  "test_data": {
+    "resources": [
+      "synthea/output/dementia/positive/fhir/",
+      "synthea/output/dementia/control/fhir/"
+    ],
+    "expected_result_count": 22,
+    "expected_resource_ids": [],
+    "expected_patient_ids": [
+      "09278a56-0541-6d95-b59b-2212f90e7614",
+      "0f321eb0-3fe3-e648-803c-66a0b357edf7",
+      "2017daab-c1bc-808d-bed8-3b352a2c5cdc",
+      "2a4d9d5b-fec0-4a16-43e7-c6965b6ca17b",
+      "3ed9f977-3713-3382-9245-9322cd5545f4",
+      "3f3eb144-2570-245d-965a-40aeb8e50b2a",
+      "3f753e95-1db1-f0bf-3b94-5770f0937f2e",
+      "486c49f5-1086-54f8-208d-729581d16600",
+      "48bf6ebc-b754-b7c5-248f-870d48c12542",
+      "54e82802-0a04-8d4f-07a7-b769e04b00da",
+      "881b42b8-a663-b348-72df-0dfbc68eca98",
+      "89c7d417-f506-ecfd-e530-b5537d39e9c3",
+      "8ae0d313-4083-1efe-ef7a-190898515f70",
+      "93e4c3ca-d318-c6f4-4079-852ecd8c2991",
+      "9aa3b49c-f51b-a242-b251-d78fb27f0de5",
+      "a29023a1-2cbf-0f67-e9d2-763c05b3437a",
+      "ba3bbe48-52dd-d697-9203-f6d7f360bdc8",
+      "c5d7e9c3-5c55-79db-23e6-92eb2a7820fe",
+      "c9cf5b3b-d231-18e0-bc0b-bddff94ee60b",
+      "d6bc2a3c-f643-db37-108b-ef44c367d0f6",
+      "d962ad1d-4e81-94b1-f36d-423eeefd5c48",
+      "f1636daf-0022-3707-b936-afc4993138cf"
+    ]
+  },
+  "created_at": "2026-04-25T00:00:00.000000Z",
+  "updated_at": "2026-04-25T00:00:00.000000Z"
+}

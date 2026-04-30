@@ -1,0 +1,67 @@
+{
+  "id": "phekb-systemic-lupus-erythematosus-labs",
+  "source": "phekb",
+  "source_id": "systemic-lupus-erythematosus",
+  "name": "SLE - ANA Antibody Titer Query (Positive)",
+  "description": "Tests ability to find SLE patients via positive ANA (Antinuclear Antibody) titer. ANA is the primary screening lab for SLE — titers ≥1:160 (numerically encoded as 160 in our data) are clinically significant. Synthea generates ANA titers of 160-1280 for SLE patients (positive). The ANA test has high sensitivity (~95%) but lower specificity — many autoimmune conditions can produce positive ANA.",
+  "prompt": "Find patients with positive antinuclear antibody (ANA) titer lab results at or above 160 — the clinical threshold for autoimmune disease workup.",
+  "prompts": {
+    "naive": "Find patients with positive ANA.",
+    "broad": "Find patients with elevated antinuclear antibody (ANA) titer — values at or above 160 (1:160 dilution), the standard threshold for clinically significant ANA positivity.",
+    "expert": "I need Observation resources with elevated ANA titer. Use LOINC code 5048-4 (Nuclear Ab [Titer] in Serum by Immunofluorescence). Filter by value-quantity at or above 160 (the standard 1:160 cutoff). Query: Observation?code=http://loinc.org|5048-4&value-quantity=ge160"
+  },
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "algorithm_path": "labs-path",
+    "algorithm_path_description": "Patients with positive ANA suggesting autoimmune disease. Sensitive but not SLE-specific.",
+    "code_systems": [
+      "LOINC"
+    ],
+    "required_codes": [
+      {
+        "system": "http://loinc.org",
+        "code": "5048-4",
+        "display": "Nuclear Ab [Titer] in Serum by Immunofluorescence",
+        "source": "UMLS verified"
+      }
+    ],
+    "complexity": "hard",
+    "tags": [
+      "observation",
+      "lab",
+      "rheumatology",
+      "systemic-lupus-erythematosus",
+      "sle",
+      "ana",
+      "autoantibody",
+      "value-quantity"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "Observation",
+    "parameters": {
+      "code": "http://loinc.org|5048-4",
+      "value-quantity": "ge160"
+    },
+    "url": "Observation?code=http://loinc.org|5048-4&value-quantity=ge160"
+  },
+  "test_data": {
+    "resources": [
+      "synthea/output/systemic-lupus-erythematosus/positive/fhir/",
+      "synthea/output/systemic-lupus-erythematosus/control/fhir/"
+    ],
+    "expected_result_count": 7,
+    "expected_resource_ids": [],
+    "expected_patient_ids": [
+      "1fa11cad-e1ee-24c7-bac5-f39ba0fd9cc4",
+      "5598bc32-6378-a251-7307-63137d6f57d4",
+      "55de6113-f25d-60cf-53ac-ac74e75f38b1",
+      "5ed151d6-a672-1597-5031-841b8ec6d53a",
+      "91aeebe0-1ec8-a949-e988-d4165f180103",
+      "a505b075-2c17-7d1f-f8f4-74a76c5d6b48",
+      "ed8e090a-42fc-478c-52d7-a463a4c28dd0"
+    ]
+  },
+  "created_at": "2026-04-28T00:00:00.000000Z",
+  "updated_at": "2026-04-27T00:00:00.000000Z"
+}

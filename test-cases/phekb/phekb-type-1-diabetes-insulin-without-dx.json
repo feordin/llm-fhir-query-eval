@@ -1,0 +1,118 @@
+{
+  "id": "phekb-type-1-diabetes-insulin-without-dx",
+  "source": "phekb",
+  "source_id": "type-1-diabetes",
+  "name": "Insulin WITHOUT Diabetes Diagnosis (Negation / Undocumented or Steroid-Induced)",
+  "description": "**Negation test for clinically-meaningful undocumented disease.** Find patients prescribed insulin who do NOT have a documented type 1 OR type 2 diabetes diagnosis. Real-world causes: (1) newly insulin-requiring T1D before formal diagnosis, (2) steroid-induced hyperglycemia in chronic-steroid patients, (3) gestational diabetes (resolved), (4) charting gaps. This is one of the most clinically actionable negation queries — these patients should be flagged for endocrinology review. Tests two-query subtraction across BOTH T1D and T2D diagnosis codes.",
+  "prompt": "Find patients prescribed insulin (any form — regular, glargine, aspart, etc.) who do NOT have a documented diagnosis of type 1 diabetes OR type 2 diabetes. These represent clinically important undocumented populations: undiagnosed diabetes, steroid-induced hyperglycemia, or charting gaps that should trigger endocrinology referral.",
+  "prompts": {
+    "naive": "Find insulin patients without diabetes.",
+    "broad": "Find patients with insulin prescriptions (any insulin product) but NO type 1 diabetes diagnosis AND NO type 2 diabetes diagnosis. Use a two-query subtraction approach: insulin patients minus diabetes-diagnosed patients (both T1D and T2D codes combined).",
+    "expert": "Set difference: MedicationRequest patients on any insulin MINUS Condition patients with T1D OR T2D diagnoses. Two queries: (1) `MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|5856,274783,311036,253182,575068` (insulin variants), (2) `Condition?code=http://snomed.info/sct|46635009,199229001,23045005,31321000119102,190368000,44054006&code=http://hl7.org/fhir/sid/icd-10-cm|E11` (T1D + T2D codes combined). Return query 1 MINUS query 2. The diagnosis subtraction must include BOTH T1D and T2D codes — neither alone is sufficient."
+  },
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "multi_query": true,
+    "negation": true,
+    "algorithm_path": "negation-via-subtraction-multi-dx",
+    "algorithm_path_description": "Set difference (insulin patients) MINUS (T1D OR T2D-diagnosed patients). Tests negation with multi-disease union on the subtracted side.",
+    "expected_queries": [
+      "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|5856,http://www.nlm.nih.gov/research/umls/rxnorm|274783,http://www.nlm.nih.gov/research/umls/rxnorm|311036,http://www.nlm.nih.gov/research/umls/rxnorm|253182,http://www.nlm.nih.gov/research/umls/rxnorm|575068",
+      "Condition?code=http://snomed.info/sct|46635009,http://snomed.info/sct|199229001,http://snomed.info/sct|23045005,http://snomed.info/sct|31321000119102,http://snomed.info/sct|190368000,http://snomed.info/sct|44054006,http://hl7.org/fhir/sid/icd-10-cm|E11"
+    ],
+    "negation_operation": "query[0]_patients - query[1]_patients",
+    "code_systems": [
+      "RxNorm",
+      "SNOMED CT",
+      "ICD-10-CM"
+    ],
+    "required_codes": [
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "5856",
+        "display": "Insulin",
+        "source": "RxNav verified"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "274783",
+        "display": "insulin glargine",
+        "source": "RxNav verified"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "311036",
+        "display": "Humulin R (insulin regular)",
+        "source": "RxNav verified"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "253182",
+        "display": "insulin regular human",
+        "source": "RxNav verified"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "575068",
+        "display": "insulin aspart protamine",
+        "source": "RxNav verified"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "46635009",
+        "display": "Diabetes mellitus type 1",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "44054006",
+        "display": "Type 2 diabetes mellitus",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://hl7.org/fhir/sid/icd-10-cm",
+        "code": "E11",
+        "display": "Type 2 diabetes mellitus",
+        "source": "UMLS verified"
+      }
+    ],
+    "complexity": "expert",
+    "tags": [
+      "negation",
+      "set-difference",
+      "two-query",
+      "endocrinology",
+      "type-1-diabetes",
+      "type-2-diabetes",
+      "insulin",
+      "undocumented-disease",
+      "steroid-induced-hyperglycemia",
+      "multi-disease-subtraction"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "MedicationRequest",
+    "parameters": {
+      "code": "http://www.nlm.nih.gov/research/umls/rxnorm|5856,http://www.nlm.nih.gov/research/umls/rxnorm|274783,http://www.nlm.nih.gov/research/umls/rxnorm|311036,http://www.nlm.nih.gov/research/umls/rxnorm|253182,http://www.nlm.nih.gov/research/umls/rxnorm|575068"
+    },
+    "url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|5856,http://www.nlm.nih.gov/research/umls/rxnorm|274783,http://www.nlm.nih.gov/research/umls/rxnorm|311036,http://www.nlm.nih.gov/research/umls/rxnorm|253182,http://www.nlm.nih.gov/research/umls/rxnorm|575068"
+  },
+  "test_data": {
+    "resources": [
+      "synthea/output/type-1-diabetes/positive/fhir/",
+      "synthea/output/type-1-diabetes/control/fhir/",
+      "synthea/output/type-2-diabetes/positive/fhir/",
+      "synthea/output/type-2-diabetes/control/fhir/"
+    ],
+    "expected_result_count": 4,
+    "expected_resource_ids": [],
+    "expected_patient_ids": [
+      "3ba88562-0b82-743c-ba3b-390aada6f4a6",
+      "41d50827-ecdf-986a-bfbe-f98be63e15ab",
+      "8dd98c94-1e34-c6aa-db4c-e617081bc16a",
+      "bac8a47d-ddee-bf98-71a7-2164bcb74c05"
+    ]
+  },
+  "created_at": "2026-04-28T00:00:00.000000Z",
+  "updated_at": "2026-04-28T00:00:00.000000Z"
+}

@@ -1,0 +1,127 @@
+{
+  "id": "phekb-hepatitis-c-comprehensive",
+  "source": "phekb",
+  "source_id": "hepatitis-c",
+  "name": "Hepatitis C - Comprehensive Provider Query",
+  "description": "Simulates a hepatology or infectious disease provider identifying their complete HCV patient population for a treatment cascade or screening initiative. CDC and USPSTF recommend universal HCV screening in adults aged 18-79. Real-world identification primarily unions: HCV diagnosis codes, DAA prescriptions, HCV antibody labs, and HCV RNA viral loads. Like MS, DAA specificity means union is reliable — minimal cross-indication noise.",
+  "prompt": "I need to identify my complete hepatitis C patient population for a screening and treatment cascade quality initiative. From clinical experience, HCV patients are documented in different ways: most have a formal HCV diagnosis (acute or chronic), most have positive HCV antibody screening, many have detectable HCV RNA viral loads, and patients in active treatment are on direct-acting antivirals.\n\nPlease run multiple FHIR queries to capture the full population:\n1. Patients with any HCV diagnosis (parent viral hepatitis C, acute, or chronic)\n2. Patients prescribed direct-acting antivirals (sofosbuvir, ledipasvir, simeprevir, or ribavirin)\n3. Patients with HCV antibody lab results (any value — positive antibody indicates past or present infection)\n\nFor each query, return the matching resources. I want the union of all patients found across these three approaches.",
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "multi_query": true,
+    "algorithm_path": "comprehensive",
+    "algorithm_path_description": "Union of HCV dx codes, DAA Rx, and HCV antibody labs. Tests provider-level identification for screening/treatment cascade. The DAA query has minimal Path C overcount — like MS DMTs, DAAs are HCV-specific.",
+    "expected_queries": [
+      "Condition?code=http://snomed.info/sct|50711007,http://snomed.info/sct|128302006,http://snomed.info/sct|235866006",
+      "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1484911,http://www.nlm.nih.gov/research/umls/rxnorm|1591922,http://www.nlm.nih.gov/research/umls/rxnorm|1482790,http://www.nlm.nih.gov/research/umls/rxnorm|108766",
+      "Observation?code=http://loinc.org|13955-0"
+    ],
+    "code_systems": [
+      "SNOMED CT",
+      "RxNorm",
+      "LOINC"
+    ],
+    "required_codes": [
+      {
+        "system": "http://snomed.info/sct",
+        "code": "50711007",
+        "display": "Viral hepatitis type C",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "128302006",
+        "display": "Chronic hepatitis C",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "235866006",
+        "display": "Acute hepatitis C",
+        "source": "CSTE VSAC"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "1484911",
+        "display": "sofosbuvir",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "1591922",
+        "display": "ledipasvir",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "1482790",
+        "display": "simeprevir",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "108766",
+        "display": "ribavirin 100 MG Oral Capsule",
+        "source": "VSAC verified"
+      },
+      {
+        "system": "http://loinc.org",
+        "code": "13955-0",
+        "display": "Hepatitis C virus Ab [Presence] in Serum or Plasma by Immunoassay",
+        "source": "UMLS verified"
+      }
+    ],
+    "complexity": "expert",
+    "tags": [
+      "multi-query",
+      "infectious-disease",
+      "hepatitis-c",
+      "comprehensive",
+      "cross-resource",
+      "screening-cascade"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "Patient",
+    "parameters": {},
+    "url": "Condition?code=http://snomed.info/sct|50711007,http://snomed.info/sct|128302006,http://snomed.info/sct|235866006"
+  },
+  "test_data": {
+    "resources": [
+      "synthea/output/hepatitis-c/positive/fhir/",
+      "synthea/output/hepatitis-c/control/fhir/"
+    ],
+    "expected_result_count": 27,
+    "expected_resource_ids": [],
+    "expected_patient_ids": [
+      "0170c5ec-ac6a-e3fb-7c4e-a193cf7d62e3",
+      "026d955a-59d6-c929-2b68-d0b1ca78e94d",
+      "1068af52-2083-6616-3b1a-a2bf3dd4d886",
+      "114b3097-f259-d915-9d79-8276b7c57e65",
+      "152eab27-7dd8-c0b8-c85e-37634dbe3d03",
+      "1e899a04-f489-a4fe-a9ad-78b69ac5a583",
+      "22867eeb-ef45-a60e-67a4-961973304d40",
+      "31fc5b05-4b4f-f82c-eee5-d338ec698ce8",
+      "35b1094a-c017-9aeb-9b73-cb11a8095a82",
+      "3fc9d15b-d93e-5f83-f3fa-8ec7a7f6fc59",
+      "5aecc878-faf8-c900-e77f-9dabbc4a1020",
+      "5e84d377-2de4-2aec-f96c-78c1018c28f2",
+      "796cc791-428f-3e2a-ca0e-3f678ebd7040",
+      "809a8137-b3fb-70f4-0704-5939446fff3a",
+      "84137e50-6e01-9d54-e2ba-0111f19ac7ed",
+      "9d3974e2-d258-ec51-4eef-8bc4318a9dc9",
+      "bace836a-990f-73f8-2137-6f4b9dd28693",
+      "c0f9210f-da2a-dd30-010e-1284f5a0d867",
+      "c7ce7487-ca57-f520-5f57-82548f9e9238",
+      "c9e69b65-159e-d923-c8b4-60e6e8023740",
+      "cafc828c-eadb-2d3b-c75f-d28d3a972896",
+      "d4d3c041-7407-b867-b70e-fd0394fa3f87",
+      "d9917246-5b23-666e-ca76-370186ad6744",
+      "daab7292-bbdb-3fa0-ef77-e949dfcfc762",
+      "dff289fb-921f-119b-0b67-068b30868bdd",
+      "e14f7ac4-4e00-9114-35ad-a5d4a63502af",
+      "f06cea72-c9c1-c4ab-4f62-d822f0929117"
+    ]
+  },
+  "created_at": "2026-04-27T00:00:00.000000Z",
+  "updated_at": "2026-04-27T00:00:00.000000Z"
+}

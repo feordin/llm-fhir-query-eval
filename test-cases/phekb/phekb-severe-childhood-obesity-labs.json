@@ -1,0 +1,105 @@
+{
+  "id": "phekb-severe-childhood-obesity-labs",
+  "source": "phekb",
+  "source_id": "severe-childhood-obesity",
+  "name": "Severe Childhood Obesity - Elevated BMI Query",
+  "description": "Tests ability to find pediatric obesity patients via elevated BMI Observations. While adult obesity uses BMI≥30, pediatric obesity should use age/sex-specific BMI percentiles (≥95th = obese, ≥99th = severe). For testing purposes, this case uses BMI≥30 as the severe threshold (corresponds to roughly 99th percentile in adolescents).",
+  "prompt": "Find patients with elevated BMI lab/measurement results greater than or equal to 30 kg/m².",
+  "prompts": {
+    "naive": "Find patients with high BMI.",
+    "broad": "Find patients with body mass index (BMI) measurements at or above 30 kg/m² — the threshold for class I obesity in adults, corresponding roughly to the 99th percentile in adolescents (severe pediatric obesity).",
+    "expert": "I need Observation resources with elevated BMI. Use LOINC code 39156-5 (Body mass index [Ratio]). Filter by value-quantity at or above 30 kg/m². Query: Observation?code=http://loinc.org|39156-5&value-quantity=ge30||kg/m2"
+  },
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "algorithm_path": "labs-path",
+    "algorithm_path_description": "Patients with elevated BMI Observations. Note: adult obesity threshold (≥30); pediatric should use age-percentile cutoffs.",
+    "code_systems": [
+      "LOINC"
+    ],
+    "required_codes": [
+      {
+        "system": "http://loinc.org",
+        "code": "39156-5",
+        "display": "Body mass index (BMI) [Ratio]",
+        "source": "UMLS verified"
+      }
+    ],
+    "complexity": "hard",
+    "tags": [
+      "observation",
+      "vital-signs",
+      "pediatric",
+      "obesity",
+      "bmi",
+      "value-quantity",
+      "patient-birthdate-filter"
+    ],
+    "patient_filters": {
+      "min_age_years": 5,
+      "max_age_years": 17,
+      "reference_date": "2026-04-28"
+    }
+  },
+  "expected_query": {
+    "resource_type": "Observation",
+    "parameters": {
+      "code": "http://loinc.org|39156-5",
+      "value-quantity": "ge30||kg/m2",
+      "patient.birthdate": [
+        "gt2008-04-28",
+        "le2021-04-28"
+      ]
+    },
+    "url": "Observation?code=http://loinc.org|39156-5&value-quantity=ge30||kg/m2&patient.birthdate=gt2008-04-28&patient.birthdate=le2021-04-28"
+  },
+  "test_data": {
+    "resources": [
+      "synthea/output/severe-childhood-obesity/positive/fhir/",
+      "synthea/output/severe-childhood-obesity/control/fhir/"
+    ],
+    "expected_result_count": 37,
+    "expected_resource_ids": [],
+    "expected_patient_ids": [
+      "00a8f9c5-5df5-ef5a-78b5-b9ea312f0532",
+      "0fd16b67-5610-fe31-c018-919d62820a0e",
+      "1044c2fa-4fa2-819d-f953-bcdd83ed4ad7",
+      "14f6d989-2947-44f4-657f-7da8c15f6f51",
+      "20ac2ade-11da-b7cb-3390-de70ce2481ef",
+      "29c2c3ed-77f9-3c36-5649-ae7e14b95463",
+      "3ad97201-1ae2-75b4-c729-071ae3c8b845",
+      "45bcd75b-fa33-2c58-acb4-12bcf646409b",
+      "484e292d-e2fc-65a0-58db-02b67cae20fa",
+      "56e23076-a425-f6e3-83bc-e491bad016e2",
+      "5d50a7a5-3553-b1d6-827a-a4bcd02839b2",
+      "5ff716cb-f126-2a77-f024-75d473f5cb39",
+      "659812a7-6065-0968-db96-d6339f477595",
+      "774477ec-10a0-82b3-24d6-fbe2bc3cb906",
+      "77cb9ae9-22d4-bee5-33b7-41dfc3aab65a",
+      "7eaa50b7-03df-2ab3-864a-a928d83357d1",
+      "815158db-cd7a-e017-43d8-dc743dcf498d",
+      "843e36e1-0458-34d1-8905-291974878ad7",
+      "84dd3295-1648-c08b-78f0-a8d91c1e2339",
+      "87b10ebe-d8c0-1cb4-5f9b-86dcd9929bc7",
+      "8982d047-95ee-09e4-8b95-8ba6f3f8a609",
+      "89b27301-9a6c-079d-fdd9-f6fb9c274aa1",
+      "95280422-f8dc-7601-3cc4-1464f75c8626",
+      "953d0f64-db49-b108-8f25-4a0820cd2ba2",
+      "9d580633-e2a2-83d2-f9c4-b7f314fcd157",
+      "a0933c74-f9dd-f174-5a0f-b9142a567284",
+      "a1b01c01-d55d-64f4-c1de-aedc64b80a71",
+      "a5138ec2-32e6-14c8-7da0-b5d799e1c939",
+      "b64d2cf2-c9ab-749a-9930-2de8a0575406",
+      "be409699-2c67-11ce-f728-711aad098389",
+      "c27e65a9-9570-5aa6-7d78-c8e8fa8310af",
+      "c573d66d-e385-73ad-aed1-84d31983d6c4",
+      "cb5afc4d-90a4-86dd-90c3-dc41ee7cfacc",
+      "da44c062-d510-28f4-e0aa-a4a52500e69a",
+      "eb6d5c7e-cf39-1f7a-67cc-c92d452b5342",
+      "f430b7bc-dc6e-102a-2f8f-c8ef860cd495",
+      "f8d533a2-0568-7dad-4710-3a6fca605ed0"
+    ]
+  },
+  "created_at": "2026-04-28T00:00:00.000000Z",
+  "updated_at": "2026-04-27T00:00:00.000000Z"
+}

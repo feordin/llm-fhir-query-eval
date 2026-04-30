@@ -1,0 +1,60 @@
+{
+  "id": "phekb-hypothyroidism-labs-only",
+  "source": "phekb",
+  "source_id": "hypothyroidism",
+  "name": "Hypothyroidism - Lab-Only Patients (No Diagnosis, No Treatment)",
+  "description": "Tricky test case: finds patients with abnormal TSH lab values but NO hypothyroidism diagnosis AND NO levothyroxine therapy (Path D). These represent untreated subclinical or mild overt hypothyroidism — patients whose labs flag the condition but who haven't been formally diagnosed or treated yet. Discoverable only by Observation queries with value-quantity filters. The hardest tricky path because the LLM must apply both a value filter AND understand that no Condition/MedicationRequest exists.",
+  "prompt": "Are there any patients in our system who have elevated TSH lab values suggesting hypothyroidism, but have not been formally diagnosed or started on thyroid replacement therapy? I want to identify potential gaps in care.",
+  "prompts": {
+    "naive": "Find patients with high TSH but no hypothyroidism diagnosis or treatment.",
+    "expert": "I need to identify untreated patients with biochemical evidence of hypothyroidism. Search Observation resources for TSH (LOINC 3016-3) with value-quantity > 5 mIU/L, then exclude any patient who has either: (a) a Condition with hypothyroidism SNOMED codes (40930008, 111566002, 83664006, 237519003, 237520009), or (b) a MedicationRequest for any levothyroxine SCD code. The remaining patients are candidates for further evaluation. This requires combining results from multiple FHIR queries with set differences."
+  },
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "algorithm_path": "labs-only-path",
+    "algorithm_path_description": "Path D 'tricky' patients: have elevated TSH but no Condition resource and no MedicationRequest. Tests cross-resource reasoning combined with value-quantity filtering.",
+    "code_systems": [
+      "LOINC"
+    ],
+    "required_codes": [
+      {
+        "system": "http://loinc.org",
+        "code": "3016-3",
+        "display": "Thyrotropin [Units/volume] in Serum or Plasma",
+        "source": "Synthea built-in module"
+      }
+    ],
+    "complexity": "hard",
+    "tags": [
+      "observation",
+      "endocrinology",
+      "hypothyroidism",
+      "tricky",
+      "labs-only",
+      "value-quantity",
+      "cross-resource"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "Observation",
+    "parameters": {
+      "code": "http://loinc.org|3016-3",
+      "value-quantity": "gt5"
+    },
+    "url": "Observation?code=http://loinc.org|3016-3&value-quantity=gt5"
+  },
+  "test_data": {
+    "resources": [
+      "synthea/output/hypothyroidism/positive/fhir/",
+      "synthea/output/hypothyroidism/control/fhir/"
+    ],
+    "expected_result_count": 2,
+    "expected_resource_ids": [],
+    "expected_patient_ids": [
+      "62f60bdb-cc5c-8305-b98b-f2b229a55eca",
+      "c0a47dee-cc72-29ce-df5a-ea6d306c36a4"
+    ]
+  },
+  "created_at": "2026-04-25T00:00:00.000000Z",
+  "updated_at": "2026-04-25T00:00:00.000000Z"
+}

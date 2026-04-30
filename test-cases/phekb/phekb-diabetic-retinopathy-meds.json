@@ -1,0 +1,89 @@
+{
+  "id": "phekb-diabetic-retinopathy-meds",
+  "source": "phekb",
+  "source_id": "diabetic-retinopathy",
+  "name": "Diabetic Retinopathy - Anti-VEGF Medication Query",
+  "description": "Tests ability to find DR patients via anti-VEGF intravitreal injections. Three main agents: ranibizumab (Lucentis), aflibercept (Eylea), bevacizumab (Avastin off-label). All used for proliferative DR and diabetic macular edema. Anti-VEGFs are highly DR/AMD-specific (also used in age-related macular degeneration, but not in our generated population).",
+  "prompt": "Find patients prescribed anti-VEGF intravitreal injections used for diabetic retinopathy, including ranibizumab, aflibercept, or bevacizumab.",
+  "prompts": {
+    "naive": "Find patients on anti-VEGF for diabetes eye disease.",
+    "broad": "Find patients prescribed anti-vascular endothelial growth factor (anti-VEGF) intravitreal injections used for proliferative diabetic retinopathy and diabetic macular edema — ranibizumab (Lucentis), aflibercept (Eylea), and bevacizumab (Avastin, off-label for ophthalmology).",
+    "expert": "I need MedicationRequest resources for any anti-VEGF therapy. Use these RxNorm ingredient codes: 595060 (ranibizumab), 1232150 (aflibercept), 253337 (bevacizumab). Combine in a single comma-separated code search. Anti-VEGFs are highly retinal-specific — main cross-indication is AMD (also retinal disease)."
+  },
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "algorithm_path": "medication-path",
+    "algorithm_path_description": "Patients with anti-VEGF intravitreal injection orders. High retinal-disease specificity.",
+    "code_systems": [
+      "RxNorm"
+    ],
+    "required_codes": [
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "595060",
+        "display": "ranibizumab",
+        "source": "RxNav verified"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "1232150",
+        "display": "aflibercept",
+        "source": "RxNav verified"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "253337",
+        "display": "bevacizumab",
+        "source": "RxNav verified"
+      }
+    ],
+    "complexity": "medium",
+    "tags": [
+      "medication",
+      "ophthalmology",
+      "diabetic-retinopathy",
+      "anti-vegf",
+      "intravitreal"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "MedicationRequest",
+    "parameters": {
+      "code": "http://www.nlm.nih.gov/research/umls/rxnorm|595060,http://www.nlm.nih.gov/research/umls/rxnorm|1232150,http://www.nlm.nih.gov/research/umls/rxnorm|253337"
+    },
+    "url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|595060,http://www.nlm.nih.gov/research/umls/rxnorm|1232150,http://www.nlm.nih.gov/research/umls/rxnorm|253337"
+  },
+  "test_data": {
+    "resources": [
+      "synthea/output/diabetic-retinopathy/positive/fhir/",
+      "synthea/output/diabetic-retinopathy/control/fhir/"
+    ],
+    "expected_result_count": 21,
+    "expected_resource_ids": [],
+    "expected_patient_ids": [
+      "181cbad8-9a29-3f47-785b-6cc9236b2563",
+      "1f692384-f5c5-f3cf-6dfb-6ac1020a59c3",
+      "245c4da0-71dc-497d-c1e9-ab01868f6bf1",
+      "26d56732-a937-035c-2ca8-66716ce8ffe9",
+      "3d44dd41-ae97-85fb-961e-4abfb87beb3a",
+      "5a72baf1-7ac2-e183-0ced-276d71de2933",
+      "5b4c5728-3e94-c067-9790-677255aba1fa",
+      "6c473997-f23a-4c6f-d512-7f262d96298a",
+      "7995d283-e2f0-5b31-fbd7-e312011df15d",
+      "9c53c50a-d21a-63c9-61ee-9808fe526d87",
+      "a2ee893a-7ccd-d320-9fba-e38988910e64",
+      "adc7c9a5-e76d-79d3-5036-311970485f0c",
+      "b0a14ba3-92ff-d81d-2e2b-aa204391e4cc",
+      "bce1ecd8-7d2b-4432-33b9-cb17f86263ce",
+      "bf293810-0017-d7b1-a584-4109ee16589a",
+      "d7ea7b90-0a4f-29b2-c1fb-8364057496ea",
+      "d94f72ed-2a0d-07d0-7349-63621954a9e0",
+      "e25af212-4f40-f0f0-5693-f86af0f1888a",
+      "e4db0471-7b58-b23b-9174-4adbf21308bc",
+      "e6e18607-a958-9e3a-1a49-e878fa5c703c",
+      "f59f28b1-1cf2-6394-bc89-9eaa95d9450c"
+    ]
+  },
+  "created_at": "2026-04-28T00:00:00.000000Z",
+  "updated_at": "2026-04-27T00:00:00.000000Z"
+}

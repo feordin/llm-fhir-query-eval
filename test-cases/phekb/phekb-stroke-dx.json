@@ -1,0 +1,94 @@
+{
+  "id": "phekb-stroke-dx",
+  "source": "phekb",
+  "source_id": "stroke",
+  "name": "Stroke (Cerebral Infarction) - Diagnosis Code Query",
+  "description": "Tests ability to find stroke patients via diagnosis codes across cerebral infarction (specific) and cerebrovascular accident (broader CVA) variants. First cerebrovascular event phenotype.",
+  "prompt": "Find all patients with a diagnosis of stroke or cerebrovascular accident.",
+  "prompts": {
+    "naive": "Find patients with stroke.",
+    "broad": "Find patients diagnosed with stroke — including cerebral infarction (ischemic stroke) and the broader cerebrovascular accident (CVA) concept.",
+    "expert": "Search Condition resources for SNOMED codes Cerebral infarction (432504007) and Cerebrovascular accident (230690007). Query: Condition?code=http://snomed.info/sct|432504007,http://snomed.info/sct|230690007"
+  },
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "algorithm_path": "diagnosis-path",
+    "algorithm_path_description": "Patients with stroke/CVA dx. First cerebrovascular event phenotype.",
+    "code_systems": [
+      "SNOMED CT"
+    ],
+    "required_codes": [
+      {
+        "system": "http://snomed.info/sct",
+        "code": "432504007",
+        "display": "Cerebral infarction",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "230690007",
+        "display": "Cerebrovascular accident",
+        "source": "UMLS verified"
+      }
+    ],
+    "complexity": "easy",
+    "tags": [
+      "condition",
+      "neurology",
+      "cerebrovascular",
+      "stroke",
+      "cva",
+      "diagnosis-code"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "Condition",
+    "parameters": {
+      "code": "http://snomed.info/sct|432504007,http://snomed.info/sct|230690007"
+    },
+    "url": "Condition?code=http://snomed.info/sct|432504007,http://snomed.info/sct|230690007"
+  },
+  "test_data": {
+    "resources": [
+      "synthea/output/stroke/positive/fhir/",
+      "synthea/output/stroke/control/fhir/"
+    ],
+    "expected_result_count": 31,
+    "expected_resource_ids": [],
+    "expected_patient_ids": [
+      "13ebd338-44a2-8fe3-3c61-76af69bfefb8",
+      "1562c403-ab4a-18b3-b5df-5013db340e7d",
+      "15d9cb1e-164a-baf7-6d55-647e08a60ea7",
+      "1f819e5b-bff1-5a0c-3cbb-c03bd79ab6da",
+      "236a6919-a75c-3879-ca78-72cead977d8d",
+      "23d220eb-7794-f486-fef6-5e59dccb14a5",
+      "26d4db42-2832-1e96-8fc8-72f5495c53c4",
+      "273561fb-274a-1806-a19f-0c1361d810f8",
+      "2c3d39aa-4e23-28e2-d3c0-e37c7ddb90c5",
+      "3151cc51-a0e4-0858-3083-5f3e72be9ebb",
+      "37075b69-89b8-f159-edc6-373012a90735",
+      "3b44cccf-4ca3-2357-b102-f3a8ec663016",
+      "5233a06f-6c38-264b-f5a3-e782b042f90a",
+      "59023463-3d19-6752-ed83-e5b3f116b2ab",
+      "6f662b89-48ea-3ee1-da8a-a95456cbcfc4",
+      "71c51e57-07cf-b768-6f4e-bcee08969c91",
+      "768ff7a7-153b-2798-706b-9eb16883e15d",
+      "7e6fc8bd-3e1e-d026-4c38-4e441087acc4",
+      "802504f8-7e36-74a4-dc79-ea83ef74fef4",
+      "815ecbf5-f11c-aefe-f2aa-2683a5bffa00",
+      "886c77fb-d5e6-5e72-6f31-d93131eb6b51",
+      "8c29dffb-0a04-01c7-2343-51a40ccb63e1",
+      "8fe434c2-1c2a-0e7e-53ff-0b23a2285aac",
+      "a62d8546-cfb0-6b20-13f5-f84e7fd4d040",
+      "b80364b4-0214-14d6-93f1-b2be96e71ba9",
+      "bd3bb445-14a8-62e4-2618-9dac5a04e2a7",
+      "bfbecba4-547a-d225-ab87-51011f804add",
+      "c18e7670-7971-651f-a8f0-67d974324ac5",
+      "c42fe579-3707-d9a3-1807-f176e0ba78d1",
+      "d83b357c-7217-4e81-1481-06c6cd76b2ed",
+      "d9f66f97-e1dc-709c-a33c-1909faa6d98b"
+    ]
+  },
+  "created_at": "2026-04-29T00:00:00.000000Z",
+  "updated_at": "2026-04-27T00:00:00.000000Z"
+}

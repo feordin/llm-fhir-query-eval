@@ -1,0 +1,80 @@
+{
+  "id": "phekb-hepatitis-c-meds-only",
+  "source": "phekb",
+  "source_id": "hepatitis-c",
+  "name": "Hepatitis C - DAA Without HCV Diagnosis (Rare Path C)",
+  "description": "Tricky test case: finds patients on direct-acting antivirals who have NO formal HCV diagnosis. Like MS DMTs, DAAs are highly specific to HCV — natalizumab/ocrelizumab/sofosbuvir all have near-zero non-target-disease use. The Synthea module weights this path lightly (~10%) representing patients whose HCV diagnosis was made elsewhere and not yet documented in the local problem list, or where ribavirin was used for unusual indications (RSV in immunocompromised infants, viral hemorrhagic fevers — exceedingly rare).",
+  "prompt": "I want to find patients in our system who are taking hepatitis C antivirals such as sofosbuvir, ledipasvir, or simeprevir but don't have a formal HCV diagnosis on their problem list. These are uncommon — DAAs are very specific to HCV.",
+  "prompts": {
+    "naive": "Find patients on HCV antivirals without a hepatitis C diagnosis.",
+    "expert": "I need to identify the rare DAA-without-HCV-dx population. Two-step approach: first find patients with MedicationRequest for DAAs (RxNorm 1484911 sofosbuvir, 1591922 ledipasvir, 1482790 simeprevir, 108766 ribavirin), then exclude patients with a Condition for HCV (50711007, 128302006, 235866006). The remaining group is small — typically HCV diagnosed at outside institution and not yet imported, or rare ribavirin off-label use."
+  },
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "algorithm_path": "meds-only-path",
+    "algorithm_path_description": "Path C 'tricky' patients: have DAAs but NO HCV Condition. The Synthea module weights this path lightly (~10%) — DAAs are highly HCV-specific.",
+    "code_systems": [
+      "RxNorm",
+      "SNOMED CT"
+    ],
+    "required_codes": [
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "1484911",
+        "display": "sofosbuvir",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "1591922",
+        "display": "ledipasvir",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "1482790",
+        "display": "simeprevir",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "108766",
+        "display": "ribavirin 100 MG Oral Capsule",
+        "source": "VSAC verified"
+      }
+    ],
+    "complexity": "hard",
+    "tags": [
+      "medication",
+      "infectious-disease",
+      "hepatitis-c",
+      "tricky",
+      "meds-only",
+      "cross-resource",
+      "small-path-c"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "MedicationRequest",
+    "parameters": {
+      "code": "http://www.nlm.nih.gov/research/umls/rxnorm|1484911,http://www.nlm.nih.gov/research/umls/rxnorm|1591922,http://www.nlm.nih.gov/research/umls/rxnorm|1482790,http://www.nlm.nih.gov/research/umls/rxnorm|108766"
+    },
+    "url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1484911,http://www.nlm.nih.gov/research/umls/rxnorm|1591922,http://www.nlm.nih.gov/research/umls/rxnorm|1482790,http://www.nlm.nih.gov/research/umls/rxnorm|108766"
+  },
+  "test_data": {
+    "resources": [
+      "synthea/output/hepatitis-c/positive/fhir/",
+      "synthea/output/hepatitis-c/control/fhir/"
+    ],
+    "expected_result_count": 4,
+    "expected_resource_ids": [],
+    "expected_patient_ids": [
+      "c9e69b65-159e-d923-c8b4-60e6e8023740",
+      "d4d3c041-7407-b867-b70e-fd0394fa3f87",
+      "dff289fb-921f-119b-0b67-068b30868bdd",
+      "e14f7ac4-4e00-9114-35ad-a5d4a63502af"
+    ]
+  },
+  "created_at": "2026-04-27T00:00:00.000000Z",
+  "updated_at": "2026-04-27T00:00:00.000000Z"
+}

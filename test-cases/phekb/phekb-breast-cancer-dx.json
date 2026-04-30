@@ -1,0 +1,104 @@
+{
+  "id": "phekb-breast-cancer-dx",
+  "source": "phekb",
+  "source_id": "breast-cancer",
+  "name": "Breast Cancer - Diagnosis Code Query (Multi-Subtype)",
+  "description": "Tests ability to find breast cancer patients via diagnosis codes. The PheKB breast cancer phenotype requires either ICD diagnostic codes or pathology reports. Synthea distributes patients across SNOMED codes for the breast cancer family: Malignant neoplasm of breast (parent), Carcinoma of breast, Infiltrating duct carcinoma (IDC, most common), Lobular carcinoma (ILC), Invasive carcinoma. An LLM querying only the parent code will miss patients coded with histology-specific codes — IDC alone accounts for ~70% of invasive breast cancers and is often coded directly.",
+  "prompt": "Find all patients with a diagnosis of breast cancer, including invasive ductal carcinoma, invasive lobular carcinoma, and other malignant neoplasms of the breast.",
+  "prompts": {
+    "naive": "Find all patients with breast cancer.",
+    "broad": "Find all patients diagnosed with any form of breast cancer — including the parent malignant neoplasm of breast concept, carcinoma of breast (general), invasive ductal carcinoma (IDC, the most common subtype), invasive lobular carcinoma (ILC), and other invasive breast carcinomas.",
+    "expert": "I need to identify all breast cancer patients in our population. Breast cancer is documented under multiple SNOMED codes by histology: Malignant neoplasm of breast (254837009) is the parent, Carcinoma of breast (254838004) is a general code, Infiltrating duct carcinoma of breast (408643008, IDC) and Lobular carcinoma of breast (278054005, ILC) are the dominant histologic subtypes (~70% and ~10% of invasive cancers respectively), and Invasive carcinoma of breast (713609000) is a less specific but commonly used code. All five codes appear in the ASCO 'Breast Cancer' VSAC (OID 2.16.840.1.113883.3.1444.3.102). Search Condition resources for all five codes."
+  },
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "algorithm_path": "diagnosis-path",
+    "algorithm_path_description": "Patients with breast cancer diagnosis codes (Paths A and B). Maps to PheKB breast cancer female/male case definition: 1+ diagnostic code OR 2+ history codes on distinct days.",
+    "code_systems": [
+      "SNOMED CT",
+      "ICD-10-CM"
+    ],
+    "required_codes": [
+      {
+        "system": "http://snomed.info/sct",
+        "code": "254837009",
+        "display": "Malignant neoplasm of breast",
+        "source": "ASCO VSAC, parent concept"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "254838004",
+        "display": "Carcinoma of breast",
+        "source": "ASCO VSAC"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "408643008",
+        "display": "Infiltrating duct carcinoma of breast",
+        "source": "ASCO VSAC, IDC histology"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "278054005",
+        "display": "Lobular carcinoma of breast",
+        "source": "ASCO VSAC, ILC histology"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "713609000",
+        "display": "Invasive carcinoma of breast",
+        "source": "ASCO VSAC"
+      }
+    ],
+    "complexity": "medium",
+    "tags": [
+      "condition",
+      "oncology",
+      "breast-cancer",
+      "diagnosis-code",
+      "multi-subtype",
+      "code-variation",
+      "histology"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "Condition",
+    "parameters": {
+      "code": "http://snomed.info/sct|254837009,http://snomed.info/sct|254838004,http://snomed.info/sct|408643008,http://snomed.info/sct|278054005,http://snomed.info/sct|713609000"
+    },
+    "url": "Condition?code=http://snomed.info/sct|254837009,http://snomed.info/sct|254838004,http://snomed.info/sct|408643008,http://snomed.info/sct|278054005,http://snomed.info/sct|713609000"
+  },
+  "test_data": {
+    "resources": [
+      "synthea/output/breast-cancer/positive/fhir/",
+      "synthea/output/breast-cancer/control/fhir/"
+    ],
+    "expected_result_count": 21,
+    "expected_resource_ids": [],
+    "expected_patient_ids": [
+      "157ef18c-208e-3e27-05d1-ba3d7af10aba",
+      "18fb1dd9-c6cd-2630-9891-e0c756ae00fc",
+      "2976dab9-dc5c-ce87-1393-47445d0f5208",
+      "41cc47e3-9883-b373-877c-534e405ea8ea",
+      "484ad1ea-f8e8-de23-ac9f-51f57d3e9f80",
+      "5b5456b4-945c-a3fa-f1b4-fcd3863a4f32",
+      "66316f15-f227-a3db-705f-012abfec553f",
+      "84aab935-2975-ee2f-1b5d-a4952ddb8353",
+      "8731fac9-87f4-f4dd-19de-06e432eabd2d",
+      "8c134c6b-b20f-99d3-f9e3-f3d829e8bac8",
+      "90fd40b5-2649-d413-4c97-e5689aabf617",
+      "a46f5350-df0d-cc4d-7cb8-824a4f940f35",
+      "ad35f856-856e-6757-6526-1eea11470b8c",
+      "ae4ca1b9-fa3e-0da2-870a-3723c29ad322",
+      "b136c08d-fc91-5523-a1fe-836d37248eb1",
+      "c4efe1fe-d6fe-7f3c-dc7b-eeeb386273bb",
+      "c65de70d-5bf1-078a-f770-b39dd9513eae",
+      "c8374d67-93d2-2d1a-2432-6ab0c125e240",
+      "f1e7ab73-931e-2d5d-8d5d-9a367098acf2",
+      "f782a497-fab6-7145-c137-74aedb93eaca",
+      "f7955fc9-6273-813e-9751-a870b74dea81"
+    ]
+  },
+  "created_at": "2026-04-27T00:00:00.000000Z",
+  "updated_at": "2026-04-27T00:00:00.000000Z"
+}

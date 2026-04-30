@@ -283,6 +283,8 @@ PheKB phenotype algorithms are multi-path decision trees, NOT simple code lookup
 - Diagnosis codes + medications
 - Diagnosis codes + abnormal labs
 - Medications + abnormal labs (NO diagnosis code)
+- Labs only (NO diagnosis, NO medications)
+- Procedures only (NO diagnosis code)
 - Complex temporal ordering rules
 
 ### Generating Path-Specific Patients
@@ -291,25 +293,113 @@ When creating Synthea modules for phenotypes with multiple identification paths,
 
 1. **Analyze the algorithm document** (usually a PDF in `data/phekb-raw/<phenotype>/`) to identify all paths
 2. **Create separate state branches** in the Synthea module for each path type
-3. **Path 4-type patients** (no diagnosis code): These patients should have MedicationRequest + Observation resources but NO Condition resource. This requires a separate branch in the module that:
-   - Skips the ConditionOnset state
-   - Still prescribes medications (MedicationOrder)
-   - Still records abnormal lab values (Observation)
+3. **"Tricky" patients** (no diagnosis code): These patients have clinical evidence but NO Condition resource. This tests whether LLMs search beyond Condition resources.
 4. **Use distributed_transition** to control the mix of patient types
 
 ### Module Structure for Multi-Path Phenotypes
 
+**CRITICAL: Every positive-case module MUST include "tricky" patients AND code variation.**
+
+#### Tricky Patient Paths
+
+"Tricky" patients are those who have clinical evidence of the phenotype but LACK a formal diagnosis code (no Condition resource). Real-world EHR data frequently has patients like this. Include ALL tricky paths that make clinical sense for the phenotype:
+
+| Tricky Path | Synthea Resources | When to Include | Example Phenotypes |
+|---|---|---|---|
+| **Meds only, no dx** | MedicationRequest only | Phenotype has characteristic medications | Dementia (donepezil), SCD (hydroxyurea), asthma (inhalers), depression (SSRIs), MS (interferons) |
+| **Labs only, no dx** | Observation only | Phenotype has diagnostic lab thresholds | CKD (eGFR < 60), diabetes (HbA1c ≥ 6.5%), hyperlipidemia (LDL > 190) |
+| **Meds + labs, no dx** | MedicationRequest + Observation | Both meds and labs are relevant | Diabetes (metformin + elevated glucose), CKD (ACE inhibitor + low eGFR) |
+| **Procedure only, no dx** | Procedure only | Phenotype has defining procedures | Appendicitis (appendectomy), heart failure (cardiac device), cancer (chemotherapy) |
+
+**Standard path split for modules (adapt percentages based on phenotype):**
+
 ```
-Initial → Age_Guard → Set_Diabetes_Flag → Wellness_Encounter → Path_Router
-                                                                    ├→ Path_With_Diagnosis (70%)
-                                                                    │     ├→ Diagnose_Condition
-                                                                    │     ├→ Record_Labs
-                                                                    │     ├→ Prescribe_Meds
-                                                                    │     └→ End_Encounter
-                                                                    └→ Path_No_Diagnosis (30%)
-                                                                          ├→ Record_Abnormal_Labs (NO ConditionOnset!)
-                                                                          ├→ Prescribe_Meds
-                                                                          └→ End_Encounter
+Initial → Age_Guard → Set_Flag → Wellness_Encounter → Path_Router
+    ├→ Path A: Diagnosis + Meds/Labs (40-50%)
+    │     ├→ Diagnose_Condition (with code variation!)
+    │     ├→ Record_Labs (if applicable)
+    │     ├→ Prescribe_Meds (if applicable)
+    │     └→ End_Encounter
+    ├→ Path B: Diagnosis only (15-20%)
+    │     ├→ Diagnose_Condition (with code variation!)
+    │     └→ End_Encounter
+    ├→ Path C: Meds only, NO diagnosis (20-30%)
+    │     ├→ NO ConditionOnset!
+    │     ├→ Prescribe_Meds (omit "reason" field)
+    │     └→ End_Encounter
+    └→ Path D: Labs only, NO diagnosis (10-15%) [if applicable]
+          ├→ NO ConditionOnset!
+          ├→ Record_Abnormal_Labs
+          └→ End_Encounter
+```
+
+**Path C/D implementation details:**
+- Skip the ConditionOnset state entirely — NO Condition resource for the phenotype
+- MedicationOrder states must OMIT the `"reason"` field (no condition attribute to reference)
+- These patients SHOULD appear in medication/lab test case expected_patient_ids
+- These patients should NOT appear in diagnosis-only test case expected_patient_ids
+- The comprehensive test case (union of all queries) should include ALL patients from all paths
+
+**When a tricky path doesn't make clinical sense:**
+Some phenotypes are ONLY identifiable by diagnosis (e.g., sickle cell trait where there's no treatment). In those cases, document WHY the path is omitted in the module remarks.
+
+#### Code Variation (CRITICAL)
+
+**Patients with diagnoses MUST use varied SNOMED codes across the phenotype's code family, not a single code.**
+
+Real EHR data codes conditions at varying levels of specificity. If all Synthea patients use the same SNOMED code, we're only testing whether the LLM knows *that one code* — not whether it understands the clinical concept broadly.
+
+**How to implement code variation:**
+1. Look up the VSAC value set for the phenotype to find ALL valid SNOMED codes
+2. Identify the major subtypes/variants that are clinically distinct
+3. Use `distributed_transition` to route patients to different ConditionOnset states, each with a different SNOMED code
+4. Weight the distribution by clinical prevalence
+
+**Example — Dementia (many subtypes):**
+```
+Route_Diagnosis_Code
+  ├→ Diagnose_Alzheimers (40%)      → SNOMED 26929004 "Alzheimer's disease"
+  ├→ Diagnose_Vascular (20%)        → SNOMED 429998004 "Vascular dementia"
+  ├→ Diagnose_Lewy_Body (15%)       → SNOMED 312991009 "Dementia with Lewy bodies"
+  ├→ Diagnose_Frontotemporal (10%)  → SNOMED 230270009 "Frontotemporal dementia"
+  └→ Diagnose_Unspecified (15%)     → SNOMED 52448006 "Dementia"
+```
+
+**Example — Sickle Cell Disease (subtypes by genotype):**
+```
+Route_SCD_Subtype
+  ├→ Diagnose_HbSS (60%)           → SNOMED 127040003 "HbSS disease"
+  ├→ Diagnose_HbSC (25%)           → SNOMED 35434009 "HbSC disease"
+  └→ Diagnose_Thalassemia (15%)    → SNOMED 36472007 "SCD-thalassemia"
+```
+
+**Why this matters for evaluation:**
+- An LLM that queries only `Condition?code=26929004` (Alzheimer's) would miss vascular dementia patients
+- An LLM that queries the parent code `52448006` (Dementia) with `:below` modifier would find all subtypes — but only if the server supports subsumption
+- An LLM that queries ALL specific subtype codes in a comma-separated list shows the deepest code knowledge
+- This directly exercises Layer 2 of the three-layer evaluation (Code System Accuracy)
+
+**Code variation also applies to medications:**
+If a phenotype has multiple characteristic medications (e.g., dementia has donepezil, galantamine, rivastigmine, memantine), distribute patients across different meds. An LLM that only queries for donepezil would miss patients on memantine.
+
+**Verify code variation** after generation:
+```python
+# Check that diagnosis codes are distributed across subtypes:
+# - Count patients per SNOMED code
+# - Ensure no single code has > 70% of patients
+# - Verify all planned subtypes appear in the data
+```
+
+**Verify the path split works** by examining generated patients:
+```python
+# After generation, check that you have patients in each category:
+# - Patients with Condition AND MedicationRequest (Path A)
+# - Patients with Condition but NO MedicationRequest (Path B)
+# - Patients with MedicationRequest but NO Condition for the phenotype (Path C)
+# - Patients with Observation but NO Condition (Path D, if applicable)
+# Also check code variation:
+# - Multiple different SNOMED codes in Condition resources
+# - Multiple different RxNorm codes in MedicationRequest resources (if applicable)
 ```
 
 ### Lab Value Thresholds

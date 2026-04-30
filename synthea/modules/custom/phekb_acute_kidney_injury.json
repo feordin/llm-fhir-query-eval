@@ -1,0 +1,263 @@
+{
+  "name": "PheKB Acute Kidney Injury (AKI)",
+  "remarks": [
+    "Custom Synthea module for PheKB phenotype: acute-kidney-injury-aki",
+    "Based on PheKB AKI algorithm using serum creatinine changes and KDIGO staging",
+    "",
+    "Generates TWO types of positive patients:",
+    "  Type A (70%): AKI diagnosis + elevated creatinine labs",
+    "  Type B (30%): Elevated creatinine labs ONLY, NO diagnosis code",
+    "",
+    "Type B patients test whether LLMs can identify AKI cases that have",
+    "no Condition resource - only Observation evidence (elevated SCr).",
+    "",
+    "Lab values:",
+    "  AKI case creatinine: 2.0 - 6.0 mg/dL (elevated)",
+    "  BUN in AKI: 25 - 80 mg/dL (elevated)",
+    "  Normal creatinine: 0.6 - 1.2 mg/dL",
+    "",
+    "Exclusion criteria from PheKB algorithm:",
+    "  - Pre-existing ESRD (SNOMED 46177005)",
+    "  - Kidney transplant (SNOMED 70536003)",
+    "  - Dialysis (SNOMED 108241001)",
+    "  These are NOT generated in positive patients.",
+    "",
+    "Codes verified via NIH UMLS MCP (2025AB):",
+    "  SNOMED 14669001 (AKI), LOINC 2160-0 (Creatinine), LOINC 3094-0 (BUN)"
+  ],
+  "states": {
+    "Initial": {
+      "type": "Initial",
+      "direct_transition": "Age_Guard"
+    },
+
+    "Age_Guard": {
+      "type": "Guard",
+      "allow": {
+        "condition_type": "Age",
+        "operator": ">=",
+        "quantity": 18,
+        "unit": "years"
+      },
+      "direct_transition": "Wait_For_AKI_Event"
+    },
+
+    "Wait_For_AKI_Event": {
+      "type": "Delay",
+      "remarks": ["Simulate time before AKI episode occurs"],
+      "range": { "low": 1, "high": 5, "unit": "years" },
+      "direct_transition": "Choose_Patient_Path"
+    },
+
+    "Choose_Patient_Path": {
+      "type": "Simple",
+      "remarks": [
+        "Split patients into two groups:",
+        "  70% get a formal AKI diagnosis + elevated creatinine",
+        "  30% have elevated creatinine ONLY, NO diagnosis code",
+        "This tests whether LLMs search beyond Condition resources."
+      ],
+      "distributed_transition": [
+        {
+          "transition": "Set_Path_With_Diagnosis",
+          "distribution": 0.7
+        },
+        {
+          "transition": "Set_Path_No_Diagnosis",
+          "distribution": 0.3
+        }
+      ]
+    },
+
+    "Set_Path_With_Diagnosis": {
+      "type": "SetAttribute",
+      "attribute": "aki_has_diagnosis",
+      "value": true,
+      "direct_transition": "Set_Needs_First_Visit"
+    },
+
+    "Set_Path_No_Diagnosis": {
+      "type": "SetAttribute",
+      "remarks": ["No diagnosis code, only elevated creatinine labs"],
+      "attribute": "aki_has_diagnosis",
+      "value": false,
+      "direct_transition": "Set_Needs_First_Visit"
+    },
+
+    "Set_Needs_First_Visit": {
+      "type": "SetAttribute",
+      "attribute": "aki_needs_first_visit",
+      "value": true,
+      "direct_transition": "Wellness_Encounter"
+    },
+
+    "Wellness_Encounter": {
+      "type": "Encounter",
+      "wellness": true,
+      "direct_transition": "Check_First_Visit"
+    },
+
+    "Check_First_Visit": {
+      "type": "Simple",
+      "conditional_transition": [
+        {
+          "condition": {
+            "condition_type": "Attribute",
+            "attribute": "aki_needs_first_visit",
+            "operator": "==",
+            "value": true
+          },
+          "transition": "Route_First_Visit"
+        },
+        {
+          "transition": "Record_Followup_Creatinine"
+        }
+      ]
+    },
+
+    "Route_First_Visit": {
+      "type": "Simple",
+      "remarks": ["Route to diagnosis or no-diagnosis path based on patient type"],
+      "conditional_transition": [
+        {
+          "condition": {
+            "condition_type": "Attribute",
+            "attribute": "aki_has_diagnosis",
+            "operator": "==",
+            "value": true
+          },
+          "transition": "Diagnose_AKI"
+        },
+        {
+          "transition": "Record_Elevated_Creatinine_NoDx"
+        }
+      ]
+    },
+
+    "Diagnose_AKI": {
+      "type": "ConditionOnset",
+      "remarks": ["Formally diagnosed AKI - recorded inside wellness encounter"],
+      "assign_to_attribute": "aki_condition",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": "14669001",
+          "display": "Acute kidney injury"
+        }
+      ],
+      "direct_transition": "Record_Elevated_Creatinine_Dx"
+    },
+
+    "Record_Elevated_Creatinine_Dx": {
+      "type": "Observation",
+      "category": "laboratory",
+      "unit": "mg/dL",
+      "codes": [
+        {
+          "system": "LOINC",
+          "code": "2160-0",
+          "display": "Creatinine [Mass/volume] in Serum or Plasma"
+        }
+      ],
+      "range": { "low": 2.0, "high": 6.0 },
+      "direct_transition": "Record_Elevated_BUN_Dx"
+    },
+
+    "Record_Elevated_BUN_Dx": {
+      "type": "Observation",
+      "category": "laboratory",
+      "unit": "mg/dL",
+      "codes": [
+        {
+          "system": "LOINC",
+          "code": "3094-0",
+          "display": "Urea nitrogen [Mass/volume] in Serum or Plasma"
+        }
+      ],
+      "range": { "low": 25, "high": 80 },
+      "direct_transition": "Clear_First_Visit_Flag"
+    },
+
+    "Record_Elevated_Creatinine_NoDx": {
+      "type": "Observation",
+      "remarks": ["No diagnosis path: elevated creatinine but NO ConditionOnset"],
+      "category": "laboratory",
+      "unit": "mg/dL",
+      "codes": [
+        {
+          "system": "LOINC",
+          "code": "2160-0",
+          "display": "Creatinine [Mass/volume] in Serum or Plasma"
+        }
+      ],
+      "range": { "low": 2.0, "high": 5.0 },
+      "direct_transition": "Record_Elevated_BUN_NoDx"
+    },
+
+    "Record_Elevated_BUN_NoDx": {
+      "type": "Observation",
+      "remarks": ["BUN also elevated in uncoded AKI cases"],
+      "category": "laboratory",
+      "unit": "mg/dL",
+      "codes": [
+        {
+          "system": "LOINC",
+          "code": "3094-0",
+          "display": "Urea nitrogen [Mass/volume] in Serum or Plasma"
+        }
+      ],
+      "range": { "low": 25, "high": 60 },
+      "direct_transition": "Clear_First_Visit_Flag"
+    },
+
+    "Clear_First_Visit_Flag": {
+      "type": "SetAttribute",
+      "attribute": "aki_needs_first_visit",
+      "value": false,
+      "direct_transition": "End_Wellness_Encounter"
+    },
+
+    "Record_Followup_Creatinine": {
+      "type": "Observation",
+      "remarks": ["Follow-up creatinine - may still be elevated or recovering"],
+      "category": "laboratory",
+      "unit": "mg/dL",
+      "codes": [
+        {
+          "system": "LOINC",
+          "code": "2160-0",
+          "display": "Creatinine [Mass/volume] in Serum or Plasma"
+        }
+      ],
+      "range": { "low": 1.5, "high": 4.0 },
+      "direct_transition": "Record_Followup_BUN"
+    },
+
+    "Record_Followup_BUN": {
+      "type": "Observation",
+      "category": "laboratory",
+      "unit": "mg/dL",
+      "codes": [
+        {
+          "system": "LOINC",
+          "code": "3094-0",
+          "display": "Urea nitrogen [Mass/volume] in Serum or Plasma"
+        }
+      ],
+      "range": { "low": 15, "high": 50 },
+      "direct_transition": "End_Wellness_Encounter"
+    },
+
+    "End_Wellness_Encounter": {
+      "type": "EncounterEnd",
+      "direct_transition": "Followup_Delay"
+    },
+
+    "Followup_Delay": {
+      "type": "Delay",
+      "range": { "low": 3, "high": 6, "unit": "months" },
+      "direct_transition": "Wellness_Encounter"
+    }
+  },
+  "gmf_version": 2
+}

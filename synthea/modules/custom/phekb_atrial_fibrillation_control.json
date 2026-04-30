@@ -1,0 +1,167 @@
+{
+  "name": "PheKB Atrial Fibrillation Control (Non-AF)",
+  "remarks": [
+    "Control module for AF phenotype testing",
+    "Generates patients who should NOT match AF criteria",
+    "",
+    "Control Criteria (from PheKB AF algorithm):",
+    "- No atrial fibrillation diagnosis",
+    "- No atrial flutter diagnosis",
+    "- No AF-specific medications (anticoagulants, antiarrhythmics)",
+    "- May have hypertension or other cardiac conditions",
+    "- May have metoprolol for hypertension (but NOT in the AF context)",
+    "",
+    "PheKB specifies controls should have no evidence of atrial flutter,",
+    "atrial fibrillation, or atrial tachycardia, but with at least one ECG.",
+    "Since Synthea ECG generation is limited, we focus on the absence of",
+    "AF/flutter diagnoses and AF-specific medications.",
+    "",
+    "Uses 'wellness: true' encounter pattern to produce FHIR resources.",
+    "These patients should NOT be returned by AF queries."
+  ],
+  "states": {
+    "Initial": {
+      "type": "Initial",
+      "direct_transition": "Age_Guard"
+    },
+
+    "Age_Guard": {
+      "type": "Guard",
+      "allow": {
+        "condition_type": "Age",
+        "operator": ">=",
+        "quantity": 40,
+        "unit": "years"
+      },
+      "direct_transition": "Set_Control_Flag"
+    },
+
+    "Set_Control_Flag": {
+      "type": "SetAttribute",
+      "attribute": "af_control",
+      "value": true,
+      "direct_transition": "Wellness_Encounter"
+    },
+
+    "Wellness_Encounter": {
+      "type": "Encounter",
+      "wellness": true,
+      "direct_transition": "Check_Other_Conditions"
+    },
+
+    "Check_Other_Conditions": {
+      "type": "Simple",
+      "remarks": ["Some control patients have non-AF cardiac conditions for variety"],
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Hypertension",
+          "distribution": 0.35
+        },
+        {
+          "transition": "Diagnose_Hyperlipidemia",
+          "distribution": 0.25
+        },
+        {
+          "transition": "Diagnose_Heart_Failure",
+          "distribution": 0.10
+        },
+        {
+          "transition": "End_Wellness_Encounter",
+          "distribution": 0.30
+        }
+      ]
+    },
+
+    "Diagnose_Hypertension": {
+      "type": "ConditionOnset",
+      "assign_to_attribute": "hypertension",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": "38341003",
+          "display": "Hypertensive disorder"
+        }
+      ],
+      "remarks": ["Non-AF condition - hypertension is common in the same age group"],
+      "direct_transition": "Prescribe_Antihypertensive"
+    },
+
+    "Prescribe_Antihypertensive": {
+      "type": "MedicationOrder",
+      "codes": [
+        {
+          "system": "RxNorm",
+          "code": "314076",
+          "display": "lisinopril 10 MG Oral Tablet"
+        }
+      ],
+      "reason": "hypertension",
+      "direct_transition": "End_Wellness_Encounter"
+    },
+
+    "Diagnose_Hyperlipidemia": {
+      "type": "ConditionOnset",
+      "assign_to_attribute": "hyperlipidemia",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": "55822004",
+          "display": "Hyperlipidemia"
+        }
+      ],
+      "remarks": ["Non-AF condition for control population variety"],
+      "direct_transition": "Prescribe_Statin"
+    },
+
+    "Prescribe_Statin": {
+      "type": "MedicationOrder",
+      "codes": [
+        {
+          "system": "RxNorm",
+          "code": "259255",
+          "display": "atorvastatin 20 MG Oral Tablet"
+        }
+      ],
+      "reason": "hyperlipidemia",
+      "direct_transition": "End_Wellness_Encounter"
+    },
+
+    "Diagnose_Heart_Failure": {
+      "type": "ConditionOnset",
+      "assign_to_attribute": "heart_failure",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": "84114007",
+          "display": "Heart failure"
+        }
+      ],
+      "remarks": ["Heart failure without AF - tests specificity of AF queries"],
+      "direct_transition": "Prescribe_HF_Med"
+    },
+
+    "Prescribe_HF_Med": {
+      "type": "MedicationOrder",
+      "codes": [
+        {
+          "system": "RxNorm",
+          "code": "314076",
+          "display": "lisinopril 10 MG Oral Tablet"
+        }
+      ],
+      "reason": "heart_failure",
+      "direct_transition": "End_Wellness_Encounter"
+    },
+
+    "End_Wellness_Encounter": {
+      "type": "EncounterEnd",
+      "direct_transition": "Terminal_Control"
+    },
+
+    "Terminal_Control": {
+      "type": "Terminal",
+      "remarks": ["Control patient - should NOT be found by AF phenotype query"]
+    }
+  },
+  "gmf_version": 2
+}

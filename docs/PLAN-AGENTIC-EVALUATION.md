@@ -53,6 +53,20 @@ synthea/output/type-2-diabetes/
     └── control/fhir/
 ```
 
+### MIMIC-IV as a Third Data Source
+
+In addition to the two Synthea variants, evaluations will also run against **MIMIC-IV on FHIR Demo** (100 real de-identified patients from PhysioNet). This creates a dual-track evaluation:
+
+| Track | Data Source | Code Systems Present | Ground Truth | Layer 3 Behavior |
+|-------|-----------|---------------------|-------------|-----------------|
+| **A (Synthea Generic)** | Synthea custom modules | SNOMED conditions, LOINC labs, RxNorm SCD meds | Controlled — we built the data | ICD-10 queries return 0 results (SNOMED only) |
+| **A (Synthea US Core)** | Synthea US Core variant | SNOMED + ICD-10-CM conditions, LOINC, RxNorm | Controlled | ICD-10 queries return results |
+| **B (MIMIC-IV)** | MIMIC-IV on FHIR Demo | ICD-10-CM, ICD-9-CM, SNOMED CT, RxNorm, LOINC | Comprehensive reference queries (VSAC-expanded) | Any clinically valid code may return results |
+
+MIMIC ground truth is established per-phenotype by building **comprehensive reference queries** from VSAC value set expansions and validating the resulting patient sets. See `docs/IMPLEMENTATION-ROADMAP.md` "Dual-Track Evaluation" for the full methodology.
+
+The three-tier evaluation (Closed Book → Tool-Assisted → Skill-Guided) runs independently on each track, producing a 3×3 comparison matrix (3 tiers × 3 data tracks) per model.
+
 ## Agentic Evaluation Architecture
 
 ### Provider Interface Extension
@@ -89,6 +103,11 @@ Tools available to the LLM in agentic mode:
 | `fhir_metadata` | Query server CapabilityStatement | Tier 2, 3 |
 | `fhir_sample_data` | Sample actual data on the server | Tier 2, 3 |
 | `fhir_execute_query` | Try a query and see results | Tier 2, 3 |
+| `vsac_search_value_sets` | Search VSAC for curated value sets (quality measure code lists) | Tier 2, 3 |
+| `vsac_expand_value_set` | Get all codes in a value set — replaces manual crosswalking | Tier 2, 3 |
+| `vsac_validate_code` | Check if a code belongs to a value set | Tier 2, 3 |
+| `vsac_lookup_code` | Look up code details using FHIR-native system URIs | Tier 2, 3 |
+| `vsac_check_subsumption` | Check parent/child relationships in SNOMED hierarchy | Tier 2, 3 |
 | `read_profile` | Read a pre-downloaded StructureDefinition | Tier 3 only |
 | `read_valueset` | Read a pre-downloaded ValueSet | Tier 3 only |
 | `read_ig_summary` | Read an IG summary document | Tier 3 only |
@@ -322,11 +341,36 @@ Expected: 20 patients (union of dx + meds + labs)
 | Gemini 2.0 Pro   | -    | ? | ? |
 
 Tool Usage Analysis (Tier 2):
-| Model           | UMLS Lookups | /metadata Checked | Data Sampled | Self-Corrected |
-|-----------------|:---:|:---:|:---:|:---:|
-| qwen2.5:7b      | ? | ? | ? | ? |
-| Claude Sonnet    | ? | ? | ? | ? |
+| Model           | UMLS Lookups | VSAC Value Sets | /metadata Checked | Data Sampled | Self-Corrected |
+|-----------------|:---:|:---:|:---:|:---:|:---:|
+| qwen2.5:7b      | ? | ? | ? | ? | ? |
+| Claude Sonnet    | ? | ? | ? | ? | ? |
 ```
+
+Three-Layer Evaluation Breakdown (per test case):
+| Metric                  | Tier 1 (Closed) | Tier 2 (Tools) | Tier 3 (Skill) |
+|-------------------------|:---:|:---:|:---:|
+| L1: Resource Type Match | ?   | ?   | ?   |
+| L2a: Code System Match  | ?   | ?   | ?   |
+| L2b: Code Value Match   | ?   | ?   | ?   |
+| L3: Execution F1        | ?   | ?   | ?   |
+
+The three-layer decomposition (see `docs/IMPLEMENTATION-ROADMAP.md`) enables isolating the specific impact of each evaluation tier. We expect **Layer 2 (code system accuracy) to show the largest delta between Tier 1 and Tier 2**, directly quantifying the value of the UMLS/VSAC MCP server. Tier 3 should improve Layer 3 execution scores by teaching LLMs to sample actual server data and adapt query strategies to the Implementation Guide in use.
+
+Dual-Track Comparison (per phenotype, per model):
+```
+Phenotype: Type 2 Diabetes Mellitus
+Model: [model name]
+
+| Metric        | Synthea (Track A) | MIMIC-IV (Track B) | Interpretation |
+|---------------|:-:|:-:|----------------|
+| L1: Resource Type | ? | ? | Should match across tracks |
+| L2a: Code System  | ? | ? | MIMIC may reward ICD-10; Synthea requires SNOMED |
+| L2b: Code Value   | ? | ? | MIMIC accepts broader code set via VSAC |
+| L3: Execution F1  | ? | ? | MIMIC L3 validates clinically correct codes that Synthea penalizes |
+```
+
+When L3 differs across tracks (e.g., L3=0 on Synthea but L3>0 on MIMIC for the same generated query), the failure is **data-mismatch**, not clinical error. This is a key diagnostic that only dual-track evaluation can provide.
 
 ## Implementation Phases
 
@@ -376,3 +420,11 @@ Tool Usage Analysis (Tier 2):
 5. **Caching**: UMLS lookups for the same codes repeat across evaluations. Should we cache tool results to speed up batch runs?
 
 6. **Ground truth for tool usage**: Should we define "expected tool calls" (e.g., "the LLM SHOULD have looked up the LOINC code for HbA1c") and score on that?
+
+7. **VSAC value set caching**: Value set expansions can be large (100+ codes). Should we cache expansions to avoid repeated API calls? Should we pre-expand common value sets as part of test setup?
+
+8. **Value set awareness scoring**: Should we give bonus points to LLMs that look up VSAC value sets to find comprehensive code lists vs. ones that only use individual code lookup?
+
+9. **Three-layer metric aggregation**: When reporting aggregate scores across test cases, should we weight Layer 2 (code accuracy) more heavily for phenotype test cases since clinical code resolution is the primary capability being tested?
+
+10. **Lenient vs strict code evaluation**: Should Layer 2b use exact code match (strict) or VSAC value set membership (lenient)? Strict mode penalizes clinically correct codes that don't match Synthea's generated data (e.g., ICD-10 E11 for T2DM when Synthea only generates SNOMED 44054006). Lenient mode requires VSAC API access and pre-expanded value sets. We may want to report both.

@@ -1,0 +1,90 @@
+{
+  "id": "phekb-gout-dx",
+  "source": "phekb",
+  "source_id": "gout",
+  "name": "Gout - Diagnosis Code Query",
+  "description": "Tests ability to find gout patients via diagnosis code. Distinct from inflammatory arthritis (RA) by hyperuricemia mechanism.",
+  "prompt": "Find all patients with a diagnosis of gout.",
+  "prompts": {
+    "naive": "Find patients with gout.",
+    "broad": "Find patients diagnosed with gout — a metabolic arthritis caused by monosodium urate crystal deposition, distinct from inflammatory arthritis like rheumatoid arthritis.",
+    "expert": "Search Condition resources with SNOMED 90560007 (Gout). Query: Condition?code=http://snomed.info/sct|90560007"
+  },
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "algorithm_path": "diagnosis-path",
+    "algorithm_path_description": "Patients with gout dx. First uric-acid-related phenotype.",
+    "code_systems": [
+      "SNOMED CT"
+    ],
+    "required_codes": [
+      {
+        "system": "http://snomed.info/sct",
+        "code": "90560007",
+        "display": "Gout",
+        "source": "UMLS verified"
+      }
+    ],
+    "complexity": "easy",
+    "tags": [
+      "condition",
+      "rheumatology",
+      "gout",
+      "metabolic-arthritis",
+      "diagnosis-code"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "Condition",
+    "parameters": {
+      "code": "http://snomed.info/sct|90560007"
+    },
+    "url": "Condition?code=http://snomed.info/sct|90560007"
+  },
+  "test_data": {
+    "resources": [
+      "synthea/output/gout/positive/fhir/",
+      "synthea/output/gout/control/fhir/"
+    ],
+    "expected_result_count": 34,
+    "expected_resource_ids": [],
+    "expected_patient_ids": [
+      "029c97e8-f7ff-670c-b134-d3352b41c4f5",
+      "02b4a363-a296-27e0-d86d-33bf2cae497c",
+      "04786bbd-2882-e67a-f5bd-4d120089220b",
+      "07b51d43-92fa-9e7a-ef49-4ad08949a8ca",
+      "17010c65-57fc-1515-85c2-7a2168bf0e32",
+      "20b97589-1177-ab8d-5769-babe74f37ee2",
+      "2b2210e1-d5c8-0827-89ef-e3b24ccffdc0",
+      "39c4b31e-5a39-3a61-eca7-14c4933c7c3b",
+      "3dae1003-0515-9f19-e132-8a1680ae48b1",
+      "3dd9c880-f665-b307-f3e2-4ccab68dc0c2",
+      "408ddcde-3170-8597-7c41-8ae1c40406bd",
+      "4af1d40a-12a1-b67a-bdae-8816e94702c9",
+      "5705f8f4-1419-3e91-ab83-7785f2cdba5e",
+      "6db9df95-ce42-5a64-8e4d-89dd02c7ce14",
+      "71161a5d-9496-f0eb-f317-d7376b833add",
+      "7a5ee348-fd37-2f63-a6b6-9e7bd24d055f",
+      "812a63bf-1c18-8317-864f-5c4385f64fcd",
+      "918d34fc-438e-b8fa-303f-294c1db04f99",
+      "9ad66e8c-7b27-9201-a93a-1f2b17a6ac0b",
+      "9ba0bae1-c44f-fedf-df42-f022dfa97e1b",
+      "9d849d6a-e01a-4911-790b-4db4222c88cf",
+      "a0e4b6dc-d81e-4ba8-4206-3e83e624269e",
+      "a164ee81-c35b-999f-f89a-b3c411d73ee6",
+      "b2129dab-e000-710c-b018-cb4cd3442562",
+      "ba1bdd59-bfae-6bb6-5241-ec29ec8f2ac9",
+      "bed009f1-66b4-5720-83cf-4ddddc8a83c3",
+      "c2c9e410-bc5c-b920-896e-bd8ea0706beb",
+      "c6790f63-ce6f-1332-3960-35d1fc325f49",
+      "da49974a-037d-2132-4106-ebd3cf83c98f",
+      "db1b057c-ad1c-c169-f771-78bb9ec3436d",
+      "deaf3175-de18-2279-4e2a-303e7ca5dc6c",
+      "e9719aef-2808-bc97-c67b-26d13494ec33",
+      "f5a62ae0-8719-87e1-f79f-ad7cdc2117bc",
+      "f7dfcd9c-5043-75c9-d8e4-db4e8dc6ad53"
+    ]
+  },
+  "created_at": "2026-04-29T00:00:00.000000Z",
+  "updated_at": "2026-04-27T00:00:00.000000Z"
+}

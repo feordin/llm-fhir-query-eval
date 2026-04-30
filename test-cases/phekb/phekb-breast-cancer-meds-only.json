@@ -1,0 +1,84 @@
+{
+  "id": "phekb-breast-cancer-meds-only",
+  "source": "phekb",
+  "source_id": "breast-cancer",
+  "name": "Breast Cancer - Tamoxifen for Chemoprevention (No Diagnosis)",
+  "description": "Tricky test case: finds patients on tamoxifen or aromatase inhibitors who have NO breast cancer diagnosis. Unlike most Path C scenarios, breast cancer Path C has a clinically meaningful interpretation: tamoxifen and AIs are FDA-approved for breast cancer chemoprevention in high-risk women (BRCA1/2 mutation carriers, atypical hyperplasia, lobular carcinoma in situ). These patients receive endocrine therapy without an active breast cancer diagnosis. The Synthea module weights this path lightly (~15%) because chemoprevention is a much smaller population than treatment.",
+  "prompt": "I want to find patients in our system who are taking tamoxifen or aromatase inhibitors but don't have a formal breast cancer diagnosis on their problem list. These are typically high-risk patients on chemoprevention rather than treatment.",
+  "prompts": {
+    "naive": "Find patients on tamoxifen or aromatase inhibitors without a breast cancer diagnosis.",
+    "expert": "I need to identify the chemoprevention population: patients with MedicationRequest for tamoxifen (RxNorm 10324), anastrozole (199224), letrozole (200064), or exemestane (310261), who lack a Condition for breast cancer (SNOMED 254837009, 254838004, 408643008, 278054005, 713609000). These patients are typically BRCA1/2 carriers, have atypical hyperplasia, or have a strong family history but no active malignancy."
+  },
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "algorithm_path": "meds-only-path",
+    "algorithm_path_description": "Path C 'tricky' patients: have tamoxifen or AI but NO breast cancer Condition. The Synthea module weights this path lightly (~15%) — this is a smaller population than therapeutic use but clinically meaningful (BRCA carriers, atypical hyperplasia).",
+    "code_systems": [
+      "RxNorm",
+      "SNOMED CT"
+    ],
+    "required_codes": [
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "10324",
+        "display": "tamoxifen",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "199224",
+        "display": "anastrozole 1 MG Oral Tablet",
+        "source": "VSAC verified"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "200064",
+        "display": "letrozole 2.5 MG Oral Tablet",
+        "source": "VSAC verified"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "310261",
+        "display": "exemestane 25 MG Oral Tablet",
+        "source": "VSAC verified"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "224905",
+        "display": "trastuzumab",
+        "source": "UMLS verified"
+      }
+    ],
+    "complexity": "hard",
+    "tags": [
+      "medication",
+      "oncology",
+      "breast-cancer",
+      "tricky",
+      "meds-only",
+      "cross-resource",
+      "chemoprevention"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "MedicationRequest",
+    "parameters": {
+      "code": "http://www.nlm.nih.gov/research/umls/rxnorm|10324,http://www.nlm.nih.gov/research/umls/rxnorm|199224,http://www.nlm.nih.gov/research/umls/rxnorm|200064,http://www.nlm.nih.gov/research/umls/rxnorm|310261,http://www.nlm.nih.gov/research/umls/rxnorm|224905"
+    },
+    "url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|10324,http://www.nlm.nih.gov/research/umls/rxnorm|199224,http://www.nlm.nih.gov/research/umls/rxnorm|200064,http://www.nlm.nih.gov/research/umls/rxnorm|310261,http://www.nlm.nih.gov/research/umls/rxnorm|224905"
+  },
+  "test_data": {
+    "resources": [
+      "synthea/output/breast-cancer/positive/fhir/",
+      "synthea/output/breast-cancer/control/fhir/"
+    ],
+    "expected_result_count": 2,
+    "expected_resource_ids": [],
+    "expected_patient_ids": [
+      "ba1884ba-f019-9c56-538d-2064caf29f17",
+      "f1fc0f13-1412-6ab5-edef-ffa63f39464b"
+    ]
+  },
+  "created_at": "2026-04-27T00:00:00.000000Z",
+  "updated_at": "2026-04-27T00:00:00.000000Z"
+}

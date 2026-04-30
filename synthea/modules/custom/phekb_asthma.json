@@ -1,0 +1,359 @@
+{
+  "name": "PheKB Asthma",
+  "remarks": [
+    "Custom Synthea module for PheKB phenotype: asthma",
+    "Based on PheKB asthma algorithm: age 4+, asthma meds + diagnosis codes",
+    "",
+    "Generates TWO types of positive patients:",
+    "  Type A (70%): Diagnosis + Meds (standard path - has Condition resource)",
+    "  Type B (30%): Meds only, NO diagnosis code (tests if LLMs search beyond Condition)",
+    "",
+    "All patients get at least one asthma medication (rescue or controller).",
+    "Type A patients also get a formal asthma diagnosis code.",
+    "",
+    "Codes verified via NIH UMLS MCP (2025AB) and RxNav:",
+    "  SNOMED 195967001 (Asthma)",
+    "  RxNorm SCD: 245314 (albuterol inhalation soln), 895994 (fluticasone MDI),",
+    "              351109 (budesonide inhalation susp), 200224 (montelukast tablet)"
+  ],
+  "states": {
+    "Initial": {
+      "type": "Initial",
+      "direct_transition": "Age_Guard"
+    },
+    "Age_Guard": {
+      "type": "Guard",
+      "allow": {
+        "condition_type": "Age",
+        "operator": ">=",
+        "quantity": 4,
+        "unit": "years"
+      },
+      "direct_transition": "Set_Asthma_Flag"
+    },
+    "Set_Asthma_Flag": {
+      "type": "SetAttribute",
+      "attribute": "asthma_positive",
+      "value": true,
+      "direct_transition": "Choose_Patient_Path"
+    },
+    "Choose_Patient_Path": {
+      "type": "Simple",
+      "remarks": [
+        "Split patients into two groups:",
+        "  70% get a formal asthma diagnosis + meds (standard path)",
+        "  30% have NO diagnosis - only medication prescriptions (meds-only path)",
+        "This tests whether LLMs search beyond Condition resources."
+      ],
+      "distributed_transition": [
+        {
+          "transition": "Set_Path_With_Diagnosis",
+          "distribution": 0.7
+        },
+        {
+          "transition": "Set_Path_No_Diagnosis",
+          "distribution": 0.3
+        }
+      ]
+    },
+    "Set_Path_With_Diagnosis": {
+      "type": "SetAttribute",
+      "attribute": "asthma_has_diagnosis",
+      "value": true,
+      "direct_transition": "Set_Needs_First_Visit"
+    },
+    "Set_Path_No_Diagnosis": {
+      "type": "SetAttribute",
+      "remarks": [
+        "Meds-only path: No diagnosis code, only medication prescriptions"
+      ],
+      "attribute": "asthma_has_diagnosis",
+      "value": false,
+      "direct_transition": "Set_Needs_First_Visit"
+    },
+    "Set_Needs_First_Visit": {
+      "type": "SetAttribute",
+      "attribute": "asthma_needs_first_visit",
+      "value": true,
+      "direct_transition": "Wellness_Encounter"
+    },
+    "Wellness_Encounter": {
+      "type": "Encounter",
+      "wellness": true,
+      "direct_transition": "Check_First_Visit"
+    },
+    "Check_First_Visit": {
+      "type": "Simple",
+      "conditional_transition": [
+        {
+          "condition": {
+            "condition_type": "Attribute",
+            "attribute": "asthma_needs_first_visit",
+            "operator": "==",
+            "value": true
+          },
+          "transition": "Route_First_Visit"
+        },
+        {
+          "transition": "End_Wellness_Encounter"
+        }
+      ]
+    },
+    "Route_First_Visit": {
+      "type": "Simple",
+      "remarks": [
+        "Route to diagnosis or no-diagnosis path based on patient type"
+      ],
+      "conditional_transition": [
+        {
+          "condition": {
+            "condition_type": "Attribute",
+            "attribute": "asthma_has_diagnosis",
+            "operator": "==",
+            "value": true
+          },
+          "transition": "Diagnose_Asthma"
+        },
+        {
+          "transition": "Choose_Med_No_Diagnosis"
+        }
+      ]
+    },
+    "Diagnose_Asthma": {
+      "type": "Simple",
+      "remarks": [
+        "Standard path: Record asthma diagnosis inside wellness encounter",
+        "Distributes patients across SNOMED variants for code-variation testing."
+      ],
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Asthma__variant_0",
+          "distribution": 0.4
+        },
+        {
+          "transition": "Diagnose_Asthma__variant_1",
+          "distribution": 0.3
+        },
+        {
+          "transition": "Diagnose_Asthma__variant_2",
+          "distribution": 0.2
+        },
+        {
+          "transition": "Diagnose_Asthma__variant_3",
+          "distribution": 0.1
+        }
+      ]
+    },
+    "Prescribe_Albuterol_Diagnosed": {
+      "type": "MedicationOrder",
+      "remarks": [
+        "All diagnosed patients get a rescue inhaler"
+      ],
+      "codes": [
+        {
+          "system": "RxNorm",
+          "code": "245314",
+          "display": "albuterol 5 MG/ML Inhalation Solution"
+        }
+      ],
+      "reason": "asthma_condition",
+      "direct_transition": "Choose_Controller_Med_Diagnosed"
+    },
+    "Choose_Controller_Med_Diagnosed": {
+      "type": "Simple",
+      "remarks": [
+        "Most diagnosed patients also get a controller medication"
+      ],
+      "distributed_transition": [
+        {
+          "transition": "Prescribe_Fluticasone_Dx",
+          "distribution": 0.3
+        },
+        {
+          "transition": "Prescribe_Budesonide_Dx",
+          "distribution": 0.25
+        },
+        {
+          "transition": "Prescribe_Montelukast_Dx",
+          "distribution": 0.25
+        },
+        {
+          "transition": "Clear_First_Visit_Flag",
+          "distribution": 0.2
+        }
+      ]
+    },
+    "Prescribe_Fluticasone_Dx": {
+      "type": "MedicationOrder",
+      "codes": [
+        {
+          "system": "RxNorm",
+          "code": "895994",
+          "display": "120 ACTUAT fluticasone propionate 0.044 MG/ACTUAT Metered Dose Inhaler"
+        }
+      ],
+      "reason": "asthma_condition",
+      "direct_transition": "Clear_First_Visit_Flag"
+    },
+    "Prescribe_Budesonide_Dx": {
+      "type": "MedicationOrder",
+      "codes": [
+        {
+          "system": "RxNorm",
+          "code": "351109",
+          "display": "budesonide 0.25 MG/ML Inhalation Suspension"
+        }
+      ],
+      "reason": "asthma_condition",
+      "direct_transition": "Clear_First_Visit_Flag"
+    },
+    "Prescribe_Montelukast_Dx": {
+      "type": "MedicationOrder",
+      "codes": [
+        {
+          "system": "RxNorm",
+          "code": "200224",
+          "display": "montelukast 10 MG Oral Tablet"
+        }
+      ],
+      "reason": "asthma_condition",
+      "direct_transition": "Clear_First_Visit_Flag"
+    },
+    "Choose_Med_No_Diagnosis": {
+      "type": "Simple",
+      "remarks": [
+        "Meds-only path: patients get asthma meds but NO diagnosis code (key evidence without diagnosis)"
+      ],
+      "distributed_transition": [
+        {
+          "transition": "Prescribe_Albuterol_NoDx",
+          "distribution": 0.35
+        },
+        {
+          "transition": "Prescribe_Fluticasone_NoDx",
+          "distribution": 0.25
+        },
+        {
+          "transition": "Prescribe_Budesonide_NoDx",
+          "distribution": 0.2
+        },
+        {
+          "transition": "Prescribe_Montelukast_NoDx",
+          "distribution": 0.2
+        }
+      ]
+    },
+    "Prescribe_Albuterol_NoDx": {
+      "type": "MedicationOrder",
+      "codes": [
+        {
+          "system": "RxNorm",
+          "code": "245314",
+          "display": "albuterol 5 MG/ML Inhalation Solution"
+        }
+      ],
+      "direct_transition": "Clear_First_Visit_Flag"
+    },
+    "Prescribe_Fluticasone_NoDx": {
+      "type": "MedicationOrder",
+      "codes": [
+        {
+          "system": "RxNorm",
+          "code": "895994",
+          "display": "120 ACTUAT fluticasone propionate 0.044 MG/ACTUAT Metered Dose Inhaler"
+        }
+      ],
+      "direct_transition": "Clear_First_Visit_Flag"
+    },
+    "Prescribe_Budesonide_NoDx": {
+      "type": "MedicationOrder",
+      "codes": [
+        {
+          "system": "RxNorm",
+          "code": "351109",
+          "display": "budesonide 0.25 MG/ML Inhalation Suspension"
+        }
+      ],
+      "direct_transition": "Clear_First_Visit_Flag"
+    },
+    "Prescribe_Montelukast_NoDx": {
+      "type": "MedicationOrder",
+      "codes": [
+        {
+          "system": "RxNorm",
+          "code": "200224",
+          "display": "montelukast 10 MG Oral Tablet"
+        }
+      ],
+      "direct_transition": "Clear_First_Visit_Flag"
+    },
+    "Clear_First_Visit_Flag": {
+      "type": "SetAttribute",
+      "attribute": "asthma_needs_first_visit",
+      "value": false,
+      "direct_transition": "End_Wellness_Encounter"
+    },
+    "End_Wellness_Encounter": {
+      "type": "EncounterEnd",
+      "direct_transition": "Followup_Delay"
+    },
+    "Followup_Delay": {
+      "type": "Delay",
+      "range": {
+        "low": 3,
+        "high": 12,
+        "unit": "months"
+      },
+      "direct_transition": "Wellness_Encounter"
+    },
+    "Diagnose_Asthma__variant_0": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": "195967001",
+          "display": "Asthma"
+        }
+      ],
+      "direct_transition": "Prescribe_Albuterol_Diagnosed",
+      "assign_to_attribute": "asthma_condition"
+    },
+    "Diagnose_Asthma__variant_1": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": "389145006",
+          "display": "Allergic asthma"
+        }
+      ],
+      "direct_transition": "Prescribe_Albuterol_Diagnosed",
+      "assign_to_attribute": "asthma_condition"
+    },
+    "Diagnose_Asthma__variant_2": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": "233678006",
+          "display": "Childhood asthma"
+        }
+      ],
+      "direct_transition": "Prescribe_Albuterol_Diagnosed",
+      "assign_to_attribute": "asthma_condition"
+    },
+    "Diagnose_Asthma__variant_3": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": "195977004",
+          "display": "Mixed asthma"
+        }
+      ],
+      "direct_transition": "Prescribe_Albuterol_Diagnosed",
+      "assign_to_attribute": "asthma_condition"
+    }
+  },
+  "gmf_version": 2
+}

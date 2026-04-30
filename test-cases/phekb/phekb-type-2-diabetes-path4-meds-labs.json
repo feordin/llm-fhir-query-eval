@@ -4,7 +4,11 @@
   "source_id": "type-2-diabetes-mellitus",
   "name": "Type 2 Diabetes - Path 4: Patients on T2DM Meds with Elevated A1c (No Diagnosis)",
   "description": "Tests the hardest T2DM identification path: patients who have NO formal diabetes diagnosis but ARE prescribed diabetes medications AND have elevated HbA1c. This requires a cross-resource query combining MedicationRequest and Observation evidence at the Patient level. Tests whether the LLM can use _has parameters or other cross-resource FHIR search techniques.",
-  "prompt": "Find all patients who are currently prescribed type 2 diabetes medications such as metformin, sulfonylureas, or thiazolidinediones, and who also have hemoglobin A1c lab results at or above 6.5 percent. These patients may not have a formal diabetes diagnosis recorded.",
+  "prompt": "Find patients who are on type 2 diabetes medications and also have elevated hemoglobin A1c results above 6.5 percent, even if they do not have a formal diabetes diagnosis.",
+  "prompts": {
+    "naive": "Find patients who are on type 2 diabetes medications and also have elevated hemoglobin A1c results above 6.5 percent, even if they do not have a formal diabetes diagnosis.",
+    "expert": "Find all patients who are currently prescribed type 2 diabetes medications such as metformin, sulfonylureas, or thiazolidinediones, and who also have hemoglobin A1c lab results at or above 6.5 percent. These patients may not have a formal diabetes diagnosis recorded."
+  },
   "metadata": {
     "implementation_guide": "US Core 5.0.0",
     "algorithm_path": "path-4",
@@ -17,39 +21,44 @@
       {
         "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
         "code": "860975",
-        "display": "Metformin 500mg ER"
+        "display": "Metformin 500mg ER",
+        "source": "document"
       },
       {
         "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
         "code": "310490",
-        "display": "Glipizide 5mg"
+        "display": "Glipizide 5mg",
+        "source": "document"
       },
       {
         "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
         "code": "310537",
-        "display": "Glyburide 5mg"
+        "display": "Glyburide 5mg",
+        "source": "document"
       },
       {
         "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
         "code": "312440",
-        "display": "Pioglitazone 30mg"
-      },
-      {
-        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
-        "code": "199246",
-        "display": "Glimepiride 2mg"
+        "display": "Pioglitazone 30mg",
+        "source": "document"
       },
       {
         "system": "http://loinc.org",
         "code": "4548-4",
-        "display": "Hemoglobin A1c"
+        "display": "Hemoglobin A1c",
+        "source": "document"
       }
     ],
     "complexity": "expert",
+    "multi_query": true,
+    "expected_queries": [
+      "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|860975,http://www.nlm.nih.gov/research/umls/rxnorm|310490,http://www.nlm.nih.gov/research/umls/rxnorm|310537,http://www.nlm.nih.gov/research/umls/rxnorm|312440",
+      "Observation?code=http://loinc.org|4548-4&value-quantity=ge6.5||%"
+    ],
     "tags": [
       "cross-resource",
       "patient-level",
-      "_has",
+      "multi-query",
       "medication",
       "observation",
       "type-2-diabetes",
@@ -58,42 +67,94 @@
   },
   "expected_query": {
     "resource_type": "Patient",
-    "parameters": {
-      "_has:MedicationRequest:patient:code": "http://www.nlm.nih.gov/research/umls/rxnorm|860975,http://www.nlm.nih.gov/research/umls/rxnorm|310490,http://www.nlm.nih.gov/research/umls/rxnorm|310539,http://www.nlm.nih.gov/research/umls/rxnorm|312440,http://www.nlm.nih.gov/research/umls/rxnorm|199246",
-      "_has:Observation:patient:code": "http://loinc.org|4548-4"
-    },
-    "url": "Patient?_has:MedicationRequest:patient:code=http://www.nlm.nih.gov/research/umls/rxnorm|860975,http://www.nlm.nih.gov/research/umls/rxnorm|310490,http://www.nlm.nih.gov/research/umls/rxnorm|310539,http://www.nlm.nih.gov/research/umls/rxnorm|312440,http://www.nlm.nih.gov/research/umls/rxnorm|199246&_has:Observation:patient:code=http://loinc.org|4548-4",
-    "notes": "This uses dual _has parameters to find Patients who have BOTH a T2DM MedicationRequest AND an HbA1c Observation. An ideal query would also add value-quantity filtering on the Observation. Acceptable alternatives include separate queries for MedicationRequest and Observation with client-side intersection."
+    "parameters": {},
+    "url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|860975,http://www.nlm.nih.gov/research/umls/rxnorm|310490,http://www.nlm.nih.gov/research/umls/rxnorm|310537,http://www.nlm.nih.gov/research/umls/rxnorm|312440",
+    "notes": "This test requires two queries: one for T2DM medications and one for elevated A1c. The expected patient set is the INTERSECTION of patients from both queries who do NOT have a T2D diagnosis. Acceptable approaches include dual _has on Patient, or separate queries with client-side intersection."
   },
   "test_data": {
     "resources": [
       "synthea/output/type-2-diabetes/positive/fhir/",
       "synthea/output/type-2-diabetes/control/fhir/"
     ],
-    "expected_result_count": 20,
-    "expected_resource_ids": [
-      "1389",
-      "1440",
-      "1686",
-      "1747",
-      "1839",
-      "1946",
-      "2072",
-      "2312",
-      "2365",
-      "2563",
-      "2763",
-      "2814",
-      "3023",
-      "3410",
-      "3514",
-      "3572",
-      "3653",
-      "3760",
-      "3816",
-      "4009"
+    "expected_result_count": 74,
+    "expected_resource_ids": [],
+    "expected_patient_ids": [
+      "080b069b-5108-46b6-ecef-6aacd3b9ef3f",
+      "0c07fba7-424b-53b7-b593-b9f82d87416d",
+      "1ad96ef4-e416-4722-441e-3cb3ce280833",
+      "1ee7c50f-5670-cbe9-241c-8ee0c76169a2",
+      "244397f7-9204-140c-0301-0678bcc3c4a0",
+      "265b637d-5a62-9b4c-e9ca-83c16e3b460b",
+      "2694941f-b838-561a-d47c-7093ce0eaa01",
+      "2c167999-289d-95fa-5c27-7d8b8d35348c",
+      "2ccf50c1-31c5-b3d9-dc49-fb54764d05ce",
+      "2dbe8913-9254-068d-bbbb-cd42528ca0fb",
+      "35b353dd-402b-571a-d67a-af0a104d0854",
+      "374a7a12-0a25-632b-8db1-0d3f3e27780e",
+      "3a62ae3f-83e2-7d7b-4fa4-188dce1df480",
+      "46ee9d82-b52c-856d-069b-5064ff052225",
+      "46f6a358-f8f8-614d-0542-19451221109a",
+      "4bfa091f-113c-25f3-9eec-381f1e884a58",
+      "4f083ce3-f12b-bb4b-7353-e17f0cd55b0a",
+      "559f630b-99b6-b0cf-1cb1-97625ff2fc01",
+      "56a1a07e-47a5-7407-9121-43cd2bbadf1d",
+      "57fba869-2570-031e-a7c0-292907b28680",
+      "5ba0a3f3-32f7-02b1-ec6a-8f568923954c",
+      "5e7ebf2c-22ec-a89b-53ab-38edddd81be9",
+      "607c28c3-567e-8e26-80a8-cd1fb951db0d",
+      "61e24146-3373-5634-b04c-0c53949fd033",
+      "62f60bdb-cc5c-8305-b98b-f2b229a55eca",
+      "639e38d8-6d69-f17d-d55f-2378d9039499",
+      "6ad2dd19-6429-2020-2a52-9253f9a033b4",
+      "6aed9210-c500-4375-b0fc-3374c40b8591",
+      "6fbddf55-7096-b883-7cd3-260f27953080",
+      "75768779-dbf2-ef75-613f-b4331ae42946",
+      "77cc4d24-863d-7d6f-1774-67dd9f563063",
+      "79f1c6d7-8add-c610-2711-ad39f2800507",
+      "7b06ee52-df9a-8487-0be6-dff27cc7d519",
+      "840e5833-655e-1dff-59e7-e4e1f4f1db7b",
+      "89b73d4b-8b8c-1b15-1b4a-687147f661a4",
+      "8ad5d7b1-bc3d-8a55-ff50-ae6d863c8826",
+      "8e031d52-2ae1-197f-3319-03ce8cc45bbf",
+      "8fee110c-d66a-8634-de2a-e70d182be55b",
+      "922fb35e-148d-9e82-7e65-bfa05e3b3515",
+      "952fb8ae-23c1-48fe-a0ee-18ca083275a0",
+      "9661a432-4630-2cd9-142c-386845fae837",
+      "97831cc7-a4d9-9690-42f2-feec54e86943",
+      "982750f4-569b-5949-196b-60699bdda3fb",
+      "9af513f8-372b-e1f2-0682-1733cf7371f4",
+      "a2102333-3206-a76f-74aa-f471137fdffa",
+      "a2fb233f-60e0-b477-cd38-af3923f792a3",
+      "a5e349cc-1808-1a92-d8a9-aaee91dbc90e",
+      "a65890ee-275c-2935-abf7-ac448a829871",
+      "a862380e-4d7b-7f34-2462-5dda8ce2f9f7",
+      "aa616abe-1761-0c9a-7959-07544679dafd",
+      "ab126ccb-62f8-c219-fe5c-7b33b84340bc",
+      "b6a1cac9-8873-36a7-e726-4aad8a07d44d",
+      "b8e80a18-3024-169f-17e0-d3f4bcaf270d",
+      "b97f99f3-6c1d-090b-f6d3-39bea7df0b04",
+      "ba419d35-0dfe-8af7-347c-eebf02485a56",
+      "bbfe92bc-ab7c-4a2c-0259-f8ed47c47cc0",
+      "bff9d9d5-ee3d-d852-9c67-36d8361a4a4a",
+      "c0139ea3-de29-71b8-b6da-fe13ca7209a9",
+      "c07ad94d-67cb-d96f-0993-81252fc11607",
+      "c0a47dee-cc72-29ce-df5a-ea6d306c36a4",
+      "c3f5ba78-4bf3-c61d-af9e-8bddb229f7b3",
+      "c86c400e-ff88-a1e3-2e23-caa4d8311f47",
+      "ca0e013b-9d15-6bf7-c32c-e703725df964",
+      "d2f7cdbc-c194-ed1c-b317-10dec56f51e0",
+      "db3fff49-3bd8-9684-ff2f-a52757e9afa1",
+      "df9f6545-52b2-5c29-faca-b1563b1efe3b",
+      "e0e1c949-d33e-5bf2-caf9-eddc5b11ac12",
+      "e2b354d9-1408-a615-3848-1ad7c9142e34",
+      "e63d02ea-5753-145b-10f1-97d30275a83c",
+      "e74367bd-7385-97dc-2c7f-251b4cd9fe29",
+      "eb5910f1-26e6-bc6f-b300-716eae678d6f",
+      "f95a6723-14a5-c4b6-78df-fa97f7ab361c",
+      "fd08f424-a245-6d32-ee9e-005154f96c5b",
+      "fed54161-0f33-63f0-7d02-d958d26ce492"
     ]
   },
   "created_at": "2026-03-12T18:30:00.000000Z",
-  "updated_at": "2026-03-12T18:30:00.000000Z"
+  "updated_at": "2026-04-27T00:00:00.000000Z"
 }

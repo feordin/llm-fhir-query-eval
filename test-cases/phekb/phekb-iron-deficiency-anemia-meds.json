@@ -1,0 +1,129 @@
+{
+  "id": "phekb-iron-deficiency-anemia-meds",
+  "source": "phekb",
+  "source_id": "iron-deficiency-anemia",
+  "name": "Iron Deficiency Anemia - Iron Supplementation Query",
+  "description": "Tests ability to find IDA patients via ferrous sulfate prescriptions. First iron-supplementation phenotype.",
+  "prompt": "Find patients prescribed ferrous sulfate for iron supplementation.",
+  "prompts": {
+    "naive": "Find patients on iron supplements.",
+    "broad": "Find patients prescribed ferrous sulfate — the standard oral iron supplement for treating iron deficiency anemia.",
+    "expert": "Search MedicationRequest with RxNorm 310325 (ferrous sulfate 325 MG Oral Tablet — Synthea-canonical SCD code). Query: MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|310325"
+  },
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "algorithm_path": "medication-path",
+    "algorithm_path_description": "Patients on ferrous sulfate. First iron supplementation phenotype.",
+    "code_systems": [
+      "RxNorm"
+    ],
+    "required_codes": [
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "310325",
+        "display": "ferrous sulfate 325 MG Oral Tablet",
+        "source": "UMLS verified, Synthea SCD"
+      }
+    ],
+    "complexity": "easy",
+    "tags": [
+      "medication",
+      "hematology",
+      "anemia",
+      "iron",
+      "ferrous-sulfate"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "MedicationRequest",
+    "parameters": {
+      "code": "http://www.nlm.nih.gov/research/umls/rxnorm|310325"
+    },
+    "url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|310325"
+  },
+  "test_data": {
+    "resources": [
+      "synthea/output/iron-deficiency-anemia/positive/fhir/",
+      "synthea/output/iron-deficiency-anemia/control/fhir/"
+    ],
+    "expected_result_count": 73,
+    "expected_resource_ids": [],
+    "expected_patient_ids": [
+      "05d7903a-334a-58f4-6beb-81b0ee8aab21",
+      "066bc8f0-8427-0da2-46bf-b8d106e077cb",
+      "10e33a26-344a-3ef5-de18-5f1cccd7a50d",
+      "11dbf69a-0515-4a66-11ae-4ecf92178add",
+      "13fba84b-f564-ac51-d052-f1bcfdc1f869",
+      "14f9a319-2795-7dcb-f807-2204d3dc74f0",
+      "15edffaa-e95c-d04f-7468-f2c22bb3a608",
+      "17c01c6c-a515-5b84-b894-a63834e3b1f5",
+      "1984ed48-7ead-6960-ac2a-0bb2296e9d81",
+      "1b4d602f-b4d0-d88c-d037-ac4d6849cbb9",
+      "1fa5fcaf-76a2-4dcc-512d-f28730166f9c",
+      "21cac2d6-1cdb-3a77-c511-ee698b5aef19",
+      "23dbae30-4032-0acd-899e-32fa142ed5d0",
+      "29a6f295-7147-902c-9348-2c0e29389001",
+      "2b089826-59d2-6a35-7850-248233813223",
+      "2cb41a14-b56a-f5e1-5f75-5c35686cf50e",
+      "2cef4967-178b-d713-13a0-890d3c8a5269",
+      "374799c5-7c78-10cc-dd3f-51dff06cdc00",
+      "38623bf3-63d3-9972-b419-dea09063f11b",
+      "39b229e2-76f6-1f9a-22f6-cdc430d5582d",
+      "3aa5a216-151f-9ff7-e0d3-f985f403affa",
+      "3e2d0c10-3657-9702-e591-85b1d28e7a35",
+      "4067ec9f-eff3-2a16-1894-720fb7e06a04",
+      "4534659a-2ef4-b9f6-b41c-bb637b331e23",
+      "46b238c6-ff82-837b-030e-929872fd8ef6",
+      "46ecc532-955a-a7b1-0d99-89858e3fa568",
+      "490a51d9-1d57-4a85-63ab-58bdc35a100b",
+      "49681059-a87f-f6ef-612b-ddfaf3d9c5e2",
+      "5210ccb8-3cc1-e2e2-f928-cf335de8af7c",
+      "577cf423-f962-8334-031d-0093d0ce71f4",
+      "611b26b3-8e9e-8b21-1320-ee1906527137",
+      "650fc53c-7bef-de2d-de88-0a84beed0b34",
+      "65533c9d-4d11-8627-1128-abbc19d6fbce",
+      "65bb3ef8-85ee-3948-f9cb-cb13de3d32d5",
+      "66591301-5cd0-e6f9-3141-31af8dedb837",
+      "8049b5df-c053-a76b-b070-dd0ca2425aa3",
+      "811f1db5-0af9-f67d-47d2-45db89d84277",
+      "83ee4dd0-0316-774d-15f0-44636d295bc2",
+      "89690409-3ec1-1473-a7e2-a505a0b74df6",
+      "8b30bc70-a6ab-70b3-7b58-a4f6eef74abb",
+      "8eb3ef0c-0458-50a2-d8fb-261e940e8049",
+      "91813d9f-2f0e-537b-11ba-3f16849c7639",
+      "926c27dc-e76a-a1e2-e669-01a87b4b9602",
+      "979ba0b8-acf1-33ea-a61d-d608504adc9e",
+      "99473273-97a6-3f95-2c43-41a20c2e5090",
+      "9a262eb4-8d76-d0fd-e30e-c4d92e19463c",
+      "9b476ef2-4f3e-c762-1d8d-d10fb203b13f",
+      "9e5f4d46-f435-8737-7551-1f1b3b2c5847",
+      "9ebdb1cb-428f-c131-ad98-806e9ac8c4f8",
+      "a05f1403-b618-4e00-11df-11c9a1191967",
+      "a0b8ee24-b80c-8a2f-7bcf-aea08fc8b13d",
+      "a8dbba6b-e5e4-8460-9aff-dee7d813f100",
+      "ae8b73ff-046d-e1be-65bc-f27f3ee01118",
+      "b0985ea6-79d6-8786-3544-b0f7e266cf06",
+      "bf0586d5-f947-3d98-8b69-d838fee47a16",
+      "bf13ad0b-5bcf-9c8d-7e5d-abc363e7ba83",
+      "c8b627be-3d41-d2d4-6118-f832fbead958",
+      "cb32a208-c067-09ff-aea5-e3a30c206d42",
+      "cc199fa8-4a2e-ad7e-09ba-5a2d1367743a",
+      "ce3ecd28-3826-4460-ceda-23e83acfa52e",
+      "cf84c8d7-2c7b-6cc5-77c6-9740c8262e4c",
+      "cfece78c-6160-bc69-5f9f-0b0aeaa3cdc3",
+      "d1a19958-f97e-92e2-c2af-ce808f77e2e7",
+      "d5ae058a-2ee5-2d63-6daf-6f4e997bebce",
+      "dddb89f3-11a2-04ed-f40f-b951e64adc04",
+      "e81eb23b-9f25-1385-e5ac-b7f19b86c417",
+      "ee8f6fb1-ec2d-b78e-5952-a4a01511e513",
+      "f0ae5b95-8e46-3957-27d6-4e05548754a6",
+      "f649f859-9345-94a3-e812-d3107f4a41a9",
+      "f7324090-e17b-9f7b-8db8-bbb470131512",
+      "fa4c7fbe-b354-0ae7-c97c-937aa31fb8a8",
+      "fc1b1714-944b-91b4-680b-d8367bdc94c9",
+      "fed39c91-d85c-5f74-056b-15c16df65d92"
+    ]
+  },
+  "created_at": "2026-04-29T00:00:00.000000Z",
+  "updated_at": "2026-04-27T00:00:00.000000Z"
+}

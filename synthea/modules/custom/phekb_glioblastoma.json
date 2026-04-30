@@ -1,0 +1,27 @@
+{
+  "name": "PheKB Glioblastoma",
+  "remarks": [
+    "Custom Synthea module for glioblastoma multiforme.",
+    "13th cancer phenotype, first CNS malignancy. Most aggressive primary brain tumor.",
+    "Single-path: 100% have GBM dx. Age guard: >=30 (peak incidence 50-70)."
+  ],
+  "states": {
+    "Initial": { "type": "Initial", "direct_transition": "Age_Guard" },
+    "Age_Guard": { "type": "Guard", "allow": { "condition_type": "Age", "operator": ">=", "quantity": 30, "unit": "years" }, "direct_transition": "Set_GBM_Flag" },
+    "Set_GBM_Flag": { "type": "SetAttribute", "attribute": "gbm_positive", "value": true, "direct_transition": "Set_Needs_First_Visit" },
+    "Set_Needs_First_Visit": { "type": "SetAttribute", "attribute": "gbm_needs_first_visit", "value": true, "direct_transition": "Wellness_Encounter" },
+    "Wellness_Encounter": { "type": "Encounter", "wellness": true, "direct_transition": "Check_First_Visit" },
+    "Check_First_Visit": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "gbm_needs_first_visit", "operator": "==", "value": true }, "transition": "Diagnose_GBM" },
+        { "transition": "End_Wellness_Encounter" }
+      ]
+    },
+    "Diagnose_GBM": { "type": "ConditionOnset", "assign_to_attribute": "gbm_condition", "codes": [{ "system": "SNOMED-CT", "code": "393563007", "display": "Glioblastoma multiforme" }], "direct_transition": "Clear_First_Visit_Flag" },
+    "Clear_First_Visit_Flag": { "type": "SetAttribute", "attribute": "gbm_needs_first_visit", "value": false, "direct_transition": "End_Wellness_Encounter" },
+    "End_Wellness_Encounter": { "type": "EncounterEnd", "direct_transition": "Followup_Delay" },
+    "Followup_Delay": { "type": "Delay", "range": { "low": 6, "high": 12, "unit": "months" }, "direct_transition": "Wellness_Encounter" }
+  },
+  "gmf_version": 2
+}

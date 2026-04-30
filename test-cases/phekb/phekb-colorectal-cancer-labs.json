@@ -1,0 +1,68 @@
+{
+  "id": "phekb-colorectal-cancer-labs",
+  "source": "phekb",
+  "source_id": "colorectal-cancer",
+  "name": "Colorectal Cancer - CEA Tumor Marker Query (Elevated)",
+  "description": "Tests ability to find CRC patients via elevated CEA (Carcinoembryonic Antigen). CEA is the standard CRC tumor marker for surveillance — values above 5 ng/mL suggest active disease, recurrence, or metastasis. Synthea generates CEA >10 ng/mL for active CRC patients.",
+  "prompt": "Find patients with elevated CEA (Carcinoembryonic Antigen) lab results greater than 5 nanograms per milliliter — the clinical threshold for colorectal cancer surveillance.",
+  "prompts": {
+    "naive": "Find patients with high CEA.",
+    "broad": "Find patients with elevated Carcinoembryonic Antigen (CEA) — values greater than 5 ng/mL, the standard surveillance threshold for colorectal cancer recurrence.",
+    "expert": "I need Observation resources with elevated CEA. Use LOINC code 2039-6 (Carcinoembryonic Ag [Mass/volume] in Serum or Plasma). Filter by value-quantity greater than 5 ng/mL. Query: Observation?code=http://loinc.org|2039-6&value-quantity=gt5||ng/mL"
+  },
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "algorithm_path": "labs-path",
+    "algorithm_path_description": "Patients with elevated CEA suggesting active CRC. CEA is sensitive for monitoring but has false positives in smokers and inflammatory conditions.",
+    "code_systems": [
+      "LOINC"
+    ],
+    "required_codes": [
+      {
+        "system": "http://loinc.org",
+        "code": "2039-6",
+        "display": "Carcinoembryonic Ag [Mass/volume] in Serum or Plasma",
+        "source": "UMLS verified"
+      }
+    ],
+    "complexity": "hard",
+    "tags": [
+      "observation",
+      "lab",
+      "oncology",
+      "colorectal-cancer",
+      "cea",
+      "tumor-marker",
+      "value-quantity"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "Observation",
+    "parameters": {
+      "code": "http://loinc.org|2039-6",
+      "value-quantity": "gt5||ng/mL"
+    },
+    "url": "Observation?code=http://loinc.org|2039-6&value-quantity=gt5||ng/mL"
+  },
+  "test_data": {
+    "resources": [
+      "synthea/output/colorectal-cancer/positive/fhir/",
+      "synthea/output/colorectal-cancer/control/fhir/"
+    ],
+    "expected_result_count": 9,
+    "expected_resource_ids": [],
+    "expected_patient_ids": [
+      "0c2b3548-006e-d3b9-d87e-282ff6f312eb",
+      "1eb9e266-a23e-aded-c48b-7129cfc9cf7b",
+      "1fe77ca3-dabc-c812-cc01-0bcecc3176ca",
+      "aec18803-a81b-6921-29e7-20990a856c52",
+      "c6f25e1b-2cfb-a2e3-cd13-5dc0ae0cd71a",
+      "da585667-4b00-95a5-27ae-edc1126b6df7",
+      "eeea0e35-9e20-bb28-1c8d-758834d97be0",
+      "ef291c0b-6fc6-d40e-6d18-97157f26698e",
+      "f1cf1fab-330c-6cfc-68aa-aae3c75b8a2b"
+    ]
+  },
+  "created_at": "2026-04-28T00:00:00.000000Z",
+  "updated_at": "2026-04-27T00:00:00.000000Z"
+}

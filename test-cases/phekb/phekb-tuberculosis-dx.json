@@ -1,0 +1,121 @@
+{
+  "id": "phekb-tuberculosis-dx",
+  "source": "phekb",
+  "source_id": "tuberculosis",
+  "name": "Tuberculosis - Diagnosis Code Query (Pulmonary + General)",
+  "description": "Tests ability to find TB patients via diagnosis codes across pulmonary-specific and general TB SNOMED variants.",
+  "prompt": "Find all patients with a diagnosis of tuberculosis, including pulmonary tuberculosis.",
+  "prompts": {
+    "naive": "Find patients with TB.",
+    "broad": "Find patients diagnosed with tuberculosis — including pulmonary tuberculosis (most common form) and the broader tuberculosis concept covering extrapulmonary disease.",
+    "expert": "Search Condition resources for SNOMED codes Pulmonary tuberculosis (154283005) and Tuberculosis (56717001). Query: Condition?code=http://snomed.info/sct|154283005,http://snomed.info/sct|56717001"
+  },
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "algorithm_path": "diagnosis-path",
+    "algorithm_path_description": "Patients with TB diagnosis (pulmonary + general).",
+    "code_systems": [
+      "SNOMED CT"
+    ],
+    "required_codes": [
+      {
+        "system": "http://snomed.info/sct",
+        "code": "154283005",
+        "display": "Pulmonary tuberculosis",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "56717001",
+        "display": "Tuberculosis",
+        "source": "UMLS verified"
+      }
+    ],
+    "complexity": "easy",
+    "tags": [
+      "condition",
+      "infectious",
+      "tuberculosis",
+      "tb",
+      "diagnosis-code"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "Condition",
+    "parameters": {
+      "code": "http://snomed.info/sct|154283005,http://snomed.info/sct|56717001"
+    },
+    "url": "Condition?code=http://snomed.info/sct|154283005,http://snomed.info/sct|56717001"
+  },
+  "test_data": {
+    "resources": [
+      "synthea/output/tuberculosis/positive/fhir/",
+      "synthea/output/tuberculosis/control/fhir/"
+    ],
+    "expected_result_count": 59,
+    "expected_resource_ids": [],
+    "expected_patient_ids": [
+      "06f5220a-4be3-c18d-5087-94d11b711b2f",
+      "0b0192d5-938c-d501-498f-174807a762b4",
+      "0b3019b6-b993-043b-689e-234674229413",
+      "0b30c8b4-f249-c5b0-fe67-535b86a372fa",
+      "0e489511-1191-2aa9-6635-cef61a212236",
+      "1120335e-8805-13d4-f1fc-f0a4de937cc9",
+      "13691ed1-fdbc-f88b-7bd1-05c1a28c77a3",
+      "1524b25d-6a20-299f-fd8c-d9b7be72fafb",
+      "15333461-c937-ddcd-ad41-4bda51da464b",
+      "217401ad-d800-338d-1d8d-e80032b113fd",
+      "27f73af5-5181-9c92-bd70-61b4bea2a18e",
+      "2e075dca-fd92-6edc-0c32-31e61cbcc2e2",
+      "2e104aae-60b3-45e5-2d23-04ee29ee34cf",
+      "2eda5230-a578-b4e1-90ef-fda9794562f8",
+      "331628e3-e134-9363-9b01-f668c03e4c7c",
+      "34dd8e54-c05b-2034-a6cf-ca57761e97b0",
+      "36b4c19e-2c19-e3df-bf5a-78a432604e59",
+      "39e30597-b077-324c-ee83-1378a54ef149",
+      "3d92d7c7-a38b-0565-7eaa-f7c870315cfb",
+      "4c017fcd-c231-97b5-a2fa-2bc61a892405",
+      "4e0ceb8e-40db-4bbf-1f81-9ace934205b5",
+      "4fb739f6-229f-e7ff-e541-3947c218951c",
+      "51078d5a-55ff-c715-c70e-e46f3dba45fd",
+      "537e274f-00d0-281a-fdd6-2d5988b0ad4f",
+      "546926df-2f80-9e39-7957-eb673a1c93ca",
+      "5714de8a-1a81-0ecd-64c2-625ba25b52ee",
+      "5ad36e45-d8ee-9fbd-ce0b-bb7b59e2d8d5",
+      "5bef77ac-2d84-ece0-b43a-aefe0618d037",
+      "5ee66599-706d-6b4f-261e-d78e6b8482ca",
+      "5f55c4ff-9022-6025-303c-f7202f2d8c45",
+      "644a0f73-6cc2-f9a2-54c9-10a3e57d5bd7",
+      "6499e58a-72d5-5f0e-b113-fda771c09d37",
+      "67fb9332-6365-bd78-1821-2a175c3eefc6",
+      "6fe45a6e-4cb1-ba6f-1d35-528b3e16f8f3",
+      "7224b69c-7799-8f66-2908-15147845c11c",
+      "80fa9282-ecca-05b1-407e-9a3789d9b497",
+      "82b0016f-f108-3413-29ed-73497bee3b45",
+      "855bd675-f5f9-59dc-f0d9-33a54ad61b84",
+      "871019a6-ade7-097f-0677-15bfc2727d5a",
+      "8ec10d63-3426-b29a-16f1-fa5e88a37dad",
+      "90d81a60-decd-62da-3f91-11400d20dc29",
+      "9c842893-b1c1-6bbe-a34d-0f6b248102fe",
+      "9d3b3d1a-2359-3769-7ac4-48d88e016c63",
+      "a720571c-7aa6-d299-0694-c1e99ab53c7d",
+      "be830084-f29a-f458-5c2f-9352b4c48edf",
+      "c179f289-ae63-d06b-2277-f696d1f29281",
+      "c3860682-24da-bac6-f5a2-9c935b8046fd",
+      "c88c27bd-eb2a-6a17-6c82-0e34d14491b6",
+      "d5cf91a8-b408-6c1a-0c8b-bc73fda7022a",
+      "d97501cc-ba46-27b2-b3db-a4df18cdbcdf",
+      "d9aee57d-c66b-328d-76c1-e9b1018229d8",
+      "dd55c93e-faa4-df8a-7531-8cbdfad75d49",
+      "e21c4e11-ef28-ea13-799a-6942df82a61f",
+      "e5062d55-e8a8-1753-cc11-42fbb0e446a7",
+      "e78f3e58-d472-115a-5b85-5f767a9dd734",
+      "eaffd2d3-c0e3-1202-5795-c01403d201d2",
+      "f6c0d5e4-706f-4d77-1fb9-cdafeae009cb",
+      "f85174dc-f244-cd85-4f35-617d9e6e147f",
+      "f86addf4-aa80-6bb2-cbb7-63fef04ad6b7"
+    ]
+  },
+  "created_at": "2026-04-29T00:00:00.000000Z",
+  "updated_at": "2026-04-27T00:00:00.000000Z"
+}

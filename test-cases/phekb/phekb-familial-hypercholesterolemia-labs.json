@@ -1,0 +1,63 @@
+{
+  "id": "phekb-familial-hypercholesterolemia-labs",
+  "source": "phekb",
+  "source_id": "familial-hypercholesterolemia",
+  "name": "Familial Hypercholesterolemia - Severely Elevated LDL-C Query",
+  "description": "Tests ability to find FH patients via severely elevated LDL cholesterol. The Geisinger PheKB FH algorithm uses LDL-C ≥ 190 mg/dL as the FH-specific case threshold (Dutch Lipid Clinic Network 'definite' FH category requires untreated LDL ≥ 8.5 mmol/L = ~330 mg/dL, but ≥190 mg/dL is the more inclusive definite-FH cutoff). This is distinct from the general 'high cholesterol' threshold of LDL ≥ 130 — testing whether LLM knows the FH-specific cutoff vs general lipid management cutoffs.",
+  "prompt": "Find laboratory observations for LDL cholesterol where the value is at or above 190 mg/dL, indicating severely elevated LDL consistent with familial hypercholesterolemia.",
+  "prompts": {
+    "naive": "Find patients with very high LDL cholesterol.",
+    "broad": "Find Observation resources for low-density lipoprotein (LDL) cholesterol where the value is greater than or equal to 190 mg/dL. LDL ≥ 190 mg/dL is the threshold used in Dutch Lipid Clinic Network criteria for definite familial hypercholesterolemia.",
+    "expert": "I need Observation resources for severely elevated LDL-C consistent with FH. Use LOINC 2089-1 (Cholesterol in LDL [Mass/volume] in Serum or Plasma). Apply a value-quantity filter with the ge prefix at threshold 190, unit mg/dL. The query should look like: Observation?code=http://loinc.org|2089-1&value-quantity=ge190. Note this is the FH-specific cutoff — general 'high cholesterol' uses LDL ≥ 130 (LOINC same code, different threshold)."
+  },
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "algorithm_path": "lab-path",
+    "algorithm_path_description": "Patients with severely elevated LDL-C (Paths A and D). Path D is particularly important for FH — many genetically affected patients are not diagnosed until lab screening reveals very high LDL. Tests value-quantity filtering with ge threshold and FH-specific (not general lipid management) cutoff.",
+    "code_systems": [
+      "LOINC"
+    ],
+    "required_codes": [
+      {
+        "system": "http://loinc.org",
+        "code": "2089-1",
+        "display": "Cholesterol in LDL [Mass/volume] in Serum or Plasma",
+        "source": "UMLS verified"
+      }
+    ],
+    "complexity": "hard",
+    "tags": [
+      "observation",
+      "cardiology",
+      "familial-hypercholesterolemia",
+      "value-quantity",
+      "lab-threshold",
+      "ldl",
+      "fh-specific-cutoff"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "Observation",
+    "parameters": {
+      "code": "http://loinc.org|2089-1",
+      "value-quantity": "ge190"
+    },
+    "url": "Observation?code=http://loinc.org|2089-1&value-quantity=ge190"
+  },
+  "test_data": {
+    "resources": [
+      "synthea/output/familial-hypercholesterolemia/positive/fhir/",
+      "synthea/output/familial-hypercholesterolemia/control/fhir/"
+    ],
+    "expected_result_count": 4,
+    "expected_resource_ids": [],
+    "expected_patient_ids": [
+      "38621d08-b1b1-a7a4-f149-5741c923fc27",
+      "5a4a8e9c-87c7-db1f-60d1-a9c342fb1e06",
+      "95120fa4-48ec-52b0-535e-58e8e001bb50",
+      "c9a9f060-a150-fc08-3a60-9669597db06d"
+    ]
+  },
+  "created_at": "2026-04-27T00:00:00.000000Z",
+  "updated_at": "2026-04-27T00:00:00.000000Z"
+}

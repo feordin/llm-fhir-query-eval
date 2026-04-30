@@ -1,0 +1,68 @@
+{
+  "id": "phekb-ckd-labs-only",
+  "source": "phekb",
+  "source_id": "ckd",
+  "name": "Chronic Kidney Disease - Lab-Only Patients (No Diagnosis)",
+  "description": "Tricky test case: finds patients with reduced eGFR (< 60 mL/min/1.73 m²) but NO chronic kidney disease diagnosis on their problem list (Path C). This is the dominant real-world undercoding pattern in CKD: patients are flagged biochemically as having Stage 3+ kidney function but never receive a formal CKD diagnosis. Studies estimate 30-50% of CKD Stage 3 patients are undiagnosed in primary care. Discoverable only by Observation queries with value-quantity filters combined with set difference against Condition queries.",
+  "prompt": "Are there any patients in our system who have reduced eGFR values (below 60 mL/min/1.73 m²) suggesting CKD stage 3 or worse, but have not been formally diagnosed with chronic kidney disease? I want to identify potential undiagnosed CKD for nephrology referral.",
+  "prompts": {
+    "naive": "Find patients with low eGFR but no CKD diagnosis.",
+    "expert": "I need to identify the dominant undercoding pattern in CKD: patients with biochemical evidence of reduced kidney function who lack a formal CKD Condition resource. Two-step approach: first find all patients with Observation for eGFR (LOINC 62238-1) where value-quantity is less than 60, then exclude any patient with a Condition for CKD subtypes (709044004, 431856006, 433144002, 700378005, 431857002). The remaining patients are candidates for nephrology referral and CKD diagnosis coding."
+  },
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "algorithm_path": "labs-only-path",
+    "algorithm_path_description": "Path C 'tricky' patients: have reduced eGFR but no CKD Condition resource. The Synthea module weights this path heavily (~35%) because real-world CKD is substantially undercoded — primary care often does not formally diagnose CKD even when labs meet criteria.",
+    "code_systems": [
+      "LOINC",
+      "SNOMED CT"
+    ],
+    "required_codes": [
+      {
+        "system": "http://loinc.org",
+        "code": "62238-1",
+        "display": "Glomerular filtration rate [Volume Rate/Area] in Serum, Plasma or Blood by Creatinine-based formula (CKD-EPI)/1.73 sq M",
+        "source": "UMLS verified"
+      }
+    ],
+    "complexity": "hard",
+    "tags": [
+      "observation",
+      "nephrology",
+      "ckd",
+      "tricky",
+      "labs-only",
+      "value-quantity",
+      "cross-resource",
+      "undiagnosed-ckd"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "Observation",
+    "parameters": {
+      "code": "http://loinc.org|62238-1",
+      "value-quantity": "lt60"
+    },
+    "url": "Observation?code=http://loinc.org|62238-1&value-quantity=lt60"
+  },
+  "test_data": {
+    "resources": [
+      "synthea/output/ckd/positive/fhir/",
+      "synthea/output/ckd/control/fhir/"
+    ],
+    "expected_result_count": 8,
+    "expected_resource_ids": [],
+    "expected_patient_ids": [
+      "0822dbac-f57f-dede-d8ff-305618480e4a",
+      "3b560da4-c7fd-8008-04a5-1882e1c3f781",
+      "596c786c-2c66-6caa-ee67-945053156ab1",
+      "976f568d-7841-b1b0-0c26-904ced33d8cc",
+      "9f45ffe3-cbc4-a083-f52f-7f3ca865e449",
+      "a714119a-c214-2162-8060-394901e90a85",
+      "ed6c03e1-f389-2b3d-35c0-260b184d5ab0",
+      "f883a494-f578-ca8b-b985-772f0c65680a"
+    ]
+  },
+  "created_at": "2026-04-27T00:00:00.000000Z",
+  "updated_at": "2026-04-27T00:00:00.000000Z"
+}

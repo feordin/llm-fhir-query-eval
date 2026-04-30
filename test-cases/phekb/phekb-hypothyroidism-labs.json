@@ -1,0 +1,69 @@
+{
+  "id": "phekb-hypothyroidism-labs",
+  "source": "phekb",
+  "source_id": "hypothyroidism",
+  "name": "Hypothyroidism - Abnormal TSH Lab Query",
+  "description": "Tests ability to find hypothyroidism patients via abnormal Thyroid Stimulating Hormone (TSH) values. The PheKB algorithm defines a case threshold of TSH > 5 mIU/L. This test exercises Observation queries with value-quantity filters. Returns Path A patients (with full presentation) and Path D tricky patients (abnormal labs only, never treated).",
+  "prompt": "Find laboratory observations for thyroid stimulating hormone tests where the result was greater than 5 mIU/L, indicating possible hypothyroidism.",
+  "prompts": {
+    "naive": "Find patients with high TSH lab values.",
+    "broad": "Find lab observations for thyroid stimulating hormone (TSH, also called thyrotropin) where the value is above the upper limit of normal (typically > 5 milli-international units per liter), which suggests primary hypothyroidism.",
+    "expert": "I need to find Observation resources for elevated TSH. The standard LOINC code for TSH in serum or plasma is 3016-3 (Thyrotropin:ACnc:Pt:Ser/Plas:Qn). The PheKB hypothyroidism algorithm uses a threshold of TSH > 5 mIU/L. Use a value-quantity filter with the gt prefix and unit mIU/L. The query should look like: Observation?code=http://loinc.org|3016-3&value-quantity=gt5|http://unitsofmeasure.org|m[IU]/L. Note that some FHIR servers accept simpler unit notation."
+  },
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "algorithm_path": "lab-path",
+    "algorithm_path_description": "Patients with elevated TSH (Paths A and D). Includes Path D tricky patients who have abnormal labs but were never given a hypothyroidism diagnosis or replacement therapy.",
+    "code_systems": [
+      "LOINC"
+    ],
+    "required_codes": [
+      {
+        "system": "http://loinc.org",
+        "code": "3016-3",
+        "display": "Thyrotropin [Units/volume] in Serum or Plasma",
+        "source": "Synthea built-in module"
+      }
+    ],
+    "complexity": "hard",
+    "tags": [
+      "observation",
+      "endocrinology",
+      "hypothyroidism",
+      "value-quantity",
+      "lab-threshold"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "Observation",
+    "parameters": {
+      "code": "http://loinc.org|3016-3",
+      "value-quantity": "gt5"
+    },
+    "url": "Observation?code=http://loinc.org|3016-3&value-quantity=gt5"
+  },
+  "test_data": {
+    "resources": [
+      "synthea/output/hypothyroidism/positive/fhir/",
+      "synthea/output/hypothyroidism/control/fhir/"
+    ],
+    "expected_result_count": 12,
+    "expected_resource_ids": [],
+    "expected_patient_ids": [
+      "080b069b-5108-46b6-ecef-6aacd3b9ef3f",
+      "2c167999-289d-95fa-5c27-7d8b8d35348c",
+      "35b353dd-402b-571a-d67a-af0a104d0854",
+      "62f60bdb-cc5c-8305-b98b-f2b229a55eca",
+      "6aed9210-c500-4375-b0fc-3374c40b8591",
+      "922fb35e-148d-9e82-7e65-bfa05e3b3515",
+      "9661a432-4630-2cd9-142c-386845fae837",
+      "b6a1cac9-8873-36a7-e726-4aad8a07d44d",
+      "bff9d9d5-ee3d-d852-9c67-36d8361a4a4a",
+      "c0a47dee-cc72-29ce-df5a-ea6d306c36a4",
+      "e74367bd-7385-97dc-2c7f-251b4cd9fe29",
+      "f95a6723-14a5-c4b6-78df-fa97f7ab361c"
+    ]
+  },
+  "created_at": "2026-04-25T00:00:00.000000Z",
+  "updated_at": "2026-04-25T00:00:00.000000Z"
+}

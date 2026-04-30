@@ -1,0 +1,129 @@
+{
+  "name": "PheKB Atopic Dermatitis Control (Non-AD)",
+  "remarks": [
+    "Control module for atopic dermatitis phenotype testing",
+    "Generates patients who should NOT match atopic dermatitis criteria",
+    "",
+    "Control Criteria (exclusion from AD):",
+    "- No atopic dermatitis diagnosis codes",
+    "- No AD-related medications (no topical corticosteroids, no antihistamines for skin)",
+    "- May have unrelated conditions (hypertension, hyperlipidemia)",
+    "",
+    "Uses 'wellness: true' encounter pattern to produce FHIR resources.",
+    "These patients should NOT be returned by atopic dermatitis queries."
+  ],
+  "states": {
+    "Initial": {
+      "type": "Initial",
+      "direct_transition": "Age_Guard"
+    },
+
+    "Age_Guard": {
+      "type": "Guard",
+      "allow": {
+        "condition_type": "Age",
+        "operator": ">=",
+        "quantity": 1,
+        "unit": "years"
+      },
+      "direct_transition": "Set_Control_Flag"
+    },
+
+    "Set_Control_Flag": {
+      "type": "SetAttribute",
+      "attribute": "ad_control",
+      "value": true,
+      "direct_transition": "Wellness_Encounter"
+    },
+
+    "Wellness_Encounter": {
+      "type": "Encounter",
+      "wellness": true,
+      "direct_transition": "Check_Other_Conditions"
+    },
+
+    "Check_Other_Conditions": {
+      "type": "Simple",
+      "remarks": ["Some control patients have non-AD conditions for variety"],
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Hypertension",
+          "distribution": 0.30
+        },
+        {
+          "transition": "Diagnose_Hyperlipidemia",
+          "distribution": 0.25
+        },
+        {
+          "transition": "End_Wellness_Encounter",
+          "distribution": 0.45
+        }
+      ]
+    },
+
+    "Diagnose_Hypertension": {
+      "type": "ConditionOnset",
+      "assign_to_attribute": "hypertension",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": "38341003",
+          "display": "Hypertensive disorder"
+        }
+      ],
+      "remarks": ["Non-AD condition for control population variety"],
+      "direct_transition": "Prescribe_Antihypertensive"
+    },
+
+    "Prescribe_Antihypertensive": {
+      "type": "MedicationOrder",
+      "codes": [
+        {
+          "system": "RxNorm",
+          "code": "314076",
+          "display": "lisinopril 10 MG Oral Tablet"
+        }
+      ],
+      "reason": "hypertension",
+      "direct_transition": "End_Wellness_Encounter"
+    },
+
+    "Diagnose_Hyperlipidemia": {
+      "type": "ConditionOnset",
+      "assign_to_attribute": "hyperlipidemia",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": "55822004",
+          "display": "Hyperlipidemia"
+        }
+      ],
+      "remarks": ["Non-AD condition for control population variety"],
+      "direct_transition": "Prescribe_Statin"
+    },
+
+    "Prescribe_Statin": {
+      "type": "MedicationOrder",
+      "codes": [
+        {
+          "system": "RxNorm",
+          "code": "259255",
+          "display": "atorvastatin 20 MG Oral Tablet"
+        }
+      ],
+      "reason": "hyperlipidemia",
+      "direct_transition": "End_Wellness_Encounter"
+    },
+
+    "End_Wellness_Encounter": {
+      "type": "EncounterEnd",
+      "direct_transition": "Terminal_Control"
+    },
+
+    "Terminal_Control": {
+      "type": "Terminal",
+      "remarks": ["Control patient - should NOT be found by atopic dermatitis phenotype query"]
+    }
+  },
+  "gmf_version": 2
+}

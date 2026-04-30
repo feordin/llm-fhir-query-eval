@@ -1,0 +1,66 @@
+{
+  "id": "phekb-hiv-labs",
+  "source": "phekb",
+  "source_id": "hiv",
+  "name": "HIV - Low CD4 Count (AIDS Threshold) Query",
+  "description": "Tests ability to find HIV/AIDS patients via low CD4 cell count. CD4 < 200 cells/μL defines AIDS regardless of opportunistic infections. CD4 monitoring guides ART decisions and prophylaxis (e.g., PJP prophylaxis at CD4 < 200). This test exercises a less-than threshold value-quantity filter on a cell-count Observation — a unique data type for the suite.",
+  "prompt": "Find laboratory observations for CD4 cell counts where the value is below 200 cells per microliter, indicating AIDS or severe HIV-related immunosuppression.",
+  "prompts": {
+    "naive": "Find patients with low CD4 counts.",
+    "broad": "Find Observation resources for CD4 helper T-cell counts where the value is less than 200 cells per microliter. CD4 < 200 cells/μL is the CDC threshold for AIDS diagnosis regardless of opportunistic infections. CD4 < 200 also triggers prophylaxis for opportunistic infections like Pneumocystis jirovecii pneumonia (PJP).",
+    "expert": "I need Observation resources for low CD4 counts. Use LOINC 24467-3 (CD3+CD4+ T helper cells [#/volume] in Blood). Apply a value-quantity filter with the lt prefix at threshold 200, unit cells/μL. The query should look like: Observation?code=http://loinc.org|24467-3&value-quantity=lt200. CD4 < 200 defines AIDS per CDC criteria."
+  },
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "algorithm_path": "lab-path",
+    "algorithm_path_description": "Patients with low CD4 (Paths A and B for AIDS-stage HIV). Tests cell-count Observation queries — a unique data type. Distinguishes AIDS-stage HIV from controlled HIV (CD4 ≥ 500) and partially-controlled HIV (CD4 200-500).",
+    "code_systems": [
+      "LOINC"
+    ],
+    "required_codes": [
+      {
+        "system": "http://loinc.org",
+        "code": "24467-3",
+        "display": "CD3+CD4+ (T4 helper) cells [#/volume] in Blood",
+        "source": "UMLS verified"
+      }
+    ],
+    "complexity": "hard",
+    "tags": [
+      "observation",
+      "infectious-disease",
+      "hiv",
+      "value-quantity",
+      "less-than-threshold",
+      "cd4-count",
+      "aids-defining"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "Observation",
+    "parameters": {
+      "code": "http://loinc.org|24467-3",
+      "value-quantity": "lt200"
+    },
+    "url": "Observation?code=http://loinc.org|24467-3&value-quantity=lt200"
+  },
+  "test_data": {
+    "resources": [
+      "synthea/output/hiv/positive/fhir/",
+      "synthea/output/hiv/control/fhir/"
+    ],
+    "expected_result_count": 7,
+    "expected_resource_ids": [],
+    "expected_patient_ids": [
+      "06366e5e-6a73-6163-4ba6-a46d8a175537",
+      "15e13141-f895-9df5-9e8b-4e1ec859e4ce",
+      "baab49de-364b-39b7-9d66-4681f5781f95",
+      "ca8bb2bb-4081-8bdb-33d2-e6f224dc95c8",
+      "e6cb2959-ab20-5136-06eb-ee230a906ef3",
+      "ec02bf54-6838-92ac-6405-ad824e9fe9a1",
+      "ff451a64-b8e1-b94c-4ca5-f5ae7536f6f4"
+    ]
+  },
+  "created_at": "2026-04-27T00:00:00.000000Z",
+  "updated_at": "2026-04-27T00:00:00.000000Z"
+}

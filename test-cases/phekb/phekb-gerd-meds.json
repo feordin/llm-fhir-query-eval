@@ -1,0 +1,112 @@
+{
+  "id": "phekb-gerd-meds",
+  "source": "phekb",
+  "source_id": "gerd",
+  "name": "GERD - PPI Medication Query",
+  "description": "Tests ability to find GERD patients via proton pump inhibitor (PPI) prescriptions. The PheKB GERD algorithm uses 2+ GERD-related medication prescriptions as part of case definition. PPIs are the dominant treatment class. Synthea distributes patients across 5 PPIs. An LLM querying only omeprazole will miss patients on the equally-common pantoprazole, lansoprazole, esomeprazole, or rabeprazole.",
+  "prompt": "Find patients prescribed proton pump inhibitors (PPIs) used to treat GERD, including omeprazole, pantoprazole, lansoprazole, esomeprazole, and rabeprazole.",
+  "prompts": {
+    "naive": "Find patients on PPIs.",
+    "broad": "Find patients prescribed any proton pump inhibitor (PPI) — the standard treatment class for GERD. Include omeprazole, pantoprazole, lansoprazole, esomeprazole, and rabeprazole.",
+    "expert": "I need MedicationRequest resources for any PPI. Use these RxNorm ingredient codes: 7646 (omeprazole), 40790 (pantoprazole), 17128 (lansoprazole), 283742 (esomeprazole), 114979 (rabeprazole). Combine in a single comma-separated code search."
+  },
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "algorithm_path": "medication-path",
+    "algorithm_path_description": "Patients with PPI medication orders (Paths A and C). Captures both diagnosed GERD patients and the very large Path C population — PPIs are arguably the most cross-prescribed drug class (dyspepsia, NSAID-associated gastritis, H. pylori eradication, prophylaxis in critically ill, empirical relief of upper GI symptoms).",
+    "code_systems": [
+      "RxNorm"
+    ],
+    "required_codes": [
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "7646",
+        "display": "omeprazole",
+        "source": "UMLS verified, RxNorm ingredient"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "40790",
+        "display": "pantoprazole",
+        "source": "UMLS verified, RxNorm ingredient"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "17128",
+        "display": "lansoprazole",
+        "source": "UMLS verified, RxNorm ingredient"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "283742",
+        "display": "esomeprazole",
+        "source": "UMLS verified, RxNorm ingredient"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "114979",
+        "display": "rabeprazole",
+        "source": "UMLS verified, RxNorm ingredient"
+      }
+    ],
+    "complexity": "medium",
+    "tags": [
+      "medication",
+      "gastroenterology",
+      "gerd",
+      "ppi",
+      "multi-class",
+      "code-variation"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "MedicationRequest",
+    "parameters": {
+      "code": "http://www.nlm.nih.gov/research/umls/rxnorm|7646,http://www.nlm.nih.gov/research/umls/rxnorm|40790,http://www.nlm.nih.gov/research/umls/rxnorm|17128,http://www.nlm.nih.gov/research/umls/rxnorm|283742,http://www.nlm.nih.gov/research/umls/rxnorm|114979"
+    },
+    "url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|7646,http://www.nlm.nih.gov/research/umls/rxnorm|40790,http://www.nlm.nih.gov/research/umls/rxnorm|17128,http://www.nlm.nih.gov/research/umls/rxnorm|283742,http://www.nlm.nih.gov/research/umls/rxnorm|114979"
+  },
+  "test_data": {
+    "resources": [
+      "synthea/output/gerd/positive/fhir/",
+      "synthea/output/gerd/control/fhir/"
+    ],
+    "expected_result_count": 31,
+    "expected_resource_ids": [],
+    "expected_patient_ids": [
+      "051f4214-4cea-dade-f42d-099d8789fd8d",
+      "0a8dfb7c-e26a-3516-d8d2-f2af15e6d66d",
+      "0ab61c39-9847-32f2-c47e-3dba59c1f84f",
+      "1889330c-f9b6-3c50-9231-d1bf7752f8f0",
+      "21e9cc36-12a9-4689-d28b-a2613a0f47cf",
+      "241c462a-8a58-9a58-48a5-660798a428f1",
+      "3368574f-e2a4-b52e-1748-d68324dcb609",
+      "42a5c83c-6bfb-544f-baa7-c005b5dcdb97",
+      "456ecb6d-a0d9-cff7-c0d8-77764aedad8c",
+      "4c05b4d9-fc30-54e3-e9c6-5262e323a644",
+      "51cdf3f0-4026-ca00-bb81-f5c6c534c285",
+      "56f86504-9600-51e9-5831-e45aa9abd92d",
+      "67fca239-e00a-08d7-e856-7ff2bf881ebd",
+      "7679787c-d95a-0555-6f73-70a8da1490c1",
+      "7bbab65b-3727-3891-a7d6-8d3a15dfd635",
+      "917452cf-b109-ecef-4206-bd8ed617c9b3",
+      "9208f814-a67c-0db0-6708-a554e5154d9b",
+      "970448fc-d9ce-de24-13e3-be4e9b8dfd22",
+      "9d7b202b-936e-0f17-9561-77ae64b48054",
+      "a2f9f259-a73b-b830-96e0-5a47b4eed51f",
+      "a34e3b46-68d6-2cf4-b28c-3c21503ef937",
+      "ae2996a7-a71b-44e3-71ec-93f57344b56c",
+      "b7bce687-8996-36a8-76f5-6ec9506ad51c",
+      "bcf8913c-15d9-38b2-caa5-217d6968bd0f",
+      "bf263f4c-b743-1c94-d29e-da7575dd1ef4",
+      "c427e2e9-3e1c-670a-e897-3bea7598d797",
+      "d7d02a2e-a104-ed7b-7801-575fe3a6cb1e",
+      "e7da0918-d8fd-db40-23a9-8153eddeeebc",
+      "e995d27e-9cb5-fe91-9694-defa1ad4385d",
+      "f3ce6281-44ab-6e66-694b-d6d1cca75a84",
+      "f5a486e6-661f-93ed-8e5d-3ea97da173f4"
+    ]
+  },
+  "created_at": "2026-04-27T00:00:00.000000Z",
+  "updated_at": "2026-04-27T00:00:00.000000Z"
+}

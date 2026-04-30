@@ -1,0 +1,68 @@
+{
+  "id": "phekb-liver-cancer-labs",
+  "source": "phekb",
+  "source_id": "liver-cancer",
+  "name": "Liver Cancer (HCC) - Elevated AFP Query",
+  "description": "Tests ability to find HCC patients via elevated alpha-fetoprotein (AFP) lab results. AFP > 100 ng/mL is suggestive of HCC; > 400 ng/mL is diagnostic in the right clinical context. This case includes 'Path D' patients (elevated AFP without formal HCC diagnosis) — exposing whether the LLM thinks to query Observations rather than only Conditions.",
+  "prompt": "Find patients with elevated alpha-fetoprotein (AFP) lab results greater than or equal to 100 ng/mL.",
+  "prompts": {
+    "naive": "Find patients with high AFP.",
+    "broad": "Find patients with alpha-fetoprotein (AFP) measurements at or above 100 ng/mL — the threshold suggestive of hepatocellular carcinoma.",
+    "expert": "I need Observation resources with elevated AFP. Use LOINC code 1834-1 (Alpha-1-Fetoprotein [Mass/volume] in Serum or Plasma). Filter by value-quantity at or above 100 ng/mL. Query: Observation?code=http://loinc.org|1834-1&value-quantity=ge100||ng/mL"
+  },
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "algorithm_path": "labs-path",
+    "algorithm_path_description": "Patients with elevated AFP Observations. Includes Path D (no formal HCC dx).",
+    "code_systems": [
+      "LOINC"
+    ],
+    "required_codes": [
+      {
+        "system": "http://loinc.org",
+        "code": "1834-1",
+        "display": "Alpha-1-Fetoprotein [Mass/volume] in Serum or Plasma",
+        "source": "UMLS verified"
+      }
+    ],
+    "complexity": "hard",
+    "tags": [
+      "observation",
+      "oncology",
+      "liver-cancer",
+      "hcc",
+      "afp",
+      "tumor-marker",
+      "value-quantity"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "Observation",
+    "parameters": {
+      "code": "http://loinc.org|1834-1",
+      "value-quantity": "ge100||ng/mL"
+    },
+    "url": "Observation?code=http://loinc.org|1834-1&value-quantity=ge100||ng/mL"
+  },
+  "test_data": {
+    "resources": [
+      "synthea/output/liver-cancer/positive/fhir/",
+      "synthea/output/liver-cancer/control/fhir/"
+    ],
+    "expected_result_count": 9,
+    "expected_resource_ids": [],
+    "expected_patient_ids": [
+      "053b737f-a6df-5828-7be0-87e0bce74d7a",
+      "0a40142b-2534-98c6-1a8f-fdb434b2c2a5",
+      "183505c6-946f-11d4-bb69-6053cc86aee3",
+      "3eb07164-5b1d-5375-746e-d182a46b6d89",
+      "4a559561-cf77-3b56-2085-3a3640b6d960",
+      "76bf549a-57e4-d4f1-5ac5-8fef7e9c9fb3",
+      "9220429d-00fe-1614-1cab-fd30dbfc815d",
+      "ae021cf2-ad0d-1797-2ad2-51ce1307eb6d",
+      "aed870df-99d8-0073-28f0-9b0d16a30c8b"
+    ]
+  },
+  "created_at": "2026-04-28T00:00:00.000000Z",
+  "updated_at": "2026-04-27T00:00:00.000000Z"
+}

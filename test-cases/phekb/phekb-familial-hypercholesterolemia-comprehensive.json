@@ -1,0 +1,143 @@
+{
+  "id": "phekb-familial-hypercholesterolemia-comprehensive",
+  "source": "phekb",
+  "source_id": "familial-hypercholesterolemia",
+  "name": "Familial Hypercholesterolemia - Comprehensive Provider Query",
+  "description": "Simulates a lipid clinic provider identifying their complete FH patient population. The Geisinger PheKB FH algorithm uses LDL ≥ 190, statin therapy adjustment, and ASCVD history scoring (Dutch Lipid Clinic Network criteria). Real-world FH identification primarily unions: FH diagnosis codes, statin prescriptions, and severely elevated LDL labs. Note that the statin query is broadly cross-indication — most statin patients don't have FH but do have other cardiovascular risk.",
+  "prompt": "I need to identify my complete familial hypercholesterolemia (FH) patient population for a genetic testing and cascade screening initiative. From clinical experience, FH patients are documented in different ways: many have a formal FH diagnosis code, most are on statin therapy, and some are undiagnosed but have very elevated LDL.\n\nPlease run multiple FHIR queries to capture the full population:\n1. Patients with any FH diagnosis (parent, heterozygous, homozygous, or LDL receptor mutation variants)\n2. Patients prescribed statin therapy\n3. Patients with LDL cholesterol ≥ 190 mg/dL\n\nFor each query, return the matching resources. I want the union of all patients found. The statin query will substantially overcount — most statin patients are non-FH. The LDL query catches undiagnosed FH which is the most clinically valuable group for genetic testing referral.",
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "multi_query": true,
+    "algorithm_path": "comprehensive",
+    "algorithm_path_description": "Union of FH dx codes, statin Rx, and severely elevated LDL labs. Tests the FH underdiagnosis screening workflow — the LDL query catches the population that genetic testing campaigns target.",
+    "expected_queries": [
+      "Condition?code=http://snomed.info/sct|398036000,http://snomed.info/sct|238079002,http://snomed.info/sct|238078005,http://snomed.info/sct|403829002,http://snomed.info/sct|403830007",
+      "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|83367,http://www.nlm.nih.gov/research/umls/rxnorm|36567,http://www.nlm.nih.gov/research/umls/rxnorm|301542,http://www.nlm.nih.gov/research/umls/rxnorm|42463,http://www.nlm.nih.gov/research/umls/rxnorm|6472",
+      "Observation?code=http://loinc.org|2089-1&value-quantity=ge190"
+    ],
+    "code_systems": [
+      "SNOMED CT",
+      "RxNorm",
+      "LOINC"
+    ],
+    "required_codes": [
+      {
+        "system": "http://snomed.info/sct",
+        "code": "398036000",
+        "display": "Familial hypercholesterolemia",
+        "source": "AIR VSAC"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "238079002",
+        "display": "Familial hypercholesterolemia - heterozygous",
+        "source": "AIR VSAC"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "238078005",
+        "display": "Familial hypercholesterolemia - homozygous",
+        "source": "AIR VSAC"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "403829002",
+        "display": "Familial hypercholesterolemia due to heterozygous low density lipoprotein receptor mutation",
+        "source": "AIR VSAC"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "403830007",
+        "display": "Familial hypercholesterolemia due to homozygous low density lipoprotein receptor mutation",
+        "source": "AIR VSAC"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "83367",
+        "display": "atorvastatin",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "36567",
+        "display": "simvastatin",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "301542",
+        "display": "rosuvastatin",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "42463",
+        "display": "pravastatin",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "6472",
+        "display": "lovastatin",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://loinc.org",
+        "code": "2089-1",
+        "display": "Cholesterol in LDL [Mass/volume] in Serum or Plasma",
+        "source": "UMLS verified"
+      }
+    ],
+    "complexity": "expert",
+    "tags": [
+      "multi-query",
+      "cardiology",
+      "familial-hypercholesterolemia",
+      "comprehensive",
+      "cross-resource",
+      "genetic-screening"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "Patient",
+    "parameters": {},
+    "url": "Condition?code=http://snomed.info/sct|398036000,http://snomed.info/sct|238079002,http://snomed.info/sct|238078005,http://snomed.info/sct|403829002,http://snomed.info/sct|403830007"
+  },
+  "test_data": {
+    "resources": [
+      "synthea/output/familial-hypercholesterolemia/positive/fhir/",
+      "synthea/output/familial-hypercholesterolemia/control/fhir/"
+    ],
+    "expected_result_count": 25,
+    "expected_resource_ids": [],
+    "expected_patient_ids": [
+      "1c994f96-4fce-1821-125f-30debf9300d3",
+      "1d6f5e73-7b70-7d66-22b8-0ec459f4cd3d",
+      "1f6f3dc3-3996-86cc-8c27-d20846f9a20a",
+      "278f6908-aeef-5e63-13d3-9298b3005334",
+      "29b181f9-470e-0ccd-4de5-31c0d9a7aff3",
+      "38621d08-b1b1-a7a4-f149-5741c923fc27",
+      "3d088973-ac76-8e5f-ea61-10bc9aa2a909",
+      "495abe3a-ac3d-d18e-6d12-85cae79062fe",
+      "5a4a8e9c-87c7-db1f-60d1-a9c342fb1e06",
+      "6479950d-2fcb-5253-41e3-db18f35af27e",
+      "723ad5b6-850f-799e-99b4-60e38ea93791",
+      "95120fa4-48ec-52b0-535e-58e8e001bb50",
+      "96ddb8cf-a9da-b40a-cb29-58bef0190cc4",
+      "9e9e9306-e659-6cf3-2238-05fe9ad1c7d2",
+      "a7417f1f-fd80-d9fa-71d8-069a5233364d",
+      "a9901a83-5fbe-0482-f53d-65c43e0b8f6a",
+      "aad5814e-e8e9-febc-befc-e30d27002abe",
+      "aaec3845-7eeb-b765-9e2c-d5cbdf6796df",
+      "bdbb4551-9771-52a6-3f2f-1f0c2e81b85f",
+      "c5c269e4-8d56-3485-873b-cfd889593ec1",
+      "c9a9f060-a150-fc08-3a60-9669597db06d",
+      "cca32f1b-3c66-0629-a648-c3632ea9ab8e",
+      "de39f1c7-a011-b054-9b3d-17b8703b02e6",
+      "ded32913-7700-d6d7-bff7-89bdcde1505f",
+      "e1eab7bd-39c0-2cc0-c002-c2eaff965bfa"
+    ]
+  },
+  "created_at": "2026-04-27T00:00:00.000000Z",
+  "updated_at": "2026-04-27T00:00:00.000000Z"
+}

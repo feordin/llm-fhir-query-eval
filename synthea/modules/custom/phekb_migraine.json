@@ -1,0 +1,160 @@
+{
+  "name": "PheKB Migraine",
+  "remarks": [
+    "Custom Synthea module for migraine.",
+    "First headache disorder phenotype. Triptans are highly migraine-specific.",
+    "",
+    "Generates THREE patient paths (no Path D — migraine has no defining lab):",
+    "  Path A (60%): Migraine dx + triptan Rx",
+    "  Path B (20%): Migraine dx, no triptan (mild patient or alt therapy)",
+    "  Path C (20%): Triptan only, NO migraine dx (rare — almost migraine-specific drug class)",
+    "",
+    "Diagnosis SNOMED variation (Paths A + B):",
+    "  35% Migraine (37796009) — parent",
+    "  20% Migraine without aura (56097005)",
+    "  20% Migraine with aura (4473006)",
+    "  10% Hemiplegic migraine (59292006)",
+    "  15% Headache disorder (230461009) — broader umbrella",
+    "",
+    "Triptan variation (Paths A + C — 5 ingredients):",
+    "  35% Sumatriptan (37418) — most common",
+    "  25% Rizatriptan (88014)",
+    "  15% Eletriptan (231049)",
+    "  15% Zolmitriptan (135775)",
+    "  10% Naratriptan (141366)"
+  ],
+  "states": {
+    "Initial": { "type": "Initial", "direct_transition": "Age_Guard" },
+    "Age_Guard": { "type": "Guard", "allow": { "condition_type": "Age", "operator": ">=", "quantity": 18, "unit": "years" }, "direct_transition": "Set_Migraine_Flag" },
+    "Set_Migraine_Flag": { "type": "SetAttribute", "attribute": "migraine_positive", "value": true, "direct_transition": "Choose_Patient_Path" },
+    "Choose_Patient_Path": {
+      "type": "Simple",
+      "distributed_transition": [
+        { "transition": "Set_Path_A", "distribution": 0.60 },
+        { "transition": "Set_Path_B", "distribution": 0.20 },
+        { "transition": "Set_Path_C", "distribution": 0.20 }
+      ]
+    },
+    "Set_Path_A": { "type": "SetAttribute", "attribute": "migraine_has_dx", "value": true, "direct_transition": "Set_Path_A_Meds" },
+    "Set_Path_A_Meds": { "type": "SetAttribute", "attribute": "migraine_has_meds", "value": true, "direct_transition": "Choose_Subtype" },
+    "Set_Path_B": { "type": "SetAttribute", "attribute": "migraine_has_dx", "value": true, "direct_transition": "Set_Path_B_Meds" },
+    "Set_Path_B_Meds": { "type": "SetAttribute", "attribute": "migraine_has_meds", "value": false, "direct_transition": "Choose_Subtype" },
+    "Set_Path_C": { "type": "SetAttribute", "remarks": ["TRICKY: triptan without migraine dx (rare)"], "attribute": "migraine_has_dx", "value": false, "direct_transition": "Set_Path_C_Meds" },
+    "Set_Path_C_Meds": { "type": "SetAttribute", "attribute": "migraine_has_meds", "value": true, "direct_transition": "Choose_Subtype" },
+
+    "Choose_Subtype": {
+      "type": "Simple",
+      "distributed_transition": [
+        { "transition": "Set_Subtype_Migraine", "distribution": 0.35 },
+        { "transition": "Set_Subtype_NoAura", "distribution": 0.20 },
+        { "transition": "Set_Subtype_WithAura", "distribution": 0.20 },
+        { "transition": "Set_Subtype_Hemiplegic", "distribution": 0.10 },
+        { "transition": "Set_Subtype_Headache", "distribution": 0.15 }
+      ]
+    },
+    "Set_Subtype_Migraine": { "type": "SetAttribute", "attribute": "migraine_subtype", "value": "migraine", "direct_transition": "Choose_Med" },
+    "Set_Subtype_NoAura": { "type": "SetAttribute", "attribute": "migraine_subtype", "value": "noaura", "direct_transition": "Choose_Med" },
+    "Set_Subtype_WithAura": { "type": "SetAttribute", "attribute": "migraine_subtype", "value": "withaura", "direct_transition": "Choose_Med" },
+    "Set_Subtype_Hemiplegic": { "type": "SetAttribute", "attribute": "migraine_subtype", "value": "hemiplegic", "direct_transition": "Choose_Med" },
+    "Set_Subtype_Headache": { "type": "SetAttribute", "attribute": "migraine_subtype", "value": "headache", "direct_transition": "Choose_Med" },
+
+    "Choose_Med": {
+      "type": "Simple",
+      "distributed_transition": [
+        { "transition": "Set_Med_Sumatriptan", "distribution": 0.35 },
+        { "transition": "Set_Med_Rizatriptan", "distribution": 0.25 },
+        { "transition": "Set_Med_Eletriptan", "distribution": 0.15 },
+        { "transition": "Set_Med_Zolmitriptan", "distribution": 0.15 },
+        { "transition": "Set_Med_Naratriptan", "distribution": 0.10 }
+      ]
+    },
+    "Set_Med_Sumatriptan": { "type": "SetAttribute", "attribute": "migraine_med", "value": "sumatriptan", "direct_transition": "Set_Needs_First_Visit" },
+    "Set_Med_Rizatriptan": { "type": "SetAttribute", "attribute": "migraine_med", "value": "rizatriptan", "direct_transition": "Set_Needs_First_Visit" },
+    "Set_Med_Eletriptan": { "type": "SetAttribute", "attribute": "migraine_med", "value": "eletriptan", "direct_transition": "Set_Needs_First_Visit" },
+    "Set_Med_Zolmitriptan": { "type": "SetAttribute", "attribute": "migraine_med", "value": "zolmitriptan", "direct_transition": "Set_Needs_First_Visit" },
+    "Set_Med_Naratriptan": { "type": "SetAttribute", "attribute": "migraine_med", "value": "naratriptan", "direct_transition": "Set_Needs_First_Visit" },
+
+    "Set_Needs_First_Visit": { "type": "SetAttribute", "attribute": "migraine_needs_first_visit", "value": true, "direct_transition": "Wellness_Encounter" },
+    "Wellness_Encounter": { "type": "Encounter", "wellness": true, "direct_transition": "Check_First_Visit" },
+    "Check_First_Visit": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "migraine_needs_first_visit", "operator": "==", "value": true }, "transition": "Check_Has_Diagnosis" },
+        { "transition": "End_Wellness_Encounter" }
+      ]
+    },
+    "Check_Has_Diagnosis": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "migraine_has_dx", "operator": "==", "value": true }, "transition": "Route_By_Subtype" },
+        { "transition": "Check_Meds_NoDx" }
+      ]
+    },
+    "Route_By_Subtype": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "migraine_subtype", "operator": "==", "value": "migraine" }, "transition": "Diagnose_Migraine" },
+        { "condition": { "condition_type": "Attribute", "attribute": "migraine_subtype", "operator": "==", "value": "noaura" }, "transition": "Diagnose_NoAura" },
+        { "condition": { "condition_type": "Attribute", "attribute": "migraine_subtype", "operator": "==", "value": "withaura" }, "transition": "Diagnose_WithAura" },
+        { "condition": { "condition_type": "Attribute", "attribute": "migraine_subtype", "operator": "==", "value": "hemiplegic" }, "transition": "Diagnose_Hemiplegic" },
+        { "transition": "Diagnose_Headache" }
+      ]
+    },
+    "Diagnose_Migraine": { "type": "ConditionOnset", "assign_to_attribute": "migraine_condition", "codes": [{ "system": "SNOMED-CT", "code": "37796009", "display": "Migraine" }], "direct_transition": "Check_Meds_WithDx" },
+    "Diagnose_NoAura": { "type": "ConditionOnset", "assign_to_attribute": "migraine_condition", "codes": [{ "system": "SNOMED-CT", "code": "56097005", "display": "Migraine without aura" }], "direct_transition": "Check_Meds_WithDx" },
+    "Diagnose_WithAura": { "type": "ConditionOnset", "assign_to_attribute": "migraine_condition", "codes": [{ "system": "SNOMED-CT", "code": "4473006", "display": "Migraine with aura" }], "direct_transition": "Check_Meds_WithDx" },
+    "Diagnose_Hemiplegic": { "type": "ConditionOnset", "assign_to_attribute": "migraine_condition", "codes": [{ "system": "SNOMED-CT", "code": "59292006", "display": "Hemiplegic migraine" }], "direct_transition": "Check_Meds_WithDx" },
+    "Diagnose_Headache": { "type": "ConditionOnset", "assign_to_attribute": "migraine_condition", "codes": [{ "system": "SNOMED-CT", "code": "230461009", "display": "Headache disorder" }], "direct_transition": "Check_Meds_WithDx" },
+
+    "Check_Meds_WithDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "migraine_has_meds", "operator": "==", "value": true }, "transition": "Route_Med_WithDx" },
+        { "transition": "Clear_First_Visit_Flag" }
+      ]
+    },
+    "Route_Med_WithDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "migraine_med", "operator": "==", "value": "sumatriptan" }, "transition": "Prescribe_Sumatriptan_WithDx" },
+        { "condition": { "condition_type": "Attribute", "attribute": "migraine_med", "operator": "==", "value": "rizatriptan" }, "transition": "Prescribe_Rizatriptan_WithDx" },
+        { "condition": { "condition_type": "Attribute", "attribute": "migraine_med", "operator": "==", "value": "eletriptan" }, "transition": "Prescribe_Eletriptan_WithDx" },
+        { "condition": { "condition_type": "Attribute", "attribute": "migraine_med", "operator": "==", "value": "zolmitriptan" }, "transition": "Prescribe_Zolmitriptan_WithDx" },
+        { "transition": "Prescribe_Naratriptan_WithDx" }
+      ]
+    },
+    "Prescribe_Sumatriptan_WithDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "37418", "display": "sumatriptan" }], "reason": "migraine_condition", "direct_transition": "Clear_First_Visit_Flag" },
+    "Prescribe_Rizatriptan_WithDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "88014", "display": "rizatriptan" }], "reason": "migraine_condition", "direct_transition": "Clear_First_Visit_Flag" },
+    "Prescribe_Eletriptan_WithDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "231049", "display": "eletriptan" }], "reason": "migraine_condition", "direct_transition": "Clear_First_Visit_Flag" },
+    "Prescribe_Zolmitriptan_WithDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "135775", "display": "zolmitriptan" }], "reason": "migraine_condition", "direct_transition": "Clear_First_Visit_Flag" },
+    "Prescribe_Naratriptan_WithDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "141366", "display": "naratriptan" }], "reason": "migraine_condition", "direct_transition": "Clear_First_Visit_Flag" },
+
+    "Check_Meds_NoDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "migraine_has_meds", "operator": "==", "value": true }, "transition": "Route_Med_NoDx" },
+        { "transition": "Clear_First_Visit_Flag" }
+      ]
+    },
+    "Route_Med_NoDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "migraine_med", "operator": "==", "value": "sumatriptan" }, "transition": "Prescribe_Sumatriptan_NoDx" },
+        { "condition": { "condition_type": "Attribute", "attribute": "migraine_med", "operator": "==", "value": "rizatriptan" }, "transition": "Prescribe_Rizatriptan_NoDx" },
+        { "condition": { "condition_type": "Attribute", "attribute": "migraine_med", "operator": "==", "value": "eletriptan" }, "transition": "Prescribe_Eletriptan_NoDx" },
+        { "condition": { "condition_type": "Attribute", "attribute": "migraine_med", "operator": "==", "value": "zolmitriptan" }, "transition": "Prescribe_Zolmitriptan_NoDx" },
+        { "transition": "Prescribe_Naratriptan_NoDx" }
+      ]
+    },
+    "Prescribe_Sumatriptan_NoDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "37418", "display": "sumatriptan" }], "direct_transition": "Clear_First_Visit_Flag" },
+    "Prescribe_Rizatriptan_NoDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "88014", "display": "rizatriptan" }], "direct_transition": "Clear_First_Visit_Flag" },
+    "Prescribe_Eletriptan_NoDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "231049", "display": "eletriptan" }], "direct_transition": "Clear_First_Visit_Flag" },
+    "Prescribe_Zolmitriptan_NoDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "135775", "display": "zolmitriptan" }], "direct_transition": "Clear_First_Visit_Flag" },
+    "Prescribe_Naratriptan_NoDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "141366", "display": "naratriptan" }], "direct_transition": "Clear_First_Visit_Flag" },
+
+    "Clear_First_Visit_Flag": { "type": "SetAttribute", "attribute": "migraine_needs_first_visit", "value": false, "direct_transition": "End_Wellness_Encounter" },
+    "End_Wellness_Encounter": { "type": "EncounterEnd", "direct_transition": "Followup_Delay" },
+    "Followup_Delay": { "type": "Delay", "range": { "low": 6, "high": 12, "unit": "months" }, "direct_transition": "Wellness_Encounter" }
+  },
+  "gmf_version": 2
+}

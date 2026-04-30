@@ -176,6 +176,10 @@ Look up and crosswalk clinical codes using the NIH UMLS MCP server.
 /umls crosswalk <system> <code>  # Map a code to other systems
 /umls codes-for <term>           # Get all FHIR-relevant codes (SNOMED, ICD-10, LOINC, RxNorm)
 /umls validate <system> <code>   # Check if a code exists and get its display name
+/umls valueset <term>            # Search VSAC for curated value sets
+/umls expand <oid>               # Expand a value set to see all member codes
+/umls validate-in-vs <oid> <system> <code>  # Check if a code is in a value set
+/umls subsumes <system> <code_a> <code_b>   # Check if code_a subsumes code_b
 ```
 
 **Examples:**
@@ -184,6 +188,9 @@ Look up and crosswalk clinical codes using the NIH UMLS MCP server.
 /umls codes-for hemoglobin A1c
 /umls crosswalk SNOMEDCT_US 44054006
 /umls validate ICD10CM E11
+/umls valueset diabetes
+/umls expand 2.16.840.1.113883.3.464.1003.103.12.1001
+/umls subsumes http://snomed.info/sct 73211009 44054006
 ```
 
 Requires the `nih-umls` MCP server configured in `.mcp.json`. See `.claude/skills/umls/SKILL.md` for detailed instructions.

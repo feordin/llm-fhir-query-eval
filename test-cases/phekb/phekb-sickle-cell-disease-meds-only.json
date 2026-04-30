@@ -1,0 +1,58 @@
+{
+  "id": "phekb-sickle-cell-disease-meds-only",
+  "source": "phekb",
+  "source_id": "sickle-cell-disease",
+  "name": "Sickle Cell Disease - Medication-Only Patients (No Diagnosis)",
+  "description": "The hardest test case: finds patients who are on hydroxyurea but have NO sickle cell disease diagnosis in their chart. These 'tricky' patients (Path C) can only be discovered by searching MedicationRequest resources. An LLM that only queries Condition resources will score 0% on this test. This simulates real-world scenarios where SCD patients are managed by outside hematologists and the diagnosis was never formally documented in the local EHR.",
+  "prompt": "I suspect some of my patients may be receiving hydroxyurea for sickle cell disease but don't have a formal sickle cell diagnosis documented in their problem list. Can you search for patients who have hydroxyurea prescriptions but no sickle cell disease diagnosis on record?",
+  "prompts": {
+    "naive": "Find patients on hydroxyurea who don't have a sickle cell disease diagnosis.",
+    "expert": "I need to identify a gap in our documentation: patients receiving hydroxyurea (the standard SCD treatment) who lack a formal sickle cell disease Condition resource. This requires a two-step approach: first find all patients with MedicationRequest for hydroxyurea, then exclude those who also have a Condition with SCD SNOMED codes (127040003 HbSS, 35434009 HbSC, 36472007 SCD-thalassemia). In FHIR, this can be done using _has negation or by comparing result sets from two queries."
+  },
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "algorithm_path": "meds-only-path",
+    "algorithm_path_description": "Path C 'tricky' patients: have hydroxyurea but NO SCD Condition resource. Tests cross-resource reasoning — the LLM must know to search MedicationRequest and understand that not all patients have diagnosis codes.",
+    "code_systems": ["RxNorm", "SNOMED CT"],
+    "required_codes": [
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "5552",
+        "display": "hydroxyurea",
+        "source": "VSAC OID 2.16.840.1.113762.1.4.1290.22"
+      }
+    ],
+    "complexity": "hard",
+    "tags": ["medication", "hematology", "sickle-cell-disease", "tricky", "meds-only", "cross-resource"]
+  },
+  "expected_query": {
+    "resource_type": "MedicationRequest",
+    "parameters": {
+      "code": "http://www.nlm.nih.gov/research/umls/rxnorm|5552"
+    },
+    "url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|5552"
+  },
+  "test_data": {
+    "resources": [
+      "synthea/output/sickle-cell-disease/positive/fhir/",
+      "synthea/output/sickle-cell-disease/control/fhir/"
+    ],
+    "expected_result_count": 11,
+    "expected_resource_ids": [],
+    "expected_patient_ids": [
+      "0a9c433f-8013-842e-4ef9-bae5315b5f43",
+      "2a1f1639-553d-5aa1-fbdc-003ab77ea30d",
+      "51076b8c-3f7d-e693-a195-896bea314f02",
+      "5f5fff20-bc4c-7893-ccd5-07cf71cc435f",
+      "8dd97f76-7844-ff38-a117-d6722877273c",
+      "9b949d39-921e-c9fd-88f7-91a4c700f262",
+      "e8876905-3db5-9d36-0748-0d7803b6a625",
+      "e973b5a5-232a-db46-32ae-eefac0c3f7ef",
+      "eebcaba3-2fb7-2e18-c992-5c8dc817c0eb",
+      "f0f8f5c7-5d45-3af1-c5d4-01188a7f22c4",
+      "f20509b7-673c-515f-51ca-7edeb931b29e"
+    ]
+  },
+  "created_at": "2026-04-14T00:00:00.000000Z",
+  "updated_at": "2026-04-14T00:00:00.000000Z"
+}

@@ -1,0 +1,197 @@
+{
+  "name": "PheKB GERD",
+  "remarks": [
+    "Custom Synthea module for PheKB phenotype: gastroesophageal reflux disease (GERD)",
+    "Based on PheKB GERD algorithm",
+    "",
+    "PheKB algorithm: 2+ ICD-9 GERD codes (530.81 or 530.11) on separate visits PLUS 2+ GERD med prescriptions,",
+    "  OR 3+ ICD-9 530.81 codes on separate visits.",
+    "",
+    "Generates THREE patient paths with HEAVY Path C:",
+    "  Path A (35%): Diagnosis + PPI — full presentation",
+    "  Path B (15%): Diagnosis only, no PPI",
+    "  Path C (50%): PPI ONLY, NO diagnosis (DOMINANT — PPIs are arguably the most cross-prescribed drug class)",
+    "",
+    "Path C dominance reflects real-world PPI over-prescribing for:",
+    "  - Functional dyspepsia",
+    "  - NSAID-associated gastritis prophylaxis",
+    "  - H. pylori eradication regimens",
+    "  - Critical care / anticoagulation prophylaxis",
+    "  - Empirical relief of upper GI symptoms",
+    "",
+    "Diagnosis SNOMED variation (Paths A + B):",
+    "  60% Gastroesophageal reflux disease (235595009) — canonical disorder",
+    "  25% Acid reflux (698065002) — finding code, often used informally",
+    "  15% Heartburn (16331000) — finding code",
+    "",
+    "Medication ingredient variation (Paths A + C):",
+    "  35% Omeprazole (7646)",
+    "  20% Pantoprazole (40790)",
+    "  15% Lansoprazole (17128)",
+    "  20% Esomeprazole (283742)",
+    "  10% Rabeprazole (114979)",
+    "",
+    "Codes verified via NIH UMLS MCP and HL7 GastroesophagealReflux VSAC."
+  ],
+  "states": {
+    "Initial": { "type": "Initial", "direct_transition": "Age_Guard" },
+
+    "Age_Guard": {
+      "type": "Guard",
+      "allow": { "condition_type": "Age", "operator": ">=", "quantity": 18, "unit": "years" },
+      "direct_transition": "Set_GERD_Flag"
+    },
+
+    "Set_GERD_Flag": { "type": "SetAttribute", "attribute": "gerd_positive", "value": true, "direct_transition": "Choose_Patient_Path" },
+
+    "Choose_Patient_Path": {
+      "type": "Simple",
+      "distributed_transition": [
+        { "transition": "Set_Path_A", "distribution": 0.35 },
+        { "transition": "Set_Path_B", "distribution": 0.15 },
+        { "transition": "Set_Path_C", "distribution": 0.50 }
+      ]
+    },
+
+    "Set_Path_A": { "type": "SetAttribute", "attribute": "gerd_has_dx", "value": true, "direct_transition": "Set_Path_A_Meds" },
+    "Set_Path_A_Meds": { "type": "SetAttribute", "attribute": "gerd_has_meds", "value": true, "direct_transition": "Choose_Subtype" },
+
+    "Set_Path_B": { "type": "SetAttribute", "attribute": "gerd_has_dx", "value": true, "direct_transition": "Set_Path_B_Meds" },
+    "Set_Path_B_Meds": { "type": "SetAttribute", "attribute": "gerd_has_meds", "value": false, "direct_transition": "Choose_Subtype" },
+
+    "Set_Path_C": { "type": "SetAttribute", "remarks": ["DOMINANT TRICKY: PPI without GERD dx — represents PPI over-prescribing"], "attribute": "gerd_has_dx", "value": false, "direct_transition": "Set_Path_C_Meds" },
+    "Set_Path_C_Meds": { "type": "SetAttribute", "attribute": "gerd_has_meds", "value": true, "direct_transition": "Choose_Subtype" },
+
+    "Choose_Subtype": {
+      "type": "Simple",
+      "distributed_transition": [
+        { "transition": "Set_Subtype_GERD", "distribution": 0.60 },
+        { "transition": "Set_Subtype_AcidReflux", "distribution": 0.25 },
+        { "transition": "Set_Subtype_Heartburn", "distribution": 0.15 }
+      ]
+    },
+
+    "Set_Subtype_GERD": { "type": "SetAttribute", "attribute": "gerd_subtype", "value": "gerd", "direct_transition": "Choose_Med" },
+    "Set_Subtype_AcidReflux": { "type": "SetAttribute", "attribute": "gerd_subtype", "value": "acidreflux", "direct_transition": "Choose_Med" },
+    "Set_Subtype_Heartburn": { "type": "SetAttribute", "attribute": "gerd_subtype", "value": "heartburn", "direct_transition": "Choose_Med" },
+
+    "Choose_Med": {
+      "type": "Simple",
+      "distributed_transition": [
+        { "transition": "Set_Med_Omeprazole", "distribution": 0.35 },
+        { "transition": "Set_Med_Pantoprazole", "distribution": 0.20 },
+        { "transition": "Set_Med_Lansoprazole", "distribution": 0.15 },
+        { "transition": "Set_Med_Esomeprazole", "distribution": 0.20 },
+        { "transition": "Set_Med_Rabeprazole", "distribution": 0.10 }
+      ]
+    },
+
+    "Set_Med_Omeprazole": { "type": "SetAttribute", "attribute": "gerd_med", "value": "omeprazole", "direct_transition": "Set_Needs_First_Visit" },
+    "Set_Med_Pantoprazole": { "type": "SetAttribute", "attribute": "gerd_med", "value": "pantoprazole", "direct_transition": "Set_Needs_First_Visit" },
+    "Set_Med_Lansoprazole": { "type": "SetAttribute", "attribute": "gerd_med", "value": "lansoprazole", "direct_transition": "Set_Needs_First_Visit" },
+    "Set_Med_Esomeprazole": { "type": "SetAttribute", "attribute": "gerd_med", "value": "esomeprazole", "direct_transition": "Set_Needs_First_Visit" },
+    "Set_Med_Rabeprazole": { "type": "SetAttribute", "attribute": "gerd_med", "value": "rabeprazole", "direct_transition": "Set_Needs_First_Visit" },
+
+    "Set_Needs_First_Visit": { "type": "SetAttribute", "attribute": "gerd_needs_first_visit", "value": true, "direct_transition": "Wellness_Encounter" },
+
+    "Wellness_Encounter": { "type": "Encounter", "wellness": true, "direct_transition": "Check_First_Visit" },
+
+    "Check_First_Visit": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "gerd_needs_first_visit", "operator": "==", "value": true }, "transition": "Check_Has_Diagnosis" },
+        { "transition": "End_Wellness_Encounter" }
+      ]
+    },
+
+    "Check_Has_Diagnosis": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "gerd_has_dx", "operator": "==", "value": true }, "transition": "Route_By_Subtype" },
+        { "transition": "Route_Med_NoDx" }
+      ]
+    },
+
+    "Route_By_Subtype": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "gerd_subtype", "operator": "==", "value": "gerd" }, "transition": "Diagnose_GERD" },
+        { "condition": { "condition_type": "Attribute", "attribute": "gerd_subtype", "operator": "==", "value": "acidreflux" }, "transition": "Diagnose_AcidReflux" },
+        { "transition": "Diagnose_Heartburn" }
+      ]
+    },
+
+    "Diagnose_GERD": {
+      "type": "ConditionOnset",
+      "assign_to_attribute": "gerd_condition",
+      "codes": [{ "system": "SNOMED-CT", "code": "235595009", "display": "Gastroesophageal reflux disease" }],
+      "direct_transition": "Check_Meds_WithDx"
+    },
+    "Diagnose_AcidReflux": {
+      "type": "ConditionOnset",
+      "assign_to_attribute": "gerd_condition",
+      "codes": [{ "system": "SNOMED-CT", "code": "698065002", "display": "Acid reflux" }],
+      "direct_transition": "Check_Meds_WithDx"
+    },
+    "Diagnose_Heartburn": {
+      "type": "ConditionOnset",
+      "assign_to_attribute": "gerd_condition",
+      "codes": [{ "system": "SNOMED-CT", "code": "16331000", "display": "Heartburn" }],
+      "direct_transition": "Check_Meds_WithDx"
+    },
+
+    "Check_Meds_WithDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "gerd_has_meds", "operator": "==", "value": true }, "transition": "Route_Med_WithDx" },
+        { "transition": "Clear_First_Visit_Flag" }
+      ]
+    },
+
+    "Route_Med_WithDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "gerd_med", "operator": "==", "value": "omeprazole" }, "transition": "Prescribe_Omeprazole_WithDx" },
+        { "condition": { "condition_type": "Attribute", "attribute": "gerd_med", "operator": "==", "value": "pantoprazole" }, "transition": "Prescribe_Pantoprazole_WithDx" },
+        { "condition": { "condition_type": "Attribute", "attribute": "gerd_med", "operator": "==", "value": "lansoprazole" }, "transition": "Prescribe_Lansoprazole_WithDx" },
+        { "condition": { "condition_type": "Attribute", "attribute": "gerd_med", "operator": "==", "value": "esomeprazole" }, "transition": "Prescribe_Esomeprazole_WithDx" },
+        { "transition": "Prescribe_Rabeprazole_WithDx" }
+      ]
+    },
+
+    "Prescribe_Omeprazole_WithDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "7646", "display": "omeprazole" }], "reason": "gerd_condition", "direct_transition": "Clear_First_Visit_Flag" },
+    "Prescribe_Pantoprazole_WithDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "40790", "display": "pantoprazole" }], "reason": "gerd_condition", "direct_transition": "Clear_First_Visit_Flag" },
+    "Prescribe_Lansoprazole_WithDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "17128", "display": "lansoprazole" }], "reason": "gerd_condition", "direct_transition": "Clear_First_Visit_Flag" },
+    "Prescribe_Esomeprazole_WithDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "283742", "display": "esomeprazole" }], "reason": "gerd_condition", "direct_transition": "Clear_First_Visit_Flag" },
+    "Prescribe_Rabeprazole_WithDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "114979", "display": "rabeprazole" }], "reason": "gerd_condition", "direct_transition": "Clear_First_Visit_Flag" },
+
+    "Route_Med_NoDx": {
+      "type": "Simple",
+      "remarks": ["Path C: PPI without GERD dx — over-prescribing reality"],
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "gerd_med", "operator": "==", "value": "omeprazole" }, "transition": "Prescribe_Omeprazole_NoDx" },
+        { "condition": { "condition_type": "Attribute", "attribute": "gerd_med", "operator": "==", "value": "pantoprazole" }, "transition": "Prescribe_Pantoprazole_NoDx" },
+        { "condition": { "condition_type": "Attribute", "attribute": "gerd_med", "operator": "==", "value": "lansoprazole" }, "transition": "Prescribe_Lansoprazole_NoDx" },
+        { "condition": { "condition_type": "Attribute", "attribute": "gerd_med", "operator": "==", "value": "esomeprazole" }, "transition": "Prescribe_Esomeprazole_NoDx" },
+        { "transition": "Prescribe_Rabeprazole_NoDx" }
+      ]
+    },
+
+    "Prescribe_Omeprazole_NoDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "7646", "display": "omeprazole" }], "direct_transition": "Clear_First_Visit_Flag" },
+    "Prescribe_Pantoprazole_NoDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "40790", "display": "pantoprazole" }], "direct_transition": "Clear_First_Visit_Flag" },
+    "Prescribe_Lansoprazole_NoDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "17128", "display": "lansoprazole" }], "direct_transition": "Clear_First_Visit_Flag" },
+    "Prescribe_Esomeprazole_NoDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "283742", "display": "esomeprazole" }], "direct_transition": "Clear_First_Visit_Flag" },
+    "Prescribe_Rabeprazole_NoDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "114979", "display": "rabeprazole" }], "direct_transition": "Clear_First_Visit_Flag" },
+
+    "Clear_First_Visit_Flag": { "type": "SetAttribute", "attribute": "gerd_needs_first_visit", "value": false, "direct_transition": "End_Wellness_Encounter" },
+
+    "End_Wellness_Encounter": { "type": "EncounterEnd", "direct_transition": "Followup_Delay" },
+
+    "Followup_Delay": {
+      "type": "Delay",
+      "range": { "low": 3, "high": 6, "unit": "months" },
+      "direct_transition": "Wellness_Encounter"
+    }
+  },
+  "gmf_version": 2
+}

@@ -1,0 +1,107 @@
+{
+  "id": "phekb-ckd-comprehensive",
+  "source": "phekb",
+  "source_id": "ckd",
+  "name": "Chronic Kidney Disease - Comprehensive Provider Query",
+  "description": "Simulates a primary care or nephrology provider identifying their complete chronic kidney disease patient population. The Columbia CKD V4.2 algorithm formalizes case definition as: dx + qualifying eGFR + albuminuria, with full stage classification by eGFR (G-stage) and UACR (A-stage). Real-world identification primarily unions: CKD diagnosis codes, reduced eGFR (<60), and elevated UACR (>30 mg/g). The Path C heavy distribution (~35% labs without dx) makes this query especially important — a Condition-only query will miss most undiagnosed-but-detected CKD.",
+  "prompt": "I need to identify my complete chronic kidney disease patient population for a quality improvement initiative on CKD care coordination. From clinical experience, I know CKD is substantially undercoded: only about half of patients with biochemical evidence of CKD (reduced eGFR or proteinuria) have a formal CKD diagnosis on their problem list. Documentation patterns:\n1. Some have a formal CKD diagnosis code with stage (Stage 2, 3, 3A, 3B, or 4)\n2. Many have reduced eGFR below 60 mL/min/1.73 m² but no CKD diagnosis ever coded\n3. Some have elevated urine albumin-to-creatinine ratio (above 30 mg/g) indicating proteinuria, regardless of eGFR\n\nPlease run multiple FHIR queries to capture the full population:\n1. Patients with any CKD diagnosis (parent CKD or any of stages 2-4)\n2. Patients with reduced eGFR labs (below 60)\n3. Patients with elevated urine albumin-to-creatinine ratio (above 30 mg/g)\n\nFor each query, return the matching resources. I want the union of all patients found across these three approaches.",
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "multi_query": true,
+    "algorithm_path": "comprehensive",
+    "algorithm_path_description": "Union of CKD dx codes (Paths A+B), reduced eGFR (Paths A+C), and elevated UACR (Paths A+D). Path C is heavy because real-world CKD is substantially undercoded — many patients with reduced eGFR never receive a formal diagnosis. The PheKB algorithm's full classification operationalized as union for screening, with stage refinement requiring downstream classifier logic.",
+    "expected_queries": [
+      "Condition?code=http://snomed.info/sct|709044004,http://snomed.info/sct|431856006,http://snomed.info/sct|433144002,http://snomed.info/sct|700378005,http://snomed.info/sct|431857002",
+      "Observation?code=http://loinc.org|62238-1&value-quantity=lt60",
+      "Observation?code=http://loinc.org|9318-7&value-quantity=gt30"
+    ],
+    "code_systems": [
+      "SNOMED CT",
+      "LOINC"
+    ],
+    "required_codes": [
+      {
+        "system": "http://snomed.info/sct",
+        "code": "709044004",
+        "display": "Chronic kidney disease",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "431856006",
+        "display": "Chronic kidney disease stage 2",
+        "source": "VSAC value set"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "433144002",
+        "display": "Chronic kidney disease stage 3",
+        "source": "VSAC value set"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "700378005",
+        "display": "Chronic kidney disease stage 3A",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "431857002",
+        "display": "Chronic kidney disease stage 4",
+        "source": "VSAC value set"
+      },
+      {
+        "system": "http://loinc.org",
+        "code": "62238-1",
+        "display": "Glomerular filtration rate [Volume Rate/Area] in Serum, Plasma or Blood by Creatinine-based formula (CKD-EPI)/1.73 sq M",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://loinc.org",
+        "code": "9318-7",
+        "display": "Albumin/Creatinine [Mass Ratio] in Urine",
+        "source": "UMLS verified"
+      }
+    ],
+    "complexity": "expert",
+    "tags": [
+      "multi-query",
+      "nephrology",
+      "ckd",
+      "comprehensive",
+      "cross-resource"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "Patient",
+    "parameters": {},
+    "url": "Condition?code=http://snomed.info/sct|709044004,http://snomed.info/sct|431856006,http://snomed.info/sct|433144002,http://snomed.info/sct|700378005,http://snomed.info/sct|431857002"
+  },
+  "test_data": {
+    "resources": [
+      "synthea/output/ckd/positive/fhir/",
+      "synthea/output/ckd/control/fhir/"
+    ],
+    "expected_result_count": 15,
+    "expected_resource_ids": [],
+    "expected_patient_ids": [
+      "0822dbac-f57f-dede-d8ff-305618480e4a",
+      "3b560da4-c7fd-8008-04a5-1882e1c3f781",
+      "596c786c-2c66-6caa-ee67-945053156ab1",
+      "976f568d-7841-b1b0-0c26-904ced33d8cc",
+      "9f45ffe3-cbc4-a083-f52f-7f3ca865e449",
+      "a714119a-c214-2162-8060-394901e90a85",
+      "b58b78aa-37be-b013-ba51-98bdebc4947b",
+      "bb024f09-4e20-6f91-df71-6cb5485ac045",
+      "c4a42722-b087-3935-fbe1-9cc0cf276d40",
+      "db6190a3-ceb6-3e39-87aa-8eccec442d6a",
+      "e306284b-aaa3-5279-8b2b-530fdb5853d4",
+      "ed5eba29-a875-120a-7b04-a42034975276",
+      "ed6c03e1-f389-2b3d-35c0-260b184d5ab0",
+      "f883a494-f578-ca8b-b985-772f0c65680a",
+      "fa04876c-372c-ad66-4fa7-c8bcce305712"
+    ]
+  },
+  "created_at": "2026-04-27T00:00:00.000000Z",
+  "updated_at": "2026-04-27T00:00:00.000000Z"
+}

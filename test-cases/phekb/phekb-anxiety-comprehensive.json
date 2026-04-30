@@ -1,0 +1,112 @@
+{
+  "id": "phekb-anxiety-comprehensive",
+  "source": "phekb",
+  "source_id": "anxiety-algorithm",
+  "name": "Anxiety Disorder - Comprehensive Multi-Query",
+  "description": "Comprehensive test for the PheKB anxiety phenotype algorithm. A psychiatrist needs to identify their complete anxiety patient population for a treatment outcomes study. This requires searching both Condition resources (formal diagnoses) and MedicationRequest resources (anti-anxiety prescriptions), because some patients may be prescribed medications by primary care without a formal anxiety diagnosis in the psychiatry system. Tests whether LLMs can construct multiple FHIR queries across resource types to capture the full cohort.",
+  "prompt": "Find all patients with an anxiety disorder. Search both diagnoses and anti-anxiety medication prescriptions to capture the complete population.",
+  "prompts": {
+    "naive": "Find all patients with an anxiety disorder. Search both diagnoses and anti-anxiety medication prescriptions to capture the complete population.",
+    "expert": "A psychiatrist is conducting a treatment outcomes study and needs to identify their complete anxiety patient population. They explain that while many patients have a formal anxiety diagnosis on record, some patients are prescribed anti-anxiety medications such as sertraline, escitalopram, buspirone, or alprazolam by their primary care provider without a formal anxiety diagnosis appearing in the psychiatry system. The psychiatrist needs to find all patients who either have an anxiety disorder diagnosis or have been prescribed any of these anti-anxiety medications."
+  },
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "algorithm_path": "comprehensive",
+    "algorithm_path_description": "Full PheKB anxiety case identification combining diagnosis codes and medication evidence. Requires multi-query strategy: Condition search for anxiety diagnoses plus MedicationRequest search for anti-anxiety medications to catch patients without formal diagnosis codes.",
+    "multi_query": true,
+    "code_systems": [
+      "SNOMED CT",
+      "RxNorm"
+    ],
+    "required_codes": [
+      {
+        "system": "http://snomed.info/sct",
+        "code": "21897009",
+        "display": "Generalized anxiety disorder",
+        "source": "umls"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "371631005",
+        "display": "Panic disorder",
+        "source": "umls"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "197480006",
+        "display": "Anxiety disorder",
+        "source": "umls"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "312941",
+        "display": "sertraline 50 MG Oral Tablet",
+        "source": "umls"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "349332",
+        "display": "escitalopram 10 MG Oral Tablet",
+        "source": "umls"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "866083",
+        "display": "buspirone hydrochloride 10 MG Oral Tablet",
+        "source": "umls"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "308048",
+        "display": "alprazolam 0.5 MG Oral Tablet",
+        "source": "umls"
+      }
+    ],
+    "complexity": "expert",
+    "expected_queries": [
+      "Condition?code=http://snomed.info/sct|21897009,http://snomed.info/sct|371631005,http://snomed.info/sct|197480006",
+      "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|312941,http://www.nlm.nih.gov/research/umls/rxnorm|349332,http://www.nlm.nih.gov/research/umls/rxnorm|866083,http://www.nlm.nih.gov/research/umls/rxnorm|308048"
+    ],
+    "tags": [
+      "condition",
+      "medication",
+      "psychiatry",
+      "anxiety",
+      "multi-query",
+      "comprehensive"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "Patient",
+    "parameters": {},
+    "url": "Condition?code=http://snomed.info/sct|21897009,http://snomed.info/sct|371631005,http://snomed.info/sct|197480006",
+    "notes": "This test case expects MULTIPLE queries (see metadata.expected_queries). The expected_query.url is the minimum viable query. Evaluation unions patient IDs from both queries to get the complete anxiety population including patients with medications but no formal diagnosis."
+  },
+  "test_data": {
+    "resources": [
+      "synthea/output/anxiety/positive/fhir/",
+      "synthea/output/anxiety/control/fhir/"
+    ],
+    "expected_result_count": 15,
+    "expected_resource_ids": [],
+    "expected_patient_ids": [
+      "2c167999-289d-95fa-5c27-7d8b8d35348c",
+      "35b353dd-402b-571a-d67a-af0a104d0854",
+      "46976cf7-b0bf-be20-39a5-9f425a52886d",
+      "46ee9d82-b52c-856d-069b-5064ff052225",
+      "4f083ce3-f12b-bb4b-7353-e17f0cd55b0a",
+      "62f60bdb-cc5c-8305-b98b-f2b229a55eca",
+      "6fbddf55-7096-b883-7cd3-260f27953080",
+      "9661a432-4630-2cd9-142c-386845fae837",
+      "982750f4-569b-5949-196b-60699bdda3fb",
+      "aa616abe-1761-0c9a-7959-07544679dafd",
+      "ba419d35-0dfe-8af7-347c-eebf02485a56",
+      "bff9d9d5-ee3d-d852-9c67-36d8361a4a4a",
+      "c86c400e-ff88-a1e3-2e23-caa4d8311f47",
+      "e74367bd-7385-97dc-2c7f-251b4cd9fe29",
+      "eb5910f1-26e6-bc6f-b300-716eae678d6f"
+    ]
+  },
+  "created_at": "2026-03-15T12:00:00.000000Z",
+  "updated_at": "2026-04-27T00:00:00.000000Z"
+}

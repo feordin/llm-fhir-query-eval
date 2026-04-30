@@ -1,0 +1,201 @@
+{
+  "name": "PheKB Venous Thromboembolism",
+  "remarks": [
+    "Custom Synthea module for venous thromboembolism (VTE).",
+    "First thrombotic disorder phenotype in the suite.",
+    "",
+    "Generates FOUR patient paths:",
+    "  Path A (50%): VTE dx + therapeutic anticoagulant + elevated D-dimer",
+    "  Path B (15%): VTE dx + anticoagulant, no D-dimer recorded",
+    "  Path C (25%): Anticoagulant only, NO VTE dx (cross-indication — AFib, mechanical valve, post-op prophylaxis)",
+    "  Path D (10%): Elevated D-dimer only, NO VTE dx and NO anticoagulant (early presentation, undiagnosed)",
+    "",
+    "Diagnosis SNOMED variation (Paths A + B):",
+    "  35% Deep venous thrombosis (128053003) — parent DVT",
+    "  20% Iliofemoral DVT (234044007) — extent-specific",
+    "  10% IVC thrombosis (281595001)",
+    "  25% Pulmonary embolism (59282003) — parent PE",
+    "  10% Venous embolism (234049002) — NOS",
+    "",
+    "Anticoagulant variation (Paths A + B + C — 5 ingredients):",
+    "  35% Apixaban (1364430) — most common DOAC",
+    "  20% Warfarin (11289) — vitamin K antagonist",
+    "  20% Rivaroxaban (1114195)",
+    "  15% Enoxaparin (67108) — bridging",
+    "  10% Dabigatran etexilate (1037042)"
+  ],
+  "states": {
+    "Initial": { "type": "Initial", "direct_transition": "Age_Guard" },
+    "Age_Guard": { "type": "Guard", "allow": { "condition_type": "Age", "operator": ">=", "quantity": 30, "unit": "years" }, "direct_transition": "Set_VTE_Flag" },
+    "Set_VTE_Flag": { "type": "SetAttribute", "attribute": "vte_positive", "value": true, "direct_transition": "Choose_Patient_Path" },
+    "Choose_Patient_Path": {
+      "type": "Simple",
+      "distributed_transition": [
+        { "transition": "Set_Path_A", "distribution": 0.50 },
+        { "transition": "Set_Path_B", "distribution": 0.15 },
+        { "transition": "Set_Path_C", "distribution": 0.25 },
+        { "transition": "Set_Path_D", "distribution": 0.10 }
+      ]
+    },
+    "Set_Path_A": { "type": "SetAttribute", "attribute": "vte_has_dx", "value": true, "direct_transition": "Set_Path_A_Lab" },
+    "Set_Path_A_Lab": { "type": "SetAttribute", "attribute": "vte_has_high_ddimer", "value": true, "direct_transition": "Set_Path_A_Meds" },
+    "Set_Path_A_Meds": { "type": "SetAttribute", "attribute": "vte_has_meds", "value": true, "direct_transition": "Choose_Subtype" },
+
+    "Set_Path_B": { "type": "SetAttribute", "attribute": "vte_has_dx", "value": true, "direct_transition": "Set_Path_B_Lab" },
+    "Set_Path_B_Lab": { "type": "SetAttribute", "attribute": "vte_has_high_ddimer", "value": false, "direct_transition": "Set_Path_B_Meds" },
+    "Set_Path_B_Meds": { "type": "SetAttribute", "attribute": "vte_has_meds", "value": true, "direct_transition": "Choose_Subtype" },
+
+    "Set_Path_C": { "type": "SetAttribute", "remarks": ["TRICKY: anticoagulants without VTE dx (cross-indication)"], "attribute": "vte_has_dx", "value": false, "direct_transition": "Set_Path_C_Lab" },
+    "Set_Path_C_Lab": { "type": "SetAttribute", "attribute": "vte_has_high_ddimer", "value": false, "direct_transition": "Set_Path_C_Meds" },
+    "Set_Path_C_Meds": { "type": "SetAttribute", "attribute": "vte_has_meds", "value": true, "direct_transition": "Choose_Subtype" },
+
+    "Set_Path_D": { "type": "SetAttribute", "remarks": ["TRICKY: elevated D-dimer without dx or anticoagulant"], "attribute": "vte_has_dx", "value": false, "direct_transition": "Set_Path_D_Lab" },
+    "Set_Path_D_Lab": { "type": "SetAttribute", "attribute": "vte_has_high_ddimer", "value": true, "direct_transition": "Set_Path_D_Meds" },
+    "Set_Path_D_Meds": { "type": "SetAttribute", "attribute": "vte_has_meds", "value": false, "direct_transition": "Choose_Subtype" },
+
+    "Choose_Subtype": {
+      "type": "Simple",
+      "distributed_transition": [
+        { "transition": "Set_Subtype_DVT", "distribution": 0.35 },
+        { "transition": "Set_Subtype_Iliofemoral", "distribution": 0.20 },
+        { "transition": "Set_Subtype_IVC", "distribution": 0.10 },
+        { "transition": "Set_Subtype_PE", "distribution": 0.25 },
+        { "transition": "Set_Subtype_VenousEmb", "distribution": 0.10 }
+      ]
+    },
+    "Set_Subtype_DVT": { "type": "SetAttribute", "attribute": "vte_subtype", "value": "dvt", "direct_transition": "Choose_Med" },
+    "Set_Subtype_Iliofemoral": { "type": "SetAttribute", "attribute": "vte_subtype", "value": "iliofemoral", "direct_transition": "Choose_Med" },
+    "Set_Subtype_IVC": { "type": "SetAttribute", "attribute": "vte_subtype", "value": "ivc", "direct_transition": "Choose_Med" },
+    "Set_Subtype_PE": { "type": "SetAttribute", "attribute": "vte_subtype", "value": "pe", "direct_transition": "Choose_Med" },
+    "Set_Subtype_VenousEmb": { "type": "SetAttribute", "attribute": "vte_subtype", "value": "venousemb", "direct_transition": "Choose_Med" },
+
+    "Choose_Med": {
+      "type": "Simple",
+      "distributed_transition": [
+        { "transition": "Set_Med_Apixaban", "distribution": 0.35 },
+        { "transition": "Set_Med_Warfarin", "distribution": 0.20 },
+        { "transition": "Set_Med_Rivaroxaban", "distribution": 0.20 },
+        { "transition": "Set_Med_Enoxaparin", "distribution": 0.15 },
+        { "transition": "Set_Med_Dabigatran", "distribution": 0.10 }
+      ]
+    },
+    "Set_Med_Apixaban": { "type": "SetAttribute", "attribute": "vte_med", "value": "apixaban", "direct_transition": "Set_Needs_First_Visit" },
+    "Set_Med_Warfarin": { "type": "SetAttribute", "attribute": "vte_med", "value": "warfarin", "direct_transition": "Set_Needs_First_Visit" },
+    "Set_Med_Rivaroxaban": { "type": "SetAttribute", "attribute": "vte_med", "value": "rivaroxaban", "direct_transition": "Set_Needs_First_Visit" },
+    "Set_Med_Enoxaparin": { "type": "SetAttribute", "attribute": "vte_med", "value": "enoxaparin", "direct_transition": "Set_Needs_First_Visit" },
+    "Set_Med_Dabigatran": { "type": "SetAttribute", "attribute": "vte_med", "value": "dabigatran", "direct_transition": "Set_Needs_First_Visit" },
+
+    "Set_Needs_First_Visit": { "type": "SetAttribute", "attribute": "vte_needs_first_visit", "value": true, "direct_transition": "Wellness_Encounter" },
+    "Wellness_Encounter": { "type": "Encounter", "wellness": true, "direct_transition": "Check_First_Visit" },
+    "Check_First_Visit": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "vte_needs_first_visit", "operator": "==", "value": true }, "transition": "Check_Has_Diagnosis" },
+        { "transition": "End_Wellness_Encounter" }
+      ]
+    },
+    "Check_Has_Diagnosis": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "vte_has_dx", "operator": "==", "value": true }, "transition": "Route_By_Subtype" },
+        { "transition": "Check_Lab_NoDx" }
+      ]
+    },
+    "Route_By_Subtype": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "vte_subtype", "operator": "==", "value": "dvt" }, "transition": "Diagnose_DVT" },
+        { "condition": { "condition_type": "Attribute", "attribute": "vte_subtype", "operator": "==", "value": "iliofemoral" }, "transition": "Diagnose_Iliofemoral" },
+        { "condition": { "condition_type": "Attribute", "attribute": "vte_subtype", "operator": "==", "value": "ivc" }, "transition": "Diagnose_IVC" },
+        { "condition": { "condition_type": "Attribute", "attribute": "vte_subtype", "operator": "==", "value": "pe" }, "transition": "Diagnose_PE" },
+        { "transition": "Diagnose_VenousEmb" }
+      ]
+    },
+    "Diagnose_DVT": { "type": "ConditionOnset", "assign_to_attribute": "vte_condition", "codes": [{ "system": "SNOMED-CT", "code": "128053003", "display": "Deep venous thrombosis" }], "direct_transition": "Check_Lab_WithDx" },
+    "Diagnose_Iliofemoral": { "type": "ConditionOnset", "assign_to_attribute": "vte_condition", "codes": [{ "system": "SNOMED-CT", "code": "234044007", "display": "Iliofemoral deep vein thrombosis" }], "direct_transition": "Check_Lab_WithDx" },
+    "Diagnose_IVC": { "type": "ConditionOnset", "assign_to_attribute": "vte_condition", "codes": [{ "system": "SNOMED-CT", "code": "281595001", "display": "Thrombosis of inferior vena cava" }], "direct_transition": "Check_Lab_WithDx" },
+    "Diagnose_PE": { "type": "ConditionOnset", "assign_to_attribute": "vte_condition", "codes": [{ "system": "SNOMED-CT", "code": "59282003", "display": "Pulmonary embolism" }], "direct_transition": "Check_Lab_WithDx" },
+    "Diagnose_VenousEmb": { "type": "ConditionOnset", "assign_to_attribute": "vte_condition", "codes": [{ "system": "SNOMED-CT", "code": "234049002", "display": "Venous embolism" }], "direct_transition": "Check_Lab_WithDx" },
+
+    "Check_Lab_WithDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "vte_has_high_ddimer", "operator": "==", "value": true }, "transition": "Record_High_DDimer_WithDx" },
+        { "transition": "Check_Meds_WithDx" }
+      ]
+    },
+    "Record_High_DDimer_WithDx": {
+      "type": "Observation",
+      "category": "laboratory",
+      "unit": "ug/mL",
+      "codes": [{ "system": "LOINC", "code": "48065-7", "display": "Fibrin D-dimer FEU [Mass/volume] in Platelet poor plasma" }],
+      "range": { "low": 1.5, "high": 5.0 },
+      "direct_transition": "Check_Meds_WithDx"
+    },
+    "Check_Meds_WithDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "vte_has_meds", "operator": "==", "value": true }, "transition": "Route_Med_WithDx" },
+        { "transition": "Clear_First_Visit_Flag" }
+      ]
+    },
+    "Route_Med_WithDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "vte_med", "operator": "==", "value": "apixaban" }, "transition": "Prescribe_Apixaban_WithDx" },
+        { "condition": { "condition_type": "Attribute", "attribute": "vte_med", "operator": "==", "value": "warfarin" }, "transition": "Prescribe_Warfarin_WithDx" },
+        { "condition": { "condition_type": "Attribute", "attribute": "vte_med", "operator": "==", "value": "rivaroxaban" }, "transition": "Prescribe_Rivaroxaban_WithDx" },
+        { "condition": { "condition_type": "Attribute", "attribute": "vte_med", "operator": "==", "value": "enoxaparin" }, "transition": "Prescribe_Enoxaparin_WithDx" },
+        { "transition": "Prescribe_Dabigatran_WithDx" }
+      ]
+    },
+    "Prescribe_Apixaban_WithDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "1364430", "display": "apixaban" }], "reason": "vte_condition", "direct_transition": "Clear_First_Visit_Flag" },
+    "Prescribe_Warfarin_WithDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "11289", "display": "warfarin" }], "reason": "vte_condition", "direct_transition": "Clear_First_Visit_Flag" },
+    "Prescribe_Rivaroxaban_WithDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "1114195", "display": "rivaroxaban" }], "reason": "vte_condition", "direct_transition": "Clear_First_Visit_Flag" },
+    "Prescribe_Enoxaparin_WithDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "67108", "display": "enoxaparin" }], "reason": "vte_condition", "direct_transition": "Clear_First_Visit_Flag" },
+    "Prescribe_Dabigatran_WithDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "1037042", "display": "dabigatran etexilate" }], "reason": "vte_condition", "direct_transition": "Clear_First_Visit_Flag" },
+
+    "Check_Lab_NoDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "vte_has_high_ddimer", "operator": "==", "value": true }, "transition": "Record_High_DDimer_NoDx" },
+        { "transition": "Check_Meds_NoDx" }
+      ]
+    },
+    "Record_High_DDimer_NoDx": {
+      "type": "Observation",
+      "category": "laboratory",
+      "unit": "ug/mL",
+      "codes": [{ "system": "LOINC", "code": "48065-7", "display": "Fibrin D-dimer FEU [Mass/volume] in Platelet poor plasma" }],
+      "range": { "low": 0.8, "high": 2.5 },
+      "direct_transition": "Check_Meds_NoDx"
+    },
+    "Check_Meds_NoDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "vte_has_meds", "operator": "==", "value": true }, "transition": "Route_Med_NoDx" },
+        { "transition": "Clear_First_Visit_Flag" }
+      ]
+    },
+    "Route_Med_NoDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "vte_med", "operator": "==", "value": "apixaban" }, "transition": "Prescribe_Apixaban_NoDx" },
+        { "condition": { "condition_type": "Attribute", "attribute": "vte_med", "operator": "==", "value": "warfarin" }, "transition": "Prescribe_Warfarin_NoDx" },
+        { "condition": { "condition_type": "Attribute", "attribute": "vte_med", "operator": "==", "value": "rivaroxaban" }, "transition": "Prescribe_Rivaroxaban_NoDx" },
+        { "condition": { "condition_type": "Attribute", "attribute": "vte_med", "operator": "==", "value": "enoxaparin" }, "transition": "Prescribe_Enoxaparin_NoDx" },
+        { "transition": "Prescribe_Dabigatran_NoDx" }
+      ]
+    },
+    "Prescribe_Apixaban_NoDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "1364430", "display": "apixaban" }], "direct_transition": "Clear_First_Visit_Flag" },
+    "Prescribe_Warfarin_NoDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "11289", "display": "warfarin" }], "direct_transition": "Clear_First_Visit_Flag" },
+    "Prescribe_Rivaroxaban_NoDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "1114195", "display": "rivaroxaban" }], "direct_transition": "Clear_First_Visit_Flag" },
+    "Prescribe_Enoxaparin_NoDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "67108", "display": "enoxaparin" }], "direct_transition": "Clear_First_Visit_Flag" },
+    "Prescribe_Dabigatran_NoDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "1037042", "display": "dabigatran etexilate" }], "direct_transition": "Clear_First_Visit_Flag" },
+
+    "Clear_First_Visit_Flag": { "type": "SetAttribute", "attribute": "vte_needs_first_visit", "value": false, "direct_transition": "End_Wellness_Encounter" },
+    "End_Wellness_Encounter": { "type": "EncounterEnd", "direct_transition": "Followup_Delay" },
+    "Followup_Delay": { "type": "Delay", "range": { "low": 6, "high": 12, "unit": "months" }, "direct_transition": "Wellness_Encounter" }
+  },
+  "gmf_version": 2
+}

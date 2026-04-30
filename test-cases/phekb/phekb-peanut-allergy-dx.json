@@ -1,0 +1,110 @@
+{
+  "id": "phekb-peanut-allergy-dx",
+  "source": "phekb",
+  "source_id": "peanut-allergy",
+  "name": "Peanut Allergy - Diagnosis Code Query (Pediatric, Ages 1-17)",
+  "description": "Tests ability to find peanut allergy patients via diagnosis code with pediatric age restriction (1-17). Second pediatric phenotype (after SECO). Reuses PatientFilters schema with chained patient.birthdate filter.",
+  "prompt": "Find pediatric patients (ages 1-17) with a documented peanut allergy.",
+  "prompts": {
+    "naive": "Find kids with peanut allergy.",
+    "broad": "Find pediatric patients (ages 1 through 17) with a documented diagnosis of peanut allergy.",
+    "expert": "I need pediatric patients (ages 1-17) with peanut allergy. SNOMED 91935009 (Allergy to peanut). FHIR has no patient.age — use chained patient.birthdate. With reference date 2026-04-28: ages 1-17 inclusive means birthdate in (2008-04-28, 2025-04-28]. Query: Condition?code=http://snomed.info/sct|91935009&patient.birthdate=gt2008-04-28&patient.birthdate=le2025-04-28"
+  },
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "algorithm_path": "diagnosis-path",
+    "algorithm_path_description": "Pediatric patients (1-17) with peanut allergy diagnosis. Reuses PatientFilters schema.",
+    "code_systems": [
+      "SNOMED CT"
+    ],
+    "required_codes": [
+      {
+        "system": "http://snomed.info/sct",
+        "code": "91935009",
+        "display": "Allergy to peanut",
+        "source": "UMLS verified"
+      }
+    ],
+    "complexity": "hard",
+    "tags": [
+      "condition",
+      "allergy",
+      "peanut-allergy",
+      "pediatric",
+      "age-restricted",
+      "diagnosis-code",
+      "patient-filters"
+    ],
+    "patient_filters": {
+      "min_age_years": 1,
+      "max_age_years": 17,
+      "reference_date": "2026-04-28"
+    }
+  },
+  "expected_query": {
+    "resource_type": "Condition",
+    "parameters": {
+      "code": "http://snomed.info/sct|91935009",
+      "patient.birthdate": [
+        "gt2008-04-28",
+        "le2025-04-28"
+      ]
+    },
+    "url": "Condition?code=http://snomed.info/sct|91935009&patient.birthdate=gt2008-04-28&patient.birthdate=le2025-04-28"
+  },
+  "test_data": {
+    "resources": [
+      "synthea/output/peanut-allergy/positive/fhir/",
+      "synthea/output/peanut-allergy/control/fhir/"
+    ],
+    "expected_result_count": 43,
+    "expected_resource_ids": [],
+    "expected_patient_ids": [
+      "16a87437-f438-e9e8-4491-fbf4090a862d",
+      "2239bcf0-d699-7c66-6132-fe099bb5cff6",
+      "25aee6b9-05bb-82f4-e7fe-5dbcc88800d1",
+      "25de9697-3f6a-9270-ec9a-143d53a5b14e",
+      "28243fd7-129e-7cb5-9188-4e0190d6e8e1",
+      "332c6f2e-bd00-6190-d9e5-bc8089f6effe",
+      "371db582-9f9f-0fe5-5923-88cdbc321491",
+      "39625876-7395-31c8-8f9b-4cc7df460183",
+      "40526549-4f26-80a2-2023-367276d3aa70",
+      "42bc10ac-3e8c-ac17-8fa5-2c357d54b384",
+      "4d8b98b1-39b8-6d92-e609-80935ae6ea98",
+      "5eb70411-7222-2561-7ba2-e5147861e68f",
+      "5ebbfa33-8671-997c-fa9e-7cbbced1fafd",
+      "6c5b4b85-35a3-b28b-a507-a1430dc1eb5c",
+      "6cf91969-5ace-9b9f-a714-05beb28157c1",
+      "70b1898c-71ab-de55-1404-cd52ac948072",
+      "737def11-e3ac-4cbf-2da0-34792eef1bfe",
+      "7d9299c8-e192-1337-9ab0-6a8cfef93438",
+      "8a018b81-4cfe-6344-e044-1c8e6708a497",
+      "8ec82fad-65e6-1081-bd62-982fe04de33b",
+      "a46964e9-07c1-880c-87cb-b11dc4cb627b",
+      "a69b1527-1bec-eacc-4145-6272a6694460",
+      "a74a6636-cd8f-7aa5-7897-3807fe4d3b16",
+      "a7ec7353-fee1-f1fd-fb80-39042e1af709",
+      "a984f6f8-bb3b-0726-fe21-f8c81b451fa9",
+      "af8b58eb-e138-6a99-5350-a6e89c4aa978",
+      "b437ab21-fe67-7071-a933-8183cd9a24b1",
+      "b62b26e4-39bc-2a17-bfc8-ee9b9cbde12d",
+      "b6d7d63b-a162-246e-a7fa-808f44e90a80",
+      "ba79e705-37fa-e956-6333-3873a47a5063",
+      "c3e6eb8d-484c-9a62-1fda-6bf702b92eae",
+      "cec05477-ddb1-18de-c4fd-fbcd9db96cfa",
+      "d315f864-336e-ad57-c607-9f13e6d501a2",
+      "d6ce9e2c-56ed-b7c1-8ea1-aa2d743b221f",
+      "dc24ee21-f9e7-548b-d5a3-b7825d4df6ca",
+      "e4c9ac3a-1918-3c01-d5ea-cbcd92a328d8",
+      "e7966062-78be-6acf-3df2-e9907553a563",
+      "f0ee3c90-478c-70e7-be98-efa2de377ddf",
+      "f4bf2fb6-c15f-5418-88cb-eebaea7f3ddf",
+      "f8150767-2369-d1aa-27dd-7358b25a093c",
+      "fce97ec0-69fc-a647-3959-f3278a940151",
+      "fcf24bdb-7cf4-697b-7ee8-17946a34a1a8",
+      "fd4e39bc-6166-1389-9fb5-2024341dc525"
+    ]
+  },
+  "created_at": "2026-04-28T00:00:00.000000Z",
+  "updated_at": "2026-04-27T00:00:00.000000Z"
+}

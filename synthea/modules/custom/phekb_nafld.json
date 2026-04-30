@@ -1,0 +1,141 @@
+{
+  "name": "PheKB NAFLD",
+  "remarks": [
+    "Custom Synthea module for non-alcoholic fatty liver disease (NAFLD/MASLD).",
+    "**First liver disease phenotype** in suite. No procedure path (liver biopsy is rare in routine NAFLD).",
+    "",
+    "Generates THREE patient paths:",
+    "  Path A (60%): NAFLD dx + elevated ALT/AST",
+    "  Path B (20%): NAFLD dx, no recent labs",
+    "  Path D (20%): Elevated ALT/AST only, NO NAFLD dx (drug-induced injury, hepatitis, undocumented)",
+    "",
+    "Diagnosis SNOMED variation (Paths A + B):",
+    "  35% Steatosis of liver (197321007) — parent fatty liver",
+    "  25% MASH/NASH (442685003)",
+    "  20% MASLD (722866000)",
+    "  10% Steatohepatitis (442191002) — generic",
+    "  10% Cirrhosis of liver (19943007) — end-stage",
+    "",
+    "Lab pattern: ALT 60-200 IU/L, AST 50-150 IU/L (NAFLD pattern: ALT > AST)"
+  ],
+  "states": {
+    "Initial": { "type": "Initial", "direct_transition": "Age_Guard" },
+    "Age_Guard": { "type": "Guard", "allow": { "condition_type": "Age", "operator": ">=", "quantity": 30, "unit": "years" }, "direct_transition": "Set_NAFLD_Flag" },
+    "Set_NAFLD_Flag": { "type": "SetAttribute", "attribute": "nafld_positive", "value": true, "direct_transition": "Choose_Patient_Path" },
+    "Choose_Patient_Path": {
+      "type": "Simple",
+      "distributed_transition": [
+        { "transition": "Set_Path_A", "distribution": 0.60 },
+        { "transition": "Set_Path_B", "distribution": 0.20 },
+        { "transition": "Set_Path_D", "distribution": 0.20 }
+      ]
+    },
+    "Set_Path_A": { "type": "SetAttribute", "attribute": "nafld_has_dx", "value": true, "direct_transition": "Set_Path_A_Lab" },
+    "Set_Path_A_Lab": { "type": "SetAttribute", "attribute": "nafld_has_high_lft", "value": true, "direct_transition": "Choose_Subtype" },
+    "Set_Path_B": { "type": "SetAttribute", "attribute": "nafld_has_dx", "value": true, "direct_transition": "Set_Path_B_Lab" },
+    "Set_Path_B_Lab": { "type": "SetAttribute", "attribute": "nafld_has_high_lft", "value": false, "direct_transition": "Choose_Subtype" },
+    "Set_Path_D": { "type": "SetAttribute", "remarks": ["TRICKY: elevated LFTs without NAFLD dx (could be DILI, hepatitis, undocumented)"], "attribute": "nafld_has_dx", "value": false, "direct_transition": "Set_Path_D_Lab" },
+    "Set_Path_D_Lab": { "type": "SetAttribute", "attribute": "nafld_has_high_lft", "value": true, "direct_transition": "Choose_Subtype" },
+
+    "Choose_Subtype": {
+      "type": "Simple",
+      "distributed_transition": [
+        { "transition": "Set_Subtype_Steatosis", "distribution": 0.35 },
+        { "transition": "Set_Subtype_MASH", "distribution": 0.25 },
+        { "transition": "Set_Subtype_MASLD", "distribution": 0.20 },
+        { "transition": "Set_Subtype_Steatohep", "distribution": 0.10 },
+        { "transition": "Set_Subtype_Cirrhosis", "distribution": 0.10 }
+      ]
+    },
+    "Set_Subtype_Steatosis": { "type": "SetAttribute", "attribute": "nafld_subtype", "value": "steatosis", "direct_transition": "Set_Needs_First_Visit" },
+    "Set_Subtype_MASH": { "type": "SetAttribute", "attribute": "nafld_subtype", "value": "mash", "direct_transition": "Set_Needs_First_Visit" },
+    "Set_Subtype_MASLD": { "type": "SetAttribute", "attribute": "nafld_subtype", "value": "masld", "direct_transition": "Set_Needs_First_Visit" },
+    "Set_Subtype_Steatohep": { "type": "SetAttribute", "attribute": "nafld_subtype", "value": "steatohep", "direct_transition": "Set_Needs_First_Visit" },
+    "Set_Subtype_Cirrhosis": { "type": "SetAttribute", "attribute": "nafld_subtype", "value": "cirrhosis", "direct_transition": "Set_Needs_First_Visit" },
+
+    "Set_Needs_First_Visit": { "type": "SetAttribute", "attribute": "nafld_needs_first_visit", "value": true, "direct_transition": "Wellness_Encounter" },
+    "Wellness_Encounter": { "type": "Encounter", "wellness": true, "direct_transition": "Check_First_Visit" },
+    "Check_First_Visit": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "nafld_needs_first_visit", "operator": "==", "value": true }, "transition": "Check_Has_Diagnosis" },
+        { "transition": "End_Wellness_Encounter" }
+      ]
+    },
+    "Check_Has_Diagnosis": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "nafld_has_dx", "operator": "==", "value": true }, "transition": "Route_By_Subtype" },
+        { "transition": "Check_Lab_NoDx" }
+      ]
+    },
+    "Route_By_Subtype": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "nafld_subtype", "operator": "==", "value": "steatosis" }, "transition": "Diagnose_Steatosis" },
+        { "condition": { "condition_type": "Attribute", "attribute": "nafld_subtype", "operator": "==", "value": "mash" }, "transition": "Diagnose_MASH" },
+        { "condition": { "condition_type": "Attribute", "attribute": "nafld_subtype", "operator": "==", "value": "masld" }, "transition": "Diagnose_MASLD" },
+        { "condition": { "condition_type": "Attribute", "attribute": "nafld_subtype", "operator": "==", "value": "steatohep" }, "transition": "Diagnose_Steatohep" },
+        { "transition": "Diagnose_Cirrhosis" }
+      ]
+    },
+    "Diagnose_Steatosis": { "type": "ConditionOnset", "assign_to_attribute": "nafld_condition", "codes": [{ "system": "SNOMED-CT", "code": "197321007", "display": "Steatosis of liver" }], "direct_transition": "Check_Lab_WithDx" },
+    "Diagnose_MASH": { "type": "ConditionOnset", "assign_to_attribute": "nafld_condition", "codes": [{ "system": "SNOMED-CT", "code": "442685003", "display": "Metabolic dysfunction-associated steatohepatitis" }], "direct_transition": "Check_Lab_WithDx" },
+    "Diagnose_MASLD": { "type": "ConditionOnset", "assign_to_attribute": "nafld_condition", "codes": [{ "system": "SNOMED-CT", "code": "722866000", "display": "Metabolic dysfunction-associated steatotic liver" }], "direct_transition": "Check_Lab_WithDx" },
+    "Diagnose_Steatohep": { "type": "ConditionOnset", "assign_to_attribute": "nafld_condition", "codes": [{ "system": "SNOMED-CT", "code": "442191002", "display": "Steatohepatitis" }], "direct_transition": "Check_Lab_WithDx" },
+    "Diagnose_Cirrhosis": { "type": "ConditionOnset", "assign_to_attribute": "nafld_condition", "codes": [{ "system": "SNOMED-CT", "code": "19943007", "display": "Cirrhosis of liver" }], "direct_transition": "Check_Lab_WithDx" },
+
+    "Check_Lab_WithDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "nafld_has_high_lft", "operator": "==", "value": true }, "transition": "Record_High_ALT_WithDx" },
+        { "transition": "Clear_First_Visit_Flag" }
+      ]
+    },
+    "Record_High_ALT_WithDx": {
+      "type": "Observation",
+      "category": "laboratory",
+      "unit": "U/L",
+      "codes": [{ "system": "LOINC", "code": "1742-6", "display": "Alanine aminotransferase [Enzymatic activity/volume] in Serum or Plasma" }],
+      "range": { "low": 60, "high": 200 },
+      "direct_transition": "Record_High_AST_WithDx"
+    },
+    "Record_High_AST_WithDx": {
+      "type": "Observation",
+      "category": "laboratory",
+      "unit": "U/L",
+      "codes": [{ "system": "LOINC", "code": "1920-8", "display": "Aspartate aminotransferase [Enzymatic activity/volume] in Serum or Plasma" }],
+      "range": { "low": 50, "high": 150 },
+      "direct_transition": "Clear_First_Visit_Flag"
+    },
+
+    "Check_Lab_NoDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "nafld_has_high_lft", "operator": "==", "value": true }, "transition": "Record_High_ALT_NoDx" },
+        { "transition": "Clear_First_Visit_Flag" }
+      ]
+    },
+    "Record_High_ALT_NoDx": {
+      "type": "Observation",
+      "category": "laboratory",
+      "unit": "U/L",
+      "codes": [{ "system": "LOINC", "code": "1742-6", "display": "Alanine aminotransferase [Enzymatic activity/volume] in Serum or Plasma" }],
+      "range": { "low": 50, "high": 120 },
+      "direct_transition": "Record_High_AST_NoDx"
+    },
+    "Record_High_AST_NoDx": {
+      "type": "Observation",
+      "category": "laboratory",
+      "unit": "U/L",
+      "codes": [{ "system": "LOINC", "code": "1920-8", "display": "Aspartate aminotransferase [Enzymatic activity/volume] in Serum or Plasma" }],
+      "range": { "low": 45, "high": 100 },
+      "direct_transition": "Clear_First_Visit_Flag"
+    },
+
+    "Clear_First_Visit_Flag": { "type": "SetAttribute", "attribute": "nafld_needs_first_visit", "value": false, "direct_transition": "End_Wellness_Encounter" },
+    "End_Wellness_Encounter": { "type": "EncounterEnd", "direct_transition": "Followup_Delay" },
+    "Followup_Delay": { "type": "Delay", "range": { "low": 6, "high": 12, "unit": "months" }, "direct_transition": "Wellness_Encounter" }
+  },
+  "gmf_version": 2
+}

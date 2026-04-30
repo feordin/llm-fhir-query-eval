@@ -1,0 +1,322 @@
+{
+  "name": "PheKB Anxiety Disorder",
+  "remarks": [
+    "Custom Synthea module for PheKB phenotype: anxiety",
+    "Based on PheKB anxiety algorithm (2+ anxiety ICD codes on different days + medication/therapy)",
+    "",
+    "Generates TWO types of positive patients:",
+    "  Type A (70%): Anxiety Diagnosis + Medication (formal diagnosis + anti-anxiety med)",
+    "  Type B (30%): Medication only, NO diagnosis code (meds-only evidence)",
+    "",
+    "Type B patients test whether LLMs can identify anxiety cases that have",
+    "no Condition resource - only MedicationRequest evidence.",
+    "",
+    "Diagnosis codes distributed across anxiety subtypes:",
+    "  40% Generalized anxiety disorder (SNOMED 21897009)",
+    "  30% Panic disorder (SNOMED 371631005)",
+    "  30% Anxiety disorder unspecified (SNOMED 197480006)",
+    "",
+    "Medication codes distributed across drug classes:",
+    "  30% sertraline 50 MG (RxNorm 312941) - SSRI",
+    "  25% escitalopram 10 MG (RxNorm 349332) - SSRI",
+    "  25% buspirone 10 MG (RxNorm 866083) - Anxiolytic",
+    "  20% alprazolam 0.5 MG (RxNorm 308048) - Benzodiazepine",
+    "",
+    "Codes verified via NIH UMLS MCP (2025AB) and RxNav API."
+  ],
+  "states": {
+    "Initial": {
+      "type": "Initial",
+      "direct_transition": "Age_Guard"
+    },
+
+    "Age_Guard": {
+      "type": "Guard",
+      "allow": {
+        "condition_type": "Age",
+        "operator": ">=",
+        "quantity": 18,
+        "unit": "years"
+      },
+      "direct_transition": "Choose_Patient_Path"
+    },
+
+    "Choose_Patient_Path": {
+      "type": "Simple",
+      "remarks": [
+        "Split patients into two groups:",
+        "  70% get a formal anxiety diagnosis + medications",
+        "  30% have NO diagnosis - only medication records",
+        "This tests whether LLMs search beyond Condition resources."
+      ],
+      "distributed_transition": [
+        {
+          "transition": "Set_Path_With_Diagnosis",
+          "distribution": 0.7
+        },
+        {
+          "transition": "Set_Path_No_Diagnosis",
+          "distribution": 0.3
+        }
+      ]
+    },
+
+    "Set_Path_With_Diagnosis": {
+      "type": "SetAttribute",
+      "attribute": "anxiety_has_diagnosis",
+      "value": true,
+      "direct_transition": "Set_Needs_First_Visit"
+    },
+
+    "Set_Path_No_Diagnosis": {
+      "type": "SetAttribute",
+      "remarks": ["Meds-only path: No diagnosis code, only medication evidence"],
+      "attribute": "anxiety_has_diagnosis",
+      "value": false,
+      "direct_transition": "Set_Needs_First_Visit"
+    },
+
+    "Set_Needs_First_Visit": {
+      "type": "SetAttribute",
+      "attribute": "anxiety_needs_first_visit",
+      "value": true,
+      "direct_transition": "Wellness_Encounter"
+    },
+
+    "Wellness_Encounter": {
+      "type": "Encounter",
+      "wellness": true,
+      "direct_transition": "Check_First_Visit"
+    },
+
+    "Check_First_Visit": {
+      "type": "Simple",
+      "conditional_transition": [
+        {
+          "condition": {
+            "condition_type": "Attribute",
+            "attribute": "anxiety_needs_first_visit",
+            "operator": "==",
+            "value": true
+          },
+          "transition": "Route_First_Visit"
+        },
+        {
+          "transition": "End_Wellness_Encounter"
+        }
+      ]
+    },
+
+    "Route_First_Visit": {
+      "type": "Simple",
+      "remarks": ["Route to diagnosis or no-diagnosis path based on patient type"],
+      "conditional_transition": [
+        {
+          "condition": {
+            "condition_type": "Attribute",
+            "attribute": "anxiety_has_diagnosis",
+            "operator": "==",
+            "value": true
+          },
+          "transition": "Choose_Diagnosis_Type"
+        },
+        {
+          "transition": "Choose_Med_No_Diagnosis"
+        }
+      ]
+    },
+
+    "Choose_Diagnosis_Type": {
+      "type": "Simple",
+      "remarks": ["Distribute across anxiety disorder subtypes"],
+      "distributed_transition": [
+        { "transition": "Diagnose_GAD", "distribution": 0.4 },
+        { "transition": "Diagnose_Panic", "distribution": 0.3 },
+        { "transition": "Diagnose_Anxiety_NOS", "distribution": 0.3 }
+      ]
+    },
+
+    "Diagnose_GAD": {
+      "type": "ConditionOnset",
+      "remarks": ["Generalized anxiety disorder"],
+      "assign_to_attribute": "anxiety_condition",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": "21897009",
+          "display": "Generalized anxiety disorder"
+        }
+      ],
+      "direct_transition": "Choose_Med_Diagnosed"
+    },
+
+    "Diagnose_Panic": {
+      "type": "ConditionOnset",
+      "remarks": ["Panic disorder"],
+      "assign_to_attribute": "anxiety_condition",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": "371631005",
+          "display": "Panic disorder"
+        }
+      ],
+      "direct_transition": "Choose_Med_Diagnosed"
+    },
+
+    "Diagnose_Anxiety_NOS": {
+      "type": "ConditionOnset",
+      "remarks": ["Anxiety disorder, unspecified"],
+      "assign_to_attribute": "anxiety_condition",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": "197480006",
+          "display": "Anxiety disorder"
+        }
+      ],
+      "direct_transition": "Choose_Med_Diagnosed"
+    },
+
+    "Choose_Med_Diagnosed": {
+      "type": "Simple",
+      "remarks": ["Type A patients get anxiety diagnosis + anti-anxiety medication"],
+      "distributed_transition": [
+        { "transition": "Prescribe_Sertraline_Dx", "distribution": 0.30 },
+        { "transition": "Prescribe_Escitalopram_Dx", "distribution": 0.25 },
+        { "transition": "Prescribe_Buspirone_Dx", "distribution": 0.25 },
+        { "transition": "Prescribe_Alprazolam_Dx", "distribution": 0.20 }
+      ]
+    },
+
+    "Prescribe_Sertraline_Dx": {
+      "type": "MedicationOrder",
+      "codes": [
+        {
+          "system": "RxNorm",
+          "code": "312941",
+          "display": "sertraline 50 MG Oral Tablet"
+        }
+      ],
+      "reason": "anxiety_condition",
+      "direct_transition": "Clear_First_Visit_Flag"
+    },
+
+    "Prescribe_Escitalopram_Dx": {
+      "type": "MedicationOrder",
+      "codes": [
+        {
+          "system": "RxNorm",
+          "code": "349332",
+          "display": "escitalopram 10 MG Oral Tablet"
+        }
+      ],
+      "reason": "anxiety_condition",
+      "direct_transition": "Clear_First_Visit_Flag"
+    },
+
+    "Prescribe_Buspirone_Dx": {
+      "type": "MedicationOrder",
+      "codes": [
+        {
+          "system": "RxNorm",
+          "code": "866083",
+          "display": "buspirone hydrochloride 10 MG Oral Tablet"
+        }
+      ],
+      "reason": "anxiety_condition",
+      "direct_transition": "Clear_First_Visit_Flag"
+    },
+
+    "Prescribe_Alprazolam_Dx": {
+      "type": "MedicationOrder",
+      "codes": [
+        {
+          "system": "RxNorm",
+          "code": "308048",
+          "display": "alprazolam 0.5 MG Oral Tablet"
+        }
+      ],
+      "reason": "anxiety_condition",
+      "direct_transition": "Clear_First_Visit_Flag"
+    },
+
+    "Choose_Med_No_Diagnosis": {
+      "type": "Simple",
+      "remarks": ["Type B: No anxiety diagnosis, only medication evidence"],
+      "distributed_transition": [
+        { "transition": "Prescribe_Sertraline_NoDx", "distribution": 0.30 },
+        { "transition": "Prescribe_Escitalopram_NoDx", "distribution": 0.25 },
+        { "transition": "Prescribe_Buspirone_NoDx", "distribution": 0.25 },
+        { "transition": "Prescribe_Alprazolam_NoDx", "distribution": 0.20 }
+      ]
+    },
+
+    "Prescribe_Sertraline_NoDx": {
+      "type": "MedicationOrder",
+      "codes": [
+        {
+          "system": "RxNorm",
+          "code": "312941",
+          "display": "sertraline 50 MG Oral Tablet"
+        }
+      ],
+      "direct_transition": "Clear_First_Visit_Flag"
+    },
+
+    "Prescribe_Escitalopram_NoDx": {
+      "type": "MedicationOrder",
+      "codes": [
+        {
+          "system": "RxNorm",
+          "code": "349332",
+          "display": "escitalopram 10 MG Oral Tablet"
+        }
+      ],
+      "direct_transition": "Clear_First_Visit_Flag"
+    },
+
+    "Prescribe_Buspirone_NoDx": {
+      "type": "MedicationOrder",
+      "codes": [
+        {
+          "system": "RxNorm",
+          "code": "866083",
+          "display": "buspirone hydrochloride 10 MG Oral Tablet"
+        }
+      ],
+      "direct_transition": "Clear_First_Visit_Flag"
+    },
+
+    "Prescribe_Alprazolam_NoDx": {
+      "type": "MedicationOrder",
+      "codes": [
+        {
+          "system": "RxNorm",
+          "code": "308048",
+          "display": "alprazolam 0.5 MG Oral Tablet"
+        }
+      ],
+      "direct_transition": "Clear_First_Visit_Flag"
+    },
+
+    "Clear_First_Visit_Flag": {
+      "type": "SetAttribute",
+      "attribute": "anxiety_needs_first_visit",
+      "value": false,
+      "direct_transition": "End_Wellness_Encounter"
+    },
+
+    "End_Wellness_Encounter": {
+      "type": "EncounterEnd",
+      "direct_transition": "Followup_Delay"
+    },
+
+    "Followup_Delay": {
+      "type": "Delay",
+      "range": { "low": 3, "high": 6, "unit": "months" },
+      "direct_transition": "Wellness_Encounter"
+    }
+  },
+  "gmf_version": 2
+}

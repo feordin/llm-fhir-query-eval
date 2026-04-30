@@ -1,0 +1,88 @@
+{
+  "id": "phekb-prostate-cancer-dx",
+  "source": "phekb",
+  "source_id": "prostate-cancer",
+  "name": "Prostate Cancer - Diagnosis Code Query (Multi-Stage, Male-Specific)",
+  "description": "**First sex-specific (male-only) phenotype.** Tests ability to find prostate cancer patients via diagnosis codes. PCa is documented under multiple SNOMED codes by stage and primary/metastatic status: parent malignant neoplasm, primary, metastatic, neoplasm (broader). All patients in expected results are male — tests whether LLM can produce correct sex-restricted population.",
+  "prompt": "Find all male patients with a diagnosis of prostate cancer, including primary and metastatic prostate malignancy.",
+  "prompts": {
+    "naive": "Find all patients with prostate cancer.",
+    "broad": "Find all patients diagnosed with prostate cancer — including the parent malignant neoplasm of prostate concept, primary malignant neoplasm of prostate, metastatic malignant neoplasm to prostate, and broader prostate neoplasms.",
+    "expert": "I need to identify all prostate cancer patients. PCa is documented under multiple SNOMED codes: Malignant neoplasm of prostate (399068003) is the parent concept, with stage-specific Primary malignant neoplasm of prostate (93974005), Metastatic malignant neoplasm to prostate (94503003), Neoplasm of prostate (126906006), and Malignant tumor involving prostate by direct extension from bladder (369485004). Search Condition resources for all five codes. Note this phenotype is male-only — female patients should not appear in expected results."
+  },
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "algorithm_path": "diagnosis-path",
+    "algorithm_path_description": "Patients with PCa diagnosis codes. **First sex-specific (male) phenotype.** Tests stage-of-disease code variation.",
+    "code_systems": [
+      "SNOMED CT"
+    ],
+    "required_codes": [
+      {
+        "system": "http://snomed.info/sct",
+        "code": "399068003",
+        "display": "Malignant neoplasm of prostate",
+        "source": "UMLS verified, parent"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "93974005",
+        "display": "Primary malignant neoplasm of prostate",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "94503003",
+        "display": "Metastatic malignant neoplasm to prostate",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "126906006",
+        "display": "Neoplasm of prostate",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "369485004",
+        "display": "Malignant tumor involving prostate by direct extension from bladder",
+        "source": "UMLS verified"
+      }
+    ],
+    "complexity": "medium",
+    "tags": [
+      "condition",
+      "oncology",
+      "prostate-cancer",
+      "male-specific",
+      "diagnosis-code",
+      "multi-stage",
+      "first-sex-specific"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "Condition",
+    "parameters": {
+      "code": "http://snomed.info/sct|399068003,http://snomed.info/sct|93974005,http://snomed.info/sct|94503003,http://snomed.info/sct|126906006,http://snomed.info/sct|369485004"
+    },
+    "url": "Condition?code=http://snomed.info/sct|399068003,http://snomed.info/sct|93974005,http://snomed.info/sct|94503003,http://snomed.info/sct|126906006,http://snomed.info/sct|369485004"
+  },
+  "test_data": {
+    "resources": [
+      "synthea/output/prostate-cancer/positive/fhir/",
+      "synthea/output/prostate-cancer/control/fhir/"
+    ],
+    "expected_result_count": 6,
+    "expected_resource_ids": [],
+    "expected_patient_ids": [
+      "04361431-ab75-3fa9-5616-00548b219024",
+      "390a3fad-08db-baa0-7e83-3571bc82aaba",
+      "79f68bd1-f7bb-443e-a986-a73f364451b4",
+      "7d03dc4f-bd78-fcdc-1cee-17fc2b0d7da3",
+      "92907ddf-ffae-cf3d-9c6c-ad5ce2d8329d",
+      "a2035979-78c8-ea3c-9a16-91a8e1990a82"
+    ]
+  },
+  "created_at": "2026-04-28T00:00:00.000000Z",
+  "updated_at": "2026-04-27T00:00:00.000000Z"
+}

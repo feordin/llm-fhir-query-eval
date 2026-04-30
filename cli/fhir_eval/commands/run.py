@@ -23,8 +23,10 @@ from src.api.models.test_case import TestCase
 @click.option("--command", "-c", default=None, help="Command for 'command' provider (e.g., 'ollama run llama3')")
 @click.option("--fhir-url", default="http://localhost:8080", help="FHIR server base URL")
 @click.option("--output-dir", "-o", default="results", help="Directory to save results")
+@click.option("--prompt-variant", default="naive", type=click.Choice(["naive", "expert"]),
+              help="Which prompt variant to use (default: naive)")
 @click.option("--verbose", "-v", is_flag=True, help="Verbose logging")
-def run(test_case, provider, model, command, fhir_url, output_dir, verbose):
+def run(test_case, provider, model, command, fhir_url, output_dir, prompt_variant, verbose):
     """Run FHIR query evaluation against an LLM.
 
     Examples:
@@ -51,7 +53,7 @@ def run(test_case, provider, model, command, fhir_url, output_dir, verbose):
     if not tc:
         sys.exit(1)
     click.echo(f"  Name: {tc.name}")
-    click.echo(f"  Prompt: {tc.prompt[:80]}...")
+    click.echo(f"  Prompt ({prompt_variant}): {tc.get_prompt(prompt_variant)[:80]}...")
     click.echo(f"  Expected query: {tc.expected_query.url}")
 
     # Step 2: Check FHIR server
@@ -78,6 +80,11 @@ def run(test_case, provider, model, command, fhir_url, output_dir, verbose):
         kwargs = {}
         if command:
             kwargs["command"] = command
+        if provider == "ollama-agentic":
+            # Pass FHIR URL (with /fhir suffix) to the agentic provider
+            agentic_fhir = fhir_url.rstrip("/") + "/fhir" if not fhir_url.rstrip("/").endswith("/fhir") else fhir_url
+            kwargs["fhir_url"] = agentic_fhir
+            click.echo(f"  Agentic mode: tools enabled, FHIR endpoint: {agentic_fhir}")
         llm = get_provider(provider, model=model, **kwargs)
         model_name = model or provider
         click.echo(f"  Provider: {provider}, Model: {model_name}")
@@ -135,6 +142,21 @@ def run(test_case, provider, model, command, fhir_url, output_dir, verbose):
     click.echo(f"\n  --- Overall ---")
     click.echo(f"  Score:  {result.overall_score:.4f}")
     click.echo(f"  Passed: {'YES' if result.passed else 'NO'}")
+
+    # Display agentic tool trace if available
+    if provider == "ollama-agentic" and hasattr(llm, "tool_trace") and llm.tool_trace:
+        click.echo(f"\n  --- Agentic Tool Trace ({len(llm.tool_trace)} calls) ---")
+        for i, call in enumerate(llm.tool_trace, 1):
+            args_str = json.dumps(call["args"]) if call["args"] else ""
+            click.echo(f"  [{call['iteration']+1}] {call['tool']}({args_str})")
+            if verbose:
+                result_preview = json.dumps(call["result"], indent=2)
+                # Truncate long results
+                if len(result_preview) > 500:
+                    result_preview = result_preview[:500] + "\n    ... (truncated)"
+                for line in result_preview.split("\n"):
+                    click.echo(f"       {line}")
+
     click.echo("=" * 60)
 
     # Save results

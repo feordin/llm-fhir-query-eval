@@ -3,122 +3,118 @@
   "source": "phekb",
   "source_id": "type-2-diabetes-mellitus",
   "name": "Type 2 Diabetes Mellitus (Comprehensive)",
-  "description": "Comprehensive test case covering all 5 paths of the Northwestern University T2DM algorithm. This evaluates the LLM's overall approach to identifying T2DM patients. The algorithm identifies cases through diagnosis codes, medications, and abnormal lab values. Path 4 patients have NO diagnosis code - only medications and abnormal labs. See path-specific test cases (phekb-type-2-diabetes-dx, -meds, -labs) for targeted evaluation.",
+  "description": "Comprehensive test case covering all 5 paths of the Northwestern University T2DM algorithm. Evaluates whether the LLM generates multiple queries across Condition, MedicationRequest, and Observation to identify the full T2DM population. Path 4 patients have NO diagnosis code — only medications and abnormal labs.",
   "prompt": "Find all patients who may have type 2 diabetes mellitus. Consider patients who have a formal diabetes diagnosis, those prescribed diabetes medications like metformin or sulfonylureas, and those with elevated hemoglobin A1c levels at or above 6.5 percent.",
   "metadata": {
     "implementation_guide": "US Core 5.0.0",
     "algorithm_paths": "all-5-paths",
     "algorithm_path_description": "Comprehensive query. An ideal answer would query Condition (diagnosis codes), MedicationRequest (T2DM meds), and Observation (abnormal HbA1c). See path-specific test cases for per-resource evaluation.",
     "code_systems": [
-      "ICD-9-CM",
-      "ICD-10-CM",
-      "RxNorm",
       "SNOMED CT",
+      "RxNorm",
       "LOINC"
     ],
     "required_codes": [
       {
         "system": "http://snomed.info/sct",
         "code": "44054006",
-        "display": "Type 2 diabetes mellitus"
-      },
-      {
-        "system": "http://hl7.org/fhir/sid/icd-10-cm",
-        "code": "E11",
-        "display": "Type 2 diabetes mellitus"
-      },
-      {
-        "system": "http://hl7.org/fhir/sid/icd-9-cm",
-        "code": "250.00",
-        "display": "DM type II"
+        "display": "Type 2 diabetes mellitus",
+        "source": "document"
       },
       {
         "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
         "code": "860975",
-        "display": "Metformin 500mg ER"
+        "display": "Metformin 500mg ER",
+        "source": "document"
       },
       {
         "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
         "code": "310490",
-        "display": "Glipizide 5mg"
+        "display": "Glipizide 5mg",
+        "source": "document"
       },
       {
         "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
         "code": "665033",
-        "display": "Sitagliptin 100mg"
+        "display": "Sitagliptin 100mg",
+        "source": "document"
       },
       {
         "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
         "code": "310537",
-        "display": "Glyburide 5mg"
+        "display": "Glyburide 5mg",
+        "source": "document"
       },
       {
         "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
         "code": "312440",
-        "display": "Pioglitazone 30mg"
-      },
-      {
-        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
-        "code": "199246",
-        "display": "Glimepiride 2mg"
+        "display": "Pioglitazone 30mg",
+        "source": "document"
       },
       {
         "system": "http://loinc.org",
         "code": "4548-4",
-        "display": "Hemoglobin A1c"
-      },
-      {
-        "system": "http://loinc.org",
-        "code": "1558-6",
-        "display": "Fasting glucose"
-      },
-      {
-        "system": "http://loinc.org",
-        "code": "2339-0",
-        "display": "Glucose in Blood"
+        "display": "Hemoglobin A1c",
+        "source": "document"
       }
     ],
     "complexity": "hard",
+    "multi_query": true,
+    "expected_queries": [
+      "Condition?code=http://snomed.info/sct|44054006",
+      "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|860975,http://www.nlm.nih.gov/research/umls/rxnorm|310490,http://www.nlm.nih.gov/research/umls/rxnorm|665033,http://www.nlm.nih.gov/research/umls/rxnorm|310537,http://www.nlm.nih.gov/research/umls/rxnorm|312440",
+      "Observation?code=http://loinc.org|4548-4&value-quantity=ge6.5||%"
+    ],
     "tags": [
       "condition",
       "medication",
       "observation",
       "endocrinology",
       "type-2-diabetes",
+      "multi-query",
       "multi-resource"
     ]
   },
   "expected_query": {
-    "resource_type": "Condition",
-    "parameters": {
-      "code": "http://snomed.info/sct|44054006"
-    },
+    "resource_type": "Patient",
+    "parameters": {},
     "url": "Condition?code=http://snomed.info/sct|44054006",
-    "notes": "This is the minimum viable query (Condition by SNOMED). A complete answer would also query MedicationRequest and Observation to catch Path 4 patients without diagnosis codes."
+    "notes": "This test case expects MULTIPLE queries (see metadata.expected_queries). The expected_query.url is the minimum viable query. The full evaluation unions patient IDs from all 3 queries to get the complete T2DM population of 24 patients."
   },
   "test_data": {
     "resources": [
       "synthea/output/type-2-diabetes/positive/fhir/",
       "synthea/output/type-2-diabetes/control/fhir/"
     ],
-    "expected_result_count": 14,
-    "expected_resource_ids": [
-      "1391",
-      "1688",
-      "1749",
-      "1841",
-      "2074",
-      "2326",
-      "2373",
-      "2565",
-      "2765",
-      "2816",
-      "3412",
-      "3553",
-      "3655",
-      "4114"
+    "expected_result_count": 24,
+    "expected_resource_ids": [],
+    "expected_patient_ids": [
+      "080b069b-5108-46b6-ecef-6aacd3b9ef3f",
+      "2c167999-289d-95fa-5c27-7d8b8d35348c",
+      "35b353dd-402b-571a-d67a-af0a104d0854",
+      "46ee9d82-b52c-856d-069b-5064ff052225",
+      "4f083ce3-f12b-bb4b-7353-e17f0cd55b0a",
+      "5ba0a3f3-32f7-02b1-ec6a-8f568923954c",
+      "5e7ebf2c-22ec-a89b-53ab-38edddd81be9",
+      "62f60bdb-cc5c-8305-b98b-f2b229a55eca",
+      "6aed9210-c500-4375-b0fc-3374c40b8591",
+      "6fbddf55-7096-b883-7cd3-260f27953080",
+      "7b06ee52-df9a-8487-0be6-dff27cc7d519",
+      "922fb35e-148d-9e82-7e65-bfa05e3b3515",
+      "9661a432-4630-2cd9-142c-386845fae837",
+      "982750f4-569b-5949-196b-60699bdda3fb",
+      "a2fb233f-60e0-b477-cd38-af3923f792a3",
+      "aa616abe-1761-0c9a-7959-07544679dafd",
+      "b6a1cac9-8873-36a7-e726-4aad8a07d44d",
+      "ba419d35-0dfe-8af7-347c-eebf02485a56",
+      "bff9d9d5-ee3d-d852-9c67-36d8361a4a4a",
+      "c0a47dee-cc72-29ce-df5a-ea6d306c36a4",
+      "c86c400e-ff88-a1e3-2e23-caa4d8311f47",
+      "e74367bd-7385-97dc-2c7f-251b4cd9fe29",
+      "eb5910f1-26e6-bc6f-b300-716eae678d6f",
+      "f95a6723-14a5-c4b6-78df-fa97f7ab361c"
     ]
   },
   "created_at": "2026-01-24T12:00:00.000000Z",
-  "updated_at": "2026-03-12T18:00:00.000000Z"
+  "updated_at": "2026-03-12T22:00:00.000000Z"
 }

@@ -1,0 +1,272 @@
+{
+  "name": "PheKB Autism Spectrum Disorder",
+  "remarks": [
+    "Custom Synthea module for PheKB phenotype: autism",
+    "Based on PheKB ASD algorithm (diagnosis-based with medication evidence)",
+    "",
+    "Generates TWO types of positive patients:",
+    "  Type A (70%): ASD Diagnosis + Medications (formal diagnosis + behavioral meds)",
+    "  Type B (30%): Medications only, NO diagnosis code (meds-only evidence)",
+    "",
+    "Type B patients test whether LLMs can identify ASD cases that have",
+    "no Condition resource - only MedicationRequest evidence (risperidone/aripiprazole).",
+    "",
+    "Codes verified via NIH UMLS MCP (2025AB):",
+    "  SNOMED 35919005 (Autism spectrum disorder)",
+    "  RxNorm SCD: 312804 (risperidone 1 MG Oral Tablet),",
+    "             350386 (aripiprazole 5 MG Oral Tablet)"
+  ],
+  "states": {
+    "Initial": {
+      "type": "Initial",
+      "direct_transition": "Age_Guard"
+    },
+    "Age_Guard": {
+      "type": "Guard",
+      "allow": {
+        "condition_type": "Age",
+        "operator": ">=",
+        "quantity": 2,
+        "unit": "years"
+      },
+      "direct_transition": "Choose_Patient_Path"
+    },
+    "Choose_Patient_Path": {
+      "type": "Simple",
+      "remarks": [
+        "Split patients into two groups:",
+        "  70% get a formal ASD diagnosis + medications",
+        "  30% have NO diagnosis - only medication records",
+        "This tests whether LLMs search beyond Condition resources."
+      ],
+      "distributed_transition": [
+        {
+          "transition": "Set_Path_With_Diagnosis",
+          "distribution": 0.7
+        },
+        {
+          "transition": "Set_Path_No_Diagnosis",
+          "distribution": 0.3
+        }
+      ]
+    },
+    "Set_Path_With_Diagnosis": {
+      "type": "SetAttribute",
+      "attribute": "asd_has_diagnosis",
+      "value": true,
+      "direct_transition": "Set_Needs_First_Visit"
+    },
+    "Set_Path_No_Diagnosis": {
+      "type": "SetAttribute",
+      "remarks": [
+        "Meds-only path: No diagnosis code, only medication evidence"
+      ],
+      "attribute": "asd_has_diagnosis",
+      "value": false,
+      "direct_transition": "Set_Needs_First_Visit"
+    },
+    "Set_Needs_First_Visit": {
+      "type": "SetAttribute",
+      "attribute": "asd_needs_first_visit",
+      "value": true,
+      "direct_transition": "Wellness_Encounter"
+    },
+    "Wellness_Encounter": {
+      "type": "Encounter",
+      "wellness": true,
+      "direct_transition": "Check_First_Visit"
+    },
+    "Check_First_Visit": {
+      "type": "Simple",
+      "conditional_transition": [
+        {
+          "condition": {
+            "condition_type": "Attribute",
+            "attribute": "asd_needs_first_visit",
+            "operator": "==",
+            "value": true
+          },
+          "transition": "Route_First_Visit"
+        },
+        {
+          "transition": "End_Wellness_Encounter"
+        }
+      ]
+    },
+    "Route_First_Visit": {
+      "type": "Simple",
+      "remarks": [
+        "Route to diagnosis or no-diagnosis path based on patient type"
+      ],
+      "conditional_transition": [
+        {
+          "condition": {
+            "condition_type": "Attribute",
+            "attribute": "asd_has_diagnosis",
+            "operator": "==",
+            "value": true
+          },
+          "transition": "Diagnose_ASD"
+        },
+        {
+          "transition": "Choose_Med_No_Diagnosis"
+        }
+      ]
+    },
+    "Diagnose_ASD": {
+      "type": "Simple",
+      "remarks": [
+        "Type A: Record ASD diagnosis inside wellness encounter",
+        "Distributes patients across SNOMED variants for code-variation testing."
+      ],
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_ASD__variant_0",
+          "distribution": 0.5
+        },
+        {
+          "transition": "Diagnose_ASD__variant_1",
+          "distribution": 0.3
+        },
+        {
+          "transition": "Diagnose_ASD__variant_2",
+          "distribution": 0.2
+        }
+      ]
+    },
+    "Choose_Med_Diagnosed": {
+      "type": "Simple",
+      "remarks": [
+        "Type A patients get ASD diagnosis + behavioral medication"
+      ],
+      "distributed_transition": [
+        {
+          "transition": "Prescribe_Risperidone_Dx",
+          "distribution": 0.5
+        },
+        {
+          "transition": "Prescribe_Aripiprazole_Dx",
+          "distribution": 0.5
+        }
+      ]
+    },
+    "Prescribe_Risperidone_Dx": {
+      "type": "MedicationOrder",
+      "codes": [
+        {
+          "system": "RxNorm",
+          "code": "312804",
+          "display": "risperidone 1 MG Oral Tablet"
+        }
+      ],
+      "reason": "autism_condition",
+      "direct_transition": "Clear_First_Visit_Flag"
+    },
+    "Prescribe_Aripiprazole_Dx": {
+      "type": "MedicationOrder",
+      "codes": [
+        {
+          "system": "RxNorm",
+          "code": "350386",
+          "display": "aripiprazole 5 MG Oral Tablet"
+        }
+      ],
+      "reason": "autism_condition",
+      "direct_transition": "Clear_First_Visit_Flag"
+    },
+    "Choose_Med_No_Diagnosis": {
+      "type": "Simple",
+      "remarks": [
+        "Type B: No ASD diagnosis, only medication evidence"
+      ],
+      "distributed_transition": [
+        {
+          "transition": "Prescribe_Risperidone_NoDx",
+          "distribution": 0.5
+        },
+        {
+          "transition": "Prescribe_Aripiprazole_NoDx",
+          "distribution": 0.5
+        }
+      ]
+    },
+    "Prescribe_Risperidone_NoDx": {
+      "type": "MedicationOrder",
+      "codes": [
+        {
+          "system": "RxNorm",
+          "code": "312804",
+          "display": "risperidone 1 MG Oral Tablet"
+        }
+      ],
+      "direct_transition": "Clear_First_Visit_Flag"
+    },
+    "Prescribe_Aripiprazole_NoDx": {
+      "type": "MedicationOrder",
+      "codes": [
+        {
+          "system": "RxNorm",
+          "code": "350386",
+          "display": "aripiprazole 5 MG Oral Tablet"
+        }
+      ],
+      "direct_transition": "Clear_First_Visit_Flag"
+    },
+    "Clear_First_Visit_Flag": {
+      "type": "SetAttribute",
+      "attribute": "asd_needs_first_visit",
+      "value": false,
+      "direct_transition": "End_Wellness_Encounter"
+    },
+    "End_Wellness_Encounter": {
+      "type": "EncounterEnd",
+      "direct_transition": "Followup_Delay"
+    },
+    "Followup_Delay": {
+      "type": "Delay",
+      "range": {
+        "low": 3,
+        "high": 6,
+        "unit": "months"
+      },
+      "direct_transition": "Wellness_Encounter"
+    },
+    "Diagnose_ASD__variant_0": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": "35919005",
+          "display": "Pervasive developmental disorder"
+        }
+      ],
+      "direct_transition": "Choose_Med_Diagnosed",
+      "assign_to_attribute": "autism_condition"
+    },
+    "Diagnose_ASD__variant_1": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": "408856003",
+          "display": "Autistic disorder"
+        }
+      ],
+      "direct_transition": "Choose_Med_Diagnosed",
+      "assign_to_attribute": "autism_condition"
+    },
+    "Diagnose_ASD__variant_2": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": "23560001",
+          "display": "Asperger's disorder"
+        }
+      ],
+      "direct_transition": "Choose_Med_Diagnosed",
+      "assign_to_attribute": "autism_condition"
+    }
+  },
+  "gmf_version": 2
+}

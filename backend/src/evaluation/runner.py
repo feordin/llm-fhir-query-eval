@@ -10,12 +10,13 @@ if str(backend_path) not in sys.path:
 
 from src.api.models.evaluation import (
     EvaluationResult, EvaluationResults, GeneratedQuery,
-    LLMJudgeResult, CodeSystemValidationResult, ParsedQuery,
+    LLMJudgeResult, ParsedQuery,
 )
 from src.api.models.test_case import TestCase
 from src.llm.provider import parse_fhir_queries_from_text
 from .execution import ExecutionEvaluator
 from .semantic import SemanticEvaluator
+from .code_validation import CodeSystemValidator
 
 logger = logging.getLogger(__name__)
 
@@ -28,6 +29,7 @@ class EvaluationRunner:
         self.llm_provider = llm_provider
         self.execution_eval = ExecutionEvaluator(fhir_client)
         self.semantic_eval = SemanticEvaluator()
+        self.code_eval = CodeSystemValidator()
 
     def run_single(self, test_case: TestCase, provider_name: str = "unknown", model_name: str = "unknown") -> EvaluationResult:
         """Run full evaluation for a single test case.
@@ -47,8 +49,8 @@ class EvaluationRunner:
         logger.info(f"Evaluating test case (single-query): {test_case.id}")
 
         # Step 1: Generate query from LLM
-        logger.info(f"Sending prompt to LLM: {test_case.prompt[:80]}...")
-        generated = self.llm_provider.generate_fhir_query(test_case.prompt)
+        logger.info(f"Sending prompt to LLM: {test_case.get_prompt()[:80]}...")
+        generated = self.llm_provider.generate_fhir_query(test_case.get_prompt())
         logger.info(f"LLM generated query: {generated.parsed_query.url}")
 
         expected_url = test_case.expected_query.url
@@ -64,18 +66,32 @@ class EvaluationRunner:
         semantic_result = self.semantic_eval.evaluate(expected_url, generated_url)
         logger.info(f"Semantic: passed={semantic_result.passed}, diffs={semantic_result.differences}")
 
-        # Step 4: Stub results
+        # Step 4: Code system validation
+        code_validation_result = self.code_eval.evaluate(
+            test_case.metadata.required_codes, [generated_url]
+        )
+        logger.info(
+            f"Code validation: passed={code_validation_result.passed} "
+            f"correct_systems={code_validation_result.correct_systems} "
+            f"incorrect_systems={code_validation_result.incorrect_systems} "
+            f"missing={len(code_validation_result.missing_codes)} "
+            f"extra={len(code_validation_result.extra_codes)}"
+        )
+
+        # Step 5: Stub LLM judge
         llm_judge_result = LLMJudgeResult(
             passed=False, score=0.0, reasoning="LLM judge not yet implemented"
         )
-        code_validation_result = CodeSystemValidationResult(
-            passed=False, correct_systems=[], incorrect_systems=[],
-            missing_codes=[], extra_codes=[],
-        )
 
-        # Step 5: Overall score (60% execution F1 + 40% semantic)
+        # Step 6: Overall score (50% execution F1 + 30% semantic + 20% code validation)
         semantic_score = 1.0 if semantic_result.passed else 0.0
-        overall_score = round(execution_result.f1_score * 0.6 + semantic_score * 0.4, 4)
+        code_score = 1.0 if code_validation_result.passed else 0.0
+        overall_score = round(
+            execution_result.f1_score * 0.5
+            + semantic_score * 0.3
+            + code_score * 0.2,
+            4,
+        )
 
         return EvaluationResult(
             evaluation_id=str(uuid.uuid4()),
@@ -108,8 +124,8 @@ class EvaluationRunner:
         logger.info(f"Evaluating test case (multi-query): {test_case.id}")
 
         # Step 1: Generate queries from LLM
-        logger.info(f"Sending prompt to LLM: {test_case.prompt[:80]}...")
-        generated = self.llm_provider.generate_fhir_query(test_case.prompt)
+        logger.info(f"Sending prompt to LLM: {test_case.get_prompt()[:80]}...")
+        generated = self.llm_provider.generate_fhir_query(test_case.get_prompt())
         raw_response = generated.raw_response
 
         # Step 2: Parse ALL queries from the response
@@ -135,11 +151,21 @@ class EvaluationRunner:
 
         # Step 3: Patient-level execution evaluation
         expected_patient_ids = test_case.test_data.expected_patient_ids
+        is_negation = test_case.metadata.negation
         if not expected_patient_ids:
             # Fall back to resource ID comparison with the primary query
             logger.warning("No expected_patient_ids set; falling back to single-query evaluation")
             expected_url = test_case.expected_query.url
             execution_result = self.execution_eval.evaluate(expected_url, primary.url)
+        elif is_negation:
+            logger.info(
+                f"Running patient-level DIFFERENCE evaluation (negation) against "
+                f"{len(expected_patient_ids)} expected patients..."
+            )
+            execution_result = self.execution_eval.evaluate_multi_query_patient_difference(
+                expected_patient_ids, query_urls
+            )
+            logger.info(f"Execution: P={execution_result.precision} R={execution_result.recall} F1={execution_result.f1_score}")
         else:
             logger.info(f"Running patient-level union evaluation against {len(expected_patient_ids)} expected patients...")
             execution_result = self.execution_eval.evaluate_multi_query_patient_union(
@@ -152,20 +178,34 @@ class EvaluationRunner:
         semantic_result = self._evaluate_multi_query_coverage(expected_queries, query_urls)
         logger.info(f"Query coverage: {semantic_result.differences}")
 
-        # Step 5: Stub results
+        # Step 5: Code system validation across all generated queries
+        code_validation_result = self.code_eval.evaluate(
+            test_case.metadata.required_codes, query_urls
+        )
+        logger.info(
+            f"Code validation: passed={code_validation_result.passed} "
+            f"correct_systems={code_validation_result.correct_systems} "
+            f"incorrect_systems={code_validation_result.incorrect_systems} "
+            f"missing={len(code_validation_result.missing_codes)} "
+            f"extra={len(code_validation_result.extra_codes)}"
+        )
+
+        # Step 6: Stub LLM judge
         llm_judge_result = LLMJudgeResult(
             passed=False, score=0.0, reasoning="LLM judge not yet implemented"
         )
-        code_validation_result = CodeSystemValidationResult(
-            passed=False, correct_systems=[], incorrect_systems=[],
-            missing_codes=[], extra_codes=[],
-        )
 
-        # Step 6: Overall score (70% execution F1 + 30% query coverage)
+        # Step 7: Overall score (60% execution F1 + 20% query coverage + 20% code validation)
         coverage_score = 1.0 if semantic_result.passed else (
             0.5 if any("covered" in d.lower() for d in semantic_result.differences) else 0.0
         )
-        overall_score = round(execution_result.f1_score * 0.7 + coverage_score * 0.3, 4)
+        code_score = 1.0 if code_validation_result.passed else 0.0
+        overall_score = round(
+            execution_result.f1_score * 0.6
+            + coverage_score * 0.2
+            + code_score * 0.2,
+            4,
+        )
 
         return EvaluationResult(
             evaluation_id=str(uuid.uuid4()),

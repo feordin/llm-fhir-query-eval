@@ -1,0 +1,154 @@
+{
+  "id": "phekb-venous-thromboembolism-comprehensive",
+  "source": "phekb",
+  "source_id": "venous-thromboembolism",
+  "name": "Venous Thromboembolism - Comprehensive Provider Query (DX + Meds + Labs)",
+  "description": "Simulates a hematologist identifying their complete VTE patient population. Real-world identification combines: VTE diagnosis codes, therapeutic anticoagulants, and elevated D-dimer. Tests whether LLM correctly queries multiple FHIR resource types in a multi-query union.",
+  "prompt": "I need to identify my complete venous thromboembolism patient population for a quality improvement initiative on anticoagulation duration and bleeding events. From clinical experience, VTE patients are documented in different ways: most have a formal VTE diagnosis (DVT, PE, or extent-specific codes like iliofemoral DVT), most are on therapeutic anticoagulants (warfarin, DOACs like apixaban or rivaroxaban, or enoxaparin), and many had elevated D-dimer at presentation.\n\nPlease run multiple FHIR queries to capture the full population:\n1. Patients with any VTE diagnosis (DVT, iliofemoral DVT, IVC thrombosis, PE, or venous embolism)\n2. Patients prescribed therapeutic anticoagulants (warfarin, apixaban, rivaroxaban, dabigatran, or enoxaparin)\n3. Patients with elevated D-dimer (>0.5 mcg/mL FEU)\n\nFor each query, return the matching resources. I want the union of all patients found.",
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "multi_query": true,
+    "algorithm_path": "comprehensive",
+    "algorithm_path_description": "Union of VTE dx codes, anticoagulant Rx, and elevated D-dimer Observation. Tests multi-resource union.",
+    "expected_queries": [
+      "Condition?code=http://snomed.info/sct|128053003,http://snomed.info/sct|234044007,http://snomed.info/sct|281595001,http://snomed.info/sct|59282003,http://snomed.info/sct|234049002",
+      "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|11289,http://www.nlm.nih.gov/research/umls/rxnorm|1364430,http://www.nlm.nih.gov/research/umls/rxnorm|1114195,http://www.nlm.nih.gov/research/umls/rxnorm|1037042,http://www.nlm.nih.gov/research/umls/rxnorm|67108",
+      "Observation?code=http://loinc.org|48065-7&value-quantity=gt0.5||ug/mL"
+    ],
+    "code_systems": [
+      "SNOMED CT",
+      "RxNorm",
+      "LOINC"
+    ],
+    "required_codes": [
+      {
+        "system": "http://snomed.info/sct",
+        "code": "128053003",
+        "display": "Deep venous thrombosis",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "234044007",
+        "display": "Iliofemoral deep vein thrombosis",
+        "source": "VSAC"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "281595001",
+        "display": "Thrombosis of inferior vena cava",
+        "source": "VSAC"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "59282003",
+        "display": "Pulmonary embolism",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "234049002",
+        "display": "Venous embolism",
+        "source": "VSAC"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "11289",
+        "display": "warfarin",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "1364430",
+        "display": "apixaban",
+        "source": "VSAC"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "1114195",
+        "display": "rivaroxaban",
+        "source": "VSAC"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "1037042",
+        "display": "dabigatran etexilate",
+        "source": "VSAC"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "67108",
+        "display": "enoxaparin",
+        "source": "VSAC"
+      },
+      {
+        "system": "http://loinc.org",
+        "code": "48065-7",
+        "display": "Fibrin D-dimer FEU [Mass/volume] in Platelet poor plasma",
+        "source": "UMLS verified"
+      }
+    ],
+    "complexity": "expert",
+    "tags": [
+      "multi-query",
+      "vascular",
+      "venous-thromboembolism",
+      "comprehensive",
+      "cross-resource"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "Patient",
+    "parameters": {},
+    "url": "Condition?code=http://snomed.info/sct|128053003,http://snomed.info/sct|234044007,http://snomed.info/sct|281595001,http://snomed.info/sct|59282003,http://snomed.info/sct|234049002"
+  },
+  "test_data": {
+    "resources": [
+      "synthea/output/venous-thromboembolism/positive/fhir/",
+      "synthea/output/venous-thromboembolism/control/fhir/"
+    ],
+    "expected_result_count": 37,
+    "expected_resource_ids": [],
+    "expected_patient_ids": [
+      "00a208ac-bc88-f08c-e6da-2297722eeada",
+      "05a85c8d-6818-c290-b03e-09764c4c5c03",
+      "0619c92d-6233-ee4e-dba6-3972e9f656d7",
+      "0b95956f-4e36-af26-7d37-dd0470630f9f",
+      "0c830e20-7422-e34f-85fc-01c205b52eed",
+      "0f6ff136-b44e-03c5-d7ed-a368168a4a69",
+      "1956bf54-c149-e1e0-6b14-62ebc1b92d73",
+      "326b0a3b-9205-179f-570d-53b07acc342e",
+      "32b9b608-6b10-f367-3e83-1f1a9122fa6a",
+      "45e84fb2-8447-7364-e01d-a2a72131dfc9",
+      "4e71a082-772c-dc9a-4fca-e1e8052a259e",
+      "4f4c1519-f0dd-02c8-ab20-bbf23b37074d",
+      "501f832c-80c4-7449-0eb8-bf5197035e44",
+      "52975315-2150-d82c-6c57-7c50f24145b7",
+      "53e6ec35-a430-15da-24ee-91560613ec3a",
+      "55466c78-a661-a041-38c4-03bfdfd75f90",
+      "561614dd-3521-cb72-bd0b-f8400e900799",
+      "608a1136-0bf8-0ab3-fe84-15a87288b3e8",
+      "68195607-da30-8dd9-31ec-82cf6c9c7ef5",
+      "6f65d0aa-5f61-1bd8-8214-18690d85cbcb",
+      "720f7df7-6379-3b4a-57d5-95c7fe3c7fc9",
+      "7642be28-2a0e-f617-934c-aa6f8bf9613b",
+      "7f9c1a9c-74c6-b23f-ed0e-6b26a627e26f",
+      "845102c8-0680-fc97-5711-076475f2632f",
+      "8a85cf0a-6f3c-ca34-316e-d0555dc2e23b",
+      "8b211b66-d7aa-466d-d1e3-492484c0b267",
+      "94112784-7a9e-b618-fc9d-0039292416bb",
+      "9cdf486e-8634-adbd-72ac-8ce62c315e62",
+      "a04a2e8e-d446-40ab-8ca8-a4e8568f075d",
+      "ac6bcfa9-ab7b-29ae-e0b2-543348d97f68",
+      "b21aab1b-a234-1f62-ea14-65665d2b7d0e",
+      "b39887f3-49a6-2a39-9f68-5331622e5798",
+      "bb066ca2-6895-073d-8f2c-912c95df47c7",
+      "c2a1a7d7-64ca-3773-0f43-c921bde903c9",
+      "c491cb8b-130b-d80c-2f17-29b0eec7b30c",
+      "d2a8d116-3725-61ef-99b7-c71986851bff",
+      "f1b76f27-3b7d-eef7-3def-1f70ae76e352"
+    ]
+  },
+  "created_at": "2026-04-27T00:00:00.000000Z",
+  "updated_at": "2026-04-27T00:00:00.000000Z"
+}

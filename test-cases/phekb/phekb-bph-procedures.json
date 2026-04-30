@@ -1,0 +1,62 @@
+{
+  "id": "phekb-bph-procedures",
+  "source": "phekb",
+  "source_id": "bph",
+  "name": "BPH - TURP Procedure Query (Tenth Procedure Phenotype)",
+  "description": "**Tenth Procedure-resource phenotype**, **first urologic-surgical** procedure (complementing PCa biopsy = urologic-diagnostic from batch 7). Tests ability to find BPH patients via Transurethral Resection of Prostate (TURP) procedures.",
+  "prompt": "Find patients who have undergone transurethral resection of the prostate (TURP).",
+  "prompts": {
+    "naive": "Find patients who had TURP surgery.",
+    "broad": "Find patients who have undergone transurethral resection of the prostate (TURP) — the standard surgical treatment for symptomatic benign prostatic hyperplasia not responsive to medical therapy.",
+    "expert": "Search Procedure resources with SNOMED 90199006 (Transurethral prostatectomy). Query: Procedure?code=http://snomed.info/sct|90199006"
+  },
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "algorithm_path": "procedure-path",
+    "algorithm_path_description": "BPH patients who underwent TURP. **Tenth Procedure phenotype, first urologic-surgical.**",
+    "code_systems": [
+      "SNOMED CT"
+    ],
+    "required_codes": [
+      {
+        "system": "http://snomed.info/sct",
+        "code": "90199006",
+        "display": "Transurethral prostatectomy",
+        "source": "UMLS verified"
+      }
+    ],
+    "complexity": "medium",
+    "tags": [
+      "procedure",
+      "urology",
+      "bph",
+      "turp",
+      "surgery",
+      "tenth-procedure",
+      "urologic-surgical"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "Procedure",
+    "parameters": {
+      "code": "http://snomed.info/sct|90199006"
+    },
+    "url": "Procedure?code=http://snomed.info/sct|90199006"
+  },
+  "test_data": {
+    "resources": [
+      "synthea/output/bph/positive/fhir/",
+      "synthea/output/bph/control/fhir/"
+    ],
+    "expected_result_count": 4,
+    "expected_resource_ids": [],
+    "expected_patient_ids": [
+      "6e18d891-5728-6f45-15f7-0207968c58b1",
+      "716d5005-724e-780e-8cf1-d99936c1035b",
+      "84334bd2-6ad1-8669-fc68-84765c68c885",
+      "b984f81e-169a-17b7-cdc8-ae2f6ec624d8"
+    ]
+  },
+  "created_at": "2026-04-28T00:00:00.000000Z",
+  "updated_at": "2026-04-27T00:00:00.000000Z"
+}

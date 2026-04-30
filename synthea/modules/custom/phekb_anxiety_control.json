@@ -1,0 +1,116 @@
+{
+  "name": "PheKB Anxiety Control (Non-Anxiety)",
+  "remarks": [
+    "Control module for anxiety phenotype testing",
+    "Generates patients who should NOT match anxiety criteria",
+    "",
+    "Control Criteria (exclusion from anxiety phenotype):",
+    "- No anxiety disorder diagnosis codes",
+    "- No anti-anxiety medications (sertraline, escitalopram, buspirone, alprazolam)",
+    "- May have common unrelated conditions (hypertension, allergic rhinitis)",
+    "",
+    "Uses 'wellness: true' encounter pattern to produce FHIR resources.",
+    "These patients should NOT be returned by anxiety queries."
+  ],
+  "states": {
+    "Initial": {
+      "type": "Initial",
+      "direct_transition": "Age_Guard"
+    },
+
+    "Age_Guard": {
+      "type": "Guard",
+      "allow": {
+        "condition_type": "Age",
+        "operator": ">=",
+        "quantity": 18,
+        "unit": "years"
+      },
+      "direct_transition": "Set_Control_Flag"
+    },
+
+    "Set_Control_Flag": {
+      "type": "SetAttribute",
+      "attribute": "anxiety_control",
+      "value": true,
+      "direct_transition": "Wellness_Encounter"
+    },
+
+    "Wellness_Encounter": {
+      "type": "Encounter",
+      "wellness": true,
+      "direct_transition": "Check_Other_Conditions"
+    },
+
+    "Check_Other_Conditions": {
+      "type": "Simple",
+      "remarks": ["Some control patients have common unrelated conditions for variety"],
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Hypertension",
+          "distribution": 0.30
+        },
+        {
+          "transition": "Diagnose_Allergic_Rhinitis",
+          "distribution": 0.25
+        },
+        {
+          "transition": "End_Wellness_Encounter",
+          "distribution": 0.45
+        }
+      ]
+    },
+
+    "Diagnose_Hypertension": {
+      "type": "ConditionOnset",
+      "assign_to_attribute": "hypertension",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": "38341003",
+          "display": "Hypertensive disorder"
+        }
+      ],
+      "remarks": ["Common condition for control population variety - NOT anxiety related"],
+      "direct_transition": "Prescribe_Lisinopril"
+    },
+
+    "Prescribe_Lisinopril": {
+      "type": "MedicationOrder",
+      "codes": [
+        {
+          "system": "RxNorm",
+          "code": "314076",
+          "display": "lisinopril 10 MG Oral Tablet"
+        }
+      ],
+      "reason": "hypertension",
+      "direct_transition": "End_Wellness_Encounter"
+    },
+
+    "Diagnose_Allergic_Rhinitis": {
+      "type": "ConditionOnset",
+      "assign_to_attribute": "allergic_rhinitis",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": "61582004",
+          "display": "Allergic rhinitis"
+        }
+      ],
+      "remarks": ["Common condition for control population variety - NOT anxiety related"],
+      "direct_transition": "End_Wellness_Encounter"
+    },
+
+    "End_Wellness_Encounter": {
+      "type": "EncounterEnd",
+      "direct_transition": "Terminal_Control"
+    },
+
+    "Terminal_Control": {
+      "type": "Terminal",
+      "remarks": ["Control patient - should NOT be found by anxiety phenotype query"]
+    }
+  },
+  "gmf_version": 2
+}

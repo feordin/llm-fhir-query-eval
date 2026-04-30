@@ -1,0 +1,174 @@
+{
+  "name": "PheKB Diabetic Retinopathy",
+  "remarks": [
+    "Custom Synthea module for diabetic retinopathy.",
+    "**First diabetes complication phenotype**. **Seventh Procedure-resource phenotype** (camera fundoscopy).",
+    "",
+    "Generates THREE patient paths:",
+    "  Path A (50%): DR dx + anti-VEGF + fundoscopy",
+    "  Path B (30%): DR dx + fundoscopy, no anti-VEGF (early/non-proliferative — observation only)",
+    "  Path C (20%): Fundoscopy only, NO DR dx (screening of diabetic patients with normal exam)",
+    "",
+    "Diagnosis SNOMED variation (Paths A + B):",
+    "  35% Retinopathy due to diabetes mellitus (4855003) — parent",
+    "  20% Nonproliferative retinopathy due to diabetes (390834004)",
+    "  20% Proliferative retinopathy due to diabetes (59276001)",
+    "  15% Nonproliferative retinopathy due to T2DM (1551000119108)",
+    "  10% Macular edema due to diabetes (312912001)",
+    "",
+    "Anti-VEGF variation (Paths A — 3 ingredients):",
+    "  50% Aflibercept (1232150)",
+    "  35% Ranibizumab (595060)",
+    "  15% Bevacizumab (253337) — off-label use"
+  ],
+  "states": {
+    "Initial": { "type": "Initial", "direct_transition": "Age_Guard" },
+    "Age_Guard": { "type": "Guard", "allow": { "condition_type": "Age", "operator": ">=", "quantity": 30, "unit": "years" }, "direct_transition": "Set_DR_Flag" },
+    "Set_DR_Flag": { "type": "SetAttribute", "attribute": "dr_positive", "value": true, "direct_transition": "Choose_Patient_Path" },
+    "Choose_Patient_Path": {
+      "type": "Simple",
+      "distributed_transition": [
+        { "transition": "Set_Path_A", "distribution": 0.50 },
+        { "transition": "Set_Path_B", "distribution": 0.30 },
+        { "transition": "Set_Path_C", "distribution": 0.20 }
+      ]
+    },
+    "Set_Path_A": { "type": "SetAttribute", "attribute": "dr_has_dx", "value": true, "direct_transition": "Set_Path_A_Proc" },
+    "Set_Path_A_Proc": { "type": "SetAttribute", "attribute": "dr_has_proc", "value": true, "direct_transition": "Set_Path_A_Meds" },
+    "Set_Path_A_Meds": { "type": "SetAttribute", "attribute": "dr_has_meds", "value": true, "direct_transition": "Choose_Subtype" },
+    "Set_Path_B": { "type": "SetAttribute", "attribute": "dr_has_dx", "value": true, "direct_transition": "Set_Path_B_Proc" },
+    "Set_Path_B_Proc": { "type": "SetAttribute", "attribute": "dr_has_proc", "value": true, "direct_transition": "Set_Path_B_Meds" },
+    "Set_Path_B_Meds": { "type": "SetAttribute", "attribute": "dr_has_meds", "value": false, "direct_transition": "Choose_Subtype" },
+    "Set_Path_C": { "type": "SetAttribute", "remarks": ["TRICKY: fundoscopy without DR dx (negative screening)"], "attribute": "dr_has_dx", "value": false, "direct_transition": "Set_Path_C_Proc" },
+    "Set_Path_C_Proc": { "type": "SetAttribute", "attribute": "dr_has_proc", "value": true, "direct_transition": "Set_Path_C_Meds" },
+    "Set_Path_C_Meds": { "type": "SetAttribute", "attribute": "dr_has_meds", "value": false, "direct_transition": "Choose_Subtype" },
+
+    "Choose_Subtype": {
+      "type": "Simple",
+      "distributed_transition": [
+        { "transition": "Set_Subtype_DR", "distribution": 0.35 },
+        { "transition": "Set_Subtype_NPDR", "distribution": 0.20 },
+        { "transition": "Set_Subtype_PDR", "distribution": 0.20 },
+        { "transition": "Set_Subtype_NPDRT2D", "distribution": 0.15 },
+        { "transition": "Set_Subtype_MacEd", "distribution": 0.10 }
+      ]
+    },
+    "Set_Subtype_DR": { "type": "SetAttribute", "attribute": "dr_subtype", "value": "dr", "direct_transition": "Choose_Med" },
+    "Set_Subtype_NPDR": { "type": "SetAttribute", "attribute": "dr_subtype", "value": "npdr", "direct_transition": "Choose_Med" },
+    "Set_Subtype_PDR": { "type": "SetAttribute", "attribute": "dr_subtype", "value": "pdr", "direct_transition": "Choose_Med" },
+    "Set_Subtype_NPDRT2D": { "type": "SetAttribute", "attribute": "dr_subtype", "value": "npdr_t2d", "direct_transition": "Choose_Med" },
+    "Set_Subtype_MacEd": { "type": "SetAttribute", "attribute": "dr_subtype", "value": "maced", "direct_transition": "Choose_Med" },
+
+    "Choose_Med": {
+      "type": "Simple",
+      "distributed_transition": [
+        { "transition": "Set_Med_Aflibercept", "distribution": 0.50 },
+        { "transition": "Set_Med_Ranibizumab", "distribution": 0.35 },
+        { "transition": "Set_Med_Bevacizumab", "distribution": 0.15 }
+      ]
+    },
+    "Set_Med_Aflibercept": { "type": "SetAttribute", "attribute": "dr_med", "value": "aflibercept", "direct_transition": "Set_Needs_First_Visit" },
+    "Set_Med_Ranibizumab": { "type": "SetAttribute", "attribute": "dr_med", "value": "ranibizumab", "direct_transition": "Set_Needs_First_Visit" },
+    "Set_Med_Bevacizumab": { "type": "SetAttribute", "attribute": "dr_med", "value": "bevacizumab", "direct_transition": "Set_Needs_First_Visit" },
+
+    "Set_Needs_First_Visit": { "type": "SetAttribute", "attribute": "dr_needs_first_visit", "value": true, "direct_transition": "Wellness_Encounter" },
+    "Wellness_Encounter": { "type": "Encounter", "wellness": true, "direct_transition": "Check_First_Visit" },
+    "Check_First_Visit": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "dr_needs_first_visit", "operator": "==", "value": true }, "transition": "Check_Has_Diagnosis" },
+        { "transition": "End_Wellness_Encounter" }
+      ]
+    },
+    "Check_Has_Diagnosis": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "dr_has_dx", "operator": "==", "value": true }, "transition": "Route_By_Subtype" },
+        { "transition": "Check_Procedure_NoDx" }
+      ]
+    },
+    "Route_By_Subtype": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "dr_subtype", "operator": "==", "value": "dr" }, "transition": "Diagnose_DR" },
+        { "condition": { "condition_type": "Attribute", "attribute": "dr_subtype", "operator": "==", "value": "npdr" }, "transition": "Diagnose_NPDR" },
+        { "condition": { "condition_type": "Attribute", "attribute": "dr_subtype", "operator": "==", "value": "pdr" }, "transition": "Diagnose_PDR" },
+        { "condition": { "condition_type": "Attribute", "attribute": "dr_subtype", "operator": "==", "value": "npdr_t2d" }, "transition": "Diagnose_NPDRT2D" },
+        { "transition": "Diagnose_MacEd" }
+      ]
+    },
+    "Diagnose_DR": { "type": "ConditionOnset", "assign_to_attribute": "dr_condition", "codes": [{ "system": "SNOMED-CT", "code": "4855003", "display": "Retinopathy due to diabetes mellitus" }], "direct_transition": "Check_Meds_WithDx" },
+    "Diagnose_NPDR": { "type": "ConditionOnset", "assign_to_attribute": "dr_condition", "codes": [{ "system": "SNOMED-CT", "code": "390834004", "display": "Nonproliferative retinopathy due to diabetes mellitus" }], "direct_transition": "Check_Meds_WithDx" },
+    "Diagnose_PDR": { "type": "ConditionOnset", "assign_to_attribute": "dr_condition", "codes": [{ "system": "SNOMED-CT", "code": "59276001", "display": "Proliferative retinopathy due to diabetes mellitus" }], "direct_transition": "Check_Meds_WithDx" },
+    "Diagnose_NPDRT2D": { "type": "ConditionOnset", "assign_to_attribute": "dr_condition", "codes": [{ "system": "SNOMED-CT", "code": "1551000119108", "display": "Nonproliferative retinopathy due to type 2 diabetes mellitus" }], "direct_transition": "Check_Meds_WithDx" },
+    "Diagnose_MacEd": { "type": "ConditionOnset", "assign_to_attribute": "dr_condition", "codes": [{ "system": "SNOMED-CT", "code": "312912001", "display": "Macular edema due to diabetes mellitus" }], "direct_transition": "Check_Meds_WithDx" },
+
+    "Check_Meds_WithDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "dr_has_meds", "operator": "==", "value": true }, "transition": "Route_Med_WithDx" },
+        { "transition": "Check_Procedure_WithDx" }
+      ]
+    },
+    "Route_Med_WithDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "dr_med", "operator": "==", "value": "aflibercept" }, "transition": "Prescribe_Aflibercept_WithDx" },
+        { "condition": { "condition_type": "Attribute", "attribute": "dr_med", "operator": "==", "value": "ranibizumab" }, "transition": "Prescribe_Ranibizumab_WithDx" },
+        { "transition": "Prescribe_Bevacizumab_WithDx" }
+      ]
+    },
+    "Prescribe_Aflibercept_WithDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "1232150", "display": "aflibercept" }], "reason": "dr_condition", "direct_transition": "Check_Procedure_WithDx" },
+    "Prescribe_Ranibizumab_WithDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "595060", "display": "ranibizumab" }], "reason": "dr_condition", "direct_transition": "Check_Procedure_WithDx" },
+    "Prescribe_Bevacizumab_WithDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "253337", "display": "bevacizumab" }], "reason": "dr_condition", "direct_transition": "Check_Procedure_WithDx" },
+
+    "Check_Procedure_WithDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "dr_has_proc", "operator": "==", "value": true }, "transition": "Eye_Encounter_WithDx" },
+        { "transition": "Clear_First_Visit_Flag" }
+      ]
+    },
+    "Eye_Encounter_WithDx": {
+      "type": "Encounter",
+      "encounter_class": "ambulatory",
+      "reason": "dr_condition",
+      "codes": [{ "system": "SNOMED-CT", "code": "440655000", "display": "Outpatient procedure encounter (procedure)" }],
+      "direct_transition": "Procedure_Fundoscopy_WithDx"
+    },
+    "Procedure_Fundoscopy_WithDx": {
+      "type": "Procedure",
+      "reason": "dr_condition",
+      "codes": [{ "system": "SNOMED-CT", "code": "314971001", "display": "Camera fundoscopy (procedure)" }],
+      "duration": { "low": 15, "high": 30, "unit": "minutes" },
+      "direct_transition": "End_Eye_Encounter_WithDx"
+    },
+    "End_Eye_Encounter_WithDx": { "type": "EncounterEnd", "direct_transition": "Clear_First_Visit_Flag" },
+
+    "Check_Procedure_NoDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "dr_has_proc", "operator": "==", "value": true }, "transition": "Eye_Encounter_NoDx" },
+        { "transition": "Clear_First_Visit_Flag" }
+      ]
+    },
+    "Eye_Encounter_NoDx": {
+      "type": "Encounter",
+      "encounter_class": "ambulatory",
+      "codes": [{ "system": "SNOMED-CT", "code": "440655000", "display": "Outpatient procedure encounter (procedure)" }],
+      "direct_transition": "Procedure_Fundoscopy_NoDx"
+    },
+    "Procedure_Fundoscopy_NoDx": {
+      "type": "Procedure",
+      "codes": [{ "system": "SNOMED-CT", "code": "314971001", "display": "Camera fundoscopy (procedure)" }],
+      "duration": { "low": 15, "high": 30, "unit": "minutes" },
+      "direct_transition": "End_Eye_Encounter_NoDx"
+    },
+    "End_Eye_Encounter_NoDx": { "type": "EncounterEnd", "direct_transition": "Clear_First_Visit_Flag" },
+
+    "Clear_First_Visit_Flag": { "type": "SetAttribute", "attribute": "dr_needs_first_visit", "value": false, "direct_transition": "End_Wellness_Encounter" },
+    "End_Wellness_Encounter": { "type": "EncounterEnd", "direct_transition": "Followup_Delay" },
+    "Followup_Delay": { "type": "Delay", "range": { "low": 6, "high": 12, "unit": "months" }, "direct_transition": "Wellness_Encounter" }
+  },
+  "gmf_version": 2
+}

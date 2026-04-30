@@ -1,0 +1,65 @@
+{
+  "id": "phekb-venous-thromboembolism-labs",
+  "source": "phekb",
+  "source_id": "venous-thromboembolism",
+  "name": "Venous Thromboembolism - D-dimer Lab Query (Elevated)",
+  "description": "Tests ability to find VTE patients via elevated D-dimer. D-dimer is a fibrin degradation product elevated in active thrombosis. The clinical cutoff for VTE workup is age-adjusted but typically >0.5 mcg/mL FEU (500 ng/mL FEU). The Synthea module generates D-dimer >2.0 mcg/mL FEU for active VTE patients.",
+  "prompt": "Find patients with elevated D-dimer lab results greater than 0.5 micrograms per milliliter (the clinical cutoff for venous thromboembolism workup).",
+  "prompts": {
+    "naive": "Find patients with high D-dimer.",
+    "broad": "Find patients with elevated D-dimer (fibrin degradation product) — values greater than 0.5 mcg/mL FEU (the standard threshold for further VTE workup).",
+    "expert": "I need Observation resources with elevated D-dimer. Use LOINC code 48065-7 (Fibrin D-dimer FEU [Mass/volume] in Platelet poor plasma). Filter by value-quantity greater than 0.5 mcg/mL. Query: Observation?code=http://loinc.org|48065-7&value-quantity=gt0.5||ug/mL"
+  },
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "algorithm_path": "labs-path",
+    "algorithm_path_description": "Patients with elevated D-dimer suggesting active thrombosis. D-dimer is sensitive but not specific.",
+    "code_systems": [
+      "LOINC"
+    ],
+    "required_codes": [
+      {
+        "system": "http://loinc.org",
+        "code": "48065-7",
+        "display": "Fibrin D-dimer FEU [Mass/volume] in Platelet poor plasma",
+        "source": "UMLS verified"
+      }
+    ],
+    "complexity": "hard",
+    "tags": [
+      "observation",
+      "lab",
+      "vascular",
+      "venous-thromboembolism",
+      "d-dimer",
+      "value-quantity"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "Observation",
+    "parameters": {
+      "code": "http://loinc.org|48065-7",
+      "value-quantity": "gt0.5||ug/mL"
+    },
+    "url": "Observation?code=http://loinc.org|48065-7&value-quantity=gt0.5||ug/mL"
+  },
+  "test_data": {
+    "resources": [
+      "synthea/output/venous-thromboembolism/positive/fhir/",
+      "synthea/output/venous-thromboembolism/control/fhir/"
+    ],
+    "expected_result_count": 7,
+    "expected_resource_ids": [],
+    "expected_patient_ids": [
+      "05a85c8d-6818-c290-b03e-09764c4c5c03",
+      "45e84fb2-8447-7364-e01d-a2a72131dfc9",
+      "53e6ec35-a430-15da-24ee-91560613ec3a",
+      "720f7df7-6379-3b4a-57d5-95c7fe3c7fc9",
+      "845102c8-0680-fc97-5711-076475f2632f",
+      "8b211b66-d7aa-466d-d1e3-492484c0b267",
+      "ac6bcfa9-ab7b-29ae-e0b2-543348d97f68"
+    ]
+  },
+  "created_at": "2026-04-27T00:00:00.000000Z",
+  "updated_at": "2026-04-27T00:00:00.000000Z"
+}

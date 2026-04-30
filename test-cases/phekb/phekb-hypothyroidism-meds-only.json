@@ -1,0 +1,80 @@
+{
+  "id": "phekb-hypothyroidism-meds-only",
+  "source": "phekb",
+  "source_id": "hypothyroidism",
+  "name": "Hypothyroidism - Medication-Only Patients (No Diagnosis)",
+  "description": "Tricky test case: finds patients on long-term levothyroxine but with NO hypothyroidism diagnosis on the problem list (Path C). These patients can only be discovered by searching MedicationRequest resources. An LLM that only queries Condition resources will score 0% on this test. Real-world scenario: patients on chronic thyroid replacement therapy whose original diagnosis was made elsewhere or never formally documented.",
+  "prompt": "I suspect some of my patients are on chronic levothyroxine therapy for hypothyroidism but don't have a formal hypothyroidism diagnosis documented in their problem list. Can you search for patients who have levothyroxine prescriptions but no hypothyroidism diagnosis on record?",
+  "prompts": {
+    "naive": "Find patients on levothyroxine who don't have a hypothyroidism diagnosis.",
+    "expert": "I need to identify a documentation gap: patients receiving levothyroxine (the standard chronic therapy for hypothyroidism) who lack a formal hypothyroidism Condition resource. This requires a two-step approach: first find all patients with MedicationRequest for levothyroxine SCD codes (966222, 966224, 966247, 966189), then exclude those who also have a Condition with hypothyroidism SNOMED codes (40930008, 111566002, 83664006, 237519003, 237520009). In FHIR, this can be done using _has negation or by comparing result sets from two queries."
+  },
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "algorithm_path": "meds-only-path",
+    "algorithm_path_description": "Path C 'tricky' patients: have levothyroxine but NO hypothyroidism Condition resource. Tests cross-resource reasoning — the LLM must know to search MedicationRequest and understand that not all patients have diagnosis codes.",
+    "code_systems": [
+      "RxNorm",
+      "SNOMED CT"
+    ],
+    "required_codes": [
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "966222",
+        "display": "Levothyroxine Sodium 0.075 MG Oral Tablet",
+        "source": "Synthea built-in module"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "966224",
+        "display": "Levothyroxine Sodium 0.125 MG Oral Tablet",
+        "source": "RxNorm SCD"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "966247",
+        "display": "Levothyroxine Sodium 0.05 MG Oral Tablet [Synthroid]",
+        "source": "RxNorm SCD"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "966189",
+        "display": "Levothyroxine Sodium 0.125 MG Oral Tablet [Levotabs]",
+        "source": "RxNorm SCD"
+      }
+    ],
+    "complexity": "hard",
+    "tags": [
+      "medication",
+      "endocrinology",
+      "hypothyroidism",
+      "tricky",
+      "meds-only",
+      "cross-resource"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "MedicationRequest",
+    "parameters": {
+      "code": "http://www.nlm.nih.gov/research/umls/rxnorm|966222,http://www.nlm.nih.gov/research/umls/rxnorm|966224,http://www.nlm.nih.gov/research/umls/rxnorm|966247,http://www.nlm.nih.gov/research/umls/rxnorm|966189"
+    },
+    "url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|966222,http://www.nlm.nih.gov/research/umls/rxnorm|966224,http://www.nlm.nih.gov/research/umls/rxnorm|966247,http://www.nlm.nih.gov/research/umls/rxnorm|966189"
+  },
+  "test_data": {
+    "resources": [
+      "synthea/output/hypothyroidism/positive/fhir/",
+      "synthea/output/hypothyroidism/control/fhir/"
+    ],
+    "expected_result_count": 5,
+    "expected_resource_ids": [],
+    "expected_patient_ids": [
+      "982750f4-569b-5949-196b-60699bdda3fb",
+      "aa616abe-1761-0c9a-7959-07544679dafd",
+      "ba419d35-0dfe-8af7-347c-eebf02485a56",
+      "c86c400e-ff88-a1e3-2e23-caa4d8311f47",
+      "eb5910f1-26e6-bc6f-b300-716eae678d6f"
+    ]
+  },
+  "created_at": "2026-04-25T00:00:00.000000Z",
+  "updated_at": "2026-04-25T00:00:00.000000Z"
+}

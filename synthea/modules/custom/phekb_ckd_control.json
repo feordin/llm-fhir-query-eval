@@ -1,0 +1,80 @@
+{
+  "name": "PheKB Chronic Kidney Disease Control",
+  "remarks": [
+    "Control module for PheKB CKD phenotype.",
+    "Generates patients who do NOT have CKD.",
+    "",
+    "Controls per Columbia CKD V4.2 algorithm must:",
+    "  - Have no CKD or other kidney disease diagnosis",
+    "  - Have eGFR >= 90 (normal) — KDIGO G1",
+    "  - Have UACR < 30 mg/g (normal) — KDIGO A1",
+    "  - This is the CKD G1A1-Control definition (normal eGFR + negative urine test)",
+    "",
+    "Lab values:",
+    "  Control eGFR range: 95 - 130 mL/min/1.73 m² (well above 90 to avoid false positives)",
+    "  Control UACR range: 3 - 25 mg/g (below 30)",
+    "",
+    "Controls get NO Condition resources for CKD."
+  ],
+  "states": {
+    "Initial": { "type": "Initial", "direct_transition": "Age_Guard" },
+
+    "Age_Guard": {
+      "type": "Guard",
+      "allow": { "condition_type": "Age", "operator": ">=", "quantity": 50, "unit": "years" },
+      "direct_transition": "Set_Control_Flag"
+    },
+
+    "Set_Control_Flag": { "type": "SetAttribute", "attribute": "ckd_positive", "value": false, "direct_transition": "Set_Needs_First_Visit" },
+
+    "Set_Needs_First_Visit": { "type": "SetAttribute", "attribute": "ckd_needs_first_visit", "value": true, "direct_transition": "Wellness_Encounter" },
+
+    "Wellness_Encounter": { "type": "Encounter", "wellness": true, "direct_transition": "Check_First_Visit" },
+
+    "Check_First_Visit": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "ckd_needs_first_visit", "operator": "==", "value": true }, "transition": "Record_Normal_eGFR" },
+        { "transition": "Record_Followup_Normal_eGFR" }
+      ]
+    },
+
+    "Record_Normal_eGFR": {
+      "type": "Observation",
+      "category": "laboratory",
+      "unit": "mL/min/{1.73_m2}",
+      "codes": [{ "system": "LOINC", "code": "62238-1", "display": "Glomerular filtration rate [Volume Rate/Area] in Serum, Plasma or Blood by Creatinine-based formula (CKD-EPI)/1.73 sq M" }],
+      "range": { "low": 95, "high": 130 },
+      "direct_transition": "Record_Normal_UACR"
+    },
+
+    "Record_Normal_UACR": {
+      "type": "Observation",
+      "category": "laboratory",
+      "unit": "mg/g",
+      "codes": [{ "system": "LOINC", "code": "9318-7", "display": "Albumin/Creatinine [Mass Ratio] in Urine" }],
+      "range": { "low": 3, "high": 25 },
+      "direct_transition": "Clear_First_Visit_Flag"
+    },
+
+    "Clear_First_Visit_Flag": { "type": "SetAttribute", "attribute": "ckd_needs_first_visit", "value": false, "direct_transition": "End_Wellness_Encounter" },
+
+    "Record_Followup_Normal_eGFR": {
+      "type": "Observation",
+      "category": "laboratory",
+      "unit": "mL/min/{1.73_m2}",
+      "codes": [{ "system": "LOINC", "code": "62238-1", "display": "Glomerular filtration rate [Volume Rate/Area] in Serum, Plasma or Blood by Creatinine-based formula (CKD-EPI)/1.73 sq M" }],
+      "range": { "low": 92, "high": 125 },
+      "direct_transition": "End_Wellness_Encounter"
+    },
+
+    "End_Wellness_Encounter": { "type": "EncounterEnd", "direct_transition": "Followup_Delay" },
+
+    "Followup_Delay": {
+      "type": "Delay",
+      "range": { "low": 12, "high": 24, "unit": "months" },
+      "direct_transition": "Wellness_Encounter"
+    }
+  },
+  "gmf_version": 2
+}

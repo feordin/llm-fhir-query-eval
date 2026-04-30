@@ -1,0 +1,99 @@
+{
+  "id": "phekb-aaa-comprehensive",
+  "source": "phekb",
+  "source_id": "abdominal-aortic-aneurysm-aaa",
+  "name": "Abdominal Aortic Aneurysm - Comprehensive Vascular Surveillance Query",
+  "description": "Simulates a vascular surgeon who needs to identify the complete AAA patient population for a surveillance program. The prompt asks the LLM to search across multiple evidence types — formal AAA diagnoses (both ruptured and unruptured variants) and AAA repair procedures — to capture patients who might only appear through one pathway. This tests multi-query generation, understanding of ruptured vs unruptured AAA as distinct clinical entities, and knowledge of SNOMED procedure codes for aneurysm repair.",
+  "prompt": "Find all patients with an abdominal aortic aneurysm. Search both diagnoses and aneurysm repair procedures to capture the complete population.",
+  "prompts": {
+    "naive": "Find all patients with an abdominal aortic aneurysm. Search both diagnoses and aneurysm repair procedures to capture the complete population.",
+    "expert": "I am a vascular surgeon setting up a comprehensive aortic aneurysm surveillance program. I need to identify my complete abdominal aortic aneurysm patient population, and I know from experience that relying on a single query misses patients. Some patients have a formal AAA diagnosis on their problem list but never had surgery. Others had emergency or elective aneurysm repair procedures but the underlying AAA condition may not have been separately documented as a diagnosis code. Please run multiple FHIR queries to capture the full population:\n\n1. Patients with any diagnosis of abdominal aortic aneurysm on their problem list, including both ruptured and unruptured variants\n2. Patients who have had abdominal aortic aneurysm repair procedures, whether endovascular (EVAR) or open surgical repair\n\nFor each query, return the matching resources. I want to see the union of all patients found across these approaches to ensure no one falls through the cracks."
+  },
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "algorithm_paths": "all-3-case-types",
+    "algorithm_path_description": "Comprehensive multi-query approach that mirrors the PheKB AAA algorithm across all three case types. Case Type 1 is captured via procedure codes (EVAR/open repair), while Case Types 2 and 3 are captured via diagnosis codes (ruptured I71.3 and unruptured I71.4). Requires the LLM to generate 2 separate FHIR queries and combine results.",
+    "code_systems": [
+      "SNOMED CT"
+    ],
+    "required_codes": [
+      {
+        "system": "http://snomed.info/sct",
+        "code": "233985008",
+        "display": "Abdominal aortic aneurysm",
+        "source": "document"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "14336007",
+        "display": "Ruptured abdominal aortic aneurysm",
+        "source": "document"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "441788006",
+        "display": "Endovascular repair of abdominal aortic aneurysm",
+        "source": "document"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "24165007",
+        "display": "Open repair of abdominal aortic aneurysm with graft",
+        "source": "document"
+      }
+    ],
+    "complexity": "expert",
+    "multi_query": true,
+    "expected_queries": [
+      "Condition?code=http://snomed.info/sct|233985008,http://snomed.info/sct|14336007",
+      "Procedure?code=http://snomed.info/sct|441788006,http://snomed.info/sct|24165007"
+    ],
+    "tags": [
+      "multi-query",
+      "comprehensive",
+      "provider-perspective",
+      "condition",
+      "procedure",
+      "vascular",
+      "abdominal-aortic-aneurysm"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "Patient",
+    "parameters": {},
+    "url": "Condition?code=http://snomed.info/sct|233985008,http://snomed.info/sct|14336007",
+    "notes": "This test case expects MULTIPLE queries (see metadata.expected_queries). The expected_query.url is the minimum viable query covering diagnosis-based cases. Evaluation unions patient IDs from both queries to get the complete AAA population."
+  },
+  "test_data": {
+    "resources": [
+      "synthea/output/abdominal-aortic-aneurysm/positive/fhir/",
+      "synthea/output/abdominal-aortic-aneurysm/control/fhir/"
+    ],
+    "expected_result_count": 20,
+    "expected_resource_ids": [],
+    "expected_patient_ids": [
+      "2c167999-289d-95fa-5c27-7d8b8d35348c",
+      "2d68ad16-268a-478c-1f84-d0f1976e1a46",
+      "35b353dd-402b-571a-d67a-af0a104d0854",
+      "46976cf7-b0bf-be20-39a5-9f425a52886d",
+      "46ee9d82-b52c-856d-069b-5064ff052225",
+      "4f083ce3-f12b-bb4b-7353-e17f0cd55b0a",
+      "5e688e99-61b3-5c88-3f60-21df8aaced27",
+      "62f60bdb-cc5c-8305-b98b-f2b229a55eca",
+      "6fbddf55-7096-b883-7cd3-260f27953080",
+      "76b20010-c318-5754-8c85-983aa538522f",
+      "9661a432-4630-2cd9-142c-386845fae837",
+      "982750f4-569b-5949-196b-60699bdda3fb",
+      "aa616abe-1761-0c9a-7959-07544679dafd",
+      "aee7bbe1-0c45-c028-1e62-1f4cdb30c273",
+      "ba419d35-0dfe-8af7-347c-eebf02485a56",
+      "bff9d9d5-ee3d-d852-9c67-36d8361a4a4a",
+      "c86c400e-ff88-a1e3-2e23-caa4d8311f47",
+      "d3727ff2-5d7b-347f-d78c-edc4323cf890",
+      "e74367bd-7385-97dc-2c7f-251b4cd9fe29",
+      "eb5910f1-26e6-bc6f-b300-716eae678d6f"
+    ]
+  },
+  "created_at": "2026-03-15T00:00:00.000000Z",
+  "updated_at": "2026-03-15T00:00:00.000000Z"
+}

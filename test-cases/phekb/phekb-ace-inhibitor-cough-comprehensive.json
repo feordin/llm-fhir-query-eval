@@ -1,0 +1,107 @@
+{
+  "id": "phekb-ace-inhibitor-cough-comprehensive",
+  "source": "phekb",
+  "source_id": "ace-inhibitor-ace-i-induced-cough",
+  "name": "ACE Inhibitor Cough - Comprehensive Adverse Event Query (Multi-Query)",
+  "description": "Simulates a pharmacist conducting a medication safety review for ACE inhibitor-induced cough. The prompt requires the LLM to generate multiple FHIR queries: one to find ACEi prescriptions and another to find cough diagnoses, then cross-reference the results to identify patients experiencing this known adverse drug reaction. This is the most challenging test for this phenotype because it requires understanding the clinical relationship between ACE inhibitors and cough, and constructing queries across multiple FHIR resource types.",
+  "prompt": "Find all patients who are taking ACE inhibitor medications and also have a cough diagnosis. Search both medication orders and diagnoses separately.",
+  "prompts": {
+    "naive": "Find all patients who are taking ACE inhibitor medications and also have a cough diagnosis. Search both medication orders and diagnoses separately.",
+    "expert": "I'm a clinical pharmacist conducting a medication safety review. I need to identify patients who may be experiencing ACE inhibitor-induced cough, which is a well-known adverse effect occurring in approximately 5-20% of patients taking ACE inhibitors.\n\nPlease help me by running these FHIR queries:\n\n1. Find all patients currently prescribed an ACE inhibitor medication (such as lisinopril, enalapril, ramipril, or benazepril)\n2. Find all patients who have a documented diagnosis of cough\n\nI will cross-reference these lists to identify patients on ACE inhibitors who also have a cough diagnosis, as these patients may need to be switched to an ARB (angiotensin receptor blocker) as an alternative therapy."
+  },
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "algorithm_paths": "case-and-control-identification",
+    "algorithm_path_description": "Comprehensive multi-query approach that mirrors how a pharmacist would identify ACEi-induced cough cases. Requires the LLM to generate 2 separate FHIR queries across MedicationRequest and Condition resources. Tests clinical reasoning about adverse drug reactions, FHIR query construction, and multi-resource search strategy.",
+    "code_systems": [
+      "RxNorm",
+      "SNOMED CT"
+    ],
+    "required_codes": [
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "314076",
+        "display": "lisinopril 10 MG Oral Tablet",
+        "source": "umls"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "314077",
+        "display": "lisinopril 20 MG Oral Tablet",
+        "source": "umls"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "858817",
+        "display": "enalapril maleate 10 MG Oral Tablet",
+        "source": "umls"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "198189",
+        "display": "ramipril 5 MG Oral Capsule",
+        "source": "umls"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "898687",
+        "display": "benazepril hydrochloride 10 MG Oral Tablet",
+        "source": "umls"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "49727002",
+        "display": "Cough",
+        "source": "umls"
+      }
+    ],
+    "complexity": "expert",
+    "multi_query": true,
+    "expected_queries": [
+      "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|314076,http://www.nlm.nih.gov/research/umls/rxnorm|314077,http://www.nlm.nih.gov/research/umls/rxnorm|858817,http://www.nlm.nih.gov/research/umls/rxnorm|198189,http://www.nlm.nih.gov/research/umls/rxnorm|898687",
+      "Condition?code=http://snomed.info/sct|49727002"
+    ],
+    "tags": [
+      "multi-query",
+      "comprehensive",
+      "pharmacist-perspective",
+      "adverse-event",
+      "medication-safety",
+      "ace-inhibitor",
+      "condition",
+      "medication"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "MedicationRequest",
+    "parameters": {},
+    "url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|314076,http://www.nlm.nih.gov/research/umls/rxnorm|314077,http://www.nlm.nih.gov/research/umls/rxnorm|858817,http://www.nlm.nih.gov/research/umls/rxnorm|198189,http://www.nlm.nih.gov/research/umls/rxnorm|898687",
+    "notes": "This test case expects MULTIPLE queries (see metadata.expected_queries). The expected_query.url is the minimum viable query for ACEi medications. Evaluation should cross-reference patients from both queries to identify those with both ACEi prescriptions and cough diagnoses."
+  },
+  "test_data": {
+    "resources": [
+      "synthea/output/ace-inhibitor-cough/positive/fhir/",
+      "synthea/output/ace-inhibitor-cough/control/fhir/"
+    ],
+    "expected_result_count": 14,
+    "expected_resource_ids": [],
+    "expected_patient_ids": [
+      "2c167999-289d-95fa-5c27-7d8b8d35348c",
+      "35b353dd-402b-571a-d67a-af0a104d0854",
+      "46ee9d82-b52c-856d-069b-5064ff052225",
+      "4f083ce3-f12b-bb4b-7353-e17f0cd55b0a",
+      "62f60bdb-cc5c-8305-b98b-f2b229a55eca",
+      "6fbddf55-7096-b883-7cd3-260f27953080",
+      "9661a432-4630-2cd9-142c-386845fae837",
+      "982750f4-569b-5949-196b-60699bdda3fb",
+      "aa616abe-1761-0c9a-7959-07544679dafd",
+      "ba419d35-0dfe-8af7-347c-eebf02485a56",
+      "bff9d9d5-ee3d-d852-9c67-36d8361a4a4a",
+      "c86c400e-ff88-a1e3-2e23-caa4d8311f47",
+      "e74367bd-7385-97dc-2c7f-251b4cd9fe29",
+      "eb5910f1-26e6-bc6f-b300-716eae678d6f"
+    ]
+  },
+  "created_at": "2026-03-15T12:00:00.000000Z",
+  "updated_at": "2026-04-27T00:00:00.000000Z"
+}

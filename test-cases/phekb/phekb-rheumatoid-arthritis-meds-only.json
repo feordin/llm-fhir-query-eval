@@ -1,0 +1,92 @@
+{
+  "id": "phekb-rheumatoid-arthritis-meds-only",
+  "source": "phekb",
+  "source_id": "rheumatoid-arthritis",
+  "name": "Rheumatoid Arthritis - DMARD-Only Patients (No Diagnosis)",
+  "description": "Tricky test case: finds patients on DMARDs/biologics who have NO formal rheumatoid arthritis diagnosis on their problem list (Path C). DMARDs are commonly prescribed for non-RA indications: methotrexate (psoriasis, ectopic pregnancy, malignancy), hydroxychloroquine (lupus, malaria, COVID-era empirical use), sulfasalazine (inflammatory bowel disease, ankylosing spondylitis), TNF inhibitors (Crohn's, psoriasis, ankylosing spondylitis). This makes Path C particularly important to evaluate — an LLM that queries only Condition for RA will overcount RA prevalence and miss the cross-indication noise.",
+  "prompt": "I want to find patients in our system who are taking DMARDs such as methotrexate, hydroxychloroquine, or anti-TNF biologics but don't have a formal rheumatoid arthritis diagnosis on their problem list. These medications are commonly prescribed for many other indications including lupus, psoriasis, IBD, and ankylosing spondylitis.",
+  "prompts": {
+    "naive": "Find patients on DMARDs without a rheumatoid arthritis diagnosis.",
+    "expert": "I need to identify the documentation gap that is especially common with DMARDs because of cross-indication prescribing: patients on methotrexate, hydroxychloroquine, sulfasalazine, adalimumab, or infliximab who lack a formal RA Condition resource. Two-step approach: first find all patients with MedicationRequest for DMARD ingredients (RxNorm 6851, 5521, 9524, 327361, 191831), then exclude those with a Condition for RA subtypes (69896004, 11055151000119108, 201766009, 1073811000119102, 143441000119108)."
+  },
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "algorithm_path": "meds-only-path",
+    "algorithm_path_description": "Path C 'tricky' patients: have DMARD/biologic meds but NO RA Condition resource. The Synthea module weights this path moderately (~30%) to reflect cross-indication DMARD prescribing.",
+    "code_systems": [
+      "RxNorm",
+      "SNOMED CT"
+    ],
+    "required_codes": [
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "6851",
+        "display": "methotrexate",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "5521",
+        "display": "hydroxychloroquine",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "9524",
+        "display": "sulfasalazine",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "327361",
+        "display": "adalimumab",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "191831",
+        "display": "infliximab",
+        "source": "UMLS verified"
+      }
+    ],
+    "complexity": "hard",
+    "tags": [
+      "medication",
+      "rheumatology",
+      "rheumatoid-arthritis",
+      "tricky",
+      "meds-only",
+      "cross-resource",
+      "cross-indication-prescribing"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "MedicationRequest",
+    "parameters": {
+      "code": "http://www.nlm.nih.gov/research/umls/rxnorm|6851,http://www.nlm.nih.gov/research/umls/rxnorm|5521,http://www.nlm.nih.gov/research/umls/rxnorm|9524,http://www.nlm.nih.gov/research/umls/rxnorm|327361,http://www.nlm.nih.gov/research/umls/rxnorm|191831"
+    },
+    "url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6851,http://www.nlm.nih.gov/research/umls/rxnorm|5521,http://www.nlm.nih.gov/research/umls/rxnorm|9524,http://www.nlm.nih.gov/research/umls/rxnorm|327361,http://www.nlm.nih.gov/research/umls/rxnorm|191831"
+  },
+  "test_data": {
+    "resources": [
+      "synthea/output/rheumatoid-arthritis/positive/fhir/",
+      "synthea/output/rheumatoid-arthritis/control/fhir/"
+    ],
+    "expected_result_count": 10,
+    "expected_resource_ids": [],
+    "expected_patient_ids": [
+      "101ab214-653c-62d8-5c62-ece990be8837",
+      "1425765a-7ecf-c957-d4cc-3ed75a98cbad",
+      "2017daab-c1bc-808d-bed8-3b352a2c5cdc",
+      "433922c6-e082-42d1-6d0a-ee37b9b58c09",
+      "5a0bbc65-9779-6eba-456c-06f74fb015b8",
+      "5b897894-d747-42f9-1ee4-629a282a39d5",
+      "881b42b8-a663-b348-72df-0dfbc68eca98",
+      "c5d7e9c3-5c55-79db-23e6-92eb2a7820fe",
+      "d5ca1c3e-abb0-e9b3-a5b9-7a58b46fd5f6",
+      "e397d112-37ab-7240-d142-81a8a86b9ad2"
+    ]
+  },
+  "created_at": "2026-04-27T00:00:00.000000Z",
+  "updated_at": "2026-04-27T00:00:00.000000Z"
+}

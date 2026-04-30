@@ -1,0 +1,201 @@
+{
+  "name": "PheKB Crohn's Disease",
+  "remarks": [
+    "Custom Synthea module for Crohn's disease.",
+    "First IBD phenotype in the suite.",
+    "",
+    "Generates FOUR patient paths:",
+    "  Path A (50%): Crohn's dx + IBD med + elevated calprotectin (active disease)",
+    "  Path B (15%): Crohn's dx + IBD med, no active inflammation marker",
+    "  Path C (20%): IBD med only, NO Crohn's dx (cross-indication — RA/psoriasis/lupus/transplant)",
+    "  Path D (15%): Elevated calprotectin only, NO dx and NO med (undiagnosed presentation)",
+    "",
+    "Diagnosis SNOMED variation (Paths A + B):",
+    "  30% Crohn's disease (34000006) — parent",
+    "  20% Crohn's of large bowel (7620006)",
+    "  20% Crohn's of terminal ileum (196977009) — most common location",
+    "  15% Crohn disease of colon and rectum (1197732001)",
+    "  15% Crohn disease of jejunum and ileum (1197733006)",
+    "",
+    "Medication variation (Paths A + B + C — 5 ingredients):",
+    "  25% Mesalamine (52582) — 5-ASA",
+    "  20% Infliximab (191831) — anti-TNF biologic",
+    "  20% Adalimumab (327361) — anti-TNF biologic",
+    "  15% Ustekinumab (847083) — IL-12/23 inhibitor",
+    "  20% Azathioprine (1256) — immunomodulator"
+  ],
+  "states": {
+    "Initial": { "type": "Initial", "direct_transition": "Age_Guard" },
+    "Age_Guard": { "type": "Guard", "allow": { "condition_type": "Age", "operator": ">=", "quantity": 18, "unit": "years" }, "direct_transition": "Set_Crohn_Flag" },
+    "Set_Crohn_Flag": { "type": "SetAttribute", "attribute": "crohn_positive", "value": true, "direct_transition": "Choose_Patient_Path" },
+    "Choose_Patient_Path": {
+      "type": "Simple",
+      "distributed_transition": [
+        { "transition": "Set_Path_A", "distribution": 0.50 },
+        { "transition": "Set_Path_B", "distribution": 0.15 },
+        { "transition": "Set_Path_C", "distribution": 0.20 },
+        { "transition": "Set_Path_D", "distribution": 0.15 }
+      ]
+    },
+    "Set_Path_A": { "type": "SetAttribute", "attribute": "crohn_has_dx", "value": true, "direct_transition": "Set_Path_A_Lab" },
+    "Set_Path_A_Lab": { "type": "SetAttribute", "attribute": "crohn_has_high_calprotectin", "value": true, "direct_transition": "Set_Path_A_Meds" },
+    "Set_Path_A_Meds": { "type": "SetAttribute", "attribute": "crohn_has_meds", "value": true, "direct_transition": "Choose_Subtype" },
+
+    "Set_Path_B": { "type": "SetAttribute", "attribute": "crohn_has_dx", "value": true, "direct_transition": "Set_Path_B_Lab" },
+    "Set_Path_B_Lab": { "type": "SetAttribute", "attribute": "crohn_has_high_calprotectin", "value": false, "direct_transition": "Set_Path_B_Meds" },
+    "Set_Path_B_Meds": { "type": "SetAttribute", "attribute": "crohn_has_meds", "value": true, "direct_transition": "Choose_Subtype" },
+
+    "Set_Path_C": { "type": "SetAttribute", "remarks": ["TRICKY: IBD meds without Crohn's dx (cross-indication)"], "attribute": "crohn_has_dx", "value": false, "direct_transition": "Set_Path_C_Lab" },
+    "Set_Path_C_Lab": { "type": "SetAttribute", "attribute": "crohn_has_high_calprotectin", "value": false, "direct_transition": "Set_Path_C_Meds" },
+    "Set_Path_C_Meds": { "type": "SetAttribute", "attribute": "crohn_has_meds", "value": true, "direct_transition": "Choose_Subtype" },
+
+    "Set_Path_D": { "type": "SetAttribute", "remarks": ["TRICKY: elevated calprotectin without dx or med"], "attribute": "crohn_has_dx", "value": false, "direct_transition": "Set_Path_D_Lab" },
+    "Set_Path_D_Lab": { "type": "SetAttribute", "attribute": "crohn_has_high_calprotectin", "value": true, "direct_transition": "Set_Path_D_Meds" },
+    "Set_Path_D_Meds": { "type": "SetAttribute", "attribute": "crohn_has_meds", "value": false, "direct_transition": "Choose_Subtype" },
+
+    "Choose_Subtype": {
+      "type": "Simple",
+      "distributed_transition": [
+        { "transition": "Set_Subtype_NOS", "distribution": 0.30 },
+        { "transition": "Set_Subtype_LargeBowel", "distribution": 0.20 },
+        { "transition": "Set_Subtype_TerminalIleum", "distribution": 0.20 },
+        { "transition": "Set_Subtype_ColonRectum", "distribution": 0.15 },
+        { "transition": "Set_Subtype_JejunumIleum", "distribution": 0.15 }
+      ]
+    },
+    "Set_Subtype_NOS": { "type": "SetAttribute", "attribute": "crohn_subtype", "value": "nos", "direct_transition": "Choose_Med" },
+    "Set_Subtype_LargeBowel": { "type": "SetAttribute", "attribute": "crohn_subtype", "value": "largebowel", "direct_transition": "Choose_Med" },
+    "Set_Subtype_TerminalIleum": { "type": "SetAttribute", "attribute": "crohn_subtype", "value": "terminalileum", "direct_transition": "Choose_Med" },
+    "Set_Subtype_ColonRectum": { "type": "SetAttribute", "attribute": "crohn_subtype", "value": "colonrectum", "direct_transition": "Choose_Med" },
+    "Set_Subtype_JejunumIleum": { "type": "SetAttribute", "attribute": "crohn_subtype", "value": "jejunumileum", "direct_transition": "Choose_Med" },
+
+    "Choose_Med": {
+      "type": "Simple",
+      "distributed_transition": [
+        { "transition": "Set_Med_Mesalamine", "distribution": 0.25 },
+        { "transition": "Set_Med_Infliximab", "distribution": 0.20 },
+        { "transition": "Set_Med_Adalimumab", "distribution": 0.20 },
+        { "transition": "Set_Med_Ustekinumab", "distribution": 0.15 },
+        { "transition": "Set_Med_Azathioprine", "distribution": 0.20 }
+      ]
+    },
+    "Set_Med_Mesalamine": { "type": "SetAttribute", "attribute": "crohn_med", "value": "mesalamine", "direct_transition": "Set_Needs_First_Visit" },
+    "Set_Med_Infliximab": { "type": "SetAttribute", "attribute": "crohn_med", "value": "infliximab", "direct_transition": "Set_Needs_First_Visit" },
+    "Set_Med_Adalimumab": { "type": "SetAttribute", "attribute": "crohn_med", "value": "adalimumab", "direct_transition": "Set_Needs_First_Visit" },
+    "Set_Med_Ustekinumab": { "type": "SetAttribute", "attribute": "crohn_med", "value": "ustekinumab", "direct_transition": "Set_Needs_First_Visit" },
+    "Set_Med_Azathioprine": { "type": "SetAttribute", "attribute": "crohn_med", "value": "azathioprine", "direct_transition": "Set_Needs_First_Visit" },
+
+    "Set_Needs_First_Visit": { "type": "SetAttribute", "attribute": "crohn_needs_first_visit", "value": true, "direct_transition": "Wellness_Encounter" },
+    "Wellness_Encounter": { "type": "Encounter", "wellness": true, "direct_transition": "Check_First_Visit" },
+    "Check_First_Visit": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "crohn_needs_first_visit", "operator": "==", "value": true }, "transition": "Check_Has_Diagnosis" },
+        { "transition": "End_Wellness_Encounter" }
+      ]
+    },
+    "Check_Has_Diagnosis": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "crohn_has_dx", "operator": "==", "value": true }, "transition": "Route_By_Subtype" },
+        { "transition": "Check_Lab_NoDx" }
+      ]
+    },
+    "Route_By_Subtype": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "crohn_subtype", "operator": "==", "value": "nos" }, "transition": "Diagnose_NOS" },
+        { "condition": { "condition_type": "Attribute", "attribute": "crohn_subtype", "operator": "==", "value": "largebowel" }, "transition": "Diagnose_LargeBowel" },
+        { "condition": { "condition_type": "Attribute", "attribute": "crohn_subtype", "operator": "==", "value": "terminalileum" }, "transition": "Diagnose_TerminalIleum" },
+        { "condition": { "condition_type": "Attribute", "attribute": "crohn_subtype", "operator": "==", "value": "colonrectum" }, "transition": "Diagnose_ColonRectum" },
+        { "transition": "Diagnose_JejunumIleum" }
+      ]
+    },
+    "Diagnose_NOS": { "type": "ConditionOnset", "assign_to_attribute": "crohn_condition", "codes": [{ "system": "SNOMED-CT", "code": "34000006", "display": "Crohn's disease" }], "direct_transition": "Check_Lab_WithDx" },
+    "Diagnose_LargeBowel": { "type": "ConditionOnset", "assign_to_attribute": "crohn_condition", "codes": [{ "system": "SNOMED-CT", "code": "7620006", "display": "Crohn's disease of large bowel" }], "direct_transition": "Check_Lab_WithDx" },
+    "Diagnose_TerminalIleum": { "type": "ConditionOnset", "assign_to_attribute": "crohn_condition", "codes": [{ "system": "SNOMED-CT", "code": "196977009", "display": "Crohn's disease of terminal ileum" }], "direct_transition": "Check_Lab_WithDx" },
+    "Diagnose_ColonRectum": { "type": "ConditionOnset", "assign_to_attribute": "crohn_condition", "codes": [{ "system": "SNOMED-CT", "code": "1197732001", "display": "Crohn disease of colon and rectum" }], "direct_transition": "Check_Lab_WithDx" },
+    "Diagnose_JejunumIleum": { "type": "ConditionOnset", "assign_to_attribute": "crohn_condition", "codes": [{ "system": "SNOMED-CT", "code": "1197733006", "display": "Crohn disease of jejunum and ileum" }], "direct_transition": "Check_Lab_WithDx" },
+
+    "Check_Lab_WithDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "crohn_has_high_calprotectin", "operator": "==", "value": true }, "transition": "Record_High_Calprotectin_WithDx" },
+        { "transition": "Check_Meds_WithDx" }
+      ]
+    },
+    "Record_High_Calprotectin_WithDx": {
+      "type": "Observation",
+      "category": "laboratory",
+      "unit": "ug/g",
+      "codes": [{ "system": "LOINC", "code": "38445-3", "display": "Calprotectin [Mass/mass] in Stool" }],
+      "range": { "low": 500, "high": 1500 },
+      "direct_transition": "Check_Meds_WithDx"
+    },
+    "Check_Meds_WithDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "crohn_has_meds", "operator": "==", "value": true }, "transition": "Route_Med_WithDx" },
+        { "transition": "Clear_First_Visit_Flag" }
+      ]
+    },
+    "Route_Med_WithDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "crohn_med", "operator": "==", "value": "mesalamine" }, "transition": "Prescribe_Mesalamine_WithDx" },
+        { "condition": { "condition_type": "Attribute", "attribute": "crohn_med", "operator": "==", "value": "infliximab" }, "transition": "Prescribe_Infliximab_WithDx" },
+        { "condition": { "condition_type": "Attribute", "attribute": "crohn_med", "operator": "==", "value": "adalimumab" }, "transition": "Prescribe_Adalimumab_WithDx" },
+        { "condition": { "condition_type": "Attribute", "attribute": "crohn_med", "operator": "==", "value": "ustekinumab" }, "transition": "Prescribe_Ustekinumab_WithDx" },
+        { "transition": "Prescribe_Azathioprine_WithDx" }
+      ]
+    },
+    "Prescribe_Mesalamine_WithDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "52582", "display": "mesalamine" }], "reason": "crohn_condition", "direct_transition": "Clear_First_Visit_Flag" },
+    "Prescribe_Infliximab_WithDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "191831", "display": "infliximab" }], "reason": "crohn_condition", "direct_transition": "Clear_First_Visit_Flag" },
+    "Prescribe_Adalimumab_WithDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "327361", "display": "adalimumab" }], "reason": "crohn_condition", "direct_transition": "Clear_First_Visit_Flag" },
+    "Prescribe_Ustekinumab_WithDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "847083", "display": "ustekinumab" }], "reason": "crohn_condition", "direct_transition": "Clear_First_Visit_Flag" },
+    "Prescribe_Azathioprine_WithDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "1256", "display": "azathioprine" }], "reason": "crohn_condition", "direct_transition": "Clear_First_Visit_Flag" },
+
+    "Check_Lab_NoDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "crohn_has_high_calprotectin", "operator": "==", "value": true }, "transition": "Record_High_Calprotectin_NoDx" },
+        { "transition": "Check_Meds_NoDx" }
+      ]
+    },
+    "Record_High_Calprotectin_NoDx": {
+      "type": "Observation",
+      "category": "laboratory",
+      "unit": "ug/g",
+      "codes": [{ "system": "LOINC", "code": "38445-3", "display": "Calprotectin [Mass/mass] in Stool" }],
+      "range": { "low": 300, "high": 800 },
+      "direct_transition": "Check_Meds_NoDx"
+    },
+    "Check_Meds_NoDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "crohn_has_meds", "operator": "==", "value": true }, "transition": "Route_Med_NoDx" },
+        { "transition": "Clear_First_Visit_Flag" }
+      ]
+    },
+    "Route_Med_NoDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "crohn_med", "operator": "==", "value": "mesalamine" }, "transition": "Prescribe_Mesalamine_NoDx" },
+        { "condition": { "condition_type": "Attribute", "attribute": "crohn_med", "operator": "==", "value": "infliximab" }, "transition": "Prescribe_Infliximab_NoDx" },
+        { "condition": { "condition_type": "Attribute", "attribute": "crohn_med", "operator": "==", "value": "adalimumab" }, "transition": "Prescribe_Adalimumab_NoDx" },
+        { "condition": { "condition_type": "Attribute", "attribute": "crohn_med", "operator": "==", "value": "ustekinumab" }, "transition": "Prescribe_Ustekinumab_NoDx" },
+        { "transition": "Prescribe_Azathioprine_NoDx" }
+      ]
+    },
+    "Prescribe_Mesalamine_NoDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "52582", "display": "mesalamine" }], "direct_transition": "Clear_First_Visit_Flag" },
+    "Prescribe_Infliximab_NoDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "191831", "display": "infliximab" }], "direct_transition": "Clear_First_Visit_Flag" },
+    "Prescribe_Adalimumab_NoDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "327361", "display": "adalimumab" }], "direct_transition": "Clear_First_Visit_Flag" },
+    "Prescribe_Ustekinumab_NoDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "847083", "display": "ustekinumab" }], "direct_transition": "Clear_First_Visit_Flag" },
+    "Prescribe_Azathioprine_NoDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "1256", "display": "azathioprine" }], "direct_transition": "Clear_First_Visit_Flag" },
+
+    "Clear_First_Visit_Flag": { "type": "SetAttribute", "attribute": "crohn_needs_first_visit", "value": false, "direct_transition": "End_Wellness_Encounter" },
+    "End_Wellness_Encounter": { "type": "EncounterEnd", "direct_transition": "Followup_Delay" },
+    "Followup_Delay": { "type": "Delay", "range": { "low": 6, "high": 12, "unit": "months" }, "direct_transition": "Wellness_Encounter" }
+  },
+  "gmf_version": 2
+}

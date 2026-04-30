@@ -1,0 +1,87 @@
+{
+  "id": "phekb-heart-failure-meds-only",
+  "source": "phekb",
+  "source_id": "heart-failure",
+  "name": "Heart Failure - Medication-Only Patients (No Diagnosis)",
+  "description": "Tricky test case: finds patients on HF guideline-directed medical therapy who have NO formal heart failure diagnosis on their problem list (Path C). Real-world cardiology often has many GDMT-treated patients without an explicit HF diagnosis — meds may have been started for hypertension (carvedilol, ACE-I), arrhythmia (beta blockers), edema (furosemide), or empirically. An LLM that queries only Condition resources for HF will miss this entire population.",
+  "prompt": "I want to find patients in our system who are taking heart failure medications such as sacubitril/valsartan, carvedilol, or empagliflozin but don't have a formal heart failure diagnosis on their problem list. These are often patients managed empirically or whose HF was never coded.",
+  "prompts": {
+    "naive": "Find patients on heart failure medications without a heart failure diagnosis.",
+    "expert": "I need to identify a documentation gap that is common with HF GDMT: patients on ARNi, MRA, SGLT2 inhibitors, or HF-dose carvedilol who lack a formal HF Condition resource. Two-step approach: first find all patients with MedicationRequest for HF medications (RxNorm 4603 furosemide, 20352 carvedilol, 9997 spironolactone, 1656339 sacubitril/valsartan, 1545653 empagliflozin), then exclude those with a Condition for HF subtypes (84114007, 42343007, 88805009, 703272007, 446221000)."
+  },
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "algorithm_path": "meds-only-path",
+    "algorithm_path_description": "Path C 'tricky' patients: have HF medications but NO HF Condition resource. The Synthea module weights this path moderately (~30%) because some HF patients (especially those started on diuretics for edema or carvedilol for hypertension) end up on de facto GDMT without a coded HF diagnosis.",
+    "code_systems": [
+      "RxNorm",
+      "SNOMED CT"
+    ],
+    "required_codes": [
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "4603",
+        "display": "furosemide",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "20352",
+        "display": "carvedilol",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "9997",
+        "display": "spironolactone",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "1656339",
+        "display": "sacubitril / valsartan",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "1545653",
+        "display": "empagliflozin",
+        "source": "UMLS verified"
+      }
+    ],
+    "complexity": "hard",
+    "tags": [
+      "medication",
+      "cardiology",
+      "heart-failure",
+      "tricky",
+      "meds-only",
+      "cross-resource",
+      "gdmt-prescribing-gap"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "MedicationRequest",
+    "parameters": {
+      "code": "http://www.nlm.nih.gov/research/umls/rxnorm|4603,http://www.nlm.nih.gov/research/umls/rxnorm|20352,http://www.nlm.nih.gov/research/umls/rxnorm|9997,http://www.nlm.nih.gov/research/umls/rxnorm|1656339,http://www.nlm.nih.gov/research/umls/rxnorm|1545653"
+    },
+    "url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|4603,http://www.nlm.nih.gov/research/umls/rxnorm|20352,http://www.nlm.nih.gov/research/umls/rxnorm|9997,http://www.nlm.nih.gov/research/umls/rxnorm|1656339,http://www.nlm.nih.gov/research/umls/rxnorm|1545653"
+  },
+  "test_data": {
+    "resources": [
+      "synthea/output/heart-failure/positive/fhir/",
+      "synthea/output/heart-failure/control/fhir/"
+    ],
+    "expected_result_count": 5,
+    "expected_resource_ids": [],
+    "expected_patient_ids": [
+      "322ab5c6-5846-ac1e-38cc-48b8cb441e20",
+      "35b353dd-402b-571a-d67a-af0a104d0854",
+      "5e7ebf2c-22ec-a89b-53ab-38edddd81be9",
+      "62f60bdb-cc5c-8305-b98b-f2b229a55eca",
+      "d57841fa-c9e2-a3d1-0e78-09bdbe4eed66"
+    ]
+  },
+  "created_at": "2026-04-27T00:00:00.000000Z",
+  "updated_at": "2026-04-27T00:00:00.000000Z"
+}

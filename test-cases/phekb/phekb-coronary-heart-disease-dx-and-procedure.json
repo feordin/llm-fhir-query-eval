@@ -1,0 +1,112 @@
+{
+  "id": "phekb-coronary-heart-disease-dx-and-procedure",
+  "source": "phekb",
+  "source_id": "coronary-heart-disease",
+  "name": "CHD - Diagnosis + Procedure via _has (Interventional Subset)",
+  "description": "**Cross-resource _has test combining Condition + Procedure.** Find CHD patients who have BOTH a CHD diagnosis AND have undergone a revascularization procedure (CABG or PCI). This is the interventional-management subset, distinct from medical-management-only patients. Tests whether LLM uses FHIR `_has` to combine diagnosis evidence with procedural evidence — a different cross-resource pairing than the more common Condition + MedicationRequest.",
+  "prompt": "Find coronary heart disease patients who have BOTH a formal CHD diagnosis AND have undergone a revascularization procedure (CABG, PCI, coronary stent placement, or balloon angioplasty). The intent is the interventional-management cohort — patients whose CHD has been treated procedurally, not just medically.",
+  "prompts": {
+    "naive": "Find CHD patients with procedures.",
+    "broad": "Find patients who have BOTH a coronary heart disease diagnosis AND have undergone a coronary revascularization procedure. Use FHIR `_has` to combine evidence from Condition and Procedure resources at the patient level.",
+    "expert": "I need patients matching TWO criteria: a Condition with a CHD SNOMED code (53741008, 414545008, 233817007, 371803003, 371804009) AND a Procedure with a revascularization SNOMED code (232717009 CABG, 415070008 PCI, 36969009 stent, 68466008 balloon). Use `Patient?_has:Condition:patient:code=...&_has:Procedure:patient:code=...`. Note Procedure resources are typically scarcer than Condition or MedicationRequest in real EHRs — the diagnosis filter is necessary because some procedure codes also appear in screening contexts."
+  },
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "algorithm_path": "cross-resource-_has-procedure",
+    "algorithm_path_description": "Cross-resource intersection via FHIR `_has` combining Condition + Procedure. First test pairing these two specific resource types via `_has`.",
+    "code_systems": [
+      "SNOMED CT"
+    ],
+    "required_codes": [
+      {
+        "system": "http://snomed.info/sct",
+        "code": "53741008",
+        "display": "Coronary arteriosclerosis",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "414545008",
+        "display": "Ischemic heart disease",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "233817007",
+        "display": "Triple vessel disease of the heart",
+        "source": "VSAC"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "371803003",
+        "display": "Multi vessel coronary artery disease",
+        "source": "VSAC"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "371804009",
+        "display": "Left main coronary artery disease",
+        "source": "VSAC"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "232717009",
+        "display": "Coronary artery bypass grafting",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "415070008",
+        "display": "Percutaneous transluminal coronary intervention",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "36969009",
+        "display": "Placement of stent in coronary artery",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "68466008",
+        "display": "Coronary balloon angioplasty",
+        "source": "UMLS verified"
+      }
+    ],
+    "complexity": "expert",
+    "tags": [
+      "_has",
+      "cross-resource",
+      "intersection",
+      "cardiology",
+      "coronary-heart-disease",
+      "procedure",
+      "condition-plus-procedure"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "Patient",
+    "parameters": {
+      "_has:Condition:patient:code": "http://snomed.info/sct|53741008,http://snomed.info/sct|414545008,http://snomed.info/sct|233817007,http://snomed.info/sct|371803003,http://snomed.info/sct|371804009",
+      "_has:Procedure:patient:code": "http://snomed.info/sct|232717009,http://snomed.info/sct|415070008,http://snomed.info/sct|36969009,http://snomed.info/sct|68466008"
+    },
+    "url": "Patient?_has:Condition:patient:code=http://snomed.info/sct|53741008,http://snomed.info/sct|414545008,http://snomed.info/sct|233817007,http://snomed.info/sct|371803003,http://snomed.info/sct|371804009&_has:Procedure:patient:code=http://snomed.info/sct|232717009,http://snomed.info/sct|415070008,http://snomed.info/sct|36969009,http://snomed.info/sct|68466008"
+  },
+  "test_data": {
+    "resources": [
+      "synthea/output/coronary-heart-disease/positive/fhir/",
+      "synthea/output/coronary-heart-disease/control/fhir/"
+    ],
+    "expected_result_count": 5,
+    "expected_resource_ids": [],
+    "expected_patient_ids": [
+      "3e400a4e-a543-5391-d4fc-be2a218fe981",
+      "52b9f450-88b5-38d2-06ab-3557df1497d9",
+      "88b55b8d-1726-074c-8e62-16266caf77da",
+      "b84db720-fc92-d33d-8745-279482f6d8dc",
+      "c49744c0-d4a2-602b-0818-692f2e1aff53"
+    ]
+  },
+  "created_at": "2026-04-27T00:00:00.000000Z",
+  "updated_at": "2026-04-27T00:00:00.000000Z"
+}

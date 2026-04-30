@@ -1,0 +1,118 @@
+{
+  "id": "phekb-sleep-apnea-dx",
+  "source": "phekb",
+  "source_id": "sleep-apnea",
+  "name": "Sleep Apnea - Diagnosis Code Query (OSA + CSA)",
+  "description": "Tests ability to find sleep apnea patients via diagnosis codes. Sleep apnea is documented under multiple SNOMED codes by mechanism (obstructive vs central) and severity (mild/moderate/severe OSA). Synthea distributes patients across the parent sleep apnea code, OSA syndrome, central sleep apnea, OSA of adult, mixed sleep apnea, and severity-specific OSA codes.",
+  "prompt": "Find all patients diagnosed with sleep apnea, including obstructive sleep apnea, central sleep apnea, and mixed sleep apnea — across all severity levels.",
+  "prompts": {
+    "naive": "Find all patients with sleep apnea.",
+    "broad": "Find all patients diagnosed with any form of sleep apnea — obstructive sleep apnea (OSA), central sleep apnea (CSA), mixed sleep apnea, and OSA in adults across all severity levels (mild, moderate, severe).",
+    "expert": "I need to identify all sleep apnea patients. Sleep apnea is documented under multiple SNOMED codes from the HL7 Sleep Apnea Disorders value set (OID 2.16.840.1.113762.1.4.1222.102): Sleep apnea (73430006) is the parent concept, with mechanism-specific Obstructive sleep apnea syndrome (78275009), Central sleep apnea syndrome (27405005), Obstructive sleep apnea of adult (1101000119103), and Mixed sleep apnea (230493001). Search Condition resources for all five codes."
+  },
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "algorithm_path": "diagnosis-path",
+    "algorithm_path_description": "Patients with sleep apnea diagnosis codes. Tests OSA-vs-CSA and severity code variation.",
+    "code_systems": [
+      "SNOMED CT"
+    ],
+    "required_codes": [
+      {
+        "system": "http://snomed.info/sct",
+        "code": "73430006",
+        "display": "Sleep apnea",
+        "source": "UMLS verified, parent"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "78275009",
+        "display": "Obstructive sleep apnea syndrome",
+        "source": "VSAC"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "27405005",
+        "display": "Central sleep apnea syndrome",
+        "source": "VSAC"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "1101000119103",
+        "display": "Obstructive sleep apnea of adult",
+        "source": "VSAC"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "230493001",
+        "display": "Mixed sleep apnea",
+        "source": "VSAC"
+      }
+    ],
+    "complexity": "medium",
+    "tags": [
+      "condition",
+      "sleep-medicine",
+      "sleep-apnea",
+      "osa",
+      "csa",
+      "diagnosis-code",
+      "multi-subtype"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "Condition",
+    "parameters": {
+      "code": "http://snomed.info/sct|73430006,http://snomed.info/sct|78275009,http://snomed.info/sct|27405005,http://snomed.info/sct|1101000119103,http://snomed.info/sct|230493001"
+    },
+    "url": "Condition?code=http://snomed.info/sct|73430006,http://snomed.info/sct|78275009,http://snomed.info/sct|27405005,http://snomed.info/sct|1101000119103,http://snomed.info/sct|230493001"
+  },
+  "test_data": {
+    "resources": [
+      "synthea/output/sleep-apnea/positive/fhir/",
+      "synthea/output/sleep-apnea/control/fhir/"
+    ],
+    "expected_result_count": 36,
+    "expected_resource_ids": [],
+    "expected_patient_ids": [
+      "0753c8e0-3b1d-ab70-ca30-278cfbf7d212",
+      "1428149c-62dd-4e3f-3f16-728e4acbaa16",
+      "19e291af-b9c9-1291-6574-a926edb0d653",
+      "1f991266-fddf-1eba-a99f-53319a34f80c",
+      "22111af0-300d-653c-482c-ca9b5463ef76",
+      "2a4c11eb-1420-c1a1-394a-802379f78fec",
+      "4bd1fa23-6692-3aed-bf64-f19c261c2953",
+      "4be711e9-ef9e-75e7-e230-2f4a6ea08ee1",
+      "56bf9a95-8d70-775b-b380-890dfb4a54a6",
+      "5c93d0ee-a38e-00d4-84ff-7932e199d5bf",
+      "66c79db7-9b84-112a-b148-9c149fa5bb6b",
+      "67c0f1b9-e752-7594-f236-31a3d78c460f",
+      "6816c561-cc27-cee6-d723-84a9c13f7a1e",
+      "83e0efe7-5381-fff4-9b2c-60f029c85209",
+      "84300e0d-5cfd-201e-056a-ebfdee7f71af",
+      "87f60347-17f0-904d-52f6-25c20b8fff4f",
+      "8b8e7e68-be78-6431-caa4-3933ef48545a",
+      "96af1c87-bbca-55f2-a2e2-acffcf9a6b04",
+      "a09015dc-f8bb-d3d1-1aae-069603eb9d5c",
+      "aa30a4ea-9771-f16c-f27a-f59d676d83dd",
+      "af4c67e5-2a76-ab0c-0788-48bf6065df82",
+      "b0392433-84d3-b77e-fe28-ef53c6b42608",
+      "bf93560c-01d2-4eeb-a325-3566a4505b1d",
+      "c1e11c6d-06d0-3d2a-247f-1ec7a01ddf3a",
+      "c22a1969-21a3-156e-0f4c-8f99f9972e4a",
+      "c62c174f-0c27-fb63-800f-2eeab2b8556e",
+      "d0f184c6-64ec-ae0b-e0fa-a25919748513",
+      "d557f486-f256-915a-a8d3-f797cda4b678",
+      "d5f1edfc-a6da-2f76-7a2c-c7148aa9f5ad",
+      "e1bcc79b-801b-f6e9-1f25-2ea07d60f178",
+      "e3478ba1-8a84-6e29-ce91-c1ec15f54f7c",
+      "e8adc8e7-5a11-f390-434e-94d3e390c789",
+      "e9d0c2d3-7da8-0472-8c8d-90fd1ef90093",
+      "f6722533-2612-11c7-231b-dd58622fb91a",
+      "f68ddc78-30d8-9f8a-d219-51aec85df781",
+      "fe5a273e-59ce-0a93-5675-ff6721442fb0"
+    ]
+  },
+  "created_at": "2026-04-27T00:00:00.000000Z",
+  "updated_at": "2026-04-27T00:00:00.000000Z"
+}

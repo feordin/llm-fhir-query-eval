@@ -1,0 +1,114 @@
+{
+  "id": "phekb-multiple-sclerosis-meds",
+  "source": "phekb",
+  "source_id": "multiple-sclerosis",
+  "name": "Multiple Sclerosis - Disease-Modifying Therapy Query",
+  "description": "Tests ability to find multiple sclerosis patients via disease-modifying therapy (DMT) prescriptions. The PheKB MS algorithm uses MS-specific medications (Avonex, Betaseron, Copaxone, Tysabri) as part of the Type 2 case definition. Modern MS DMTs span injectables (interferons, glatiramer), oral DMTs (dimethyl fumarate, fingolimod), and high-efficacy infusions (natalizumab, alemtuzumab, ocrelizumab). Synthea distributes patients across these classes. Unlike RA biologics, MS DMTs are highly specific to MS — Path C should be near-zero for ocrelizumab/dimethyl fumarate/fingolimod, with small overlap only for alemtuzumab (also used in CLL).",
+  "prompt": "Find patients prescribed disease-modifying therapy for multiple sclerosis, including infusion biologics like natalizumab, alemtuzumab, or ocrelizumab, oral DMTs like dimethyl fumarate, or fingolimod.",
+  "prompts": {
+    "naive": "Find patients on multiple sclerosis medications.",
+    "broad": "Find patients prescribed any disease-modifying therapy (DMT) for multiple sclerosis. Include high-efficacy infusion biologics (natalizumab/Tysabri, alemtuzumab/Lemtrada, ocrelizumab/Ocrevus) and oral DMTs (dimethyl fumarate/Tecfidera, fingolimod/Gilenya).",
+    "expert": "I need MedicationRequest resources for any MS DMT. Use these RxNorm codes: 354770 (natalizumab ingredient), 117055 (alemtuzumab ingredient), 1876366 (ocrelizumab ingredient), 1373478 (dimethyl fumarate ingredient), 1012896 (Gilenya — fingolimod brand). Combine in a single comma-separated code search. MS DMTs are highly specific to MS, so very few non-MS patients will appear in these results — alemtuzumab is the only one with a meaningful non-MS indication (chronic lymphocytic leukemia)."
+  },
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "algorithm_path": "medication-path",
+    "algorithm_path_description": "Patients with MS DMT orders (Paths A and C). The Path C population is intentionally small (~10%) because MS DMTs are highly specific. This makes MS the inverse of GERD — high specificity on the medication side, so the meds query is almost as accurate as the dx query.",
+    "code_systems": [
+      "RxNorm"
+    ],
+    "required_codes": [
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "354770",
+        "display": "natalizumab",
+        "source": "UMLS verified, RxNorm ingredient"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "117055",
+        "display": "alemtuzumab",
+        "source": "UMLS verified, RxNorm ingredient"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "1876366",
+        "display": "ocrelizumab",
+        "source": "UMLS verified, RxNorm ingredient"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "1373478",
+        "display": "dimethyl fumarate",
+        "source": "UMLS verified, RxNorm ingredient"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "1012896",
+        "display": "Gilenya",
+        "source": "UMLS verified, RxNorm fingolimod brand"
+      }
+    ],
+    "complexity": "medium",
+    "tags": [
+      "medication",
+      "neurology",
+      "multiple-sclerosis",
+      "dmt",
+      "biologic",
+      "multi-class",
+      "code-variation",
+      "high-specificity"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "MedicationRequest",
+    "parameters": {
+      "code": "http://www.nlm.nih.gov/research/umls/rxnorm|354770,http://www.nlm.nih.gov/research/umls/rxnorm|117055,http://www.nlm.nih.gov/research/umls/rxnorm|1876366,http://www.nlm.nih.gov/research/umls/rxnorm|1373478,http://www.nlm.nih.gov/research/umls/rxnorm|1012896"
+    },
+    "url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|354770,http://www.nlm.nih.gov/research/umls/rxnorm|117055,http://www.nlm.nih.gov/research/umls/rxnorm|1876366,http://www.nlm.nih.gov/research/umls/rxnorm|1373478,http://www.nlm.nih.gov/research/umls/rxnorm|1012896"
+  },
+  "test_data": {
+    "resources": [
+      "synthea/output/multiple-sclerosis/positive/fhir/",
+      "synthea/output/multiple-sclerosis/control/fhir/"
+    ],
+    "expected_result_count": 31,
+    "expected_resource_ids": [],
+    "expected_patient_ids": [
+      "025e04e3-3431-9a30-9bba-2c841529ffab",
+      "060516d3-ccfc-15ad-ebe0-2319147e172d",
+      "0c7637b9-6f5f-8e52-4611-1e6b9bbfe7b4",
+      "216c6dca-9697-9b00-fd8f-aa4d36400746",
+      "29034c02-93f7-a6db-aa63-ffdb59e1687e",
+      "293847e3-c422-c139-7b2c-fe2fae8525ac",
+      "30402368-6ac1-69b1-6f98-8f7746b3a39e",
+      "30993558-1fea-728c-6c6b-cbfe94b49e54",
+      "4390047f-5261-3de2-222f-cfa3cbab02b6",
+      "45bc6d1e-741b-4d2b-b314-2bf5fa5145c3",
+      "48b47fbf-5c88-8016-596f-2cf2c3c96546",
+      "5597ffc8-4eef-2200-a854-d9767b61fa0b",
+      "6d99bd1f-b130-a235-5899-9d3166841dd3",
+      "844008b3-bcc2-f17e-7316-8ec02932fb9c",
+      "879390ce-6588-cec5-4653-1565293d6dd7",
+      "87ca3c29-2837-3b39-95fb-79810db0382c",
+      "89a4ba02-c39c-b4fa-9ff8-d8a64dbe8885",
+      "97cb011b-c256-68a7-3c30-5083580e09cc",
+      "9fe57634-70b9-62a8-bef7-cc9ecec38739",
+      "a4cf3221-e62c-e064-4eaf-66d6d5a9b583",
+      "aa144843-f8d8-19e0-27c5-2a8a1bb2a882",
+      "b3d227a3-10c6-f3c1-3fa6-5d4e42018f2c",
+      "b45b8c12-4a44-70a5-889b-2d4a9dd8b46a",
+      "ba244295-665b-0516-e660-a1596c88f8d1",
+      "bc6f4d63-e457-53bd-8cc9-a163b8ae9109",
+      "bf2dc17f-3af8-fb35-af76-5d927b1734d3",
+      "cdc04d5c-3391-231a-4035-04f61e35696e",
+      "dfa30d1d-835d-5070-449b-33a64ffc0b36",
+      "e8dbf8b0-d2ff-ebc5-3589-bc9512ce1160",
+      "faeddb54-a28c-2f0a-1be3-6fe22f759295",
+      "fc9d766d-329e-eb05-1fda-c7eebe43255b"
+    ]
+  },
+  "created_at": "2026-04-27T00:00:00.000000Z",
+  "updated_at": "2026-04-27T00:00:00.000000Z"
+}

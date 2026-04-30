@@ -1,0 +1,156 @@
+{
+  "id": "phekb-fibromyalgia-comprehensive",
+  "source": "phekb",
+  "source_id": "fibromyalgia",
+  "name": "Fibromyalgia - Comprehensive Provider Query (Multi-Resource)",
+  "description": "Provider-level query identifying fibromyalgia patients via Condition + MedicationRequest. Path C (med only without dx) is large because the meds are also used for depression, neuropathic pain, migraine, insomnia.",
+  "prompt": "I need to identify my complete fibromyalgia patient population. Some patients have a coded fibromyalgia diagnosis. Others are on duloxetine, gabapentin, or amitriptyline for chronic pain or related conditions without a formal fibromyalgia diagnosis. Run multiple FHIR queries — diagnosis and chronic pain medications — and union the patient sets.",
+  "prompts": {
+    "naive": "Find all fibromyalgia patients.",
+    "broad": "Find all fibromyalgia patients — by diagnosis or by chronic-pain medications (duloxetine, gabapentin, amitriptyline). Run multiple queries and union the patient sets.",
+    "expert": "Run two queries. (1) Condition?code=http://snomed.info/sct|24693007 — fibromyalgia dx. (2) MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|72625,http://www.nlm.nih.gov/research/umls/rxnorm|25480,http://www.nlm.nih.gov/research/umls/rxnorm|704 — chronic pain meds. Union the patient IDs."
+  },
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "algorithm_path": "comprehensive-provider-query",
+    "algorithm_path_description": "Multi-query union: Condition + MedicationRequest for fibromyalgia.",
+    "code_systems": [
+      "SNOMED CT",
+      "RxNorm"
+    ],
+    "required_codes": [
+      {
+        "system": "http://snomed.info/sct",
+        "code": "24693007",
+        "display": "Fibromyositis",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "72625",
+        "display": "duloxetine",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "25480",
+        "display": "gabapentin",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "704",
+        "display": "amitriptyline",
+        "source": "UMLS verified"
+      }
+    ],
+    "complexity": "expert",
+    "tags": [
+      "multi-query",
+      "comprehensive",
+      "rheumatology",
+      "chronic-pain",
+      "fibromyalgia"
+    ],
+    "multi_query": true,
+    "expected_queries": [
+      "Condition?code=http://snomed.info/sct|24693007",
+      "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|72625,http://www.nlm.nih.gov/research/umls/rxnorm|25480,http://www.nlm.nih.gov/research/umls/rxnorm|704"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "multi",
+    "parameters": {},
+    "url": "Condition?code=http://snomed.info/sct|24693007"
+  },
+  "test_data": {
+    "resources": [
+      "synthea/output/fibromyalgia/positive/fhir/",
+      "synthea/output/fibromyalgia/control/fhir/"
+    ],
+    "expected_result_count": 78,
+    "expected_resource_ids": [],
+    "expected_patient_ids": [
+      "00a46e21-19d7-4ab8-4744-4f868d628f53",
+      "07d2a29a-f932-f114-da0a-a5ceb21e38ef",
+      "099e1c1e-955a-8678-0784-c8e87242d274",
+      "0b395c6d-0dac-acab-f2f9-db6fdd97e141",
+      "0c41ac1c-62ee-436e-f3a7-5c9b3bff6d1e",
+      "0d8fac46-099e-05b3-be14-13e4b91b8894",
+      "108249fd-704d-237d-872b-c293478b0276",
+      "10a6365c-1a75-91dd-741c-64f8debb8b01",
+      "11bf445c-401f-c113-c052-80c90fb8ba13",
+      "126b4f2d-464d-aacf-f746-4636285c0276",
+      "1901e252-5652-1171-3d51-8f9947900d56",
+      "1a2efe79-5083-cba0-dcff-c3a126a3ff39",
+      "1e5b859e-fa33-e7d8-4178-db6705eac18d",
+      "25a85666-3f7c-f88c-f700-2a662d96c8c7",
+      "28024f07-5717-daa1-1881-7d0320fa00ff",
+      "28a4f22b-e305-93d1-fc07-f7a57959f45b",
+      "2a71349b-4137-d01c-b5ab-4d0deac6dfcc",
+      "2fdb7d7d-892a-4274-eabe-ddc9b7bf19b4",
+      "388be910-6dbc-e7ef-bceb-631d6ab4a1dc",
+      "3aef5c39-4f2a-ff8c-3085-d473a9f3470c",
+      "42bfa058-7642-990b-3e8a-28bb49fcc91c",
+      "48e27238-bdf6-cdfd-2a97-f9d39615ccca",
+      "4a108bf0-9703-4f3b-0e88-ce4e1ab54528",
+      "4c1c7813-5891-9ba4-f880-135e44d8ba13",
+      "4c608285-e080-5126-a42a-cfb776a85206",
+      "4e35f8e7-b5a5-4a0a-9603-0ac822ea2d98",
+      "52f882b1-25a6-db70-7ef1-87b52de7ab18",
+      "53c9c0c1-7450-b609-725f-ef85d0e4af1f",
+      "541cf11e-e668-569d-72b9-b659beec5f8b",
+      "5706a201-3d1c-d0f2-0f51-c93b09551206",
+      "596d9c36-8658-c118-095c-4e5ebb0c1e05",
+      "5d6064d2-17c5-d4c5-0a9f-3d8dc00658ae",
+      "62875b25-5030-fdeb-9f70-f3a0fbf10db0",
+      "668d144a-0c9e-9804-296e-9d32f0c2777a",
+      "690afebd-cf83-efea-a9d6-ea363bd8b569",
+      "6d405be3-50ff-0e8d-cb13-a8aaf72cd9e8",
+      "6d9170e0-1b34-718a-8664-6a60e9ea264b",
+      "6f1184aa-b27c-47c7-5895-16314331621b",
+      "722c2353-53a9-c24b-b3ea-3c2baf58f9cd",
+      "737f6270-5173-80c6-c099-a62ebe896838",
+      "7772742c-2a0b-4657-c1b2-8b76b2e35917",
+      "7b3301b1-b5c3-8441-7f74-153aae15a758",
+      "7dfbceed-77ad-a037-4758-0ab86f600c3a",
+      "7e4e7982-ba88-f31f-7a4c-9ab32758b367",
+      "7e59ec16-10f6-418f-b04b-3a146655ced4",
+      "82f06fc9-2e62-85cc-9c45-77fef28a494e",
+      "8542caae-6307-ffab-203f-aa402db6dc23",
+      "89e7f360-c5fa-e4bf-bbcc-1e5e88922953",
+      "8a0e9d91-7b8f-131a-70b2-9d8403b8237d",
+      "8e8a3d1c-a995-9efd-ec66-cb067473f997",
+      "912a8744-08d4-31e4-0731-35fd3a88d7db",
+      "920459fc-5623-3384-9cdf-bfde4bf95a70",
+      "922e47ec-cc9a-a2f4-589f-8c3c9e88a3ba",
+      "980079dd-0198-c649-186f-2d3bbf3f911a",
+      "9e1833fd-f236-7772-8598-cd0981343c69",
+      "9f3d7c70-fd2b-2a00-a060-47bc94264911",
+      "a130674f-2e1c-7a20-8773-801098aa2fc7",
+      "a6bc6370-696a-f569-742f-7e0af761a2df",
+      "a98466a3-74e4-4bc3-3947-9737d0c930b9",
+      "af1f3f58-0eff-bd59-b02c-1d4896b36b11",
+      "af4b4d97-7a5b-7d58-a3b8-a90ac71fcaba",
+      "af4c19b9-01f2-cd53-4e35-05f80715c75b",
+      "b4b1f4d4-b7f3-a56d-7474-d2257fccb74e",
+      "b9377079-599e-a061-b1f4-1cb00654424b",
+      "bbe45ce5-8ba4-1884-7cbb-d1ce97c1e6f0",
+      "be97034d-55d7-1403-4c17-ae6a71fffd65",
+      "c2ea6db5-30d1-e9b2-c9ad-8ac680f70140",
+      "c62956fa-bf66-c2df-0f0c-ce2247a86a14",
+      "ce2c5a91-ca89-e70a-1023-6c98f3e458e3",
+      "d01a0b77-28e5-0f3f-aa09-a1a19ae5a94b",
+      "d69c769c-125c-a052-c26c-3815c9e0167b",
+      "db9dcbfc-1db8-afb8-dd52-e520c3b5279a",
+      "e01af071-e2ee-7548-7b7f-a533441d6607",
+      "ea43a402-06c8-64c9-2c08-77fc7e6e06e5",
+      "ec90ef6d-2d77-45f0-7cc1-1c034c56c1f4",
+      "f578b1b7-67d5-f7e3-056e-f8879f5e4322",
+      "f9b4335f-a222-7ec3-ef4f-8eb0b528bf8b",
+      "fb2db694-c4e4-974f-8320-bfb0790c90dc"
+    ]
+  },
+  "created_at": "2026-04-29T00:00:00.000000Z",
+  "updated_at": "2026-04-27T00:00:00.000000Z"
+}

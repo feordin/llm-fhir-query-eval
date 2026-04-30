@@ -1,0 +1,64 @@
+{
+  "id": "phekb-iron-deficiency-anemia-labs",
+  "source": "phekb",
+  "source_id": "iron-deficiency-anemia",
+  "name": "Iron Deficiency Anemia - Low Hemoglobin Lab Query",
+  "description": "Tests ability to find anemic patients via low hemoglobin (<12 g/dL). First Hgb lab test. Includes Path D (low Hgb without formal IDA dx).",
+  "prompt": "Find patients with hemoglobin results below 12 g/dL.",
+  "prompts": {
+    "naive": "Find patients with low hemoglobin.",
+    "broad": "Find patients with hemoglobin measurements below 12 g/dL — reflective of anemia (normal F: 12-16, M: 14-18 g/dL).",
+    "expert": "Search Observation resources with LOINC 718-7 (Hemoglobin in Blood) where value-quantity < 12 g/dL. Query: Observation?code=http://loinc.org|718-7&value-quantity=lt12||g/dL"
+  },
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "algorithm_path": "labs-path",
+    "algorithm_path_description": "Patients with low Hgb (<12 g/dL). Includes Path D (no formal anemia dx).",
+    "code_systems": [
+      "LOINC"
+    ],
+    "required_codes": [
+      {
+        "system": "http://loinc.org",
+        "code": "718-7",
+        "display": "Hemoglobin [Mass/volume] in Blood",
+        "source": "UMLS verified"
+      }
+    ],
+    "complexity": "hard",
+    "tags": [
+      "observation",
+      "hematology",
+      "anemia",
+      "hemoglobin",
+      "value-quantity"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "Observation",
+    "parameters": {
+      "code": "http://loinc.org|718-7",
+      "value-quantity": "lt12||g/dL"
+    },
+    "url": "Observation?code=http://loinc.org|718-7&value-quantity=lt12||g/dL"
+  },
+  "test_data": {
+    "resources": [
+      "synthea/output/iron-deficiency-anemia/positive/fhir/",
+      "synthea/output/iron-deficiency-anemia/control/fhir/"
+    ],
+    "expected_result_count": 7,
+    "expected_resource_ids": [],
+    "expected_patient_ids": [
+      "21cac2d6-1cdb-3a77-c511-ee698b5aef19",
+      "2cb41a14-b56a-f5e1-5f75-5c35686cf50e",
+      "4ba53f25-a719-2a40-4bc1-8ad08ff919ab",
+      "8eb3ef0c-0458-50a2-d8fb-261e940e8049",
+      "bf0586d5-f947-3d98-8b69-d838fee47a16",
+      "cf84c8d7-2c7b-6cc5-77c6-9740c8262e4c",
+      "f649f859-9345-94a3-e812-d3107f4a41a9"
+    ]
+  },
+  "created_at": "2026-04-29T00:00:00.000000Z",
+  "updated_at": "2026-04-27T00:00:00.000000Z"
+}

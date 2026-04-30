@@ -1,0 +1,143 @@
+{
+  "name": "PheKB Carotid Atherosclerosis (CAAD)",
+  "remarks": [
+    "Custom Synthea module for carotid artery atherosclerosis disease.",
+    "First cerebrovascular precursor phenotype. **ELEVENTH Procedure-resource phenotype** (carotid revascularization — first non-coronary vascular-surgical, complementing CHD CABG/PCI).",
+    "Heavy cross-indication with CHD/PAD via shared antiplatelet + statin therapy.",
+    "",
+    "Generates FOUR patient paths:",
+    "  Path A (30%): Carotid stenosis dx + antiplatelet/statin + revascularization",
+    "  Path B (40%): Carotid stenosis dx + antiplatelet/statin (medical mgmt)",
+    "  Path C (20%): Antiplatelet+statin only, no carotid dx (TRICKY — empirical CV risk reduction)",
+    "  Path P (10%): Carotid stenosis dx, no meds (early/incidental)",
+    "",
+    "Medication distribution (Paths A + B + C):",
+    "  40% Aspirin (RxNorm 1191) — first-line antiplatelet",
+    "  30% Clopidogrel (RxNorm 32968) — second-line antiplatelet",
+    "  30% Atorvastatin (RxNorm 83367) — for atherosclerosis stabilization",
+    "",
+    "Age guard: >=50 (carotid atherosclerosis is age-related)."
+  ],
+  "states": {
+    "Initial": { "type": "Initial", "direct_transition": "Age_Guard" },
+    "Age_Guard": { "type": "Guard", "allow": { "condition_type": "Age", "operator": ">=", "quantity": 50, "unit": "years" }, "direct_transition": "Set_CAAD_Flag" },
+    "Set_CAAD_Flag": { "type": "SetAttribute", "attribute": "caad_positive", "value": true, "direct_transition": "Choose_Patient_Path" },
+    "Choose_Patient_Path": {
+      "type": "Simple",
+      "distributed_transition": [
+        { "transition": "Set_Path_A", "distribution": 0.30 },
+        { "transition": "Set_Path_B", "distribution": 0.40 },
+        { "transition": "Set_Path_C", "distribution": 0.20 },
+        { "transition": "Set_Path_P", "distribution": 0.10 }
+      ]
+    },
+    "Set_Path_A": { "type": "SetAttribute", "attribute": "caad_has_dx", "value": true, "direct_transition": "Set_Path_A_Meds" },
+    "Set_Path_A_Meds": { "type": "SetAttribute", "attribute": "caad_has_meds", "value": true, "direct_transition": "Set_Path_A_Proc" },
+    "Set_Path_A_Proc": { "type": "SetAttribute", "attribute": "caad_has_proc", "value": true, "direct_transition": "Choose_Med" },
+    "Set_Path_B": { "type": "SetAttribute", "attribute": "caad_has_dx", "value": true, "direct_transition": "Set_Path_B_Meds" },
+    "Set_Path_B_Meds": { "type": "SetAttribute", "attribute": "caad_has_meds", "value": true, "direct_transition": "Set_Path_B_Proc" },
+    "Set_Path_B_Proc": { "type": "SetAttribute", "attribute": "caad_has_proc", "value": false, "direct_transition": "Choose_Med" },
+    "Set_Path_C": { "type": "SetAttribute", "remarks": ["TRICKY: meds only, no carotid dx"], "attribute": "caad_has_dx", "value": false, "direct_transition": "Set_Path_C_Meds" },
+    "Set_Path_C_Meds": { "type": "SetAttribute", "attribute": "caad_has_meds", "value": true, "direct_transition": "Set_Path_C_Proc" },
+    "Set_Path_C_Proc": { "type": "SetAttribute", "attribute": "caad_has_proc", "value": false, "direct_transition": "Choose_Med" },
+    "Set_Path_P": { "type": "SetAttribute", "attribute": "caad_has_dx", "value": true, "direct_transition": "Set_Path_P_Meds" },
+    "Set_Path_P_Meds": { "type": "SetAttribute", "attribute": "caad_has_meds", "value": false, "direct_transition": "Set_Path_P_Proc" },
+    "Set_Path_P_Proc": { "type": "SetAttribute", "attribute": "caad_has_proc", "value": false, "direct_transition": "Choose_Med" },
+
+    "Choose_Med": {
+      "type": "Simple",
+      "distributed_transition": [
+        { "transition": "Set_Med_Aspirin", "distribution": 0.40 },
+        { "transition": "Set_Med_Clopidogrel", "distribution": 0.30 },
+        { "transition": "Set_Med_Atorvastatin", "distribution": 0.30 }
+      ]
+    },
+    "Set_Med_Aspirin": { "type": "SetAttribute", "attribute": "caad_med", "value": "aspirin", "direct_transition": "Set_Needs_First_Visit" },
+    "Set_Med_Clopidogrel": { "type": "SetAttribute", "attribute": "caad_med", "value": "clopidogrel", "direct_transition": "Set_Needs_First_Visit" },
+    "Set_Med_Atorvastatin": { "type": "SetAttribute", "attribute": "caad_med", "value": "atorvastatin", "direct_transition": "Set_Needs_First_Visit" },
+
+    "Set_Needs_First_Visit": { "type": "SetAttribute", "attribute": "caad_needs_first_visit", "value": true, "direct_transition": "Wellness_Encounter" },
+    "Wellness_Encounter": { "type": "Encounter", "wellness": true, "direct_transition": "Check_First_Visit" },
+    "Check_First_Visit": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "caad_needs_first_visit", "operator": "==", "value": true }, "transition": "Check_Has_Diagnosis" },
+        { "transition": "End_Wellness_Encounter" }
+      ]
+    },
+    "Check_Has_Diagnosis": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "caad_has_dx", "operator": "==", "value": true }, "transition": "Diagnose_Carotid_Stenosis" },
+        { "transition": "Check_Meds_NoDx" }
+      ]
+    },
+    "Diagnose_Carotid_Stenosis": { "type": "ConditionOnset", "assign_to_attribute": "caad_condition", "codes": [{ "system": "SNOMED-CT", "code": "64586002", "display": "Stenosis of carotid artery" }], "direct_transition": "Check_Meds_WithDx" },
+
+    "Check_Meds_WithDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "caad_has_meds", "operator": "==", "value": true }, "transition": "Route_Med_WithDx" },
+        { "transition": "Check_Procedure_WithDx" }
+      ]
+    },
+    "Route_Med_WithDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "caad_med", "operator": "==", "value": "aspirin" }, "transition": "Prescribe_Aspirin_WithDx" },
+        { "condition": { "condition_type": "Attribute", "attribute": "caad_med", "operator": "==", "value": "clopidogrel" }, "transition": "Prescribe_Clopidogrel_WithDx" },
+        { "transition": "Prescribe_Atorvastatin_WithDx" }
+      ]
+    },
+    "Prescribe_Aspirin_WithDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "1191", "display": "aspirin" }], "reason": "caad_condition", "direct_transition": "Check_Procedure_WithDx" },
+    "Prescribe_Clopidogrel_WithDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "32968", "display": "clopidogrel" }], "reason": "caad_condition", "direct_transition": "Check_Procedure_WithDx" },
+    "Prescribe_Atorvastatin_WithDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "83367", "display": "atorvastatin" }], "reason": "caad_condition", "direct_transition": "Check_Procedure_WithDx" },
+
+    "Check_Procedure_WithDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "caad_has_proc", "operator": "==", "value": true }, "transition": "Carotid_Surgery_Encounter_WithDx" },
+        { "transition": "Clear_First_Visit_Flag" }
+      ]
+    },
+    "Carotid_Surgery_Encounter_WithDx": {
+      "type": "Encounter",
+      "encounter_class": "ambulatory",
+      "reason": "caad_condition",
+      "codes": [{ "system": "SNOMED-CT", "code": "440655000", "display": "Outpatient procedure encounter (procedure)" }],
+      "direct_transition": "Procedure_Carotid_Revasc_WithDx"
+    },
+    "Procedure_Carotid_Revasc_WithDx": {
+      "type": "Procedure",
+      "reason": "caad_condition",
+      "codes": [{ "system": "SNOMED-CT", "code": "233259003", "display": "Angioplasty of external carotid artery" }],
+      "duration": { "low": 60, "high": 180, "unit": "minutes" },
+      "direct_transition": "End_Carotid_Surgery_Encounter_WithDx"
+    },
+    "End_Carotid_Surgery_Encounter_WithDx": { "type": "EncounterEnd", "direct_transition": "Clear_First_Visit_Flag" },
+
+    "Check_Meds_NoDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "caad_has_meds", "operator": "==", "value": true }, "transition": "Route_Med_NoDx" },
+        { "transition": "Clear_First_Visit_Flag" }
+      ]
+    },
+    "Route_Med_NoDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "caad_med", "operator": "==", "value": "aspirin" }, "transition": "Prescribe_Aspirin_NoDx" },
+        { "condition": { "condition_type": "Attribute", "attribute": "caad_med", "operator": "==", "value": "clopidogrel" }, "transition": "Prescribe_Clopidogrel_NoDx" },
+        { "transition": "Prescribe_Atorvastatin_NoDx" }
+      ]
+    },
+    "Prescribe_Aspirin_NoDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "1191", "display": "aspirin" }], "direct_transition": "Clear_First_Visit_Flag" },
+    "Prescribe_Clopidogrel_NoDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "32968", "display": "clopidogrel" }], "direct_transition": "Clear_First_Visit_Flag" },
+    "Prescribe_Atorvastatin_NoDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "83367", "display": "atorvastatin" }], "direct_transition": "Clear_First_Visit_Flag" },
+
+    "Clear_First_Visit_Flag": { "type": "SetAttribute", "attribute": "caad_needs_first_visit", "value": false, "direct_transition": "End_Wellness_Encounter" },
+    "End_Wellness_Encounter": { "type": "EncounterEnd", "direct_transition": "Followup_Delay" },
+    "Followup_Delay": { "type": "Delay", "range": { "low": 6, "high": 12, "unit": "months" }, "direct_transition": "Wellness_Encounter" }
+  },
+  "gmf_version": 2
+}

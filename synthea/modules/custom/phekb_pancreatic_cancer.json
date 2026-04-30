@@ -1,0 +1,112 @@
+{
+  "name": "PheKB Pancreatic Cancer",
+  "remarks": [
+    "Custom Synthea module for pancreatic cancer.",
+    "Eighth cancer phenotype. First pancreatic. Tests recognition of pancreas-specific malignancy distinct from CRC and HCC.",
+    "",
+    "Generates THREE patient paths:",
+    "  Path A (50%): Pancreatic cancer dx + elevated CA 19-9 (>37 U/mL — tumor marker)",
+    "  Path B (35%): Pancreatic cancer dx, no CA 19-9 measured",
+    "  Path D (15%): Elevated CA 19-9 without formal pancreatic cancer dx (TRICKY — undiagnosed or other GI cancer)",
+    "",
+    "Diagnosis SNOMED variation:",
+    "  60% Malignant neoplasm of pancreas (363418001)",
+    "  40% Carcinoma of pancreas (372142002) — alternate concept",
+    "",
+    "CA 19-9 range: 100-3000 U/mL (normal <37; >100 = highly suspicious for pancreatic ca).",
+    "",
+    "Age guard: >=45 (pancreatic cancer rare under 45)."
+  ],
+  "states": {
+    "Initial": { "type": "Initial", "direct_transition": "Age_Guard" },
+    "Age_Guard": { "type": "Guard", "allow": { "condition_type": "Age", "operator": ">=", "quantity": 45, "unit": "years" }, "direct_transition": "Set_Panc_Flag" },
+    "Set_Panc_Flag": { "type": "SetAttribute", "attribute": "panc_positive", "value": true, "direct_transition": "Choose_Patient_Path" },
+    "Choose_Patient_Path": {
+      "type": "Simple",
+      "distributed_transition": [
+        { "transition": "Set_Path_A", "distribution": 0.50 },
+        { "transition": "Set_Path_B", "distribution": 0.35 },
+        { "transition": "Set_Path_D", "distribution": 0.15 }
+      ]
+    },
+    "Set_Path_A": { "type": "SetAttribute", "attribute": "panc_has_dx", "value": true, "direct_transition": "Set_Path_A_Lab" },
+    "Set_Path_A_Lab": { "type": "SetAttribute", "attribute": "panc_has_lab", "value": true, "direct_transition": "Choose_Subtype" },
+    "Set_Path_B": { "type": "SetAttribute", "attribute": "panc_has_dx", "value": true, "direct_transition": "Set_Path_B_Lab" },
+    "Set_Path_B_Lab": { "type": "SetAttribute", "attribute": "panc_has_lab", "value": false, "direct_transition": "Choose_Subtype" },
+    "Set_Path_D": { "type": "SetAttribute", "remarks": ["TRICKY: elevated CA 19-9 without pancreatic dx"], "attribute": "panc_has_dx", "value": false, "direct_transition": "Set_Path_D_Lab" },
+    "Set_Path_D_Lab": { "type": "SetAttribute", "attribute": "panc_has_lab", "value": true, "direct_transition": "Choose_Subtype" },
+
+    "Choose_Subtype": {
+      "type": "Simple",
+      "distributed_transition": [
+        { "transition": "Set_Subtype_Malig", "distribution": 0.60 },
+        { "transition": "Set_Subtype_Carc", "distribution": 0.40 }
+      ]
+    },
+    "Set_Subtype_Malig": { "type": "SetAttribute", "attribute": "panc_subtype", "value": "malig", "direct_transition": "Set_Needs_First_Visit" },
+    "Set_Subtype_Carc": { "type": "SetAttribute", "attribute": "panc_subtype", "value": "carc", "direct_transition": "Set_Needs_First_Visit" },
+
+    "Set_Needs_First_Visit": { "type": "SetAttribute", "attribute": "panc_needs_first_visit", "value": true, "direct_transition": "Wellness_Encounter" },
+    "Wellness_Encounter": { "type": "Encounter", "wellness": true, "direct_transition": "Check_First_Visit" },
+    "Check_First_Visit": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "panc_needs_first_visit", "operator": "==", "value": true }, "transition": "Check_Has_Diagnosis" },
+        { "transition": "End_Wellness_Encounter" }
+      ]
+    },
+    "Check_Has_Diagnosis": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "panc_has_dx", "operator": "==", "value": true }, "transition": "Route_By_Subtype" },
+        { "transition": "Check_Lab_NoDx" }
+      ]
+    },
+    "Route_By_Subtype": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "panc_subtype", "operator": "==", "value": "malig" }, "transition": "Diagnose_Malig" },
+        { "transition": "Diagnose_Carc" }
+      ]
+    },
+    "Diagnose_Malig": { "type": "ConditionOnset", "assign_to_attribute": "panc_condition", "codes": [{ "system": "SNOMED-CT", "code": "363418001", "display": "Malignant neoplasm of pancreas" }], "direct_transition": "Check_Lab_WithDx" },
+    "Diagnose_Carc": { "type": "ConditionOnset", "assign_to_attribute": "panc_condition", "codes": [{ "system": "SNOMED-CT", "code": "372142002", "display": "Carcinoma of pancreas" }], "direct_transition": "Check_Lab_WithDx" },
+
+    "Check_Lab_WithDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "panc_has_lab", "operator": "==", "value": true }, "transition": "Record_CA199_WithDx" },
+        { "transition": "Clear_First_Visit_Flag" }
+      ]
+    },
+    "Record_CA199_WithDx": {
+      "type": "Observation",
+      "category": "laboratory",
+      "unit": "U/mL",
+      "codes": [{ "system": "LOINC", "code": "24108-3", "display": "Cancer Ag 19-9 [Units/volume] in Serum or Plasma" }],
+      "range": { "low": 100, "high": 3000 },
+      "direct_transition": "Clear_First_Visit_Flag"
+    },
+
+    "Check_Lab_NoDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "panc_has_lab", "operator": "==", "value": true }, "transition": "Record_CA199_NoDx" },
+        { "transition": "Clear_First_Visit_Flag" }
+      ]
+    },
+    "Record_CA199_NoDx": {
+      "type": "Observation",
+      "category": "laboratory",
+      "unit": "U/mL",
+      "codes": [{ "system": "LOINC", "code": "24108-3", "display": "Cancer Ag 19-9 [Units/volume] in Serum or Plasma" }],
+      "range": { "low": 100, "high": 3000 },
+      "direct_transition": "Clear_First_Visit_Flag"
+    },
+
+    "Clear_First_Visit_Flag": { "type": "SetAttribute", "attribute": "panc_needs_first_visit", "value": false, "direct_transition": "End_Wellness_Encounter" },
+    "End_Wellness_Encounter": { "type": "EncounterEnd", "direct_transition": "Followup_Delay" },
+    "Followup_Delay": { "type": "Delay", "range": { "low": 6, "high": 12, "unit": "months" }, "direct_transition": "Wellness_Encounter" }
+  },
+  "gmf_version": 2
+}

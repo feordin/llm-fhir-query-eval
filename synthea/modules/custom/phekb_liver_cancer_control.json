@@ -1,0 +1,21 @@
+{
+  "name": "PheKB Liver Cancer (HCC) Control",
+  "remarks": ["Control module for HCC. Generates patients age 40+ without HCC dx and with normal AFP."],
+  "states": {
+    "Initial": { "type": "Initial", "direct_transition": "Age_Guard" },
+    "Age_Guard": { "type": "Guard", "allow": { "condition_type": "Age", "operator": ">=", "quantity": 40, "unit": "years" }, "direct_transition": "Set_Control_Flag" },
+    "Set_Control_Flag": { "type": "SetAttribute", "attribute": "hcc_positive", "value": false, "direct_transition": "Wellness_Encounter" },
+    "Wellness_Encounter": { "type": "Encounter", "wellness": true, "direct_transition": "Record_Normal_AFP" },
+    "Record_Normal_AFP": {
+      "type": "Observation",
+      "category": "laboratory",
+      "unit": "ng/mL",
+      "codes": [{ "system": "LOINC", "code": "1834-1", "display": "Alpha-1-Fetoprotein [Mass/volume] in Serum or Plasma" }],
+      "range": { "low": 1, "high": 8 },
+      "direct_transition": "End_Wellness_Encounter"
+    },
+    "End_Wellness_Encounter": { "type": "EncounterEnd", "direct_transition": "Followup_Delay" },
+    "Followup_Delay": { "type": "Delay", "range": { "low": 12, "high": 24, "unit": "months" }, "direct_transition": "Wellness_Encounter" }
+  },
+  "gmf_version": 2
+}

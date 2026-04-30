@@ -1,0 +1,91 @@
+{
+  "id": "phekb-atrial-fibrillation-dx",
+  "source": "phekb",
+  "source_id": "atrial-fibrillation-demonstration-project",
+  "name": "Atrial Fibrillation - Diagnosis Code Query",
+  "description": "Tests ability to find patients with atrial fibrillation by diagnosis code. The PheKB AF algorithm identifies cases as patients with an AF diagnosis and absence of heart transplant. This test case focuses on the core inclusion criterion: finding Condition resources coded as atrial fibrillation.",
+  "prompt": "Find all patients diagnosed with atrial fibrillation.",
+  "prompts": {
+    "naive": "Find all patients diagnosed with atrial fibrillation.",
+    "expert": "I need to identify patients with atrial fibrillation by searching their diagnosis records. Atrial fibrillation has a specific SNOMED code, and the query should target Condition resources. Be aware that AF may also be documented as atrial flutter (a related but distinct arrhythmia) in some patients, though for this query we want specifically atrial fibrillation. The PheKB AF algorithm uses the diagnosis code as the primary inclusion criterion, with exclusion of patients who have had a heart transplant. This query focuses on the inclusion side -- finding all patients with an AF diagnosis on their problem list or encounter records."
+  },
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "algorithm_path": "case-inclusion",
+    "algorithm_path_description": "Patients with atrial fibrillation diagnosis codes recorded as Condition resources. This is the primary case identification path in the PheKB AF algorithm.",
+    "code_systems": [
+      "SNOMED CT"
+    ],
+    "required_codes": [
+      {
+        "system": "http://snomed.info/sct",
+        "code": "49436004",
+        "display": "Atrial fibrillation",
+        "source": "UMLS verified, code variation"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "282825002",
+        "display": "Paroxysmal atrial fibrillation",
+        "source": "UMLS verified, code variation"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "426749004",
+        "display": "Chronic atrial fibrillation",
+        "source": "UMLS verified, code variation"
+      }
+    ],
+    "complexity": "easy",
+    "tags": [
+      "condition",
+      "cardiology",
+      "atrial-fibrillation",
+      "diagnosis-code"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "Condition",
+    "parameters": {
+      "code": "http://snomed.info/sct|49436004,http://snomed.info/sct|282825002,http://snomed.info/sct|426749004"
+    },
+    "url": "Condition?code=http://snomed.info/sct|49436004,http://snomed.info/sct|282825002,http://snomed.info/sct|426749004"
+  },
+  "test_data": {
+    "resources": [
+      "synthea/output/atrial-fibrillation/positive/fhir/",
+      "synthea/output/atrial-fibrillation/control/fhir/"
+    ],
+    "expected_result_count": 25,
+    "expected_resource_ids": [],
+    "expected_patient_ids": [
+      "02e3f8cc-3080-2e29-a9fb-2ed526393e4c",
+      "049406d8-9ccf-dcc5-82ef-8ac23dcf6709",
+      "1abc1454-3c72-c142-eab3-b88ae36b4446",
+      "1c774d5f-919a-47e7-4c83-5976430aa907",
+      "2c167999-289d-95fa-5c27-7d8b8d35348c",
+      "30803e73-ed07-58ec-292c-7b487078e903",
+      "3be566ba-643e-350e-7dd3-f098befd7da5",
+      "4b29521d-69c4-cd12-9df2-5334630c87b2",
+      "4bbe12c3-e786-f3aa-48f4-ea0af3a3046a",
+      "6f02b48b-f872-370e-0f8e-11c857456e11",
+      "6fbddf55-7096-b883-7cd3-260f27953080",
+      "701f8687-4b4b-64b1-09d7-66e648bb0965",
+      "8bcc7d73-7f7c-275d-d2a8-59eca6f6d60e",
+      "9661a432-4630-2cd9-142c-386845fae837",
+      "a22a21d9-2e4c-2a70-b436-b80bda1b3cd9",
+      "a39b8b0b-2198-b86e-a0ec-ae728d163433",
+      "ba9f678f-7ed8-7da8-b6ac-2f7bff241d9c",
+      "bac194cd-7506-55a3-0582-4f00fd1b88f6",
+      "bcfe6939-a1bc-6a6e-f2af-7e2335e8a2b8",
+      "bff9d9d5-ee3d-d852-9c67-36d8361a4a4a",
+      "c42f8b6f-fd62-eace-79a3-6b0a392e2dff",
+      "ca20b8fe-1216-d906-ce81-52fd805e60b7",
+      "d6e3d698-80d7-af0e-6c5c-cd8bbdd87484",
+      "e06dfd3c-7f07-9f73-6aa1-975dcaafe8ed",
+      "fa5c795d-88f8-765e-b3f3-baf502c76c23"
+    ]
+  },
+  "created_at": "2026-03-15T00:00:00.000000Z",
+  "updated_at": "2026-04-27T00:00:00.000000Z"
+}

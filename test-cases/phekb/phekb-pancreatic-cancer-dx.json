@@ -1,0 +1,108 @@
+{
+  "id": "phekb-pancreatic-cancer-dx",
+  "source": "phekb",
+  "source_id": "pancreatic-cancer",
+  "name": "Pancreatic Cancer - Diagnosis Code Query",
+  "description": "Tests ability to find pancreatic cancer patients via diagnosis codes (malignant neoplasm + carcinoma variants). Eighth cancer phenotype, first pancreatic.",
+  "prompt": "Find all patients with a diagnosis of pancreatic cancer.",
+  "prompts": {
+    "naive": "Find patients with pancreatic cancer.",
+    "broad": "Find patients diagnosed with pancreatic cancer — including the broader malignant neoplasm of pancreas concept and the more specific carcinoma of pancreas.",
+    "expert": "Search Condition resources for SNOMED codes Malignant neoplasm of pancreas (363418001) and Carcinoma of pancreas (372142002). Query: Condition?code=http://snomed.info/sct|363418001,http://snomed.info/sct|372142002"
+  },
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "algorithm_path": "diagnosis-path",
+    "algorithm_path_description": "Patients with pancreatic cancer dx (2 SNOMED variants). 8th cancer phenotype.",
+    "code_systems": [
+      "SNOMED CT"
+    ],
+    "required_codes": [
+      {
+        "system": "http://snomed.info/sct",
+        "code": "363418001",
+        "display": "Malignant neoplasm of pancreas",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "372142002",
+        "display": "Carcinoma of pancreas",
+        "source": "UMLS verified"
+      }
+    ],
+    "complexity": "medium",
+    "tags": [
+      "condition",
+      "oncology",
+      "pancreatic-cancer",
+      "diagnosis-code"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "Condition",
+    "parameters": {
+      "code": "http://snomed.info/sct|363418001,http://snomed.info/sct|372142002"
+    },
+    "url": "Condition?code=http://snomed.info/sct|363418001,http://snomed.info/sct|372142002"
+  },
+  "test_data": {
+    "resources": [
+      "synthea/output/pancreatic-cancer/positive/fhir/",
+      "synthea/output/pancreatic-cancer/control/fhir/"
+    ],
+    "expected_result_count": 47,
+    "expected_resource_ids": [],
+    "expected_patient_ids": [
+      "08d3db22-c534-302a-4d8f-9db3967e7405",
+      "0e474b34-e17d-26e1-4a87-23e30833dfda",
+      "0f370c10-b2b0-dff2-c8a9-c76a119f9923",
+      "1a0bf491-4e9d-9e00-5502-371acd31914b",
+      "1fa3dedd-e0ae-682a-c902-0f1dfebc2fc1",
+      "20cab59c-ac6e-6042-129e-68d939c4242c",
+      "241f2d35-9147-82f9-5dfc-6f0565786bc9",
+      "27f8307f-9c2c-149c-85cd-0f20d5a8f2ed",
+      "2ad88052-9f34-1c11-9aa2-30d8e8d55b0f",
+      "2c8f73e8-3b84-e823-4c17-e59e97292f7c",
+      "30493404-7d43-ade4-7b99-6c09ad78c9c7",
+      "32b9335a-5714-c9c0-6693-b890b556def8",
+      "34a0d5b3-6e92-9515-2710-427c86399228",
+      "42164abe-fbb9-3279-4d73-d6d952523000",
+      "4dd59287-9cda-eba9-a55d-20698bd0044a",
+      "53db82f4-73e8-3bd8-e13b-7820f281b38c",
+      "54a39856-1303-03b1-3f33-3b8128ff47b0",
+      "55a639c6-5004-23fa-7ba5-56961c834603",
+      "5fc52657-50ed-1f14-1853-c08493bb5d6d",
+      "62860253-9ea3-5a0b-514a-0e71a2622888",
+      "62b4e8d6-8fad-3d53-ea67-05f1ed6d1f30",
+      "62e79ce5-eb73-b40b-9e61-dfe2c85396a4",
+      "67a56c8d-a99f-632a-ced3-736a08acf2d1",
+      "6a9a4f2d-4553-3f78-35d5-a7a359614e94",
+      "736a68b7-62bd-5179-424f-f20cae2466a7",
+      "74828e92-4278-1241-5ed6-fae13bdc9269",
+      "7b2fe2af-b291-6e56-baab-d965a7cb0181",
+      "7d69a2de-5b67-ade0-f7b5-30f8db40a5c6",
+      "83ca00fd-31f6-3976-cabd-79d50cddd935",
+      "9b49c21b-46cc-f6b0-a912-6e79fea4be11",
+      "a3a1a06a-34a4-d9c1-2bc0-37ce1f21a312",
+      "a7d1a6af-6289-ee48-2d3b-846257fd8fef",
+      "a98327e5-ad87-2d1e-fe00-46beddb6dffa",
+      "ac9b548b-b0ff-85e0-e76e-e8b97e72fb53",
+      "b17fe1b8-5b19-3a47-3473-5c0c60774a04",
+      "b3152f40-2214-38a3-dccb-15f76974f79c",
+      "c480dc25-cd37-4516-8769-8ab80cd876a9",
+      "cd15fef4-620f-0092-938f-b18ee1542cf9",
+      "cf294144-e24c-96ab-b7ba-85bfbdfa7b89",
+      "d3084b88-bc1f-041b-6d77-4fe2b010fc61",
+      "d42a9ba5-1f35-5e4e-9a58-44cee45179d3",
+      "ddecda7f-4475-d5e6-e0ac-e0949461497e",
+      "dded8c4f-dcc8-3b52-c353-ac965292147c",
+      "dec1a0a1-ba80-7991-1b72-51dffa3123ca",
+      "e6622f6f-9c7f-ee1e-2d39-3ff55954c00c",
+      "e986e95b-daed-510d-a735-aa58420cd034",
+      "fe3b4c57-03c1-88ca-096a-61a4d3498604"
+    ]
+  },
+  "created_at": "2026-04-29T00:00:00.000000Z",
+  "updated_at": "2026-04-27T00:00:00.000000Z"
+}

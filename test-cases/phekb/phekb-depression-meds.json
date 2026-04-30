@@ -1,0 +1,108 @@
+{
+  "id": "phekb-depression-meds",
+  "source": "phekb",
+  "source_id": "depression",
+  "name": "Depression - Antidepressant Medication Query",
+  "description": "Tests ability to find depression patients via antidepressant prescriptions. The PheKB algorithm uses antidepressant medications as one of four longitudinal data sources. Synthea distributes patients across multiple drug classes — SSRIs (sertraline, fluoxetine, escitalopram, citalopram), SNRI (venlafaxine), and atypical (bupropion). An LLM that only queries one drug or one class will substantially underestimate the depression population.",
+  "prompt": "Retrieve medication orders for patients prescribed antidepressants such as SSRIs (selective serotonin reuptake inhibitors), SNRIs (serotonin-norepinephrine reuptake inhibitors), or atypical antidepressants.",
+  "prompts": {
+    "naive": "Find patients on antidepressants.",
+    "broad": "Find patients prescribed antidepressant medications. The most common classes are SSRIs (sertraline/Zoloft, fluoxetine/Prozac, escitalopram/Lexapro, citalopram/Celexa, paroxetine/Paxil), SNRIs (venlafaxine/Effexor, duloxetine/Cymbalta), and atypicals like bupropion (Wellbutrin).",
+    "expert": "I need to find all patients on antidepressant therapy. Synthea generates these at the SCD level — search MedicationRequest for these RxNorm codes: 312938 (Sertraline 100 MG), 310385 (Fluoxetine 20 MG cap), 351250 (Escitalopram 20 MG), 200371 (Citalopram 20 MG), 313580 (Venlafaxine 100 MG), and 993537 (Bupropion HCl 200 MG ER [Wellbutrin]). Note that querying ingredient codes will not match SCD-coded prescriptions in HAPI FHIR — you must query the specific SCD codes."
+  },
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "algorithm_path": "medication-path",
+    "algorithm_path_description": "Patients on antidepressants (Paths A and C). Maps to PheKB depression algorithm's antidepressant medication criterion. Includes Path C tricky patients on SSRIs without a formal depression diagnosis.",
+    "code_systems": [
+      "RxNorm"
+    ],
+    "required_codes": [
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "312938",
+        "display": "Sertraline 100 MG Oral Tablet",
+        "source": "Synthea built-in veteran_ptsd module"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "310385",
+        "display": "Fluoxetine 20 MG Oral Capsule",
+        "source": "Synthea built-in veteran_mdd module"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "351250",
+        "display": "Escitalopram 20 MG Oral Tablet",
+        "source": "RxNorm SCD"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "200371",
+        "display": "Citalopram 20 MG Oral Tablet",
+        "source": "RxNorm SCD"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "313580",
+        "display": "Venlafaxine 100 MG Oral Tablet",
+        "source": "RxNorm SCD"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "993537",
+        "display": "12 HR bupropion hydrochloride 200 MG Extended Release Oral Tablet [Wellbutrin]",
+        "source": "RxNorm SCD"
+      }
+    ],
+    "complexity": "medium",
+    "tags": [
+      "medication",
+      "psychiatry",
+      "depression",
+      "rxnorm-scd",
+      "code-variation",
+      "ssri",
+      "snri"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "MedicationRequest",
+    "parameters": {
+      "code": "http://www.nlm.nih.gov/research/umls/rxnorm|312938,http://www.nlm.nih.gov/research/umls/rxnorm|310385,http://www.nlm.nih.gov/research/umls/rxnorm|351250,http://www.nlm.nih.gov/research/umls/rxnorm|200371,http://www.nlm.nih.gov/research/umls/rxnorm|313580,http://www.nlm.nih.gov/research/umls/rxnorm|993537"
+    },
+    "url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|312938,http://www.nlm.nih.gov/research/umls/rxnorm|310385,http://www.nlm.nih.gov/research/umls/rxnorm|351250,http://www.nlm.nih.gov/research/umls/rxnorm|200371,http://www.nlm.nih.gov/research/umls/rxnorm|313580,http://www.nlm.nih.gov/research/umls/rxnorm|993537"
+  },
+  "test_data": {
+    "resources": [
+      "synthea/output/depression/positive/fhir/",
+      "synthea/output/depression/control/fhir/"
+    ],
+    "expected_result_count": 20,
+    "expected_resource_ids": [],
+    "expected_patient_ids": [
+      "01821618-1e31-7b68-1d62-64911414f4f9",
+      "21fa6ecc-518a-31ad-7921-0ef5e498bdde",
+      "596c786c-2c66-6caa-ee67-945053156ab1",
+      "7e0e7cc6-84d7-e8f2-2ec0-33248785c5d9",
+      "8acc4a22-fcb6-089b-1ce6-0cc4de491542",
+      "8c47c6f2-1bd6-a45a-b784-5907d63a23de",
+      "976f568d-7841-b1b0-0c26-904ced33d8cc",
+      "a20c2b61-8891-c883-ff01-9bddcdf8220a",
+      "a277aa9c-e9e1-8eb5-1303-7ebcee5c27e3",
+      "b3534d9f-dac0-f51e-75bd-ce4775a78f47",
+      "b949ae0b-4fb7-fde2-9452-274b77ccb1ff",
+      "ba1e63a7-ab3a-50b6-b2ed-d11276127475",
+      "bb024f09-4e20-6f91-df71-6cb5485ac045",
+      "c4a42722-b087-3935-fbe1-9cc0cf276d40",
+      "d7022824-a930-89ac-2586-594a17e14019",
+      "ed5eba29-a875-120a-7b04-a42034975276",
+      "ed6c03e1-f389-2b3d-35c0-260b184d5ab0",
+      "f883a494-f578-ca8b-b985-772f0c65680a",
+      "fa04876c-372c-ad66-4fa7-c8bcce305712",
+      "fa05ed8a-d01c-016e-7e8d-9cc291645259"
+    ]
+  },
+  "created_at": "2026-04-25T00:00:00.000000Z",
+  "updated_at": "2026-04-25T00:00:00.000000Z"
+}

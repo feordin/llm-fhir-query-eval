@@ -93,3 +93,73 @@ class ExecutionEvaluator:
             recall=round(recall, 4),
             f1_score=round(f1, 4),
         )
+
+    def evaluate_multi_query_patient_difference(
+        self, expected_patient_ids: list[str], generated_query_urls: list[str]
+    ) -> ExecutionMatchResult:
+        """Evaluate negation tests: query[0] keep set MINUS union(query[1:]) subtract sets.
+
+        For test cases with metadata.negation=true:
+        - Query[0] is the population to KEEP (e.g., MedicationRequest?code=anticoag)
+        - Query[1..N] are the populations to SUBTRACT (e.g., Condition?code=VTE)
+        - Returns set difference compared against expected_patient_ids
+
+        If the LLM produces only one query, generated_ids will equal that query's
+        result (no subtraction applied) — the LLM gets penalized for failing to
+        recognize the negation requirement, since the kept set is typically
+        larger than the expected difference.
+        """
+        expected_ids = set(expected_patient_ids)
+
+        if not generated_query_urls:
+            return ExecutionMatchResult(
+                passed=False,
+                expected_count=len(expected_ids),
+                actual_count=0,
+                expected_ids=sorted(expected_ids),
+                actual_ids=[],
+                precision=0.0,
+                recall=0.0,
+                f1_score=0.0,
+            )
+
+        # Run query[0] as the keep set
+        try:
+            keep_ids = set(self.fhir_client.get_patient_ids_from_query(generated_query_urls[0]))
+            logger.info(f"Keep query '{generated_query_urls[0][:80]}' returned {len(keep_ids)} patients")
+        except Exception as e:
+            logger.error(f"Failed to execute keep query '{generated_query_urls[0]}': {e}")
+            keep_ids = set()
+
+        # Run query[1:] as subtract sets, union them
+        subtract_ids: set[str] = set()
+        for url in generated_query_urls[1:]:
+            try:
+                pids = set(self.fhir_client.get_patient_ids_from_query(url))
+                subtract_ids |= pids
+                logger.info(f"Subtract query '{url[:80]}' returned {len(pids)} patients")
+            except Exception as e:
+                logger.error(f"Failed to execute subtract query '{url}': {e}")
+
+        generated_ids = keep_ids - subtract_ids
+        logger.info(
+            f"Set difference: {len(keep_ids)} keep - {len(subtract_ids)} subtract = "
+            f"{len(generated_ids)} final"
+        )
+
+        intersection = expected_ids & generated_ids
+
+        precision = len(intersection) / len(generated_ids) if generated_ids else 0.0
+        recall = len(intersection) / len(expected_ids) if expected_ids else 0.0
+        f1 = (2 * precision * recall / (precision + recall)) if (precision + recall) > 0 else 0.0
+
+        return ExecutionMatchResult(
+            passed=f1 >= 0.8,
+            expected_count=len(expected_ids),
+            actual_count=len(generated_ids),
+            expected_ids=sorted(expected_ids),
+            actual_ids=sorted(generated_ids),
+            precision=round(precision, 4),
+            recall=round(recall, 4),
+            f1_score=round(f1, 4),
+        )

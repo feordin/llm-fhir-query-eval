@@ -1,0 +1,216 @@
+{
+  "name": "PheKB Hypertension",
+  "remarks": [
+    "Custom Synthea module for PheKB phenotype: hypertension",
+    "Based on PheKB resistant-hypertension algorithm",
+    "",
+    "PheKB algorithm: case requires ICD-9 401.* (or SBP>140/DBP>90) + 3-4 simultaneous antihypertensive classes.",
+    "",
+    "Generates FOUR patient paths:",
+    "  Path A (35%): Diagnosis + antihypertensive + elevated SBP — full presentation",
+    "  Path B (15%): Diagnosis + antihypertensive, no elevated BP recorded",
+    "  Path C (25%): Antihypertensive ONLY, NO diagnosis (cross-indication: HF, CKD, diabetic nephropathy, edema)",
+    "  Path D (25%): Elevated SBP ONLY, NO diagnosis, NO meds (silent/undiagnosed HTN)",
+    "",
+    "Diagnosis SNOMED variation (Paths A + B):",
+    "  40% Essential hypertension (59621000) — parent",
+    "  20% Benign essential hypertension (1201005)",
+    "  10% Malignant essential hypertension (78975002)",
+    "  20% Systolic essential hypertension (429457004)",
+    "  10% Labile essential hypertension (371125006)",
+    "",
+    "Medication ingredient variation (Paths A + B + C):",
+    "  30% Lisinopril (29046) — ACE-I",
+    "  20% Losartan (52175) — ARB",
+    "  20% Amlodipine (17767) — CCB",
+    "  15% Carvedilol (20352) — BB",
+    "  15% Furosemide (4603) — diuretic",
+    "",
+    "Vital signs (Paths A + D get elevated SBP):",
+    "  SBP case range: 145-180 mmHg (above PheKB threshold of >140)",
+    "",
+    "Codes verified via NCQA Essential Hypertension VSAC (OID 2.16.840.1.113883.3.464.1003.104.11.1029)."
+  ],
+  "states": {
+    "Initial": { "type": "Initial", "direct_transition": "Age_Guard" },
+    "Age_Guard": {
+      "type": "Guard",
+      "allow": { "condition_type": "Age", "operator": ">=", "quantity": 35, "unit": "years" },
+      "direct_transition": "Set_HTN_Flag"
+    },
+    "Set_HTN_Flag": { "type": "SetAttribute", "attribute": "htn_positive", "value": true, "direct_transition": "Choose_Patient_Path" },
+    "Choose_Patient_Path": {
+      "type": "Simple",
+      "distributed_transition": [
+        { "transition": "Set_Path_A", "distribution": 0.35 },
+        { "transition": "Set_Path_B", "distribution": 0.15 },
+        { "transition": "Set_Path_C", "distribution": 0.25 },
+        { "transition": "Set_Path_D", "distribution": 0.25 }
+      ]
+    },
+    "Set_Path_A": { "type": "SetAttribute", "attribute": "htn_has_dx", "value": true, "direct_transition": "Set_Path_A_Vitals" },
+    "Set_Path_A_Vitals": { "type": "SetAttribute", "attribute": "htn_has_high_bp", "value": true, "direct_transition": "Set_Path_A_Meds" },
+    "Set_Path_A_Meds": { "type": "SetAttribute", "attribute": "htn_has_meds", "value": true, "direct_transition": "Choose_Subtype" },
+
+    "Set_Path_B": { "type": "SetAttribute", "attribute": "htn_has_dx", "value": true, "direct_transition": "Set_Path_B_Vitals" },
+    "Set_Path_B_Vitals": { "type": "SetAttribute", "attribute": "htn_has_high_bp", "value": false, "direct_transition": "Set_Path_B_Meds" },
+    "Set_Path_B_Meds": { "type": "SetAttribute", "attribute": "htn_has_meds", "value": true, "direct_transition": "Choose_Subtype" },
+
+    "Set_Path_C": { "type": "SetAttribute", "remarks": ["TRICKY: antihypertensive without HTN dx (cross-indication)"], "attribute": "htn_has_dx", "value": false, "direct_transition": "Set_Path_C_Vitals" },
+    "Set_Path_C_Vitals": { "type": "SetAttribute", "attribute": "htn_has_high_bp", "value": false, "direct_transition": "Set_Path_C_Meds" },
+    "Set_Path_C_Meds": { "type": "SetAttribute", "attribute": "htn_has_meds", "value": true, "direct_transition": "Choose_Subtype" },
+
+    "Set_Path_D": { "type": "SetAttribute", "remarks": ["TRICKY: elevated BP only — silent/undiagnosed HTN"], "attribute": "htn_has_dx", "value": false, "direct_transition": "Set_Path_D_Vitals" },
+    "Set_Path_D_Vitals": { "type": "SetAttribute", "attribute": "htn_has_high_bp", "value": true, "direct_transition": "Set_Path_D_Meds" },
+    "Set_Path_D_Meds": { "type": "SetAttribute", "attribute": "htn_has_meds", "value": false, "direct_transition": "Choose_Subtype" },
+
+    "Choose_Subtype": {
+      "type": "Simple",
+      "distributed_transition": [
+        { "transition": "Set_Subtype_Essential", "distribution": 0.40 },
+        { "transition": "Set_Subtype_Benign", "distribution": 0.20 },
+        { "transition": "Set_Subtype_Malignant", "distribution": 0.10 },
+        { "transition": "Set_Subtype_Systolic", "distribution": 0.20 },
+        { "transition": "Set_Subtype_Labile", "distribution": 0.10 }
+      ]
+    },
+    "Set_Subtype_Essential": { "type": "SetAttribute", "attribute": "htn_subtype", "value": "essential", "direct_transition": "Choose_Med" },
+    "Set_Subtype_Benign": { "type": "SetAttribute", "attribute": "htn_subtype", "value": "benign", "direct_transition": "Choose_Med" },
+    "Set_Subtype_Malignant": { "type": "SetAttribute", "attribute": "htn_subtype", "value": "malignant", "direct_transition": "Choose_Med" },
+    "Set_Subtype_Systolic": { "type": "SetAttribute", "attribute": "htn_subtype", "value": "systolic", "direct_transition": "Choose_Med" },
+    "Set_Subtype_Labile": { "type": "SetAttribute", "attribute": "htn_subtype", "value": "labile", "direct_transition": "Choose_Med" },
+
+    "Choose_Med": {
+      "type": "Simple",
+      "distributed_transition": [
+        { "transition": "Set_Med_Lisinopril", "distribution": 0.30 },
+        { "transition": "Set_Med_Losartan", "distribution": 0.20 },
+        { "transition": "Set_Med_Amlodipine", "distribution": 0.20 },
+        { "transition": "Set_Med_Carvedilol", "distribution": 0.15 },
+        { "transition": "Set_Med_Furosemide", "distribution": 0.15 }
+      ]
+    },
+    "Set_Med_Lisinopril": { "type": "SetAttribute", "attribute": "htn_med", "value": "lisinopril", "direct_transition": "Set_Needs_First_Visit" },
+    "Set_Med_Losartan": { "type": "SetAttribute", "attribute": "htn_med", "value": "losartan", "direct_transition": "Set_Needs_First_Visit" },
+    "Set_Med_Amlodipine": { "type": "SetAttribute", "attribute": "htn_med", "value": "amlodipine", "direct_transition": "Set_Needs_First_Visit" },
+    "Set_Med_Carvedilol": { "type": "SetAttribute", "attribute": "htn_med", "value": "carvedilol", "direct_transition": "Set_Needs_First_Visit" },
+    "Set_Med_Furosemide": { "type": "SetAttribute", "attribute": "htn_med", "value": "furosemide", "direct_transition": "Set_Needs_First_Visit" },
+
+    "Set_Needs_First_Visit": { "type": "SetAttribute", "attribute": "htn_needs_first_visit", "value": true, "direct_transition": "Wellness_Encounter" },
+    "Wellness_Encounter": { "type": "Encounter", "wellness": true, "direct_transition": "Check_First_Visit" },
+    "Check_First_Visit": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "htn_needs_first_visit", "operator": "==", "value": true }, "transition": "Check_Has_Diagnosis" },
+        { "transition": "End_Wellness_Encounter" }
+      ]
+    },
+    "Check_Has_Diagnosis": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "htn_has_dx", "operator": "==", "value": true }, "transition": "Route_By_Subtype" },
+        { "transition": "Check_Vitals_NoDx" }
+      ]
+    },
+    "Route_By_Subtype": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "htn_subtype", "operator": "==", "value": "essential" }, "transition": "Diagnose_Essential" },
+        { "condition": { "condition_type": "Attribute", "attribute": "htn_subtype", "operator": "==", "value": "benign" }, "transition": "Diagnose_Benign" },
+        { "condition": { "condition_type": "Attribute", "attribute": "htn_subtype", "operator": "==", "value": "malignant" }, "transition": "Diagnose_Malignant" },
+        { "condition": { "condition_type": "Attribute", "attribute": "htn_subtype", "operator": "==", "value": "systolic" }, "transition": "Diagnose_Systolic" },
+        { "transition": "Diagnose_Labile" }
+      ]
+    },
+    "Diagnose_Essential": { "type": "ConditionOnset", "assign_to_attribute": "htn_condition", "codes": [{ "system": "SNOMED-CT", "code": "59621000", "display": "Essential hypertension" }], "direct_transition": "Check_Vitals_WithDx" },
+    "Diagnose_Benign": { "type": "ConditionOnset", "assign_to_attribute": "htn_condition", "codes": [{ "system": "SNOMED-CT", "code": "1201005", "display": "Benign essential hypertension" }], "direct_transition": "Check_Vitals_WithDx" },
+    "Diagnose_Malignant": { "type": "ConditionOnset", "assign_to_attribute": "htn_condition", "codes": [{ "system": "SNOMED-CT", "code": "78975002", "display": "Malignant essential hypertension" }], "direct_transition": "Check_Vitals_WithDx" },
+    "Diagnose_Systolic": { "type": "ConditionOnset", "assign_to_attribute": "htn_condition", "codes": [{ "system": "SNOMED-CT", "code": "429457004", "display": "Systolic essential hypertension" }], "direct_transition": "Check_Vitals_WithDx" },
+    "Diagnose_Labile": { "type": "ConditionOnset", "assign_to_attribute": "htn_condition", "codes": [{ "system": "SNOMED-CT", "code": "371125006", "display": "Labile essential hypertension" }], "direct_transition": "Check_Vitals_WithDx" },
+
+    "Check_Vitals_WithDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "htn_has_high_bp", "operator": "==", "value": true }, "transition": "Record_High_SBP_WithDx" },
+        { "transition": "Check_Meds_WithDx" }
+      ]
+    },
+    "Record_High_SBP_WithDx": {
+      "type": "Observation",
+      "category": "vital-signs",
+      "unit": "mm[Hg]",
+      "codes": [{ "system": "LOINC", "code": "8480-6", "display": "Systolic blood pressure" }],
+      "range": { "low": 145, "high": 180 },
+      "direct_transition": "Check_Meds_WithDx"
+    },
+    "Check_Meds_WithDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "htn_has_meds", "operator": "==", "value": true }, "transition": "Route_Med_WithDx" },
+        { "transition": "Clear_First_Visit_Flag" }
+      ]
+    },
+    "Route_Med_WithDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "htn_med", "operator": "==", "value": "lisinopril" }, "transition": "Prescribe_Lisinopril_WithDx" },
+        { "condition": { "condition_type": "Attribute", "attribute": "htn_med", "operator": "==", "value": "losartan" }, "transition": "Prescribe_Losartan_WithDx" },
+        { "condition": { "condition_type": "Attribute", "attribute": "htn_med", "operator": "==", "value": "amlodipine" }, "transition": "Prescribe_Amlodipine_WithDx" },
+        { "condition": { "condition_type": "Attribute", "attribute": "htn_med", "operator": "==", "value": "carvedilol" }, "transition": "Prescribe_Carvedilol_WithDx" },
+        { "transition": "Prescribe_Furosemide_WithDx" }
+      ]
+    },
+    "Prescribe_Lisinopril_WithDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "29046", "display": "lisinopril" }], "reason": "htn_condition", "direct_transition": "Clear_First_Visit_Flag" },
+    "Prescribe_Losartan_WithDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "52175", "display": "losartan" }], "reason": "htn_condition", "direct_transition": "Clear_First_Visit_Flag" },
+    "Prescribe_Amlodipine_WithDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "17767", "display": "amlodipine" }], "reason": "htn_condition", "direct_transition": "Clear_First_Visit_Flag" },
+    "Prescribe_Carvedilol_WithDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "20352", "display": "carvedilol" }], "reason": "htn_condition", "direct_transition": "Clear_First_Visit_Flag" },
+    "Prescribe_Furosemide_WithDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "4603", "display": "furosemide" }], "reason": "htn_condition", "direct_transition": "Clear_First_Visit_Flag" },
+
+    "Check_Vitals_NoDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "htn_has_high_bp", "operator": "==", "value": true }, "transition": "Record_High_SBP_NoDx" },
+        { "transition": "Check_Meds_NoDx" }
+      ]
+    },
+    "Record_High_SBP_NoDx": {
+      "type": "Observation",
+      "category": "vital-signs",
+      "unit": "mm[Hg]",
+      "codes": [{ "system": "LOINC", "code": "8480-6", "display": "Systolic blood pressure" }],
+      "range": { "low": 142, "high": 175 },
+      "direct_transition": "Check_Meds_NoDx"
+    },
+    "Check_Meds_NoDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "htn_has_meds", "operator": "==", "value": true }, "transition": "Route_Med_NoDx" },
+        { "transition": "Clear_First_Visit_Flag" }
+      ]
+    },
+    "Route_Med_NoDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "htn_med", "operator": "==", "value": "lisinopril" }, "transition": "Prescribe_Lisinopril_NoDx" },
+        { "condition": { "condition_type": "Attribute", "attribute": "htn_med", "operator": "==", "value": "losartan" }, "transition": "Prescribe_Losartan_NoDx" },
+        { "condition": { "condition_type": "Attribute", "attribute": "htn_med", "operator": "==", "value": "amlodipine" }, "transition": "Prescribe_Amlodipine_NoDx" },
+        { "condition": { "condition_type": "Attribute", "attribute": "htn_med", "operator": "==", "value": "carvedilol" }, "transition": "Prescribe_Carvedilol_NoDx" },
+        { "transition": "Prescribe_Furosemide_NoDx" }
+      ]
+    },
+    "Prescribe_Lisinopril_NoDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "29046", "display": "lisinopril" }], "direct_transition": "Clear_First_Visit_Flag" },
+    "Prescribe_Losartan_NoDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "52175", "display": "losartan" }], "direct_transition": "Clear_First_Visit_Flag" },
+    "Prescribe_Amlodipine_NoDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "17767", "display": "amlodipine" }], "direct_transition": "Clear_First_Visit_Flag" },
+    "Prescribe_Carvedilol_NoDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "20352", "display": "carvedilol" }], "direct_transition": "Clear_First_Visit_Flag" },
+    "Prescribe_Furosemide_NoDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "4603", "display": "furosemide" }], "direct_transition": "Clear_First_Visit_Flag" },
+
+    "Clear_First_Visit_Flag": { "type": "SetAttribute", "attribute": "htn_needs_first_visit", "value": false, "direct_transition": "End_Wellness_Encounter" },
+    "End_Wellness_Encounter": { "type": "EncounterEnd", "direct_transition": "Followup_Delay" },
+    "Followup_Delay": {
+      "type": "Delay",
+      "range": { "low": 4, "high": 8, "unit": "months" },
+      "direct_transition": "Wellness_Encounter"
+    }
+  },
+  "gmf_version": 2
+}

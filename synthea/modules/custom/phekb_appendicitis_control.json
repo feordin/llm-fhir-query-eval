@@ -1,0 +1,148 @@
+{
+  "name": "PheKB Appendicitis Control (Non-Appendicitis)",
+  "remarks": [
+    "Control module for appendicitis phenotype testing",
+    "Generates patients who should NOT match appendicitis criteria",
+    "",
+    "Control Criteria:",
+    "- No appendicitis diagnosis (no SNOMED 85189001 or 74400008)",
+    "- No appendectomy procedure (no SNOMED 80146002)",
+    "- May have other abdominal conditions (gastroenteritis, abdominal pain)",
+    "- Age >= 5 (same as phenotype module)",
+    "",
+    "These patients should NOT be returned by appendicitis phenotype queries"
+  ],
+  "states": {
+    "Initial": {
+      "type": "Initial",
+      "direct_transition": "Age_Guard"
+    },
+
+    "Age_Guard": {
+      "type": "Guard",
+      "remarks": ["Match the same age range as the phenotype (>= 5)"],
+      "allow": {
+        "condition_type": "Age",
+        "operator": ">=",
+        "quantity": 5,
+        "unit": "years"
+      },
+      "direct_transition": "Wellness_Visit"
+    },
+
+    "Wellness_Visit": {
+      "type": "Encounter",
+      "encounter_class": "ambulatory",
+      "remarks": ["Routine encounter for control patients"],
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": "185349003",
+          "display": "Encounter for check up"
+        }
+      ],
+      "direct_transition": "Record_Vital_Signs"
+    },
+
+    "Record_Vital_Signs": {
+      "type": "Observation",
+      "category": "vital-signs",
+      "unit": "mmHg",
+      "codes": [
+        {
+          "system": "LOINC",
+          "code": "8480-6",
+          "display": "Systolic blood pressure"
+        }
+      ],
+      "range": {
+        "low": 100,
+        "high": 140
+      },
+      "direct_transition": "Check_Comorbidities"
+    },
+
+    "Check_Comorbidities": {
+      "type": "Simple",
+      "remarks": [
+        "Control patients may have common non-appendicitis abdominal conditions",
+        "Adds realistic variety and tests specificity of appendicitis queries"
+      ],
+      "distributed_transition": [
+        {
+          "transition": "Has_Gastroenteritis",
+          "distribution": 0.30,
+          "remarks": ["30% have gastroenteritis - abdominal but not appendicitis"]
+        },
+        {
+          "transition": "Has_Abdominal_Pain",
+          "distribution": 0.25,
+          "remarks": ["25% have abdominal pain - similar presentation but not appendicitis"]
+        },
+        {
+          "transition": "Has_GERD",
+          "distribution": 0.20,
+          "remarks": ["20% have GERD - GI condition but not appendicitis"]
+        },
+        {
+          "transition": "Healthy_Patient",
+          "distribution": 0.25,
+          "remarks": ["25% are generally healthy"]
+        }
+      ]
+    },
+
+    "Has_Gastroenteritis": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": "25374005",
+          "display": "Gastroenteritis"
+        }
+      ],
+      "direct_transition": "End_Encounter"
+    },
+
+    "Has_Abdominal_Pain": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": "21522001",
+          "display": "Abdominal pain"
+        }
+      ],
+      "direct_transition": "End_Encounter"
+    },
+
+    "Has_GERD": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "SNOMED-CT",
+          "code": "235595009",
+          "display": "Gastroesophageal reflux disease"
+        }
+      ],
+      "direct_transition": "End_Encounter"
+    },
+
+    "Healthy_Patient": {
+      "type": "Simple",
+      "remarks": ["No additional conditions"],
+      "direct_transition": "End_Encounter"
+    },
+
+    "End_Encounter": {
+      "type": "EncounterEnd",
+      "direct_transition": "Terminal_Control"
+    },
+
+    "Terminal_Control": {
+      "type": "Terminal",
+      "remarks": ["Control patient - should NOT be found by appendicitis phenotype query"]
+    }
+  },
+  "gmf_version": 2
+}

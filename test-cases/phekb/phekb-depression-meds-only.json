@@ -1,0 +1,101 @@
+{
+  "id": "phekb-depression-meds-only",
+  "source": "phekb",
+  "source_id": "depression",
+  "name": "Depression - Medication-Only Patients (No Diagnosis)",
+  "description": "THE highest-yield tricky test case for this phenotype. Antidepressants — especially SSRIs — are widely prescribed for many indications (depression, anxiety, insomnia, chronic pain, hot flashes, premenstrual dysphoria, eating disorders). A large fraction of SSRI patients have no formal depression diagnosis on the problem list. This is the dominant Path C pattern in real-world EHR data. The Synthea module weights Path C heavily (~40%) to make this clinically realistic. An LLM that only queries Condition for depression will miss most antidepressant-treated patients.",
+  "prompt": "I want to find patients in our system who are taking antidepressants but don't have a formal depression diagnosis on their problem list. Real-world primary care often has many SSRI patients without an explicit depression diagnosis — the prescription may have been started for anxiety, insomnia, or empirically without coding a specific diagnosis.",
+  "prompts": {
+    "naive": "Find patients on antidepressants without a depression diagnosis.",
+    "expert": "I need to identify a documentation gap that is especially common with antidepressants: patients on SSRIs/SNRIs who lack a formal depression Condition resource. Two-step approach: first find all patients with MedicationRequest for antidepressant SCDs (sertraline 312938, fluoxetine 310385, escitalopram 351250, citalopram 200371, venlafaxine 313580, bupropion 993537), then exclude those with a Condition for depression subtypes (370143000 MDD, 36923009 single episode, 66344007 recurrent, 78667006 dysthymia, 35489007 depressive disorder)."
+  },
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "algorithm_path": "meds-only-path",
+    "algorithm_path_description": "Path C 'tricky' patients: have antidepressant meds but NO depression Condition resource. The Synthea module weights this path heavily (~40%) because it's the most common real-world pattern for SSRIs.",
+    "code_systems": [
+      "RxNorm",
+      "SNOMED CT"
+    ],
+    "required_codes": [
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "312938",
+        "display": "Sertraline 100 MG Oral Tablet",
+        "source": "Synthea built-in"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "310385",
+        "display": "Fluoxetine 20 MG Oral Capsule",
+        "source": "Synthea built-in"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "351250",
+        "display": "Escitalopram 20 MG Oral Tablet",
+        "source": "RxNorm SCD"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "200371",
+        "display": "Citalopram 20 MG Oral Tablet",
+        "source": "RxNorm SCD"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "313580",
+        "display": "Venlafaxine 100 MG Oral Tablet",
+        "source": "RxNorm SCD"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "993537",
+        "display": "12 HR bupropion hydrochloride 200 MG Extended Release Oral Tablet [Wellbutrin]",
+        "source": "RxNorm SCD"
+      }
+    ],
+    "complexity": "hard",
+    "tags": [
+      "medication",
+      "psychiatry",
+      "depression",
+      "tricky",
+      "meds-only",
+      "cross-resource",
+      "ssri-prescribing-gap"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "MedicationRequest",
+    "parameters": {
+      "code": "http://www.nlm.nih.gov/research/umls/rxnorm|312938,http://www.nlm.nih.gov/research/umls/rxnorm|310385,http://www.nlm.nih.gov/research/umls/rxnorm|351250,http://www.nlm.nih.gov/research/umls/rxnorm|200371,http://www.nlm.nih.gov/research/umls/rxnorm|313580,http://www.nlm.nih.gov/research/umls/rxnorm|993537"
+    },
+    "url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|312938,http://www.nlm.nih.gov/research/umls/rxnorm|310385,http://www.nlm.nih.gov/research/umls/rxnorm|351250,http://www.nlm.nih.gov/research/umls/rxnorm|200371,http://www.nlm.nih.gov/research/umls/rxnorm|313580,http://www.nlm.nih.gov/research/umls/rxnorm|993537"
+  },
+  "test_data": {
+    "resources": [
+      "synthea/output/depression/positive/fhir/",
+      "synthea/output/depression/control/fhir/"
+    ],
+    "expected_result_count": 13,
+    "expected_resource_ids": [],
+    "expected_patient_ids": [
+      "01821618-1e31-7b68-1d62-64911414f4f9",
+      "596c786c-2c66-6caa-ee67-945053156ab1",
+      "8acc4a22-fcb6-089b-1ce6-0cc4de491542",
+      "8c47c6f2-1bd6-a45a-b784-5907d63a23de",
+      "976f568d-7841-b1b0-0c26-904ced33d8cc",
+      "a20c2b61-8891-c883-ff01-9bddcdf8220a",
+      "a277aa9c-e9e1-8eb5-1303-7ebcee5c27e3",
+      "b3534d9f-dac0-f51e-75bd-ce4775a78f47",
+      "ba1e63a7-ab3a-50b6-b2ed-d11276127475",
+      "bb024f09-4e20-6f91-df71-6cb5485ac045",
+      "ed5eba29-a875-120a-7b04-a42034975276",
+      "ed6c03e1-f389-2b3d-35c0-260b184d5ab0",
+      "f883a494-f578-ca8b-b985-772f0c65680a"
+    ]
+  },
+  "created_at": "2026-04-25T00:00:00.000000Z",
+  "updated_at": "2026-04-25T00:00:00.000000Z"
+}

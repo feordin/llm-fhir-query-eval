@@ -97,15 +97,20 @@ def _to_forward_slashes(path: str) -> str:
 
 
 def _get_gradlew() -> Path:
-    """Get the Gradle wrapper script path."""
-    if sys.platform == "win32" and not _is_bash_environment():
+    """Get the Gradle wrapper script path.
+
+    On Windows, always use gradlew.bat because Python's subprocess.run
+    uses CreateProcess which can't execute Unix shell scripts, even when
+    running inside git bash.
+    """
+    if sys.platform == "win32":
         return SYNTHEA_HOME / "gradlew.bat"
     return SYNTHEA_HOME / "gradlew"
 
 
 def _get_synthea_cmd() -> Path:
     """Get the platform-appropriate Synthea run script."""
-    if sys.platform == "win32" and not _is_bash_environment():
+    if sys.platform == "win32":
         return SYNTHEA_HOME / "run_synthea.bat"
     return SYNTHEA_HOME / "run_synthea"
 

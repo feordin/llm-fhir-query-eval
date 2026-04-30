@@ -1,0 +1,65 @@
+{
+  "id": "phekb-type-1-diabetes-labs",
+  "source": "phekb",
+  "source_id": "type-1-diabetes",
+  "name": "Type 1 Diabetes - Elevated HbA1c Lab Query",
+  "description": "Tests ability to find type 1 diabetes patients via elevated HbA1c. The diagnostic threshold for diabetes (T1 or T2) is HbA1c ≥ 6.5%. T1D typically presents with much higher HbA1c at diagnosis (often >10%) due to absolute insulin deficiency. This test case uses ≥ 6.5% to capture both well-controlled and poorly-controlled T1D patients. Same LOINC and threshold as T2D — distinction from T2D is in the diagnosis codes, not labs.",
+  "prompt": "Find laboratory observations for hemoglobin A1c results at or above 6.5 percent, indicating diabetes mellitus.",
+  "prompts": {
+    "naive": "Find patients with elevated HbA1c.",
+    "broad": "Find Observation resources for hemoglobin A1c results where the value is greater than or equal to 6.5 percent. HbA1c ≥ 6.5% meets ADA diagnostic criteria for diabetes mellitus (Type 1 or Type 2).",
+    "expert": "I need Observation resources for elevated HbA1c. Use LOINC 4548-4 (Hemoglobin A1c/Hemoglobin.total in Blood). Apply a value-quantity filter with the ge prefix at threshold 6.5, unit percent. The query should look like: Observation?code=http://loinc.org|4548-4&value-quantity=ge6.5. Note this is the ADA diabetes diagnostic threshold — same as T2D. Distinction between T1D and T2D requires diagnosis codes, not labs alone."
+  },
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "algorithm_path": "lab-path",
+    "algorithm_path_description": "Patients with elevated HbA1c (Paths A and D). Will catch both T1D and T2D patients — distinguishing requires diagnosis codes.",
+    "code_systems": [
+      "LOINC"
+    ],
+    "required_codes": [
+      {
+        "system": "http://loinc.org",
+        "code": "4548-4",
+        "display": "Hemoglobin A1c/Hemoglobin.total in Blood",
+        "source": "UMLS verified"
+      }
+    ],
+    "complexity": "hard",
+    "tags": [
+      "observation",
+      "endocrinology",
+      "type-1-diabetes",
+      "value-quantity",
+      "lab-threshold",
+      "hba1c"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "Observation",
+    "parameters": {
+      "code": "http://loinc.org|4548-4",
+      "value-quantity": "ge6.5"
+    },
+    "url": "Observation?code=http://loinc.org|4548-4&value-quantity=ge6.5"
+  },
+  "test_data": {
+    "resources": [
+      "synthea/output/type-1-diabetes/positive/fhir/",
+      "synthea/output/type-1-diabetes/control/fhir/"
+    ],
+    "expected_result_count": 7,
+    "expected_resource_ids": [],
+    "expected_patient_ids": [
+      "265b637d-5a62-9b4c-e9ca-83c16e3b460b",
+      "2694941f-b838-561a-d47c-7093ce0eaa01",
+      "2ccf50c1-31c5-b3d9-dc49-fb54764d05ce",
+      "3a62ae3f-83e2-7d7b-4fa4-188dce1df480",
+      "607c28c3-567e-8e26-80a8-cd1fb951db0d",
+      "e0e1c949-d33e-5bf2-caf9-eddc5b11ac12",
+      "e63d02ea-5753-145b-10f1-97d30275a83c"
+    ]
+  },
+  "created_at": "2026-04-27T00:00:00.000000Z",
+  "updated_at": "2026-04-27T00:00:00.000000Z"
+}

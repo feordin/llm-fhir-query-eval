@@ -1,0 +1,112 @@
+{
+  "name": "PheKB Bipolar Disorder",
+  "remarks": [
+    "Custom Synthea module for bipolar disorder.",
+    "First mood-stabilizer phenotype. Distinct from depression (unipolar) and anxiety.",
+    "First lithium phenotype.",
+    "",
+    "Generates THREE patient paths:",
+    "  Path A (60%): Bipolar dx + mood stabilizer (Rx)",
+    "  Path B (25%): Bipolar dx, no medication recorded (newly dx, intolerant)",
+    "  Path C (15%): Mood stabilizer only, no bipolar dx (TRICKY — empirical for mood instability or off-label epilepsy/migraine prophylaxis)",
+    "",
+    "Mood stabilizer distribution (Paths A + C):",
+    "  40% Lithium (RxNorm 6448) — gold standard mood stabilizer, highly specific",
+    "  35% Valproate (RxNorm 40254) — also for epilepsy/migraine (cross-indication)",
+    "  25% Lamotrigine (RxNorm 28439) — also for epilepsy",
+    "",
+    "Age guard: >=18."
+  ],
+  "states": {
+    "Initial": { "type": "Initial", "direct_transition": "Age_Guard" },
+    "Age_Guard": { "type": "Guard", "allow": { "condition_type": "Age", "operator": ">=", "quantity": 18, "unit": "years" }, "direct_transition": "Set_Bipolar_Flag" },
+    "Set_Bipolar_Flag": { "type": "SetAttribute", "attribute": "bipolar_positive", "value": true, "direct_transition": "Choose_Patient_Path" },
+    "Choose_Patient_Path": {
+      "type": "Simple",
+      "distributed_transition": [
+        { "transition": "Set_Path_A", "distribution": 0.60 },
+        { "transition": "Set_Path_B", "distribution": 0.25 },
+        { "transition": "Set_Path_C", "distribution": 0.15 }
+      ]
+    },
+    "Set_Path_A": { "type": "SetAttribute", "attribute": "bipolar_has_dx", "value": true, "direct_transition": "Set_Path_A_Med" },
+    "Set_Path_A_Med": { "type": "SetAttribute", "attribute": "bipolar_has_med", "value": true, "direct_transition": "Choose_Med" },
+    "Set_Path_B": { "type": "SetAttribute", "attribute": "bipolar_has_dx", "value": true, "direct_transition": "Set_Path_B_Med" },
+    "Set_Path_B_Med": { "type": "SetAttribute", "attribute": "bipolar_has_med", "value": false, "direct_transition": "Choose_Med" },
+    "Set_Path_C": { "type": "SetAttribute", "remarks": ["TRICKY: mood stabilizer without bipolar dx"], "attribute": "bipolar_has_dx", "value": false, "direct_transition": "Set_Path_C_Med" },
+    "Set_Path_C_Med": { "type": "SetAttribute", "attribute": "bipolar_has_med", "value": true, "direct_transition": "Choose_Med" },
+
+    "Choose_Med": {
+      "type": "Simple",
+      "distributed_transition": [
+        { "transition": "Set_Med_Lithium", "distribution": 0.40 },
+        { "transition": "Set_Med_Valproate", "distribution": 0.35 },
+        { "transition": "Set_Med_Lamotrigine", "distribution": 0.25 }
+      ]
+    },
+    "Set_Med_Lithium": { "type": "SetAttribute", "attribute": "bipolar_med", "value": "lithium", "direct_transition": "Set_Needs_First_Visit" },
+    "Set_Med_Valproate": { "type": "SetAttribute", "attribute": "bipolar_med", "value": "valproate", "direct_transition": "Set_Needs_First_Visit" },
+    "Set_Med_Lamotrigine": { "type": "SetAttribute", "attribute": "bipolar_med", "value": "lamotrigine", "direct_transition": "Set_Needs_First_Visit" },
+
+    "Set_Needs_First_Visit": { "type": "SetAttribute", "attribute": "bipolar_needs_first_visit", "value": true, "direct_transition": "Wellness_Encounter" },
+    "Wellness_Encounter": { "type": "Encounter", "wellness": true, "direct_transition": "Check_First_Visit" },
+    "Check_First_Visit": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "bipolar_needs_first_visit", "operator": "==", "value": true }, "transition": "Check_Has_Diagnosis" },
+        { "transition": "End_Wellness_Encounter" }
+      ]
+    },
+    "Check_Has_Diagnosis": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "bipolar_has_dx", "operator": "==", "value": true }, "transition": "Diagnose_Bipolar" },
+        { "transition": "Check_Med_NoDx" }
+      ]
+    },
+    "Diagnose_Bipolar": { "type": "ConditionOnset", "assign_to_attribute": "bipolar_condition", "codes": [{ "system": "SNOMED-CT", "code": "13746004", "display": "Bipolar disorder" }], "direct_transition": "Check_Med_WithDx" },
+
+    "Check_Med_WithDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "bipolar_has_med", "operator": "==", "value": true }, "transition": "Route_Med_WithDx" },
+        { "transition": "Clear_First_Visit_Flag" }
+      ]
+    },
+    "Route_Med_WithDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "bipolar_med", "operator": "==", "value": "lithium" }, "transition": "Prescribe_Lithium_WithDx" },
+        { "condition": { "condition_type": "Attribute", "attribute": "bipolar_med", "operator": "==", "value": "valproate" }, "transition": "Prescribe_Valproate_WithDx" },
+        { "transition": "Prescribe_Lamotrigine_WithDx" }
+      ]
+    },
+    "Prescribe_Lithium_WithDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "6448", "display": "lithium" }], "reason": "bipolar_condition", "direct_transition": "Clear_First_Visit_Flag" },
+    "Prescribe_Valproate_WithDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "40254", "display": "valproate" }], "reason": "bipolar_condition", "direct_transition": "Clear_First_Visit_Flag" },
+    "Prescribe_Lamotrigine_WithDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "28439", "display": "lamotrigine" }], "reason": "bipolar_condition", "direct_transition": "Clear_First_Visit_Flag" },
+
+    "Check_Med_NoDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "bipolar_has_med", "operator": "==", "value": true }, "transition": "Route_Med_NoDx" },
+        { "transition": "Clear_First_Visit_Flag" }
+      ]
+    },
+    "Route_Med_NoDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "bipolar_med", "operator": "==", "value": "lithium" }, "transition": "Prescribe_Lithium_NoDx" },
+        { "condition": { "condition_type": "Attribute", "attribute": "bipolar_med", "operator": "==", "value": "valproate" }, "transition": "Prescribe_Valproate_NoDx" },
+        { "transition": "Prescribe_Lamotrigine_NoDx" }
+      ]
+    },
+    "Prescribe_Lithium_NoDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "6448", "display": "lithium" }], "direct_transition": "Clear_First_Visit_Flag" },
+    "Prescribe_Valproate_NoDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "40254", "display": "valproate" }], "direct_transition": "Clear_First_Visit_Flag" },
+    "Prescribe_Lamotrigine_NoDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "28439", "display": "lamotrigine" }], "direct_transition": "Clear_First_Visit_Flag" },
+
+    "Clear_First_Visit_Flag": { "type": "SetAttribute", "attribute": "bipolar_needs_first_visit", "value": false, "direct_transition": "End_Wellness_Encounter" },
+    "End_Wellness_Encounter": { "type": "EncounterEnd", "direct_transition": "Followup_Delay" },
+    "Followup_Delay": { "type": "Delay", "range": { "low": 3, "high": 6, "unit": "months" }, "direct_transition": "Wellness_Encounter" }
+  },
+  "gmf_version": 2
+}

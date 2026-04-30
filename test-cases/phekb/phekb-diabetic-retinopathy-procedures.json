@@ -1,0 +1,69 @@
+{
+  "id": "phekb-diabetic-retinopathy-procedures",
+  "source": "phekb",
+  "source_id": "diabetic-retinopathy",
+  "name": "Diabetic Retinopathy - Fundoscopy Procedure Query",
+  "description": "**Seventh Procedure-resource phenotype.** Tests ability to find DR patients via camera fundoscopy — the standard retinal photography used for DR screening and surveillance.",
+  "prompt": "Find patients who have undergone a fundoscopic eye examination (camera fundoscopy).",
+  "prompts": {
+    "naive": "Find patients with eye exams.",
+    "broad": "Find Procedure resources for camera fundoscopy — the retinal photography procedure used to screen and monitor diabetic retinopathy.",
+    "expert": "I need Procedure resources for fundoscopic eye examination. Use SNOMED code 314971001 (Camera fundoscopy). Query: Procedure?code=http://snomed.info/sct|314971001"
+  },
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "algorithm_path": "procedure-path",
+    "algorithm_path_description": "Patients with camera fundoscopy. **Seventh Procedure-resource phenotype** in suite (after CHD revasc, polysomnography, colonoscopy, prostate biopsy, EEG, chest X-ray). First ophthalmological procedure type.",
+    "code_systems": [
+      "SNOMED CT"
+    ],
+    "required_codes": [
+      {
+        "system": "http://snomed.info/sct",
+        "code": "314971001",
+        "display": "Camera fundoscopy (procedure)",
+        "source": "UMLS verified"
+      }
+    ],
+    "complexity": "medium",
+    "tags": [
+      "procedure",
+      "ophthalmology",
+      "diabetic-retinopathy",
+      "fundoscopy",
+      "seventh-procedure-test"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "Procedure",
+    "parameters": {
+      "code": "http://snomed.info/sct|314971001"
+    },
+    "url": "Procedure?code=http://snomed.info/sct|314971001"
+  },
+  "test_data": {
+    "resources": [
+      "synthea/output/diabetic-retinopathy/positive/fhir/",
+      "synthea/output/diabetic-retinopathy/control/fhir/"
+    ],
+    "expected_result_count": 13,
+    "expected_resource_ids": [],
+    "expected_patient_ids": [
+      "1f692384-f5c5-f3cf-6dfb-6ac1020a59c3",
+      "245c4da0-71dc-497d-c1e9-ab01868f6bf1",
+      "26d56732-a937-035c-2ca8-66716ce8ffe9",
+      "330e036e-e859-ff37-d2bd-3f5f6ac962d5",
+      "3d44dd41-ae97-85fb-961e-4abfb87beb3a",
+      "6c473997-f23a-4c6f-d512-7f262d96298a",
+      "7995d283-e2f0-5b31-fbd7-e312011df15d",
+      "a2778aa4-b309-55fb-e498-28ebe5f04d94",
+      "ada012b4-398c-d68d-a775-0eaf4516ac02",
+      "bb4238ef-0ae8-4172-1f8e-ab06c97d3d57",
+      "bf293810-0017-d7b1-a584-4109ee16589a",
+      "decfda0d-0e8f-ff85-e3c6-62a36e885ca7",
+      "e6e18607-a958-9e3a-1a49-e878fa5c703c"
+    ]
+  },
+  "created_at": "2026-04-28T00:00:00.000000Z",
+  "updated_at": "2026-04-27T00:00:00.000000Z"
+}

@@ -1,0 +1,64 @@
+{
+  "id": "phekb-aki-dx",
+  "source": "phekb",
+  "source_id": "acute-kidney-injury-aki",
+  "name": "Acute Kidney Injury - Diagnosis Code Query",
+  "description": "Tests ability to find AKI patients by searching for diagnosis codes. This covers cases where AKI was formally diagnosed and coded in the EMR. The PheKB AKI algorithm uses serum creatinine changes as the primary identification method, but many AKI episodes also receive a formal diagnosis code (SNOMED 14669001 or ICD-10 N17.x). This test evaluates whether the LLM can identify the correct SNOMED code for acute kidney injury from a natural language prompt.",
+  "prompt": "Find all patients diagnosed with acute kidney injury.",
+  "prompts": {
+    "naive": "Find all patients diagnosed with acute kidney injury.",
+    "expert": "I need to find patients with a documented acute kidney injury diagnosis. AKI (formerly called acute renal failure) is coded in SNOMED CT as a specific clinical finding. Be aware that many AKI episodes in hospitalized patients are recognized and treated without ever receiving a formal AKI diagnosis code -- clinicians often manage the creatinine elevation without adding it to the problem list. Still, searching Condition resources for the AKI SNOMED code will capture cases where the diagnosis was formally documented. The query should use the specific acute kidney injury code rather than broader renal disease codes."
+  },
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "algorithm_path": "diagnosed-aki",
+    "algorithm_path_description": "Patients with a formal AKI diagnosis code recorded as a Condition resource. Approximately 70% of AKI positive patients in the test data have this code.",
+    "code_systems": [
+      "SNOMED CT"
+    ],
+    "required_codes": [
+      {
+        "system": "http://snomed.info/sct",
+        "code": "14669001",
+        "display": "Acute kidney injury",
+        "source": "document"
+      }
+    ],
+    "complexity": "easy",
+    "tags": [
+      "condition",
+      "nephrology",
+      "acute-kidney-injury",
+      "diagnosis-code"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "Condition",
+    "parameters": {
+      "code": "http://snomed.info/sct|14669001"
+    },
+    "url": "Condition?code=http://snomed.info/sct|14669001"
+  },
+  "test_data": {
+    "resources": [
+      "synthea/output/acute-kidney-injury/positive/fhir/",
+      "synthea/output/acute-kidney-injury/control/fhir/"
+    ],
+    "expected_result_count": 10,
+    "expected_resource_ids": [],
+    "expected_patient_ids": [
+      "2c167999-289d-95fa-5c27-7d8b8d35348c",
+      "46ee9d82-b52c-856d-069b-5064ff052225",
+      "4f083ce3-f12b-bb4b-7353-e17f0cd55b0a",
+      "62f60bdb-cc5c-8305-b98b-f2b229a55eca",
+      "6fbddf55-7096-b883-7cd3-260f27953080",
+      "aa616abe-1761-0c9a-7959-07544679dafd",
+      "ba419d35-0dfe-8af7-347c-eebf02485a56",
+      "bff9d9d5-ee3d-d852-9c67-36d8361a4a4a",
+      "e74367bd-7385-97dc-2c7f-251b4cd9fe29",
+      "eb5910f1-26e6-bc6f-b300-716eae678d6f"
+    ]
+  },
+  "created_at": "2026-03-15T12:00:00.000000Z",
+  "updated_at": "2026-03-15T12:00:00.000000Z"
+}

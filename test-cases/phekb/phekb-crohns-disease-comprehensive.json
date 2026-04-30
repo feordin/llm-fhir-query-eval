@@ -1,0 +1,173 @@
+{
+  "id": "phekb-crohns-disease-comprehensive",
+  "source": "phekb",
+  "source_id": "crohns-disease",
+  "name": "Crohn's Disease - Comprehensive Provider Query (DX + Meds + Labs)",
+  "description": "Simulates a gastroenterologist identifying their complete Crohn's disease patient population. Real-world identification combines: Crohn's diagnosis codes (anatomic locations), IBD medications (5-ASA + biologics + immunomodulators), and elevated fecal calprotectin. Tests Condition + MedicationRequest + Observation resource union.",
+  "prompt": "I need to identify my complete Crohn's disease patient population for a quality improvement initiative on biologic therapy adherence and disease activity monitoring. From clinical experience, Crohn's patients are documented in different ways: most have a formal Crohn's diagnosis (often location-specific like terminal ileum or colon), most are on IBD medications (mesalamine, biologics like infliximab/adalimumab/ustekinumab, or immunomodulators like azathioprine), and many have elevated fecal calprotectin during disease flares.\n\nPlease run multiple FHIR queries to capture the full population:\n1. Patients with any Crohn's disease diagnosis (parent Crohn's, large bowel, terminal ileum, colon and rectum, or jejunum and ileum)\n2. Patients prescribed IBD medications (mesalamine, infliximab, adalimumab, ustekinumab, or azathioprine)\n3. Patients with elevated fecal calprotectin (>250 mcg/g)\n\nFor each query, return the matching resources. I want the union of all patients found.",
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "multi_query": true,
+    "algorithm_path": "comprehensive",
+    "algorithm_path_description": "Union of Crohn's dx codes, IBD Rx, and elevated calprotectin Observation. Tests multi-resource union.",
+    "expected_queries": [
+      "Condition?code=http://snomed.info/sct|34000006,http://snomed.info/sct|7620006,http://snomed.info/sct|196977009,http://snomed.info/sct|1197732001,http://snomed.info/sct|1197733006",
+      "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|52582,http://www.nlm.nih.gov/research/umls/rxnorm|191831,http://www.nlm.nih.gov/research/umls/rxnorm|327361,http://www.nlm.nih.gov/research/umls/rxnorm|847083,http://www.nlm.nih.gov/research/umls/rxnorm|1256",
+      "Observation?code=http://loinc.org|38445-3&value-quantity=gt250||ug/g"
+    ],
+    "code_systems": [
+      "SNOMED CT",
+      "RxNorm",
+      "LOINC"
+    ],
+    "required_codes": [
+      {
+        "system": "http://snomed.info/sct",
+        "code": "34000006",
+        "display": "Crohn's disease",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "7620006",
+        "display": "Crohn's disease of large bowel",
+        "source": "VSAC"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "196977009",
+        "display": "Crohn's disease of terminal ileum",
+        "source": "VSAC"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "1197732001",
+        "display": "Crohn disease of colon and rectum",
+        "source": "VSAC"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "1197733006",
+        "display": "Crohn disease of jejunum and ileum",
+        "source": "VSAC"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "52582",
+        "display": "mesalamine",
+        "source": "RxNav verified"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "191831",
+        "display": "infliximab",
+        "source": "RxNav verified"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "327361",
+        "display": "adalimumab",
+        "source": "RxNav verified"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "847083",
+        "display": "ustekinumab",
+        "source": "RxNav verified"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "1256",
+        "display": "azathioprine",
+        "source": "RxNav verified"
+      },
+      {
+        "system": "http://loinc.org",
+        "code": "38445-3",
+        "display": "Calprotectin [Mass/mass] in Stool",
+        "source": "UMLS verified"
+      }
+    ],
+    "complexity": "expert",
+    "tags": [
+      "multi-query",
+      "gastroenterology",
+      "crohns-disease",
+      "ibd",
+      "comprehensive",
+      "cross-resource"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "Patient",
+    "parameters": {},
+    "url": "Condition?code=http://snomed.info/sct|34000006,http://snomed.info/sct|7620006,http://snomed.info/sct|196977009,http://snomed.info/sct|1197732001,http://snomed.info/sct|1197733006"
+  },
+  "test_data": {
+    "resources": [
+      "synthea/output/crohns-disease/positive/fhir/",
+      "synthea/output/crohns-disease/control/fhir/"
+    ],
+    "expected_result_count": 55,
+    "expected_resource_ids": [],
+    "expected_patient_ids": [
+      "01e0976f-9f06-550f-5b7b-5b0cca0186fe",
+      "02c11591-f8cb-549a-bcce-77128a8446ec",
+      "09278a56-0541-6d95-b59b-2212f90e7614",
+      "09ac3be2-327f-6615-e3bd-d587c1ea04bf",
+      "0f321eb0-3fe3-e648-803c-66a0b357edf7",
+      "101ab214-653c-62d8-5c62-ece990be8837",
+      "1cbaf1ae-1372-d5f4-6465-5b58a5e3308f",
+      "1e3ea149-2e3d-b55b-e2b0-f99dab19b95f",
+      "2017daab-c1bc-808d-bed8-3b352a2c5cdc",
+      "231a6275-bdf5-87b9-8cdc-ba6888fae79a",
+      "2865ea87-0bb8-6360-cf7c-254185b2fe02",
+      "2d318d7b-5641-1d14-373e-752dbce289fa",
+      "2f882635-3959-d5c4-841b-4a892f5b6283",
+      "385beedc-af48-5e72-4c16-065356f72ecb",
+      "38933f76-e491-3125-74c6-08fc23e2d2a3",
+      "3a7ec0bd-27f9-b4b8-7240-832f702d40dc",
+      "3ed9f977-3713-3382-9245-9322cd5545f4",
+      "40227167-b7da-9f33-6071-b3768fe10c7c",
+      "447c2bc0-98ef-3674-0938-e820e50c0729",
+      "47a4ae45-3119-c572-d37f-11c87d671b1f",
+      "62f990ac-ca99-cbed-63ef-350b3b619d48",
+      "6411907c-15df-3b14-2147-886e03c07d3a",
+      "664a2781-d543-5476-f865-ba70d76d6521",
+      "749c03e5-67d5-cc3d-0d95-e526c7d431b4",
+      "786c7d7f-2959-ca6d-d607-942163ddc750",
+      "7ca52d8c-a720-af84-622d-65695eecf902",
+      "7f082324-6ed8-bf53-79d8-a9e95c2de1fa",
+      "836c526c-79d5-ee6c-2b0e-deca7abcda86",
+      "856bee24-f6c3-5c62-64fe-1a7a6d16fd79",
+      "8ae0d313-4083-1efe-ef7a-190898515f70",
+      "8ba37d8a-ff07-e229-4028-0a273a8bca35",
+      "8da5c2a4-ace9-253e-3ad5-2e9597ebedd8",
+      "8db81725-9d4d-3a90-d942-5b740bdbaec3",
+      "94a56f64-7fb8-f62b-2e66-06c0e82e9782",
+      "99c571d5-0924-54f6-292c-b1216188e252",
+      "9c830ee3-1c52-e9f5-dd3c-9b5cb2d1e62f",
+      "a408da7d-bf19-7e16-c1de-a4d48a7a18b0",
+      "a7b5693a-3b2d-89c3-b632-c19b837e2cb6",
+      "a831b3d1-f6e8-960c-c6ea-9a0e4e989b43",
+      "aad9b22b-b222-81b4-5fae-ccc41534413d",
+      "b884194c-1307-4180-856a-c569b4f40046",
+      "bd96b5e6-d82b-6dbc-9663-408ed95e4566",
+      "c17e7061-b7e4-c533-7f0f-fd906a2a8dbd",
+      "c4f68e05-9f6a-477b-96bc-190c50318459",
+      "cb0de8bd-3279-b321-9b30-852072117065",
+      "cf2dbefe-3aab-0ee7-f1bf-a7dce531b6c6",
+      "d5ca1c3e-abb0-e9b3-a5b9-7a58b46fd5f6",
+      "d6bc2a3c-f643-db37-108b-ef44c367d0f6",
+      "e397d112-37ab-7240-d142-81a8a86b9ad2",
+      "e9fc4357-f58e-0deb-fd8f-b144379b0c7e",
+      "eaadb238-3ac3-1e76-88ea-232c78475e8f",
+      "edf28f19-c11a-567f-3627-c8f8149c8b19",
+      "f37ebfab-16e5-cc17-daf3-b487176f40d7",
+      "fa4dbf3b-e89b-a4dc-f95b-8e57e9822b9e",
+      "fc045b95-6b07-0b29-7e0d-5aa99044d3b2"
+    ]
+  },
+  "created_at": "2026-04-27T00:00:00.000000Z",
+  "updated_at": "2026-04-27T00:00:00.000000Z"
+}

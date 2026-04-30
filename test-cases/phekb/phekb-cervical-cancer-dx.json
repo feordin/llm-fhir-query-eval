@@ -1,0 +1,104 @@
+{
+  "id": "phekb-cervical-cancer-dx",
+  "source": "phekb",
+  "source_id": "cervical-cancer",
+  "name": "Cervical Cancer - Diagnosis Code Query (Female-Restricted)",
+  "description": "Tests ability to find cervical cancer patients via diagnosis code with female sex restriction. Seventh cancer phenotype, second female-specific cancer (after Ovarian).",
+  "prompt": "Find female patients with a diagnosis of cervical cancer.",
+  "prompts": {
+    "naive": "Find women with cervical cancer.",
+    "broad": "Find female patients diagnosed with cervical cancer (malignant neoplasm of cervix uteri).",
+    "expert": "Search Condition resources with SNOMED 363354003 (Malignant neoplasm of cervix uteri), restricted to female patients via patient.gender=female. Query: Condition?code=http://snomed.info/sct|363354003&patient.gender=female"
+  },
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "algorithm_path": "diagnosis-path",
+    "algorithm_path_description": "Female patients with cervical cancer dx. 7th cancer, 2nd female-specific.",
+    "code_systems": [
+      "SNOMED CT"
+    ],
+    "required_codes": [
+      {
+        "system": "http://snomed.info/sct",
+        "code": "363354003",
+        "display": "Malignant neoplasm of cervix uteri",
+        "source": "UMLS verified"
+      }
+    ],
+    "complexity": "medium",
+    "tags": [
+      "condition",
+      "oncology",
+      "cervical-cancer",
+      "female-only",
+      "diagnosis-code",
+      "patient-filters"
+    ],
+    "patient_filters": {
+      "sex": "female"
+    }
+  },
+  "expected_query": {
+    "resource_type": "Condition",
+    "parameters": {
+      "code": "http://snomed.info/sct|363354003",
+      "patient.gender": "female"
+    },
+    "url": "Condition?code=http://snomed.info/sct|363354003&patient.gender=female"
+  },
+  "test_data": {
+    "resources": [
+      "synthea/output/cervical-cancer/positive/fhir/",
+      "synthea/output/cervical-cancer/control/fhir/"
+    ],
+    "expected_result_count": 43,
+    "expected_resource_ids": [],
+    "expected_patient_ids": [
+      "033ac0a1-9400-eb8d-eee0-210d8c4db557",
+      "09d56462-1f33-ac7d-3a29-52de4cfcc54c",
+      "1189e09c-0060-e860-aecc-a0a8fdb6d8f4",
+      "14103525-bd9f-90c7-da46-98403d9f8896",
+      "20277be8-391f-f898-a5ae-f5b4900ed62a",
+      "241d2ecf-6146-5669-ebb3-5ba16fa04971",
+      "2fa8b965-3053-f475-d5d1-4ba176b9b068",
+      "315a4b4d-2d9e-bc9a-b3df-1ecd5600fab6",
+      "33764ebb-ae21-0802-a8d9-d8847ec2e34f",
+      "33fef732-8fb0-9399-be11-0f3fd33869cb",
+      "392a861e-6420-0933-a7b2-f9afc45dba29",
+      "3d4a5b47-ec0f-df9d-b4e1-6db3aa7512f3",
+      "406ec272-1f11-37c9-0488-f83d14aba1ad",
+      "46906797-fd45-e493-5681-7cefcb29e73a",
+      "47ae6d73-5b53-402a-716b-cc3685bac233",
+      "4ed01bc7-3f35-9a6a-1b74-3e1cba9622d1",
+      "4edd18bf-a378-1367-8c42-a21d70d264ad",
+      "53288f0b-14a3-1974-361f-89c6e08e87ee",
+      "53a4f59f-1324-b24f-fe1f-fff80b958906",
+      "547091f2-d36c-811b-9578-37691cb1e556",
+      "549be6cd-ed8c-3dd0-ad99-08e7744d7b4e",
+      "71f74e80-7348-8e9a-05a7-b83f81ec59ab",
+      "7326eead-19ac-c117-a92a-d1773c051fed",
+      "7f577afb-05ac-5ae3-b2d8-1b5655ac698a",
+      "8967d4bf-de56-49a9-54bc-67bfebbaaf4d",
+      "8cd5a08c-50f7-6d15-400c-98362442e0ba",
+      "8d2baaf0-6fc2-c98a-1f5f-015bca24fd2d",
+      "91b845a4-3bb3-8dd6-46f9-b65aa88e7196",
+      "93a8459a-1fbf-d394-50a1-9b48a8356d22",
+      "9533f8ad-dbd7-30f9-11d9-60276370790f",
+      "97eab9a9-8cf3-b360-223c-f1794be629d4",
+      "9a7add15-4603-68cb-224b-f620a002f7f3",
+      "a2406b5f-c109-e416-da74-114f339129a4",
+      "aaea02b4-77da-8b27-85a3-2fbb71353e49",
+      "b4dbf95a-109c-b235-57a4-08ba2087052a",
+      "b9013b30-db70-a3c2-db5a-4e8235961bb2",
+      "bd781d81-12ea-8461-0a75-8f865327d965",
+      "c45bbcb3-3e2f-d84f-b69e-8e439974392d",
+      "cd123b24-fa58-55c4-ab31-285d9ecaa76a",
+      "cfcd88a9-28d5-67a5-67e0-902a94d18817",
+      "d10d440a-b2f5-b08e-b9bd-5ab6b1787afc",
+      "f22178b1-9bcf-f925-705e-278d4de3e6c6",
+      "f617a102-5850-d77f-0c29-62521197e7b6"
+    ]
+  },
+  "created_at": "2026-04-29T00:00:00.000000Z",
+  "updated_at": "2026-04-27T00:00:00.000000Z"
+}

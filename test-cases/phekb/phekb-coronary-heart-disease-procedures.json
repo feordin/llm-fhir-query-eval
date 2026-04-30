@@ -1,0 +1,83 @@
+{
+  "id": "phekb-coronary-heart-disease-procedures",
+  "source": "phekb",
+  "source_id": "coronary-heart-disease",
+  "name": "Coronary Heart Disease - Revascularization Procedures Query (FIRST Procedure Test)",
+  "description": "**FIRST Procedure-resource test in the suite.** Tests ability to find CHD patients via revascularization procedures: CABG (coronary artery bypass grafting), PCI (percutaneous coronary intervention), coronary stent placement, and balloon angioplasty. Procedure resources are distinct from Condition resources — this exercises a new FHIR resource type. Synthea has historically had reliability issues with Procedure exports (must include `duration` field and non-wellness encounters per past test cases). The CHD module fixes this.",
+  "prompt": "Find patients who have undergone coronary revascularization procedures including coronary artery bypass grafting (CABG), percutaneous coronary intervention (PCI), coronary stent placement, or balloon angioplasty.",
+  "prompts": {
+    "naive": "Find patients with coronary procedures.",
+    "broad": "Find Procedure resources for coronary revascularization — coronary artery bypass grafting (CABG, the surgical option), percutaneous coronary intervention (PCI, the catheter-based option), coronary stent placement, or coronary balloon angioplasty.",
+    "expert": "I need Procedure resources (NOT Condition resources) for coronary revascularization. Use these SNOMED codes: 232717009 (Coronary artery bypass grafting), 415070008 (Percutaneous transluminal coronary intervention with imaging guidance), 36969009 (Placement of stent in coronary artery), 68466008 (Removal of coronary artery obstruction by percutaneous transluminal balloon, single vessel). The query should target the Procedure resource: Procedure?code=..."
+  },
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "algorithm_path": "procedure-path",
+    "algorithm_path_description": "Patients with revascularization procedures. **First Procedure-resource test in the suite.** Tests whether LLM correctly queries Procedure resources (not Condition or MedicationRequest) when the question is about interventions.",
+    "code_systems": [
+      "SNOMED CT"
+    ],
+    "required_codes": [
+      {
+        "system": "http://snomed.info/sct",
+        "code": "232717009",
+        "display": "Coronary artery bypass grafting",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "415070008",
+        "display": "Percutaneous transluminal coronary intervention using imaging guidance with contrast",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "36969009",
+        "display": "Placement of stent in coronary artery",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "68466008",
+        "display": "Removal of coronary artery obstruction by percutaneous transluminal balloon, single vessel",
+        "source": "UMLS verified"
+      }
+    ],
+    "complexity": "hard",
+    "tags": [
+      "procedure",
+      "cardiology",
+      "coronary-heart-disease",
+      "cabg",
+      "pci",
+      "revascularization",
+      "first-procedure-test"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "Procedure",
+    "parameters": {
+      "code": "http://snomed.info/sct|232717009,http://snomed.info/sct|415070008,http://snomed.info/sct|36969009,http://snomed.info/sct|68466008"
+    },
+    "url": "Procedure?code=http://snomed.info/sct|232717009,http://snomed.info/sct|415070008,http://snomed.info/sct|36969009,http://snomed.info/sct|68466008"
+  },
+  "test_data": {
+    "resources": [
+      "synthea/output/coronary-heart-disease/positive/fhir/",
+      "synthea/output/coronary-heart-disease/control/fhir/"
+    ],
+    "expected_result_count": 7,
+    "expected_resource_ids": [],
+    "expected_patient_ids": [
+      "3e400a4e-a543-5391-d4fc-be2a218fe981",
+      "52b9f450-88b5-38d2-06ab-3557df1497d9",
+      "88b55b8d-1726-074c-8e62-16266caf77da",
+      "94d39d3a-426d-2c17-7f72-8c538a2ceded",
+      "b84db720-fc92-d33d-8745-279482f6d8dc",
+      "c49744c0-d4a2-602b-0818-692f2e1aff53",
+      "e43a6be7-fdce-d308-08e4-3831c959d4e9"
+    ]
+  },
+  "created_at": "2026-04-27T00:00:00.000000Z",
+  "updated_at": "2026-04-27T00:00:00.000000Z"
+}

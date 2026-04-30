@@ -5,6 +5,20 @@ import os
 from pathlib import Path
 
 
+def _project_root() -> Path:
+    """Find the project root (directory containing test-cases/ or .git/)."""
+    # Start from this file's directory and walk up
+    current = Path(__file__).resolve().parent
+    for ancestor in [current] + list(current.parents):
+        if (ancestor / "test-cases").is_dir() or (ancestor / ".git").is_dir():
+            return ancestor
+    # Fallback to CWD
+    return Path.cwd()
+
+
+PROJECT_ROOT = _project_root()
+
+
 class Settings(BaseSettings):
     """Application settings
 
@@ -33,9 +47,10 @@ class Settings(BaseSettings):
     # MCP Server
     mcp_server_url: Optional[str] = None
 
-    # Storage
-    test_cases_dir: str = "test-cases"
-    data_dir: str = "data"
+    # Storage — resolved relative to project root
+    test_cases_dir: str = str(PROJECT_ROOT / "test-cases")
+    results_dir: str = str(PROJECT_ROOT / "results")
+    data_dir: str = str(PROJECT_ROOT / "data")
 
     model_config = SettingsConfigDict(
         env_file=".env",

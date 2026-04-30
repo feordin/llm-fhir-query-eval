@@ -1,0 +1,116 @@
+{
+  "id": "phekb-nafld-dx",
+  "source": "phekb",
+  "source_id": "nafld",
+  "name": "NAFLD - Diagnosis Code Query (Multi-Stage Liver Disease)",
+  "description": "**First liver disease phenotype.** Tests ability to find non-alcoholic fatty liver disease patients via diagnosis codes. NAFLD/MASLD is documented under multiple SNOMED codes by histologic stage: hepatic steatosis (simple fatty liver), MASH/NASH (steatohepatitis with inflammation), MASLD (metabolic-associated steatotic liver disease), generic steatohepatitis, and cirrhosis (end-stage). Synthea distributes patients across these stages.",
+  "prompt": "Find all patients with a diagnosis of non-alcoholic fatty liver disease, including hepatic steatosis, metabolic-associated steatohepatitis (MASH/NASH), metabolic-associated steatotic liver disease (MASLD), steatohepatitis, and cirrhosis of liver.",
+  "prompts": {
+    "naive": "Find all patients with fatty liver disease.",
+    "broad": "Find all patients diagnosed with any form of non-alcoholic fatty liver disease — including simple hepatic steatosis (fatty liver), metabolic-associated steatohepatitis (MASH/NASH — fatty liver with inflammation), metabolic-associated steatotic liver disease (MASLD — modern terminology), generic steatohepatitis, and cirrhosis (end-stage liver fibrosis).",
+    "expert": "I need to identify all NAFLD/MASLD patients. The condition is documented under multiple SNOMED codes by histologic stage: Steatosis of liver (197321007) is the parent fatty-liver concept, Metabolic dysfunction-associated steatohepatitis (442685003) is MASH/NASH, Metabolic dysfunction-associated steatotic liver (722866000) is MASLD, Steatohepatitis (442191002) is the generic inflammation pattern, and Cirrhosis of liver (19943007) is the end-stage. Search Condition resources for all five codes."
+  },
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "algorithm_path": "diagnosis-path",
+    "algorithm_path_description": "Patients with NAFLD diagnosis codes. **First liver disease phenotype.** Tests histologic-stage code variation.",
+    "code_systems": [
+      "SNOMED CT"
+    ],
+    "required_codes": [
+      {
+        "system": "http://snomed.info/sct",
+        "code": "197321007",
+        "display": "Steatosis of liver",
+        "source": "UMLS verified, parent"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "442685003",
+        "display": "Metabolic dysfunction-associated steatohepatitis",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "722866000",
+        "display": "Metabolic dysfunction-associated steatotic liver",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "442191002",
+        "display": "Steatohepatitis",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "19943007",
+        "display": "Cirrhosis of liver",
+        "source": "UMLS verified"
+      }
+    ],
+    "complexity": "medium",
+    "tags": [
+      "condition",
+      "hepatology",
+      "nafld",
+      "masld",
+      "mash",
+      "metabolic",
+      "diagnosis-code",
+      "first-liver-disease"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "Condition",
+    "parameters": {
+      "code": "http://snomed.info/sct|197321007,http://snomed.info/sct|442685003,http://snomed.info/sct|722866000,http://snomed.info/sct|442191002,http://snomed.info/sct|19943007"
+    },
+    "url": "Condition?code=http://snomed.info/sct|197321007,http://snomed.info/sct|442685003,http://snomed.info/sct|722866000,http://snomed.info/sct|442191002,http://snomed.info/sct|19943007"
+  },
+  "test_data": {
+    "resources": [
+      "synthea/output/nafld/positive/fhir/",
+      "synthea/output/nafld/control/fhir/"
+    ],
+    "expected_result_count": 33,
+    "expected_resource_ids": [],
+    "expected_patient_ids": [
+      "0eecc05f-9e7b-9dd8-8d0b-6e044e0fa2fc",
+      "15e4cc5b-bbe2-0a97-495a-97dfd66f88f9",
+      "1e044b05-3428-4513-eff7-d3403c4b91ec",
+      "3059187d-fcc4-3aaa-59ba-c74c810f1a9e",
+      "3ac6e431-a74c-3281-043a-59a6bb3fb24b",
+      "3e39f2a1-455e-2eaa-4f95-6e9ff81e0dc4",
+      "3fca2719-1a17-11ef-5382-117a6bd88ba6",
+      "4615bedd-26d8-d2ba-6dcc-5aad8f000dd7",
+      "499534a6-f603-f695-e9cb-0db2486e93ae",
+      "5849e293-35f6-49b1-bb12-32f1bd16d101",
+      "618ec6f6-8598-df5b-a40b-af99348acd6d",
+      "6bf55ff1-c22c-9b80-9303-5f98d0f8d4e3",
+      "727bf934-20d4-07b6-8e6d-eeec383cba2f",
+      "729211c1-7cdf-45eb-ed82-d2e081f59ff1",
+      "74c15054-c946-88ed-1121-2dff6303b749",
+      "7a363eb6-b34e-70d4-01ca-0079148110ef",
+      "7c5fc4a2-0cfc-029c-d299-69d7853f45da",
+      "7ff04d82-4624-dcda-ca2b-815eb70f57f2",
+      "80e4dc8e-5861-5e73-e71e-45f6f866472b",
+      "84ead572-90d9-532f-926c-ec6861cf3be0",
+      "85a4b0fa-833b-e038-31bf-4c54eb272fc8",
+      "86cc16d2-5393-b3b3-2bbd-163326f46d96",
+      "902efcd1-8864-252f-ce14-fcd0069c5f25",
+      "93e148dd-b0c9-4fdd-a52f-0f308c56d777",
+      "b9772c04-de05-4172-e43c-b1103f4de52c",
+      "bac45367-7f36-b54a-4038-23c792e8a0c4",
+      "c7e7c048-3e9e-db32-9766-4b9fad628665",
+      "d72fe3f0-9f46-7ee3-d178-1ca43f54268d",
+      "e38c71ea-f6fd-b841-eddc-b52c335a8b59",
+      "f008a568-bb2e-0ba2-8f6d-d861693bb2b2",
+      "f871345a-588c-c222-1e38-f0babc639911",
+      "f969fb93-c693-b61d-bad1-0fee1a23c41c",
+      "fbb3e0c0-ca48-5ef4-ef6b-9360f5f42cde"
+    ]
+  },
+  "created_at": "2026-04-28T00:00:00.000000Z",
+  "updated_at": "2026-04-27T00:00:00.000000Z"
+}

@@ -1,0 +1,107 @@
+{
+  "id": "phekb-hypertension-meds",
+  "source": "phekb",
+  "source_id": "hypertension",
+  "name": "Hypertension - Antihypertensive Medication Query (Multi-Class)",
+  "description": "Tests ability to find hypertension patients via antihypertensive medication prescriptions. The PheKB resistant-hypertension algorithm requires 3-4 simultaneous antihypertensive classes. Modern HTN treatment spans ACE inhibitors, ARBs, calcium channel blockers, beta blockers, and diuretics — often used together. Synthea distributes patients across these 5 classes. An LLM querying only one class (e.g., lisinopril) will miss the substantial fraction on alternatives like losartan or amlodipine.",
+  "prompt": "Find patients prescribed antihypertensive medications, including ACE inhibitors like lisinopril, ARBs like losartan, calcium channel blockers like amlodipine, beta blockers like carvedilol, or loop diuretics like furosemide.",
+  "prompts": {
+    "naive": "Find patients on blood pressure medications.",
+    "broad": "Find patients prescribed any antihypertensive drug class — ACE inhibitors (e.g., lisinopril), angiotensin receptor blockers (ARBs, e.g., losartan), calcium channel blockers (e.g., amlodipine), beta blockers (e.g., carvedilol), or diuretics (e.g., furosemide).",
+    "expert": "I need MedicationRequest resources for any antihypertensive class. Use these RxNorm ingredient codes: 29046 (lisinopril, ACE-I), 52175 (losartan, ARB), 17767 (amlodipine, CCB), 20352 (carvedilol, BB), 4603 (furosemide, loop diuretic). Combine in a single comma-separated code search."
+  },
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "algorithm_path": "medication-path",
+    "algorithm_path_description": "Patients with antihypertensive medication orders (Paths A and C). Captures both diagnosed HTN patients and Path C tricky patients on these drugs for non-HTN indications (carvedilol for HF, furosemide for edema, lisinopril for diabetic nephropathy, etc.).",
+    "code_systems": [
+      "RxNorm"
+    ],
+    "required_codes": [
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "29046",
+        "display": "lisinopril",
+        "source": "UMLS verified, RxNorm ingredient"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "52175",
+        "display": "losartan",
+        "source": "UMLS verified, RxNorm ingredient"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "17767",
+        "display": "amlodipine",
+        "source": "UMLS verified, RxNorm ingredient"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "20352",
+        "display": "carvedilol",
+        "source": "UMLS verified, RxNorm ingredient"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "4603",
+        "display": "furosemide",
+        "source": "UMLS verified, RxNorm ingredient"
+      }
+    ],
+    "complexity": "medium",
+    "tags": [
+      "medication",
+      "cardiology",
+      "hypertension",
+      "multi-class",
+      "code-variation"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "MedicationRequest",
+    "parameters": {
+      "code": "http://www.nlm.nih.gov/research/umls/rxnorm|29046,http://www.nlm.nih.gov/research/umls/rxnorm|52175,http://www.nlm.nih.gov/research/umls/rxnorm|17767,http://www.nlm.nih.gov/research/umls/rxnorm|20352,http://www.nlm.nih.gov/research/umls/rxnorm|4603"
+    },
+    "url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|29046,http://www.nlm.nih.gov/research/umls/rxnorm|52175,http://www.nlm.nih.gov/research/umls/rxnorm|17767,http://www.nlm.nih.gov/research/umls/rxnorm|20352,http://www.nlm.nih.gov/research/umls/rxnorm|4603"
+  },
+  "test_data": {
+    "resources": [
+      "synthea/output/hypertension/positive/fhir/",
+      "synthea/output/hypertension/control/fhir/"
+    ],
+    "expected_result_count": 27,
+    "expected_resource_ids": [],
+    "expected_patient_ids": [
+      "085dc5e7-9862-fec1-c319-d8d4e7bd84c1",
+      "0cc139f9-8597-82f0-8e03-60939e1da898",
+      "0e23b16e-9a88-4e66-1043-d93e66649417",
+      "322ab5c6-5846-ac1e-38cc-48b8cb441e20",
+      "35b353dd-402b-571a-d67a-af0a104d0854",
+      "3b15077e-6f01-c2b3-4f1f-e4c2b545e6cb",
+      "4221a6e1-e146-26e5-810d-e34d1c9253c0",
+      "43e5ab84-1f74-0818-bb86-1c3e9fdb9b7f",
+      "4b929ea0-70ae-dc07-53a3-4c4d5df7ab36",
+      "56c27c32-07d2-310d-d045-be63df5f4ae8",
+      "5e7ebf2c-22ec-a89b-53ab-38edddd81be9",
+      "5f752cd4-d2fd-179c-7aa2-d43fcb57129d",
+      "855ab3b6-a618-b715-d713-8b5450d44517",
+      "933d25dc-0ffd-6c28-46c3-354d9e8025ae",
+      "976dc413-6af0-ff8a-a0bf-2d56b3130ad7",
+      "a4355b98-5b93-0c58-0a72-00a86ef0d941",
+      "aa5c421c-6b45-f51f-7085-830f1409dffc",
+      "aa616abe-1761-0c9a-7959-07544679dafd",
+      "b35562d2-0fb4-ad1a-1d37-0028d18ce321",
+      "bac2c591-22ce-0b38-a7da-98326b8aafff",
+      "c31dfa59-f1aa-7b9f-cfdc-c97d525573ab",
+      "d57841fa-c9e2-a3d1-0e78-09bdbe4eed66",
+      "dc7c46a8-e3b0-c9a9-99f8-725ef3e08237",
+      "dfe4405c-275b-e58d-493e-f4b5264ee210",
+      "e3042215-ec00-4d81-0103-101f3c7ad07f",
+      "f407face-6c81-fdf8-500f-7c989877f7c6",
+      "f7a64593-3a9e-7050-bf35-16094c68933b"
+    ]
+  },
+  "created_at": "2026-04-27T00:00:00.000000Z",
+  "updated_at": "2026-04-27T00:00:00.000000Z"
+}

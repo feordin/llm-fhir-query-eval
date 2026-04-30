@@ -1,0 +1,58 @@
+{
+  "id": "phekb-appendicitis-procedures",
+  "source": "phekb",
+  "source_id": "appendicitis",
+  "name": "Appendicitis - Appendectomy Procedure Query",
+  "description": "Tests ability to find patients who underwent appendectomy procedures. Based on PheKB appendicitis algorithm Case Type 2 and 3 paths where appendectomy is the primary evidence of appendicitis. Some patients may have had the procedure documented without a separate appendicitis diagnosis code, making this a complementary search to the diagnosis query.",
+  "prompt": "Find all patients who have had an appendectomy procedure.",
+  "prompts": {
+    "naive": "Find all patients who have had an appendectomy procedure.",
+    "expert": "I need to find patients who underwent an appendectomy, which is the definitive surgical treatment for appendicitis. The query should search Procedure resources for the SNOMED code for appendectomy. This is an important complement to the diagnosis-based search because some patients may have gone directly to surgery during an emergency presentation, with the appendectomy procedure documented but the underlying appendicitis diagnosis not separately coded as a Condition resource. The appendectomy code should capture both laparoscopic and open surgical approaches under the general appendectomy concept."
+  },
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "algorithm_path": "case-2-3-procedure",
+    "algorithm_path_description": "Patients with appendectomy procedure codes. These patients have Procedure resources documenting surgical removal of the appendix. Captures patients who may not have a formal appendicitis diagnosis but had the definitive treatment.",
+    "code_systems": [
+      "SNOMED CT"
+    ],
+    "required_codes": [
+      {
+        "system": "http://snomed.info/sct",
+        "code": "80146002",
+        "display": "Appendectomy",
+        "source": "UMLS"
+      }
+    ],
+    "complexity": "medium",
+    "tags": [
+      "procedure",
+      "surgery",
+      "appendicitis",
+      "appendectomy"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "Procedure",
+    "parameters": {
+      "code": "http://snomed.info/sct|80146002"
+    },
+    "url": "Procedure?code=http://snomed.info/sct|80146002"
+  },
+  "test_data": {
+    "resources": [
+      "synthea/output/appendicitis/positive/fhir/",
+      "synthea/output/appendicitis/control/fhir/"
+    ],
+    "expected_result_count": 4,
+    "expected_resource_ids": [],
+    "expected_patient_ids": [
+      "03aa8fc4-c0d1-1a91-7d19-ca5233cf286c",
+      "2d68ad16-268a-478c-1f84-d0f1976e1a46",
+      "4f38d753-7794-588a-9c3a-e4b7d6085fa3",
+      "76b20010-c318-5754-8c85-983aa538522f"
+    ]
+  },
+  "created_at": "2026-03-15T12:00:00.000000Z",
+  "updated_at": "2026-04-27T00:00:00.000000Z"
+}

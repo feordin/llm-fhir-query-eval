@@ -1,0 +1,317 @@
+{
+  "name": "PheKB Coronary Heart Disease",
+  "remarks": [
+    "Custom Synthea module for coronary heart disease (CHD).",
+    "**FIRST module to reliably generate Procedure FHIR resources** using the Synthea pattern:",
+    "  - non-wellness Encounter (encounter_class: ambulatory or inpatient)",
+    "  - Procedure with duration field",
+    "  - EncounterEnd",
+    "",
+    "Generates FOUR patient paths:",
+    "  Path A (50%): Dx + secondary prevention meds + revascularization procedure",
+    "  Path B (20%): Dx + meds, no procedure (medical management only)",
+    "  Path C (15%): Meds only, NO dx (cross-indication — aspirin/statins for primary prevention)",
+    "  Path D (15%): Procedure only, NO dx (rare — emergency PCI before dx coded)",
+    "",
+    "Diagnosis SNOMED variation (Paths A + B):",
+    "  30% Coronary arteriosclerosis (53741008) — parent",
+    "  20% Ischemic heart disease (414545008) — broader parent",
+    "  15% Triple vessel disease (233817007)",
+    "  20% Multi vessel CAD (371803003)",
+    "  15% Left main CAD (371804009) — highest risk",
+    "",
+    "Procedure variation (Paths A + D — 4 codes):",
+    "  35% PCI with imaging guidance (415070008)",
+    "  30% Coronary stent placement (36969009)",
+    "  20% CABG (232717009) — most invasive",
+    "  15% Coronary balloon angioplasty (68466008)",
+    "",
+    "Medication variation (Paths A + B + C — 5 ingredients):",
+    "  30% Aspirin (1191) — antiplatelet",
+    "  20% Clopidogrel (32968) — P2Y12 inhibitor",
+    "  20% Atorvastatin (83367) — high-intensity statin",
+    "  15% Simvastatin (36567)",
+    "  15% Carvedilol (20352) — beta blocker"
+  ],
+  "states": {
+    "Initial": { "type": "Initial", "direct_transition": "Age_Guard" },
+    "Age_Guard": { "type": "Guard", "allow": { "condition_type": "Age", "operator": ">=", "quantity": 50, "unit": "years" }, "direct_transition": "Set_CHD_Flag" },
+    "Set_CHD_Flag": { "type": "SetAttribute", "attribute": "chd_positive", "value": true, "direct_transition": "Choose_Patient_Path" },
+    "Choose_Patient_Path": {
+      "type": "Simple",
+      "distributed_transition": [
+        { "transition": "Set_Path_A", "distribution": 0.50 },
+        { "transition": "Set_Path_B", "distribution": 0.20 },
+        { "transition": "Set_Path_C", "distribution": 0.15 },
+        { "transition": "Set_Path_D", "distribution": 0.15 }
+      ]
+    },
+    "Set_Path_A": { "type": "SetAttribute", "attribute": "chd_has_dx", "value": true, "direct_transition": "Set_Path_A_Proc" },
+    "Set_Path_A_Proc": { "type": "SetAttribute", "attribute": "chd_has_proc", "value": true, "direct_transition": "Set_Path_A_Meds" },
+    "Set_Path_A_Meds": { "type": "SetAttribute", "attribute": "chd_has_meds", "value": true, "direct_transition": "Choose_Subtype" },
+
+    "Set_Path_B": { "type": "SetAttribute", "attribute": "chd_has_dx", "value": true, "direct_transition": "Set_Path_B_Proc" },
+    "Set_Path_B_Proc": { "type": "SetAttribute", "attribute": "chd_has_proc", "value": false, "direct_transition": "Set_Path_B_Meds" },
+    "Set_Path_B_Meds": { "type": "SetAttribute", "attribute": "chd_has_meds", "value": true, "direct_transition": "Choose_Subtype" },
+
+    "Set_Path_C": { "type": "SetAttribute", "remarks": ["TRICKY: meds without CHD dx (cross-indication)"], "attribute": "chd_has_dx", "value": false, "direct_transition": "Set_Path_C_Proc" },
+    "Set_Path_C_Proc": { "type": "SetAttribute", "attribute": "chd_has_proc", "value": false, "direct_transition": "Set_Path_C_Meds" },
+    "Set_Path_C_Meds": { "type": "SetAttribute", "attribute": "chd_has_meds", "value": true, "direct_transition": "Choose_Subtype" },
+
+    "Set_Path_D": { "type": "SetAttribute", "remarks": ["TRICKY: procedure without dx coded yet"], "attribute": "chd_has_dx", "value": false, "direct_transition": "Set_Path_D_Proc" },
+    "Set_Path_D_Proc": { "type": "SetAttribute", "attribute": "chd_has_proc", "value": true, "direct_transition": "Set_Path_D_Meds" },
+    "Set_Path_D_Meds": { "type": "SetAttribute", "attribute": "chd_has_meds", "value": false, "direct_transition": "Choose_Subtype" },
+
+    "Choose_Subtype": {
+      "type": "Simple",
+      "distributed_transition": [
+        { "transition": "Set_Subtype_CoronaryArt", "distribution": 0.30 },
+        { "transition": "Set_Subtype_IschemicHD", "distribution": 0.20 },
+        { "transition": "Set_Subtype_Triple", "distribution": 0.15 },
+        { "transition": "Set_Subtype_Multi", "distribution": 0.20 },
+        { "transition": "Set_Subtype_LeftMain", "distribution": 0.15 }
+      ]
+    },
+    "Set_Subtype_CoronaryArt": { "type": "SetAttribute", "attribute": "chd_subtype", "value": "coronaryart", "direct_transition": "Choose_Procedure" },
+    "Set_Subtype_IschemicHD": { "type": "SetAttribute", "attribute": "chd_subtype", "value": "ischemic", "direct_transition": "Choose_Procedure" },
+    "Set_Subtype_Triple": { "type": "SetAttribute", "attribute": "chd_subtype", "value": "triple", "direct_transition": "Choose_Procedure" },
+    "Set_Subtype_Multi": { "type": "SetAttribute", "attribute": "chd_subtype", "value": "multi", "direct_transition": "Choose_Procedure" },
+    "Set_Subtype_LeftMain": { "type": "SetAttribute", "attribute": "chd_subtype", "value": "leftmain", "direct_transition": "Choose_Procedure" },
+
+    "Choose_Procedure": {
+      "type": "Simple",
+      "distributed_transition": [
+        { "transition": "Set_Proc_PCI", "distribution": 0.35 },
+        { "transition": "Set_Proc_Stent", "distribution": 0.30 },
+        { "transition": "Set_Proc_CABG", "distribution": 0.20 },
+        { "transition": "Set_Proc_Balloon", "distribution": 0.15 }
+      ]
+    },
+    "Set_Proc_PCI": { "type": "SetAttribute", "attribute": "chd_proc", "value": "pci", "direct_transition": "Choose_Med" },
+    "Set_Proc_Stent": { "type": "SetAttribute", "attribute": "chd_proc", "value": "stent", "direct_transition": "Choose_Med" },
+    "Set_Proc_CABG": { "type": "SetAttribute", "attribute": "chd_proc", "value": "cabg", "direct_transition": "Choose_Med" },
+    "Set_Proc_Balloon": { "type": "SetAttribute", "attribute": "chd_proc", "value": "balloon", "direct_transition": "Choose_Med" },
+
+    "Choose_Med": {
+      "type": "Simple",
+      "distributed_transition": [
+        { "transition": "Set_Med_Aspirin", "distribution": 0.30 },
+        { "transition": "Set_Med_Clopidogrel", "distribution": 0.20 },
+        { "transition": "Set_Med_Atorvastatin", "distribution": 0.20 },
+        { "transition": "Set_Med_Simvastatin", "distribution": 0.15 },
+        { "transition": "Set_Med_Carvedilol", "distribution": 0.15 }
+      ]
+    },
+    "Set_Med_Aspirin": { "type": "SetAttribute", "attribute": "chd_med", "value": "aspirin", "direct_transition": "Set_Needs_First_Visit" },
+    "Set_Med_Clopidogrel": { "type": "SetAttribute", "attribute": "chd_med", "value": "clopidogrel", "direct_transition": "Set_Needs_First_Visit" },
+    "Set_Med_Atorvastatin": { "type": "SetAttribute", "attribute": "chd_med", "value": "atorvastatin", "direct_transition": "Set_Needs_First_Visit" },
+    "Set_Med_Simvastatin": { "type": "SetAttribute", "attribute": "chd_med", "value": "simvastatin", "direct_transition": "Set_Needs_First_Visit" },
+    "Set_Med_Carvedilol": { "type": "SetAttribute", "attribute": "chd_med", "value": "carvedilol", "direct_transition": "Set_Needs_First_Visit" },
+
+    "Set_Needs_First_Visit": { "type": "SetAttribute", "attribute": "chd_needs_first_visit", "value": true, "direct_transition": "Wellness_Encounter" },
+    "Wellness_Encounter": { "type": "Encounter", "wellness": true, "direct_transition": "Check_First_Visit" },
+    "Check_First_Visit": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "chd_needs_first_visit", "operator": "==", "value": true }, "transition": "Check_Has_Diagnosis" },
+        { "transition": "End_Wellness_Encounter" }
+      ]
+    },
+    "Check_Has_Diagnosis": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "chd_has_dx", "operator": "==", "value": true }, "transition": "Route_By_Subtype" },
+        { "transition": "Route_Med_NoDx" }
+      ]
+    },
+    "Route_By_Subtype": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "chd_subtype", "operator": "==", "value": "coronaryart" }, "transition": "Diagnose_CoronaryArt" },
+        { "condition": { "condition_type": "Attribute", "attribute": "chd_subtype", "operator": "==", "value": "ischemic" }, "transition": "Diagnose_IschemicHD" },
+        { "condition": { "condition_type": "Attribute", "attribute": "chd_subtype", "operator": "==", "value": "triple" }, "transition": "Diagnose_Triple" },
+        { "condition": { "condition_type": "Attribute", "attribute": "chd_subtype", "operator": "==", "value": "multi" }, "transition": "Diagnose_Multi" },
+        { "transition": "Diagnose_LeftMain" }
+      ]
+    },
+    "Diagnose_CoronaryArt": { "type": "ConditionOnset", "assign_to_attribute": "chd_condition", "codes": [{ "system": "SNOMED-CT", "code": "53741008", "display": "Coronary arteriosclerosis" }], "direct_transition": "Route_Med_WithDx" },
+    "Diagnose_IschemicHD": { "type": "ConditionOnset", "assign_to_attribute": "chd_condition", "codes": [{ "system": "SNOMED-CT", "code": "414545008", "display": "Ischemic heart disease" }], "direct_transition": "Route_Med_WithDx" },
+    "Diagnose_Triple": { "type": "ConditionOnset", "assign_to_attribute": "chd_condition", "codes": [{ "system": "SNOMED-CT", "code": "233817007", "display": "Triple vessel disease of the heart" }], "direct_transition": "Route_Med_WithDx" },
+    "Diagnose_Multi": { "type": "ConditionOnset", "assign_to_attribute": "chd_condition", "codes": [{ "system": "SNOMED-CT", "code": "371803003", "display": "Multi vessel coronary artery disease" }], "direct_transition": "Route_Med_WithDx" },
+    "Diagnose_LeftMain": { "type": "ConditionOnset", "assign_to_attribute": "chd_condition", "codes": [{ "system": "SNOMED-CT", "code": "371804009", "display": "Left main coronary artery disease" }], "direct_transition": "Route_Med_WithDx" },
+
+    "Route_Med_WithDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "And", "conditions": [
+          { "condition_type": "Attribute", "attribute": "chd_has_meds", "operator": "==", "value": true },
+          { "condition_type": "Attribute", "attribute": "chd_med", "operator": "==", "value": "aspirin" }
+        ]}, "transition": "Prescribe_Aspirin_WithDx" },
+        { "condition": { "condition_type": "And", "conditions": [
+          { "condition_type": "Attribute", "attribute": "chd_has_meds", "operator": "==", "value": true },
+          { "condition_type": "Attribute", "attribute": "chd_med", "operator": "==", "value": "clopidogrel" }
+        ]}, "transition": "Prescribe_Clopidogrel_WithDx" },
+        { "condition": { "condition_type": "And", "conditions": [
+          { "condition_type": "Attribute", "attribute": "chd_has_meds", "operator": "==", "value": true },
+          { "condition_type": "Attribute", "attribute": "chd_med", "operator": "==", "value": "atorvastatin" }
+        ]}, "transition": "Prescribe_Atorvastatin_WithDx" },
+        { "condition": { "condition_type": "And", "conditions": [
+          { "condition_type": "Attribute", "attribute": "chd_has_meds", "operator": "==", "value": true },
+          { "condition_type": "Attribute", "attribute": "chd_med", "operator": "==", "value": "simvastatin" }
+        ]}, "transition": "Prescribe_Simvastatin_WithDx" },
+        { "condition": { "condition_type": "And", "conditions": [
+          { "condition_type": "Attribute", "attribute": "chd_has_meds", "operator": "==", "value": true },
+          { "condition_type": "Attribute", "attribute": "chd_med", "operator": "==", "value": "carvedilol" }
+        ]}, "transition": "Prescribe_Carvedilol_WithDx" },
+        { "transition": "Check_Procedure_WithDx" }
+      ]
+    },
+    "Prescribe_Aspirin_WithDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "1191", "display": "aspirin" }], "reason": "chd_condition", "direct_transition": "Check_Procedure_WithDx" },
+    "Prescribe_Clopidogrel_WithDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "32968", "display": "clopidogrel" }], "reason": "chd_condition", "direct_transition": "Check_Procedure_WithDx" },
+    "Prescribe_Atorvastatin_WithDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "83367", "display": "atorvastatin" }], "reason": "chd_condition", "direct_transition": "Check_Procedure_WithDx" },
+    "Prescribe_Simvastatin_WithDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "36567", "display": "simvastatin" }], "reason": "chd_condition", "direct_transition": "Check_Procedure_WithDx" },
+    "Prescribe_Carvedilol_WithDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "20352", "display": "carvedilol" }], "reason": "chd_condition", "direct_transition": "Check_Procedure_WithDx" },
+
+    "Check_Procedure_WithDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "chd_has_proc", "operator": "==", "value": true }, "transition": "Cath_Lab_Encounter_WithDx" },
+        { "transition": "Clear_First_Visit_Flag" }
+      ]
+    },
+
+    "Cath_Lab_Encounter_WithDx": {
+      "type": "Encounter",
+      "encounter_class": "ambulatory",
+      "reason": "chd_condition",
+      "codes": [{ "system": "SNOMED-CT", "code": "440655000", "display": "Outpatient procedure encounter (procedure)" }],
+      "direct_transition": "Route_Procedure_WithDx"
+    },
+
+    "Route_Procedure_WithDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "chd_proc", "operator": "==", "value": "pci" }, "transition": "Procedure_PCI_WithDx" },
+        { "condition": { "condition_type": "Attribute", "attribute": "chd_proc", "operator": "==", "value": "stent" }, "transition": "Procedure_Stent_WithDx" },
+        { "condition": { "condition_type": "Attribute", "attribute": "chd_proc", "operator": "==", "value": "cabg" }, "transition": "Procedure_CABG_WithDx" },
+        { "transition": "Procedure_Balloon_WithDx" }
+      ]
+    },
+    "Procedure_PCI_WithDx": {
+      "type": "Procedure",
+      "reason": "chd_condition",
+      "codes": [{ "system": "SNOMED-CT", "code": "415070008", "display": "Percutaneous transluminal coronary intervention using imaging guidance with contrast" }],
+      "duration": { "low": 60, "high": 120, "unit": "minutes" },
+      "direct_transition": "End_Cath_Lab_Encounter"
+    },
+    "Procedure_Stent_WithDx": {
+      "type": "Procedure",
+      "reason": "chd_condition",
+      "codes": [{ "system": "SNOMED-CT", "code": "36969009", "display": "Placement of stent in coronary artery" }],
+      "duration": { "low": 60, "high": 120, "unit": "minutes" },
+      "direct_transition": "End_Cath_Lab_Encounter"
+    },
+    "Procedure_CABG_WithDx": {
+      "type": "Procedure",
+      "reason": "chd_condition",
+      "codes": [{ "system": "SNOMED-CT", "code": "232717009", "display": "Coronary artery bypass grafting" }],
+      "duration": { "low": 240, "high": 360, "unit": "minutes" },
+      "direct_transition": "End_Cath_Lab_Encounter"
+    },
+    "Procedure_Balloon_WithDx": {
+      "type": "Procedure",
+      "reason": "chd_condition",
+      "codes": [{ "system": "SNOMED-CT", "code": "68466008", "display": "Removal of coronary artery obstruction by percutaneous transluminal balloon, single vessel" }],
+      "duration": { "low": 45, "high": 90, "unit": "minutes" },
+      "direct_transition": "End_Cath_Lab_Encounter"
+    },
+    "End_Cath_Lab_Encounter": { "type": "EncounterEnd", "direct_transition": "Clear_First_Visit_Flag" },
+
+    "Route_Med_NoDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "And", "conditions": [
+          { "condition_type": "Attribute", "attribute": "chd_has_meds", "operator": "==", "value": true },
+          { "condition_type": "Attribute", "attribute": "chd_med", "operator": "==", "value": "aspirin" }
+        ]}, "transition": "Prescribe_Aspirin_NoDx" },
+        { "condition": { "condition_type": "And", "conditions": [
+          { "condition_type": "Attribute", "attribute": "chd_has_meds", "operator": "==", "value": true },
+          { "condition_type": "Attribute", "attribute": "chd_med", "operator": "==", "value": "clopidogrel" }
+        ]}, "transition": "Prescribe_Clopidogrel_NoDx" },
+        { "condition": { "condition_type": "And", "conditions": [
+          { "condition_type": "Attribute", "attribute": "chd_has_meds", "operator": "==", "value": true },
+          { "condition_type": "Attribute", "attribute": "chd_med", "operator": "==", "value": "atorvastatin" }
+        ]}, "transition": "Prescribe_Atorvastatin_NoDx" },
+        { "condition": { "condition_type": "And", "conditions": [
+          { "condition_type": "Attribute", "attribute": "chd_has_meds", "operator": "==", "value": true },
+          { "condition_type": "Attribute", "attribute": "chd_med", "operator": "==", "value": "simvastatin" }
+        ]}, "transition": "Prescribe_Simvastatin_NoDx" },
+        { "condition": { "condition_type": "And", "conditions": [
+          { "condition_type": "Attribute", "attribute": "chd_has_meds", "operator": "==", "value": true },
+          { "condition_type": "Attribute", "attribute": "chd_med", "operator": "==", "value": "carvedilol" }
+        ]}, "transition": "Prescribe_Carvedilol_NoDx" },
+        { "transition": "Check_Procedure_NoDx" }
+      ]
+    },
+    "Prescribe_Aspirin_NoDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "1191", "display": "aspirin" }], "direct_transition": "Check_Procedure_NoDx" },
+    "Prescribe_Clopidogrel_NoDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "32968", "display": "clopidogrel" }], "direct_transition": "Check_Procedure_NoDx" },
+    "Prescribe_Atorvastatin_NoDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "83367", "display": "atorvastatin" }], "direct_transition": "Check_Procedure_NoDx" },
+    "Prescribe_Simvastatin_NoDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "36567", "display": "simvastatin" }], "direct_transition": "Check_Procedure_NoDx" },
+    "Prescribe_Carvedilol_NoDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "20352", "display": "carvedilol" }], "direct_transition": "Check_Procedure_NoDx" },
+
+    "Check_Procedure_NoDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "chd_has_proc", "operator": "==", "value": true }, "transition": "Cath_Lab_Encounter_NoDx" },
+        { "transition": "Clear_First_Visit_Flag" }
+      ]
+    },
+
+    "Cath_Lab_Encounter_NoDx": {
+      "type": "Encounter",
+      "encounter_class": "ambulatory",
+      "codes": [{ "system": "SNOMED-CT", "code": "440655000", "display": "Outpatient procedure encounter (procedure)" }],
+      "direct_transition": "Route_Procedure_NoDx"
+    },
+
+    "Route_Procedure_NoDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "chd_proc", "operator": "==", "value": "pci" }, "transition": "Procedure_PCI_NoDx" },
+        { "condition": { "condition_type": "Attribute", "attribute": "chd_proc", "operator": "==", "value": "stent" }, "transition": "Procedure_Stent_NoDx" },
+        { "condition": { "condition_type": "Attribute", "attribute": "chd_proc", "operator": "==", "value": "cabg" }, "transition": "Procedure_CABG_NoDx" },
+        { "transition": "Procedure_Balloon_NoDx" }
+      ]
+    },
+    "Procedure_PCI_NoDx": {
+      "type": "Procedure",
+      "codes": [{ "system": "SNOMED-CT", "code": "415070008", "display": "Percutaneous transluminal coronary intervention using imaging guidance with contrast" }],
+      "duration": { "low": 60, "high": 120, "unit": "minutes" },
+      "direct_transition": "End_Cath_Lab_Encounter_NoDx"
+    },
+    "Procedure_Stent_NoDx": {
+      "type": "Procedure",
+      "codes": [{ "system": "SNOMED-CT", "code": "36969009", "display": "Placement of stent in coronary artery" }],
+      "duration": { "low": 60, "high": 120, "unit": "minutes" },
+      "direct_transition": "End_Cath_Lab_Encounter_NoDx"
+    },
+    "Procedure_CABG_NoDx": {
+      "type": "Procedure",
+      "codes": [{ "system": "SNOMED-CT", "code": "232717009", "display": "Coronary artery bypass grafting" }],
+      "duration": { "low": 240, "high": 360, "unit": "minutes" },
+      "direct_transition": "End_Cath_Lab_Encounter_NoDx"
+    },
+    "Procedure_Balloon_NoDx": {
+      "type": "Procedure",
+      "codes": [{ "system": "SNOMED-CT", "code": "68466008", "display": "Removal of coronary artery obstruction by percutaneous transluminal balloon, single vessel" }],
+      "duration": { "low": 45, "high": 90, "unit": "minutes" },
+      "direct_transition": "End_Cath_Lab_Encounter_NoDx"
+    },
+    "End_Cath_Lab_Encounter_NoDx": { "type": "EncounterEnd", "direct_transition": "Clear_First_Visit_Flag" },
+
+    "Clear_First_Visit_Flag": { "type": "SetAttribute", "attribute": "chd_needs_first_visit", "value": false, "direct_transition": "End_Wellness_Encounter" },
+    "End_Wellness_Encounter": { "type": "EncounterEnd", "direct_transition": "Followup_Delay" },
+    "Followup_Delay": { "type": "Delay", "range": { "low": 6, "high": 12, "unit": "months" }, "direct_transition": "Wellness_Encounter" }
+  },
+  "gmf_version": 2
+}

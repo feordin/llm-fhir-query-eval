@@ -1,0 +1,93 @@
+{
+  "id": "phekb-hypothyroidism-dx",
+  "source": "phekb",
+  "source_id": "hypothyroidism",
+  "name": "Hypothyroidism - Diagnosis Code Query",
+  "description": "Tests ability to find hypothyroidism patients by diagnosis codes. The PheKB algorithm requires either an ICD code for hypothyroidism OR abnormal TSH/FT4. Synthea data uses multiple SNOMED subtypes including the parent code 40930008 (Hypothyroidism), 111566002 (Acquired hypothyroidism), 83664006 (Idiopathic atrophic hypothyroidism), 237519003 (Autoimmune hypothyroidism), and 237520009 (Hypothyroidism due to Hashimoto's thyroiditis). Patients on Path C (meds-only, no dx) and Path D (labs-only, no dx) will be missed by this query.",
+  "prompt": "Find all patients diagnosed with hypothyroidism, including the various subtypes such as acquired hypothyroidism, autoimmune hypothyroidism, and Hashimoto's thyroiditis.",
+  "prompts": {
+    "naive": "Find all patients diagnosed with hypothyroidism.",
+    "broad": "Find all patients with any form of hypothyroidism — including acquired hypothyroidism, idiopathic atrophic hypothyroidism, autoimmune hypothyroidism, and Hashimoto's thyroiditis. The condition has several distinct clinical subtypes.",
+    "expert": "I need to identify all hypothyroidism patients in the population. Hypothyroidism is documented under multiple SNOMED codes that should all be queried: the parent concept (40930008 Hypothyroidism), Acquired hypothyroidism (111566002), Idiopathic atrophic hypothyroidism (83664006), Autoimmune hypothyroidism (237519003), and Hypothyroidism due to Hashimoto's thyroiditis (237520009). Note that the parent code does NOT automatically subsume subtypes on most FHIR servers without the :below modifier, so explicitly listing all subtype codes is more reliable. Search Condition resources for all these codes."
+  },
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "algorithm_path": "diagnosis-path",
+    "algorithm_path_description": "Patients with hypothyroidism diagnosis codes (Paths A and B). These patients have Condition resources with hypothyroidism SNOMED codes. Does NOT find Path C (meds-only) or Path D (labs-only, untreated subclinical) patients.",
+    "code_systems": [
+      "SNOMED CT",
+      "ICD-10-CM"
+    ],
+    "required_codes": [
+      {
+        "system": "http://snomed.info/sct",
+        "code": "40930008",
+        "display": "Hypothyroidism (disorder)",
+        "source": "VSAC OID 2.16.840.1.113762.1.4.1222.744"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "111566002",
+        "display": "Acquired hypothyroidism (disorder)",
+        "source": "VSAC OID 2.16.840.1.113762.1.4.1222.744"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "83664006",
+        "display": "Idiopathic atrophic hypothyroidism (disorder)",
+        "source": "Synthea built-in module"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "237519003",
+        "display": "Autoimmune hypothyroidism (disorder)",
+        "source": "VSAC OID 2.16.840.1.113762.1.4.1222.744"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "237520009",
+        "display": "Hypothyroidism due to Hashimoto's thyroiditis (disorder)",
+        "source": "VSAC OID 2.16.840.1.113762.1.4.1222.744"
+      }
+    ],
+    "complexity": "medium",
+    "tags": [
+      "condition",
+      "endocrinology",
+      "hypothyroidism",
+      "diagnosis-code",
+      "multi-subtype",
+      "code-variation"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "Condition",
+    "parameters": {
+      "code": "http://snomed.info/sct|40930008,http://snomed.info/sct|111566002,http://snomed.info/sct|83664006,http://snomed.info/sct|237519003,http://snomed.info/sct|237520009"
+    },
+    "url": "Condition?code=http://snomed.info/sct|40930008,http://snomed.info/sct|111566002,http://snomed.info/sct|83664006,http://snomed.info/sct|237519003,http://snomed.info/sct|237520009"
+  },
+  "test_data": {
+    "resources": [
+      "synthea/output/hypothyroidism/positive/fhir/",
+      "synthea/output/hypothyroidism/control/fhir/"
+    ],
+    "expected_result_count": 11,
+    "expected_resource_ids": [],
+    "expected_patient_ids": [
+      "080b069b-5108-46b6-ecef-6aacd3b9ef3f",
+      "2c167999-289d-95fa-5c27-7d8b8d35348c",
+      "35b353dd-402b-571a-d67a-af0a104d0854",
+      "6aed9210-c500-4375-b0fc-3374c40b8591",
+      "6fbddf55-7096-b883-7cd3-260f27953080",
+      "922fb35e-148d-9e82-7e65-bfa05e3b3515",
+      "9661a432-4630-2cd9-142c-386845fae837",
+      "b6a1cac9-8873-36a7-e726-4aad8a07d44d",
+      "bff9d9d5-ee3d-d852-9c67-36d8361a4a4a",
+      "e74367bd-7385-97dc-2c7f-251b4cd9fe29",
+      "f95a6723-14a5-c4b6-78df-fa97f7ab361c"
+    ]
+  },
+  "created_at": "2026-04-25T00:00:00.000000Z",
+  "updated_at": "2026-04-25T00:00:00.000000Z"
+}

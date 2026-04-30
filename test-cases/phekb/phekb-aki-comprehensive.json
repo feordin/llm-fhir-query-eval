@@ -1,0 +1,88 @@
+{
+  "id": "phekb-aki-comprehensive",
+  "source": "phekb",
+  "source_id": "acute-kidney-injury-aki",
+  "name": "Acute Kidney Injury - Comprehensive Provider Query (Diagnosis + Labs)",
+  "description": "Simulates a nephrologist who understands that not all AKI episodes are formally coded in the EMR. Many patients experience acute kidney injury that is evident only from rising serum creatinine values without ever receiving a formal AKI diagnosis code. The prompt asks the LLM to generate multiple FHIR queries to capture the complete AKI population: one for patients with a coded AKI diagnosis and another for patients with elevated creatinine lab results. This is the ultimate test of clinical reasoning for the AKI phenotype - it requires understanding that AKI can be identified through both diagnosis codes AND laboratory evidence.",
+  "prompt": "Find all patients with acute kidney injury. Search both diagnoses and elevated serum creatinine lab results above 1.5 mg/dL to capture the complete population.",
+  "prompts": {
+    "naive": "Find all patients with acute kidney injury. Search both diagnoses and elevated serum creatinine lab results above 1.5 mg/dL to capture the complete population.",
+    "expert": "I'm a nephrologist reviewing our hospital's acute kidney injury cases for a quality improvement project. I know from experience that many AKI episodes are never formally coded - the creatinine rises, we treat it, and it resolves without anyone adding an AKI diagnosis to the problem list. I need to capture the full population of patients who may have experienced AKI. Please run multiple FHIR queries:\n\n1. Patients who have a formal acute kidney injury diagnosis on their chart\n2. Patients with serum creatinine lab results above 1.5 mg/dL, which may indicate undiagnosed AKI episodes\n\nFor each query, return the matching resources so I can review both the coded and potentially uncoded AKI cases."
+  },
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "algorithm_paths": "all-paths",
+    "algorithm_path_description": "Comprehensive multi-query approach mirroring real clinical workflow for AKI identification. Requires the LLM to generate 2 separate FHIR queries (Condition + Observation) and combine results. Tests clinical reasoning about coded vs uncoded AKI episodes.",
+    "code_systems": [
+      "SNOMED CT",
+      "LOINC"
+    ],
+    "required_codes": [
+      {
+        "system": "http://snomed.info/sct",
+        "code": "14669001",
+        "display": "Acute kidney injury",
+        "source": "document"
+      },
+      {
+        "system": "http://loinc.org",
+        "code": "2160-0",
+        "display": "Creatinine [Mass/volume] in Serum or Plasma",
+        "source": "document"
+      }
+    ],
+    "complexity": "expert",
+    "multi_query": true,
+    "expected_queries": [
+      "Condition?code=http://snomed.info/sct|14669001",
+      "Observation?code=http://loinc.org|2160-0&value-quantity=gt1.5||mg/dL"
+    ],
+    "tags": [
+      "multi-query",
+      "comprehensive",
+      "provider-perspective",
+      "condition",
+      "observation",
+      "nephrology",
+      "acute-kidney-injury"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "Patient",
+    "parameters": {},
+    "url": "Condition?code=http://snomed.info/sct|14669001",
+    "notes": "This test case expects MULTIPLE queries (see metadata.expected_queries). The expected_query.url is the minimum viable query. Evaluation unions patient IDs from both queries to get the complete AKI population including patients with elevated creatinine but no formal diagnosis code."
+  },
+  "test_data": {
+    "resources": [
+      "synthea/output/acute-kidney-injury/positive/fhir/",
+      "synthea/output/acute-kidney-injury/control/fhir/"
+    ],
+    "expected_result_count": 20,
+    "expected_resource_ids": [],
+    "expected_patient_ids": [
+      "2c167999-289d-95fa-5c27-7d8b8d35348c",
+      "2d68ad16-268a-478c-1f84-d0f1976e1a46",
+      "35b353dd-402b-571a-d67a-af0a104d0854",
+      "46976cf7-b0bf-be20-39a5-9f425a52886d",
+      "46ee9d82-b52c-856d-069b-5064ff052225",
+      "4f083ce3-f12b-bb4b-7353-e17f0cd55b0a",
+      "5e688e99-61b3-5c88-3f60-21df8aaced27",
+      "62f60bdb-cc5c-8305-b98b-f2b229a55eca",
+      "6fbddf55-7096-b883-7cd3-260f27953080",
+      "76b20010-c318-5754-8c85-983aa538522f",
+      "9661a432-4630-2cd9-142c-386845fae837",
+      "982750f4-569b-5949-196b-60699bdda3fb",
+      "aa616abe-1761-0c9a-7959-07544679dafd",
+      "aee7bbe1-0c45-c028-1e62-1f4cdb30c273",
+      "ba419d35-0dfe-8af7-347c-eebf02485a56",
+      "bff9d9d5-ee3d-d852-9c67-36d8361a4a4a",
+      "c86c400e-ff88-a1e3-2e23-caa4d8311f47",
+      "d3727ff2-5d7b-347f-d78c-edc4323cf890",
+      "e74367bd-7385-97dc-2c7f-251b4cd9fe29",
+      "eb5910f1-26e6-bc6f-b300-716eae678d6f"
+    ]
+  },
+  "created_at": "2026-03-15T12:00:00.000000Z",
+  "updated_at": "2026-03-15T12:00:00.000000Z"
+}

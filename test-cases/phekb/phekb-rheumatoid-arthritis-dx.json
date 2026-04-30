@@ -1,0 +1,102 @@
+{
+  "id": "phekb-rheumatoid-arthritis-dx",
+  "source": "phekb",
+  "source_id": "rheumatoid-arthritis",
+  "name": "Rheumatoid Arthritis - Diagnosis Code Query (Multi-Subtype)",
+  "description": "Tests ability to find rheumatoid arthritis patients via diagnosis codes. The Harvard eMERGE RA algorithm filters on the RA_COD_DX_RheumatoidArthritis_v2 feature (ICD-9 714.0/714.1/714.2 + ICD-10 M05*/M06*) and runs a logistic regression to classify cases. The diagnosis-code component spans many specific subtypes — joint-specific RA codes, seropositive/seronegative variants, RA with comorbidities. Synthea distributes patients across SNOMED variants. An LLM querying only the parent code (69896004) will miss patients coded with the joint-specific or severity-specific codes.",
+  "prompt": "Find all patients with a diagnosis of rheumatoid arthritis, including seropositive rheumatoid arthritis, joint-specific rheumatoid arthritis, and RA in remission.",
+  "prompts": {
+    "naive": "Find all patients with rheumatoid arthritis.",
+    "broad": "Find all patients diagnosed with any form of rheumatoid arthritis — including the general parent concept, seropositive RA of multiple joints, joint-specific variants such as RA of the shoulder or knee, and RA in remission. Exclude juvenile chronic polyarthritis and inflammatory polyarthropathy.",
+    "expert": "I need to identify all rheumatoid arthritis patients. RA is documented under multiple SNOMED codes: Rheumatoid arthritis (69896004) is the parent concept, with specific variants including Seropositive rheumatoid arthritis of multiple joints (11055151000119108), Rheumatoid arthritis of shoulder (201766009), Rheumatoid arthritis of right knee (1073811000119102), and Rheumatoid arthritis in remission (143441000119108). All five codes are members of the AIR Steward 'Rheumatoid Arthritis' VSAC value set (OID 2.16.840.1.113883.3.464.1003.113.11.1081). Search Condition resources for all five codes."
+  },
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "algorithm_path": "diagnosis-path",
+    "algorithm_path_description": "Patients with RA diagnosis codes (Paths A and B). Maps to the RA_COD_DX_RheumatoidArthritis_v2 feature filter in the Harvard eMERGE algorithm. Does NOT find Path C patients (on DMARDs/biologics without RA dx).",
+    "code_systems": [
+      "SNOMED CT",
+      "ICD-10-CM"
+    ],
+    "required_codes": [
+      {
+        "system": "http://snomed.info/sct",
+        "code": "69896004",
+        "display": "Rheumatoid arthritis",
+        "source": "UMLS verified, parent concept"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "11055151000119108",
+        "display": "Seropositive rheumatoid arthritis of multiple joints",
+        "source": "VSAC value set 2.16.840.1.113883.3.464.1003.113.11.1081"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "201766009",
+        "display": "Rheumatoid arthritis of shoulder",
+        "source": "VSAC value set"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "1073811000119102",
+        "display": "Rheumatoid arthritis of right knee",
+        "source": "VSAC value set"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "143441000119108",
+        "display": "Rheumatoid arthritis in remission",
+        "source": "VSAC value set"
+      }
+    ],
+    "complexity": "medium",
+    "tags": [
+      "condition",
+      "rheumatology",
+      "rheumatoid-arthritis",
+      "diagnosis-code",
+      "multi-subtype",
+      "code-variation",
+      "autoimmune"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "Condition",
+    "parameters": {
+      "code": "http://snomed.info/sct|69896004,http://snomed.info/sct|11055151000119108,http://snomed.info/sct|201766009,http://snomed.info/sct|1073811000119102,http://snomed.info/sct|143441000119108"
+    },
+    "url": "Condition?code=http://snomed.info/sct|69896004,http://snomed.info/sct|11055151000119108,http://snomed.info/sct|201766009,http://snomed.info/sct|1073811000119102,http://snomed.info/sct|143441000119108"
+  },
+  "test_data": {
+    "resources": [
+      "synthea/output/rheumatoid-arthritis/positive/fhir/",
+      "synthea/output/rheumatoid-arthritis/control/fhir/"
+    ],
+    "expected_result_count": 19,
+    "expected_resource_ids": [],
+    "expected_patient_ids": [
+      "09278a56-0541-6d95-b59b-2212f90e7614",
+      "0aa2e661-c0c3-a298-9666-cd112a38668e",
+      "0f321eb0-3fe3-e648-803c-66a0b357edf7",
+      "14cd5a2b-c703-6204-e1cd-5c598f0d0b48",
+      "23be6240-c487-fd38-9323-89bdf3b53130",
+      "3ed9f977-3713-3382-9245-9322cd5545f4",
+      "6acd5d2d-7d4d-1aad-3d3e-1d36ae43c340",
+      "749c03e5-67d5-cc3d-0d95-e526c7d431b4",
+      "8ae0d313-4083-1efe-ef7a-190898515f70",
+      "a7b5693a-3b2d-89c3-b632-c19b837e2cb6",
+      "a93ab8fc-0fd8-4571-9806-41b39edd279c",
+      "c3e22793-0a42-74af-19a3-c1db0bfea0fa",
+      "c75b28c5-4f2d-932d-e336-a0dcff10452e",
+      "d4b816e8-6cd3-b35c-66db-3214e47b77f1",
+      "d5d36dea-9eff-9649-6649-fa0262630098",
+      "d6bc2a3c-f643-db37-108b-ef44c367d0f6",
+      "e1073fe9-ab54-8401-a0e7-78e9cc6509c5",
+      "edf28f19-c11a-567f-3627-c8f8149c8b19",
+      "f2822830-ed9d-8eb8-15ac-ecc67f540e5c"
+    ]
+  },
+  "created_at": "2026-04-27T00:00:00.000000Z",
+  "updated_at": "2026-04-27T00:00:00.000000Z"
+}

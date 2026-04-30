@@ -1,0 +1,85 @@
+{
+  "id": "phekb-gerd-dx",
+  "source": "phekb",
+  "source_id": "gerd",
+  "name": "GERD - Diagnosis Code Query (Multi-Code)",
+  "description": "Tests ability to find GERD patients via diagnosis codes. The PheKB GERD algorithm requires 2+ ICD diagnoses on separate visits (530.81 GERD or 530.11 reflux esophagitis) PLUS PPI use, OR 3+ diagnoses alone. Synthea uses SNOMED for FHIR Conditions: GERD parent (235595009), Acid reflux (698065002), and Heartburn (16331000) — though the latter two are 'finding' not 'disorder' codes, they appear in real-world EHR coding when documentation is informal.",
+  "prompt": "Find all patients with a diagnosis of gastroesophageal reflux disease (GERD), including documented acid reflux or heartburn.",
+  "prompts": {
+    "naive": "Find all patients with GERD.",
+    "broad": "Find all patients diagnosed with gastroesophageal reflux disease (GERD), or related findings such as acid reflux or heartburn that have been documented as a diagnosis or problem.",
+    "expert": "I need to identify all GERD patients. GERD is documented under multiple SNOMED codes: Gastroesophageal reflux disease (235595009) is the canonical disorder code, but real-world EHR documentation also uses related findings such as Acid reflux (698065002) and Heartburn (16331000). Search Condition resources for all three codes. ICD-10 alternates would be K21.0 (GERD with esophagitis) and K21.9 (without esophagitis), but Synthea data uses SNOMED only."
+  },
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "algorithm_path": "diagnosis-path",
+    "algorithm_path_description": "Patients with GERD diagnosis codes (Paths A and B). Maps to PheKB GERD algorithm criterion of 2+ ICD-9 530.81/530.11 codes. Does NOT find Path C patients (on PPIs without GERD dx — the dominant real-world pattern).",
+    "code_systems": [
+      "SNOMED CT",
+      "ICD-10-CM"
+    ],
+    "required_codes": [
+      {
+        "system": "http://snomed.info/sct",
+        "code": "235595009",
+        "display": "Gastroesophageal reflux disease",
+        "source": "UMLS verified, parent disorder concept"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "698065002",
+        "display": "Acid reflux",
+        "source": "VSAC GastroesophagealReflux value set"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "16331000",
+        "display": "Heartburn",
+        "source": "VSAC GastroesophagealReflux value set"
+      }
+    ],
+    "complexity": "easy",
+    "tags": [
+      "condition",
+      "gastroenterology",
+      "gerd",
+      "diagnosis-code",
+      "code-variation"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "Condition",
+    "parameters": {
+      "code": "http://snomed.info/sct|235595009,http://snomed.info/sct|698065002,http://snomed.info/sct|16331000"
+    },
+    "url": "Condition?code=http://snomed.info/sct|235595009,http://snomed.info/sct|698065002,http://snomed.info/sct|16331000"
+  },
+  "test_data": {
+    "resources": [
+      "synthea/output/gerd/positive/fhir/",
+      "synthea/output/gerd/control/fhir/"
+    ],
+    "expected_result_count": 16,
+    "expected_resource_ids": [],
+    "expected_patient_ids": [
+      "051f4214-4cea-dade-f42d-099d8789fd8d",
+      "1889330c-f9b6-3c50-9231-d1bf7752f8f0",
+      "241c462a-8a58-9a58-48a5-660798a428f1",
+      "3368574f-e2a4-b52e-1748-d68324dcb609",
+      "42a5c83c-6bfb-544f-baa7-c005b5dcdb97",
+      "456ecb6d-a0d9-cff7-c0d8-77764aedad8c",
+      "4f94a7d4-5ed5-d5d1-b649-39129e7bfffe",
+      "56f86504-9600-51e9-5831-e45aa9abd92d",
+      "5c84c7b6-4097-e376-e1c3-6225526fd97c",
+      "6e6ea2b7-6887-cd70-5b59-31b7a0c74dc5",
+      "744c34e1-454b-b940-ff36-ba78c0e3fc18",
+      "9d7b202b-936e-0f17-9561-77ae64b48054",
+      "b7bce687-8996-36a8-76f5-6ec9506ad51c",
+      "bc570ab3-5045-c726-e754-5dc206a5f3b7",
+      "d18c3b8e-6b80-2d95-d3c6-5a12bd8087af",
+      "ffa2121f-45f0-c101-ad9d-a567928659ee"
+    ]
+  },
+  "created_at": "2026-04-27T00:00:00.000000Z",
+  "updated_at": "2026-04-27T00:00:00.000000Z"
+}
