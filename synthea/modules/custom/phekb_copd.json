@@ -1,0 +1,126 @@
+{
+  "name": "PheKB COPD",
+  "remarks": [
+    "Custom Synthea module for chronic obstructive pulmonary disease (COPD).",
+    "Most common pulmonary disease. Distinct from asthma (different mechanism, smoking-related).",
+    "",
+    "Generates THREE patient paths:",
+    "  Path A (60%): COPD dx + bronchodilator (albuterol or salmeterol)",
+    "  Path B (25%): COPD dx, no medication",
+    "  Path C (15%): Bronchodilator only, no COPD dx (TRICKY — empirical for dyspnea / overlap with asthma)",
+    "",
+    "Diagnosis SNOMED variation:",
+    "  70% COPD (13645005)",
+    "  30% Pulmonary emphysema (87433001)",
+    "",
+    "Bronchodilator distribution (Paths A + C):",
+    "  60% Albuterol (RxNorm 435) — short-acting beta agonist (SABA)",
+    "  40% Salmeterol (RxNorm 36117) — long-acting beta agonist (LABA)",
+    "",
+    "Age guard: >=40 (COPD typically diagnosed in middle-aged smokers)."
+  ],
+  "states": {
+    "Initial": { "type": "Initial", "direct_transition": "Age_Guard" },
+    "Age_Guard": { "type": "Guard", "allow": { "condition_type": "Age", "operator": ">=", "quantity": 40, "unit": "years" }, "direct_transition": "Set_COPD_Flag" },
+    "Set_COPD_Flag": { "type": "SetAttribute", "attribute": "copd_positive", "value": true, "direct_transition": "Choose_Patient_Path" },
+    "Choose_Patient_Path": {
+      "type": "Simple",
+      "distributed_transition": [
+        { "transition": "Set_Path_A", "distribution": 0.60 },
+        { "transition": "Set_Path_B", "distribution": 0.25 },
+        { "transition": "Set_Path_C", "distribution": 0.15 }
+      ]
+    },
+    "Set_Path_A": { "type": "SetAttribute", "attribute": "copd_has_dx", "value": true, "direct_transition": "Set_Path_A_Med" },
+    "Set_Path_A_Med": { "type": "SetAttribute", "attribute": "copd_has_med", "value": true, "direct_transition": "Choose_Subtype" },
+    "Set_Path_B": { "type": "SetAttribute", "attribute": "copd_has_dx", "value": true, "direct_transition": "Set_Path_B_Med" },
+    "Set_Path_B_Med": { "type": "SetAttribute", "attribute": "copd_has_med", "value": false, "direct_transition": "Choose_Subtype" },
+    "Set_Path_C": { "type": "SetAttribute", "remarks": ["TRICKY: bronchodilator without COPD dx"], "attribute": "copd_has_dx", "value": false, "direct_transition": "Set_Path_C_Med" },
+    "Set_Path_C_Med": { "type": "SetAttribute", "attribute": "copd_has_med", "value": true, "direct_transition": "Choose_Subtype" },
+
+    "Choose_Subtype": {
+      "type": "Simple",
+      "distributed_transition": [
+        { "transition": "Set_Subtype_COPD", "distribution": 0.70 },
+        { "transition": "Set_Subtype_Emphysema", "distribution": 0.30 }
+      ]
+    },
+    "Set_Subtype_COPD": { "type": "SetAttribute", "attribute": "copd_subtype", "value": "copd", "direct_transition": "Choose_Med" },
+    "Set_Subtype_Emphysema": { "type": "SetAttribute", "attribute": "copd_subtype", "value": "emphysema", "direct_transition": "Choose_Med" },
+
+    "Choose_Med": {
+      "type": "Simple",
+      "distributed_transition": [
+        { "transition": "Set_Med_Albuterol", "distribution": 0.60 },
+        { "transition": "Set_Med_Salmeterol", "distribution": 0.40 }
+      ]
+    },
+    "Set_Med_Albuterol": { "type": "SetAttribute", "attribute": "copd_med", "value": "albuterol", "direct_transition": "Set_Needs_First_Visit" },
+    "Set_Med_Salmeterol": { "type": "SetAttribute", "attribute": "copd_med", "value": "salmeterol", "direct_transition": "Set_Needs_First_Visit" },
+
+    "Set_Needs_First_Visit": { "type": "SetAttribute", "attribute": "copd_needs_first_visit", "value": true, "direct_transition": "Wellness_Encounter" },
+    "Wellness_Encounter": { "type": "Encounter", "wellness": true, "direct_transition": "Check_First_Visit" },
+    "Check_First_Visit": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "copd_needs_first_visit", "operator": "==", "value": true }, "transition": "Check_Has_Diagnosis" },
+        { "transition": "End_Wellness_Encounter" }
+      ]
+    },
+    "Check_Has_Diagnosis": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "copd_has_dx", "operator": "==", "value": true }, "transition": "Route_By_Subtype" },
+        { "transition": "Check_Med_NoDx" }
+      ]
+    },
+    "Route_By_Subtype": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "copd_subtype", "operator": "==", "value": "copd" }, "transition": "Diagnose_COPD" },
+        { "transition": "Diagnose_Emphysema" }
+      ]
+    },
+    "Diagnose_COPD": { "type": "ConditionOnset", "assign_to_attribute": "copd_condition", "codes": [{ "system": "SNOMED-CT", "code": "13645005", "display": "Chronic obstructive pulmonary disease" }], "direct_transition": "Check_Med_WithDx" },
+    "Diagnose_Emphysema": { "type": "ConditionOnset", "assign_to_attribute": "copd_condition", "codes": [{ "system": "SNOMED-CT", "code": "87433001", "display": "Pulmonary emphysema" }], "direct_transition": "Check_Med_WithDx" },
+
+    "Check_Med_WithDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "copd_has_med", "operator": "==", "value": true }, "transition": "Route_Med_WithDx" },
+        { "transition": "Clear_First_Visit_Flag" }
+      ]
+    },
+    "Route_Med_WithDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "copd_med", "operator": "==", "value": "albuterol" }, "transition": "Prescribe_Albuterol_WithDx" },
+        { "transition": "Prescribe_Salmeterol_WithDx" }
+      ]
+    },
+    "Prescribe_Albuterol_WithDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "435", "display": "albuterol" }], "reason": "copd_condition", "direct_transition": "Clear_First_Visit_Flag" },
+    "Prescribe_Salmeterol_WithDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "36117", "display": "salmeterol" }], "reason": "copd_condition", "direct_transition": "Clear_First_Visit_Flag" },
+
+    "Check_Med_NoDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "copd_has_med", "operator": "==", "value": true }, "transition": "Route_Med_NoDx" },
+        { "transition": "Clear_First_Visit_Flag" }
+      ]
+    },
+    "Route_Med_NoDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "copd_med", "operator": "==", "value": "albuterol" }, "transition": "Prescribe_Albuterol_NoDx" },
+        { "transition": "Prescribe_Salmeterol_NoDx" }
+      ]
+    },
+    "Prescribe_Albuterol_NoDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "435", "display": "albuterol" }], "direct_transition": "Clear_First_Visit_Flag" },
+    "Prescribe_Salmeterol_NoDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "36117", "display": "salmeterol" }], "direct_transition": "Clear_First_Visit_Flag" },
+
+    "Clear_First_Visit_Flag": { "type": "SetAttribute", "attribute": "copd_needs_first_visit", "value": false, "direct_transition": "End_Wellness_Encounter" },
+    "End_Wellness_Encounter": { "type": "EncounterEnd", "direct_transition": "Followup_Delay" },
+    "Followup_Delay": { "type": "Delay", "range": { "low": 6, "high": 12, "unit": "months" }, "direct_transition": "Wellness_Encounter" }
+  },
+  "gmf_version": 2
+}

@@ -1,0 +1,99 @@
+{
+  "name": "PheKB Neonatal Abstinence Syndrome / Opioid-Exposed Infants (PheKB-aligned)",
+  "remarks": [
+    "Custom Synthea module for opioid-exposed infants / neonatal abstinence syndrome (NAS / NOWS).",
+    "Aligned to the published PheKB opioid-exposed-infants algorithm (Precision Phenotyping Core, 2024).",
+    "",
+    "PheKB algorithm: identifies opioid-exposed infants via 6 indicators (4 maternal, 2 infant). PPV 95.4-100% across phenotype variants.",
+    "Synthea individual-patient modules can't model birthing-person-infant dyads, so we model the infant-side indicators only:",
+    "  - Indicator 1 (infant): NOWS/opioid-exposure dx — SNOMED 414819007 + ICD-10 P96.1",
+    "  - Indicator 2 (infant): morphine taper for NOWS (treatment, also functions as exposure marker)",
+    "",
+    "Generates THREE patient paths:",
+    "  Path A (60%): NAS dx + morphine taper",
+    "  Path B (30%): NAS dx only (mild NOWS, non-pharmacologic management — Eat/Sleep/Console)",
+    "  Path C (10%): morphine without NAS dx — TRICKY (in neonates, morphine is almost exclusively NAS or post-op — rare to have without dx code)",
+    "",
+    "Multi-coded dx: SNOMED 414819007 + ICD-10 P96.1.",
+    "",
+    "Age guard: <=1 year (neonatal/infant)."
+  ],
+  "states": {
+    "Initial": { "type": "Initial", "direct_transition": "Age_Upper_Guard" },
+    "Age_Upper_Guard": { "type": "Guard", "allow": { "condition_type": "Age", "operator": "<=", "quantity": 1, "unit": "years" }, "direct_transition": "Set_Nas_Flag" },
+    "Set_Nas_Flag": { "type": "SetAttribute", "attribute": "nas_positive", "value": true, "direct_transition": "Choose_Patient_Path" },
+    "Choose_Patient_Path": {
+      "type": "Simple",
+      "distributed_transition": [
+        { "transition": "Set_Path_A", "distribution": 0.60 },
+        { "transition": "Set_Path_B", "distribution": 0.30 },
+        { "transition": "Set_Path_C", "distribution": 0.10 }
+      ]
+    },
+    "Set_Path_A": { "type": "SetAttribute", "attribute": "nas_has_dx", "value": true, "direct_transition": "Set_Path_A_Med" },
+    "Set_Path_A_Med": { "type": "SetAttribute", "attribute": "nas_has_med", "value": true, "direct_transition": "Choose_DxCode" },
+    "Set_Path_B": { "type": "SetAttribute", "attribute": "nas_has_dx", "value": true, "direct_transition": "Set_Path_B_Med" },
+    "Set_Path_B_Med": { "type": "SetAttribute", "attribute": "nas_has_med", "value": false, "direct_transition": "Choose_DxCode" },
+    "Set_Path_C": { "type": "SetAttribute", "remarks": ["TRICKY: morphine without NAS dx in a neonate"], "attribute": "nas_has_dx", "value": false, "direct_transition": "Set_Path_C_Med" },
+    "Set_Path_C_Med": { "type": "SetAttribute", "attribute": "nas_has_med", "value": true, "direct_transition": "Choose_DxCode" },
+
+    "Choose_DxCode": {
+      "type": "Simple",
+      "distributed_transition": [
+        { "transition": "Set_DxCode_SNOMED", "distribution": 0.55 },
+        { "transition": "Set_DxCode_P961", "distribution": 0.45 }
+      ]
+    },
+    "Set_DxCode_SNOMED": { "type": "SetAttribute", "attribute": "nas_dx_code", "value": "snomed_414819007", "direct_transition": "Set_Needs_First_Visit" },
+    "Set_DxCode_P961": { "type": "SetAttribute", "attribute": "nas_dx_code", "value": "icd10_P96_1", "direct_transition": "Set_Needs_First_Visit" },
+
+    "Set_Needs_First_Visit": { "type": "SetAttribute", "attribute": "nas_needs_first_visit", "value": true, "direct_transition": "Wellness_Encounter" },
+    "Wellness_Encounter": { "type": "Encounter", "wellness": true, "direct_transition": "Check_First_Visit" },
+    "Check_First_Visit": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "nas_needs_first_visit", "operator": "==", "value": true }, "transition": "Check_Has_Diagnosis" },
+        { "transition": "End_Wellness_Encounter" }
+      ]
+    },
+    "Check_Has_Diagnosis": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "nas_has_dx", "operator": "==", "value": true }, "transition": "Route_Dx_By_Code" },
+        { "transition": "Check_Med_NoDx" }
+      ]
+    },
+    "Route_Dx_By_Code": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "nas_dx_code", "operator": "==", "value": "snomed_414819007" }, "transition": "Diagnose_NAS_SNOMED" },
+        { "transition": "Diagnose_NAS_P961" }
+      ]
+    },
+    "Diagnose_NAS_SNOMED": { "type": "ConditionOnset", "assign_to_attribute": "nas_condition", "codes": [{ "system": "SNOMED-CT", "code": "414819007", "display": "Neonatal abstinence syndrome" }], "direct_transition": "Check_Med_WithDx" },
+    "Diagnose_NAS_P961": { "type": "ConditionOnset", "assign_to_attribute": "nas_condition", "codes": [{ "system": "http://hl7.org/fhir/sid/icd-10-cm", "code": "P96.1", "display": "Neonatal withdrawal symptoms from maternal use of drugs of addiction" }], "direct_transition": "Check_Med_WithDx" },
+
+    "Check_Med_WithDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "nas_has_med", "operator": "==", "value": true }, "transition": "Prescribe_Morphine_WithDx" },
+        { "transition": "Clear_First_Visit_Flag" }
+      ]
+    },
+    "Prescribe_Morphine_WithDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "7052", "display": "morphine" }], "reason": "nas_condition", "direct_transition": "Clear_First_Visit_Flag" },
+
+    "Check_Med_NoDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "nas_has_med", "operator": "==", "value": true }, "transition": "Prescribe_Morphine_NoDx" },
+        { "transition": "Clear_First_Visit_Flag" }
+      ]
+    },
+    "Prescribe_Morphine_NoDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "7052", "display": "morphine" }], "direct_transition": "Clear_First_Visit_Flag" },
+
+    "Clear_First_Visit_Flag": { "type": "SetAttribute", "attribute": "nas_needs_first_visit", "value": false, "direct_transition": "End_Wellness_Encounter" },
+    "End_Wellness_Encounter": { "type": "EncounterEnd", "direct_transition": "Followup_Delay" },
+    "Followup_Delay": { "type": "Delay", "range": { "low": 1, "high": 3, "unit": "months" }, "direct_transition": "Wellness_Encounter" }
+  },
+  "gmf_version": 2
+}

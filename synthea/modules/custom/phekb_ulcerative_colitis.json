@@ -1,0 +1,74 @@
+{
+  "name": "PheKB Ulcerative Colitis",
+  "remarks": [
+    "Custom Synthea module for ulcerative colitis (UC).",
+    "Paired with Crohn's for IBD differential dx testing. Both inflammatory bowel diseases.",
+    "",
+    "Generates THREE patient paths:",
+    "  Path A (60%): UC dx + mesalamine (5-ASA, first-line UC therapy)",
+    "  Path B (30%): UC dx, no medication",
+    "  Path C (10%): Mesalamine only, no UC dx (TRICKY — also used for Crohn's)",
+    "",
+    "Age guard: >=15 (UC peak onset 15-30, second peak 50-70)."
+  ],
+  "states": {
+    "Initial": { "type": "Initial", "direct_transition": "Age_Guard" },
+    "Age_Guard": { "type": "Guard", "allow": { "condition_type": "Age", "operator": ">=", "quantity": 15, "unit": "years" }, "direct_transition": "Set_UC_Flag" },
+    "Set_UC_Flag": { "type": "SetAttribute", "attribute": "uc_positive", "value": true, "direct_transition": "Choose_Patient_Path" },
+    "Choose_Patient_Path": {
+      "type": "Simple",
+      "distributed_transition": [
+        { "transition": "Set_Path_A", "distribution": 0.60 },
+        { "transition": "Set_Path_B", "distribution": 0.30 },
+        { "transition": "Set_Path_C", "distribution": 0.10 }
+      ]
+    },
+    "Set_Path_A": { "type": "SetAttribute", "attribute": "uc_has_dx", "value": true, "direct_transition": "Set_Path_A_Med" },
+    "Set_Path_A_Med": { "type": "SetAttribute", "attribute": "uc_has_med", "value": true, "direct_transition": "Set_Needs_First_Visit" },
+    "Set_Path_B": { "type": "SetAttribute", "attribute": "uc_has_dx", "value": true, "direct_transition": "Set_Path_B_Med" },
+    "Set_Path_B_Med": { "type": "SetAttribute", "attribute": "uc_has_med", "value": false, "direct_transition": "Set_Needs_First_Visit" },
+    "Set_Path_C": { "type": "SetAttribute", "remarks": ["TRICKY: mesalamine without UC dx (cross-indicates Crohn's)"], "attribute": "uc_has_dx", "value": false, "direct_transition": "Set_Path_C_Med" },
+    "Set_Path_C_Med": { "type": "SetAttribute", "attribute": "uc_has_med", "value": true, "direct_transition": "Set_Needs_First_Visit" },
+
+    "Set_Needs_First_Visit": { "type": "SetAttribute", "attribute": "uc_needs_first_visit", "value": true, "direct_transition": "Wellness_Encounter" },
+    "Wellness_Encounter": { "type": "Encounter", "wellness": true, "direct_transition": "Check_First_Visit" },
+    "Check_First_Visit": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "uc_needs_first_visit", "operator": "==", "value": true }, "transition": "Check_Has_Diagnosis" },
+        { "transition": "End_Wellness_Encounter" }
+      ]
+    },
+    "Check_Has_Diagnosis": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "uc_has_dx", "operator": "==", "value": true }, "transition": "Diagnose_UC" },
+        { "transition": "Check_Med_NoDx" }
+      ]
+    },
+    "Diagnose_UC": { "type": "ConditionOnset", "assign_to_attribute": "uc_condition", "codes": [{ "system": "SNOMED-CT", "code": "64766004", "display": "Ulcerative colitis" }], "direct_transition": "Check_Med_WithDx" },
+
+    "Check_Med_WithDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "uc_has_med", "operator": "==", "value": true }, "transition": "Prescribe_Mesalamine_WithDx" },
+        { "transition": "Clear_First_Visit_Flag" }
+      ]
+    },
+    "Prescribe_Mesalamine_WithDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "52582", "display": "mesalamine" }], "reason": "uc_condition", "direct_transition": "Clear_First_Visit_Flag" },
+
+    "Check_Med_NoDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "uc_has_med", "operator": "==", "value": true }, "transition": "Prescribe_Mesalamine_NoDx" },
+        { "transition": "Clear_First_Visit_Flag" }
+      ]
+    },
+    "Prescribe_Mesalamine_NoDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "52582", "display": "mesalamine" }], "direct_transition": "Clear_First_Visit_Flag" },
+
+    "Clear_First_Visit_Flag": { "type": "SetAttribute", "attribute": "uc_needs_first_visit", "value": false, "direct_transition": "End_Wellness_Encounter" },
+    "End_Wellness_Encounter": { "type": "EncounterEnd", "direct_transition": "Followup_Delay" },
+    "Followup_Delay": { "type": "Delay", "range": { "low": 6, "high": 12, "unit": "months" }, "direct_transition": "Wellness_Encounter" }
+  },
+  "gmf_version": 2
+}

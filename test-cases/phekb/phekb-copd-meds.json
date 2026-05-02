@@ -1,0 +1,105 @@
+{
+  "id": "phekb-copd-meds",
+  "source": "phekb",
+  "source_id": "copd",
+  "name": "COPD - Medication Query (Bronchodilators)",
+  "description": "Tests ability to find COPD patients via inhaled bronchodilator prescriptions (albuterol SABA + salmeterol LABA). Cross-indication: also used in asthma.",
+  "prompt": "Find patients prescribed inhaled bronchodilators for chronic obstructive pulmonary disease — albuterol or salmeterol.",
+  "prompts": {
+    "naive": "Find patients on COPD medications.",
+    "broad": "Find patients prescribed inhaled bronchodilators commonly used for COPD — short-acting beta agonists (albuterol) and long-acting beta agonists (salmeterol).",
+    "expert": "Search MedicationRequest for RxNorm 435 (albuterol) and 36117 (salmeterol). Query: MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|435,http://www.nlm.nih.gov/research/umls/rxnorm|36117"
+  },
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "algorithm_path": "medication-path",
+    "algorithm_path_description": "Patients on inhaled bronchodilators (cross-indicated with asthma).",
+    "code_systems": [
+      "RxNorm"
+    ],
+    "required_codes": [
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "435",
+        "display": "albuterol",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "36117",
+        "display": "salmeterol",
+        "source": "UMLS verified"
+      }
+    ],
+    "complexity": "medium",
+    "tags": [
+      "medication",
+      "pulmonology",
+      "copd",
+      "bronchodilator"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "MedicationRequest",
+    "parameters": {
+      "code": "http://www.nlm.nih.gov/research/umls/rxnorm|435,http://www.nlm.nih.gov/research/umls/rxnorm|36117"
+    },
+    "url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|435,http://www.nlm.nih.gov/research/umls/rxnorm|36117"
+  },
+  "test_data": {
+    "resources": [
+      "synthea/output/copd/positive/fhir/",
+      "synthea/output/copd/control/fhir/"
+    ],
+    "expected_result_count": 44,
+    "expected_resource_ids": [],
+    "expected_patient_ids": [
+      "07b6623c-3fa0-7e98-6d29-a4c5d574f36b",
+      "092479c8-822e-124e-bbbf-38a820ddc137",
+      "0f8f2cb5-ddcf-ab05-e128-684921148149",
+      "18cdf0fc-e5b9-5b44-3ac2-8d2f76d7e7f5",
+      "19a525ab-1c00-9c35-c678-8b558dc0ffcd",
+      "1e6d4750-ec04-31a8-d615-6bbb80a9c2dc",
+      "1f725172-83a2-e020-a9cd-eb113ed603c8",
+      "2e253a02-7222-60f3-15d7-05329d976d5a",
+      "32a3e254-7b08-c69a-e736-adb7e3dae35d",
+      "33351071-c164-bf2d-802c-683eb101e17f",
+      "3665c427-372e-bf7a-a00d-4ce8ec70b580",
+      "3dd5f4b7-d38a-50d0-fbb1-5c3a8c64e05d",
+      "406b8d15-e6da-a2af-6112-b19505b7de93",
+      "504c3316-a45c-011c-ac07-74e80a691a82",
+      "62b0a29c-8d47-5aec-2b95-147ade8d8b22",
+      "65d11c3d-e04f-c320-b247-da4e923d1643",
+      "699be87d-15ba-fdac-a6bc-cbb78ca8b622",
+      "6dbea447-170f-382f-c5d2-28f26e506185",
+      "71ad8a85-5317-665b-4d4e-1f6d44beeb02",
+      "77b25e65-cd53-7f86-300c-0283ef081206",
+      "79cc8f4b-464a-c5fc-5dd8-2ad5b05d3e4d",
+      "801d0c6f-c344-5ebd-26a6-7267c14e3ad7",
+      "8c125477-96f1-11df-262e-5a68807ccfcf",
+      "8c46914f-434d-cedc-2beb-8725152e4583",
+      "8c8353c9-609e-0127-d39b-b32c309021fd",
+      "91fc16eb-e185-bc3e-0005-ef70dc513098",
+      "95e6601d-52ea-5b6a-efb2-776a255eb24a",
+      "9a8e47ad-0118-8ec6-74ac-81f4b1a94a1d",
+      "9d69eeb2-f3eb-f350-4c64-5190a6d2e6d7",
+      "a1a27d37-00dc-4790-b75a-b138c9525c27",
+      "aa3025a4-54af-3066-033e-b9ebe06f592f",
+      "afd0f23f-b4e8-1a72-bdef-d2e09a43d078",
+      "b21315c1-4c4a-7542-8970-4ede82dd6da3",
+      "b25daa1c-1a8f-5d07-c9c8-4732a8b7586f",
+      "b73fe42d-ee64-ca9a-ef6a-377815135684",
+      "b9cbd169-9dc6-8966-2e5d-70d2986191a3",
+      "bb467ac4-754d-7986-9dca-9133fbdf1929",
+      "bbd56b4e-6f30-c470-54b0-95438d193f14",
+      "c5ba37ca-f9a3-ae10-8a11-d92e25c5ae4d",
+      "c8aca61c-dbf4-6b7f-fc19-e62528f04224",
+      "d9c47fc5-7cab-8f6d-d33d-29dde71f96dd",
+      "eddb8a46-29f4-3357-1c38-6cca9a015792",
+      "eecfe40a-47ce-15ff-d570-44dffc1d776a",
+      "fb18350c-1b00-1b78-2c25-7278557eee78"
+    ]
+  },
+  "created_at": "2026-04-29T00:00:00.000000Z",
+  "updated_at": "2026-04-27T00:00:00.000000Z"
+}

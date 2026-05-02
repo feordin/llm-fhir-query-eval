@@ -1,0 +1,107 @@
+{
+  "name": "PheKB Statins and MACE (PheKB-aligned BioVU AMI algorithm)",
+  "remarks": [
+    "Custom Synthea module for statin-treated patients with major adverse cardiac events (MACE/AMI).",
+    "Aligned to PheKB BioVU AMI algorithm (Wei, Denny et al.).",
+    "",
+    "PheKB algorithm criteria for AMI on statins:",
+    "  - Statin Rx ≥180 days prior to AMI event",
+    "  - At least 2 AMI codes (ICD-9 410.* or 411.*) within 5-day window — modeled with ICD-10 I21.*",
+    "  - Lab confirmation: Troponin-I ≥0.10 ng/ml OR Troponin-T ≥0.10 ng/ml OR (CK-MB ratio ≥3.0 + CK-MB ≥10.0)",
+    "",
+    "Generates THREE patient paths:",
+    "  Path A (50%): Statin Rx + AMI dx + elevated Troponin-I (full algorithm)",
+    "  Path B (30%): Statin Rx + AMI dx, no troponin recorded (B is sub-criteria match)",
+    "  Path C (20%): Statin Rx without AMI dx — TRICKY (most statin users do NOT have AMI; this is the at-risk pool)",
+    "",
+    "Multi-system AMI dx coding:",
+    "  - ICD-10 I21.9 (AMI unspecified) — most common ICD-10 for AMI",
+    "  - ICD-10 I21.0 (STEMI anterior wall) — specific subtype",
+    "  - SNOMED 22298006 (Myocardial infarction)",
+    "",
+    "Note: Synthea individual modules can't enforce '180-day temporal' precisely, but ConditionOnset states are ordered, so statin Rx will appear in encounters before AMI dx in the timeline.",
+    "",
+    "Age guard: >=40."
+  ],
+  "states": {
+    "Initial": { "type": "Initial", "direct_transition": "Age_Guard" },
+    "Age_Guard": { "type": "Guard", "allow": { "condition_type": "Age", "operator": ">=", "quantity": 40, "unit": "years" }, "direct_transition": "Set_Mace_Flag" },
+    "Set_Mace_Flag": { "type": "SetAttribute", "attribute": "mace_positive", "value": true, "direct_transition": "Choose_Patient_Path" },
+    "Choose_Patient_Path": {
+      "type": "Simple",
+      "distributed_transition": [
+        { "transition": "Set_Path_A", "distribution": 0.50 },
+        { "transition": "Set_Path_B", "distribution": 0.30 },
+        { "transition": "Set_Path_C", "distribution": 0.20 }
+      ]
+    },
+    "Set_Path_A": { "type": "SetAttribute", "attribute": "mace_has_ami", "value": true, "direct_transition": "Set_Path_A_Lab" },
+    "Set_Path_A_Lab": { "type": "SetAttribute", "attribute": "mace_has_lab", "value": true, "direct_transition": "Choose_AMI_Code" },
+    "Set_Path_B": { "type": "SetAttribute", "attribute": "mace_has_ami", "value": true, "direct_transition": "Set_Path_B_Lab" },
+    "Set_Path_B_Lab": { "type": "SetAttribute", "attribute": "mace_has_lab", "value": false, "direct_transition": "Choose_AMI_Code" },
+    "Set_Path_C": { "type": "SetAttribute", "remarks": ["TRICKY: statin without AMI dx — most statin users do NOT have AMI"], "attribute": "mace_has_ami", "value": false, "direct_transition": "Set_Path_C_Lab" },
+    "Set_Path_C_Lab": { "type": "SetAttribute", "attribute": "mace_has_lab", "value": false, "direct_transition": "Choose_AMI_Code" },
+
+    "Choose_AMI_Code": {
+      "type": "Simple",
+      "distributed_transition": [
+        { "transition": "Set_AmiCode_I219", "distribution": 0.50 },
+        { "transition": "Set_AmiCode_I210", "distribution": 0.30 },
+        { "transition": "Set_AmiCode_SNOMED", "distribution": 0.20 }
+      ]
+    },
+    "Set_AmiCode_I219": { "type": "SetAttribute", "attribute": "mace_ami_code", "value": "icd10_I21_9", "direct_transition": "Set_Needs_First_Visit" },
+    "Set_AmiCode_I210": { "type": "SetAttribute", "attribute": "mace_ami_code", "value": "icd10_I21_0", "direct_transition": "Set_Needs_First_Visit" },
+    "Set_AmiCode_SNOMED": { "type": "SetAttribute", "attribute": "mace_ami_code", "value": "snomed_22298006", "direct_transition": "Set_Needs_First_Visit" },
+
+    "Set_Needs_First_Visit": { "type": "SetAttribute", "attribute": "mace_needs_first_visit", "value": true, "direct_transition": "Wellness_Encounter" },
+    "Wellness_Encounter": { "type": "Encounter", "wellness": true, "direct_transition": "Check_First_Visit" },
+    "Check_First_Visit": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "mace_needs_first_visit", "operator": "==", "value": true }, "transition": "Prescribe_Atorvastatin" },
+        { "transition": "End_Wellness_Encounter" }
+      ]
+    },
+    "Prescribe_Atorvastatin": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "83367", "display": "atorvastatin" }], "direct_transition": "Statin_Delay" },
+    "Statin_Delay": { "type": "Delay", "range": { "low": 6, "high": 24, "unit": "months" }, "direct_transition": "Check_AMI" },
+    "Check_AMI": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "mace_has_ami", "operator": "==", "value": true }, "transition": "AMI_Encounter" },
+        { "transition": "Clear_First_Visit_Flag" }
+      ]
+    },
+    "AMI_Encounter": { "type": "Encounter", "encounter_class": "emergency", "codes": [{ "system": "SNOMED-CT", "code": "50849002", "display": "Emergency room admission" }], "direct_transition": "Route_AMI_Dx" },
+    "Route_AMI_Dx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "mace_ami_code", "operator": "==", "value": "icd10_I21_9" }, "transition": "Diagnose_AMI_I219" },
+        { "condition": { "condition_type": "Attribute", "attribute": "mace_ami_code", "operator": "==", "value": "icd10_I21_0" }, "transition": "Diagnose_AMI_I210" },
+        { "transition": "Diagnose_AMI_SNOMED" }
+      ]
+    },
+    "Diagnose_AMI_I219": { "type": "ConditionOnset", "assign_to_attribute": "mace_ami_condition", "codes": [{ "system": "http://hl7.org/fhir/sid/icd-10-cm", "code": "I21.9", "display": "Acute myocardial infarction, unspecified" }], "direct_transition": "Check_Lab" },
+    "Diagnose_AMI_I210": { "type": "ConditionOnset", "assign_to_attribute": "mace_ami_condition", "codes": [{ "system": "http://hl7.org/fhir/sid/icd-10-cm", "code": "I21.0", "display": "ST elevation (STEMI) myocardial infarction of anterior wall" }], "direct_transition": "Check_Lab" },
+    "Diagnose_AMI_SNOMED": { "type": "ConditionOnset", "assign_to_attribute": "mace_ami_condition", "codes": [{ "system": "SNOMED-CT", "code": "22298006", "display": "Myocardial infarction" }], "direct_transition": "Check_Lab" },
+    "Check_Lab": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "mace_has_lab", "operator": "==", "value": true }, "transition": "Record_Troponin" },
+        { "transition": "End_AMI_Encounter" }
+      ]
+    },
+    "Record_Troponin": {
+      "type": "Observation", "category": "laboratory", "unit": "ng/mL",
+      "codes": [{ "system": "LOINC", "code": "10839-9", "display": "Troponin I.cardiac [Mass/volume] in Serum or Plasma" }],
+      "range": { "low": 0.15, "high": 5.0 },
+      "direct_transition": "End_AMI_Encounter"
+    },
+    "End_AMI_Encounter": { "type": "EncounterEnd", "direct_transition": "Clear_First_Visit_Flag" },
+
+    "Clear_First_Visit_Flag": { "type": "SetAttribute", "attribute": "mace_needs_first_visit", "value": false, "direct_transition": "End_Wellness_Encounter" },
+    "End_Wellness_Encounter": { "type": "EncounterEnd", "direct_transition": "Followup_Delay" },
+    "Followup_Delay": { "type": "Delay", "range": { "low": 6, "high": 12, "unit": "months" }, "direct_transition": "Wellness_Encounter" }
+  },
+  "gmf_version": 2
+}

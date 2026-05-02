@@ -23,16 +23,24 @@ def load():
 @click.option("--positive-only", is_flag=True, help="Only load positive cases")
 @click.option("--control-only", is_flag=True, help="Only load control cases")
 @click.option("--fhir-url", default="http://localhost:8080", help="FHIR server base URL")
+@click.option("--fhir-path", default=None, help="Path prefix for FHIR endpoint. HAPI: 'fhir' (default). Microsoft FHIR Server: '' (auto-detected when --fhir-url uses https or port 8443).")
+@click.option("--insecure", is_flag=True, help="Skip TLS cert verification (auto-on for https URLs)")
 @click.option("--update-test-case", is_flag=True, help="Update test case JSON with expected results")
-def synthea(phenotype, positive_only, control_only, fhir_url, update_test_case):
+def synthea(phenotype, positive_only, control_only, fhir_url, fhir_path, insecure, update_test_case):
     """Load Synthea-generated FHIR bundles for a phenotype.
 
     Example:
         fhir-eval load synthea -p type-2-diabetes
         fhir-eval load synthea -p type-2-diabetes --positive-only
         fhir-eval load synthea -p type-2-diabetes --update-test-case
+        fhir-eval load synthea -p type-2-diabetes --fhir-url https://localhost:8443 --fhir-path "" --insecure
     """
-    client = FHIRClient(base_url=fhir_url)
+    is_https = fhir_url.lower().startswith("https://")
+    # Auto-detect Microsoft FHIR Server (root-mounted, https on 8443)
+    if fhir_path is None:
+        fhir_path = "" if is_https or ":8443" in fhir_url else "fhir"
+    verify_ssl = not (insecure or is_https)
+    client = FHIRClient(base_url=fhir_url, fhir_version=fhir_path, verify_ssl=verify_ssl)
 
     # Health check
     click.echo(f"Connecting to FHIR server at {fhir_url}...")

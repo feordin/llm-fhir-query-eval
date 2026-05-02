@@ -1,0 +1,121 @@
+{
+  "name": "PheKB Hyperthyroidism (Graves' Disease)",
+  "remarks": [
+    "Custom Synthea module for hyperthyroidism / Graves' disease.",
+    "First hyperthyroid phenotype, counterpart to existing hypothyroidism.",
+    "",
+    "Generates THREE patient paths:",
+    "  Path A (60%): Hyperthyroid dx + methimazole + suppressed TSH (<0.1 mIU/L)",
+    "  Path B (25%): Hyperthyroid dx + methimazole, no TSH measured",
+    "  Path D (15%): Suppressed TSH without formal hyperthyroid dx (TRICKY — subclinical)",
+    "",
+    "Diagnosis SNOMED variation:",
+    "  60% Hyperthyroidism (34486009) — broader",
+    "  40% Graves' disease (353295004) — most common cause",
+    "",
+    "TSH range: 0.01-0.1 mIU/L (suppressed; normal 0.4-4.0). Age guard: >=18."
+  ],
+  "states": {
+    "Initial": { "type": "Initial", "direct_transition": "Age_Guard" },
+    "Age_Guard": { "type": "Guard", "allow": { "condition_type": "Age", "operator": ">=", "quantity": 18, "unit": "years" }, "direct_transition": "Set_Hyper_Flag" },
+    "Set_Hyper_Flag": { "type": "SetAttribute", "attribute": "hyper_positive", "value": true, "direct_transition": "Choose_Patient_Path" },
+    "Choose_Patient_Path": {
+      "type": "Simple",
+      "distributed_transition": [
+        { "transition": "Set_Path_A", "distribution": 0.60 },
+        { "transition": "Set_Path_B", "distribution": 0.25 },
+        { "transition": "Set_Path_D", "distribution": 0.15 }
+      ]
+    },
+    "Set_Path_A": { "type": "SetAttribute", "attribute": "hyper_has_dx", "value": true, "direct_transition": "Set_Path_A_Med" },
+    "Set_Path_A_Med": { "type": "SetAttribute", "attribute": "hyper_has_med", "value": true, "direct_transition": "Set_Path_A_Lab" },
+    "Set_Path_A_Lab": { "type": "SetAttribute", "attribute": "hyper_has_lab", "value": true, "direct_transition": "Choose_Subtype" },
+    "Set_Path_B": { "type": "SetAttribute", "attribute": "hyper_has_dx", "value": true, "direct_transition": "Set_Path_B_Med" },
+    "Set_Path_B_Med": { "type": "SetAttribute", "attribute": "hyper_has_med", "value": true, "direct_transition": "Set_Path_B_Lab" },
+    "Set_Path_B_Lab": { "type": "SetAttribute", "attribute": "hyper_has_lab", "value": false, "direct_transition": "Choose_Subtype" },
+    "Set_Path_D": { "type": "SetAttribute", "remarks": ["TRICKY: suppressed TSH without hyperthyroid dx"], "attribute": "hyper_has_dx", "value": false, "direct_transition": "Set_Path_D_Med" },
+    "Set_Path_D_Med": { "type": "SetAttribute", "attribute": "hyper_has_med", "value": false, "direct_transition": "Set_Path_D_Lab" },
+    "Set_Path_D_Lab": { "type": "SetAttribute", "attribute": "hyper_has_lab", "value": true, "direct_transition": "Choose_Subtype" },
+
+    "Choose_Subtype": {
+      "type": "Simple",
+      "distributed_transition": [
+        { "transition": "Set_Subtype_Hyper", "distribution": 0.60 },
+        { "transition": "Set_Subtype_Graves", "distribution": 0.40 }
+      ]
+    },
+    "Set_Subtype_Hyper": { "type": "SetAttribute", "attribute": "hyper_subtype", "value": "hyper", "direct_transition": "Set_Needs_First_Visit" },
+    "Set_Subtype_Graves": { "type": "SetAttribute", "attribute": "hyper_subtype", "value": "graves", "direct_transition": "Set_Needs_First_Visit" },
+
+    "Set_Needs_First_Visit": { "type": "SetAttribute", "attribute": "hyper_needs_first_visit", "value": true, "direct_transition": "Wellness_Encounter" },
+    "Wellness_Encounter": { "type": "Encounter", "wellness": true, "direct_transition": "Check_First_Visit" },
+    "Check_First_Visit": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "hyper_needs_first_visit", "operator": "==", "value": true }, "transition": "Check_Has_Diagnosis" },
+        { "transition": "End_Wellness_Encounter" }
+      ]
+    },
+    "Check_Has_Diagnosis": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "hyper_has_dx", "operator": "==", "value": true }, "transition": "Route_By_Subtype" },
+        { "transition": "Check_Lab_NoDx" }
+      ]
+    },
+    "Route_By_Subtype": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "hyper_subtype", "operator": "==", "value": "hyper" }, "transition": "Diagnose_Hyper" },
+        { "transition": "Diagnose_Graves" }
+      ]
+    },
+    "Diagnose_Hyper": { "type": "ConditionOnset", "assign_to_attribute": "hyper_condition", "codes": [{ "system": "SNOMED-CT", "code": "34486009", "display": "Hyperthyroidism" }], "direct_transition": "Check_Med_WithDx" },
+    "Diagnose_Graves": { "type": "ConditionOnset", "assign_to_attribute": "hyper_condition", "codes": [{ "system": "SNOMED-CT", "code": "353295004", "display": "Graves' disease" }], "direct_transition": "Check_Med_WithDx" },
+
+    "Check_Med_WithDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "hyper_has_med", "operator": "==", "value": true }, "transition": "Prescribe_Methimazole_WithDx" },
+        { "transition": "Check_Lab_WithDx" }
+      ]
+    },
+    "Prescribe_Methimazole_WithDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "6835", "display": "methimazole" }], "reason": "hyper_condition", "direct_transition": "Check_Lab_WithDx" },
+    "Check_Lab_WithDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "hyper_has_lab", "operator": "==", "value": true }, "transition": "Record_TSH_WithDx" },
+        { "transition": "Clear_First_Visit_Flag" }
+      ]
+    },
+    "Record_TSH_WithDx": {
+      "type": "Observation",
+      "category": "laboratory",
+      "unit": "mIU/L",
+      "codes": [{ "system": "LOINC", "code": "3016-3", "display": "Thyrotropin [Units/volume] in Serum or Plasma" }],
+      "range": { "low": 0.01, "high": 0.1 },
+      "direct_transition": "Clear_First_Visit_Flag"
+    },
+
+    "Check_Lab_NoDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "hyper_has_lab", "operator": "==", "value": true }, "transition": "Record_TSH_NoDx" },
+        { "transition": "Clear_First_Visit_Flag" }
+      ]
+    },
+    "Record_TSH_NoDx": {
+      "type": "Observation",
+      "category": "laboratory",
+      "unit": "mIU/L",
+      "codes": [{ "system": "LOINC", "code": "3016-3", "display": "Thyrotropin [Units/volume] in Serum or Plasma" }],
+      "range": { "low": 0.01, "high": 0.1 },
+      "direct_transition": "Clear_First_Visit_Flag"
+    },
+
+    "Clear_First_Visit_Flag": { "type": "SetAttribute", "attribute": "hyper_needs_first_visit", "value": false, "direct_transition": "End_Wellness_Encounter" },
+    "End_Wellness_Encounter": { "type": "EncounterEnd", "direct_transition": "Followup_Delay" },
+    "Followup_Delay": { "type": "Delay", "range": { "low": 6, "high": 12, "unit": "months" }, "direct_transition": "Wellness_Encounter" }
+  },
+  "gmf_version": 2
+}

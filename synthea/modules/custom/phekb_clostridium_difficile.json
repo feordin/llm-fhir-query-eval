@@ -1,0 +1,74 @@
+{
+  "name": "PheKB Clostridium difficile colitis",
+  "remarks": [
+    "Custom Synthea module for Clostridioides difficile infection (CDI).",
+    "First hospital-acquired infection phenotype.",
+    "",
+    "Generates THREE patient paths:",
+    "  Path A (60%): C. diff dx + oral vancomycin (first-line treatment)",
+    "  Path B (30%): C. diff dx only (mild, supportive care or pre-treatment)",
+    "  Path C (10%): vancomycin without C. diff dx (TRICKY — vancomycin is also used for MRSA, endocarditis)",
+    "",
+    "Age guard: >=18."
+  ],
+  "states": {
+    "Initial": { "type": "Initial", "direct_transition": "Age_Guard" },
+    "Age_Guard": { "type": "Guard", "allow": { "condition_type": "Age", "operator": ">=", "quantity": 18, "unit": "years" }, "direct_transition": "Set_Cdiff_Flag" },
+    "Set_Cdiff_Flag": { "type": "SetAttribute", "attribute": "cdiff_positive", "value": true, "direct_transition": "Choose_Patient_Path" },
+    "Choose_Patient_Path": {
+      "type": "Simple",
+      "distributed_transition": [
+        { "transition": "Set_Path_A", "distribution": 0.60 },
+        { "transition": "Set_Path_B", "distribution": 0.30 },
+        { "transition": "Set_Path_C", "distribution": 0.10 }
+      ]
+    },
+    "Set_Path_A": { "type": "SetAttribute", "attribute": "cdiff_has_dx", "value": true, "direct_transition": "Set_Path_A_Med" },
+    "Set_Path_A_Med": { "type": "SetAttribute", "attribute": "cdiff_has_med", "value": true, "direct_transition": "Set_Needs_First_Visit" },
+    "Set_Path_B": { "type": "SetAttribute", "attribute": "cdiff_has_dx", "value": true, "direct_transition": "Set_Path_B_Med" },
+    "Set_Path_B_Med": { "type": "SetAttribute", "attribute": "cdiff_has_med", "value": false, "direct_transition": "Set_Needs_First_Visit" },
+    "Set_Path_C": { "type": "SetAttribute", "remarks": ["TRICKY: vancomycin without C. diff dx (cross-indicates MRSA, endocarditis)"], "attribute": "cdiff_has_dx", "value": false, "direct_transition": "Set_Path_C_Med" },
+    "Set_Path_C_Med": { "type": "SetAttribute", "attribute": "cdiff_has_med", "value": true, "direct_transition": "Set_Needs_First_Visit" },
+
+    "Set_Needs_First_Visit": { "type": "SetAttribute", "attribute": "cdiff_needs_first_visit", "value": true, "direct_transition": "Wellness_Encounter" },
+    "Wellness_Encounter": { "type": "Encounter", "wellness": true, "direct_transition": "Check_First_Visit" },
+    "Check_First_Visit": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "cdiff_needs_first_visit", "operator": "==", "value": true }, "transition": "Check_Has_Diagnosis" },
+        { "transition": "End_Wellness_Encounter" }
+      ]
+    },
+    "Check_Has_Diagnosis": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "cdiff_has_dx", "operator": "==", "value": true }, "transition": "Diagnose_Cdiff" },
+        { "transition": "Check_Med_NoDx" }
+      ]
+    },
+    "Diagnose_Cdiff": { "type": "ConditionOnset", "assign_to_attribute": "cdiff_condition", "codes": [{ "system": "SNOMED-CT", "code": "186431008", "display": "Infection caused by Clostridioides difficile" }], "direct_transition": "Check_Med_WithDx" },
+
+    "Check_Med_WithDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "cdiff_has_med", "operator": "==", "value": true }, "transition": "Prescribe_Vanc_WithDx" },
+        { "transition": "Clear_First_Visit_Flag" }
+      ]
+    },
+    "Prescribe_Vanc_WithDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "1807513", "display": "vancomycin 1000 MG Injection" }], "reason": "cdiff_condition", "direct_transition": "Clear_First_Visit_Flag" },
+
+    "Check_Med_NoDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "cdiff_has_med", "operator": "==", "value": true }, "transition": "Prescribe_Vanc_NoDx" },
+        { "transition": "Clear_First_Visit_Flag" }
+      ]
+    },
+    "Prescribe_Vanc_NoDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "1807513", "display": "vancomycin 1000 MG Injection" }], "direct_transition": "Clear_First_Visit_Flag" },
+
+    "Clear_First_Visit_Flag": { "type": "SetAttribute", "attribute": "cdiff_needs_first_visit", "value": false, "direct_transition": "End_Wellness_Encounter" },
+    "End_Wellness_Encounter": { "type": "EncounterEnd", "direct_transition": "Followup_Delay" },
+    "Followup_Delay": { "type": "Delay", "range": { "low": 6, "high": 12, "unit": "months" }, "direct_transition": "Wellness_Encounter" }
+  },
+  "gmf_version": 2
+}

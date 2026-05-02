@@ -1,0 +1,109 @@
+{
+  "id": "phekb-alcohol-use-disorder-meds",
+  "source": "phekb",
+  "source_id": "alcohol-use-disorder",
+  "name": "Alcohol Use Disorder - Medication Query (Naltrexone)",
+  "description": "Tests ability to find AUD patients via naltrexone prescriptions. Naltrexone is also used for opioid use disorder, but it's the most disease-specific oral medication for AUD in this suite.",
+  "prompt": "Find patients prescribed naltrexone for alcohol use disorder.",
+  "prompts": {
+    "naive": "Find patients on AUD medications.",
+    "broad": "Find patients prescribed naltrexone — an opioid antagonist used for both alcohol use disorder and opioid use disorder maintenance.",
+    "expert": "Search MedicationRequest for RxNorm 7243 (naltrexone). Query: MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|7243"
+  },
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "algorithm_path": "medication-path",
+    "algorithm_path_description": "Patients on naltrexone (cross-indicated with opioid use disorder).",
+    "code_systems": [
+      "RxNorm"
+    ],
+    "required_codes": [
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "7243",
+        "display": "naltrexone",
+        "source": "UMLS verified"
+      }
+    ],
+    "complexity": "medium",
+    "tags": [
+      "medication",
+      "behavioral-health",
+      "substance-use",
+      "alcohol",
+      "naltrexone"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "MedicationRequest",
+    "parameters": {
+      "code": "http://www.nlm.nih.gov/research/umls/rxnorm|7243"
+    },
+    "url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|7243"
+  },
+  "test_data": {
+    "resources": [
+      "synthea/output/alcohol-use-disorder/positive/fhir/",
+      "synthea/output/alcohol-use-disorder/control/fhir/"
+    ],
+    "expected_result_count": 53,
+    "expected_resource_ids": [],
+    "expected_patient_ids": [
+      "0051e3dc-76a7-37f6-ca96-9ea38e1a1c9b",
+      "13ad0fee-cdbe-419c-46a0-19800f2ed9e0",
+      "183640bf-9cbb-ab93-df81-62d17f4dcb87",
+      "27a4edc5-6fd8-2655-7e37-e860ce629d69",
+      "2a2cb515-98e5-a581-0886-c62e7e86f478",
+      "2dfc9148-13c3-c653-6eb8-4716c08eb7aa",
+      "32dc3130-549d-bd50-8e25-d7fe6378710e",
+      "453710a4-50d5-f371-04f9-64597974e216",
+      "48ada794-6eac-d94e-eb3c-c143c717f123",
+      "4b27f302-8674-5f93-09ca-00124013d5cc",
+      "580bbce4-2c05-8e91-b726-9cc55902c4fc",
+      "591434d3-809a-712f-f61f-f0bf57d77feb",
+      "61db1169-e46d-42d6-5d08-6acde7690373",
+      "65c7c2e3-95fd-130a-d634-b8be3342b63e",
+      "7011a3e1-d0a7-66c4-b7f1-b1fe0bb8bbd7",
+      "72a650c9-e9bc-af81-0401-2166fa6327f0",
+      "783ff309-0f35-26b7-78e1-00171d6e80f1",
+      "7d0841bd-898b-c054-13fd-49b9bac4e827",
+      "85621e1d-ca28-ae3b-e541-e1e01d75a10a",
+      "8b34748a-80db-3a90-4386-3341d489a579",
+      "8b5d0a14-5d82-ddf1-68be-16c6692a6c8a",
+      "8c50fead-5d4d-52ec-074a-7ef6407bd2b7",
+      "8cc42a24-37ce-2a7a-c054-58e0abff1c66",
+      "94a9e294-6219-c095-3ab8-b8bb8982aab8",
+      "97248cab-69de-8818-4e3c-61368e9755e1",
+      "a1cba1c0-2750-4d74-90ef-f5e4418c877b",
+      "a7632967-016e-c1ee-06cc-10e052475e8e",
+      "addbe8ea-e975-dbe9-cdb5-e346d7300512",
+      "ae870d5a-84eb-e537-1924-848dec51e3a3",
+      "afb20021-b615-8462-cbb7-555f2d36fc92",
+      "b807ba20-d35b-8fe7-4e02-5fa97a5975ee",
+      "b849a808-596f-59b6-ada3-fc7bc0bf65e4",
+      "b9291fd8-d02d-07d7-6a22-8397e53ef516",
+      "bf0276a8-34ed-8f85-9c61-d6128b1464f4",
+      "c34e7ad7-3115-46fe-799a-63ae08799349",
+      "cbc2365b-c1b6-a07b-ad7a-09f02cc907ec",
+      "cee1fe99-fb3b-873b-7399-4a8d8a41e202",
+      "cfea47cd-82cd-463f-ea87-670a93698085",
+      "d8a1c545-2380-5888-b3dd-ad4a4e4040e5",
+      "dace14f2-3297-7f05-d38d-cd61b06088ef",
+      "dba58884-e781-544c-46d4-4cdb4846d7d4",
+      "e2143a2b-3d26-5d04-2660-76acb331d2ed",
+      "e2a28754-c349-b891-e32f-fd70c9f07ad6",
+      "e8861714-e166-f719-e9bc-aea9537212de",
+      "e8abc02a-c88a-48e1-cac5-38aa45fb0ffb",
+      "f1696b75-ad99-5f96-0e18-22489d88e16f",
+      "f5a30806-ef11-4f9c-2011-fbd47a901a3c",
+      "f80a1746-8491-7562-4303-fc295a0156b0",
+      "f8b787a4-1c94-3c77-cd92-d871a4c559e9",
+      "fa685865-c56e-8b43-76ec-92c26800b89f",
+      "fb58301a-ffdc-08e0-32ac-230a6f8baceb",
+      "fc09ea03-0e8c-8db2-8087-19ac590024c4",
+      "ff414dbc-4ff8-de50-2997-daffde1a61cb"
+    ]
+  },
+  "created_at": "2026-04-29T00:00:00.000000Z",
+  "updated_at": "2026-04-27T00:00:00.000000Z"
+}

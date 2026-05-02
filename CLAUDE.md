@@ -195,23 +195,24 @@ Look up and crosswalk clinical codes using the NIH UMLS MCP server.
 
 Requires the `nih-umls` MCP server configured in `.mcp.json`. See `.claude/skills/umls/SKILL.md` for detailed instructions.
 
-### /phenotype_test_case - Phenotype Test Case Creation
+### /phenotype_workflow - Phenotype Module + Test Case Workflow
 
-Create phenotype-based test cases from PheKB algorithm analysis.
+End-to-end workflow for adding a deeply-evaluated PheKB phenotype.
 
 ```bash
-/phenotype_test_case analyze <phenotype>    # Analyze algorithm paths from PheKB docs
-/phenotype_test_case create <phenotype>     # Create per-path test case JSON files
-/phenotype_test_case validate <phenotype>   # Validate test cases against FHIR server
+/phenotype_workflow analyze <phenotype>     # Read PheKB docs + identify paths/codes
+/phenotype_workflow create <phenotype>      # Build Synthea module + test cases
+/phenotype_workflow validate <phenotype>    # Load to HAPI + run validator
 ```
 
 Key methodology:
-- PheKB algorithms are multi-path decision trees, NOT simple code lookups
-- Each algorithm path becomes a separate test case targeting one FHIR resource type
-- Path 4-type cases (no diagnosis code, meds + labs only) are the hardest LLM test
-- Always verify codes via `/umls` before creating test cases
+- **PheKB raw docs are the algorithm source** — always read `data/phekb-raw/<phenotype>/{description.txt,document_analysis.json,*.pdf,*.doc}` before designing
+- **PheKB code lists are primary, UMLS verification is secondary** — real-world EHR data uses the codes PheKB lists (often legacy ICD-9 alongside SNOMED)
+- **Code resolution pattern**: `search_umls("<term>", "exact")` → CUI → `get_source_atoms_for_cui(cui, source, ttys)` (no guessing)
+- **3-path module template**: Path A (dx+meds), Path B (dx-only), Path C (meds-only TRICKY for cross-indication test); +Path D (labs-only) when applicable
+- Check `docs/PHENOTYPE-AUDIT.md` for tier classification before starting
 
-See `.claude/skills/phenotype_test_case/SKILL.md` for detailed instructions.
+See `.claude/skills/phenotype_workflow/SKILL.md` for detailed instructions. Old reference at `.claude/skills/_archived_phenotype_test_case/REFERENCE-DO-NOT-LOAD.md`.
 
 ### /fhir_server_introspection - Server-Aware Query Construction
 

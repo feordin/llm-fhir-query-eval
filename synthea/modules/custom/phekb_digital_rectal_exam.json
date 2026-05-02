@@ -1,0 +1,32 @@
+{
+  "name": "PheKB Digital Rectal Exam (PheKB-aligned Stanford)",
+  "remarks": [
+    "Custom Synthea module for digital rectal exam (DRE) utilization in prostate cancer patients.",
+    "Aligned to PheKB Stanford algorithm: DRE within 6 months before first prostate cancer treatment as quality metric.",
+    "",
+    "Generates SINGLE-PATH module: prostate cancer dx + DRE procedure.",
+    "",
+    "Sex guard: M only. Age guard: >=35."
+  ],
+  "states": {
+    "Initial": { "type": "Initial", "direct_transition": "Sex_Guard" },
+    "Sex_Guard": { "type": "Guard", "allow": { "condition_type": "Gender", "gender": "M" }, "direct_transition": "Age_Guard" },
+    "Age_Guard": { "type": "Guard", "allow": { "condition_type": "Age", "operator": ">=", "quantity": 35, "unit": "years" }, "direct_transition": "Set_Dre_Flag" },
+    "Set_Dre_Flag": { "type": "SetAttribute", "attribute": "dre_positive", "value": true, "direct_transition": "Set_Needs_First_Visit" },
+    "Set_Needs_First_Visit": { "type": "SetAttribute", "attribute": "dre_needs_first_visit", "value": true, "direct_transition": "Wellness_Encounter" },
+    "Wellness_Encounter": { "type": "Encounter", "wellness": true, "direct_transition": "Check_First_Visit" },
+    "Check_First_Visit": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "dre_needs_first_visit", "operator": "==", "value": true }, "transition": "Diagnose_PCa" },
+        { "transition": "End_Wellness_Encounter" }
+      ]
+    },
+    "Diagnose_PCa": { "type": "ConditionOnset", "codes": [{ "system": "http://hl7.org/fhir/sid/icd-10-cm", "code": "C61", "display": "Malignant neoplasm of prostate" }], "direct_transition": "DRE_Procedure" },
+    "DRE_Procedure": { "type": "Procedure", "codes": [{ "system": "SNOMED-CT", "code": "410006001", "display": "Digital examination of rectum" }], "duration": { "low": 5, "high": 15, "unit": "minutes" }, "direct_transition": "Clear_First_Visit_Flag" },
+    "Clear_First_Visit_Flag": { "type": "SetAttribute", "attribute": "dre_needs_first_visit", "value": false, "direct_transition": "End_Wellness_Encounter" },
+    "End_Wellness_Encounter": { "type": "EncounterEnd", "direct_transition": "Followup_Delay" },
+    "Followup_Delay": { "type": "Delay", "range": { "low": 6, "high": 12, "unit": "months" }, "direct_transition": "Wellness_Encounter" }
+  },
+  "gmf_version": 2
+}

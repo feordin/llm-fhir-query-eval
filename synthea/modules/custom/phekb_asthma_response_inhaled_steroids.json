@@ -1,0 +1,68 @@
+{
+  "name": "PheKB Asthma Response to Inhaled Steroids (PheKB-aligned)",
+  "remarks": [
+    "Custom Synthea module for asthma-ICS response phenotype (PGx subtype of asthma).",
+    "Aligned to PheKB Marshfield algorithm: age 4-35 + >=2 asthma codes + ICS use + acute exacerbation.",
+    "",
+    "Generates THREE patient paths:",
+    "  Path A (60%): Asthma dx + fluticasone (ICS responder)",
+    "  Path B (25%): Asthma dx + budesonide (ICS responder, alternate ICS)",
+    "  Path C (15%): On ICS without asthma dx (TRICKY — ICS used for COPD, allergic rhinitis, etc.)",
+    "",
+    "Multi-system asthma dx: ICD-10 J45.901 (asthma w/ acute exacerbation) — modern equivalent of PheKB ICD-9 493.xx legacy codes.",
+    "",
+    "Age guard: 4-35 (per PheKB algorithm)."
+  ],
+  "states": {
+    "Initial": { "type": "Initial", "direct_transition": "Age_Lower_Guard" },
+    "Age_Lower_Guard": { "type": "Guard", "allow": { "condition_type": "Age", "operator": ">=", "quantity": 4, "unit": "years" }, "direct_transition": "Age_Upper_Guard" },
+    "Age_Upper_Guard": { "type": "Guard", "allow": { "condition_type": "Age", "operator": "<=", "quantity": 35, "unit": "years" }, "direct_transition": "Set_Aics_Flag" },
+    "Set_Aics_Flag": { "type": "SetAttribute", "attribute": "aics_positive", "value": true, "direct_transition": "Choose_Patient_Path" },
+    "Choose_Patient_Path": {
+      "type": "Simple",
+      "distributed_transition": [
+        { "transition": "Set_Path_A", "distribution": 0.60 },
+        { "transition": "Set_Path_B", "distribution": 0.25 },
+        { "transition": "Set_Path_C", "distribution": 0.15 }
+      ]
+    },
+    "Set_Path_A": { "type": "SetAttribute", "attribute": "aics_has_dx", "value": true, "direct_transition": "Set_Path_A_ICS" },
+    "Set_Path_A_ICS": { "type": "SetAttribute", "attribute": "aics_ics_choice", "value": "fluticasone", "direct_transition": "Set_Needs_First_Visit" },
+    "Set_Path_B": { "type": "SetAttribute", "attribute": "aics_has_dx", "value": true, "direct_transition": "Set_Path_B_ICS" },
+    "Set_Path_B_ICS": { "type": "SetAttribute", "attribute": "aics_ics_choice", "value": "budesonide", "direct_transition": "Set_Needs_First_Visit" },
+    "Set_Path_C": { "type": "SetAttribute", "remarks": ["TRICKY: ICS without asthma dx"], "attribute": "aics_has_dx", "value": false, "direct_transition": "Set_Path_C_ICS" },
+    "Set_Path_C_ICS": { "type": "SetAttribute", "attribute": "aics_ics_choice", "value": "fluticasone", "direct_transition": "Set_Needs_First_Visit" },
+
+    "Set_Needs_First_Visit": { "type": "SetAttribute", "attribute": "aics_needs_first_visit", "value": true, "direct_transition": "Wellness_Encounter" },
+    "Wellness_Encounter": { "type": "Encounter", "wellness": true, "direct_transition": "Check_First_Visit" },
+    "Check_First_Visit": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "aics_needs_first_visit", "operator": "==", "value": true }, "transition": "Check_Has_Dx" },
+        { "transition": "End_Wellness_Encounter" }
+      ]
+    },
+    "Check_Has_Dx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "aics_has_dx", "operator": "==", "value": true }, "transition": "Diagnose_Asthma" },
+        { "transition": "Route_ICS" }
+      ]
+    },
+    "Diagnose_Asthma": { "type": "ConditionOnset", "codes": [{ "system": "http://hl7.org/fhir/sid/icd-10-cm", "code": "J45.901", "display": "Unspecified asthma with (acute) exacerbation" }], "direct_transition": "Route_ICS" },
+    "Route_ICS": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "aics_ics_choice", "operator": "==", "value": "fluticasone" }, "transition": "Prescribe_Fluticasone" },
+        { "transition": "Prescribe_Budesonide" }
+      ]
+    },
+    "Prescribe_Fluticasone": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "41126", "display": "fluticasone" }], "direct_transition": "Clear_First_Visit_Flag" },
+    "Prescribe_Budesonide": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "19831", "display": "budesonide" }], "direct_transition": "Clear_First_Visit_Flag" },
+
+    "Clear_First_Visit_Flag": { "type": "SetAttribute", "attribute": "aics_needs_first_visit", "value": false, "direct_transition": "End_Wellness_Encounter" },
+    "End_Wellness_Encounter": { "type": "EncounterEnd", "direct_transition": "Followup_Delay" },
+    "Followup_Delay": { "type": "Delay", "range": { "low": 6, "high": 12, "unit": "months" }, "direct_transition": "Wellness_Encounter" }
+  },
+  "gmf_version": 2
+}

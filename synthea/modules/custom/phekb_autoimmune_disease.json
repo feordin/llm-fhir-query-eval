@@ -1,0 +1,67 @@
+{
+  "name": "PheKB Autoimmune Disease Phenotype (PheKB-aligned umbrella)",
+  "remarks": [
+    "Custom Synthea module for the autoimmune disease umbrella phenotype.",
+    "Aligned to PheKB algorithm: identifies cases across 51 autoimmune diseases — at least one AID dx with >=3 codes on distinct days, first/last >=7 days apart.",
+    "",
+    "Generates SINGLE-PATH module: patients with one of 5 prevalent autoimmune dx codes (RA, SLE, Crohn's, MS, T1DM).",
+    "Multi-coded autoimmune dx (5 SNOMED variants distributed):",
+    "  - 25% Rheumatoid Arthritis (M06.9)",
+    "  - 20% Systemic Lupus Erythematosus (M32.9)",
+    "  - 25% Crohn's Disease (K50.9)",
+    "  - 15% Multiple Sclerosis (G35)",
+    "  - 15% Type 1 Diabetes Mellitus (E10.9)",
+    "",
+    "Age guard: >=18."
+  ],
+  "states": {
+    "Initial": { "type": "Initial", "direct_transition": "Age_Guard" },
+    "Age_Guard": { "type": "Guard", "allow": { "condition_type": "Age", "operator": ">=", "quantity": 18, "unit": "years" }, "direct_transition": "Set_Aid_Flag" },
+    "Set_Aid_Flag": { "type": "SetAttribute", "attribute": "aid_positive", "value": true, "direct_transition": "Choose_Aid_Type" },
+    "Choose_Aid_Type": {
+      "type": "Simple",
+      "distributed_transition": [
+        { "transition": "Set_Type_RA", "distribution": 0.25 },
+        { "transition": "Set_Type_SLE", "distribution": 0.20 },
+        { "transition": "Set_Type_Crohns", "distribution": 0.25 },
+        { "transition": "Set_Type_MS", "distribution": 0.15 },
+        { "transition": "Set_Type_T1D", "distribution": 0.15 }
+      ]
+    },
+    "Set_Type_RA": { "type": "SetAttribute", "attribute": "aid_type", "value": "ra", "direct_transition": "Set_Needs_First_Visit" },
+    "Set_Type_SLE": { "type": "SetAttribute", "attribute": "aid_type", "value": "sle", "direct_transition": "Set_Needs_First_Visit" },
+    "Set_Type_Crohns": { "type": "SetAttribute", "attribute": "aid_type", "value": "crohns", "direct_transition": "Set_Needs_First_Visit" },
+    "Set_Type_MS": { "type": "SetAttribute", "attribute": "aid_type", "value": "ms", "direct_transition": "Set_Needs_First_Visit" },
+    "Set_Type_T1D": { "type": "SetAttribute", "attribute": "aid_type", "value": "t1d", "direct_transition": "Set_Needs_First_Visit" },
+
+    "Set_Needs_First_Visit": { "type": "SetAttribute", "attribute": "aid_needs_first_visit", "value": true, "direct_transition": "Wellness_Encounter" },
+    "Wellness_Encounter": { "type": "Encounter", "wellness": true, "direct_transition": "Check_First_Visit" },
+    "Check_First_Visit": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "aid_needs_first_visit", "operator": "==", "value": true }, "transition": "Route_Aid_Dx" },
+        { "transition": "End_Wellness_Encounter" }
+      ]
+    },
+    "Route_Aid_Dx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "aid_type", "operator": "==", "value": "ra" }, "transition": "Diagnose_RA" },
+        { "condition": { "condition_type": "Attribute", "attribute": "aid_type", "operator": "==", "value": "sle" }, "transition": "Diagnose_SLE" },
+        { "condition": { "condition_type": "Attribute", "attribute": "aid_type", "operator": "==", "value": "crohns" }, "transition": "Diagnose_Crohns" },
+        { "condition": { "condition_type": "Attribute", "attribute": "aid_type", "operator": "==", "value": "ms" }, "transition": "Diagnose_MS" },
+        { "transition": "Diagnose_T1D" }
+      ]
+    },
+    "Diagnose_RA": { "type": "ConditionOnset", "codes": [{ "system": "http://hl7.org/fhir/sid/icd-10-cm", "code": "M06.9", "display": "Rheumatoid arthritis, unspecified" }], "direct_transition": "Clear_First_Visit_Flag" },
+    "Diagnose_SLE": { "type": "ConditionOnset", "codes": [{ "system": "http://hl7.org/fhir/sid/icd-10-cm", "code": "M32.9", "display": "Systemic lupus erythematosus, unspecified" }], "direct_transition": "Clear_First_Visit_Flag" },
+    "Diagnose_Crohns": { "type": "ConditionOnset", "codes": [{ "system": "http://hl7.org/fhir/sid/icd-10-cm", "code": "K50.9", "display": "Crohn's disease, unspecified" }], "direct_transition": "Clear_First_Visit_Flag" },
+    "Diagnose_MS": { "type": "ConditionOnset", "codes": [{ "system": "http://hl7.org/fhir/sid/icd-10-cm", "code": "G35", "display": "Multiple sclerosis" }], "direct_transition": "Clear_First_Visit_Flag" },
+    "Diagnose_T1D": { "type": "ConditionOnset", "codes": [{ "system": "http://hl7.org/fhir/sid/icd-10-cm", "code": "E10.9", "display": "Type 1 diabetes mellitus without complications" }], "direct_transition": "Clear_First_Visit_Flag" },
+
+    "Clear_First_Visit_Flag": { "type": "SetAttribute", "attribute": "aid_needs_first_visit", "value": false, "direct_transition": "End_Wellness_Encounter" },
+    "End_Wellness_Encounter": { "type": "EncounterEnd", "direct_transition": "Followup_Delay" },
+    "Followup_Delay": { "type": "Delay", "range": { "low": 6, "high": 12, "unit": "months" }, "direct_transition": "Wellness_Encounter" }
+  },
+  "gmf_version": 2
+}

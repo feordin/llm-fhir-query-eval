@@ -1,0 +1,114 @@
+{
+  "id": "phekb-urinary-incontinence-meds",
+  "source": "phekb",
+  "source_id": "urinary-incontinence",
+  "name": "Urinary Incontinence - Medication Query (Antimuscarinics)",
+  "description": "Tests ability to find UI patients via antimuscarinic prescriptions across three drugs (oxybutynin, tolterodine, solifenacin). LLM must know to query all three for full recall.",
+  "prompt": "Find patients prescribed antimuscarinic medications for urinary incontinence — oxybutynin, tolterodine, or solifenacin.",
+  "prompts": {
+    "naive": "Find patients on UI medications.",
+    "broad": "Find patients prescribed antimuscarinics for overactive bladder — including oxybutynin, tolterodine, and solifenacin.",
+    "expert": "Search MedicationRequest for RxNorm 32675 (oxybutynin), 119565 (tolterodine), 322167 (solifenacin). Query: MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|32675,http://www.nlm.nih.gov/research/umls/rxnorm|119565,http://www.nlm.nih.gov/research/umls/rxnorm|322167"
+  },
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "algorithm_path": "medication-path",
+    "algorithm_path_description": "Patients on antimuscarinic OAB medications (3 drug variants).",
+    "code_systems": [
+      "RxNorm"
+    ],
+    "required_codes": [
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "32675",
+        "display": "oxybutynin",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "119565",
+        "display": "tolterodine",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "322167",
+        "display": "solifenacin",
+        "source": "UMLS verified"
+      }
+    ],
+    "complexity": "medium",
+    "tags": [
+      "medication",
+      "urology",
+      "genitourinary",
+      "urinary-incontinence",
+      "antimuscarinic"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "MedicationRequest",
+    "parameters": {
+      "code": "http://www.nlm.nih.gov/research/umls/rxnorm|32675,http://www.nlm.nih.gov/research/umls/rxnorm|119565,http://www.nlm.nih.gov/research/umls/rxnorm|322167"
+    },
+    "url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|32675,http://www.nlm.nih.gov/research/umls/rxnorm|119565,http://www.nlm.nih.gov/research/umls/rxnorm|322167"
+  },
+  "test_data": {
+    "resources": [
+      "synthea/output/urinary-incontinence/positive/fhir/",
+      "synthea/output/urinary-incontinence/control/fhir/"
+    ],
+    "expected_result_count": 46,
+    "expected_resource_ids": [],
+    "expected_patient_ids": [
+      "1e8286be-ac3f-9fc4-70a1-35b9f0d7ec2e",
+      "223a800a-db3d-19d1-cdf1-6296f4db57fd",
+      "23ad62f1-bbfd-e6e3-8b02-d2156013e1a7",
+      "2fba935e-81da-9dee-9a7c-50b8146cb452",
+      "3a7ec48b-2478-c06e-c0f5-64b14d52d7c8",
+      "438fa4fa-96d2-66a5-3455-f10d5017123b",
+      "45fe98ef-6dbe-7637-1c01-f1b0d5ea35a9",
+      "48612862-e57d-5ef6-9f2f-9d83faaea0ad",
+      "4a1701e3-5c5d-b814-bde7-3ee04251cd10",
+      "4e7cd839-693a-d1c9-74a7-47fa8cc4d2f8",
+      "57c8e2ae-3b0f-9ac6-f226-c3cd9abc0d20",
+      "58bc7831-db9e-1624-2338-dd6bfe628016",
+      "60254919-62f6-9299-cd74-bb8f3433ff59",
+      "631ecb8c-ce3f-b410-b555-b1c08928d8b3",
+      "67353bd6-5bf8-418d-e4ae-87a4f22a843c",
+      "675768b2-2202-7987-ba10-360c314f00ad",
+      "6c3735ac-6d29-7d71-cfa2-dba5ca938edc",
+      "763840dc-cf83-a550-bcb0-cbbbb1be5428",
+      "7b63521e-0422-d5e8-538a-c1d98858524e",
+      "7bb434d6-384c-fca9-1997-15ae09117f27",
+      "8132d243-d2d2-d428-7028-2511a5d081ba",
+      "81912e48-e243-31c0-1c52-db7b82f80c9f",
+      "85ba4a05-c7c2-79e0-ef3a-e92bc74ffc49",
+      "965cc981-e7af-94d1-a3f4-de34640f8624",
+      "98285bae-6769-cd09-4881-9998d2f99d81",
+      "98739602-b86f-b8e4-d5c5-cb25b56b8bcf",
+      "a9dae93a-ae0d-b4e1-354f-fe39fa53e6b5",
+      "ad3787d1-e59c-5d23-c474-844dafe48bb6",
+      "ad6bcccc-6cb5-57eb-2aaa-ae56ce6fb29a",
+      "b079c241-60b9-d018-8609-6672c176b609",
+      "b3630732-58d8-6bc5-f3e6-32b4e856a9ca",
+      "b631f7b5-6584-5583-a4b7-deef9f33e72e",
+      "bab5fb69-e704-7936-7a3c-60d76fc664cb",
+      "bc7495c8-b9d1-94c5-28be-63c6b1e80e8e",
+      "bcf966bb-47cc-a46a-b051-25c0d479083d",
+      "c4130407-48aa-e153-2f2d-ca5c5c1658bc",
+      "d3790c26-6242-22d0-fa6e-59fb0a650888",
+      "d63b835b-cfd4-ef0e-89b1-b7f6d17212e5",
+      "d94276e1-4b2e-a760-6a49-091979e31bc3",
+      "dc397a83-ded8-b32b-3e4f-949673621080",
+      "dd2b0efd-3b2c-e7df-0e49-34f199f6d3f3",
+      "deca63c2-59e5-f344-c51d-a5cc78515cc9",
+      "e6b1a660-fee2-5faa-f96c-b58cb856cf2e",
+      "e955689f-322a-236d-00e4-874f0d6b73fe",
+      "f91ac406-9a75-4886-78b5-ff2b2b4234d4",
+      "fcc6176b-82b2-3702-1c6d-4731652e5a7b"
+    ]
+  },
+  "created_at": "2026-04-30T00:00:00.000000Z",
+  "updated_at": "2026-04-27T00:00:00.000000Z"
+}

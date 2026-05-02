@@ -1,0 +1,143 @@
+{
+  "id": "phekb-hyperthyroidism-comprehensive",
+  "source": "phekb",
+  "source_id": "hyperthyroidism",
+  "name": "Hyperthyroidism - Comprehensive Provider Query",
+  "description": "Provider-level query identifying hyperthyroid patients via Condition + MedicationRequest + Observation (TSH).",
+  "prompt": "I need to identify my complete hyperthyroidism patient population. Some patients have a coded hyperthyroidism or Graves' diagnosis. Others are on methimazole. Some have only a suppressed TSH without a formal diagnosis (subclinical hyperthyroidism). Run multiple FHIR queries and union the patient sets.",
+  "prompts": {
+    "naive": "Find all hyperthyroid patients.",
+    "broad": "Find all hyperthyroid patients — by diagnosis (hyperthyroidism or Graves'), methimazole, or suppressed TSH (<0.1 mIU/L). Run multiple queries and union the patient sets.",
+    "expert": "Run three queries. (1) Condition?code=http://snomed.info/sct|34486009,http://snomed.info/sct|353295004 — hyperthyroid dx. (2) MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6835 — methimazole. (3) Observation?code=http://loinc.org|3016-3&value-quantity=lt0.1||mIU/L — suppressed TSH. Union the patient IDs."
+  },
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "algorithm_path": "comprehensive-provider-query",
+    "algorithm_path_description": "Multi-query union: Condition + MedicationRequest + Observation for hyperthyroidism.",
+    "code_systems": [
+      "SNOMED CT",
+      "RxNorm",
+      "LOINC"
+    ],
+    "required_codes": [
+      {
+        "system": "http://snomed.info/sct",
+        "code": "34486009",
+        "display": "Hyperthyroidism",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://snomed.info/sct",
+        "code": "353295004",
+        "display": "Graves' disease",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "6835",
+        "display": "methimazole",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://loinc.org",
+        "code": "3016-3",
+        "display": "Thyrotropin [Units/volume] in Serum or Plasma",
+        "source": "UMLS verified"
+      }
+    ],
+    "complexity": "expert",
+    "tags": [
+      "multi-query",
+      "comprehensive",
+      "endocrinology",
+      "hyperthyroidism"
+    ],
+    "multi_query": true,
+    "expected_queries": [
+      "Condition?code=http://snomed.info/sct|34486009,http://snomed.info/sct|353295004",
+      "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6835",
+      "Observation?code=http://loinc.org|3016-3&value-quantity=lt0.1||mIU/L"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "multi",
+    "parameters": {},
+    "url": "Condition?code=http://snomed.info/sct|34486009,http://snomed.info/sct|353295004"
+  },
+  "test_data": {
+    "resources": [
+      "synthea/output/hyperthyroidism/positive/fhir/",
+      "synthea/output/hyperthyroidism/control/fhir/"
+    ],
+    "expected_result_count": 64,
+    "expected_resource_ids": [],
+    "expected_patient_ids": [
+      "02e1cd1b-e080-c92f-51e2-80db3a8a296d",
+      "0641c6a9-d8dc-e3d7-89df-bb0223ddae6b",
+      "0be33b5b-f89b-dde7-7778-e3c4f248fd45",
+      "13fc8f67-f586-2a2d-16ef-27609ceb4d47",
+      "1924ed34-b33a-3d53-25d9-c16b1341a7b5",
+      "1b801111-b35e-a415-1e8b-eecae9822943",
+      "1dbc508a-6873-987a-5df5-f4f3f02fb1e4",
+      "1e9080de-4ec8-6be8-78b9-7121a4f3e0f5",
+      "227ca811-0970-4a26-5987-dc20b0a63344",
+      "286fafd0-b518-b33a-a090-3e9b74816c05",
+      "2920c332-1d1d-b2cf-748d-4df78db61347",
+      "2ffcc74a-253d-3bb5-96a9-de763dc9088d",
+      "40452e67-631c-a84f-c393-5899fc69abcd",
+      "48e2b6f7-6885-0969-391e-7bdb2b5faf3c",
+      "498c2b1b-6827-e997-b53b-66689877b26b",
+      "4ad731b8-4be6-13b9-a84d-8816e48e1f18",
+      "4f4d8a9f-3d1f-6720-89ab-0524a7242565",
+      "4f90e12f-255a-6a2a-ea93-3d1543704155",
+      "53d42c0c-42a2-4612-9f61-3f76aa593b1e",
+      "55f65973-e3f1-623c-6150-e54d63dbe1c2",
+      "57eabe99-da0b-28eb-ffa9-d9f4cc334f5e",
+      "5dcdc794-b2b4-da3f-58d8-25d4f42419b8",
+      "6005c873-b540-679b-a235-248ced088d4f",
+      "60842113-c73f-199a-3abd-fad73ee8c177",
+      "6ae1088e-36ab-6250-a753-1bd0230f605c",
+      "81acc164-eb59-203d-d3db-bb2efff3644e",
+      "82f2f1ce-8d28-7db9-909a-c21f4f12c780",
+      "857eea0f-cdd9-3c7e-7155-7f258a68d488",
+      "8740a66f-18bb-41a3-bf40-b9e65fd07e11",
+      "92f11dcb-9f93-2c54-0804-f2c0326e9c1e",
+      "99f27fcc-7205-4134-83b2-4cecc1db8e0c",
+      "9af64256-58fb-dffd-2685-60acf12b2a99",
+      "9f3633e4-8a34-3ab0-4198-a59e034da330",
+      "a21721f4-9fb7-c529-419c-7a5ab62dafdb",
+      "a3c2ce1f-9525-7de8-b9f3-77c31596f6ed",
+      "a9442abe-14ed-c9b0-ba9f-6433c948fb58",
+      "abb83acd-b3d6-51c6-953c-93674a25bcc2",
+      "b3635f3d-9e86-a4bd-0a9a-dd671f865202",
+      "b37312fd-f6b6-867d-c0b0-5cbfc9a134bc",
+      "ba9d73bf-e625-f19f-014e-8c2bec49f8c5",
+      "bb439031-9527-5862-52a2-785f5ab07196",
+      "bc888b9d-4609-41bb-5e48-b4d2649aed05",
+      "bd354cef-319d-9a48-25a7-793ce7dad391",
+      "c30bc3b9-fbd3-7bcb-82db-404f81a52776",
+      "c7b254dd-590b-7a03-181b-88e676980461",
+      "caffba89-9e60-8f5d-8d45-876c1d137cb9",
+      "cd625ef8-8b62-3c09-e928-ae29a8c6a18b",
+      "cf780f75-24bb-58b7-b034-746120a02f6f",
+      "d3ea901e-3c56-5fc7-90e6-20bb416b73aa",
+      "dafac34c-744d-fc88-0f5b-ced5623812ab",
+      "db6530af-dd41-2eb9-8fcc-db592f79bfb2",
+      "dcec89a3-474f-4800-59ec-ea8ae3e9efc7",
+      "df2fad6a-9408-3f37-0646-e1ba226a0bf9",
+      "e19e05e1-5937-dde1-88c4-616b463b51da",
+      "e961df25-f93d-be07-0141-ea06660bc7fa",
+      "eaa405cb-9483-fe48-2f90-f61976e76cdc",
+      "ec8a00ee-2356-f09e-fc34-8522acf07a4e",
+      "edcec4ab-4f1a-1696-a4d0-bbb99f81bcda",
+      "ef973af1-172a-8806-fedd-f723495ef1fc",
+      "f1024ef0-ce3d-d088-6c26-127651b3d8a0",
+      "f2616a8a-a684-cc65-9320-8dca50f529b9",
+      "f90b4b9f-d3b7-4428-4f21-c8780ebd235c",
+      "f94d0796-6353-b3ad-4567-73cbafdf132e",
+      "fb071964-f1b9-15d3-01d2-6990e4c650f0"
+    ]
+  },
+  "created_at": "2026-04-29T00:00:00.000000Z",
+  "updated_at": "2026-04-27T00:00:00.000000Z"
+}

@@ -11,11 +11,18 @@ class FHIRClient:
         self,
         base_url: str = "http://localhost:8080",
         fhir_version: str = "fhir",
+        verify_ssl: bool = True,
     ) -> None:
         self.base_url = base_url.rstrip("/")
         self.fhir_version = fhir_version
-        self.endpoint = f"{self.base_url}/{self.fhir_version}"
+        # If fhir_version is empty, treat base_url as the FHIR endpoint itself
+        # (Microsoft Health FHIR Server serves FHIR at the root, no /fhir prefix).
+        self.endpoint = self.base_url if not fhir_version else f"{self.base_url}/{self.fhir_version}"
         self._session = requests.Session()
+        self._session.verify = verify_ssl
+        if not verify_ssl:
+            import urllib3
+            urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
         self._session.headers.update(
             {
                 "Accept": "application/fhir+json",
