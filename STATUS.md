@@ -1,10 +1,10 @@
 # Evaluation Pipeline Status
 
-**Last Updated:** 2026-04-29
+**Last Updated:** 2026-05-01 (batch 28 — third PheKB-aligned batch; first PGx phenotypes)
 
 ## Phenotype Progress Tracker
 
-108 phenotypes downloaded from PheKB. 93 basic test cases auto-generated. The table below tracks the **deep evaluation pipeline** for each phenotype (algorithm analysis, multi-path test cases, Synthea data, LLM evaluation). 75 phenotypes deeply done.
+108 phenotypes downloaded from PheKB. 93 basic test cases auto-generated. The table below tracks the **deep evaluation pipeline** for each phenotype (algorithm analysis, multi-path test cases, Synthea data, LLM evaluation). 100 phenotypes deeply done.
 
 ### Legend
 - **Algorithm Analyzed**: PheKB algorithm PDF read, paths identified, codes verified via UMLS
@@ -92,9 +92,120 @@
 | **Leukemia** | Yes | 1 case validated (dx=87) — **16th cancer + 1st hematologic malignancy** | Yes (single-path + age≥18 + broad leukemia dx covering AML/CML/ALL/CLL) | 100 pos / 80 ctrl | - | - |
 | **Lymphoma** | Yes | 1 case validated (dx=83) — **17th cancer + 2nd hematologic malignancy** | Yes (single-path + age≥18 + broad lymphoma dx covering Hodgkin+NHL) | 100 pos / 80 ctrl | - | - |
 | **Multiple Myeloma** | Yes | 1 case validated (dx=48) — **18th cancer + 3rd hematologic malignancy** | Yes (single-path + age≥45 + multiple myeloma dx) | 100 pos / 80 ctrl | - | - |
+| **Hyperthyroidism (Graves')** | Yes | 4 cases validated (dx=63 across 2 SNOMED variants, meds [methimazole]=63, labs [TSH<0.1]=11, comp=64) — **first hyperthyroid phenotype** (counterpart to hypothyroidism) | Yes (3-path + age≥18 + 2 SNOMED variants + methimazole + suppressed TSH) | 100 pos / 80 ctrl | - | - |
+| **Influenza** | Yes | 2 cases validated (dx=84, meds [oseltamivir]=69) — **acute viral respiratory infection** | Yes (3-path + age≥1 + influenza dx + oseltamivir) | 100 pos / 80 ctrl | - | - |
+| **Lyme Disease** | Yes | 2 cases validated (dx=85, meds [doxycycline]=84) — **first vector-borne / tick-borne phenotype** | Yes (3-path + age≥1 + Lyme dx + doxycycline with heavy real-world cross-indication) | 100 pos / 80 ctrl | - | - |
+| **COPD** | Yes | 3 cases validated (dx=50 across COPD+emphysema SNOMED variants, meds [albuterol+salmeterol]=44, comp=54) — **first chronic obstructive pulmonary phenotype** with bronchodilator cross-indication to asthma | Yes (3-path + age≥40 + 2 SNOMED variants + 2 bronchodilators) | 102 pos / 82 ctrl | - | - |
+| **Ulcerative Colitis** | Yes | 3 cases revalidated 2026-04-30 (dx=186 cumulative, meds [mesalamine]=91, comp=196) — **third IBD phenotype**; switched from triamcinolone to mesalamine 5-ASA (proper first-line) after `get_source_atoms_for_cui` MCP tool unblocked code lookup | Yes (3-path + age≥15 + UC dx + mesalamine 52582) | 152 pos / 102 ctrl (+ residual triamcinolone-era data merged) | - | - |
+| **Alcohol Use Disorder** | Yes | 3 cases validated (dx=65 across alcoholism+alcohol-dependence SNOMED variants, meds [naltrexone]=53, comp=79) — **first substance use disorder phenotype** | Yes (3-path + age≥18 + 2 SNOMED variants + naltrexone) | 102 pos / 82 ctrl | - | - |
+| **Parkinson's Disease** | Yes | 3 cases validated (dx=56, meds [levodopa]=43, comp=67) — **first movement disorder phenotype**; levodopa is highly PD-specific | Yes (3-path + age≥50 + Parkinson's dx + levodopa) | 202 pos / 102 ctrl | - | - |
+| **Psoriasis** | Yes | 3 cases validated (dx=100, meds [methotrexate]=85, comp=116) — **first immune-mediated skin disease**; heavy methotrexate cross-indication with RA | Yes (3-path + age≥18 + psoriasis dx + methotrexate SCD) | 152 pos / 102 ctrl | - | - |
+| **Endometriosis** | Yes | 3 cases validated (dx=154 female-only, meds [leuprolide]=113, comp=166) — **first female non-cancer reproductive phenotype**; uses `patient.gender=female` filter | Yes (3-path + sex F + age 18-50 guards + endometriosis dx + leuprolide SCD) | 402 pos / 202 ctrl | - | - |
+| **Clostridium difficile colitis** | Yes | 3 cases validated (dx=113, meds [vancomycin]=82, comp=123) — **first hospital-acquired infection**; vancomycin heavily cross-indicated with MRSA + other gram-positive | Yes (3-path + age≥18 + C. diff dx + vancomycin SCD) | 152 pos / 102 ctrl | - | - |
+| **Chronic Rhinosinusitis** | Yes | 3 cases validated (dx=103, meds [mometasone]=77, comp=115) — **first ENT phenotype**; mometasone cross-indicated with allergic rhinitis, asthma, eczema | Yes (3-path + age≥18 + chronic sinusitis dx + mometasone) | 152 pos / 102 ctrl | - | - |
+| **Intellectual Disability** | Yes | 1 case validated (dx=183 — highest single-path yield in suite tied with CF/Down) — **first general neurodevelopmental disability** distinct from autism + Down syndrome | Yes (single-path + age≥5 + intellectual disability dx) | 202 pos / 102 ctrl | - | - |
+| **Urinary Incontinence** | Yes | 3 cases validated (dx=51, meds=46 across 3 antimuscarinics, comp=60) — **first non-cancer genitourinary phenotype**; tests multi-RxNorm (oxybutynin/tolterodine/solifenacin) — codes resolved via new `get_source_atoms_for_cui` MCP tool after batch 24 pivot | Yes (3-path + age≥50 + UI dx + 3 antimuscarinics) | 202 pos / 102 ctrl | - | - |
+| **Community-Acquired MRSA** | Yes | 3 cases validated (dx=106, meds [clindamycin+linezolid]=82, comp=119) — **first MRSA-specific phenotype**; clindamycin cross-indicated with anaerobic infections, linezolid with VRE | Yes (3-path + age≥18 + CA-MRSA dx + clindamycin/linezolid) | 152 pos / 102 ctrl | - | - |
+| **Functional Seizures (PNES)** | Yes | 1 case validated (dx=120 — Dissociative convulsions SNOMED) — **first psychogenic neurologic phenotype** distinct from epilepsy; modeled with no medications by design (PNES managed by psychotherapy) | Yes (single-path + age≥18 + PNES dx) | 152 pos / 102 ctrl | - | - |
+| **Steroid-Induced Osteonecrosis** | Yes | 3 cases validated (dx=111, meds [prednisone]=83, comp=122) — **first iatrogenic bone disease**; tests massive prednisone cross-indication (most prednisone users do NOT develop AVN — models complication-tracking workflow) | Yes (3-path + age≥30 + drug-induced AVN dx + prednisone) | 202 pos / 102 ctrl | - | - |
+| **Drug-Induced Liver Injury (DILI)** | Yes | 4 cases validated (dx multi-system [SNOMED+3 ICD-10]=163, labs [ALT≥225]=40, meds [methotrexate]=365, comp=370) — **first PheKB-aligned batch via new skill**; multi-system code list 2.7× boosts recall vs SNOMED-only | Yes (4-path + age≥18 + 4 dx codes + ALT/AST/ALP/Bili thresholds + methotrexate) | 202 pos / 102 ctrl | - | - |
+| **Resistant Hypertension** | Yes | 4 cases validated (dx=82, meds [4-class]=106, labs [SBP>140]=13, comp=106) — **PheKB-aligned eMERGE Type-1/Type-2**; 4-drug regimen test (lisinopril+amlodipine+HCTZ+spironolactone) | Yes (3-path + age≥40 + dx + 4 antihypertensives + SBP threshold) | 202 pos / 102 ctrl | - | - |
+| **Neonatal Abstinence Syndrome** | Yes | 3 cases validated (dx multi-system [SNOMED+P96.1]=338, meds [morphine]=343, comp=464) — **first neonatal phenotype**; multi-system 1.8× boosts recall (infant-side indicators only — Synthea can't model maternal-infant dyads) | Yes (3-path + age≤1 + 2 dx codes + morphine) | 252 pos / 102 ctrl | - | - |
+| **Developmental Language Disorder (APT-DLD)** | Yes | 1 case validated (dx multi-code [F80.1+F80.2+F80.89]=187) — **first speech/language pediatric phenotype**; aligned to APT-DLD algorithm (Walters et al. 2020) | Yes (single-path + age 5-17 + 3 ICD-10 codes; no meds path — DLD is treated with speech therapy) | 202 pos / 102 ctrl | - | - |
+| **Febrile Neutropenia (Pediatric)** | Yes | 4 cases validated (dx [D70]=180, labs [ANC<0.5]=15, meds [cefepime]=200, comp=200) — **first pediatric oncology complication**; aligned to PheKB ELSA-FN trial algorithm | Yes (3-path + age≤17 + neutropenia/fever dx + ANC + Temp + cefepime) | 202 pos / 102 ctrl | - | - |
+| **Statins and MACE** | Yes | 4 cases validated (dx multi-system [SNOMED+I21.0+I21.9]=75, labs [Trop≥0.10]=14, meds [atorvastatin]=96, comp=96) — **first cardiovascular outcomes phenotype**; aligned to PheKB BioVU AMI algorithm (Wei, Denny et al.) | Yes (3-path + age≥40 + 3 AMI codes + atorvastatin + Troponin I threshold) | 202 pos / 102 ctrl | - | - |
+| **Warfarin Dose Response** | Yes | 3 cases validated (meds [warfarin]=98, labs [INR 2-3]=16, comp=98) — **first PGx phenotype**; aligned to PheKB BioVU pharmacogenetic algorithm (target INR 2-3 over 3+ weeks) | Yes (3-path + age≥40 + warfarin + INR observations stable/supra/sub-therapeutic) | 202 pos / 102 ctrl | - | - |
+| **Clopidogrel Poor Metabolizers** | Yes | 2 cases validated (meds [clopidogrel]=88, comp [clopidogrel + AMI]=137) — **second PGx phenotype**; aligned to PheKB Vanderbilt VESPA algorithm | Yes (3-path + age≥40 + clopidogrel + Drug_Delay + AMI dx) | 202 pos / 102 ctrl | - | - |
+| **Multimodal Analgesia** | Yes | 1 case validated (meds [opioid+NSAID+APAP union]=159) — **first care-pattern phenotype**; aligned to PheKB Stanford algorithm (postop multimodal regimen) | Yes (3-path + age≥18 + surgical encounter + 3 analgesic classes) | 202 pos / 102 ctrl | - | - |
 | Coronary Heart Disease (legacy) | No | 1 (basic) | No | No | - | - |
 | Coronary Heart Disease | No | 1 (basic) | No | No | - | - |
 | *... 89 more phenotypes* | No | 1 (basic) | No | No | - | - |
+
+## Phenotypes Pending PheKB-Doc Revision (T1)
+
+The audit at `docs/PHENOTYPE-AUDIT.md` classifies 63 phenotypes as **T1-significant-gap**: their PheKB doc lists ≥8 codes, lab thresholds, or temporal logic that the current modules under-model (typically just 1 SNOMED dx, missing the 8-60+ ICD-9/ICD-10 variants real EHR data contains).
+
+**Already revised with PheKB-doc-first workflow (batches 26-32, 16 phenotypes + 2 doc-reviewed — exclude from revision):**
+- Batch 26: drug-induced-liver-injury, resistant-hypertension, neonatal-abstinence-syndrome
+- Batch 27: developmental-language-disorder, febrile-neutropenia-pediatric, statins-and-mace
+- Batch 28: warfarin-dose-response, clopidogrel-poor-metabolizers, multimodal-analgesia
+- Batch 29: cardiac-conduction-qrs, autoimmune-disease, asthma-response-inhaled-steroids
+- Batch 30: cardiorespiratory-fitness, bone-scan-utilization, digital-rectal-exam
+- Batch 31: liver-cancer-staging, post-event-pain
+- Batch 32: abdominal-aortic-aneurysm (multi-coded via code-augmentation pipeline — SNOMED + ICD-10 + ICD-9 + CPT); ace-inhibitor-cough (PheKB has no codes — doc-reviewed); acute-kidney-injury (PheKB's only code already in module — doc-reviewed)
+- Batch 33: adhd (multi-coded SNOMED + ICD-10 F90.x + ICD-9 314.x); appendicitis (multi-coded SNOMED + ICD-10 K35.x + ICD-9 540); anxiety (PheKB has no extracted codes — doc-reviewed)
+- Batch 34: asthma (multi-coded SNOMED + ICD-10 J45.x + ICD-9 493.x); atopic-dermatitis (multi-coded SNOMED + ICD-10 L20.9/L30.9 + ICD-9 691.8/692.9); autism (multi-coded SNOMED + ICD-10 F84.0/F84.5/F84.9 + ICD-9 299.x)
+- Batch 35 (PARTIAL — HAPI restart needed): bph + breast-cancer + ca-mrsa modules augmented (codes added to bundles), but reload to HAPI blocked by 36-hour uptime. After restart: `for p in bph breast-cancer ca-mrsa; do fhir-eval load synthea --fhir-url http://localhost:8080 --phenotype $p; python scripts/validate_phenotype_test_cases.py $p; done`. Augmentation map cleanup also done: replaced bad auto-populator matches for Crohn's (was Reiter's-disease 099.3 → now K50.x/555.x), carotid 233259003 (was dx 433.1 → now CPT 37215 stent), and diverticulitis (removed non-FHIR HICDA system).
+
+**Code-augmentation pipeline (new 2026-05-01)**: Synthea's FHIR exporter only emits the first coding per resource, so multi-system codes can't be added directly to modules. New pipeline:
+- `data/code_augmentations.json` — SNOMED-keyed crosswalk map
+- `scripts/build_code_augmentations.py` — one-shot populator from PheKB docs
+- `scripts/augment_fhir_codes.py` — post-process Synthea bundles in-place
+
+Workflow becomes: synthea generate → augment_fhir_codes.py → fhir-eval load → validate.
+
+**Still pending revision (39 phenotypes)** — work tracked in task #167. Apply the `phenotype_workflow` skill (`.claude/skills/phenotype_workflow/SKILL.md`) to each: read PheKB doc → run augmentor → regenerate Synthea data → reload HAPI → revalidate.
+
+| # | Phenotype | PheKB raw dir | PheKB code count | Thresholds? | Temporal? |
+|---|---|---|---|---|---|
+| 1 | abdominal-aortic-aneurysm | abdominal-aortic-aneurysm-aaa | CPT:16, ICD-9-CM:11 | yes | yes |
+| 2 | ace-inhibitor-cough | ace-inhibitor-ace-i-induced-cough | (in algorithm text) | no | no |
+| 3 | acute-kidney-injury | acute-kidney-injury-aki | LOINC:1 | yes | yes |
+| 4 | adhd | adhd-phenotype-algorithm | ICD-9-CM:38 | no | no |
+| 5 | anxiety | anxiety-algorithm | (in algorithm text) | no | no |
+| 6 | appendicitis | appendicitis | ICD-9-CM:40, SNOMED CT:37, CPT:9 | no | no |
+| 7 | asthma | asthma | ICD-9-CM:37 | no | no |
+| 8 | atopic-dermatitis | atopic-dermatitis-algorithm | ICD-9-CM:34 | yes | no |
+| 9 | autism | autism | ICD-9-CM:9 | no | no |
+| 10 | bph | phema-bph-benign-prostatic-hyperplasia-cases | ICD-9-CM:2, RxNorm:1, CPT:1 | no | no |
+| 11 | breast-cancer | breast-cancer | ICD-9-CM:1 | yes | no |
+| 12 | ca-mrsa | camrsa | ICD-9-CM:8 | no | yes |
+| 13 | carotid-atherosclerosis | caad-carotid-artery-atherosclerosis-disease | ICD-9-CM:4, CPT:1 | no | no |
+| 14 | chronic-rhinosinusitis | crs-chronic-rhinosinusitis | ICD-9-CM:2 | yes | no |
+| 15 | ckd | chronic-kidney-disease | CPT:1 | yes | yes |
+| 16 | colorectal-cancer | colorectal-cancer-crc | ICD-10-CM:63 | no | yes |
+| 17 | coronary-heart-disease | coronary-heart-disease-chd | SNOMED CT:9, ICD-10-CM:7, CPT:5, ICD-9-CM:1 | no | no |
+| 18 | crohns-disease | crohns-disease-demonstration-project | ICD-9-CM:55 | yes | no |
+| 19 | dementia | dementia | ICD-9-CM:23 | no | yes |
+| 20 | depression | depression | ICD-9-CM:1, ICD-10-CM:1 | no | no |
+| 21 | diabetic-retinopathy | diabetic-retinopathy | (in algorithm text) | no | no |
+| 22 | diverticulitis | diverticulosis-and-diverticulitis | CPT:58, ICD-9-CM:8, HICDA:4 | no | yes |
+| 23 | epilepsy | epilepsyantiepileptic-drug-response-algorithm | ICD-10-CM:51, ICD-9-CM:46 | yes | no |
+| 24 | familial-hypercholesterolemia | electronic-health-record-based-phenotyping-algorithm-familial-hypercholesterolemia | ICD-9-CM:40, ICD-10-CM:25, CPT:2, HCPCS:1 | no | no |
+| 25 | functional-seizures | functional-seizures | ICD-9-CM:8, ICD-10-CM:6, CPT:2 | no | no |
+| 26 | gerd | gastroesophageal-reflux-disease-gerd-phenotype-algorithm | ICD-9-CM:34 | yes | no |
+| 27 | heart-failure | heart-failure-hf-differentiation-between-preserved-and-reduced-ejection-fraction | ICD-9-CM:1, SNOMED CT:1 | yes | yes |
+| 28 | herpes-zoster | herpes-zoster | (in algorithm text) | no | yes |
+| 29 | hiv | hiv | LOINC:38 | no | no |
+| 30 | hypertension* | blood-pressure | ICD-10-CM:1 | no | no |
+| 31 | intellectual-disability | intellectual-disability | ICD-10-CM:92, ICD-9-CM:42 | no | no |
+| 32 | lung-cancer* | computable-phenotypes-identifying-patients-lung-and-gastroenteropancreatic-neuroendocrine | ICD-10-CM:30, ICD-9-CM:26 | no | no |
+| 33 | migraine | migraine | ICD-9-CM:25, ICD-10-CM:24 | yes | no |
+| 34 | multiple-sclerosis | multiple-sclerosis-demonstration-project | ICD-9-CM:68 | no | no |
+| 35 | nafld | non-alcoholic-fatty-liver-disease-nalfd-alcoholic-fatty-liver-disease-ald | ICD-9-CM:14, ICD-10-CM:11, LOINC:4 | no | no |
+| 36 | ovarian-cancer | ovarianuterine-cancer-ovutca | ICD-10-CM:5 | yes | yes |
+| 37 | peanut-allergy | peanut-allergy | CPT:8 | no | no |
+| 38 | peripheral-arterial-disease | peripheral-arterial-disease-2012 | ICD-9-CM:23, CPT:18 | yes | no |
+| 39 | pneumonia | pneumonia-vumc-emerge-v51 | RxNorm:1 | no | yes |
+| 40 | prostate-cancer | prostate-cancer-0 | (in algorithm text) | no | no |
+| 41 | severe-childhood-obesity | severe-early-childhood-obesity | ICD-9-CM:65 | yes | no |
+| 42 | sickle-cell-disease | sickle-cell-disease-0 | ICD-9-CM:10 | no | no |
+| 43 | steroid-induced-avn | steroid-induced-osteonecrosis | ICD-9-CM:49, CPT:40 | no | no |
+| 44 | systemic-lupus-erythematosus | sle-systemic-lupus-erythematosus-using-slicc-systemic-lupus-internation-collaborating | ICD-10-CM:14, LOINC:11, ICD-9-CM:10, RxNorm:6, CPT:1 | no | yes |
+| 45 | type-1-diabetes | type-1-and-type-2-diabetes-mellitus | RxNorm:33, LOINC:7, ICD-10-CM:2, ICD-9-CM:1 | yes | no |
+| 46 | type-2-diabetes | type-2-diabetes-t2d | SNOMED CT:9, LOINC:9, ICD-9-CM:8, ICD-10-CM:7 | yes | no |
+| 47 | urinary-incontinence | urinary-incontinence | ICD-9-CM:1, ICD-10-CM:1, CPT:1 | yes | no |
+| 48 | venous-thromboembolism | venous-thromboembolism-vte | ICD-9-CM:36 | no | no |
+
+\* `hypertension` maps to PheKB `blood-pressure`, which is a BP-measurement-processing algorithm rather than an HTN cohort definition — review may yield no actionable revision.
+\* `lung-cancer` maps to a PheKB lung+GEP-neuroendocrine phenotype; only partial scope match.
+
+**T3-aligned (9 phenotypes)**: atrial-fibrillation, cardiac-conduction-qrs, cataracts, clostridium-difficile, febrile-neutropenia-pediatric, fibromyalgia, hypothyroidism, rheumatoid-arthritis, sleep-apnea — PheKB doc has minimal extracted codes; module probably acceptable but worth a quick doc review.
+
+**T3-no-phekb (36 phenotypes — no PheKB doc available; cannot revise)**:
+alcohol-use-disorder, bipolar-disorder, bladder-cancer, cervical-cancer, copd, cystic-fibrosis, down-syndrome, endometriosis, esophageal-cancer, glaucoma, glioblastoma, gout, hearing-loss, hepatitis-c, hyperthyroidism, influenza, iron-deficiency-anemia, leukemia, liver-cancer, lyme-disease, lymphoma, melanoma, multiple-myeloma, osteoporosis, pancreatic-cancer, parkinsons-disease, polycystic-kidney-disease, psoriasis, renal-cancer, schizophrenia, sepsis, stomach-cancer, stroke, thyroid-cancer, tuberculosis, ulcerative-colitis
+
+Regenerate the audit anytime: `python scripts/audit_phenotypes_vs_phekb.py` → outputs `docs/PHENOTYPE-AUDIT.md`.
 
 ### Tier 1 vs Tier 2 Comparison (qwen2.5:7b, all 34 test cases)
 

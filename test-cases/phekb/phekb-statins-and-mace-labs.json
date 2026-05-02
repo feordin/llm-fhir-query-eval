@@ -1,0 +1,72 @@
+{
+  "id": "phekb-statins-and-mace-labs",
+  "source": "phekb",
+  "source_id": "statins-and-mace",
+  "name": "Statins and MACE - Troponin Threshold Query",
+  "description": "Tests ability to find AMI confirmation via the PheKB-published troponin threshold: Troponin-I ≥0.10 ng/mL. This is the primary biomarker confirming AMI in the BioVU algorithm.",
+  "prompt": "Find patients with elevated cardiac troponin I above 0.10 ng/mL, suggesting myocardial injury.",
+  "prompts": {
+    "naive": "Find patients with high troponin.",
+    "broad": "Find patients with elevated cardiac troponin I — at least 0.10 ng/mL — indicating myocardial injury and consistent with acute MI per the BioVU algorithm.",
+    "expert": "Search Observation for LOINC 10839-9 (Troponin I.cardiac) with value-quantity ge0.10 ng/mL. Query: Observation?code=http://loinc.org|10839-9&value-quantity=ge0.10"
+  },
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "algorithm_path": "labs-path",
+    "algorithm_path_description": "Patients with Troponin I ≥0.10 ng/mL (PheKB BioVU AMI threshold).",
+    "code_systems": [
+      "LOINC"
+    ],
+    "required_codes": [
+      {
+        "system": "http://loinc.org",
+        "code": "10839-9",
+        "display": "Troponin I.cardiac [Mass/volume] in Serum or Plasma",
+        "source": "PheKB BioVU threshold + UMLS verified"
+      }
+    ],
+    "complexity": "hard",
+    "tags": [
+      "observation",
+      "cardiology",
+      "lab-threshold",
+      "ami",
+      "mace",
+      "troponin"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "Observation",
+    "parameters": {
+      "code": "http://loinc.org|10839-9",
+      "value-quantity": "ge0.10"
+    },
+    "url": "Observation?code=http://loinc.org|10839-9&value-quantity=ge0.10"
+  },
+  "test_data": {
+    "resources": [
+      "synthea/output/statins-and-mace/positive/fhir/",
+      "synthea/output/statins-and-mace/control/fhir/"
+    ],
+    "expected_result_count": 14,
+    "expected_resource_ids": [],
+    "expected_patient_ids": [
+      "18ea4e0c-3111-bfa2-ffc2-8d4eb3e93fa1",
+      "2fa5bae1-460a-32b9-4f7f-2691ad09495d",
+      "44dc6da5-aa78-7318-4ab7-34f7b0bcdd5a",
+      "5860a526-c549-2b88-26dd-9fd61cd9ae01",
+      "7b050ff8-6163-0fd5-a390-82bed6c18294",
+      "86891482-65db-bdc9-037a-6913f6ff45d0",
+      "86f7500e-b5f0-9bdc-0735-3cd5f89c672e",
+      "8ac6d841-dd77-df6a-733b-239eaa745a76",
+      "a7fa4028-7fde-7a17-d4af-cd75ca296e65",
+      "c18672d8-5f37-48fe-1f0d-ba8ffd8a3aee",
+      "ca27bdcc-95a7-812a-f54b-32e38ade56c3",
+      "dbc5b951-42d5-d3bb-0978-7f6471a28363",
+      "e5875861-d0bf-97af-0016-b212b2f566b9",
+      "f75880b0-0aeb-f40b-f5a5-b6d64d9d3480"
+    ]
+  },
+  "created_at": "2026-04-30T00:00:00.000000Z",
+  "updated_at": "2026-04-27T00:00:00.000000Z"
+}

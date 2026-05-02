@@ -1,0 +1,75 @@
+{
+  "id": "phekb-digital-rectal-exam-procedure",
+  "source": "phekb",
+  "source_id": "digital-rectal-exam",
+  "name": "Digital Rectal Exam - Procedure Query (Male Prostate Cancer)",
+  "description": "Tests ability to find male prostate cancer patients who received DRE. Per PheKB Stanford algorithm, DRE within 6 months before first prostate cancer treatment is a quality care metric.",
+  "prompt": "Find male prostate cancer patients who underwent digital rectal examination.",
+  "prompts": {
+    "naive": "Find men with DRE.",
+    "broad": "Find male prostate cancer patients who underwent digital rectal examination (DRE) — used as a quality metric per Stanford algorithm.",
+    "expert": "Search Procedure for SNOMED 410006001 (Digital examination of rectum). Restrict to male patients. Query: Procedure?code=http://snomed.info/sct|410006001&patient.gender=male"
+  },
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "algorithm_path": "procedure-path",
+    "algorithm_path_description": "Male prostate cancer patients with DRE (PheKB Stanford quality metric).",
+    "code_systems": [
+      "SNOMED CT"
+    ],
+    "required_codes": [
+      {
+        "system": "http://snomed.info/sct",
+        "code": "410006001",
+        "display": "Digital examination of rectum",
+        "source": "PheKB + UMLS verified"
+      }
+    ],
+    "complexity": "medium",
+    "tags": [
+      "procedure",
+      "oncology",
+      "prostate-cancer",
+      "dre",
+      "quality-metric"
+    ],
+    "patient_filters": {
+      "sex": "male",
+      "min_age_years": 35
+    }
+  },
+  "expected_query": {
+    "resource_type": "Procedure",
+    "parameters": {
+      "code": "http://snomed.info/sct|410006001",
+      "patient.gender": "male"
+    },
+    "url": "Procedure?code=http://snomed.info/sct|410006001&patient.gender=male"
+  },
+  "test_data": {
+    "resources": [
+      "synthea/output/digital-rectal-exam/positive/fhir/",
+      "synthea/output/digital-rectal-exam/control/fhir/"
+    ],
+    "expected_result_count": 14,
+    "expected_resource_ids": [],
+    "expected_patient_ids": [
+      "2ad7dad2-ddf7-fd52-51d2-024cc7c4e5fe",
+      "3594f93d-dc68-cf8d-be83-dc36e5259034",
+      "60dd3c6a-f9a0-7323-8e0b-8ee9a8f601ea",
+      "62438816-67f1-94a5-6e07-ca40506ac188",
+      "879f3800-35c2-a7f5-a39d-bf48be1ebc48",
+      "89d92707-98ba-71ba-d9fe-0ca9ff919adc",
+      "93eb6287-e082-aa3e-0953-5f40e8ddf52a",
+      "97d830d9-63b7-c4cd-d2b0-33fb9dec6776",
+      "af341926-6a0e-2c6b-2828-aacf8712eec0",
+      "b3b9f8e2-adcb-0e3b-2c18-46b46ca2a41c",
+      "b8374426-9fa8-486a-146a-c5608cf26ef5",
+      "c0edca56-30dc-73fe-dea0-656afc547ade",
+      "c35b8c65-0cfa-d6f5-b7c0-9524a225a8dd",
+      "fb9ba184-9aa3-1d77-f09c-1065c45336e6"
+    ]
+  },
+  "created_at": "2026-05-01T00:00:00.000000Z",
+  "updated_at": "2026-04-27T00:00:00.000000Z"
+}

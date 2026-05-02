@@ -1,0 +1,74 @@
+{
+  "name": "PheKB Warfarin Dose Response (PheKB-aligned)",
+  "remarks": [
+    "Custom Synthea module for warfarin dose-response phenotyping.",
+    "Aligned to PheKB algorithm (BioVU): identify patients with stable in-range INR (target 2-3) over >=3 weeks correlated with warfarin weekly dose. Used for pharmacogenetic discovery.",
+    "",
+    "Generates THREE patient paths:",
+    "  Path A (50%): On warfarin + multiple stable in-range INR observations (target 2-3) — full PheKB criterion",
+    "  Path B (30%): On warfarin + INR observations but supratherapeutic (>3) — over-anticoagulation",
+    "  Path C (20%): On warfarin + INR observations but subtherapeutic (<2) — under-anticoagulation",
+    "",
+    "Note: PheKB algorithm is about identifying STABLE INR over weeks (PGx use case). We model the lab outcomes; downstream queries can intersect with stability.",
+    "",
+    "Age guard: >=40 (typical anticoagulation age)."
+  ],
+  "states": {
+    "Initial": { "type": "Initial", "direct_transition": "Age_Guard" },
+    "Age_Guard": { "type": "Guard", "allow": { "condition_type": "Age", "operator": ">=", "quantity": 40, "unit": "years" }, "direct_transition": "Set_Wf_Flag" },
+    "Set_Wf_Flag": { "type": "SetAttribute", "attribute": "wf_positive", "value": true, "direct_transition": "Choose_Patient_Path" },
+    "Choose_Patient_Path": {
+      "type": "Simple",
+      "distributed_transition": [
+        { "transition": "Set_Path_A", "distribution": 0.50 },
+        { "transition": "Set_Path_B", "distribution": 0.30 },
+        { "transition": "Set_Path_C", "distribution": 0.20 }
+      ]
+    },
+    "Set_Path_A": { "type": "SetAttribute", "attribute": "wf_inr_range", "value": "stable", "direct_transition": "Set_Needs_First_Visit" },
+    "Set_Path_B": { "type": "SetAttribute", "attribute": "wf_inr_range", "value": "supra", "direct_transition": "Set_Needs_First_Visit" },
+    "Set_Path_C": { "type": "SetAttribute", "attribute": "wf_inr_range", "value": "sub", "direct_transition": "Set_Needs_First_Visit" },
+
+    "Set_Needs_First_Visit": { "type": "SetAttribute", "attribute": "wf_needs_first_visit", "value": true, "direct_transition": "Wellness_Encounter" },
+    "Wellness_Encounter": { "type": "Encounter", "wellness": true, "direct_transition": "Check_First_Visit" },
+    "Check_First_Visit": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "wf_needs_first_visit", "operator": "==", "value": true }, "transition": "Prescribe_Warfarin" },
+        { "transition": "End_Wellness_Encounter" }
+      ]
+    },
+    "Prescribe_Warfarin": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "11289", "display": "warfarin" }], "direct_transition": "Route_INR" },
+    "Route_INR": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "wf_inr_range", "operator": "==", "value": "stable" }, "transition": "Record_INR_Stable" },
+        { "condition": { "condition_type": "Attribute", "attribute": "wf_inr_range", "operator": "==", "value": "supra" }, "transition": "Record_INR_Supra" },
+        { "transition": "Record_INR_Sub" }
+      ]
+    },
+    "Record_INR_Stable": {
+      "type": "Observation", "category": "laboratory", "unit": "{INR}",
+      "codes": [{ "system": "LOINC", "code": "6301-6", "display": "INR in Platelet poor plasma by Coagulation assay" }],
+      "range": { "low": 2.1, "high": 2.9 },
+      "direct_transition": "Clear_First_Visit_Flag"
+    },
+    "Record_INR_Supra": {
+      "type": "Observation", "category": "laboratory", "unit": "{INR}",
+      "codes": [{ "system": "LOINC", "code": "6301-6", "display": "INR in Platelet poor plasma by Coagulation assay" }],
+      "range": { "low": 3.5, "high": 6.0 },
+      "direct_transition": "Clear_First_Visit_Flag"
+    },
+    "Record_INR_Sub": {
+      "type": "Observation", "category": "laboratory", "unit": "{INR}",
+      "codes": [{ "system": "LOINC", "code": "6301-6", "display": "INR in Platelet poor plasma by Coagulation assay" }],
+      "range": { "low": 1.0, "high": 1.7 },
+      "direct_transition": "Clear_First_Visit_Flag"
+    },
+
+    "Clear_First_Visit_Flag": { "type": "SetAttribute", "attribute": "wf_needs_first_visit", "value": false, "direct_transition": "End_Wellness_Encounter" },
+    "End_Wellness_Encounter": { "type": "EncounterEnd", "direct_transition": "Followup_Delay" },
+    "Followup_Delay": { "type": "Delay", "range": { "low": 1, "high": 3, "unit": "months" }, "direct_transition": "Wellness_Encounter" }
+  },
+  "gmf_version": 2
+}

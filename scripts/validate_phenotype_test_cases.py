@@ -12,13 +12,20 @@ Patient IDs come from Synthea bundles (stable UUIDs) by mapping HAPI Patient/<id
 references back to the Patient.identifier.value (Synthea UUID) in the bundle.
 """
 import json
+import os
 import sys
 import urllib.parse
 from pathlib import Path
 
 import requests
+import urllib3
 
-FHIR_BASE = "http://localhost:8080/fhir"
+# FHIR_BASE can be overridden via FHIR_BASE env var.
+# Defaults to HAPI; for Microsoft FHIR Server use FHIR_BASE=https://localhost:8443
+FHIR_BASE = os.environ.get("FHIR_BASE", "http://localhost:8080/fhir")
+VERIFY_SSL = not FHIR_BASE.lower().startswith("https://")
+if not VERIFY_SSL:
+    urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 TEST_CASE_DIR = Path("test-cases/phekb")
 
 
@@ -26,7 +33,7 @@ def get_synthea_uuid_for_hapi_patient(hapi_patient_id: str, cache: dict) -> str 
     """Look up the stable Synthea UUID from a HAPI patient ID."""
     if hapi_patient_id in cache:
         return cache[hapi_patient_id]
-    r = requests.get(f"{FHIR_BASE}/Patient/{hapi_patient_id}")
+    r = requests.get(f"{FHIR_BASE}/Patient/{hapi_patient_id}", verify=VERIFY_SSL)
     if r.status_code != 200:
         cache[hapi_patient_id] = None
         return None
@@ -48,7 +55,7 @@ def fetch_patient_ids_for_query(query_path: str, cache: dict) -> set[str]:
     pages = 0
     while url and pages < 20:
         pages += 1
-        r = requests.get(url)
+        r = requests.get(url, verify=VERIFY_SSL)
         if r.status_code != 200:
             print(f"    HTTP {r.status_code} on {url[:120]}", file=sys.stderr)
             break

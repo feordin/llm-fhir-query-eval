@@ -1,0 +1,33 @@
+{
+  "name": "PheKB Cardiac Conduction QRS (PheKB-aligned)",
+  "remarks": [
+    "Custom Synthea module for the QRS / normal-ECG cardiac conduction phenotype.",
+    "Aligned to PheKB algorithm: subjects with normal ECG, no heart disease, no QT-prolonging meds, no electrolyte abnormalities at time of ECG.",
+    "",
+    "PheKB use case: identifying healthy ECG controls for QRS-interval / cardiac-conduction PGx studies.",
+    "",
+    "Generates SINGLE-PATH module: ECG procedure performed (no cardiac dx, no interfering meds, no abnormal labs at time of ECG).",
+    "Multi-coded ECG procedure: SNOMED 29303009 (Electrocardiographic procedure).",
+    "",
+    "Age guard: >=18."
+  ],
+  "states": {
+    "Initial": { "type": "Initial", "direct_transition": "Age_Guard" },
+    "Age_Guard": { "type": "Guard", "allow": { "condition_type": "Age", "operator": ">=", "quantity": 18, "unit": "years" }, "direct_transition": "Set_Qrs_Flag" },
+    "Set_Qrs_Flag": { "type": "SetAttribute", "attribute": "qrs_positive", "value": true, "direct_transition": "Set_Needs_First_Visit" },
+    "Set_Needs_First_Visit": { "type": "SetAttribute", "attribute": "qrs_needs_first_visit", "value": true, "direct_transition": "Wellness_Encounter" },
+    "Wellness_Encounter": { "type": "Encounter", "wellness": true, "direct_transition": "Check_First_Visit" },
+    "Check_First_Visit": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "qrs_needs_first_visit", "operator": "==", "value": true }, "transition": "ECG_Procedure" },
+        { "transition": "End_Wellness_Encounter" }
+      ]
+    },
+    "ECG_Procedure": { "type": "Procedure", "codes": [{ "system": "SNOMED-CT", "code": "29303009", "display": "Electrocardiographic procedure" }], "duration": { "low": 10, "high": 30, "unit": "minutes" }, "direct_transition": "Clear_First_Visit_Flag" },
+    "Clear_First_Visit_Flag": { "type": "SetAttribute", "attribute": "qrs_needs_first_visit", "value": false, "direct_transition": "End_Wellness_Encounter" },
+    "End_Wellness_Encounter": { "type": "EncounterEnd", "direct_transition": "Followup_Delay" },
+    "Followup_Delay": { "type": "Delay", "range": { "low": 12, "high": 24, "unit": "months" }, "direct_transition": "Wellness_Encounter" }
+  },
+  "gmf_version": 2
+}

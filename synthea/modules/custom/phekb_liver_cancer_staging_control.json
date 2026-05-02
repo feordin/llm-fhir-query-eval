@@ -1,0 +1,13 @@
+{
+  "name": "PheKB Liver Cancer Staging Control",
+  "remarks": ["Control: age 40+ without HCC, AFP, or staging workup."],
+  "states": {
+    "Initial": { "type": "Initial", "direct_transition": "Age_Guard" },
+    "Age_Guard": { "type": "Guard", "allow": { "condition_type": "Age", "operator": ">=", "quantity": 40, "unit": "years" }, "direct_transition": "Set_Control_Flag" },
+    "Set_Control_Flag": { "type": "SetAttribute", "attribute": "lcs_positive", "value": false, "direct_transition": "Wellness_Encounter" },
+    "Wellness_Encounter": { "type": "Encounter", "wellness": true, "direct_transition": "End_Wellness_Encounter" },
+    "End_Wellness_Encounter": { "type": "EncounterEnd", "direct_transition": "Followup_Delay" },
+    "Followup_Delay": { "type": "Delay", "range": { "low": 12, "high": 24, "unit": "months" }, "direct_transition": "Wellness_Encounter" }
+  },
+  "gmf_version": 2
+}

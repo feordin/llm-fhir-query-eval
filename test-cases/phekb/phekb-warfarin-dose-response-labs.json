@@ -1,0 +1,73 @@
+{
+  "id": "phekb-warfarin-dose-response-labs",
+  "source": "phekb",
+  "source_id": "warfarin-dose-response",
+  "name": "Warfarin Dose Response - Stable In-Range INR Query",
+  "description": "Tests ability to find patients with stable in-range INR (target 2.0-3.0) per PheKB algorithm. This identifies the pharmacogenetic discovery cohort — patients whose warfarin dose has stabilized.",
+  "prompt": "Find patients with INR results in the therapeutic range of 2.0 to 3.0, indicating stable warfarin anticoagulation.",
+  "prompts": {
+    "naive": "Find patients with normal INR.",
+    "broad": "Find patients with international normalized ratio (INR) values between 2.0 and 3.0 — the standard therapeutic range for warfarin anticoagulation.",
+    "expert": "Search Observation for LOINC 6301-6 (INR) with value-quantity ge2.0 and le3.0. Query: Observation?code=http://loinc.org|6301-6&value-quantity=ge2.0&value-quantity=le3.0"
+  },
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "algorithm_path": "labs-path-stable",
+    "algorithm_path_description": "Patients with stable in-range INR (PheKB target 2-3).",
+    "code_systems": [
+      "LOINC"
+    ],
+    "required_codes": [
+      {
+        "system": "http://loinc.org",
+        "code": "6301-6",
+        "display": "INR in Platelet poor plasma by Coagulation assay",
+        "source": "PheKB algorithm + UMLS verified"
+      }
+    ],
+    "complexity": "hard",
+    "tags": [
+      "observation",
+      "lab-threshold",
+      "anticoagulation",
+      "warfarin",
+      "inr"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "Observation",
+    "parameters": {
+      "code": "http://loinc.org|6301-6",
+      "value-quantity": "ge2.0&value-quantity=le3.0"
+    },
+    "url": "Observation?code=http://loinc.org|6301-6&value-quantity=ge2.0&value-quantity=le3.0"
+  },
+  "test_data": {
+    "resources": [
+      "synthea/output/warfarin-dose-response/positive/fhir/",
+      "synthea/output/warfarin-dose-response/control/fhir/"
+    ],
+    "expected_result_count": 16,
+    "expected_resource_ids": [],
+    "expected_patient_ids": [
+      "09ed3824-7b6a-2770-ae4b-bbe41c224bed",
+      "0f7b6706-88f5-1c2a-290b-372d391a67bd",
+      "154bc685-8a19-fd3d-a094-2ef3c0be6c7e",
+      "1d888a11-09ee-90bf-4e1d-c599adfe9fd6",
+      "1e7d9be1-cc75-9447-adf4-646148b5ef33",
+      "2fd94f19-cfda-6a04-f557-27204accd660",
+      "4b53e5b2-a12d-6e57-bc0c-ef40da36b94d",
+      "70700e46-cd80-fa46-fcaf-b1885271a9df",
+      "a599fdc6-6c7b-2991-a4a7-2d5708a4b10e",
+      "aaf7a19b-1349-faab-d784-e954c45ca92e",
+      "b06aa24a-350b-1ff5-6543-e1431fc00555",
+      "b94151a3-787d-3034-d274-0e1e8312456d",
+      "c72dd115-47a7-0206-9601-e7b71c4fea68",
+      "ca87ca8b-e144-ccf5-9116-8df8b07cecee",
+      "e8faa04d-07da-7085-37a9-bb88c5913ab2",
+      "fd653cee-f3a1-671f-e00c-79bc735f6fd5"
+    ]
+  },
+  "created_at": "2026-05-01T00:00:00.000000Z",
+  "updated_at": "2026-04-27T00:00:00.000000Z"
+}

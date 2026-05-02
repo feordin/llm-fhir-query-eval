@@ -1,0 +1,59 @@
+{
+  "name": "PheKB Clopidogrel Poor Metabolizers (PheKB-aligned VESPA)",
+  "remarks": [
+    "Custom Synthea module for clopidogrel poor metabolizers (PGx phenotype).",
+    "Aligned to PheKB Vanderbilt VESPA algorithm: cases experience MI/stroke/revasc following stent + clopidogrel.",
+    "",
+    "Generates THREE patient paths:",
+    "  Path A (50%): On clopidogrel + post-stent AMI dx (cases — putative poor metabolizers)",
+    "  Path B (30%): On clopidogrel without adverse event (controls — likely normal metabolizers)",
+    "  Path C (20%): AMI on clopidogrel — TRICKY (overlaps with Statins-and-MACE phenotype)",
+    "",
+    "Multi-system AMI dx: SNOMED 22298006 + ICD-10 I21.0/I21.9 (per PheKB ICD-9 410.* legacy crosswalk).",
+    "",
+    "Age guard: >=40."
+  ],
+  "states": {
+    "Initial": { "type": "Initial", "direct_transition": "Age_Guard" },
+    "Age_Guard": { "type": "Guard", "allow": { "condition_type": "Age", "operator": ">=", "quantity": 40, "unit": "years" }, "direct_transition": "Set_Cl_Flag" },
+    "Set_Cl_Flag": { "type": "SetAttribute", "attribute": "cl_positive", "value": true, "direct_transition": "Choose_Patient_Path" },
+    "Choose_Patient_Path": {
+      "type": "Simple",
+      "distributed_transition": [
+        { "transition": "Set_Path_A", "distribution": 0.50 },
+        { "transition": "Set_Path_B", "distribution": 0.30 },
+        { "transition": "Set_Path_C", "distribution": 0.20 }
+      ]
+    },
+    "Set_Path_A": { "type": "SetAttribute", "attribute": "cl_has_event", "value": true, "direct_transition": "Set_Needs_First_Visit" },
+    "Set_Path_B": { "type": "SetAttribute", "attribute": "cl_has_event", "value": false, "direct_transition": "Set_Needs_First_Visit" },
+    "Set_Path_C": { "type": "SetAttribute", "remarks": ["TRICKY: AMI on clopidogrel — overlaps Statins-and-MACE"], "attribute": "cl_has_event", "value": true, "direct_transition": "Set_Needs_First_Visit" },
+
+    "Set_Needs_First_Visit": { "type": "SetAttribute", "attribute": "cl_needs_first_visit", "value": true, "direct_transition": "Wellness_Encounter" },
+    "Wellness_Encounter": { "type": "Encounter", "wellness": true, "direct_transition": "Check_First_Visit" },
+    "Check_First_Visit": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "cl_needs_first_visit", "operator": "==", "value": true }, "transition": "Prescribe_Clopidogrel" },
+        { "transition": "End_Wellness_Encounter" }
+      ]
+    },
+    "Prescribe_Clopidogrel": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "32968", "display": "clopidogrel" }], "direct_transition": "Drug_Delay" },
+    "Drug_Delay": { "type": "Delay", "range": { "low": 6, "high": 18, "unit": "months" }, "direct_transition": "Check_Event" },
+    "Check_Event": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "cl_has_event", "operator": "==", "value": true }, "transition": "AMI_Encounter" },
+        { "transition": "Clear_First_Visit_Flag" }
+      ]
+    },
+    "AMI_Encounter": { "type": "Encounter", "encounter_class": "emergency", "codes": [{ "system": "SNOMED-CT", "code": "50849002", "display": "Emergency room admission" }], "direct_transition": "Diagnose_AMI" },
+    "Diagnose_AMI": { "type": "ConditionOnset", "codes": [{ "system": "http://hl7.org/fhir/sid/icd-10-cm", "code": "I21.9", "display": "Acute myocardial infarction, unspecified" }], "direct_transition": "End_AMI_Encounter" },
+    "End_AMI_Encounter": { "type": "EncounterEnd", "direct_transition": "Clear_First_Visit_Flag" },
+
+    "Clear_First_Visit_Flag": { "type": "SetAttribute", "attribute": "cl_needs_first_visit", "value": false, "direct_transition": "End_Wellness_Encounter" },
+    "End_Wellness_Encounter": { "type": "EncounterEnd", "direct_transition": "Followup_Delay" },
+    "Followup_Delay": { "type": "Delay", "range": { "low": 6, "high": 12, "unit": "months" }, "direct_transition": "Wellness_Encounter" }
+  },
+  "gmf_version": 2
+}

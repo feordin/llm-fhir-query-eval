@@ -1,0 +1,97 @@
+{
+  "id": "phekb-drug-induced-liver-injury-labs",
+  "source": "phekb",
+  "source_id": "drug-induced-liver-injury",
+  "name": "DILI - Lab Threshold Query (ALT >=5x ULN)",
+  "description": "Tests ability to find DILI cases via the PheKB-published lab threshold: ALT >=5x ULN (>=225 U/L). This is the lab-only path that catches DILI suspects regardless of whether a dx code was assigned — central to the published PheKB algorithm.",
+  "prompt": "Find patients with markedly elevated alanine aminotransferase (ALT) at or above 225 U/L, suggesting acute liver injury.",
+  "prompts": {
+    "naive": "Find patients with high ALT.",
+    "broad": "Find patients with severely elevated alanine aminotransferase (ALT) — at least 5 times the upper limit of normal (>=225 U/L) — indicating significant hepatocellular injury.",
+    "expert": "Search Observation for LOINC 1742-6 (ALT) with value-quantity ge225 U/L. Query: Observation?code=http://loinc.org|1742-6&value-quantity=ge225"
+  },
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "algorithm_path": "labs-only-path-D",
+    "algorithm_path_description": "Patients with ALT >=5x ULN (PheKB threshold for DILI).",
+    "code_systems": [
+      "LOINC"
+    ],
+    "required_codes": [
+      {
+        "system": "http://loinc.org",
+        "code": "1742-6",
+        "display": "Alanine aminotransferase [Enzymatic activity/volume] in Serum or Plasma",
+        "source": "PheKB algorithm threshold + UMLS verified"
+      }
+    ],
+    "complexity": "hard",
+    "tags": [
+      "observation",
+      "hepatology",
+      "iatrogenic",
+      "dili",
+      "lab-threshold"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "Observation",
+    "parameters": {
+      "code": "http://loinc.org|1742-6",
+      "value-quantity": "ge225"
+    },
+    "url": "Observation?code=http://loinc.org|1742-6&value-quantity=ge225"
+  },
+  "test_data": {
+    "resources": [
+      "synthea/output/drug-induced-liver-injury/positive/fhir/",
+      "synthea/output/drug-induced-liver-injury/control/fhir/"
+    ],
+    "expected_result_count": 40,
+    "expected_resource_ids": [],
+    "expected_patient_ids": [
+      "00f91f37-3423-3ae3-50e8-f89c4696adef",
+      "156df7bc-572b-f2f8-13f1-8c0ec71dc24e",
+      "1d999d36-1b62-d8ea-817a-f3909a4b2272",
+      "20db8417-8b3f-ad93-c622-51701dadd4a2",
+      "2343e3c2-05be-25d8-2ab0-67e2d47a2b55",
+      "24872ffc-80b6-0fe0-1d1a-521c3e1a65e4",
+      "24c787fe-7089-e47a-8684-dda11d3f79f2",
+      "3645a934-329c-c015-5195-c22f318b94db",
+      "382c98e5-71ab-6773-d2cb-f51d3e65fe0a",
+      "39026a0f-31d3-6177-d407-b8381c963080",
+      "3afd6079-76f6-5582-3b2c-09c22f190d79",
+      "40fd4cac-6116-b5ee-a505-2acedd23994f",
+      "42e0fbbc-9c73-c708-d869-eb34220ffb92",
+      "46f14723-35d9-4696-01ab-59a9dd4440da",
+      "4c4ddcc8-21d9-9110-d386-58f5029a4f8c",
+      "4d54573f-0c1c-c3dd-bd3c-4254267bc6f9",
+      "627451ee-afb4-3a96-d922-43c536b3ae59",
+      "628401fd-92ff-ff01-86f4-5692ceb2cdd2",
+      "6ccbe525-07c1-0906-c734-da47472e359c",
+      "7038b512-ac42-78cf-82cb-ea0e511881a2",
+      "75894d3a-6837-ad3e-b1d0-f0ac5c9a5937",
+      "784d348b-47e9-25b4-579e-6c4e05c5d295",
+      "7bab0ab3-017d-3efa-8a7c-8b6b01c33dcf",
+      "7d9b24c8-00a1-787a-0d50-ce855569c438",
+      "8dae3f7d-e73c-7b57-5bbc-78816b2b2f40",
+      "8de3c700-282f-5c20-aedd-485d9cf06590",
+      "9445d980-a46f-ead6-fac6-81b6674e2838",
+      "9cb5b508-30ae-ac0c-4297-f33438f17e39",
+      "a3e53db4-d02a-d10c-4195-204f4f49c00a",
+      "a8ac7989-4d06-cb99-ccbe-049dbadd8c6b",
+      "adbcea35-fdb0-4aea-bb74-d22f1808e055",
+      "c3224315-a5f8-abdd-254d-cd45f3a71664",
+      "c4f8bc5d-dc9c-ccb6-47eb-8fbcf6006c14",
+      "ccc80be2-6f36-e277-62ac-aa30ff184da2",
+      "cea90a5e-c320-3711-6c4c-5918eea79b6b",
+      "e07a3439-ce90-5804-51f9-2419cfa0ab70",
+      "ef5ba278-3783-1dad-87b3-e5d6f52546dd",
+      "f6fa71f6-544e-8058-dba7-8102d43ef99b",
+      "f7fe7d5b-4fff-dbdb-f678-36dffc664085",
+      "f955b312-43cf-7c0f-2def-af9c1b48c092"
+    ]
+  },
+  "created_at": "2026-04-30T00:00:00.000000Z",
+  "updated_at": "2026-04-27T00:00:00.000000Z"
+}

@@ -1,0 +1,133 @@
+{
+  "id": "phekb-parkinsons-disease-comprehensive",
+  "source": "phekb",
+  "source_id": "parkinsons-disease",
+  "name": "Parkinson's Disease - Comprehensive Provider Query (Multi-Resource)",
+  "description": "Provider-level query identifying PD patients via Condition + MedicationRequest. Path C (med only without dx) reflects levodopa use without formal PD documentation (atypical parkinsonism, restless legs).",
+  "prompt": "I need to identify my complete Parkinson's disease patient population for a movement disorders clinic registry. Some patients have a coded PD diagnosis. Others are on levodopa for parkinsonian symptoms without a formal Parkinson's diagnosis. Run multiple FHIR queries — diagnosis and levodopa — and union the patient sets.",
+  "prompts": {
+    "naive": "Find all Parkinson's patients.",
+    "broad": "Find all Parkinson's disease patients — by diagnosis or by levodopa prescriptions. Run multiple queries and union the patient sets.",
+    "expert": "Run two queries. (1) Condition?code=http://snomed.info/sct|49049000 — PD dx. (2) MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6375 — levodopa. Union the patient IDs."
+  },
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "algorithm_path": "comprehensive-provider-query",
+    "algorithm_path_description": "Multi-query union: Condition + MedicationRequest for Parkinson's disease.",
+    "code_systems": [
+      "SNOMED CT",
+      "RxNorm"
+    ],
+    "required_codes": [
+      {
+        "system": "http://snomed.info/sct",
+        "code": "49049000",
+        "display": "Parkinson's disease",
+        "source": "UMLS verified"
+      },
+      {
+        "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+        "code": "6375",
+        "display": "levodopa",
+        "source": "UMLS verified"
+      }
+    ],
+    "complexity": "expert",
+    "tags": [
+      "multi-query",
+      "comprehensive",
+      "neurology",
+      "movement-disorder",
+      "parkinsons"
+    ],
+    "multi_query": true,
+    "expected_queries": [
+      "Condition?code=http://snomed.info/sct|49049000",
+      "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6375"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "multi",
+    "parameters": {},
+    "url": "Condition?code=http://snomed.info/sct|49049000"
+  },
+  "test_data": {
+    "resources": [
+      "synthea/output/parkinsons-disease/positive/fhir/",
+      "synthea/output/parkinsons-disease/control/fhir/"
+    ],
+    "expected_result_count": 67,
+    "expected_resource_ids": [],
+    "expected_patient_ids": [
+      "018560a8-4080-ca13-9e4c-85d622f00c4d",
+      "025ece92-ef59-20c9-91ac-6fcfeb4b12f3",
+      "07aa1b54-912f-fdf6-1a5a-ac7c365a4691",
+      "0c4bce38-3e6f-450d-d36b-fe036c1b34d3",
+      "11100094-3ef6-0667-5847-d455ddcc773f",
+      "173cb12f-b474-e49a-e78b-8e3db3f4216c",
+      "19867f0d-3d52-4e53-ac2b-87f078d867a3",
+      "1d7eb08c-d5a0-3dd2-9ebb-11b3d07effec",
+      "20eb249e-6724-a014-107d-00ea9386b4f2",
+      "25d1f267-2293-bc84-fa87-8202e5a43318",
+      "28587f4f-d048-d6f8-70e0-cd20a438f761",
+      "3105f2c6-ee6a-1377-e34b-b402ec94c88c",
+      "3e45427c-4114-772c-6444-00899ad31cb3",
+      "4147458f-da18-fc68-9ff3-3cb61b639ad7",
+      "45da5d3e-0875-cc03-beb2-0dae577167bd",
+      "46fc0c03-ad7c-bb5e-8587-9d9e01fc7f66",
+      "4d5a7fb9-e7f2-498a-0aca-27372b346a36",
+      "520a1807-cd41-a396-139d-eb027a5c4dd1",
+      "531b2852-59d5-515c-041d-01044afe1b7e",
+      "551d6a7f-2db8-6bdd-fc97-6c1b5cca4eb0",
+      "56231dad-ce05-8b7e-1dba-477825387358",
+      "5c4a1eb8-163d-039c-f75d-56b46a60899b",
+      "5fa98167-086f-b4d8-bd5d-259ba122fbd0",
+      "61d47de7-40df-7dc6-576f-3662824535a6",
+      "68933d62-39cc-7740-b268-76628ccad6eb",
+      "69e76958-5b4b-a274-a925-d51ec00663b3",
+      "6d4b2677-65b3-4f2f-6da9-fe0de92e9727",
+      "70e9175a-b79c-93dc-ddef-e0887ef28ec1",
+      "796d435a-2a4d-265e-48e7-12f5b071fc2a",
+      "7a1bc449-99eb-17c7-3793-67ae8551a3f2",
+      "7aa109c0-95f0-4158-e3b0-afdfc4be5dd1",
+      "7b6ccbe0-214f-984a-60c3-c6d519aa6f35",
+      "7beef5ae-04e4-1423-bcbe-6f6368599b88",
+      "7e3457d9-d76b-f543-524b-82b13d715e62",
+      "7ec89b7a-645c-c7df-3936-a16ca84fafe9",
+      "8194d54e-0756-44a1-5122-5073ddfc1781",
+      "85d02a1f-c9dc-c193-3b85-776ddeb56a28",
+      "8d929abc-e3f3-8db8-68c7-e1deb52ff31b",
+      "8e600d55-ec42-97d0-5254-9fad8d8d3308",
+      "8eb3ed6c-aa84-8539-aa16-28cdfc53bcf2",
+      "923a8d66-8da6-33ad-9dc2-001d30a00ae1",
+      "92b30590-cd9c-39e0-189f-3eaaf6a7b6f8",
+      "9314058a-6d89-0bd3-557a-4e3a9f29431f",
+      "99b20854-c7e3-7a12-ebb4-0e72fabc08ce",
+      "a0d3c201-9d7a-6aee-0995-a9c3910a3086",
+      "a1fca9b6-30aa-a03b-f3dc-347e4303714c",
+      "aa1d298e-877f-60f0-110a-d8e33ba756d7",
+      "ae40d5e7-b824-1597-c98b-140e40548b44",
+      "b001a77a-839a-73e2-bb78-dcc5dcecc661",
+      "b53f2135-79cd-5ebf-4057-7d06c8b14b71",
+      "c3db1270-9b5d-8845-1fd6-38cdbd2ae319",
+      "c5188def-b9d5-97fb-b94c-46af755da0fb",
+      "c79efeba-0712-a93f-3293-a8ac219a2df2",
+      "cd4eaec8-6586-6145-72db-709a03b547d7",
+      "d4dc1000-c148-e3ff-b000-b1a6839104be",
+      "d6041299-51cd-ca48-b939-e0b1ad87a332",
+      "dfd9a168-091b-1934-2c38-f0bfc3a6b34a",
+      "e1764a2c-4aa1-37a8-c017-8b9f57392250",
+      "e3fb7028-fd68-8d1f-45ff-e2f4523f5e78",
+      "e56b854d-cae6-2ad3-582b-3172f8d27fde",
+      "ecdfe46b-542d-77ee-4e59-28e987b5dbd2",
+      "ee628165-25e3-3aea-ae9b-87ce595640a1",
+      "eef97c55-808d-0a6d-2db6-47fccdecca60",
+      "f57033f2-2ff2-98c0-31c7-6163bbfb057d",
+      "f5ed8fb5-67be-a3c3-a67e-d637e97b294f",
+      "f86adecb-408e-19dd-05ec-5412a7e2b914",
+      "f975b8e1-f312-9f85-884f-a37a49908564"
+    ]
+  },
+  "created_at": "2026-04-30T00:00:00.000000Z",
+  "updated_at": "2026-04-27T00:00:00.000000Z"
+}

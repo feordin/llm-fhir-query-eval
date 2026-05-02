@@ -1,0 +1,92 @@
+{
+  "name": "PheKB Resistant Hypertension (PheKB-aligned)",
+  "remarks": [
+    "Custom Synthea module for resistant hypertension.",
+    "Aligned to the published PheKB eMERGE resistant HTN algorithm.",
+    "",
+    "PheKB algorithm (two case types):",
+    "  - Type 1: >=4 antihypertensive classes simultaneously on >=2 occasions 1 month apart",
+    "  - Type 2: 3 antihypertensive classes + SBP>140 or DBP>90 measurement at >=1 month later",
+    "",
+    "Generates THREE patient paths:",
+    "  Path A (45%): Resistant HTN dx + 4-drug regimen (ACE-I + CCB + thiazide + spironolactone) — Type 1",
+    "  Path B (35%): Resistant HTN dx + 3 drugs + uncontrolled SBP>140 — Type 2",
+    "  Path C (20%): 3-drug HTN regimen with elevated BP without resistant HTN dx — TRICKY (most uncontrolled multi-drug HTN patients aren't formally coded as resistant)",
+    "",
+    "Multi-coded dx: SNOMED 461301000124109 (Resistant hypertensive disorder) + SNOMED 38341003 (essential HTN).",
+    "Real-world cohorts often have BOTH codes; resistant HTN is layered on existing HTN dx.",
+    "",
+    "Age guard: >=40."
+  ],
+  "states": {
+    "Initial": { "type": "Initial", "direct_transition": "Age_Guard" },
+    "Age_Guard": { "type": "Guard", "allow": { "condition_type": "Age", "operator": ">=", "quantity": 40, "unit": "years" }, "direct_transition": "Set_Rhtn_Flag" },
+    "Set_Rhtn_Flag": { "type": "SetAttribute", "attribute": "rhtn_positive", "value": true, "direct_transition": "Choose_Patient_Path" },
+    "Choose_Patient_Path": {
+      "type": "Simple",
+      "distributed_transition": [
+        { "transition": "Set_Path_A", "distribution": 0.45 },
+        { "transition": "Set_Path_B", "distribution": 0.35 },
+        { "transition": "Set_Path_C", "distribution": 0.20 }
+      ]
+    },
+    "Set_Path_A": { "type": "SetAttribute", "attribute": "rhtn_has_dx", "value": true, "direct_transition": "Set_Path_A_Drugs" },
+    "Set_Path_A_Drugs": { "type": "SetAttribute", "attribute": "rhtn_drug_count", "value": 4, "direct_transition": "Set_Path_A_BP" },
+    "Set_Path_A_BP": { "type": "SetAttribute", "attribute": "rhtn_bp_elevated", "value": false, "direct_transition": "Set_Needs_First_Visit" },
+    "Set_Path_B": { "type": "SetAttribute", "attribute": "rhtn_has_dx", "value": true, "direct_transition": "Set_Path_B_Drugs" },
+    "Set_Path_B_Drugs": { "type": "SetAttribute", "attribute": "rhtn_drug_count", "value": 3, "direct_transition": "Set_Path_B_BP" },
+    "Set_Path_B_BP": { "type": "SetAttribute", "attribute": "rhtn_bp_elevated", "value": true, "direct_transition": "Set_Needs_First_Visit" },
+    "Set_Path_C": { "type": "SetAttribute", "remarks": ["TRICKY: 3-drug regimen + elevated BP without resistant HTN dx"], "attribute": "rhtn_has_dx", "value": false, "direct_transition": "Set_Path_C_Drugs" },
+    "Set_Path_C_Drugs": { "type": "SetAttribute", "attribute": "rhtn_drug_count", "value": 3, "direct_transition": "Set_Path_C_BP" },
+    "Set_Path_C_BP": { "type": "SetAttribute", "attribute": "rhtn_bp_elevated", "value": true, "direct_transition": "Set_Needs_First_Visit" },
+
+    "Set_Needs_First_Visit": { "type": "SetAttribute", "attribute": "rhtn_needs_first_visit", "value": true, "direct_transition": "Wellness_Encounter" },
+    "Wellness_Encounter": { "type": "Encounter", "wellness": true, "direct_transition": "Check_First_Visit" },
+    "Check_First_Visit": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "rhtn_needs_first_visit", "operator": "==", "value": true }, "transition": "Diagnose_HTN" },
+        { "transition": "End_Wellness_Encounter" }
+      ]
+    },
+    "Diagnose_HTN": { "type": "ConditionOnset", "codes": [{ "system": "SNOMED-CT", "code": "38341003", "display": "Hypertensive disorder, systemic arterial" }], "direct_transition": "Check_Resistant_Dx" },
+    "Check_Resistant_Dx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "rhtn_has_dx", "operator": "==", "value": true }, "transition": "Diagnose_Resistant" },
+        { "transition": "Prescribe_Lisinopril" }
+      ]
+    },
+    "Diagnose_Resistant": { "type": "ConditionOnset", "assign_to_attribute": "rhtn_condition", "codes": [{ "system": "SNOMED-CT", "code": "461301000124109", "display": "Resistant hypertensive disorder" }], "direct_transition": "Prescribe_Lisinopril" },
+
+    "Prescribe_Lisinopril": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "29046", "display": "lisinopril" }], "direct_transition": "Prescribe_Amlodipine" },
+    "Prescribe_Amlodipine": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "17767", "display": "amlodipine" }], "direct_transition": "Prescribe_HCTZ" },
+    "Prescribe_HCTZ": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "5487", "display": "hydrochlorothiazide" }], "direct_transition": "Check_Fourth_Drug" },
+    "Check_Fourth_Drug": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "rhtn_drug_count", "operator": "==", "value": 4 }, "transition": "Prescribe_Spironolactone" },
+        { "transition": "Check_BP" }
+      ]
+    },
+    "Prescribe_Spironolactone": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "9997", "display": "spironolactone" }], "direct_transition": "Check_BP" },
+    "Check_BP": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "rhtn_bp_elevated", "operator": "==", "value": true }, "transition": "Record_SBP" },
+        { "transition": "Clear_First_Visit_Flag" }
+      ]
+    },
+    "Record_SBP": {
+      "type": "Observation", "category": "vital-signs", "unit": "mm[Hg]",
+      "codes": [{ "system": "LOINC", "code": "8480-6", "display": "Systolic blood pressure" }],
+      "range": { "low": 145, "high": 175 },
+      "direct_transition": "Clear_First_Visit_Flag"
+    },
+
+    "Clear_First_Visit_Flag": { "type": "SetAttribute", "attribute": "rhtn_needs_first_visit", "value": false, "direct_transition": "End_Wellness_Encounter" },
+    "End_Wellness_Encounter": { "type": "EncounterEnd", "direct_transition": "Followup_Delay" },
+    "Followup_Delay": { "type": "Delay", "range": { "low": 3, "high": 6, "unit": "months" }, "direct_transition": "Wellness_Encounter" }
+  },
+  "gmf_version": 2
+}

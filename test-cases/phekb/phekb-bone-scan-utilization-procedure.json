@@ -1,0 +1,74 @@
+{
+  "id": "phekb-bone-scan-utilization-procedure",
+  "source": "phekb",
+  "source_id": "bone-scan-utilization",
+  "name": "Bone Scan Utilization - Procedure Query (Male Prostate Cancer)",
+  "description": "Tests ability to find male prostate cancer patients who received bone scan procedure. Per PheKB algorithm, the cohort is male age 35+ with prostate cancer dx + bone scan utilization (clinical guideline metric).",
+  "prompt": "Find male prostate cancer patients who underwent radioisotope bone scan.",
+  "prompts": {
+    "naive": "Find men with bone scan.",
+    "broad": "Find male prostate cancer patients who received a radioisotope scan of bone — used per clinical guidelines to assess metastatic spread in newly diagnosed prostate cancer.",
+    "expert": "Search Procedure for SNOMED 41747008 (Radioisotope scan of bone). Restrict to male patients. Query: Procedure?code=http://snomed.info/sct|41747008&patient.gender=male"
+  },
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "algorithm_path": "procedure-path",
+    "algorithm_path_description": "Male prostate cancer patients with bone scan (PheKB cohort).",
+    "code_systems": [
+      "SNOMED CT"
+    ],
+    "required_codes": [
+      {
+        "system": "http://snomed.info/sct",
+        "code": "41747008",
+        "display": "Radioisotope scan of bone",
+        "source": "PheKB + UMLS verified"
+      }
+    ],
+    "complexity": "medium",
+    "tags": [
+      "procedure",
+      "oncology",
+      "prostate-cancer",
+      "bone-scan",
+      "imaging-utilization"
+    ],
+    "patient_filters": {
+      "sex": "male",
+      "min_age_years": 35
+    }
+  },
+  "expected_query": {
+    "resource_type": "Procedure",
+    "parameters": {
+      "code": "http://snomed.info/sct|41747008",
+      "patient.gender": "male"
+    },
+    "url": "Procedure?code=http://snomed.info/sct|41747008&patient.gender=male"
+  },
+  "test_data": {
+    "resources": [
+      "synthea/output/bone-scan-utilization/positive/fhir/",
+      "synthea/output/bone-scan-utilization/control/fhir/"
+    ],
+    "expected_result_count": 13,
+    "expected_resource_ids": [],
+    "expected_patient_ids": [
+      "52f52a61-e2cb-6756-bfd5-3b6ab2bc535a",
+      "61566bab-ea89-9f9a-9971-0180161eba6f",
+      "7f39e539-a558-3f0e-f84d-1c489c575dc8",
+      "84e67f23-1c72-6ec9-e1c5-032431dd5d20",
+      "86af261a-d543-af98-37af-44713f10f81f",
+      "8b8352db-445a-c247-a5a7-b79462783d51",
+      "94b626a9-9465-3b54-3f1e-65ca0ea2ae7c",
+      "af3699c2-2f9a-7a33-d337-b3d3f3b3e533",
+      "b2665186-e621-6c8a-fce8-b1a7a431549e",
+      "ed9a5537-fb38-c352-b3f4-d7796a171389",
+      "f438b52f-250c-3934-754c-fa5283f8c8dd",
+      "f557db49-5033-236b-80a4-1df0dc411c1c",
+      "fb98a58f-6f38-9c92-0441-77e8709ee745"
+    ]
+  },
+  "created_at": "2026-05-01T00:00:00.000000Z",
+  "updated_at": "2026-04-27T00:00:00.000000Z"
+}

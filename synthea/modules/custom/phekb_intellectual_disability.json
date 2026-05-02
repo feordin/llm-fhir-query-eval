@@ -1,0 +1,32 @@
+{
+  "name": "PheKB Intellectual Disability",
+  "remarks": [
+    "Custom Synthea module for intellectual disability.",
+    "First neurodevelopmental disability phenotype (distinct from autism + Down syndrome).",
+    "",
+    "Single-path module: dx-only, no specific medications (managed via behavioral / educational support).",
+    "",
+    "Age guard: >=5 (typically diagnosed in early childhood)."
+  ],
+  "states": {
+    "Initial": { "type": "Initial", "direct_transition": "Age_Guard" },
+    "Age_Guard": { "type": "Guard", "allow": { "condition_type": "Age", "operator": ">=", "quantity": 5, "unit": "years" }, "direct_transition": "Set_Id_Flag" },
+    "Set_Id_Flag": { "type": "SetAttribute", "attribute": "id_positive", "value": true, "direct_transition": "Set_Needs_First_Visit" },
+
+    "Set_Needs_First_Visit": { "type": "SetAttribute", "attribute": "id_needs_first_visit", "value": true, "direct_transition": "Wellness_Encounter" },
+    "Wellness_Encounter": { "type": "Encounter", "wellness": true, "direct_transition": "Check_First_Visit" },
+    "Check_First_Visit": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "id_needs_first_visit", "operator": "==", "value": true }, "transition": "Diagnose_Id" },
+        { "transition": "End_Wellness_Encounter" }
+      ]
+    },
+    "Diagnose_Id": { "type": "ConditionOnset", "assign_to_attribute": "id_condition", "codes": [{ "system": "SNOMED-CT", "code": "110359009", "display": "Intellectual disability" }], "direct_transition": "Clear_First_Visit_Flag" },
+
+    "Clear_First_Visit_Flag": { "type": "SetAttribute", "attribute": "id_needs_first_visit", "value": false, "direct_transition": "End_Wellness_Encounter" },
+    "End_Wellness_Encounter": { "type": "EncounterEnd", "direct_transition": "Followup_Delay" },
+    "Followup_Delay": { "type": "Delay", "range": { "low": 12, "high": 24, "unit": "months" }, "direct_transition": "Wellness_Encounter" }
+  },
+  "gmf_version": 2
+}

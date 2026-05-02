@@ -1,0 +1,60 @@
+{
+  "name": "PheKB Multimodal Analgesia (PheKB-aligned Stanford)",
+  "remarks": [
+    "Custom Synthea module for multimodal analgesia (Stanford algorithm).",
+    "Aligned to PheKB algorithm: surgical patients receiving opioid + (NSAID OR acetaminophen) at discharge.",
+    "",
+    "Generates THREE patient paths:",
+    "  Path A (60%): Surgical patient + opioid + NSAID + acetaminophen (full multimodal)",
+    "  Path B (25%): Surgical patient + opioid + ONE non-opioid (NSAID OR acetaminophen — partial multimodal)",
+    "  Path C (15%): Surgical patient + opioid only (TRICKY — NOT multimodal; controls)",
+    "",
+    "Surgical encounter modeled with general surgery procedure code.",
+    "",
+    "Age guard: >=18."
+  ],
+  "states": {
+    "Initial": { "type": "Initial", "direct_transition": "Age_Guard" },
+    "Age_Guard": { "type": "Guard", "allow": { "condition_type": "Age", "operator": ">=", "quantity": 18, "unit": "years" }, "direct_transition": "Set_Mma_Flag" },
+    "Set_Mma_Flag": { "type": "SetAttribute", "attribute": "mma_positive", "value": true, "direct_transition": "Choose_Patient_Path" },
+    "Choose_Patient_Path": {
+      "type": "Simple",
+      "distributed_transition": [
+        { "transition": "Set_Path_A", "distribution": 0.60 },
+        { "transition": "Set_Path_B", "distribution": 0.25 },
+        { "transition": "Set_Path_C", "distribution": 0.15 }
+      ]
+    },
+    "Set_Path_A": { "type": "SetAttribute", "attribute": "mma_regimen", "value": "full", "direct_transition": "Set_Needs_First_Visit" },
+    "Set_Path_B": { "type": "SetAttribute", "attribute": "mma_regimen", "value": "partial", "direct_transition": "Set_Needs_First_Visit" },
+    "Set_Path_C": { "type": "SetAttribute", "remarks": ["TRICKY: opioid-only — NOT multimodal"], "attribute": "mma_regimen", "value": "opioid_only", "direct_transition": "Set_Needs_First_Visit" },
+
+    "Set_Needs_First_Visit": { "type": "SetAttribute", "attribute": "mma_needs_first_visit", "value": true, "direct_transition": "Surgery_Encounter" },
+    "Surgery_Encounter": { "type": "Encounter", "encounter_class": "inpatient", "codes": [{ "system": "SNOMED-CT", "code": "387713003", "display": "Surgical procedure" }], "direct_transition": "Check_First_Visit" },
+    "Check_First_Visit": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "mma_needs_first_visit", "operator": "==", "value": true }, "transition": "Surgical_Procedure" },
+        { "transition": "End_Surgery_Encounter" }
+      ]
+    },
+    "Surgical_Procedure": { "type": "Procedure", "codes": [{ "system": "SNOMED-CT", "code": "387713003", "display": "Surgical procedure" }], "duration": { "low": 1, "high": 3, "unit": "hours" }, "direct_transition": "Prescribe_Oxycodone" },
+    "Prescribe_Oxycodone": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "7804", "display": "oxycodone" }], "direct_transition": "Route_Adjuvants" },
+    "Route_Adjuvants": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "mma_regimen", "operator": "==", "value": "full" }, "transition": "Prescribe_Acetaminophen_Full" },
+        { "condition": { "condition_type": "Attribute", "attribute": "mma_regimen", "operator": "==", "value": "partial" }, "transition": "Prescribe_Acetaminophen_Partial" },
+        { "transition": "Clear_First_Visit_Flag" }
+      ]
+    },
+    "Prescribe_Acetaminophen_Full": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "161", "display": "acetaminophen" }], "direct_transition": "Prescribe_Ibuprofen_Full" },
+    "Prescribe_Ibuprofen_Full": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "5640", "display": "ibuprofen" }], "direct_transition": "Clear_First_Visit_Flag" },
+    "Prescribe_Acetaminophen_Partial": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "161", "display": "acetaminophen" }], "direct_transition": "Clear_First_Visit_Flag" },
+
+    "Clear_First_Visit_Flag": { "type": "SetAttribute", "attribute": "mma_needs_first_visit", "value": false, "direct_transition": "End_Surgery_Encounter" },
+    "End_Surgery_Encounter": { "type": "EncounterEnd", "direct_transition": "Followup_Delay" },
+    "Followup_Delay": { "type": "Delay", "range": { "low": 12, "high": 36, "unit": "months" }, "direct_transition": "Surgery_Encounter" }
+  },
+  "gmf_version": 2
+}

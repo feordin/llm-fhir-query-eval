@@ -1,0 +1,68 @@
+{
+  "id": "phekb-hyperthyroidism-labs",
+  "source": "phekb",
+  "source_id": "hyperthyroidism",
+  "name": "Hyperthyroidism - Suppressed TSH Query",
+  "description": "Tests ability to find hyperthyroid patients via suppressed TSH (<0.1 mIU/L). Includes Path D (subclinical hyperthyroidism without formal dx).",
+  "prompt": "Find patients with suppressed TSH results below 0.1 mIU/L.",
+  "prompts": {
+    "naive": "Find patients with suppressed TSH.",
+    "broad": "Find patients with thyroid-stimulating hormone (TSH) measurements below 0.1 mIU/L — indicating hyperthyroidism (normal range 0.4-4.0 mIU/L).",
+    "expert": "Search Observation resources with LOINC 3016-3 (Thyrotropin in Serum) where value-quantity < 0.1 mIU/L. Query: Observation?code=http://loinc.org|3016-3&value-quantity=lt0.1||mIU/L"
+  },
+  "metadata": {
+    "implementation_guide": "US Core 5.0.0",
+    "algorithm_path": "labs-path",
+    "algorithm_path_description": "Patients with suppressed TSH. Includes Path D (subclinical hyperthyroid).",
+    "code_systems": [
+      "LOINC"
+    ],
+    "required_codes": [
+      {
+        "system": "http://loinc.org",
+        "code": "3016-3",
+        "display": "Thyrotropin [Units/volume] in Serum or Plasma",
+        "source": "UMLS verified"
+      }
+    ],
+    "complexity": "hard",
+    "tags": [
+      "observation",
+      "endocrinology",
+      "hyperthyroidism",
+      "tsh",
+      "value-quantity"
+    ]
+  },
+  "expected_query": {
+    "resource_type": "Observation",
+    "parameters": {
+      "code": "http://loinc.org|3016-3",
+      "value-quantity": "lt0.1||mIU/L"
+    },
+    "url": "Observation?code=http://loinc.org|3016-3&value-quantity=lt0.1||mIU/L"
+  },
+  "test_data": {
+    "resources": [
+      "synthea/output/hyperthyroidism/positive/fhir/",
+      "synthea/output/hyperthyroidism/control/fhir/"
+    ],
+    "expected_result_count": 11,
+    "expected_resource_ids": [],
+    "expected_patient_ids": [
+      "13fc8f67-f586-2a2d-16ef-27609ceb4d47",
+      "1dbc508a-6873-987a-5df5-f4f3f02fb1e4",
+      "1e9080de-4ec8-6be8-78b9-7121a4f3e0f5",
+      "286fafd0-b518-b33a-a090-3e9b74816c05",
+      "60842113-c73f-199a-3abd-fad73ee8c177",
+      "6ae1088e-36ab-6250-a753-1bd0230f605c",
+      "99f27fcc-7205-4134-83b2-4cecc1db8e0c",
+      "a3c2ce1f-9525-7de8-b9f3-77c31596f6ed",
+      "bc888b9d-4609-41bb-5e48-b4d2649aed05",
+      "d3ea901e-3c56-5fc7-90e6-20bb416b73aa",
+      "f1024ef0-ce3d-d088-6c26-127651b3d8a0"
+    ]
+  },
+  "created_at": "2026-04-29T00:00:00.000000Z",
+  "updated_at": "2026-04-27T00:00:00.000000Z"
+}

@@ -1,0 +1,141 @@
+{
+  "name": "PheKB Drug-Induced Liver Injury (PheKB-aligned)",
+  "remarks": [
+    "Custom Synthea module for drug-induced liver injury (DILI).",
+    "Aligned to the published PheKB DILI algorithm (DILIAlgorithm_merged_050813_0.pdf).",
+    "",
+    "PheKB algorithm criteria:",
+    "  - Liver injury dx + drug exposure within 3 months prior",
+    "  - Lab thresholds: ALP >=2x ULN (>=240) OR ALT >=5x ULN (>=225) OR (ALT >=3x ULN [>=135] AND Bili >=2x ULN [>=2.34 mg/dL])",
+    "",
+    "Generates FOUR patient paths:",
+    "  Path A (50%): Multi-coded liver injury dx + offending drug + threshold-meeting labs (full PheKB criteria)",
+    "  Path B (25%): Liver injury dx + drug, but labs not measured/recorded",
+    "  Path C (15%): On methotrexate (offending drug) without liver injury dx — TRICKY (most MTX users don't develop DILI)",
+    "  Path D (10%): Threshold-meeting labs without DILI dx — TRICKY (could be NAFLD, viral hepatitis, etc.)",
+    "",
+    "Multi-system dx coding (PheKB lists ICD-9, modern systems use SNOMED + ICD-10):",
+    "  - SNOMED 427399008 (Drug-induced disorder of liver)",
+    "  - ICD-10 K71.9 (Toxic liver disease, unspecified)",
+    "  - ICD-10 K72.0 (Acute hepatic failure)",
+    "  - ICD-10 R74.01 (Elevated liver transaminase)",
+    "",
+    "Age guard: >=18."
+  ],
+  "states": {
+    "Initial": { "type": "Initial", "direct_transition": "Age_Guard" },
+    "Age_Guard": { "type": "Guard", "allow": { "condition_type": "Age", "operator": ">=", "quantity": 18, "unit": "years" }, "direct_transition": "Set_Dili_Flag" },
+    "Set_Dili_Flag": { "type": "SetAttribute", "attribute": "dili_positive", "value": true, "direct_transition": "Choose_Patient_Path" },
+    "Choose_Patient_Path": {
+      "type": "Simple",
+      "distributed_transition": [
+        { "transition": "Set_Path_A", "distribution": 0.50 },
+        { "transition": "Set_Path_B", "distribution": 0.25 },
+        { "transition": "Set_Path_C", "distribution": 0.15 },
+        { "transition": "Set_Path_D", "distribution": 0.10 }
+      ]
+    },
+    "Set_Path_A": { "type": "SetAttribute", "attribute": "dili_has_dx", "value": true, "direct_transition": "Set_Path_A_Drug" },
+    "Set_Path_A_Drug": { "type": "SetAttribute", "attribute": "dili_has_drug", "value": true, "direct_transition": "Set_Path_A_Lab" },
+    "Set_Path_A_Lab": { "type": "SetAttribute", "attribute": "dili_has_lab", "value": true, "direct_transition": "Choose_DxCode" },
+    "Set_Path_B": { "type": "SetAttribute", "attribute": "dili_has_dx", "value": true, "direct_transition": "Set_Path_B_Drug" },
+    "Set_Path_B_Drug": { "type": "SetAttribute", "attribute": "dili_has_drug", "value": true, "direct_transition": "Set_Path_B_Lab" },
+    "Set_Path_B_Lab": { "type": "SetAttribute", "attribute": "dili_has_lab", "value": false, "direct_transition": "Choose_DxCode" },
+    "Set_Path_C": { "type": "SetAttribute", "remarks": ["TRICKY: methotrexate without DILI dx"], "attribute": "dili_has_dx", "value": false, "direct_transition": "Set_Path_C_Drug" },
+    "Set_Path_C_Drug": { "type": "SetAttribute", "attribute": "dili_has_drug", "value": true, "direct_transition": "Set_Path_C_Lab" },
+    "Set_Path_C_Lab": { "type": "SetAttribute", "attribute": "dili_has_lab", "value": false, "direct_transition": "Choose_DxCode" },
+    "Set_Path_D": { "type": "SetAttribute", "remarks": ["TRICKY: elevated ALT without DILI dx"], "attribute": "dili_has_dx", "value": false, "direct_transition": "Set_Path_D_Drug" },
+    "Set_Path_D_Drug": { "type": "SetAttribute", "attribute": "dili_has_drug", "value": false, "direct_transition": "Set_Path_D_Lab" },
+    "Set_Path_D_Lab": { "type": "SetAttribute", "attribute": "dili_has_lab", "value": true, "direct_transition": "Choose_DxCode" },
+
+    "Choose_DxCode": {
+      "type": "Simple",
+      "distributed_transition": [
+        { "transition": "Set_DxCode_SNOMED", "distribution": 0.40 },
+        { "transition": "Set_DxCode_K719", "distribution": 0.30 },
+        { "transition": "Set_DxCode_K720", "distribution": 0.15 },
+        { "transition": "Set_DxCode_R7401", "distribution": 0.15 }
+      ]
+    },
+    "Set_DxCode_SNOMED": { "type": "SetAttribute", "attribute": "dili_dx_code", "value": "snomed_427399008", "direct_transition": "Set_Needs_First_Visit" },
+    "Set_DxCode_K719": { "type": "SetAttribute", "attribute": "dili_dx_code", "value": "icd10_K71_9", "direct_transition": "Set_Needs_First_Visit" },
+    "Set_DxCode_K720": { "type": "SetAttribute", "attribute": "dili_dx_code", "value": "icd10_K72_0", "direct_transition": "Set_Needs_First_Visit" },
+    "Set_DxCode_R7401": { "type": "SetAttribute", "attribute": "dili_dx_code", "value": "icd10_R74_01", "direct_transition": "Set_Needs_First_Visit" },
+
+    "Set_Needs_First_Visit": { "type": "SetAttribute", "attribute": "dili_needs_first_visit", "value": true, "direct_transition": "Wellness_Encounter" },
+    "Wellness_Encounter": { "type": "Encounter", "wellness": true, "direct_transition": "Check_First_Visit" },
+    "Check_First_Visit": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "dili_needs_first_visit", "operator": "==", "value": true }, "transition": "Check_Has_Diagnosis" },
+        { "transition": "End_Wellness_Encounter" }
+      ]
+    },
+    "Check_Has_Diagnosis": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "dili_has_dx", "operator": "==", "value": true }, "transition": "Route_Dx_By_Code" },
+        { "transition": "Check_Drug" }
+      ]
+    },
+    "Route_Dx_By_Code": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "dili_dx_code", "operator": "==", "value": "snomed_427399008" }, "transition": "Diagnose_DILI_SNOMED" },
+        { "condition": { "condition_type": "Attribute", "attribute": "dili_dx_code", "operator": "==", "value": "icd10_K71_9" }, "transition": "Diagnose_DILI_K719" },
+        { "condition": { "condition_type": "Attribute", "attribute": "dili_dx_code", "operator": "==", "value": "icd10_K72_0" }, "transition": "Diagnose_DILI_K720" },
+        { "transition": "Diagnose_DILI_R7401" }
+      ]
+    },
+    "Diagnose_DILI_SNOMED": { "type": "ConditionOnset", "assign_to_attribute": "dili_condition", "codes": [{ "system": "SNOMED-CT", "code": "427399008", "display": "Drug-induced disorder of liver" }], "direct_transition": "Check_Drug" },
+    "Diagnose_DILI_K719": { "type": "ConditionOnset", "assign_to_attribute": "dili_condition", "codes": [{ "system": "http://hl7.org/fhir/sid/icd-10-cm", "code": "K71.9", "display": "Toxic liver disease, unspecified" }], "direct_transition": "Check_Drug" },
+    "Diagnose_DILI_K720": { "type": "ConditionOnset", "assign_to_attribute": "dili_condition", "codes": [{ "system": "http://hl7.org/fhir/sid/icd-10-cm", "code": "K72.0", "display": "Acute and subacute hepatic failure" }], "direct_transition": "Check_Drug" },
+    "Diagnose_DILI_R7401": { "type": "ConditionOnset", "assign_to_attribute": "dili_condition", "codes": [{ "system": "http://hl7.org/fhir/sid/icd-10-cm", "code": "R74.01", "display": "Elevation of levels of liver transaminase levels" }], "direct_transition": "Check_Drug" },
+
+    "Check_Drug": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "dili_has_drug", "operator": "==", "value": true }, "transition": "Prescribe_MTX" },
+        { "transition": "Check_Lab" }
+      ]
+    },
+    "Prescribe_MTX": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "105585", "display": "methotrexate 2.5 MG Oral Tablet" }], "direct_transition": "Check_Lab" },
+
+    "Check_Lab": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "dili_has_lab", "operator": "==", "value": true }, "transition": "Record_ALT" },
+        { "transition": "Clear_First_Visit_Flag" }
+      ]
+    },
+    "Record_ALT": {
+      "type": "Observation", "category": "laboratory", "unit": "U/L",
+      "codes": [{ "system": "LOINC", "code": "1742-6", "display": "Alanine aminotransferase [Enzymatic activity/volume] in Serum or Plasma" }],
+      "range": { "low": 225, "high": 600 },
+      "direct_transition": "Record_AST"
+    },
+    "Record_AST": {
+      "type": "Observation", "category": "laboratory", "unit": "U/L",
+      "codes": [{ "system": "LOINC", "code": "1920-8", "display": "Aspartate aminotransferase [Enzymatic activity/volume] in Serum or Plasma" }],
+      "range": { "low": 180, "high": 500 },
+      "direct_transition": "Record_ALP"
+    },
+    "Record_ALP": {
+      "type": "Observation", "category": "laboratory", "unit": "U/L",
+      "codes": [{ "system": "LOINC", "code": "6768-6", "display": "Alkaline phosphatase [Enzymatic activity/volume] in Serum or Plasma" }],
+      "range": { "low": 240, "high": 500 },
+      "direct_transition": "Record_Bili"
+    },
+    "Record_Bili": {
+      "type": "Observation", "category": "laboratory", "unit": "mg/dL",
+      "codes": [{ "system": "LOINC", "code": "1975-2", "display": "Bilirubin.total [Mass/volume] in Serum or Plasma" }],
+      "range": { "low": 2.5, "high": 8.0 },
+      "direct_transition": "Clear_First_Visit_Flag"
+    },
+
+    "Clear_First_Visit_Flag": { "type": "SetAttribute", "attribute": "dili_needs_first_visit", "value": false, "direct_transition": "End_Wellness_Encounter" },
+    "End_Wellness_Encounter": { "type": "EncounterEnd", "direct_transition": "Followup_Delay" },
+    "Followup_Delay": { "type": "Delay", "range": { "low": 3, "high": 6, "unit": "months" }, "direct_transition": "Wellness_Encounter" }
+  },
+  "gmf_version": 2
+}

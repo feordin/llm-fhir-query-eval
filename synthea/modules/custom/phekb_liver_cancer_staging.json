@@ -1,0 +1,58 @@
+{
+  "name": "PheKB Liver Cancer Staging (PheKB-aligned)",
+  "remarks": [
+    "Custom Synthea module for HCC liver cancer staging phenotype.",
+    "Aligned to PheKB algorithm: HCC patients with required labs (Albumin, AFP, Bilirubin, INR) + CT/MRI imaging.",
+    "",
+    "Generates SINGLE-PATH module: HCC dx + 4 staging labs + CT abdomen procedure.",
+    "Per PheKB cohort: HCC dx + at least 1 clinical report + 1 radiology + all 4 lab values.",
+    "",
+    "Multi-coded HCC: SNOMED 25370001 (HCC) — also paired with ICD-10 C22.0 in real EHRs.",
+    "",
+    "Age guard: >=40."
+  ],
+  "states": {
+    "Initial": { "type": "Initial", "direct_transition": "Age_Guard" },
+    "Age_Guard": { "type": "Guard", "allow": { "condition_type": "Age", "operator": ">=", "quantity": 40, "unit": "years" }, "direct_transition": "Set_Lcs_Flag" },
+    "Set_Lcs_Flag": { "type": "SetAttribute", "attribute": "lcs_positive", "value": true, "direct_transition": "Set_Needs_First_Visit" },
+    "Set_Needs_First_Visit": { "type": "SetAttribute", "attribute": "lcs_needs_first_visit", "value": true, "direct_transition": "Wellness_Encounter" },
+    "Wellness_Encounter": { "type": "Encounter", "wellness": true, "direct_transition": "Check_First_Visit" },
+    "Check_First_Visit": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "lcs_needs_first_visit", "operator": "==", "value": true }, "transition": "Diagnose_HCC" },
+        { "transition": "End_Wellness_Encounter" }
+      ]
+    },
+    "Diagnose_HCC": { "type": "ConditionOnset", "codes": [{ "system": "SNOMED-CT", "code": "25370001", "display": "Hepatocellular carcinoma" }], "direct_transition": "CT_Procedure" },
+    "CT_Procedure": { "type": "Procedure", "codes": [{ "system": "SNOMED-CT", "code": "169070004", "display": "CT of abdomen" }], "duration": { "low": 20, "high": 60, "unit": "minutes" }, "direct_transition": "Record_AFP" },
+    "Record_AFP": {
+      "type": "Observation", "category": "laboratory", "unit": "ng/mL",
+      "codes": [{ "system": "LOINC", "code": "1834-1", "display": "Alpha-1-Fetoprotein [Mass/volume] in Serum or Plasma" }],
+      "range": { "low": 100, "high": 5000 },
+      "direct_transition": "Record_Albumin"
+    },
+    "Record_Albumin": {
+      "type": "Observation", "category": "laboratory", "unit": "g/dL",
+      "codes": [{ "system": "LOINC", "code": "1751-7", "display": "Albumin [Mass/volume] in Serum or Plasma" }],
+      "range": { "low": 2.5, "high": 4.0 },
+      "direct_transition": "Record_Bilirubin"
+    },
+    "Record_Bilirubin": {
+      "type": "Observation", "category": "laboratory", "unit": "mg/dL",
+      "codes": [{ "system": "LOINC", "code": "1975-2", "display": "Bilirubin.total [Mass/volume] in Serum or Plasma" }],
+      "range": { "low": 1.0, "high": 5.0 },
+      "direct_transition": "Record_INR"
+    },
+    "Record_INR": {
+      "type": "Observation", "category": "laboratory", "unit": "{INR}",
+      "codes": [{ "system": "LOINC", "code": "6301-6", "display": "INR in Platelet poor plasma by Coagulation assay" }],
+      "range": { "low": 1.1, "high": 2.5 },
+      "direct_transition": "Clear_First_Visit_Flag"
+    },
+    "Clear_First_Visit_Flag": { "type": "SetAttribute", "attribute": "lcs_needs_first_visit", "value": false, "direct_transition": "End_Wellness_Encounter" },
+    "End_Wellness_Encounter": { "type": "EncounterEnd", "direct_transition": "Followup_Delay" },
+    "Followup_Delay": { "type": "Delay", "range": { "low": 3, "high": 6, "unit": "months" }, "direct_transition": "Wellness_Encounter" }
+  },
+  "gmf_version": 2
+}

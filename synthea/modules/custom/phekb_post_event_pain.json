@@ -1,0 +1,38 @@
+{
+  "name": "PheKB Post-event Pain (PheKB-aligned)",
+  "remarks": [
+    "Custom Synthea module for post-operative pain phenotype.",
+    "Aligned to PheKB algorithm: pediatric patients age >=6 with scoliosis surgery + NRS pain scores documented.",
+    "",
+    "Generates SINGLE-PATH module: scoliosis dx + surgery procedure + pain severity observation (NRS >=4).",
+    "",
+    "Age guard: 6-21 (pediatric population per PheKB)."
+  ],
+  "states": {
+    "Initial": { "type": "Initial", "direct_transition": "Age_Lower_Guard" },
+    "Age_Lower_Guard": { "type": "Guard", "allow": { "condition_type": "Age", "operator": ">=", "quantity": 6, "unit": "years" }, "direct_transition": "Age_Upper_Guard" },
+    "Age_Upper_Guard": { "type": "Guard", "allow": { "condition_type": "Age", "operator": "<=", "quantity": 21, "unit": "years" }, "direct_transition": "Set_Pop_Flag" },
+    "Set_Pop_Flag": { "type": "SetAttribute", "attribute": "pop_positive", "value": true, "direct_transition": "Set_Needs_First_Visit" },
+    "Set_Needs_First_Visit": { "type": "SetAttribute", "attribute": "pop_needs_first_visit", "value": true, "direct_transition": "Wellness_Encounter" },
+    "Wellness_Encounter": { "type": "Encounter", "wellness": true, "direct_transition": "Check_First_Visit" },
+    "Check_First_Visit": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "pop_needs_first_visit", "operator": "==", "value": true }, "transition": "Diagnose_Scoliosis" },
+        { "transition": "End_Wellness_Encounter" }
+      ]
+    },
+    "Diagnose_Scoliosis": { "type": "ConditionOnset", "codes": [{ "system": "http://hl7.org/fhir/sid/icd-10-cm", "code": "M41.9", "display": "Scoliosis, unspecified" }], "direct_transition": "Surgery_Procedure" },
+    "Surgery_Procedure": { "type": "Procedure", "codes": [{ "system": "SNOMED-CT", "code": "387713003", "display": "Surgical procedure" }], "duration": { "low": 2, "high": 6, "unit": "hours" }, "direct_transition": "Record_Pain" },
+    "Record_Pain": {
+      "type": "Observation", "category": "survey", "unit": "{score}",
+      "codes": [{ "system": "LOINC", "code": "38208-5", "display": "Pain severity - Reported" }],
+      "range": { "low": 4, "high": 9 },
+      "direct_transition": "Clear_First_Visit_Flag"
+    },
+    "Clear_First_Visit_Flag": { "type": "SetAttribute", "attribute": "pop_needs_first_visit", "value": false, "direct_transition": "End_Wellness_Encounter" },
+    "End_Wellness_Encounter": { "type": "EncounterEnd", "direct_transition": "Followup_Delay" },
+    "Followup_Delay": { "type": "Delay", "range": { "low": 12, "high": 36, "unit": "months" }, "direct_transition": "Wellness_Encounter" }
+  },
+  "gmf_version": 2
+}

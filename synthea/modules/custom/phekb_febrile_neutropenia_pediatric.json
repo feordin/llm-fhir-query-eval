@@ -1,0 +1,108 @@
+{
+  "name": "PheKB Febrile Neutropenia Pediatric (PheKB-aligned ELSA-FN)",
+  "remarks": [
+    "Custom Synthea module for pediatric febrile neutropenia.",
+    "Aligned to PheKB ELSA-FN trial algorithm (early vs late stopping of antibiotics).",
+    "",
+    "PheKB algorithm criteria:",
+    "  - Fever (Temp >38.0°C OR R50.81 dx)",
+    "  - Neutropenia (ANC <500/μL OR D70 dx)",
+    "  - High-risk: leukemia/lymphoma + dose-intensive chemo OR HCT day 0-100",
+    "  - Treatment: IV antibiotics (cefepime, piperacillin-tazobactam, vancomycin) within 24h",
+    "",
+    "Generates THREE patient paths:",
+    "  Path A (60%): Both Neutropenia + Fever dx + ANC<500 + Temp>38 + IV antibiotic (full ELSA-FN criteria)",
+    "  Path B (25%): Neutropenia dx + IV antibiotic only (no fever dx — TRICKY)",
+    "  Path C (15%): IV antibiotic without FN dx (TRICKY — broad-spectrum antibiotics used for many infections)",
+    "",
+    "Multi-system codes (per PheKB):",
+    "  - ICD-10 D70 (Neutropenia)",
+    "  - ICD-10 R50.81 (Fever) — labeled differently in 2026 ICD-10 (now 'Fever presenting with conditions classified elsewhere')",
+    "  - ICD-9 288.0 (Neutropenia, legacy) — modeled via ICD-10 only since modern data uses ICD-10",
+    "",
+    "Age guard: <=17 (pediatric)."
+  ],
+  "states": {
+    "Initial": { "type": "Initial", "direct_transition": "Age_Upper_Guard" },
+    "Age_Upper_Guard": { "type": "Guard", "allow": { "condition_type": "Age", "operator": "<=", "quantity": 17, "unit": "years" }, "direct_transition": "Set_Fn_Flag" },
+    "Set_Fn_Flag": { "type": "SetAttribute", "attribute": "fn_positive", "value": true, "direct_transition": "Choose_Patient_Path" },
+    "Choose_Patient_Path": {
+      "type": "Simple",
+      "distributed_transition": [
+        { "transition": "Set_Path_A", "distribution": 0.60 },
+        { "transition": "Set_Path_B", "distribution": 0.25 },
+        { "transition": "Set_Path_C", "distribution": 0.15 }
+      ]
+    },
+    "Set_Path_A": { "type": "SetAttribute", "attribute": "fn_has_neutropenia_dx", "value": true, "direct_transition": "Set_Path_A_Fever" },
+    "Set_Path_A_Fever": { "type": "SetAttribute", "attribute": "fn_has_fever_dx", "value": true, "direct_transition": "Set_Path_A_Lab" },
+    "Set_Path_A_Lab": { "type": "SetAttribute", "attribute": "fn_has_lab", "value": true, "direct_transition": "Set_Path_A_Med" },
+    "Set_Path_A_Med": { "type": "SetAttribute", "attribute": "fn_has_med", "value": true, "direct_transition": "Set_Needs_First_Visit" },
+    "Set_Path_B": { "type": "SetAttribute", "attribute": "fn_has_neutropenia_dx", "value": true, "direct_transition": "Set_Path_B_Fever" },
+    "Set_Path_B_Fever": { "type": "SetAttribute", "attribute": "fn_has_fever_dx", "value": false, "direct_transition": "Set_Path_B_Lab" },
+    "Set_Path_B_Lab": { "type": "SetAttribute", "attribute": "fn_has_lab", "value": true, "direct_transition": "Set_Path_B_Med" },
+    "Set_Path_B_Med": { "type": "SetAttribute", "attribute": "fn_has_med", "value": true, "direct_transition": "Set_Needs_First_Visit" },
+    "Set_Path_C": { "type": "SetAttribute", "remarks": ["TRICKY: IV antibiotic without FN dx"], "attribute": "fn_has_neutropenia_dx", "value": false, "direct_transition": "Set_Path_C_Fever" },
+    "Set_Path_C_Fever": { "type": "SetAttribute", "attribute": "fn_has_fever_dx", "value": false, "direct_transition": "Set_Path_C_Lab" },
+    "Set_Path_C_Lab": { "type": "SetAttribute", "attribute": "fn_has_lab", "value": false, "direct_transition": "Set_Path_C_Med" },
+    "Set_Path_C_Med": { "type": "SetAttribute", "attribute": "fn_has_med", "value": true, "direct_transition": "Set_Needs_First_Visit" },
+
+    "Set_Needs_First_Visit": { "type": "SetAttribute", "attribute": "fn_needs_first_visit", "value": true, "direct_transition": "Wellness_Encounter" },
+    "Wellness_Encounter": { "type": "Encounter", "wellness": true, "direct_transition": "Check_First_Visit" },
+    "Check_First_Visit": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "fn_needs_first_visit", "operator": "==", "value": true }, "transition": "Check_Neutropenia_Dx" },
+        { "transition": "End_Wellness_Encounter" }
+      ]
+    },
+    "Check_Neutropenia_Dx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "fn_has_neutropenia_dx", "operator": "==", "value": true }, "transition": "Diagnose_Neutropenia" },
+        { "transition": "Check_Fever_Dx" }
+      ]
+    },
+    "Diagnose_Neutropenia": { "type": "ConditionOnset", "assign_to_attribute": "fn_neutropenia_condition", "codes": [{ "system": "http://hl7.org/fhir/sid/icd-10-cm", "code": "D70", "display": "Neutropenia" }], "direct_transition": "Check_Fever_Dx" },
+    "Check_Fever_Dx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "fn_has_fever_dx", "operator": "==", "value": true }, "transition": "Diagnose_Fever" },
+        { "transition": "Check_Lab" }
+      ]
+    },
+    "Diagnose_Fever": { "type": "ConditionOnset", "codes": [{ "system": "http://hl7.org/fhir/sid/icd-10-cm", "code": "R50.81", "display": "Fever presenting with conditions classified elsewhere" }], "direct_transition": "Check_Lab" },
+    "Check_Lab": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "fn_has_lab", "operator": "==", "value": true }, "transition": "Record_ANC" },
+        { "transition": "Check_Med" }
+      ]
+    },
+    "Record_ANC": {
+      "type": "Observation", "category": "laboratory", "unit": "10*3/uL",
+      "codes": [{ "system": "LOINC", "code": "751-8", "display": "Neutrophils [#/volume] in Blood by Automated count" }],
+      "range": { "low": 0.05, "high": 0.49 },
+      "direct_transition": "Record_Temp"
+    },
+    "Record_Temp": {
+      "type": "Observation", "category": "vital-signs", "unit": "Cel",
+      "codes": [{ "system": "LOINC", "code": "8310-5", "display": "Body temperature" }],
+      "range": { "low": 38.1, "high": 40.0 },
+      "direct_transition": "Check_Med"
+    },
+    "Check_Med": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "fn_has_med", "operator": "==", "value": true }, "transition": "Prescribe_Cefepime" },
+        { "transition": "Clear_First_Visit_Flag" }
+      ]
+    },
+    "Prescribe_Cefepime": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "20481", "display": "cefepime" }], "direct_transition": "Clear_First_Visit_Flag" },
+
+    "Clear_First_Visit_Flag": { "type": "SetAttribute", "attribute": "fn_needs_first_visit", "value": false, "direct_transition": "End_Wellness_Encounter" },
+    "End_Wellness_Encounter": { "type": "EncounterEnd", "direct_transition": "Followup_Delay" },
+    "Followup_Delay": { "type": "Delay", "range": { "low": 1, "high": 3, "unit": "months" }, "direct_transition": "Wellness_Encounter" }
+  },
+  "gmf_version": 2
+}

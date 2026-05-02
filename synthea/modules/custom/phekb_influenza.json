@@ -1,0 +1,74 @@
+{
+  "name": "PheKB Influenza",
+  "remarks": [
+    "Custom Synthea module for influenza.",
+    "Acute viral respiratory infection. Distinct from chronic viral (HCV/HIV) and bacterial (pneumonia/sepsis).",
+    "",
+    "Generates THREE patient paths:",
+    "  Path A (50%): Influenza dx + oseltamivir Rx",
+    "  Path B (35%): Influenza dx, no antiviral (mild self-limited)",
+    "  Path C (15%): Oseltamivir without influenza dx (TRICKY — empirical antiviral for ILI)",
+    "",
+    "Age guard: >=1."
+  ],
+  "states": {
+    "Initial": { "type": "Initial", "direct_transition": "Age_Guard" },
+    "Age_Guard": { "type": "Guard", "allow": { "condition_type": "Age", "operator": ">=", "quantity": 1, "unit": "years" }, "direct_transition": "Set_Flu_Flag" },
+    "Set_Flu_Flag": { "type": "SetAttribute", "attribute": "flu_positive", "value": true, "direct_transition": "Choose_Patient_Path" },
+    "Choose_Patient_Path": {
+      "type": "Simple",
+      "distributed_transition": [
+        { "transition": "Set_Path_A", "distribution": 0.50 },
+        { "transition": "Set_Path_B", "distribution": 0.35 },
+        { "transition": "Set_Path_C", "distribution": 0.15 }
+      ]
+    },
+    "Set_Path_A": { "type": "SetAttribute", "attribute": "flu_has_dx", "value": true, "direct_transition": "Set_Path_A_Med" },
+    "Set_Path_A_Med": { "type": "SetAttribute", "attribute": "flu_has_med", "value": true, "direct_transition": "Set_Needs_First_Visit" },
+    "Set_Path_B": { "type": "SetAttribute", "attribute": "flu_has_dx", "value": true, "direct_transition": "Set_Path_B_Med" },
+    "Set_Path_B_Med": { "type": "SetAttribute", "attribute": "flu_has_med", "value": false, "direct_transition": "Set_Needs_First_Visit" },
+    "Set_Path_C": { "type": "SetAttribute", "remarks": ["TRICKY: oseltamivir without flu dx"], "attribute": "flu_has_dx", "value": false, "direct_transition": "Set_Path_C_Med" },
+    "Set_Path_C_Med": { "type": "SetAttribute", "attribute": "flu_has_med", "value": true, "direct_transition": "Set_Needs_First_Visit" },
+
+    "Set_Needs_First_Visit": { "type": "SetAttribute", "attribute": "flu_needs_first_visit", "value": true, "direct_transition": "Wellness_Encounter" },
+    "Wellness_Encounter": { "type": "Encounter", "wellness": true, "direct_transition": "Check_First_Visit" },
+    "Check_First_Visit": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "flu_needs_first_visit", "operator": "==", "value": true }, "transition": "Check_Has_Diagnosis" },
+        { "transition": "End_Wellness_Encounter" }
+      ]
+    },
+    "Check_Has_Diagnosis": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "flu_has_dx", "operator": "==", "value": true }, "transition": "Diagnose_Flu" },
+        { "transition": "Check_Med_NoDx" }
+      ]
+    },
+    "Diagnose_Flu": { "type": "ConditionOnset", "assign_to_attribute": "flu_condition", "codes": [{ "system": "SNOMED-CT", "code": "6142004", "display": "Influenza" }], "direct_transition": "Check_Med_WithDx" },
+
+    "Check_Med_WithDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "flu_has_med", "operator": "==", "value": true }, "transition": "Prescribe_Oseltamivir_WithDx" },
+        { "transition": "Clear_First_Visit_Flag" }
+      ]
+    },
+    "Prescribe_Oseltamivir_WithDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "260101", "display": "oseltamivir" }], "reason": "flu_condition", "direct_transition": "Clear_First_Visit_Flag" },
+
+    "Check_Med_NoDx": {
+      "type": "Simple",
+      "conditional_transition": [
+        { "condition": { "condition_type": "Attribute", "attribute": "flu_has_med", "operator": "==", "value": true }, "transition": "Prescribe_Oseltamivir_NoDx" },
+        { "transition": "Clear_First_Visit_Flag" }
+      ]
+    },
+    "Prescribe_Oseltamivir_NoDx": { "type": "MedicationOrder", "codes": [{ "system": "RxNorm", "code": "260101", "display": "oseltamivir" }], "direct_transition": "Clear_First_Visit_Flag" },
+
+    "Clear_First_Visit_Flag": { "type": "SetAttribute", "attribute": "flu_needs_first_visit", "value": false, "direct_transition": "End_Wellness_Encounter" },
+    "End_Wellness_Encounter": { "type": "EncounterEnd", "direct_transition": "Followup_Delay" },
+    "Followup_Delay": { "type": "Delay", "range": { "low": 6, "high": 12, "unit": "months" }, "direct_transition": "Wellness_Encounter" }
+  },
+  "gmf_version": 2
+}
