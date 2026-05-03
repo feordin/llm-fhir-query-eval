@@ -114,6 +114,7 @@ def validate_test_case(tc_path: Path, cache: dict) -> dict:
     tc_id = tc.get("id", "")
     phenotype = tc.get("source_id", "")
     is_multi = tc.get("metadata", {}).get("multi_query", False)
+    is_negation = tc.get("metadata", {}).get("negation", False)
     is_meds_only = "-meds-only" in tc_id
     is_labs_only = "-labs-only" in tc_id
 
@@ -123,10 +124,22 @@ def validate_test_case(tc_path: Path, cache: dict) -> dict:
         queries = [tc["expected_query"]["url"]]
 
     all_patient_ids: set[str] = set()
-    for q in queries:
-        ids = fetch_patient_ids_for_query(q, cache)
-        all_patient_ids |= ids
-        print(f"    Query: {q[:100]}...  -> {len(ids)} patients")
+    if is_negation and len(queries) >= 2:
+        # Set difference: query[0] keep set MINUS union(query[1:]) subtract sets
+        keep_ids = fetch_patient_ids_for_query(queries[0], cache)
+        print(f"    Keep query: {queries[0][:80]}...  -> {len(keep_ids)} patients")
+        subtract_ids: set[str] = set()
+        for q in queries[1:]:
+            ids = fetch_patient_ids_for_query(q, cache)
+            subtract_ids |= ids
+            print(f"    Subtract query: {q[:80]}...  -> {len(ids)} patients")
+        all_patient_ids = keep_ids - subtract_ids
+        print(f"    Set difference: {len(keep_ids)} keep - {len(subtract_ids)} subtract = {len(all_patient_ids)} final")
+    else:
+        for q in queries:
+            ids = fetch_patient_ids_for_query(q, cache)
+            all_patient_ids |= ids
+            print(f"    Query: {q[:100]}...  -> {len(ids)} patients")
 
     # For meds-only: exclude patients with the dx
     # For labs-only: exclude patients with the dx AND patients with the meds

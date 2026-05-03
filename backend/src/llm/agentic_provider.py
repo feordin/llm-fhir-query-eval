@@ -44,33 +44,87 @@ RESOURCE_TYPE_CORRECTIONS = {
 # ---------------------------------------------------------------------------
 
 AGENTIC_SYSTEM_PROMPT = """\
-You are a FHIR query expert with access to tools that let you inspect a live FHIR server and look up clinical codes via the NIH UMLS API.
+You are a FHIR query expert with access to tools that inspect a live FHIR server and look up clinical codes (NIH UMLS, VSAC value sets).
 
-Your goal: given a clinical data request in natural language, produce the most accurate FHIR REST API search query URL(s).
+Your goal: given a clinical data request in natural language, produce the most accurate FHIR REST API search query URL(s) — one or several depending on the cohort definition.
 
-WORKFLOW - follow these steps:
-1. Use `umls_search` to find the correct clinical codes (SNOMED CT, ICD-10, LOINC, RxNorm) for the concepts mentioned in the request.
-2. If needed, use `umls_crosswalk` to map codes between systems (e.g., RxNorm ingredient to SCD, or SNOMED to ICD-10-CM).
-3. Use `vsac_search_value_sets` to find curated value sets for the clinical concept (e.g., quality measure code lists for diabetes). Use `vsac_expand_value_set` to get all codes in a value set — this is more comprehensive than manual crosswalking.
-4. Use `vsac_lookup_code` to verify individual codes using FHIR-native system URIs.
-5. Use `vsac_check_subsumption` to check if a broader SNOMED code covers a narrower one, helping you choose the right code level.
-6. Use `fhir_resource_sample` to inspect what code systems and codes are actually present on the server for the relevant resource type(s).
-7. Construct a candidate FHIR query based on your findings.
-8. Use `fhir_search` to test your candidate query and verify it returns results.
-9. Refine if needed, then give your final answer.
+# Core principles (read these before each query)
 
-RESPONSE FORMAT:
-When you are done, respond with ONLY the FHIR query URL(s), one per line. Do NOT include the server base URL.
-Format: ResourceType?parameter=value&parameter=value
+1. **Real EHR data is multi-coded.** Conditions, Procedures, Observations, and MedicationRequests on most servers carry multiple codings simultaneously: SNOMED CT + ICD-10-CM + ICD-9-CM (legacy) + CPT (procedures) + RxNorm (meds). The same patient is usually retrievable via any of those systems. Sample the server BEFORE you commit to a single code system.
 
-Use proper code system URLs:
-- LOINC: http://loinc.org|<code>
-- SNOMED CT: http://snomed.info/sct|<code>
-- ICD-10-CM: http://hl7.org/fhir/sid/icd-10-cm|<code>
-- RxNorm: http://www.nlm.nih.gov/research/umls/rxnorm|<code>
+2. **Diseases-with-subtypes need code families, not single codes.** Cancer (e.g., colorectal cancer has 9 ICD-10 subcodes C18.0-C18.9), dementia (Alzheimer's, vascular, Lewy body, frontotemporal, unspecified — 4-5 SNOMED variants), diabetes (multiple ICD-10/SNOMED variants), heart failure (HFpEF vs HFrEF). A single-code query systematically misses 30-60% of the cohort. Use VSAC value-set expansion to get the full code family.
 
-Example final answer:
-Condition?code=http://snomed.info/sct|44054006
+3. **Provider-level cohorts span resource types.** PheKB-style cohorts often need Condition OR MedicationRequest OR Observation queries unioned, because real patients can be:
+   - "documented via dx only" (Condition)
+   - "treated but undocumented" (MedicationRequest with no Condition — outside-provider scripts)
+   - "lab-evidenced but undocumented" (Observation with no Condition — undiagnosed but consistently abnormal labs)
+   - "procedure-evidenced" (Procedure — e.g., AAA repair without active dx code)
+   For provider-level requests, emit multiple queries and let the runner union the patient sets.
+
+4. **Plan before you query.** Decompose the cohort definition first: dx (Condition), meds (MedicationRequest), labs (Observation), procedures (Procedure), patient filters (age/sex/encounter). State your decomposition mentally, then execute.
+
+5. **Iterate: query → count → refine.** If a query returns 0, your code list is too narrow — search for subtypes/synonyms. If implausibly large (millions), you missed a clinical filter (category, encounter type, age guard). Sample 2-3 returned resources to confirm their codings match what you intended.
+
+# Recommended workflow
+
+The order matters — VSAC and server-sampling are cheap and often eliminate steps further down.
+
+A. **`vsac_search_value_sets`** — for any well-known disease, treatment, or measure (T2D, AAA, heart failure, sepsis, COPD, etc.), an authoritative VSAC quality-measure value set probably exists. Find it first. `vsac_expand_value_set` returns the complete code list (all subtypes, all systems). This replaces 80% of manual code lookup.
+B. **`fhir_server_metadata`** — surfaces FHIR version, supported profiles, and any Implementation Guides loaded (e.g., US Core 6.1.0). If US Core is loaded, expect Conditions to carry both SNOMED + ICD-10-CM and use `Condition.category=problem-list-item`.
+C. **`fhir_resource_sample`** — for each resource type you'll query, sample 3 actual records to see which code systems are populated. This tells you whether the server has ICD-10 coding, SNOMED, or both for the relevant concept.
+D. **`umls_search`** + **`umls_crosswalk`** — fall back here only when no VSAC value set covers the concept (rare phenotypes, custom IGs).
+E. **`vsac_check_subsumption`** — confirm a broader SNOMED code covers narrower subtypes (helpful when deciding between parent vs subcode list).
+F. **Construct the query** with the right resource type(s) and code list.
+G. **`fhir_search`** with `_summary=count` first to validate magnitude. Then a small page to sample codings on the matches. Refine if needed.
+
+# Common patterns to remember
+
+**Code-system URIs (use these EXACTLY):**
+- SNOMED CT: `http://snomed.info/sct`
+- ICD-10-CM: `http://hl7.org/fhir/sid/icd-10-cm`
+- ICD-9-CM: `http://hl7.org/fhir/sid/icd-9-cm`
+- LOINC: `http://loinc.org`
+- RxNorm: `http://www.nlm.nih.gov/research/umls/rxnorm`
+- CPT: `http://www.ama-assn.org/go/cpt`
+
+**Single-resource patterns:**
+- Multi-code (any-of within one system): `Condition?code=http://snomed.info/sct|44054006,http://snomed.info/sct|73211009`
+- Cross-system (alternate codings of same concept): `Condition?code=http://snomed.info/sct|44054006,http://hl7.org/fhir/sid/icd-10-cm|E11.9`
+- Lab with threshold: `Observation?code=http://loinc.org|4548-4&value-quantity=ge6.5||%25` (HbA1c ≥ 6.5%)
+- Lab with threshold (mg/dL): `Observation?code=http://loinc.org|2160-0&value-quantity=ge2.0||mg/dL`
+
+**Patient-level filters via chained search:**
+- Sex-specific: `Condition?code=...&patient.gender=female`
+- Age-restricted (pediatric, born after a date): `Condition?code=...&patient.birthdate=gt2010-01-01`
+- Combined: `MedicationRequest?code=...&patient.gender=female&patient.birthdate=ge1955-01-01`
+
+**Cross-resource queries (for ALL-of cohort definitions):**
+- `_has` reverse chain (find patients meeting multiple resource criteria):
+  `Patient?_has:Condition:patient:code=http://snomed.info/sct|44054006&_has:MedicationRequest:patient:code=http://www.nlm.nih.gov/research/umls/rxnorm|860975`
+- `_include` / `_revinclude` to bundle related resources alongside the primary results.
+
+**Negation / exclusion (FHIR has no NOT EXISTS):**
+- Run two queries (inclusion set, exclusion set) and emit both — set difference happens client-side.
+- Example: "Crohn's biologics without a Crohn's diagnosis" =
+  Query 1: `MedicationRequest?code=<biologic codes>` (the inclusion set)
+  Query 2: `Condition?code=<crohn codes>` (the exclusion set, to remove from the patient set above)
+
+# Response format
+
+When done, respond with ONLY the FHIR query URL(s), one per line. No prose, no explanation in the final answer.
+Format: `ResourceType?parameter=value&parameter=value`
+
+For multi-query / multi-resource cohort definitions, output one URL per line. The evaluator will union (or subtract, for negation cases) the patient sets.
+
+Example final answers:
+
+Single-resource:
+Condition?code=http://snomed.info/sct|44054006,http://snomed.info/sct|73211009,http://hl7.org/fhir/sid/icd-10-cm|E11.9
+
+Multi-resource union (provider-level cohort):
+Condition?code=http://snomed.info/sct|44054006,http://hl7.org/fhir/sid/icd-10-cm|E11.9
+MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6809
+Observation?code=http://loinc.org|4548-4&value-quantity=ge6.5||%25
 """
 
 
@@ -370,12 +424,35 @@ class OllamaAgenticProvider(LLMProvider):
         fhir_base_url: str = "http://localhost:8080/fhir",
         max_iterations: int = 10,
         request_timeout: int = 30,
+        tier: int = 2,
     ):
         self.model = model
         self.fhir_base_url = fhir_base_url.rstrip("/")
         self.max_iterations = max_iterations
         self.request_timeout = request_timeout
+        self.tier = tier
+        self.verify_ssl = not self.fhir_base_url.lower().startswith("https://")
+        if not self.verify_ssl:
+            import urllib3
+            urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
         self.tool_trace: List[Dict[str, Any]] = []
+        self._system_prompt = self._build_system_prompt()
+
+    def _build_system_prompt(self) -> str:
+        """Compose the system prompt. In Tier 3 mode, prepend the methodology skill."""
+        if self.tier >= 3:
+            from pathlib import Path
+            methodology_path = Path(__file__).parent / "tier3_methodology.md"
+            if methodology_path.exists():
+                methodology = methodology_path.read_text(encoding="utf-8")
+                return (
+                    "# Tier 3 Phenotype Methodology\n\n"
+                    "Apply the playbooks below to recognize the phenotype category and choose strategy.\n\n"
+                    + methodology
+                    + "\n\n---\n\n# Base FHIR Query Construction Rules\n\n"
+                    + AGENTIC_SYSTEM_PROMPT
+                )
+        return AGENTIC_SYSTEM_PROMPT
 
     # ------------------------------------------------------------------
     # Public interface (matches LLMProvider base class)
@@ -390,7 +467,7 @@ class OllamaAgenticProvider(LLMProvider):
             user_content = f"{context}\n\n{prompt}"
 
         messages: List[Dict[str, Any]] = [
-            {"role": "system", "content": AGENTIC_SYSTEM_PROMPT},
+            {"role": "system", "content": self._system_prompt},
             {"role": "user", "content": user_content},
         ]
 
@@ -532,28 +609,47 @@ class OllamaAgenticProvider(LLMProvider):
     # ------------------------------------------------------------------
 
     def _tool_fhir_server_metadata(self) -> Dict[str, Any]:
-        """Return a concise summary of the FHIR server CapabilityStatement."""
+        """Return a concise summary of the FHIR server CapabilityStatement.
+
+        Extracts the bits that matter for query construction:
+          - fhirVersion / status / software
+          - implementationGuide URIs (which IGs are loaded — e.g. US Core)
+          - per-resource: supportedProfile (which IG profiles apply) and
+            searchParam names (capped). Resources without searchParams are
+            still listed so the LLM knows they exist.
+        """
         url = f"{self.fhir_base_url}/metadata"
-        resp = requests.get(url, headers={"Accept": "application/fhir+json"}, timeout=self.request_timeout)
+        resp = requests.get(url, headers={"Accept": "application/fhir+json"}, timeout=self.request_timeout, verify=self.verify_ssl)
         resp.raise_for_status()
         cap = resp.json()
 
-        # Extract a concise summary instead of returning the full (huge) document
         resources_summary = []
         for rest in cap.get("rest", []):
             for resource in rest.get("resource", []):
                 rtype = resource.get("type", "")
+                supported_profiles = resource.get("supportedProfile", []) or []
                 search_params = [sp.get("name") for sp in resource.get("searchParam", [])]
-                resources_summary.append({
+                entry = {
                     "type": rtype,
-                    "searchParams": search_params[:15],  # cap to keep it small
-                })
+                    "searchParams": search_params[:15],
+                }
+                if supported_profiles:
+                    # Trim each profile URI to the last path segment for compactness
+                    entry["supportedProfile"] = [p.rsplit("/", 1)[-1] for p in supported_profiles]
+                resources_summary.append(entry)
 
+        software = cap.get("software", {}) or {}
         return {
             "fhirVersion": cap.get("fhirVersion", "unknown"),
             "status": cap.get("status", "unknown"),
+            "software": {
+                "name": software.get("name"),
+                "version": software.get("version"),
+            },
+            "implementationGuides": cap.get("implementationGuide", []) or [],
+            "instantiates": cap.get("instantiates", []) or [],
             "resourceCount": len(resources_summary),
-            "resources": resources_summary[:30],  # limit to 30 most common
+            "resources": resources_summary[:30],
         }
 
     def _tool_fhir_search(self, query: str) -> Dict[str, Any]:
@@ -570,7 +666,7 @@ class OllamaAgenticProvider(LLMProvider):
 
         url = f"{self.fhir_base_url}/{query}"
 
-        resp = requests.get(url, headers={"Accept": "application/fhir+json"}, timeout=self.request_timeout)
+        resp = requests.get(url, headers={"Accept": "application/fhir+json"}, timeout=self.request_timeout, verify=self.verify_ssl)
         if resp.status_code != 200:
             return {
                 "error": f"HTTP {resp.status_code}",
@@ -612,7 +708,7 @@ class OllamaAgenticProvider(LLMProvider):
 
         url = f"{self.fhir_base_url}/{resource_type}?_count={count}"
 
-        resp = requests.get(url, headers={"Accept": "application/fhir+json"}, timeout=self.request_timeout)
+        resp = requests.get(url, headers={"Accept": "application/fhir+json"}, timeout=self.request_timeout, verify=self.verify_ssl)
         if resp.status_code != 200:
             return {
                 "error": f"HTTP {resp.status_code}",
