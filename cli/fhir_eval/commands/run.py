@@ -23,10 +23,12 @@ from src.api.models.test_case import TestCase
 @click.option("--command", "-c", default=None, help="Command for 'command' provider (e.g., 'ollama run llama3')")
 @click.option("--fhir-url", default="http://localhost:8080", help="FHIR server base URL")
 @click.option("--output-dir", "-o", default="results", help="Directory to save results")
-@click.option("--prompt-variant", default="naive", type=click.Choice(["naive", "expert"]),
-              help="Which prompt variant to use (default: naive)")
+@click.option("--prompt-variant", default="naive", type=click.Choice(["naive", "broad", "expert"]),
+              help="Which prompt variant to use (default: naive). 'broad' is mid-tier — clinical hints without code-level guidance.")
+@click.option("--tier", default=2, type=click.IntRange(1, 3),
+              help="Evaluation tier (only meaningful for ollama-agentic provider). 1=closed-book, 2=tools, 3=tools+methodology skill (default: 2)")
 @click.option("--verbose", "-v", is_flag=True, help="Verbose logging")
-def run(test_case, provider, model, command, fhir_url, output_dir, prompt_variant, verbose):
+def run(test_case, provider, model, command, fhir_url, output_dir, prompt_variant, tier, verbose):
     """Run FHIR query evaluation against an LLM.
 
     Examples:
@@ -58,7 +60,13 @@ def run(test_case, provider, model, command, fhir_url, output_dir, prompt_varian
 
     # Step 2: Check FHIR server
     click.echo(f"\n[2/5] Checking FHIR server at {fhir_url}...")
-    fhir_client = FHIRClient(base_url=fhir_url)
+    is_https = fhir_url.lower().startswith("https://")
+    is_root_mounted = is_https or ":8443" in fhir_url
+    fhir_client = FHIRClient(
+        base_url=fhir_url,
+        fhir_version="" if is_root_mounted else "fhir",
+        verify_ssl=not is_https,
+    )
     if not fhir_client.health_check():
         click.echo("  ERROR: FHIR server not responding!")
         click.echo("  Start it with: docker-compose up -d fhir-candle")
@@ -81,10 +89,18 @@ def run(test_case, provider, model, command, fhir_url, output_dir, prompt_varian
         if command:
             kwargs["command"] = command
         if provider == "ollama-agentic":
-            # Pass FHIR URL (with /fhir suffix) to the agentic provider
-            agentic_fhir = fhir_url.rstrip("/") + "/fhir" if not fhir_url.rstrip("/").endswith("/fhir") else fhir_url
+            # HAPI mounts FHIR at /fhir; Microsoft FHIR Server mounts it at root.
+            # Detect Microsoft FHIR via https or :8443 and skip the /fhir suffix.
+            base = fhir_url.rstrip("/")
+            is_root_mounted = base.lower().startswith("https://") or ":8443" in base
+            if is_root_mounted or base.endswith("/fhir"):
+                agentic_fhir = base
+            else:
+                agentic_fhir = base + "/fhir"
             kwargs["fhir_url"] = agentic_fhir
-            click.echo(f"  Agentic mode: tools enabled, FHIR endpoint: {agentic_fhir}")
+            kwargs["tier"] = tier
+            tier_label = {1: "closed-book", 2: "tools-assisted", 3: "tools+methodology"}[tier]
+            click.echo(f"  Agentic mode (Tier {tier} — {tier_label}): tools enabled, FHIR endpoint: {agentic_fhir}")
         llm = get_provider(provider, model=model, **kwargs)
         model_name = model or provider
         click.echo(f"  Provider: {provider}, Model: {model_name}")

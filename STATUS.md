@@ -135,7 +135,17 @@ The audit at `docs/PHENOTYPE-AUDIT.md` classifies 63 phenotypes as **T1-signific
 - Batch 32: abdominal-aortic-aneurysm (multi-coded via code-augmentation pipeline — SNOMED + ICD-10 + ICD-9 + CPT); ace-inhibitor-cough (PheKB has no codes — doc-reviewed); acute-kidney-injury (PheKB's only code already in module — doc-reviewed)
 - Batch 33: adhd (multi-coded SNOMED + ICD-10 F90.x + ICD-9 314.x); appendicitis (multi-coded SNOMED + ICD-10 K35.x + ICD-9 540); anxiety (PheKB has no extracted codes — doc-reviewed)
 - Batch 34: asthma (multi-coded SNOMED + ICD-10 J45.x + ICD-9 493.x); atopic-dermatitis (multi-coded SNOMED + ICD-10 L20.9/L30.9 + ICD-9 691.8/692.9); autism (multi-coded SNOMED + ICD-10 F84.0/F84.5/F84.9 + ICD-9 299.x)
-- Batch 35 (PARTIAL — HAPI restart needed): bph + breast-cancer + ca-mrsa modules augmented (codes added to bundles), but reload to HAPI blocked by 36-hour uptime. After restart: `for p in bph breast-cancer ca-mrsa; do fhir-eval load synthea --fhir-url http://localhost:8080 --phenotype $p; python scripts/validate_phenotype_test_cases.py $p; done`. Augmentation map cleanup also done: replaced bad auto-populator matches for Crohn's (was Reiter's-disease 099.3 → now K50.x/555.x), carotid 233259003 (was dx 433.1 → now CPT 37215 stent), and diverticulitis (removed non-FHIR HICDA system).
+- Batch 35: bph (multi-coded SNOMED + ICD-10 N40.0 + ICD-9 600.00, plus CPT 52601 TURP); breast-cancer (multi-coded SNOMED + ICD-10 C50.91x + ICD-9 174.x — replaced bad auto-populator V10.3 history-of-cancer entry); ca-mrsa (multi-coded SNOMED + ICD-10 A49.02 + ICD-9 041.12 — replaced too-narrow pneumonia 482.42 entry). Augmentation map cleanup also done: replaced bad auto-populator matches for Crohn's (was Reiter's-disease 099.3 → now K50.x/555.x), carotid 233259003 (was dx 433.1 → now CPT 37215 stent), diverticulitis (removed non-FHIR HICDA system entry → now K57.92).
+- Batch 36: carotid-atherosclerosis (64586002 → ICD-10 I65.29 + ICD-9 433.1; 233259003 → CPT 37215); chronic-rhinosinusitis (40055000 → ICD-10 J32.9 + ICD-9 473.9); ckd (5 SNOMED stages → ICD-10 N18.x + ICD-9 585.x family).
+- Batch 37: colorectal-cancer (5 SNOMEDs → C18.x/C19); coronary-heart-disease (5 dx SNOMEDs → I25.x; 4 procedure SNOMEDs → CPT 33533/92928/92920); crohns-disease (5 SNOMEDs → K50.x + 555.x).
+- Batch 38: dementia (Alzheimer's → G30.9, vascular → F01.50, frontotemporal → G31.09, Lewy body → G31.83, general → F03.90 — replaced bad auto-populator 290.10 entries); depression (5 SNOMEDs → F32.A/F33.9/F32.9/F34.1 + 311/296.x/300.4); diabetic-retinopathy (5 dx SNOMEDs → E11.319/E11.329/E11.359/E11.311; fundoscopy → CPT 92250).
+- Batch 39: diverticulitis (already done batch 36); epilepsy (5 SNOMEDs → G40.x/R56.9; EEG → CPT 95816); familial-hypercholesterolemia (5 SNOMEDs → E78.01).
+- Batch 40: functional-seizures (191714002 → F44.5 + 300.11); gerd (3 SNOMEDs → K21.9 + 530.81); heart-failure (5 SNOMEDs → I50.x + 428.x — replaced bad 428.X wildcard).
+- Batches 41-49 (bulk): herpes-zoster, hiv (4 SNOMEDs), hypertension (5 SNOMEDs → I10), intellectual-disability, lung-cancer (3 SNOMEDs), migraine (5 SNOMEDs — replaced wildcards), multiple-sclerosis (5 SNOMEDs → G35), nafld (5 SNOMEDs → K75.81/K76.0), ovarian-cancer (5 dx + 2 procedure SNOMEDs), peanut-allergy, peripheral-arterial-disease (5 SNOMEDs → I73.9), pneumonia (5 dx SNOMEDs + chest X-ray CPT), prostate-cancer (5 dx + biopsy CPT 55700), severe-childhood-obesity (5 SNOMEDs), sickle-cell-disease (3 SNOMEDs → D57.x), steroid-induced-avn, systemic-lupus-erythematosus (5 SNOMEDs → M32.x), type-1-diabetes (5 SNOMEDs → E10.x — replaced wildcard), type-2-diabetes (3 SNOMEDs → E11.x — replaced wildcard), urinary-incontinence, venous-thromboembolism (5 SNOMEDs → I82.x/I26.99 — replaced wildcards).
+
+**Augmentation map total: 314 entries** across all 48 T1 revision phenotypes. All 33 remaining phenotypes augmented + reloaded to Microsoft FHIR (background job, ~hours). Final validation step: `for p in <slug>; do FHIR_BASE=https://localhost:8443 python scripts/validate_phenotype_test_cases.py $p; done` after reload completes.
+
+**Migrated from HAPI to Microsoft Health FHIR Server (2026-05-01)**: Persistent HAPI instability under rapid sequential loads led to switching to the Microsoft OSS FHIR Server (`healthcareapis/r4-fhir-server:latest`, port 8443 HTTPS, SQL Server backed). Required `FhirServer__Security__Enabled=false`, `FhirServer__Bundle__EntryLimit=5000`, and placeholder `FhirServer__Security__Authentication__Authority` env vars; commented out `TestAuthEnvironment__FilePath` to avoid auth-provider DI errors. Patched `backend/src/fhir/client.py` (added `verify_ssl` param + auto-detect Microsoft FHIR's root-mounted endpoint when port 8443 / https URL), `cli/fhir_eval/commands/load.py` (added `--insecure` and `--fhir-path` flags), and `scripts/validate_phenotype_test_cases.py` (reads `FHIR_BASE` env var). Reload commands now use `--fhir-url https://localhost:8443` and `FHIR_BASE=https://localhost:8443`. Full reload of all 108 phenotypes completed clean (20,206 patients, 0 errors).
 
 **Code-augmentation pipeline (new 2026-05-01)**: Synthea's FHIR exporter only emits the first coding per resource, so multi-system codes can't be added directly to modules. New pipeline:
 - `data/code_augmentations.json` — SNOMED-keyed crosswalk map
@@ -144,7 +154,56 @@ The audit at `docs/PHENOTYPE-AUDIT.md` classifies 63 phenotypes as **T1-signific
 
 Workflow becomes: synthea generate → augment_fhir_codes.py → fhir-eval load → validate.
 
-**Still pending revision (39 phenotypes)** — work tracked in task #167. Apply the `phenotype_workflow` skill (`.claude/skills/phenotype_workflow/SKILL.md`) to each: read PheKB doc → run augmentor → regenerate Synthea data → reload HAPI → revalidate.
+### Agentic-loop improvements TODO (insights from Tier 1 sweep)
+
+10 insights from designing 108 phenotypes + 314 augmentation entries that should reshape the agentic loop. Priority 1 + 2 done 2026-05-03; the rest are queued.
+
+- [x] **#1 — Multi-coded data is the rule.** Bake into system prompt: real Conditions/Procedures/Observations carry SNOMED + ICD-10 + ICD-9 + CPT simultaneously; sample server before committing to a code system. Done in `agentic_provider.py` system prompt.
+- [x] **#2 — Code-family enumeration via VSAC.** System prompt now elevates `vsac_search_value_sets` + `vsac_expand_value_set` to the canonical first step; calls out cancers/dementias/diabetes as needing full subtype lists.
+- [x] **#3 — Multi-resource union for provider-level cohorts.** Decomposition step (Condition/MedicationRequest/Observation/Procedure) added to system prompt with explicit "documented via dx only / treated but undocumented / lab-evidenced / procedure-evidenced" framing.
+- [x] **#4 — Threshold logic on Observations.** `value-quantity` examples (`ge6.5||%25`, `ge2.0||mg/dL`) now in system prompt.
+- [x] **#5 — Patient-level filters via chained search.** Examples for `patient.gender`, `patient.birthdate` in system prompt.
+- [x] **#6 — Negation and exclusion via two-query subtraction.** Done 2026-05-03. Runner-side support was already wired (`evaluate_multi_query_patient_difference` in `backend/src/evaluation/execution.py`, dispatched via `metadata.negation` flag in `runner.py:160`). What was missing: the validator script (`scripts/validate_phenotype_test_cases.py`) was applying union semantics to ALL multi-query cases, including negation ones, so refreshed `expected_patient_ids` were computed via union instead of difference. Patched validator to honor `negation: true` and apply set difference. Re-validated 4 negation test cases against Microsoft FHIR: Crohn's biologic-without-dx (19 patients), sleep-apnea polysom-without-dx (2), T1D insulin-without-dx (4), VTE anticoag-without-dx (106). Runner pathway and validator now match — LLM evaluation against these tests will score correctly.
+- [x] **#7 — Cross-resource references (`_has`, `_include`, `_revinclude`).** Examples added to system prompt. The 5 cross-resource test cases should be exercisable now.
+- [x] **#8 — VSAC-before-UMLS strategy.** Workflow reordered: VSAC first, sample data second, UMLS only as fallback for rare phenotypes.
+- [x] **#9 — Iterate: query → count → refine.** "Core principles" section in system prompt explicitly instructs sample-and-validate.
+- [x] **#10 — Tier 3 phenotype methodology skill.** Done 2026-05-03. `backend/src/llm/tier3_methodology.md` written — 12 playbooks covering disease-with-subtypes, PGx, pediatric/sex-restricted, iatrogenic, procedural, threshold-based, multi-system PheKB code lists, acute/temporal, negation, cross-resource AND, and cohort-vs-case decisions. Plus a categorization decision tree and a worked T2D example. Agentic provider now accepts a `tier` kwarg (default 2); `tier=3` prepends the methodology to the system prompt. CLI `--tier` flag added to `fhir-eval run`.
+
+**Test matrix (3 prompts × 3 tiers × 3 data tracks × N models):**
+- Prompt variants: `naive` / `broad` / `expert` — `broad` now unlocked in CLI as of 2026-05-03 (was previously only naive/expert).
+- Tiers: 1 (closed book, `provider.py`), 2 (agentic with tools, `agentic_provider.py`), 3 (agentic + IG-aware reading + methodology skill — pending #10).
+- Data tracks: Synthea Generic (current default), Synthea US Core variant (planned `*_uscore.json` modules), MIMIC-IV (planned).
+
+### Known: Reload duplicates on Microsoft FHIR
+
+Synthea transaction bundles use POST with relative URLs, not PUT-with-ID. Each reload creates NEW resources on Microsoft FHIR rather than upserting. Validation still produces correct unique-patient counts because the validator maps HAPI patient IDs back to the stable Synthea UUIDs via `Patient.identifier`, so duplicates collapse. But raw resource counts accumulate (e.g., AAA shows 46 Conditions for 23 unique patients after 2 reloads).
+
+Two paths to clean this up later:
+- Wipe phenotype resources before each reload (`DELETE` by Patient compartment)
+- Switch to `$import` (which has deduplication via `ImportMode=IncrementalLoad`) — see TODO below
+
+For now, accept the duplication during the revision sweep — validation still works correctly.
+
+### TODO: Bulk-load via Microsoft FHIR `$import` + Azurite (next reload)
+
+Switched from HAPI to the Microsoft Health FHIR Server (image `healthcareapis/r4-fhir-server:latest`, port 8443 HTTPS, SQL-backed). Reliable but slow on transaction-bundle ingest — ~10-12 hrs to reload all 108 phenotypes via per-bundle POSTs (SQL Server pegged at 95% CPU during ingest).
+
+For future full reloads, use `$import`:
+1. Convert augmented Synthea bundles to **NDJSON shards per resource type** (Patient.ndjson, Condition.ndjson, Procedure.ndjson, MedicationRequest.ndjson, Observation.ndjson, etc.) — one resource per line.
+2. Upload shards to the Azurite blob container (already running at port 10000, env var `STORAGE_ACCOUNT_CONNECTION=UseDevelopmentStorage=true`).
+3. POST a `Parameters` resource to `https://localhost:8443/$import` referencing the shard URLs. Microsoft FHIR runs the import async, returns a status URL to poll.
+4. Bulk import bypasses the per-bundle transaction overhead — typically 10x+ faster than `fhir-eval load synthea`.
+
+Tooling needed (build before next reload):
+- `scripts/synthea_to_ndjson.py` — walk `synthea/output/*/{positive,control}/fhir/*.json`, group entries by resourceType, emit shard files
+- `scripts/upload_ndjson_to_azurite.py` — push shards to local Azurite container
+- `scripts/import_ndjson_to_fhir.py` — orchestrate the `$import` request + status polling
+
+Reference: https://learn.microsoft.com/en-us/azure/healthcare-apis/fhir/configure-import-data and the `microsoft/fhir-server` repo `samples/` for `$import` request format.
+
+**State-B PheKB extraction (2026-05-02)** — 6 previously-unanalyzed phenotypes (`atrial-fibrillation-demonstration-project`, `cardiac-conduction-qrs`, `cataracts`, `clostridium-difficile-colitis`, `hypothyroidism`, `rheumatoid-arthritis-demonstration-project`) had their PheKB algorithm `.doc` files extracted via Claude streaming (`scripts/extract_phekb_doc_analysis.py`). 836 new PheKB-listed codes captured. State A is now 69/108 (was 63), State B is 0. 5 of 6 picked up new augmentation entries (cardiac-conduction-qrs already covered). 22 test cases re-validated post-reload, all pass. Doc audit at `docs/PHENOTYPE-DOC-AUDIT.md`.
+
+**Tier 1 revision sweep COMPLETE (2026-05-02)** — task #167 closed. All 48 T1 phenotypes augmented with PheKB-doc-derived ICD-10/ICD-9/CPT codings. Final validation: 113 test cases across 30 batch-38-49 phenotypes all pass on Microsoft FHIR; 18 batch-32-37 phenotypes validated incrementally during the sweep. Total augmentation map: 314 SNOMED-keyed entries. Workflow established (`scripts/build_code_augmentations.py` + `scripts/augment_fhir_codes.py` + `data/code_augmentations.json`) is reusable for future PheKB-doc-first phenotypes added to the suite.
 
 | # | Phenotype | PheKB raw dir | PheKB code count | Thresholds? | Temporal? |
 |---|---|---|---|---|---|
