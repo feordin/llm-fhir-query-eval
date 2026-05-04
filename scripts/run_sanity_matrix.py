@@ -9,14 +9,25 @@ Tier 2 = tools-assisted (OllamaAgenticProvider with tier=2)
 Tier 3 = tools + methodology (OllamaAgenticProvider with tier=3)
 
 Usage:
+    # Full matrix:
     python scripts/run_sanity_matrix.py \\
         --test-case phekb-crohns-disease-biologic-without-dx \\
         --model phi4 \\
         --fhir-url https://localhost:8443
+
+    # Internal: run a single cell (called by the matrix as a subprocess for hard timeout):
+    python scripts/run_sanity_matrix.py \\
+        --test-case <id> --model <m> --fhir-url <url> \\
+        --single-cell --cell-tier 2 --cell-variant naive --cell-out /tmp/cell.json
+
+Per-cell wall-clock timeout: 5 minutes (configurable with --cell-timeout-sec).
+On timeout the cell is recorded as error="timeout" and the matrix moves on.
 """
 from __future__ import annotations
 import argparse
 import json
+import os
+import subprocess
 import sys
 import time
 from datetime import datetime
@@ -33,6 +44,9 @@ from src.api.models.test_case import TestCase  # noqa: E402
 PROMPT_VARIANTS = ["naive", "broad", "expert"]
 TIERS = [1, 2, 3]
 
+# Reduce the agent's spin ceiling to keep cells bounded
+AGENT_MAX_ITERATIONS = 8
+
 
 def load_test_case(tc_id: str) -> TestCase:
     tc_path = REPO / "test-cases" / "phekb" / f"{tc_id}.json"
@@ -44,26 +58,17 @@ def load_test_case(tc_id: str) -> TestCase:
 
 
 def make_provider(tier: int, model: str, fhir_url: str):
-    """Build the right provider for the given tier."""
     if tier == 1:
-        # Closed book: CommandProvider running `ollama run <model>`
-        return get_provider(
-            "command",
-            command=f"ollama run {model}",
-        )
-    # Tier 2 + 3 use the agentic provider; tier kwarg controls methodology loading
+        return get_provider("command", command=f"ollama run {model}")
     base = fhir_url.rstrip("/")
     is_root_mounted = base.lower().startswith("https://") or ":8443" in base
-    if is_root_mounted or base.endswith("/fhir"):
-        agentic_fhir = base
-    else:
-        agentic_fhir = base + "/fhir"
+    agentic_fhir = base if (is_root_mounted or base.endswith("/fhir")) else base + "/fhir"
     return get_provider(
         "ollama-agentic",
         model=model,
         fhir_url=agentic_fhir,
         tier=tier,
-        max_iterations=12,
+        max_iterations=AGENT_MAX_ITERATIONS,
     )
 
 
@@ -77,15 +82,103 @@ def make_fhir_client(fhir_url: str) -> FHIRClient:
     )
 
 
+def run_one_cell(tc_id: str, tier: int, variant: str, model: str, fhir_url: str) -> dict:
+    """Execute a single (tier, variant) cell and return the result dict.
+
+    Called both directly (in --single-cell mode by the subprocess) and from
+    the matrix orchestrator below.
+    """
+    tc = load_test_case(tc_id)
+    fhir_client = make_fhir_client(fhir_url)
+    cell = {"tier": tier, "prompt_variant": variant}
+    t0 = time.time()
+    try:
+        provider = make_provider(tier, model, fhir_url)
+        runner = EvaluationRunner(fhir_client, provider)
+        cell_prompt_text = tc.get_prompt(variant)
+        cell_tc = tc.model_copy(update={
+            "prompt": cell_prompt_text,
+            "prompts": {"naive": cell_prompt_text},
+        })
+        result = runner.run_single(cell_tc, provider_name="ollama", model_name=model)
+        exec_r = result.evaluation_results.execution_match
+        cell.update({
+            "elapsed_sec": round(time.time() - t0, 1),
+            "passed": exec_r.passed,
+            "precision": exec_r.precision,
+            "recall": exec_r.recall,
+            "f1": exec_r.f1_score,
+            "expected_count": exec_r.expected_count,
+            "actual_count": exec_r.actual_count,
+        })
+    except Exception as e:
+        cell.update({
+            "elapsed_sec": round(time.time() - t0, 1),
+            "error": str(e)[:200],
+        })
+    return cell
+
+
+def run_cell_subprocess(tc_id: str, tier: int, variant: str, model: str,
+                        fhir_url: str, timeout_sec: int) -> dict:
+    """Run a single cell in a subprocess with a hard wall-clock timeout."""
+    out_dir = REPO / "results"
+    out_dir.mkdir(exist_ok=True)
+    cell_out = out_dir / f"_cell_tmp_{os.getpid()}_{tier}_{variant}.json"
+    cmd = [
+        sys.executable, str(Path(__file__).resolve()),
+        "--test-case", tc_id,
+        "--model", model,
+        "--fhir-url", fhir_url,
+        "--single-cell",
+        "--cell-tier", str(tier),
+        "--cell-variant", variant,
+        "--cell-out", str(cell_out),
+    ]
+    cell = {"tier": tier, "prompt_variant": variant}
+    t0 = time.time()
+    try:
+        subprocess.run(cmd, timeout=timeout_sec, check=False,
+                       capture_output=True, text=True)
+        if cell_out.exists():
+            with cell_out.open(encoding="utf-8") as f:
+                cell = json.load(f)
+            cell_out.unlink()
+        else:
+            cell["elapsed_sec"] = round(time.time() - t0, 1)
+            cell["error"] = "subprocess produced no output (likely crashed before writing)"
+    except subprocess.TimeoutExpired:
+        cell["elapsed_sec"] = timeout_sec
+        cell["error"] = f"timeout after {timeout_sec}s — cell killed"
+        try:
+            cell_out.unlink()
+        except FileNotFoundError:
+            pass
+    return cell
+
+
 def main() -> int:
     p = argparse.ArgumentParser()
     p.add_argument("--test-case", "-t", required=True)
     p.add_argument("--model", default="phi4")
     p.add_argument("--fhir-url", default="https://localhost:8443")
-    p.add_argument("--tiers", default="1,2,3", help="Comma-separated tiers to run (default: 1,2,3)")
-    p.add_argument("--prompt-variants", default="naive,broad,expert",
-                   help="Comma-separated prompt variants (default: naive,broad,expert)")
+    p.add_argument("--tiers", default="1,2,3")
+    p.add_argument("--prompt-variants", default="naive,broad,expert")
+    p.add_argument("--cell-timeout-sec", type=int, default=300,
+                   help="Per-cell wall-clock timeout (default: 300 = 5 min)")
+    # Internal flags for the subprocess single-cell mode
+    p.add_argument("--single-cell", action="store_true", help=argparse.SUPPRESS)
+    p.add_argument("--cell-tier", type=int, help=argparse.SUPPRESS)
+    p.add_argument("--cell-variant", help=argparse.SUPPRESS)
+    p.add_argument("--cell-out", help=argparse.SUPPRESS)
     args = p.parse_args()
+
+    if args.single_cell:
+        cell = run_one_cell(args.test_case, args.cell_tier, args.cell_variant,
+                            args.model, args.fhir_url)
+        with open(args.cell_out, "w", encoding="utf-8") as f:
+            json.dump(cell, f, indent=2)
+        return 0
 
     tiers = [int(t) for t in args.tiers.split(",")]
     variants = args.prompt_variants.split(",")
@@ -99,46 +192,21 @@ def main() -> int:
     print(f"Tiers: {tiers}, Prompt variants: {variants}")
     print(f"Negation test: {tc.metadata.negation}")
     print(f"Expected patient count: {len(tc.test_data.expected_patient_ids)}")
+    print(f"Per-cell timeout: {args.cell_timeout_sec}s | Agent max iterations: {AGENT_MAX_ITERATIONS}")
     print()
 
     results = []
     for tier in tiers:
         for variant in variants:
-            cell = {"tier": tier, "prompt_variant": variant}
             label = f"T{tier} | {variant:6s}"
             print(f"--- {label} starting...", flush=True)
-            t0 = time.time()
-            try:
-                provider = make_provider(tier, args.model, args.fhir_url)
-                runner = EvaluationRunner(fhir_client, provider)
-                # Override the prompt variant the runner uses
-                # The runner calls test_case.get_prompt() — which defaults to "naive".
-                # We monkey-patch by overriding get_prompt on this instance.
-                original_get_prompt = tc.get_prompt
-                tc.get_prompt = lambda v=variant: original_get_prompt(v)  # type: ignore
-                try:
-                    result = runner.evaluate(tc, provider_name="ollama", model_name=args.model)
-                finally:
-                    tc.get_prompt = original_get_prompt  # type: ignore
-
-                exec_r = result.execution_result
-                cell.update({
-                    "elapsed_sec": round(time.time() - t0, 1),
-                    "passed": exec_r.passed,
-                    "precision": exec_r.precision,
-                    "recall": exec_r.recall,
-                    "f1": exec_r.f1_score,
-                    "expected_count": exec_r.expected_count,
-                    "actual_count": exec_r.actual_count,
-                })
-                print(f"    {label} -> P={exec_r.precision} R={exec_r.recall} F1={exec_r.f1_score} "
-                      f"(expected={exec_r.expected_count}, got={exec_r.actual_count}, {cell['elapsed_sec']}s)")
-            except Exception as e:
-                cell.update({
-                    "elapsed_sec": round(time.time() - t0, 1),
-                    "error": str(e)[:200],
-                })
-                print(f"    {label} -> ERROR: {str(e)[:200]}")
+            cell = run_cell_subprocess(tc.id, tier, variant, args.model,
+                                       args.fhir_url, args.cell_timeout_sec)
+            if "f1" in cell:
+                print(f"    {label} -> P={cell['precision']} R={cell['recall']} F1={cell['f1']} "
+                      f"(expected={cell['expected_count']}, got={cell['actual_count']}, {cell['elapsed_sec']}s)")
+            else:
+                print(f"    {label} -> ERROR: {cell.get('error','')[:200]}")
             results.append(cell)
 
     # Summary
@@ -152,7 +220,6 @@ def main() -> int:
         else:
             print(f"T{r['tier']:<5} {r['prompt_variant']:<8} ERROR: {r.get('error','')[:60]}")
 
-    # Save full report
     out_dir = REPO / "results"
     out_dir.mkdir(exist_ok=True)
     ts = datetime.utcnow().strftime("%Y%m%dT%H%M%SZ")
@@ -162,6 +229,8 @@ def main() -> int:
             "test_case": tc.id,
             "model": args.model,
             "fhir_url": args.fhir_url,
+            "cell_timeout_sec": args.cell_timeout_sec,
+            "agent_max_iterations": AGENT_MAX_ITERATIONS,
             "results": results,
         }, f, indent=2)
     print(f"\nFull report: {out_path}")

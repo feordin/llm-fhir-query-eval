@@ -15,7 +15,9 @@
 
 ### Evaluation Results
 
-| Phenotype | Algorithm Analyzed | Test Cases | Synthea Module | Data Generated | T1 qwen2.5:7b | T2 qwen2.5:7b |
+> **Note:** the `T1 qwen2.5:7b` and `T2 qwen2.5:7b` columns below are **stale 2026-03-15 data** from before the augmentation pipeline, agentic-loop rewrite, Microsoft FHIR migration, and Tier 3 introduction. They are kept in this table for historical reference only — do not draw conclusions from them. Fresh evaluation runs will populate a new results table once the new sanity matrix completes (see `scripts/run_sanity_matrix.py`). The phenotype/test-case/Synthea-module columns are still current.
+
+| Phenotype | Algorithm Analyzed | Test Cases | Synthea Module | Data Generated | T1 qwen2.5:7b (stale) | T2 qwen2.5:7b (stale) |
 |-----------|:--:|:--:|:--:|:--:|:--:|:--:|
 | **Type 2 Diabetes** | Yes | 6 cases revalidated 2026-04-29 (dx=44 with 3 SNOMED variants, meds=65, labs=74, comp=74, path4=74) | Yes (multi-path + 3 SNOMED variants added 2026-04-29) | 100+ pos / 25 ctrl | **0.00** | **0.00** |
 | **Abdominal Aortic Aneurysm** | Yes | 3 cases per-path created 2026-04-29 (dx=10 with 2 SNOMED variants, procedures=3, comp=10) — replaced orphan auto-gen test | Yes (multi-path + 2 SNOMED variants) | 22 pos / 22 ctrl | **0.00** | **0.00** |
@@ -266,77 +268,20 @@ alcohol-use-disorder, bipolar-disorder, bladder-cancer, cervical-cancer, copd, c
 
 Regenerate the audit anytime: `python scripts/audit_phenotypes_vs_phekb.py` → outputs `docs/PHENOTYPE-AUDIT.md`.
 
-### Tier 1 vs Tier 2 Comparison (qwen2.5:7b, all 34 test cases)
+### Evaluation results — pending fresh runs
 
-First batch evaluation run on 2026-03-15. Tier 1 = closed book (no tools). Tier 2 = agentic with FHIR server tools + hardcoded code lookup table (UMLS integration added after this run).
+The 2026-03-15 qwen2.5:7b T1-vs-T2 results table previously documented here has been removed (cleanup 2026-05-03). Those numbers are no longer representative because the project has changed substantially since then:
 
-| Test Case | Complexity | T1 F1 | T2 F1 | T2 Tools | Winner |
-|-----------|-----------|:-----:|:-----:|:--------:|--------|
-| **Diagnosis queries (easy)** | | | | | |
-| aaa-dx | easy | 0.00 | 0.00 | 5 | tie |
-| ace-inhibitor-cough-dx | medium | 0.00 | 1.00 | 3 | **T2** |
-| adhd-dx | easy | 0.00 | 1.00 | 3 | **T2** |
-| aki-dx | easy | 0.00 | 1.00 | 2 | **T2** |
-| anxiety-dx | easy | 0.00 | 0.00 | 3 | tie |
-| appendicitis-dx | easy | 0.00 | 1.00 | 3 | **T2** |
-| asthma-dx | easy | 0.00 | 1.00 | 3 | **T2** |
-| atopic-dermatitis-dx | easy | 0.00 | 0.00 | 5 | tie |
-| atrial-fibrillation-dx | easy | 0.00 | 1.00 | 5 | **T2** |
-| autism-dx | easy | 0.00 | 0.00 | 4 | tie |
-| type-2-diabetes-dx | easy | 0.00 | 0.00 | 3 | tie |
-| **Medication queries (medium)** | | | | | |
-| ace-inhibitor-cough-meds | medium | 0.00 | 0.00 | 4 | tie |
-| adhd-meds | medium | 0.00 | 0.00 | 0 | tie |
-| anxiety-meds | medium | 0.00 | 0.00 | 4 | tie |
-| asthma-meds | medium | 0.00 | 0.00 | 0 | tie |
-| atopic-dermatitis-meds | medium | 0.00 | 0.00 | 6 | tie |
-| atrial-fibrillation-meds | medium | 0.00 | 0.00 | 5 | tie |
-| autism-meds | medium | 0.00 | 0.00 | 5 | tie |
-| type-2-diabetes-meds | medium | 0.00 | 0.00 | 6 | tie |
-| **Lab/Procedure queries (hard)** | | | | | |
-| aki-labs | hard | 1.00 | 0.00 | 2 | T1 |
-| type-2-diabetes-labs | hard | 0.00 | 0.00 | 3 | tie |
-| appendicitis-procedures | medium | 0.00 | 0.00 | 4 | tie |
-| type-2-diabetes-path4 | expert | 0.00 | 0.00 | 4 | tie |
-| **Comprehensive (multi-query)** | | | | | |
-| aaa-comprehensive | expert | 0.00 | 1.00 | 18 | **T2** |
-| ace-inhibitor-cough-comp | expert | 0.00 | 0.00 | 0 | tie |
-| adhd-comprehensive | expert | 0.00 | 0.00 | 17 | tie |
-| aki-comprehensive | expert | 0.00 | 0.00 | 3 | tie |
-| anxiety-comprehensive | expert | 0.00 | 0.00 | 6 | tie |
-| appendicitis-comprehensive | expert | 0.00 | 0.00 | 4 | tie |
-| asthma-comprehensive | expert | 0.00 | 1.00 | 6 | **T2** |
-| atopic-dermatitis-comp | expert | 0.00 | 1.00 | 10 | **T2** |
-| atrial-fibrillation-comp | expert | 0.00 | 0.00 | 6 | tie |
-| autism-comprehensive | expert | 0.00 | 0.00 | 4 | tie |
-| type-2-diabetes-comp | expert | 0.00 | 0.00 | 7 | tie |
-| | | | | | |
-| **AVERAGE** | | **0.03** | **0.26** | | |
-| **Tier 2 wins** | | | | | **9** |
-| **Tier 1 wins** | | | | | **1** |
-| **Ties** | | | | | **24** |
+- **Data layer**: code-augmentation pipeline (314 SNOMED-keyed crosswalks) added — Conditions/Procedures/Observations now multi-coded (SNOMED + ICD-10 + ICD-9 + CPT) on the augmented Synthea data, mirroring real EHR data.
+- **Server**: migrated HAPI → Microsoft Health FHIR Server (port 8443 HTTPS, SQL-backed).
+- **Agentic loop**: system prompt rewritten with 8 of 10 phenotype-design insights baked in (multi-coded data, code-family enumeration via VSAC, multi-resource union, threshold logic, patient filters, cross-resource `_has`, VSAC-before-UMLS workflow, iterate/refine).
+- **Tier 3 added**: `tier3_methodology.md` with 12 phenotype playbooks; provider supports `tier=3` mode that prepends the methodology.
+- **Negation runner**: validator now applies set-difference (not union) for `metadata.negation: true` test cases, matching the runner's pre-existing logic.
+- **Prompt variants**: `broad` (mid-tier) unlocked in CLI alongside `naive` and `expert`.
 
-### Evaluation Reporting Gap
+`results/` directory cleaned 2026-05-03. Next evaluation run will populate it with fresh numbers across the new 3 prompts × 3 tiers × N models matrix.
 
-The current evaluation produces a **single F1 score** per test case, making it impossible to diagnose WHERE in the reasoning chain the LLM failed. A three-layer evaluation decomposition has been designed to address this — see `docs/IMPLEMENTATION-ROADMAP.md` for the full specification and `docs/literature_review.md` for the literature analysis that motivated it.
-
-### Key Findings
-
-1. **Tier 2 (agentic) is 9x better** on average F1 (0.265 vs 0.029)
-2. **Diagnosis queries**: Tier 2 scored perfect 1.0 on 6/11 dx queries vs 0/11 for Tier 1
-3. **Medication queries**: Both tiers scored 0.00 on ALL medication queries — root cause: hardcoded lookup table only had ingredient-level codes, not the SCD codes in the data. **Fixed** by wiring in real UMLS API with crosswalk support.
-4. **Comprehensive queries**: Tier 2 scored 3 perfect scores (AAA, asthma, atopic dermatitis)
-5. **Tier 1's one win**: AKI labs — qwen2.5:7b happened to know the LOINC code for creatinine
-6. **qwen2.5:7b limitations**: Even with tools, the 7b model struggles with multi-step reasoning and query syntax
-
-### Failure Analysis
-
-| Failure Mode | Tier 1 | Tier 2 | Fix Applied |
-|-------------|:------:|:------:|-------------|
-| Wrong clinical codes (hallucinated) | 100% of failures | Rare | Tools provide real codes |
-| Wrong resource type | Common | Rare | Server sampling shows what exists |
-| Malformed query syntax | Common | Occasional | System prompt improvements |
-| Ingredient vs SCD code mismatch | N/A | 100% of med failures | UMLS crosswalk integration |
+For the sanity check methodology, see `scripts/run_sanity_matrix.py`.
 | MedicationOrder (STU3) vs MedicationRequest (R4) | Occasional | Occasional | Auto-correction added |
 
 ## What's Built
