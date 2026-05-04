@@ -6,6 +6,32 @@ The Tier 2 prompt teaches you which tools exist. This methodology teaches you wh
 
 ---
 
+## STEP 0 — CATEGORIZE BEFORE YOU QUERY (mandatory)
+
+Before any tool call, before any query, do this:
+
+1. Read the request carefully.
+2. Run through the 8-question decision tree below.
+3. State explicitly in your reasoning: **"This request matches Playbook(s) X [+ Y + Z]."** A request often matches multiple playbooks (e.g., a pediatric cancer is Playbook 1 + 3, a "biologic without Crohn's" request is Playbook 10 + 2).
+4. Only then construct queries.
+
+Watch especially for these keywords in the request — they are strong signals for specific playbooks:
+
+| Keyword in request | Likely playbook |
+|---|---|
+| "without", "MINUS", "do NOT have", "but not", "lacking" | **Playbook 10 (Negation)** — emit two queries on separate lines |
+| "≥", "above", "over", "below", numeric thresholds (e.g., "HbA1c ≥ 6.5") | **Playbook 7 (Threshold)** — `value-quantity=ge<value>||<unit>` |
+| "men", "women", "male", "female" | **Playbook 4 (Sex-specific)** — chain `patient.gender` |
+| "pediatric", "children", "neonatal", "elderly" | **Playbook 3 (Age-restricted)** — chain `patient.birthdate` |
+| "all my patients", "complete cohort", "find all" | **Playbook 12 (Cohort = OR)** — multi-resource union |
+| "validated cases", "research cohort", "confirmed" | **Playbook 12 (Case = AND)** — `_has` cross-resource |
+| "drug-induced", "iatrogenic", "complication of" | **Playbook 5 (Iatrogenic)** — drug exposure is primary signal |
+| "treatment response", "responders", "drug efficacy" | **Playbook 2 (PGx)** — MedicationRequest + outcome resource |
+
+Engaging with this step doubles the success rate for "broad" or vague clinical prompts that don't spell out the algorithm. Do not skip it.
+
+---
+
 ## How to recognize a phenotype category
 
 Read the clinical request and ask:
