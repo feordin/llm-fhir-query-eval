@@ -26,6 +26,31 @@ class GeneratedQuery(BaseModel):
         return len(self.additional_queries) > 0
 
 
+class RunMetadata(BaseModel):
+    """Audit-grade metadata for a benchmark run cell.
+
+    Captures everything needed to reproduce and explain a result.
+    All fields are optional for backward compatibility with existing results.
+    """
+    provider_backend: Optional[str] = None      # e.g. "ollama", "anthropic", "openai", "gemini"
+    model_version: Optional[str] = None          # exact model string sent to API
+    tool_transport: Optional[str] = None         # "http" (direct calls) or "mcp"
+    tier: Optional[int] = None                   # 1, 2, or 3
+    prompt_variant: Optional[str] = None         # "naive", "broad", "expert"
+    system_prompt_version: Optional[str] = None  # from FHIR_SYSTEM_PROMPT_VERSION or AGENTIC version
+    tool_schema_version: Optional[str] = None    # version of TOOL_DEFINITIONS
+    iterations_used: Optional[int] = None        # how many agentic loop iterations ran
+    max_iterations: Optional[int] = None         # configured ceiling
+    input_tokens: Optional[int] = None           # total input tokens across all iterations
+    output_tokens: Optional[int] = None          # total output tokens across all iterations
+    elapsed_sec: Optional[float] = None          # wall-clock time for LLM generation
+    stop_reason: Optional[str] = None            # "complete", "max_iterations", "fallback_assistant", "fallback_tool_trace"
+    fallback_used: Optional[bool] = None         # whether a fallback path was taken
+    tool_calls_count: Optional[int] = None       # total tool invocations
+    host: Optional[str] = None                   # machine hostname
+    benchmark_track: Optional[str] = None        # "standardized", "optimized", "copilot"
+
+
 class ExecutionMatchResult(BaseModel):
     """Result of execution-based evaluation"""
     passed: bool
@@ -82,6 +107,7 @@ class EvaluationResult(BaseModel):
     evaluation_results: EvaluationResults
     overall_score: float
     passed: bool
+    run_metadata: Optional[RunMetadata] = None
 
 
 class EvaluationRequest(BaseModel):

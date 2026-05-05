@@ -1,4 +1,4 @@
-from .provider import LLMProvider, FHIR_SYSTEM_PROMPT, parse_fhir_query_from_text
+from .provider import LLMProvider, FHIR_SYSTEM_PROMPT, build_generated_query
 
 import sys
 from pathlib import Path
@@ -32,5 +32,4 @@ class AnthropicProvider(LLMProvider):
         )
 
         raw_text = response.content[0].text
-        parsed = parse_fhir_query_from_text(raw_text)
-        return GeneratedQuery(raw_response=raw_text, parsed_query=parsed)
+        return build_generated_query(raw_text)

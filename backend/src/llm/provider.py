@@ -12,6 +12,8 @@ if str(backend_path) not in sys.path:
 
 from src.api.models.evaluation import ParsedQuery, GeneratedQuery
 
+# Versioned so benchmark runs can trace score changes to prompt edits
+FHIR_SYSTEM_PROMPT_VERSION = "1.0.0"
 
 FHIR_SYSTEM_PROMPT = """You are a FHIR query expert. Given a clinical data request in natural language, generate the appropriate FHIR REST API query URL(s).
 
@@ -138,3 +140,21 @@ def parse_fhir_queries_from_text(text: str) -> list[ParsedQuery]:
         queries.append(ParsedQuery(resource_type=resource_type, parameters=params, url=url))
 
     return queries
+
+
+def build_generated_query(raw_text: str) -> GeneratedQuery:
+    """Parse raw LLM text into a GeneratedQuery, preserving ALL queries.
+
+    Uses the plural parser first so multi-query responses are never lost.
+    Falls back to the singular parser for edge cases the plural misses.
+    """
+    all_parsed = parse_fhir_queries_from_text(raw_text)
+    if all_parsed:
+        return GeneratedQuery(
+            raw_response=raw_text,
+            parsed_query=all_parsed[0],
+            additional_queries=all_parsed[1:],
+        )
+    # Singular parser as last resort (stricter fallback patterns)
+    parsed = parse_fhir_query_from_text(raw_text)
+    return GeneratedQuery(raw_response=raw_text, parsed_query=parsed)

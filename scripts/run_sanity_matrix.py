@@ -27,6 +27,7 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import socket
 import subprocess
 import sys
 import time
@@ -37,6 +38,8 @@ REPO = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO / "backend"))
 
 from src.llm import get_provider  # noqa: E402
+from src.llm.provider import FHIR_SYSTEM_PROMPT_VERSION  # noqa: E402
+from src.llm.agentic_provider import AGENTIC_SYSTEM_PROMPT_VERSION, TOOL_SCHEMA_VERSION  # noqa: E402
 from src.fhir.client import FHIRClient  # noqa: E402
 from src.evaluation.runner import EvaluationRunner  # noqa: E402
 from src.api.models.test_case import TestCase  # noqa: E402
@@ -108,7 +111,8 @@ def run_one_cell(tc_id: str, tier: int, variant: str, model: str, fhir_url: str,
             "prompt": cell_prompt_text,
             "prompts": {"naive": cell_prompt_text},
         })
-        result = runner.run_single(cell_tc, provider_name="ollama", model_name=model)
+        provider_name = "ollama"  # TODO: derive from --provider flag when multi-backend lands
+        result = runner.run_single(cell_tc, provider_name=provider_name, model_name=model)
         exec_r = result.evaluation_results.execution_match
         cell.update({
             "elapsed_sec": round(time.time() - t0, 1),
@@ -118,7 +122,11 @@ def run_one_cell(tc_id: str, tier: int, variant: str, model: str, fhir_url: str,
             "f1": exec_r.f1_score,
             "expected_count": exec_r.expected_count,
             "actual_count": exec_r.actual_count,
+            "queries_generated": len(result.generated_query.all_queries),
         })
+        # Attach run metadata from the provider if available
+        if result.run_metadata:
+            cell["run_metadata"] = result.run_metadata.model_dump(exclude_none=True)
     except Exception as e:
         cell.update({
             "elapsed_sec": round(time.time() - t0, 1),
@@ -239,8 +247,15 @@ def main() -> int:
             "test_case": tc.id,
             "model": args.model,
             "fhir_url": args.fhir_url,
+            "host": socket.gethostname(),
+            "timestamp": ts,
             "cell_timeout_sec": args.cell_timeout_sec,
             "agent_max_iterations": AGENT_MAX_ITERATIONS,
+            "prompt_versions": {
+                "closed_book": FHIR_SYSTEM_PROMPT_VERSION,
+                "agentic": AGENTIC_SYSTEM_PROMPT_VERSION,
+                "tool_schema": TOOL_SCHEMA_VERSION,
+            },
             "results": results,
         }, f, indent=2)
     print(f"\nFull report: {out_path}")
