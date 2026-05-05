@@ -10,9 +10,13 @@ if str(backend_path) not in sys.path:
 from src.api.models.evaluation import GeneratedQuery
 
 
+DEFAULT_COMMAND_TIMEOUT_SEC = 300
+
+
 class CommandProvider(LLMProvider):
-    def __init__(self, command: str):
+    def __init__(self, command: str, timeout_sec: int = DEFAULT_COMMAND_TIMEOUT_SEC):
         self.command = command
+        self.timeout_sec = timeout_sec
 
     def generate_fhir_query(self, prompt: str, context: str = "") -> GeneratedQuery:
         full_prompt = f"{FHIR_SYSTEM_PROMPT}\n\n"
@@ -23,7 +27,7 @@ class CommandProvider(LLMProvider):
         try:
             result = subprocess.run(
                 self.command, input=full_prompt.encode("utf-8"), shell=True,
-                capture_output=True, timeout=120
+                capture_output=True, timeout=self.timeout_sec
             )
             if result.returncode != 0:
                 stderr = result.stderr.decode("utf-8", errors="replace")
@@ -45,4 +49,4 @@ class CommandProvider(LLMProvider):
         except FileNotFoundError:
             raise RuntimeError(f"Command not found: {self.command}")
         except subprocess.TimeoutExpired:
-            raise RuntimeError("Command timed out after 120 seconds")
+            raise RuntimeError(f"Command timed out after {self.timeout_sec} seconds")

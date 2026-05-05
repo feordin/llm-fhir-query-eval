@@ -223,7 +223,8 @@ def main() -> int:
     out_dir = REPO / "results"
     out_dir.mkdir(exist_ok=True)
     ts = datetime.utcnow().strftime("%Y%m%dT%H%M%SZ")
-    out_path = out_dir / f"sanity-matrix-{tc.id}-{args.model}-{ts}.json"
+    safe_model = args.model.replace(":", "-").replace("/", "-")
+    out_path = out_dir / f"sanity-matrix-{tc.id}-{safe_model}-{ts}.json"
     with out_path.open("w", encoding="utf-8") as f:
         json.dump({
             "test_case": tc.id,
