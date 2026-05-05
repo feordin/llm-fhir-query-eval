@@ -57,17 +57,21 @@ def load_workload(machine: str) -> list[str]:
     return data["workloads"][machine]["phenotypes"]
 
 
-def has_existing_result(phenotype: str, model: str) -> Path | None:
-    """Look for an existing matrix result for this phenotype + model.
+def has_existing_result(test_case_id: str, model: str) -> Path | None:
+    """Look for an existing matrix result for this specific test case + model.
 
-    Pattern: results/sanity-matrix-<phen-test-case-id>-<model>-<ts>.json
-    Since each phenotype has multiple test cases (-dx, -meds, etc.), we check
-    if at least one test case has a result. The runner produces one matrix
-    file per test case ID it processes.
+    Result filename format (set by run_sanity_matrix.py):
+      results/sanity-matrix-{test_case_id}-{model_safe}-{ts}.json
+    where model_safe replaces ":" with "-".
+
+    Returns the first matching file, or None if no result exists yet.
+    Per-test-case granularity is required so a partially-completed
+    phenotype (some cells run, some not) doesn't get wrongly skipped.
     """
     if not RESULTS_DIR.exists():
         return None
-    pattern = f"sanity-matrix-phekb-{phenotype}-*-{model.replace(':', '-')}-*.json"
+    safe_model = model.replace(":", "-").replace("/", "-")
+    pattern = f"sanity-matrix-{test_case_id}-{safe_model}-*.json"
     matches = list(RESULTS_DIR.glob(pattern))
     return matches[0] if matches else None
 

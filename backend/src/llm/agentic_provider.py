@@ -422,7 +422,7 @@ class OllamaAgenticProvider(LLMProvider):
         self,
         model: str = "qwen2.5:7b",
         fhir_base_url: str = "http://localhost:8080/fhir",
-        max_iterations: int = 10,
+        max_iterations: int = 20,
         request_timeout: int = 30,
         tier: int = 2,
     ):
@@ -473,6 +473,8 @@ class OllamaAgenticProvider(LLMProvider):
 
         tools = TOOL_DEFINITIONS
 
+        final_answer_retry_used = False
+
         for iteration in range(self.max_iterations):
             logger.debug("Agentic iteration %d/%d", iteration + 1, self.max_iterations)
 
@@ -490,12 +492,34 @@ class OllamaAgenticProvider(LLMProvider):
             msg = response["message"]
             messages.append(msg)
 
-            # If no tool calls, the model is done -- extract the final query
+            # If no tool calls, the model is done -- extract the final query.
+            # If parsing fails, give the model ONE more turn with a strict
+            # "URL only, no prose" reminder before falling back to tool_trace.
             if not msg.get("tool_calls"):
-                raw_text = msg.get("content", "")
+                raw_text = msg.get("content", "") or ""
                 logger.debug("Model finished after %d iteration(s)", iteration + 1)
-                parsed = parse_fhir_query_from_text(raw_text)
-                return GeneratedQuery(raw_response=raw_text, parsed_query=parsed)
+                try:
+                    parsed = parse_fhir_query_from_text(raw_text)
+                    return GeneratedQuery(raw_response=raw_text, parsed_query=parsed)
+                except ValueError:
+                    if not final_answer_retry_used:
+                        final_answer_retry_used = True
+                        logger.warning(
+                            "Final answer didn't parse (len=%d); retrying with strict reminder",
+                            len(raw_text),
+                        )
+                        messages.append({
+                            "role": "user",
+                            "content": (
+                                "Your previous response could not be parsed as a FHIR query. "
+                                "Respond now with ONLY the FHIR query URL(s), one per line, "
+                                "no prose, no markdown, no explanation. "
+                                "Format: ResourceType?param1=value1&param2=value2"
+                            ),
+                        })
+                        continue
+                    # Retry already used -- fall through to the tool_trace fallback below
+                    break
 
             # Execute each tool call and append tool-role messages
             for tool_call in msg["tool_calls"]:
@@ -519,16 +543,46 @@ class OllamaAgenticProvider(LLMProvider):
                     "content": result_str,
                 })
 
-        # Max iterations exhausted -- try to extract a query from the last assistant message
-        logger.warning("Max iterations (%d) reached without final answer", self.max_iterations)
+        # Either max_iterations exhausted, or final-answer retry failed.
+        # Fallback strategy:
+        #   1. Try parsing the last non-empty assistant message
+        #   2. If that fails, use the last fhir_search query from tool_trace
+        logger.warning(
+            "Loop ended (iter=%d, retry_used=%s); falling back to tool_trace",
+            len(messages), final_answer_retry_used,
+        )
         last_assistant = ""
         for m in reversed(messages):
             if m.get("role") == "assistant" and m.get("content"):
                 last_assistant = m["content"]
                 break
 
-        parsed = parse_fhir_query_from_text(last_assistant)
-        return GeneratedQuery(raw_response=last_assistant, parsed_query=parsed)
+        try:
+            parsed = parse_fhir_query_from_text(last_assistant)
+            return GeneratedQuery(raw_response=last_assistant, parsed_query=parsed)
+        except ValueError:
+            pass
+
+        # Last resort: the agent successfully ran fhir_search at some point.
+        # The most-recent successful search reflects the agent's best query.
+        for entry in reversed(self.tool_trace):
+            if entry.get("tool") == "fhir_search":
+                query = entry.get("args", {}).get("query", "")
+                if query:
+                    logger.warning("Falling back to last fhir_search query: %s", query[:200])
+                    parsed = parse_fhir_query_from_text(query)
+                    raw_fallback = (
+                        f"[FALLBACK: parser couldn't extract URL from final response; "
+                        f"using last fhir_search query]\n{query}\n\n"
+                        f"Original last assistant message:\n{last_assistant[:500]}"
+                    )
+                    return GeneratedQuery(raw_response=raw_fallback, parsed_query=parsed)
+
+        # Nothing worked -- propagate the parse error with diagnostic context
+        raise ValueError(
+            f"Could not parse FHIR query from LLM response: "
+            f"{last_assistant[:200] if last_assistant else '<empty>'}"
+        )
 
     # ------------------------------------------------------------------
     # Tool dispatch
