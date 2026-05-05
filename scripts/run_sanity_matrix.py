@@ -45,7 +45,7 @@ PROMPT_VARIANTS = ["naive", "broad", "expert"]
 TIERS = [1, 2, 3]
 
 # Reduce the agent's spin ceiling to keep cells bounded
-AGENT_MAX_ITERATIONS = 8
+AGENT_MAX_ITERATIONS = 20
 
 
 def load_test_case(tc_id: str) -> TestCase:
@@ -57,9 +57,16 @@ def load_test_case(tc_id: str) -> TestCase:
     return TestCase(**data)
 
 
-def make_provider(tier: int, model: str, fhir_url: str):
+def make_provider(tier: int, model: str, fhir_url: str, cell_timeout_sec: int = 300):
     if tier == 1:
-        return get_provider("command", command=f"ollama run {model}")
+        # Give CommandProvider 30s of slack inside the wall-clock cell timeout
+        # so its own TimeoutExpired fires cleanly before the subprocess wrapper kills it.
+        inner_timeout = max(30, cell_timeout_sec - 30)
+        return get_provider(
+            "command",
+            command=f"ollama run {model}",
+            timeout_sec=inner_timeout,
+        )
     base = fhir_url.rstrip("/")
     is_root_mounted = base.lower().startswith("https://") or ":8443" in base
     agentic_fhir = base if (is_root_mounted or base.endswith("/fhir")) else base + "/fhir"
@@ -82,7 +89,8 @@ def make_fhir_client(fhir_url: str) -> FHIRClient:
     )
 
 
-def run_one_cell(tc_id: str, tier: int, variant: str, model: str, fhir_url: str) -> dict:
+def run_one_cell(tc_id: str, tier: int, variant: str, model: str, fhir_url: str,
+                 cell_timeout_sec: int = 300) -> dict:
     """Execute a single (tier, variant) cell and return the result dict.
 
     Called both directly (in --single-cell mode by the subprocess) and from
@@ -93,7 +101,7 @@ def run_one_cell(tc_id: str, tier: int, variant: str, model: str, fhir_url: str)
     cell = {"tier": tier, "prompt_variant": variant}
     t0 = time.time()
     try:
-        provider = make_provider(tier, model, fhir_url)
+        provider = make_provider(tier, model, fhir_url, cell_timeout_sec)
         runner = EvaluationRunner(fhir_client, provider)
         cell_prompt_text = tc.get_prompt(variant)
         cell_tc = tc.model_copy(update={
@@ -130,6 +138,7 @@ def run_cell_subprocess(tc_id: str, tier: int, variant: str, model: str,
         "--test-case", tc_id,
         "--model", model,
         "--fhir-url", fhir_url,
+        "--cell-timeout-sec", str(timeout_sec),
         "--single-cell",
         "--cell-tier", str(tier),
         "--cell-variant", variant,
@@ -175,7 +184,7 @@ def main() -> int:
 
     if args.single_cell:
         cell = run_one_cell(args.test_case, args.cell_tier, args.cell_variant,
-                            args.model, args.fhir_url)
+                            args.model, args.fhir_url, args.cell_timeout_sec)
         with open(args.cell_out, "w", encoding="utf-8") as f:
             json.dump(cell, f, indent=2)
         return 0
