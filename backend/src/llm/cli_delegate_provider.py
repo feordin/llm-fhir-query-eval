@@ -2,7 +2,7 @@ import os
 import subprocess
 import tempfile
 from typing import Optional
-from .provider import LLMProvider, FHIR_SYSTEM_PROMPT, parse_fhir_query_from_text
+from .provider import LLMProvider, FHIR_SYSTEM_PROMPT, build_generated_query
 
 import sys
 from pathlib import Path
@@ -58,8 +58,8 @@ class CLIDelegateProvider(LLMProvider):
             if not raw_text:
                 raise RuntimeError("CLI returned empty output")
 
-            parsed = parse_fhir_query_from_text(raw_text)
-            return GeneratedQuery(raw_response=raw_text, parsed_query=parsed)
+            parsed = build_generated_query(raw_text)
+            return parsed
         except FileNotFoundError:
             raise RuntimeError(
                 f"CLI command '{self.cli_command}' not found. "

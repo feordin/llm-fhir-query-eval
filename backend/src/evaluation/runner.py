@@ -10,7 +10,7 @@ if str(backend_path) not in sys.path:
 
 from src.api.models.evaluation import (
     EvaluationResult, EvaluationResults, GeneratedQuery,
-    LLMJudgeResult, ParsedQuery,
+    LLMJudgeResult, ParsedQuery, RunMetadata,
 )
 from src.api.models.test_case import TestCase
 from src.llm.provider import parse_fhir_queries_from_text
@@ -93,6 +93,9 @@ class EvaluationRunner:
             4,
         )
 
+        # Capture run metadata from the provider if available
+        run_metadata = getattr(self.llm_provider, 'last_run_metadata', None)
+
         return EvaluationResult(
             evaluation_id=str(uuid.uuid4()),
             test_case_id=test_case.id,
@@ -109,6 +112,7 @@ class EvaluationRunner:
             ),
             overall_score=overall_score,
             passed=overall_score >= 0.7,
+            run_metadata=run_metadata,
         )
 
     def _run_multi_query(self, test_case: TestCase, provider_name: str, model_name: str) -> EvaluationResult:
@@ -207,6 +211,9 @@ class EvaluationRunner:
             4,
         )
 
+        # Capture run metadata from the provider if available
+        run_metadata = getattr(self.llm_provider, 'last_run_metadata', None)
+
         return EvaluationResult(
             evaluation_id=str(uuid.uuid4()),
             test_case_id=test_case.id,
@@ -223,6 +230,7 @@ class EvaluationRunner:
             ),
             overall_score=overall_score,
             passed=overall_score >= 0.7,
+            run_metadata=run_metadata,
         )
 
     def _evaluate_multi_query_coverage(

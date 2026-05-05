@@ -12,19 +12,20 @@ import json
 import logging
 import os
 import requests
+import time
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
 import ollama
 
-from .provider import LLMProvider, parse_fhir_query_from_text
+from .provider import LLMProvider, parse_fhir_query_from_text, build_generated_query
 
 import sys
 backend_path = Path(__file__).parent.parent.parent
 if str(backend_path) not in sys.path:
     sys.path.insert(0, str(backend_path))
 
-from src.api.models.evaluation import GeneratedQuery
+from src.api.models.evaluation import GeneratedQuery, RunMetadata
 
 logger = logging.getLogger(__name__)
 
@@ -42,6 +43,10 @@ RESOURCE_TYPE_CORRECTIONS = {
 # ---------------------------------------------------------------------------
 # System prompt for the agentic loop
 # ---------------------------------------------------------------------------
+
+# Versioned so benchmark runs can trace score changes to prompt/tool edits
+AGENTIC_SYSTEM_PROMPT_VERSION = "2.0.0"  # major: loop rewrite, minor: prompt tweaks
+TOOL_SCHEMA_VERSION = "1.0.0"
 
 AGENTIC_SYSTEM_PROMPT = """\
 You are a FHIR query expert with access to tools that inspect a live FHIR server and look up clinical codes (NIH UMLS, VSAC value sets).
@@ -436,6 +441,7 @@ class OllamaAgenticProvider(LLMProvider):
             import urllib3
             urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
         self.tool_trace: List[Dict[str, Any]] = []
+        self.last_run_metadata: Optional[RunMetadata] = None
         self._system_prompt = self._build_system_prompt()
 
     def _build_system_prompt(self) -> str:
@@ -454,6 +460,23 @@ class OllamaAgenticProvider(LLMProvider):
                 )
         return AGENTIC_SYSTEM_PROMPT
 
+    def _build_run_metadata(self, iterations_used: int, stop_reason: str, elapsed_sec: float) -> RunMetadata:
+        """Build audit metadata for the just-completed agentic run."""
+        return RunMetadata(
+            provider_backend="ollama",
+            model_version=self.model,
+            tool_transport="http",
+            tier=self.tier,
+            system_prompt_version=AGENTIC_SYSTEM_PROMPT_VERSION,
+            tool_schema_version=TOOL_SCHEMA_VERSION,
+            iterations_used=iterations_used,
+            max_iterations=self.max_iterations,
+            elapsed_sec=round(elapsed_sec, 2),
+            stop_reason=stop_reason,
+            fallback_used=stop_reason.startswith("fallback"),
+            tool_calls_count=len(self.tool_trace),
+        )
+
     # ------------------------------------------------------------------
     # Public interface (matches LLMProvider base class)
     # ------------------------------------------------------------------
@@ -461,6 +484,10 @@ class OllamaAgenticProvider(LLMProvider):
     def generate_fhir_query(self, prompt: str, context: str = "") -> GeneratedQuery:
         """Run the agentic loop and return a GeneratedQuery."""
         self.tool_trace = []
+        self.last_run_metadata = None
+        _t0 = time.time()
+        _iterations_used = 0
+        _stop_reason = "max_iterations"
 
         user_content = prompt
         if context:
@@ -497,10 +524,13 @@ class OllamaAgenticProvider(LLMProvider):
             # "URL only, no prose" reminder before falling back to tool_trace.
             if not msg.get("tool_calls"):
                 raw_text = msg.get("content", "") or ""
-                logger.debug("Model finished after %d iteration(s)", iteration + 1)
+                _iterations_used = iteration + 1
+                logger.debug("Model finished after %d iteration(s)", _iterations_used)
                 try:
-                    parsed = parse_fhir_query_from_text(raw_text)
-                    return GeneratedQuery(raw_response=raw_text, parsed_query=parsed)
+                    result = build_generated_query(raw_text)
+                    _stop_reason = "complete"
+                    self.last_run_metadata = self._build_run_metadata(_iterations_used, _stop_reason, time.time() - _t0)
+                    return result
                 except ValueError:
                     if not final_answer_retry_used:
                         final_answer_retry_used = True
@@ -547,6 +577,7 @@ class OllamaAgenticProvider(LLMProvider):
         # Fallback strategy:
         #   1. Try parsing the last non-empty assistant message
         #   2. If that fails, use the last fhir_search query from tool_trace
+        _iterations_used = self.max_iterations
         logger.warning(
             "Loop ended (iter=%d, retry_used=%s); falling back to tool_trace",
             len(messages), final_answer_retry_used,
@@ -558,27 +589,40 @@ class OllamaAgenticProvider(LLMProvider):
                 break
 
         try:
-            parsed = parse_fhir_query_from_text(last_assistant)
-            return GeneratedQuery(raw_response=last_assistant, parsed_query=parsed)
+            result = build_generated_query(last_assistant)
+            _stop_reason = "fallback_assistant"
+            self.last_run_metadata = self._build_run_metadata(_iterations_used, _stop_reason, time.time() - _t0)
+            return result
         except ValueError:
             pass
 
-        # Last resort: the agent successfully ran fhir_search at some point.
-        # The most-recent successful search reflects the agent's best query.
+        # Last resort: collect all unique fhir_search queries from tool trace.
+        # Multiple searches may reflect a multi-resource cohort query.
+        search_queries = []
+        seen = set()
         for entry in reversed(self.tool_trace):
             if entry.get("tool") == "fhir_search":
                 query = entry.get("args", {}).get("query", "")
-                if query:
-                    logger.warning("Falling back to last fhir_search query: %s", query[:200])
-                    parsed = parse_fhir_query_from_text(query)
-                    raw_fallback = (
-                        f"[FALLBACK: parser couldn't extract URL from final response; "
-                        f"using last fhir_search query]\n{query}\n\n"
-                        f"Original last assistant message:\n{last_assistant[:500]}"
-                    )
-                    return GeneratedQuery(raw_response=raw_fallback, parsed_query=parsed)
+                if query and query not in seen:
+                    search_queries.append(query)
+                    seen.add(query)
+        if search_queries:
+            # Reverse to restore chronological order
+            search_queries.reverse()
+            combined = "\n".join(search_queries)
+            logger.warning("Falling back to %d fhir_search queries: %s", len(search_queries), combined[:200])
+            raw_fallback = (
+                f"[FALLBACK: parser couldn't extract URL from final response; "
+                f"using fhir_search queries from tool trace]\n{combined}\n\n"
+                f"Original last assistant message:\n{last_assistant[:500]}"
+            )
+            _stop_reason = "fallback_tool_trace"
+            self.last_run_metadata = self._build_run_metadata(_iterations_used, _stop_reason, time.time() - _t0)
+            return build_generated_query(raw_fallback)
 
         # Nothing worked -- propagate the parse error with diagnostic context
+        _stop_reason = "error"
+        self.last_run_metadata = self._build_run_metadata(_iterations_used, _stop_reason, time.time() - _t0)
         raise ValueError(
             f"Could not parse FHIR query from LLM response: "
             f"{last_assistant[:200] if last_assistant else '<empty>'}"
@@ -616,25 +660,19 @@ class OllamaAgenticProvider(LLMProvider):
     # ------------------------------------------------------------------
 
     def _get_umls_api_key(self) -> str:
-        """Get UMLS API key from environment or .mcp.json."""
-        key = os.environ.get("UMLS_API_KEY")
-        if key:
-            return key
-        # Try .mcp.json in the project root
-        mcp_json = Path(__file__).parent.parent.parent.parent / ".mcp.json"
-        if mcp_json.exists():
-            try:
-                with open(mcp_json) as f:
-                    config = json.load(f)
-                return (
-                    config.get("mcpServers", {})
-                    .get("nih-umls", {})
-                    .get("env", {})
-                    .get("UMLS_API_KEY", "")
-                )
-            except (json.JSONDecodeError, OSError) as e:
-                logger.warning("Failed to read .mcp.json for UMLS API key: %s", e)
-        return ""
+        """Get UMLS API key from environment variables.
+
+        Requires UMLS_API_KEY to be set in the environment.
+        The previous .mcp.json file fallback was removed to avoid
+        reading secrets from checked-in config files.
+        """
+        key = os.environ.get("UMLS_API_KEY", "")
+        if not key:
+            logger.warning(
+                "UMLS_API_KEY not set in environment. "
+                "UMLS/VSAC tools will fail. Set the UMLS_API_KEY env var."
+            )
+        return key
 
     # ------------------------------------------------------------------
     # Async helper

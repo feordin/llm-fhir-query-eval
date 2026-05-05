@@ -1,4 +1,4 @@
-from .provider import LLMProvider, parse_fhir_query_from_text, FHIR_SYSTEM_PROMPT
+from .provider import LLMProvider, parse_fhir_query_from_text, FHIR_SYSTEM_PROMPT, FHIR_SYSTEM_PROMPT_VERSION, build_generated_query
 from .anthropic_provider import AnthropicProvider
 from .cli_delegate_provider import CLIDelegateProvider
 from .command_provider import CommandProvider
@@ -40,5 +40,6 @@ def get_provider(name: str, model: str = None, **kwargs) -> LLMProvider:
 
 __all__ = [
     "LLMProvider", "get_provider", "parse_fhir_query_from_text", "FHIR_SYSTEM_PROMPT",
+    "FHIR_SYSTEM_PROMPT_VERSION", "build_generated_query",
     "AnthropicProvider", "CLIDelegateProvider", "CommandProvider", "OllamaAgenticProvider",
 ]
