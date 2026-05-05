@@ -12,7 +12,7 @@ Before any tool call, before any query, do this:
 
 1. Read the request carefully.
 2. Run through the 8-question decision tree below.
-3. State explicitly in your reasoning: **"This request matches Playbook(s) X [+ Y + Z]."** A request often matches multiple playbooks (e.g., a pediatric cancer is Playbook 1 + 3, a "biologic without Crohn's" request is Playbook 10 + 2).
+3. State explicitly in your reasoning: **"This request matches Playbook(s) X [+ Y + Z]."** A request often matches multiple playbooks (e.g., a pediatric cancer combines Playbook 1 + 3; a "drug X without dx Y" request combines Playbook 10 + 2).
 4. Only then construct queries.
 
 Watch especially for these keywords in the request — they are strong signals for specific playbooks:
@@ -36,14 +36,14 @@ Engaging with this step doubles the success rate for "broad" or vague clinical p
 
 Read the clinical request and ask:
 
-1. Is the disease one with **clinical subtypes**? (cancer, dementia, diabetes, multiple sclerosis, epilepsy, heart failure)
-2. Is it a **pharmacogenomics / drug response** phenotype? (warfarin, clopidogrel, asthma-ICS response, ACE-inhibitor cough)
-3. Is it **age-restricted**? (pediatric: NAS, peanut allergy, SECO, post-event pain; geriatric: dementia, BPH)
-4. Is it **sex-specific**? (BPH, prostate cancer for male; ovarian/cervical cancer, endometriosis for female)
-5. Is it an **iatrogenic / complication** phenotype? (steroid-induced AVN, drug-induced liver injury, statins-and-MACE)
-6. Is it **procedurally defined**? (colonoscopy for CRC, CABG/PCI for CHD, AAA repair, biopsy for cancer staging)
-7. Is it **threshold-based**? (T2D via HbA1c, AKI via creatinine ratio, hypertension via BP, FH via LDL)
-8. Does it involve **negation / exclusion**? ("biologic without a Crohn's diagnosis", "anticoagulant in patients without VTE", "statin without indication")
+1. Is the disease one with **clinical subtypes**? (cancers, neurodegenerative disorders, diabetes families, demyelinating diseases, seizure disorders, chronic cardiac conditions with morphologic variants)
+2. Is it a **pharmacogenomics / drug response** phenotype? (anticoagulant dosing, antiplatelet metabolizer status, inhaled-medication responsiveness, drug-class adverse-reaction phenotypes)
+3. Is it **age-restricted**? (pediatric: neonatal, infant, school-age, adolescent phenotypes; geriatric: ≥50 cognitive, bone, GU phenotypes)
+4. Is it **sex-specific**? (male-only: prostate / male-GU phenotypes; female-only: ovarian, uterine, cervical, breast, female-reproductive phenotypes)
+5. Is it an **iatrogenic / complication** phenotype? (drug-induced organ toxicity, cardiovascular events on chronic preventive therapy, post-treatment complications)
+6. Is it **procedurally defined**? (GI screening, cardiac revascularization, vascular repair, urologic surgery, biopsy-based staging, imaging utilization)
+7. Is it **threshold-based**? (T2D via HbA1c, glomerular filtration, hepatic enzyme elevation, lipid thresholds, bone-density T-score, blood-pressure thresholds)
+8. Does it involve **negation / exclusion**? ("drug X without dx Y", "treatment for indication A in patients without indication B", "lab abnormality without corresponding dx")
 9. Is it a **broad provider-level cohort** or a **validated research case**? Cohort = OR of evidence; validated case = AND of strict criteria.
 
 Most phenotypes match more than one category. Combine the playbooks below.
@@ -52,9 +52,9 @@ Most phenotypes match more than one category. Combine the playbooks below.
 
 ## Playbook 1 — Diseases with clinical subtypes
 
-**Examples:** colorectal cancer, lung cancer, dementia, type 2 diabetes, heart failure, multiple sclerosis, epilepsy, sickle cell disease, depression, hypertension subtypes.
+**Common patterns:** cancers with multiple anatomic/histologic subtypes; chronic neurodegenerative disorders with multiple etiologies; metabolic diseases with subtype variants (Type 1 vs Type 2 vs gestational); chronic cardiac conditions with morphologic variants; demyelinating disorders; seizure disorders; chronic hematologic disorders; mood disorders.
 
-**Why they're hard:** a single SNOMED or ICD-10 code typically covers ~30-40% of the cohort. PheKB algorithms enumerate full code families.
+**Why they're hard:** a single SNOMED or ICD-10 code typically covers ~30-40% of the cohort. Algorithms for these phenotypes enumerate full code families.
 
 **Strategy:**
 1. Start with `vsac_search_value_sets("<concept>")`. Quality-measure value sets exist for almost all of these.
@@ -71,9 +71,9 @@ Most phenotypes match more than one category. Combine the playbooks below.
 
 ## Playbook 2 — Pharmacogenomics / drug response
 
-**Examples:** Warfarin Dose Response, Clopidogrel Poor Metabolizers, Asthma Response to Inhaled Steroids, ACE-Inhibitor Cough.
+**Common patterns:** anticoagulant dosing optimization studies; antiplatelet metabolizer-status studies; inhaled-medication responsiveness in obstructive airway disease; adverse drug reaction phenotypes tied to a specific drug class.
 
-**Why they're hard:** the diagnosis isn't the signal — the *medication* is. Outcome resources (INR labs for warfarin, AMI Conditions for clopidogrel) further qualify the cohort.
+**Why they're hard:** the diagnosis isn't the signal — the *medication* is. Outcome resources (drug-monitoring labs, downstream clinical events) further qualify the cohort.
 
 **Strategy:**
 1. The primary resource type is `MedicationRequest`. Expect RxNorm ingredient codes (or SCD).
@@ -82,15 +82,15 @@ Most phenotypes match more than one category. Combine the playbooks below.
 4. Or emit two queries (med + outcome) and let the runner intersect.
 
 **Common mistakes:**
-- Querying Condition for "patients on warfarin" — they don't necessarily have an atrial-fibrillation dx.
+- Querying Condition for "patients on drug X" — they don't necessarily have the most-common dx for that drug class.
 - Using SCD codes when ingredient codes catch all formulations.
 
 ---
 
 ## Playbook 3 — Age-restricted (pediatric, geriatric)
 
-**Examples (pediatric):** Neonatal Abstinence Syndrome (<28 days), Peanut Allergy (school-age), SECO (5-17), Post-event Pain (6-21), ADHD, autism.
-**Examples (geriatric):** dementia (≥50), osteoporosis, BPH (≥40 male).
+**Common patterns (pediatric):** neonatal substance withdrawal (<28 days); food-allergy phenotypes in school-age children; severe early-childhood growth disorders; post-procedural pain in adolescents; neurodevelopmental disorders with childhood onset.
+**Common patterns (geriatric):** cognitive disorders of aging (≥50); age-related bone-density loss; age-related male genitourinary phenotypes (≥40).
 
 **Why they're hard:** FHIR has no `Patient.age` parameter. You must compute via `patient.birthdate`.
 
@@ -108,7 +108,7 @@ Most phenotypes match more than one category. Combine the playbooks below.
 
 ## Playbook 4 — Sex-specific
 
-**Examples:** prostate cancer, BPH, DRE, PCa biopsy (male only); ovarian, cervical, breast cancer, endometriosis (female only).
+**Common patterns:** male-only phenotypes are typically those involving prostate or other male-specific anatomy. Female-only phenotypes typically involve ovaries, uterus, cervix, breast, or other female reproductive disorders.
 
 **Strategy:**
 1. Add `&patient.gender=male` or `&patient.gender=female` to the Condition / MedicationRequest / Procedure query.
@@ -118,7 +118,7 @@ Most phenotypes match more than one category. Combine the playbooks below.
 
 ## Playbook 5 — Iatrogenic / complications
 
-**Examples:** steroid-induced AVN, drug-induced liver injury (DILI), statins-and-MACE, ACE-inhibitor cough, peanut anaphylaxis after epinephrine, febrile neutropenia post-chemotherapy.
+**Common patterns:** drug-induced organ toxicity (hepatic, renal, bone); cardiovascular events on chronic preventive therapy; adverse drug reactions where the culprit is a common chronic-disease drug class; post-treatment complications in oncology or transplant populations.
 
 **Why they're hard:** the cohort is defined by **drug-then-outcome**, not by a static dx. Many patients never get the iatrogenic dx coded — the medication is the *exposure*, not the cohort.
 
@@ -136,7 +136,7 @@ Most phenotypes match more than one category. Combine the playbooks below.
 
 ## Playbook 6 — Procedurally defined
 
-**Examples:** CRC (colonoscopy + biopsy), CHD (CABG/PCI/stent), AAA (repair procedures), BPH (TURP), prostate cancer (biopsy), bone scan utilization, DRE, cardiac stress test.
+**Common patterns:** GI screening procedures, cardiac revascularization procedures, vascular repair procedures, urologic surgical procedures, biopsy-based cancer staging procedures, imaging-utilization quality measures, cardiac stress testing.
 
 **Why they're hard:** the procedure is the inclusion criterion. CPT codes often outperform SNOMED for recall on US healthcare data.
 
@@ -151,7 +151,7 @@ Most phenotypes match more than one category. Combine the playbooks below.
 
 ## Playbook 7 — Threshold-based
 
-**Examples:** T2D (HbA1c ≥6.5%), AKI (creatinine ≥1.5x baseline), DILI (ALT ≥5×ULN), FH (LDL ≥190), osteoporosis (T-score ≤-2.5), HTN (SBP >140).
+**Common patterns:** glycemic thresholds (e.g., HbA1c ≥6.5% for T2D); creatinine elevation against a baseline; hepatic enzyme elevation expressed as a multiple of ULN; lipid thresholds (e.g., LDL); bone-density T-score (negative threshold); blood-pressure thresholds.
 
 **Strategy:**
 1. Resource is `Observation`.
@@ -167,13 +167,13 @@ Most phenotypes match more than one category. Combine the playbooks below.
 **Common mistakes:**
 - Forgetting units — `ge6.5` without unit returns matches in any unit.
 - Using `=6.5` (exact match) when you mean `ge6.5`.
-- Negative thresholds (osteoporosis T-score ≤-2.5): `value-quantity=le-2.5||SD`.
+- Negative-value thresholds (e.g., bone-density T-score): `value-quantity=le-2.5||SD`.
 
 ---
 
 ## Playbook 8 — Multi-system code lists from PheKB algorithms
 
-**Examples:** DILI, NAS, T2D, CKD, atrial fibrillation, heart failure, AAA — anywhere PheKB lists a comprehensive code table spanning ICD-9 + ICD-10 + SNOMED.
+**Common patterns:** anywhere a published phenotype algorithm lists a comprehensive code table spanning ICD-9 + ICD-10 + SNOMED — frequent in metabolic, hepatic, cardiac, renal, and arrhythmia phenotypes.
 
 **Why they matter:** the PheKB algorithm explicitly enumerates the multi-system code list. Real EHR data may use any of those codings on the same patient.
 
@@ -186,7 +186,7 @@ Most phenotypes match more than one category. Combine the playbooks below.
 
 ## Playbook 9 — Acute / temporal cohorts
 
-**Examples:** sepsis (acute presentation), AKI (within 7-day baseline), pneumonia (CAP vs HAP), influenza (seasonal).
+**Common patterns:** acute systemic infections; time-bounded organ injury defined relative to a baseline; community-acquired vs hospital-acquired infection distinctions; seasonal viral illness.
 
 **Strategy:**
 1. Use `_lastUpdated=gt<date>` for "recent" filters.
@@ -197,13 +197,13 @@ Most phenotypes match more than one category. Combine the playbooks below.
 
 ## Playbook 10 — Negation / exclusion
 
-**Examples:** "biologic without Crohn's diagnosis", "statin without atherosclerotic disease indication", "anticoagulant in patient without VTE history".
+**Common patterns:** "medication X without dx Y" (treatment for an indication other than the obvious one); "treatment for indication A in patients without indication B" (cross-indication contamination); "lab abnormality without corresponding dx" (undocumented disease).
 
 **Why they're hard:** FHIR has no `NOT EXISTS` operator. The agent must emit two queries and the runner subtracts.
 
 **Strategy:**
-1. Identify the inclusion set (e.g., all biologic prescriptions).
-2. Identify the exclusion set (e.g., all Crohn's diagnoses).
+1. Identify the inclusion set (e.g., all prescriptions for the drug class).
+2. Identify the exclusion set (e.g., all diagnoses for the condition being excluded).
 3. Emit both queries on separate lines.
 4. Annotate the cohort definition mentally: "patients in set A but not in set B".
 
@@ -213,7 +213,7 @@ The runner subtracts. Do NOT emit a single query and hope to filter post-hoc —
 
 ## Playbook 11 — Cross-resource AND cohorts
 
-**Examples:** T2D dx + metformin Rx, RA dx + biologic, CHD dx + stent procedure.
+**Common patterns:** diagnosis + first-line treatment AND queries; diagnosis + interventional procedure AND queries; diagnosis + biomarker-confirmation AND queries.
 
 **Strategy:**
 1. If both criteria are required (AND): use `Patient?_has:Condition:patient:code=...&_has:MedicationRequest:patient:code=...`.

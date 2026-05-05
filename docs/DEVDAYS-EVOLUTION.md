@@ -141,16 +141,113 @@ The system prompt also includes worked examples for:
 
 ---
 
-## Where Tier 3 will go
+## Tier 3 in practice: when context isn't engagement
 
-Tier 2 teaches the agent what tools exist. Tier 3 will teach it what *strategies* exist by giving it a methodology skill that distills the phenotype-design heuristics:
+Tier 2 teaches the agent what tools exist. Tier 3 was supposed to teach it what *strategies* exist by giving it a methodology skill — distilled phenotype-design heuristics:
 
 - "For chronic diseases with subtypes, use VSAC + sample + multi-resource union"
 - "For pediatric phenotypes, add `patient.birthdate` filter — pediatric is age, not a code"
 - "For PGx phenotypes, MedicationRequest is the primary signal, not the Condition"
 - "For procedural phenotypes, CPT often beats SNOMED for recall on US data"
 
-This is the same knowledge the `phenotype_workflow` skill encodes for human authors. Surfacing it as a Tier 3 skill should let the agent operate at the level of an experienced clinical informaticist rather than just a careful FHIR developer.
+We built it: `backend/src/llm/tier3_methodology.md`, 12 playbooks, ~5,000 words, prepended to the system prompt when `tier=3`.
+
+### What we expected vs. what we measured
+
+The first qwen3:8b matrix (9 cells: T1/T2/T3 × naive/broad/expert prompts) showed a depressing result: **Tier 3 didn't beat Tier 2.** Both got perfect F1 on the expert prompt; both failed on naive and broad. The 5,000 words of methodology made no measurable difference.
+
+The hypothesis: small models *receive* long context but don't *engage* with it. They skim, jump to tool calls, and behave like Tier 2 with a longer prompt.
+
+### Step 0: forced categorization
+
+The fix was a 30-line addition at the top of the methodology document — **before** the playbooks themselves:
+
+1. A 4-step procedural instruction ("read the request → run the decision tree → state the playbook number(s) explicitly → only then construct queries"). The word "mandatory" matters less than "State explicitly in your reasoning" — that's what turns it from passive context into a forced output.
+2. An 8-row keyword→playbook lookup table: `"without"` → Playbook 10 (negation, two-query subtraction), `"≥"` → Playbook 7 (threshold via `value-quantity`), `"female"` → Playbook 4 (chain `patient.gender`), `"all my patients"` → Playbook 12 (cohort = OR multi-resource union), and so on.
+3. A closing exhortation about the cost of skipping (folklore, but it doesn't hurt).
+
+### What it bought us
+
+Re-running the matrix on 5 more test cases yielded:
+
+| Phenotype | T2 broad F1 | T3 broad F1 |
+|---|---|---|
+| Ovarian-cancer-dx (sex-specific) | 0.3 | **1.0** |
+| T2D-comprehensive (multi-resource) | timeout | **1.0** |
+| AKI-labs (threshold) | 1.0 (already at ceiling) | 1.0 |
+| Crohn's-dx (subtypes) | 0.0 | 0.0 |
+
+Two phenotypes flipped from poor/timeout to perfect. AKI-labs was already at ceiling. Crohn's-dx didn't lift — qwen3:8b's classification might've still been off there. Small N, but directionally consistent: where there was room to lift, the lift happened.
+
+### The honest assessment
+
+The lift is plausibly driven by the **table** more than the procedural framing. The keyword index lets a small model *match* against a short lookup rather than *recall* from a long methodology doc. Strip out the "mandatory" wording and most of the lift would probably remain. Unverified — would take a control matrix to confirm.
+
+### The generalizable principle
+
+This is the cleanest illustration we got of a broader truth in agentic LLM design: **handing a model a lot of knowledge isn't the same as making it use that knowledge.** A small explicit "categorize first, act second" instruction extracts an order of magnitude more value out of the same content. Same idea as putting your hot path at the top of a CLAUDE.md, or like an index card on a doctor's desk vs. a textbook on the shelf.
+
+For DevDays: the audience doesn't have to care about FHIR to take this home. They have to design agents that consume context they put together themselves. "Make the most-likely-needed knowledge a reflex, not a recall" is portable.
+
+---
+
+## Open problem: the multi-resource union ceiling
+
+The Crohn's-comprehensive test case is the one we couldn't beat. It defines a 152-patient provider-level cohort that requires three queries unioned:
+
+1. `Condition?code=<crohn's SNOMED + ICD-10 + ICD-9>` — patients with a documented diagnosis
+2. `MedicationRequest?code=<biologic + 5-ASA + steroid RxNorm codes>` — treated patients (some without dx)
+3. `Observation?code=<inflammatory markers>` — lab-evidenced patients
+
+The runner unions the patient IDs. Best F1 we hit across all 9 cells (T1/T2/T3 × naive/broad/expert) was **0.31** — the agent never produced all three queries cleanly enough to reach the 152-patient cohort.
+
+### Why this matters: it's not just Crohn's
+
+The same shape recurs across most provider-level cohort definitions:
+
+- **T2D comprehensive** (74 patients): dx + meds + HbA1c labs. T1 baseline got lucky here (qwen3:8b had T2D knowledge baked in), but on phenotypes the model doesn't already know, the same shape would fail.
+- **DILI** (drug-induced liver injury): culprit drug exposure + ALT lab threshold + hepatotoxicity dx — three resources with a temporal twist.
+- **AAA** (3 case types: repair procedure, ruptured dx, ≥2 vascular visits with unruptured dx): three queries, three failure paths.
+- **Heart failure** (HFpEF vs HFrEF, multiple meds, BNP labs)
+- **Sepsis** (SIRS Conditions + qSOFA Observations + lactate threshold + abx Rx)
+- Generally: **any phenotype where "find all my X patients" is the question**, which is most of clinical practice.
+
+PheKB's algorithms are mostly written this way because real EHR documentation is mostly written this way: a patient is sometimes diagnosed, sometimes treated, sometimes lab-evidenced, often two of three, occasionally all three.
+
+### Failure modes we observed
+
+- **Single concatenated query.** The agent emits one giant URL that smashes multiple `?code=` strings together (`MedicationRequest?code=...MedicationRequest?code=...`). The server returns 400; the runner records a 0.
+- **Multiple queries, wrong resource types.** Agent emits two `Condition?` queries with different codes instead of `Condition?` + `MedicationRequest?`. Result is duplication within one resource type, not union across types.
+- **Multiple queries, one resource type missing.** Agent recognized "dx + meds" but not "dx + meds + labs". 30-60% under-recall.
+- **Over-querying spam.** Especially on T1 broad, the model dumps a wall of queries that catch the cohort but also catch thousands of unrelated patients (precision = 0.04, recall = 0.99).
+
+### Possible solutions — captured here as gaps, not yet implemented
+
+We're treating this as a known frontier and not patching it before the talk. Candidates for future work, roughly ranked by leverage:
+
+1. **Output-schema enforcement.** Require the agent's final answer to follow a template:
+   ```
+   # Query 1 (Condition): <url>
+   # Query 2 (MedicationRequest): <url>
+   # Query 3 (Observation): <url>
+   ```
+   Force the agent to address each resource type explicitly. Even if it leaves a query empty, the structural prompt makes it harder to skip a resource type unconsciously.
+
+2. **A pre-flight `decompose_cohort(prompt)` tool** that returns suggested per-resource queries for the agent to verify and refine. Trades flexibility for structure — useful for cohort prompts, less so for case-validation prompts.
+
+3. **Iterative validation in-loop.** Agent emits one query, runner returns count + sample, agent asks "is this the cohort or do I need to broaden?". Slow but pedagogically interesting — and more like how a clinician actually works.
+
+4. **Two-stage agent: planner + executor.** The planner outputs a JSON resource decomposition (`{Condition: [codes], MedicationRequest: [codes], Observation: [codes + threshold]}`), and a deterministic executor builds the queries. Removes one degree of freedom (URL syntax) from the LLM's job.
+
+5. **Fine-tune on synthetic union examples.** A few hundred (prompt → 3-query union) pairs would teach the format. Practical but not as portable a story.
+
+6. **Stronger STEP 0 framing for cohort cases.** A keyword like "all my patients" or "comprehensive" already maps to Playbook 12 today, but the lookup row could be more aggressive: *"You MUST emit one query per resource type. Skipping a resource type drops the cohort by 30-60%."* — more behavioral nudging.
+
+### What we'll say at DevDays
+
+This is the open question we end on. The takeaway: **context-only methods plateau when the answer is structurally multi-step.** Single-prompt agents — even with tools, even with methodology — hit a ceiling on tasks that require coordinated outputs across multiple structural slots. The next research lever isn't more knowledge; it's tighter output structure or workflow decomposition.
+
+It's a satisfying open question because it's the same shape as a lot of real-world agentic problems: deal-flow agents that need to query 3 systems, support agents that need to consult 4 references, planning agents that need to fill N slots in a coordinated plan. Small models (and even mid-tier models) under-fill. Big models over-spam. Structure beats both.
 
 ---
 
