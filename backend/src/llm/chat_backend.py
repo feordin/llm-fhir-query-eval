@@ -85,6 +85,11 @@ class OpenAIChatBackend(ChatBackend):
     OpenAI-compatible target wired in today.
     """
 
+    # Some OpenAI-compatible servers (observed with Lemonade) intermittently
+    # return an HTTP 200 whose body has no "choices" -- retry a few times
+    # before giving up so a single blip doesn't kill a long agentic run.
+    MAX_ATTEMPTS = 3
+
     def __init__(self, model: str, base_url: str, request_timeout: int = 300):
         self.model = model
         self.base_url = base_url.rstrip("/")
@@ -94,18 +99,35 @@ class OpenAIChatBackend(ChatBackend):
         self._tokens_per_sec = None
         self._ttft_sec = None
 
+    def _post_chat(self, payload: Dict[str, Any]) -> Dict[str, Any]:
+        """POST to /chat/completions, retrying on responses that lack 'choices'."""
+        last_problem = None
+        for attempt in range(1, self.MAX_ATTEMPTS + 1):
+            resp = requests.post(
+                f"{self.base_url}/chat/completions",
+                json=payload,
+                timeout=self.request_timeout,
+            )
+            resp.raise_for_status()
+            data = resp.json()
+            if data.get("choices"):
+                return data
+            last_problem = json.dumps(data)[:300]
+            logger.warning(
+                "OpenAI-compatible response missing 'choices' (attempt %d/%d): %s",
+                attempt, self.MAX_ATTEMPTS, last_problem,
+            )
+        raise RuntimeError(
+            f"OpenAI-compatible server returned no 'choices' after "
+            f"{self.MAX_ATTEMPTS} attempts. Last body: {last_problem}"
+        )
+
     def chat(self, messages: List[NormMsg], tools: List[dict]) -> NormMsg:
         wire_messages = [self._to_wire(m) for m in messages]
         payload: Dict[str, Any] = {"model": self.model, "messages": wire_messages}
         if tools:
             payload["tools"] = tools
-        resp = requests.post(
-            f"{self.base_url}/chat/completions",
-            json=payload,
-            timeout=self.request_timeout,
-        )
-        resp.raise_for_status()
-        data = resp.json()
+        data = self._post_chat(payload)
 
         usage = data.get("usage", {}) or {}
         self._input_tokens += usage.get("prompt_tokens", 0) or 0

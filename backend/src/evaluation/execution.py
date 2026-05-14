@@ -18,20 +18,24 @@ class ExecutionEvaluator:
         self.fhir_client = fhir_client
 
     def evaluate(self, expected_query_url: str, generated_query_url: str) -> ExecutionMatchResult:
-        """Execute both queries and compare result sets.
+        """Execute both queries and compare the patient sets they identify.
 
-        Uses resource IDs for comparison. Calculates precision, recall, F1.
+        Compares stable patient IDs (not raw resource IDs) and walks pagination,
+        via ``get_patient_ids_from_query``. This keeps single-query evaluation
+        consistent with the multi-query patient-union path, and avoids
+        first-page truncation on servers that paginate (e.g. Microsoft/Azure
+        FHIR default ``_count``). Calculates precision, recall, F1.
         """
-        # Get IDs from expected query
+        # Get patient IDs from expected query
         try:
-            expected_ids = set(self.fhir_client.get_resource_ids(expected_query_url))
+            expected_ids = set(self.fhir_client.get_patient_ids_from_query(expected_query_url))
         except Exception as e:
             logger.error(f"Failed to execute expected query '{expected_query_url}': {e}")
             expected_ids = set()
 
-        # Get IDs from generated query
+        # Get patient IDs from generated query
         try:
-            generated_ids = set(self.fhir_client.get_resource_ids(generated_query_url))
+            generated_ids = set(self.fhir_client.get_patient_ids_from_query(generated_query_url))
         except Exception as e:
             logger.error(f"Failed to execute generated query '{generated_query_url}': {e}")
             generated_ids = set()
