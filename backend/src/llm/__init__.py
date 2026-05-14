@@ -1,8 +1,11 @@
+import os
+
 from .provider import LLMProvider, parse_fhir_query_from_text, FHIR_SYSTEM_PROMPT, FHIR_SYSTEM_PROMPT_VERSION, build_generated_query
 from .anthropic_provider import AnthropicProvider
 from .cli_delegate_provider import CLIDelegateProvider
 from .command_provider import CommandProvider
-from .agentic_provider import OllamaAgenticProvider
+from .agentic_provider import OllamaAgenticProvider, LemonadeAgenticProvider
+from .openai_chat_provider import OpenAIChatProvider
 
 
 def get_provider(name: str, model: str = None, **kwargs) -> LLMProvider:
@@ -31,10 +34,32 @@ def get_provider(name: str, model: str = None, **kwargs) -> LLMProvider:
             max_iterations=max_iterations,
             **kwargs,
         )
+    elif name == "lemonade":
+        base_url = kwargs.pop("base_url", None) or os.environ.get(
+            "LEMONADE_BASE_URL", "http://localhost:13305/api/v1")
+        # Tier 1 closed-book -- drop agentic-only kwargs if a caller passed them
+        kwargs.pop("fhir_url", None)
+        kwargs.pop("max_iterations", None)
+        kwargs.pop("tier", None)
+        return OpenAIChatProvider(model=model or "Phi-4-mini-reasoning-Hybrid",
+                                  base_url=base_url, **kwargs)
+    elif name == "lemonade-agentic":
+        base_url = kwargs.pop("base_url", None) or os.environ.get(
+            "LEMONADE_BASE_URL", "http://localhost:13305/api/v1")
+        fhir_url = kwargs.pop("fhir_url", "http://localhost:8080/fhir")
+        max_iterations = kwargs.pop("max_iterations", 10)
+        return LemonadeAgenticProvider(
+            model=model or "Phi-4-mini-reasoning-Hybrid",
+            base_url=base_url,
+            fhir_base_url=fhir_url,
+            max_iterations=max_iterations,
+            **kwargs,
+        )
     else:
         raise ValueError(
             f"Unknown provider: '{name}'. "
-            "Choose from: anthropic, claude-cli, command, ollama-agentic"
+            "Choose from: anthropic, claude-cli, command, ollama-agentic, "
+            "lemonade, lemonade-agentic"
         )
 
 
@@ -42,4 +67,5 @@ __all__ = [
     "LLMProvider", "get_provider", "parse_fhir_query_from_text", "FHIR_SYSTEM_PROMPT",
     "FHIR_SYSTEM_PROMPT_VERSION", "build_generated_query",
     "AnthropicProvider", "CLIDelegateProvider", "CommandProvider", "OllamaAgenticProvider",
+    "LemonadeAgenticProvider", "OpenAIChatProvider",
 ]
