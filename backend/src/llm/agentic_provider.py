@@ -16,7 +16,7 @@ import time
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
-import ollama
+from .chat_backend import ChatBackend, OllamaChatBackend, OpenAIChatBackend
 
 from .provider import LLMProvider, parse_fhir_query_from_text, build_generated_query
 
@@ -404,11 +404,14 @@ TOOL_DEFINITIONS = [
 # Agentic provider
 # ---------------------------------------------------------------------------
 
-class OllamaAgenticProvider(LLMProvider):
+class AgenticProvider(LLMProvider):
     """LLM provider that gives the model access to tools during FHIR query generation.
 
     Implements a Tier 2 agentic evaluation loop:
       prompt -> tool calls -> refinement -> final FHIR query
+
+    The loop is transport-agnostic: it drives a ChatBackend (see chat_backend.py),
+    so the same loop serves a local Ollama server or any OpenAI-compatible server.
 
     Tools available to the model:
       - fhir_server_metadata: inspect server capabilities
@@ -425,12 +428,14 @@ class OllamaAgenticProvider(LLMProvider):
 
     def __init__(
         self,
-        model: str = "qwen3.5:9b",
+        backend: ChatBackend,
+        model: str,
         fhir_base_url: str = "http://localhost:8080/fhir",
         max_iterations: int = 20,
         request_timeout: int = 30,
         tier: int = 2,
     ):
+        self.backend = backend
         self.model = model
         self.fhir_base_url = fhir_base_url.rstrip("/")
         self.max_iterations = max_iterations
@@ -462,8 +467,9 @@ class OllamaAgenticProvider(LLMProvider):
 
     def _build_run_metadata(self, iterations_used: int, stop_reason: str, elapsed_sec: float) -> RunMetadata:
         """Build audit metadata for the just-completed agentic run."""
+        m = self.backend.get_run_metrics()
         return RunMetadata(
-            provider_backend="ollama",
+            provider_backend=m["provider_backend"],
             model_version=self.model,
             tool_transport="http",
             tier=self.tier,
@@ -475,6 +481,10 @@ class OllamaAgenticProvider(LLMProvider):
             stop_reason=stop_reason,
             fallback_used=stop_reason.startswith("fallback"),
             tool_calls_count=len(self.tool_trace),
+            input_tokens=m["input_tokens"] or None,
+            output_tokens=m["output_tokens"] or None,
+            tokens_per_sec=m["tokens_per_sec"],
+            ttft_sec=m["ttft_sec"],
         )
 
     # ------------------------------------------------------------------
@@ -506,17 +516,12 @@ class OllamaAgenticProvider(LLMProvider):
             logger.debug("Agentic iteration %d/%d", iteration + 1, self.max_iterations)
 
             try:
-                response = ollama.chat(
-                    model=self.model,
-                    messages=messages,
-                    tools=tools,
-                )
+                msg = self.backend.chat(messages, tools)
             except Exception as e:
                 raise RuntimeError(
-                    f"Ollama chat failed (model={self.model}): {e}"
+                    f"Chat backend failed (model={self.model}): {e}"
                 ) from e
 
-            msg = response["message"]
             messages.append(msg)
 
             # If no tool calls, the model is done -- extract the final query.
@@ -570,6 +575,7 @@ class OllamaAgenticProvider(LLMProvider):
                 result_str = json.dumps(result) if not isinstance(result, str) else result
                 messages.append({
                     "role": "tool",
+                    "tool_call_id": tool_call["id"],
                     "content": result_str,
                 })
 
@@ -1139,3 +1145,23 @@ class OllamaAgenticProvider(LLMProvider):
                     })
 
         return codes
+
+
+# ---------------------------------------------------------------------------
+# Concrete providers -- thin subclasses that pick a chat backend
+# ---------------------------------------------------------------------------
+
+class OllamaAgenticProvider(AgenticProvider):
+    """Agentic provider backed by a local Ollama server (unchanged qwen path)."""
+
+    def __init__(self, model: str = "qwen3.5:9b", **kwargs):
+        super().__init__(backend=OllamaChatBackend(model), model=model, **kwargs)
+
+
+class LemonadeAgenticProvider(AgenticProvider):
+    """Agentic provider backed by an OpenAI-compatible server (AMD GAIA Lemonade)."""
+
+    def __init__(self, model: str, base_url: str = "http://localhost:13305/api/v1",
+                 request_timeout: int = 300, **kwargs):
+        backend = OpenAIChatBackend(model, base_url=base_url, request_timeout=request_timeout)
+        super().__init__(backend=backend, model=model, **kwargs)

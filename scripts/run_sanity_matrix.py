@@ -60,11 +60,14 @@ def load_test_case(tc_id: str) -> TestCase:
     return TestCase(**data)
 
 
-def make_provider(tier: int, model: str, fhir_url: str, cell_timeout_sec: int = 300):
+def make_provider(tier: int, model: str, fhir_url: str, backend: str = "ollama",
+                  cell_timeout_sec: int = 300):
     if tier == 1:
         # Give CommandProvider 30s of slack inside the wall-clock cell timeout
         # so its own TimeoutExpired fires cleanly before the subprocess wrapper kills it.
         inner_timeout = max(30, cell_timeout_sec - 30)
+        if backend == "lemonade":
+            return get_provider("lemonade", model=model)
         return get_provider(
             "command",
             command=f"ollama run {model}",
@@ -73,8 +76,9 @@ def make_provider(tier: int, model: str, fhir_url: str, cell_timeout_sec: int = 
     base = fhir_url.rstrip("/")
     is_root_mounted = base.lower().startswith("https://") or ":8443" in base
     agentic_fhir = base if (is_root_mounted or base.endswith("/fhir")) else base + "/fhir"
+    provider_name = "lemonade-agentic" if backend == "lemonade" else "ollama-agentic"
     return get_provider(
-        "ollama-agentic",
+        provider_name,
         model=model,
         fhir_url=agentic_fhir,
         tier=tier,
@@ -93,7 +97,7 @@ def make_fhir_client(fhir_url: str) -> FHIRClient:
 
 
 def run_one_cell(tc_id: str, tier: int, variant: str, model: str, fhir_url: str,
-                 cell_timeout_sec: int = 300) -> dict:
+                 backend: str = "ollama", cell_timeout_sec: int = 300) -> dict:
     """Execute a single (tier, variant) cell and return the result dict.
 
     Called both directly (in --single-cell mode by the subprocess) and from
@@ -104,14 +108,14 @@ def run_one_cell(tc_id: str, tier: int, variant: str, model: str, fhir_url: str,
     cell = {"tier": tier, "prompt_variant": variant}
     t0 = time.time()
     try:
-        provider = make_provider(tier, model, fhir_url, cell_timeout_sec)
+        provider = make_provider(tier, model, fhir_url, backend, cell_timeout_sec)
         runner = EvaluationRunner(fhir_client, provider)
         cell_prompt_text = tc.get_prompt(variant)
         cell_tc = tc.model_copy(update={
             "prompt": cell_prompt_text,
             "prompts": {"naive": cell_prompt_text},
         })
-        provider_name = "ollama"  # TODO: derive from --provider flag when multi-backend lands
+        provider_name = backend
         result = runner.run_single(cell_tc, provider_name=provider_name, model_name=model)
         exec_r = result.evaluation_results.execution_match
         cell.update({
@@ -136,7 +140,7 @@ def run_one_cell(tc_id: str, tier: int, variant: str, model: str, fhir_url: str,
 
 
 def run_cell_subprocess(tc_id: str, tier: int, variant: str, model: str,
-                        fhir_url: str, timeout_sec: int) -> dict:
+                        fhir_url: str, backend: str, timeout_sec: int) -> dict:
     """Run a single cell in a subprocess with a hard wall-clock timeout."""
     out_dir = REPO / "results"
     out_dir.mkdir(exist_ok=True)
@@ -146,6 +150,7 @@ def run_cell_subprocess(tc_id: str, tier: int, variant: str, model: str,
         "--test-case", tc_id,
         "--model", model,
         "--fhir-url", fhir_url,
+        "--backend", backend,
         "--cell-timeout-sec", str(timeout_sec),
         "--single-cell",
         "--cell-tier", str(tier),
@@ -178,6 +183,8 @@ def main() -> int:
     p = argparse.ArgumentParser()
     p.add_argument("--test-case", "-t", required=True)
     p.add_argument("--model", default="phi4")
+    p.add_argument("--backend", choices=["ollama", "lemonade"], default="ollama",
+                   help="Model serving backend (default: ollama)")
     p.add_argument("--fhir-url", default="https://localhost:8443")
     p.add_argument("--tiers", default="1,2,3")
     p.add_argument("--prompt-variants", default="naive,broad,expert")
@@ -192,7 +199,7 @@ def main() -> int:
 
     if args.single_cell:
         cell = run_one_cell(args.test_case, args.cell_tier, args.cell_variant,
-                            args.model, args.fhir_url, args.cell_timeout_sec)
+                            args.model, args.fhir_url, args.backend, args.cell_timeout_sec)
         with open(args.cell_out, "w", encoding="utf-8") as f:
             json.dump(cell, f, indent=2)
         return 0
@@ -218,7 +225,7 @@ def main() -> int:
             label = f"T{tier} | {variant:6s}"
             print(f"--- {label} starting...", flush=True)
             cell = run_cell_subprocess(tc.id, tier, variant, args.model,
-                                       args.fhir_url, args.cell_timeout_sec)
+                                       args.fhir_url, args.backend, args.cell_timeout_sec)
             if "f1" in cell:
                 print(f"    {label} -> P={cell['precision']} R={cell['recall']} F1={cell['f1']} "
                       f"(expected={cell['expected_count']}, got={cell['actual_count']}, {cell['elapsed_sec']}s)")
@@ -246,6 +253,7 @@ def main() -> int:
         json.dump({
             "test_case": tc.id,
             "model": args.model,
+            "backend": args.backend,
             "fhir_url": args.fhir_url,
             "host": socket.gethostname(),
             "timestamp": ts,
