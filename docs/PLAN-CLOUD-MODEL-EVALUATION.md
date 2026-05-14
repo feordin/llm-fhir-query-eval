@@ -1,8 +1,8 @@
 # Plan: Cloud Frontier Model Evaluation
 
-> **Status**: Phase 0 complete (committed `7d56661c`). Phase 1a (Azure provisioning) is next.
+> **Status**: Phase 0 complete (committed `7d56661c`). Phase 1a (Azure provisioning) in progress.
 >
-> **Created**: 2026-05-05 | **Updated**: 2026-05-09
+> **Created**: 2026-05-05 | **Updated**: 2026-05-14
 
 ## Problem Statement
 
@@ -17,7 +17,13 @@ models from Anthropic, OpenAI, and Google, plus a cloud-hosted small model.
   `umls_search`, `umls_crosswalk`, `vsac_search_value_sets`, `vsac_expand_value_set`,
   `vsac_validate_code`, `vsac_lookup_code`, `vsac_check_subsumption`
 
-**Scale**: ~100 phenotypes × ~3 test cases × 9 cells = ~2,700 cells per model × 7+ models.
+**Scale**: ~100 phenotypes × ~3 test cases × 9 cells = ~2,700 cells per model × 4 models.
+
+**Tier focus**: This evaluation is anchored at the **workhorse tier** (Claude Sonnet 4.6 class).
+All target models are chosen to match that tier on positioning and pricing, so the model is
+the only variable rather than the capability class. Flagship-tier comparisons (Opus 4.7 /
+GPT-5.5 standard / Gemini 3 Pro) are out of scope for the initial run but can be added as
+a separate track once the workhorse-tier baseline is established.
 
 ## Key Design Decision: Azure AI Foundry as Unified Backend
 
@@ -61,15 +67,24 @@ built-in orchestration. Uses BYOK to route to each provider.
 
 ## Target Models
 
-| Model | Azure Deployment | Track S (Azure) | Track S (Local) | Track O | Track C |
-|-------|-----------------|-----------------|-----------------|---------|---------|
-| Claude Sonnet 4 | Serverless API | ✅ | — | ✅ (native Anthropic SDK) | ✅ |
-| Claude Opus 4 | Serverless API | ✅ | — | ✅ (native Anthropic SDK) | ✅ |
-| GPT-4.1 | Azure OpenAI | ✅ | — | ✅ (native OpenAI SDK) | ✅ |
-| GPT-5.2 | Azure OpenAI | ✅ | — | ✅ (native OpenAI SDK) | ✅ |
-| Gemini 2.5 Pro | Serverless API | ✅ | — | ✅ (native Google SDK) | ✅ |
-| Gemini 2.5 Flash | Serverless API | ✅ | — | ✅ (native Google SDK) | ✅ |
-| Qwen3-8B | Serverless API | ✅ | ✅ (Ollama) | — | ✅ |
+Workhorse-tier lineup (~$3–5 input / ~$15–30 output per Mtok class):
+
+| Model | Provider | Azure Deployment | Track S (Azure) | Track S (Local) | Track O | Track C |
+|-------|----------|-----------------|-----------------|-----------------|---------|---------|
+| Claude Sonnet 4.6 | Anthropic | Serverless API | ✅ | — | ✅ (native Anthropic SDK) | ✅ |
+| GPT-5.5 Instant | OpenAI | Azure OpenAI | ✅ | — | ✅ (native OpenAI SDK) | ✅ |
+| Gemini 3 Flash | Google | Serverless API | ✅ | — | ✅ (native Google SDK) | ✅ |
+| Qwen3.5-9B | Alibaba | Serverless API | ✅ | ✅ (Ollama) | — | ✅ |
+
+**Tier-mapping rationale** (see Open Question #6 below for the full analysis):
+- Claude Sonnet 4.6 is the anchor (Anthropic's workhorse, $3/$15 per Mtok).
+- GPT-5.5 Instant is OpenAI's workhorse counterpart. GPT-5.5 standard prices at $5/$30 and
+  benchmarks head-to-head against Opus 4.7 — that's a flagship-tier match, not a Sonnet
+  match. Instant is the right Sonnet 4.6 peer.
+- Gemini 3 Flash matches the workhorse positioning and pricing; Gemini 3 Pro would be the
+  Opus 4.7 peer.
+- Qwen3.5-9B is the small open-source baseline, with optional local Ollama fallback for
+  cost/sanity comparison.
 
 ---
 
@@ -136,14 +151,11 @@ Deploy model endpoints in Azure AI Foundry:
 ```
 Azure AI Foundry Project
 ├── Azure OpenAI resource (GPT models)
-│   ├── gpt-4.1 deployment
-│   └── gpt-5.2 deployment (or latest available)
+│   └── gpt-5.5-instant deployment
 ├── Serverless API deployments (Model Catalog — pay-per-token)
-│   ├── Claude Sonnet 4          (Anthropic via Azure)
-│   ├── Claude Opus 4            (Anthropic via Azure)
-│   ├── Gemini 2.5 Pro           (Google via Azure)
-│   ├── Gemini 2.5 Flash         (Google via Azure)
-│   └── Qwen3-8B                 (Alibaba via Azure)
+│   ├── Claude Sonnet 4.6        (Anthropic via Azure)
+│   ├── Gemini 3 Flash           (Google via Azure)
+│   └── Qwen3.5-9B               (Alibaba via Azure)
 └── Shared config
     ├── API key (single key for all endpoints)
     └── Region: chosen for model availability
@@ -156,7 +168,7 @@ AZURE_FOUNDRY_API_KEY=<key>
 # Per-deployment model names map to Azure deployment IDs
 ```
 
-**Action**: Manual Azure Portal / CLI provisioning. Check [Azure AI Foundry model catalog](https://ai.azure.com/explore/models) for regional availability of all target models.
+**Action**: Manual Azure Portal / CLI provisioning. Check [Azure AI Foundry model catalog](https://ai.azure.com/explore/models) for regional availability of all target models. **Availability caveat**: GPT-5.5 Instant launched 2026-05-05 and Gemini 3 Flash is recent — both may not yet be in every Foundry region as serverless deployments. If a model is missing, either switch region or fall back temporarily to the next-newest variant of the same family (e.g., a prior Gemini Flash or GPT-5.4 Instant) and document the substitution in `RunMetadata.model_version`.
 
 #### 1b. Normalized Agent Protocol
 
@@ -230,18 +242,15 @@ identically (same normalized output for the same logical conversation).
 ```python
 # backend/src/llm/model_registry.py
 AZURE_MODELS = {
-    "claude-sonnet-4":  {"deployment": "claude-sonnet-4",  "provider": "anthropic", "tier": "frontier"},
-    "claude-opus-4":    {"deployment": "claude-opus-4",    "provider": "anthropic", "tier": "frontier"},
-    "gpt-4.1":          {"deployment": "gpt-4.1",          "provider": "openai",    "tier": "frontier"},
-    "gpt-5.2":          {"deployment": "gpt-5.2",          "provider": "openai",    "tier": "frontier"},
-    "gemini-2.5-pro":   {"deployment": "gemini-2.5-pro",   "provider": "google",    "tier": "frontier"},
-    "gemini-2.5-flash": {"deployment": "gemini-2.5-flash", "provider": "google",    "tier": "frontier"},
-    "qwen3-8b":         {"deployment": "qwen3-8b",         "provider": "alibaba",   "tier": "small",
-                          "local_fallback": "qwen3:8b"},
+    "claude-sonnet-4.6": {"deployment": "claude-sonnet-4-6", "provider": "anthropic", "tier": "workhorse"},
+    "gpt-5.5-instant":   {"deployment": "gpt-5.5-instant",   "provider": "openai",    "tier": "workhorse"},
+    "gemini-3-flash":    {"deployment": "gemini-3-flash",    "provider": "google",    "tier": "workhorse"},
+    "qwen3.5-9b":        {"deployment": "qwen3-5-9b",        "provider": "alibaba",   "tier": "small",
+                           "local_fallback": "qwen3.5:9b"},
 }
 
 LOCAL_MODELS = {
-    "qwen3:8b": {"backend": "ollama", "tier": "small"},
+    "qwen3.5:9b": {"backend": "ollama", "tier": "small"},
 }
 ```
 
@@ -337,19 +346,19 @@ Add new CLI flags:
 ```bash
 python scripts/run_workload.py \
     --backend azure \                      # azure | ollama | copilot-sdk
-    --model claude-sonnet-4 \              # model/deployment name
+    --model claude-sonnet-4.6 \            # model/deployment name
     --track standardized \                 # standardized | optimized | copilot
     --fhir-url https://localhost:8443 \
     --machine main_pc
 
 # Qwen local:
-python scripts/run_workload.py --backend ollama --model qwen3:8b --track standardized ...
+python scripts/run_workload.py --backend ollama --model qwen3.5:9b --track standardized ...
 
 # Pilot mode:
-python scripts/run_workload.py --backend azure --model gpt-4.1 --pilot ...
+python scripts/run_workload.py --backend azure --model gpt-5.5-instant --pilot ...
 
 # Token budget:
-python scripts/run_workload.py --backend azure --model claude-opus-4 --token-budget-k 100 ...
+python scripts/run_workload.py --backend azure --model gemini-3-flash --token-budget-k 100 ...
 ```
 
 Result filenames: `sanity-matrix-{test_case}-{backend}-{model}-{track}-{timestamp}.json`
@@ -364,7 +373,7 @@ Result filenames: `sanity-matrix-{test_case}-{backend}-{model}-{track}-{timestam
 5. `warfarin-dose-response` — PGx, temporal logic
 
 **Execution order**:
-1. **6a**: Pilot — 5 phenotypes × all 7 Azure models + local Qwen on Track S
+1. **6a**: Pilot — 5 phenotypes × 4 Azure models + local Qwen on Track S
 2. **6b**: Full Track S — all 100 phenotypes × all models
 3. **6c**: Track O and C runs
 
@@ -372,12 +381,15 @@ Result filenames: `sanity-matrix-{test_case}-{backend}-{model}-{track}-{timestam
 
 ## Estimated Scope
 
+Workhorse-tier pricing assumed: ~$3–5 input / ~$15–30 output per Mtok.
+
 | Scope | Cells | Est. Cost |
 |-------|-------|-----------|
-| Pilot (Track S) | 5 × 3 × 9 × 8 = **1,080** | ~$20-50 |
-| Full Track S (Azure) | 7 × 2,700 = **18,900** | ~$200-800 |
+| Pilot (Track S) | 5 × 3 × 9 × 4 = **540** | ~$10-25 |
+| Full Track S (Azure, 3 cloud models) | 3 × 2,700 = **8,100** | ~$100-400 |
+| Full Track S (Cloud Qwen) | **2,700** | ~$10-30 |
 | Full Track S (Local Qwen) | **2,700** | $0 (compute only) |
-| Track O + C | **~40,000** | ~$500-1,500 |
+| Track O + C | **~22,000** | ~$300-900 |
 
 ## Implementation Order
 
@@ -413,6 +425,26 @@ Result filenames: `sanity-matrix-{test_case}-{backend}-{model}-{track}-{timestam
 
 5. **Result storage**: Current flat JSON files in `results/`. May need a structured
    DB (SQLite or DuckDB) for cross-model comparison dashboards at scale.
+
+6. **Tier mapping rationale (workhorse anchor)**: Sonnet 4.6 is the workhorse-tier
+   anchor at $3/$15 per Mtok. Peers chosen by *positioning + pricing*, not by name
+   suffix:
+   - **GPT-5.5 standard** ($5/$30) benchmarks head-to-head against Opus 4.7
+     (SWE-Bench Pro 58.6 vs 64.3; GPQA Diamond 93.6 vs 94.2; Terminal-Bench 2.0
+     82.7 vs 69.4). That's a flagship match — **wrong tier for this eval**.
+     **GPT-5.5 Instant** is the workhorse variant (ChatGPT default since
+     2026-05-05) and the correct Sonnet 4.6 peer.
+   - **Gemini 3 Pro** is the flagship; **Gemini 3 Flash** is the workhorse with
+     pricing/positioning matching Sonnet.
+   A flagship-tier follow-up run (Opus 4.7 / GPT-5.5 standard / Gemini 3 Pro)
+   is plausible later but explicitly out of scope for the initial baseline.
+
+7. **GPT-5.5 Instant API availability**: GPT-5.5 Instant launched 2026-05-05 as
+   the ChatGPT default. Confirm it is exposed via Azure OpenAI as a deployable
+   model name before locking the plan. If not, fall back options in order of
+   preference: (a) wait for GA, (b) GPT-5.5 Thinking with `reasoning_effort=low`
+   to approximate Instant, (c) prior workhorse-tier GPT (GPT-5.4 Instant or
+   equivalent) — document the substitution in `RunMetadata`.
 
 ## Dependencies
 
