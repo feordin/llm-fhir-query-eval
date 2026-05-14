@@ -4,20 +4,26 @@ For one test case ID, runs every (prompt_variant × tier) combination through
 the right provider and prints a P/R/F1 grid. Produces a JSON report under
 results/sanity-<timestamp>.json.
 
-Tier 1 = closed-book (CommandProvider — `ollama run <model>`)
-Tier 2 = tools-assisted (OllamaAgenticProvider with tier=2)
-Tier 3 = tools + methodology (OllamaAgenticProvider with tier=3)
+Per provider, the tiers map to:
+  ollama:        T1=`ollama run` subprocess, T2/3=OllamaAgenticProvider
+  foundry-local: T1=FoundryLocalProvider, T2/3=FoundryAgenticProvider (NPU)
 
 Usage:
-    # Full matrix:
+    # Full matrix on the workstation (Ollama):
     python scripts/run_sanity_matrix.py \\
         --test-case phekb-crohns-disease-biologic-without-dx \\
-        --model phi4 \\
+        --provider ollama --model qwen3:8b \\
         --fhir-url https://localhost:8443
+
+    # On the Snapdragon (Foundry Local NPU):
+    python scripts/run_sanity_matrix.py \\
+        --test-case phekb-asthma \\
+        --provider foundry-local --model qwen2.5-7b \\
+        --fhir-url https://<cloud-fhir-host>
 
     # Internal: run a single cell (called by the matrix as a subprocess for hard timeout):
     python scripts/run_sanity_matrix.py \\
-        --test-case <id> --model <m> --fhir-url <url> \\
+        --test-case <id> --provider <p> --model <m> --fhir-url <url> \\
         --single-cell --cell-tier 2 --cell-variant naive --cell-out /tmp/cell.json
 
 Per-cell wall-clock timeout: 5 minutes (configurable with --cell-timeout-sec).
@@ -46,6 +52,7 @@ from src.api.models.test_case import TestCase  # noqa: E402
 
 PROMPT_VARIANTS = ["naive", "broad", "expert"]
 TIERS = [1, 2, 3]
+SUPPORTED_PROVIDERS = ["ollama", "foundry-local"]
 
 # Reduce the agent's spin ceiling to keep cells bounded
 AGENT_MAX_ITERATIONS = 20
@@ -60,26 +67,48 @@ def load_test_case(tc_id: str) -> TestCase:
     return TestCase(**data)
 
 
-def make_provider(tier: int, model: str, fhir_url: str, cell_timeout_sec: int = 300):
-    if tier == 1:
-        # Give CommandProvider 30s of slack inside the wall-clock cell timeout
-        # so its own TimeoutExpired fires cleanly before the subprocess wrapper kills it.
-        inner_timeout = max(30, cell_timeout_sec - 30)
-        return get_provider(
-            "command",
-            command=f"ollama run {model}",
-            timeout_sec=inner_timeout,
-        )
+def _agentic_fhir_url(fhir_url: str) -> str:
     base = fhir_url.rstrip("/")
     is_root_mounted = base.lower().startswith("https://") or ":8443" in base
-    agentic_fhir = base if (is_root_mounted or base.endswith("/fhir")) else base + "/fhir"
-    return get_provider(
-        "ollama-agentic",
-        model=model,
-        fhir_url=agentic_fhir,
-        tier=tier,
-        max_iterations=AGENT_MAX_ITERATIONS,
-    )
+    return base if (is_root_mounted or base.endswith("/fhir")) else base + "/fhir"
+
+
+def make_provider(tier: int, provider: str, model: str, fhir_url: str,
+                  base_url: str | None = None, cell_timeout_sec: int = 300):
+    """Construct the LLM provider for a given (tier, provider, model)."""
+    if provider == "ollama":
+        if tier == 1:
+            # Give CommandProvider 30s of slack inside the wall-clock cell timeout
+            # so its own TimeoutExpired fires cleanly before the subprocess wrapper kills it.
+            inner_timeout = max(30, cell_timeout_sec - 30)
+            return get_provider(
+                "command",
+                command=f"ollama run {model}",
+                timeout_sec=inner_timeout,
+            )
+        return get_provider(
+            "ollama-agentic",
+            model=model,
+            fhir_url=_agentic_fhir_url(fhir_url),
+            tier=tier,
+            max_iterations=AGENT_MAX_ITERATIONS,
+        )
+    if provider == "foundry-local":
+        if tier == 1:
+            return get_provider(
+                "foundry-local",
+                model=model,
+                base_url=base_url,
+            )
+        return get_provider(
+            "foundry-agentic",
+            model=model,
+            base_url=base_url,
+            fhir_url=_agentic_fhir_url(fhir_url),
+            tier=tier,
+            max_iterations=AGENT_MAX_ITERATIONS,
+        )
+    raise ValueError(f"Unsupported provider: {provider!r}. Choose from {SUPPORTED_PROVIDERS}")
 
 
 def make_fhir_client(fhir_url: str) -> FHIRClient:
@@ -92,7 +121,8 @@ def make_fhir_client(fhir_url: str) -> FHIRClient:
     )
 
 
-def run_one_cell(tc_id: str, tier: int, variant: str, model: str, fhir_url: str,
+def run_one_cell(tc_id: str, tier: int, variant: str, provider_name: str,
+                 model: str, fhir_url: str, base_url: str | None = None,
                  cell_timeout_sec: int = 300) -> dict:
     """Execute a single (tier, variant) cell and return the result dict.
 
@@ -104,14 +134,13 @@ def run_one_cell(tc_id: str, tier: int, variant: str, model: str, fhir_url: str,
     cell = {"tier": tier, "prompt_variant": variant}
     t0 = time.time()
     try:
-        provider = make_provider(tier, model, fhir_url, cell_timeout_sec)
+        provider = make_provider(tier, provider_name, model, fhir_url, base_url, cell_timeout_sec)
         runner = EvaluationRunner(fhir_client, provider)
         cell_prompt_text = tc.get_prompt(variant)
         cell_tc = tc.model_copy(update={
             "prompt": cell_prompt_text,
             "prompts": {"naive": cell_prompt_text},
         })
-        provider_name = "ollama"  # TODO: derive from --provider flag when multi-backend lands
         result = runner.run_single(cell_tc, provider_name=provider_name, model_name=model)
         exec_r = result.evaluation_results.execution_match
         cell.update({
@@ -135,8 +164,9 @@ def run_one_cell(tc_id: str, tier: int, variant: str, model: str, fhir_url: str,
     return cell
 
 
-def run_cell_subprocess(tc_id: str, tier: int, variant: str, model: str,
-                        fhir_url: str, timeout_sec: int) -> dict:
+def run_cell_subprocess(tc_id: str, tier: int, variant: str, provider_name: str,
+                        model: str, fhir_url: str, base_url: str | None,
+                        timeout_sec: int) -> dict:
     """Run a single cell in a subprocess with a hard wall-clock timeout."""
     out_dir = REPO / "results"
     out_dir.mkdir(exist_ok=True)
@@ -144,6 +174,7 @@ def run_cell_subprocess(tc_id: str, tier: int, variant: str, model: str,
     cmd = [
         sys.executable, str(Path(__file__).resolve()),
         "--test-case", tc_id,
+        "--provider", provider_name,
         "--model", model,
         "--fhir-url", fhir_url,
         "--cell-timeout-sec", str(timeout_sec),
@@ -152,6 +183,8 @@ def run_cell_subprocess(tc_id: str, tier: int, variant: str, model: str,
         "--cell-variant", variant,
         "--cell-out", str(cell_out),
     ]
+    if base_url:
+        cmd += ["--base-url", base_url]
     cell = {"tier": tier, "prompt_variant": variant}
     t0 = time.time()
     try:
@@ -177,8 +210,12 @@ def run_cell_subprocess(tc_id: str, tier: int, variant: str, model: str,
 def main() -> int:
     p = argparse.ArgumentParser()
     p.add_argument("--test-case", "-t", required=True)
+    p.add_argument("--provider", default="ollama", choices=SUPPORTED_PROVIDERS,
+                   help="LLM provider (default: ollama)")
     p.add_argument("--model", default="phi4")
     p.add_argument("--fhir-url", default="https://localhost:8443")
+    p.add_argument("--base-url", default=None,
+                   help="Override LLM endpoint URL (foundry-local: auto-discovered if omitted)")
     p.add_argument("--tiers", default="1,2,3")
     p.add_argument("--prompt-variants", default="naive,broad,expert")
     p.add_argument("--cell-timeout-sec", type=int, default=300,
@@ -192,7 +229,8 @@ def main() -> int:
 
     if args.single_cell:
         cell = run_one_cell(args.test_case, args.cell_tier, args.cell_variant,
-                            args.model, args.fhir_url, args.cell_timeout_sec)
+                            args.provider, args.model, args.fhir_url,
+                            args.base_url, args.cell_timeout_sec)
         with open(args.cell_out, "w", encoding="utf-8") as f:
             json.dump(cell, f, indent=2)
         return 0
@@ -205,7 +243,7 @@ def main() -> int:
     if not fhir_client.health_check():
         sys.exit(f"FHIR server not healthy at {args.fhir_url}")
 
-    print(f"\n=== Sanity matrix: {tc.id} | model={args.model} | server={args.fhir_url} ===")
+    print(f"\n=== Sanity matrix: {tc.id} | provider={args.provider} | model={args.model} | server={args.fhir_url} ===")
     print(f"Tiers: {tiers}, Prompt variants: {variants}")
     print(f"Negation test: {tc.metadata.negation}")
     print(f"Expected patient count: {len(tc.test_data.expected_patient_ids)}")
@@ -217,8 +255,9 @@ def main() -> int:
         for variant in variants:
             label = f"T{tier} | {variant:6s}"
             print(f"--- {label} starting...", flush=True)
-            cell = run_cell_subprocess(tc.id, tier, variant, args.model,
-                                       args.fhir_url, args.cell_timeout_sec)
+            cell = run_cell_subprocess(tc.id, tier, variant, args.provider,
+                                       args.model, args.fhir_url, args.base_url,
+                                       args.cell_timeout_sec)
             if "f1" in cell:
                 print(f"    {label} -> P={cell['precision']} R={cell['recall']} F1={cell['f1']} "
                       f"(expected={cell['expected_count']}, got={cell['actual_count']}, {cell['elapsed_sec']}s)")
@@ -241,10 +280,11 @@ def main() -> int:
     out_dir.mkdir(exist_ok=True)
     ts = datetime.utcnow().strftime("%Y%m%dT%H%M%SZ")
     safe_model = args.model.replace(":", "-").replace("/", "-")
-    out_path = out_dir / f"sanity-matrix-{tc.id}-{safe_model}-{ts}.json"
+    out_path = out_dir / f"sanity-matrix-{tc.id}-{args.provider}-{safe_model}-{ts}.json"
     with out_path.open("w", encoding="utf-8") as f:
         json.dump({
             "test_case": tc.id,
+            "provider": args.provider,
             "model": args.model,
             "fhir_url": args.fhir_url,
             "host": socket.gethostname(),
