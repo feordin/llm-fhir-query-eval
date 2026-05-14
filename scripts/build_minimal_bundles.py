@@ -113,20 +113,32 @@ def keep_sets_by_phenotype(pheno_names: set[str]) -> dict[str, set[str]]:
 
 
 def _rewrite_refs(node, id_to_type: dict) -> None:
-    """Recursively rewrite ``urn:uuid:<id>`` references to ``ResourceType/<id>``.
+    """Normalise references so a transaction bundle of only the kept resources loads.
 
-    Synthea transaction bundles reference resources by ``urn:uuid:``; $import of
-    bare resources needs literal ``ResourceType/id`` references instead. A
-    reference to a dropped resource (e.g. Practitioner) is still rewritten -- a
-    dangling ``Practitioner/<id>`` reference is harmless for search-based eval.
+    Synthea uses three reference styles; each must be handled or the transaction
+    is rejected:
+      * ``urn:uuid:<id>``  -- in-bundle ref; rewrite to literal ``Type/<id>``
+                              (or drop if the id isn't known).
+      * ``Type?param=...`` -- conditional ref to a cross-bundle resource we drop
+                              (Practitioner, Organization); the server can't
+                              resolve it, so drop the ``reference`` field. These
+                              only appear in optional fields (recorder,
+                              requester, serviceProvider, ...), so dropping is safe.
+      * ``Type/<id>``      -- already literal; left as-is. A dangling literal ref
+                              is harmless -- the server doesn't existence-check it.
     """
     if isinstance(node, dict):
-        for key, value in node.items():
-            if key == "reference" and isinstance(value, str) and value.startswith("urn:uuid:"):
-                uuid = value[len("urn:uuid:"):]
-                rtype = id_to_type.get(uuid)
-                if rtype:
-                    node[key] = f"{rtype}/{uuid}"
+        for key, value in list(node.items()):
+            if key == "reference" and isinstance(value, str):
+                if value.startswith("urn:uuid:"):
+                    uuid = value[len("urn:uuid:"):]
+                    rtype = id_to_type.get(uuid)
+                    if rtype:
+                        node[key] = f"{rtype}/{uuid}"
+                    else:
+                        del node[key]  # unknown target -- drop dangling urn ref
+                elif "?" in value:
+                    del node[key]  # conditional ref to a dropped resource
             else:
                 _rewrite_refs(value, id_to_type)
     elif isinstance(node, list):
