@@ -10,8 +10,14 @@ Steps:
 
 Usage:
     python scripts/reload_phenotype.py asthma
-    python scripts/reload_phenotype.py asthma --no-wipe   # load+verify only
+    python scripts/reload_phenotype.py asthma psoriasis stroke   # several, in turn
+    python scripts/reload_phenotype.py                          # ALL phenotypes (triage)
+    python scripts/reload_phenotype.py asthma --no-wipe          # load+verify only
     python scripts/reload_phenotype.py asthma --wipe-only
+
+With multiple/all phenotypes each is wiped + loaded + verified in turn, and a
+PASS/FAIL triage summary is printed -- useful for finding phenotypes whose local
+synthea/output is stale relative to their test cases' expected_patient_ids.
 """
 from __future__ import annotations
 
@@ -161,29 +167,53 @@ def verify_phenotype(client: FHIRClient, phenotype: str) -> bool:
     return all_ok
 
 
+def reload_one(client: FHIRClient, phenotype: str, *, wipe: bool, wipe_only: bool) -> str:
+    """Run the wipe/load/verify cycle for one phenotype. Returns a status string."""
+    t0 = time.time()
+    if wipe:
+        wipe_server(client)
+    if wipe_only:
+        return f"wiped ({int(time.time() - t0)}s)"
+    loaded = load_phenotype(client, phenotype)
+    print(f"LOAD complete: {loaded} resources", flush=True)
+    ok = verify_phenotype(client, phenotype)
+    return f"{'PASS' if ok else 'FAIL'} ({loaded} resources, {int(time.time() - t0)}s)"
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
-    ap.add_argument("phenotype")
+    ap.add_argument("phenotypes", nargs="*",
+                    help="phenotype name(s); empty = ALL phenotypes in synthea/output")
     ap.add_argument("--no-wipe", action="store_true", help="skip the wipe; load+verify only")
     ap.add_argument("--wipe-only", action="store_true", help="wipe only; no load/verify")
     args = ap.parse_args()
 
+    phenos = args.phenotypes or sorted(
+        p.name for p in (REPO / "synthea" / "output").iterdir() if p.is_dir())
     client = FHIRClient(base_url=BASE_URL, fhir_version="", verify_ssl=False)
-    t0 = time.time()
+    suite_t0 = time.time()
 
-    if not args.no_wipe:
-        print("BEFORE:", _counts(client), flush=True)
-        wipe_server(client)
-        print("AFTER WIPE:", _counts(client), flush=True)
-    if args.wipe_only:
-        print(f"\nDONE (wipe only) in {int(time.time()-t0)}s")
-        return 0
+    results: list[tuple[str, str]] = []
+    for i, pheno in enumerate(phenos, 1):
+        print(f"\n{'=' * 64}\n[{i}/{len(phenos)}] {pheno}\n{'=' * 64}", flush=True)
+        try:
+            status = reload_one(client, pheno, wipe=not args.no_wipe, wipe_only=args.wipe_only)
+        except Exception as e:
+            status = f"ERROR: {str(e)[:120]}"
+        print(f"  -> {pheno}: {status}", flush=True)
+        results.append((pheno, status))
 
-    loaded = load_phenotype(client, args.phenotype)
-    print(f"LOAD complete: {loaded} resources", flush=True)
-    ok = verify_phenotype(client, args.phenotype)
-    print(f"\n{'PASS' if ok else 'FAIL'} -- {args.phenotype} reload cycle in {int(time.time()-t0)}s")
-    return 0 if ok else 1
+    if len(results) > 1:
+        npass = sum(1 for _, s in results if s.startswith(("PASS", "wiped")))
+        nfail = sum(1 for _, s in results if s.startswith("FAIL"))
+        nerr = sum(1 for _, s in results if s.startswith("ERROR"))
+        print(f"\n{'=' * 64}\n=== TRIAGE SUMMARY ({int(time.time() - suite_t0)}s) ===")
+        print(f"{len(results)} phenotypes: {npass} PASS, {nfail} FAIL, {nerr} ERROR\n")
+        for pheno, status in sorted(results, key=lambda r: r[1]):
+            print(f"  {pheno:46} {status}")
+        return 0 if nfail == 0 and nerr == 0 else 1
+
+    return 0 if results and results[0][1].startswith(("PASS", "wiped")) else 1
 
 
 if __name__ == "__main__":
