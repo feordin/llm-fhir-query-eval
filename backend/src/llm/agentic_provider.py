@@ -425,7 +425,7 @@ class OllamaAgenticProvider(LLMProvider):
 
     def __init__(
         self,
-        model: str = "qwen2.5:7b",
+        model: str = "qwen3.5:9b",
         fhir_base_url: str = "http://localhost:8080/fhir",
         max_iterations: int = 20,
         request_timeout: int = 30,

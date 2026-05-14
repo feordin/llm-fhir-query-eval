@@ -150,7 +150,7 @@ def evaluate_query(fhir: FHIRClient, tc: TestCase, parsed_url: str) -> dict:
 def main():
     parser = argparse.ArgumentParser(description="Batch evaluation: Tier 1 vs Tier 2")
     parser.add_argument("--tier", type=int, choices=[1, 2], default=None, help="Run only this tier (default: both)")
-    parser.add_argument("--model", default="qwen2.5:7b", help="Ollama model name")
+    parser.add_argument("--model", default="qwen3.5:9b", help="Ollama model name")
     parser.add_argument("--fhir-url", default="http://localhost:8080/fhir", help="FHIR server URL")
     parser.add_argument("--limit", type=int, default=None, help="Max test cases to run")
     parser.add_argument("--filter", default=None, help="Filter test case IDs (substring match)")
