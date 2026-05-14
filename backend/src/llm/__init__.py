@@ -26,7 +26,7 @@ def get_provider(name: str, model: str = None, **kwargs) -> LLMProvider:
         fhir_url = kwargs.pop("fhir_url", "http://localhost:8080/fhir")
         max_iterations = kwargs.pop("max_iterations", 10)
         return OllamaAgenticProvider(
-            model=model or "qwen2.5:7b",
+            model=model or "qwen3.5:9b",
             fhir_base_url=fhir_url,
             max_iterations=max_iterations,
             **kwargs,
