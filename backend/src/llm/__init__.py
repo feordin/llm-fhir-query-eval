@@ -2,8 +2,14 @@ from .provider import LLMProvider, parse_fhir_query_from_text, FHIR_SYSTEM_PROMP
 from .anthropic_provider import AnthropicProvider
 from .cli_delegate_provider import CLIDelegateProvider
 from .command_provider import CommandProvider
-from .agentic_provider import AgenticProvider, OllamaAgenticProvider, FoundryAgenticProvider
+import os
+
+from .agentic_provider import (
+    AgenticProvider, OllamaAgenticProvider, FoundryAgenticProvider,
+    OpenAICompatAgenticProvider,
+)
 from .foundry_local_provider import FoundryLocalProvider
+from .openai_chat_provider import OpenAIChatProvider
 from .chat_backend import (
     ChatBackend, OllamaChatBackend, OpenAICompatChatBackend,
     FoundryChatBackend, FoundryWinMLChatBackend,
@@ -15,7 +21,9 @@ def get_provider(name: str, model: str = None, **kwargs) -> LLMProvider:
 
     Args:
         name: Provider name - "anthropic", "claude-cli", "command",
-              "ollama-agentic", "foundry-local", or "foundry-agentic"
+              "ollama-agentic", "foundry-local", "foundry-agentic", or
+              "openai-compat" (any OpenAI-compatible endpoint, incl. AMD GAIA
+              Lemonade and Azure OpenAI)
         model: Model name (provider-specific)
         **kwargs: Additional provider-specific args
     """
@@ -47,10 +55,24 @@ def get_provider(name: str, model: str = None, **kwargs) -> LLMProvider:
             max_iterations=max_iterations,
             **kwargs,
         )
+    elif name == "openai-compat":
+        # Any OpenAI-compatible endpoint. base_url via arg / OPENAI_COMPAT_BASE_URL
+        # env / Lemonade's default. Tier 1 (closed-book) when no fhir_url is given,
+        # otherwise the agentic loop.
+        base_url = kwargs.pop("base_url", None) or os.environ.get(
+            "OPENAI_COMPAT_BASE_URL", "http://localhost:13305/api/v1")
+        if "fhir_url" in kwargs or "tier" in kwargs:
+            fhir_url = kwargs.pop("fhir_url", "http://localhost:8080/fhir")
+            max_iterations = kwargs.pop("max_iterations", 10)
+            return OpenAICompatAgenticProvider(
+                model=model, base_url=base_url, fhir_base_url=fhir_url,
+                max_iterations=max_iterations, **kwargs,
+            )
+        return OpenAIChatProvider(model=model, base_url=base_url, **kwargs)
     else:
         raise ValueError(
             f"Unknown provider: '{name}'. Choose from: anthropic, claude-cli, command, "
-            "ollama-agentic, foundry-local, foundry-agentic"
+            "ollama-agentic, foundry-local, foundry-agentic, openai-compat"
         )
 
 
@@ -59,7 +81,7 @@ __all__ = [
     "FHIR_SYSTEM_PROMPT_VERSION", "build_generated_query",
     "AnthropicProvider", "CLIDelegateProvider", "CommandProvider",
     "AgenticProvider", "OllamaAgenticProvider", "FoundryAgenticProvider",
-    "FoundryLocalProvider",
+    "OpenAICompatAgenticProvider", "FoundryLocalProvider", "OpenAIChatProvider",
     "ChatBackend", "OllamaChatBackend", "OpenAICompatChatBackend",
     "FoundryChatBackend", "FoundryWinMLChatBackend",
 ]

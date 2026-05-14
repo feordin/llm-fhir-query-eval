@@ -139,6 +139,38 @@ Observation?code=http://loinc.org|4548-4&value-quantity=ge6.5||%25
 """
 
 
+# Lean, imperative-first variant for smaller models. The full
+# AGENTIC_SYSTEM_PROMPT's descriptive framing lets smaller models shortcut
+# straight to a memorized answer without calling tools (validated on Lemonade
+# Qwen3-8B: 0 tool calls with the full prompt, proper tool calls with this one).
+# Foundry Local's small Qwen models likely benefit too -- opt in via the
+# agentic_prompt parameter. Versioned separately so benchmark runs trace score
+# changes to prompt edits.
+LEAN_AGENTIC_SYSTEM_PROMPT_VERSION = "0.1.0"
+
+LEAN_AGENTIC_SYSTEM_PROMPT = """\
+You are a FHIR query agent with tools to inspect a live FHIR server and look up clinical codes (NIH UMLS, VSAC value sets).
+
+RULES (follow exactly):
+1. You MUST call tools to gather evidence. NEVER answer from memory. Your FIRST action must be a tool call.
+2. Typical workflow: find the concept's codes (`vsac_search_value_sets` then `vsac_expand_value_set`, or `umls_search`) -> sample the server (`fhir_resource_sample`) to see which code systems it actually uses -> validate magnitude with `fhir_search` using `_summary=count`.
+3. If a query returns 0, your code list is too narrow -- search for subtypes/synonyms. If implausibly large, you missed a clinical filter.
+
+Code-system URIs (use EXACTLY):
+- SNOMED CT: http://snomed.info/sct
+- ICD-10-CM: http://hl7.org/fhir/sid/icd-10-cm
+- ICD-9-CM: http://hl7.org/fhir/sid/icd-9-cm
+- LOINC: http://loinc.org
+- RxNorm: http://www.nlm.nih.gov/research/umls/rxnorm
+- CPT: http://www.ama-assn.org/go/cpt
+
+Query format: `ResourceType?code=system|code` -- e.g. `Condition?code=http://snomed.info/sct|195967001`.
+Multi-code (any-of): comma-separate. Multi-resource cohorts: emit one query URL per line; the evaluator unions the patient sets.
+
+Only AFTER you have verified your query with tools, give your FINAL ANSWER as ONLY the FHIR query URL(s), one per line -- no prose, no explanation.
+"""
+
+
 # ---------------------------------------------------------------------------
 # Tool definitions in Ollama format
 # ---------------------------------------------------------------------------
@@ -439,6 +471,8 @@ class AgenticProvider(LLMProvider):
         max_iterations: int = 20,
         request_timeout: int = 30,
         tier: int = 2,
+        agentic_prompt: str = AGENTIC_SYSTEM_PROMPT,
+        agentic_prompt_version: str = AGENTIC_SYSTEM_PROMPT_VERSION,
     ):
         self.backend = chat_backend
         self.model = chat_backend.model  # convenience accessor + audit field
@@ -446,6 +480,8 @@ class AgenticProvider(LLMProvider):
         self.max_iterations = max_iterations
         self.request_timeout = request_timeout
         self.tier = tier
+        self._agentic_prompt = agentic_prompt
+        self._agentic_prompt_version = agentic_prompt_version
         self.verify_ssl = not self.fhir_base_url.lower().startswith("https://")
         if not self.verify_ssl:
             import urllib3
@@ -466,9 +502,9 @@ class AgenticProvider(LLMProvider):
                     "Apply the playbooks below to recognize the phenotype category and choose strategy.\n\n"
                     + methodology
                     + "\n\n---\n\n# Base FHIR Query Construction Rules\n\n"
-                    + AGENTIC_SYSTEM_PROMPT
+                    + self._agentic_prompt
                 )
-        return AGENTIC_SYSTEM_PROMPT
+        return self._agentic_prompt
 
     def _build_run_metadata(self, iterations_used: int, stop_reason: str, elapsed_sec: float) -> RunMetadata:
         """Build audit metadata for the just-completed agentic run."""
@@ -477,7 +513,7 @@ class AgenticProvider(LLMProvider):
             model_version=self.model,
             tool_transport="http",
             tier=self.tier,
-            system_prompt_version=AGENTIC_SYSTEM_PROMPT_VERSION,
+            system_prompt_version=self._agentic_prompt_version,
             tool_schema_version=TOOL_SCHEMA_VERSION,
             iterations_used=iterations_used,
             max_iterations=self.max_iterations,
@@ -1198,4 +1234,43 @@ class FoundryAgenticProvider(AgenticProvider):
             max_iterations=max_iterations,
             request_timeout=request_timeout,
             tier=tier,
+        )
+
+
+class OpenAICompatAgenticProvider(AgenticProvider):
+    """AgenticProvider backed by any OpenAI-compatible endpoint.
+
+    Covers AMD GAIA Lemonade, Azure OpenAI, OpenAI direct, etc. For small
+    local models (Lemonade Qwen3-8B, Phi-4-mini) pass ``lean_prompt=True`` --
+    they shortcut past tool use given the full AGENTIC_SYSTEM_PROMPT. Frontier
+    models on the same protocol (GPT-4 via Azure OpenAI) should keep the full
+    prompt, so it is opt-in rather than the default.
+    """
+
+    def __init__(
+        self,
+        model: str,
+        base_url: str,
+        api_key: str = "not-used",
+        fhir_base_url: str = "http://localhost:8080/fhir",
+        max_iterations: int = 20,
+        request_timeout: int = 30,
+        tier: int = 2,
+        lean_prompt: bool = False,
+        **_legacy_kwargs,
+    ):
+        backend = OpenAICompatChatBackend(model=model, base_url=base_url, api_key=api_key)
+        prompt_kwargs = {}
+        if lean_prompt:
+            prompt_kwargs = {
+                "agentic_prompt": LEAN_AGENTIC_SYSTEM_PROMPT,
+                "agentic_prompt_version": LEAN_AGENTIC_SYSTEM_PROMPT_VERSION,
+            }
+        super().__init__(
+            chat_backend=backend,
+            fhir_base_url=fhir_base_url,
+            max_iterations=max_iterations,
+            request_timeout=request_timeout,
+            tier=tier,
+            **prompt_kwargs,
         )
