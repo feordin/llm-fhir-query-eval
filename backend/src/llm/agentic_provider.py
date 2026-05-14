@@ -1,9 +1,9 @@
 """Agentic LLM provider that gives models tool access during FHIR query generation.
 
-Uses Ollama's native tool calling API to let the LLM introspect the FHIR server,
+Uses a vendor-agnostic ChatBackend to let the LLM introspect the FHIR server,
 look up clinical codes via UMLS, search VSAC value sets, check code subsumption,
 and test queries before producing a final answer.
-This is the Tier 2 evaluation mode.
+This is the Tier 2/3 evaluation mode.
 """
 
 import asyncio
@@ -16,8 +16,14 @@ import time
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
-import ollama
-
+from .chat_backend import (
+    AssistantMessage,
+    ChatBackend,
+    OllamaChatBackend,
+    FoundryChatBackend,
+    FoundryWinMLChatBackend,
+    OpenAICompatChatBackend,
+)
 from .provider import LLMProvider, parse_fhir_query_from_text, build_generated_query
 
 import sys
@@ -404,11 +410,14 @@ TOOL_DEFINITIONS = [
 # Agentic provider
 # ---------------------------------------------------------------------------
 
-class OllamaAgenticProvider(LLMProvider):
+class AgenticProvider(LLMProvider):
     """LLM provider that gives the model access to tools during FHIR query generation.
 
-    Implements a Tier 2 agentic evaluation loop:
+    Implements the Tier 2/3 agentic evaluation loop:
       prompt -> tool calls -> refinement -> final FHIR query
+
+    The chat call is delegated to a ChatBackend so the same loop runs against
+    any vendor (Ollama, Foundry Local, Azure OpenAI, OpenAI direct, etc.).
 
     Tools available to the model:
       - fhir_server_metadata: inspect server capabilities
@@ -425,13 +434,14 @@ class OllamaAgenticProvider(LLMProvider):
 
     def __init__(
         self,
-        model: str = "qwen2.5:7b",
+        chat_backend: ChatBackend,
         fhir_base_url: str = "http://localhost:8080/fhir",
         max_iterations: int = 20,
         request_timeout: int = 30,
         tier: int = 2,
     ):
-        self.model = model
+        self.backend = chat_backend
+        self.model = chat_backend.model  # convenience accessor + audit field
         self.fhir_base_url = fhir_base_url.rstrip("/")
         self.max_iterations = max_iterations
         self.request_timeout = request_timeout
@@ -463,7 +473,7 @@ class OllamaAgenticProvider(LLMProvider):
     def _build_run_metadata(self, iterations_used: int, stop_reason: str, elapsed_sec: float) -> RunMetadata:
         """Build audit metadata for the just-completed agentic run."""
         return RunMetadata(
-            provider_backend="ollama",
+            provider_backend=self.backend.backend_name,
             model_version=self.model,
             tool_transport="http",
             tier=self.tier,
@@ -506,24 +516,20 @@ class OllamaAgenticProvider(LLMProvider):
             logger.debug("Agentic iteration %d/%d", iteration + 1, self.max_iterations)
 
             try:
-                response = ollama.chat(
-                    model=self.model,
-                    messages=messages,
-                    tools=tools,
-                )
+                assistant: AssistantMessage = self.backend.chat(messages, tools)
             except Exception as e:
                 raise RuntimeError(
-                    f"Ollama chat failed (model={self.model}): {e}"
+                    f"Chat backend '{self.backend.backend_name}' failed "
+                    f"(model={self.model}): {e}"
                 ) from e
 
-            msg = response["message"]
-            messages.append(msg)
+            messages.append(self.backend.assistant_to_history_dict(assistant))
 
             # If no tool calls, the model is done -- extract the final query.
             # If parsing fails, give the model ONE more turn with a strict
             # "URL only, no prose" reminder before falling back to tool_trace.
-            if not msg.get("tool_calls"):
-                raw_text = msg.get("content", "") or ""
+            if not assistant.tool_calls:
+                raw_text = assistant.content
                 _iterations_used = iteration + 1
                 logger.debug("Model finished after %d iteration(s)", _iterations_used)
                 try:
@@ -551,27 +557,21 @@ class OllamaAgenticProvider(LLMProvider):
                     # Retry already used -- fall through to the tool_trace fallback below
                     break
 
-            # Execute each tool call and append tool-role messages
-            for tool_call in msg["tool_calls"]:
-                func_name = tool_call["function"]["name"]
-                func_args = tool_call["function"].get("arguments", {})
+            # Execute each tool call and append a canonical tool-role message
+            for tool_call in assistant.tool_calls:
+                logger.debug("Tool call: %s(%s)", tool_call.name, json.dumps(tool_call.arguments)[:200])
 
-                logger.debug("Tool call: %s(%s)", func_name, json.dumps(func_args)[:200])
-
-                result = self._execute_tool(func_name, func_args)
+                result = self._execute_tool(tool_call.name, tool_call.arguments)
 
                 self.tool_trace.append({
                     "iteration": iteration,
-                    "tool": func_name,
-                    "args": func_args,
+                    "tool": tool_call.name,
+                    "args": tool_call.arguments,
                     "result": result,
                 })
 
                 result_str = json.dumps(result) if not isinstance(result, str) else result
-                messages.append({
-                    "role": "tool",
-                    "content": result_str,
-                })
+                messages.append(self.backend.tool_result_message(tool_call.id, result_str))
 
         # Either max_iterations exhausted, or final-answer retry failed.
         # Fallback strategy:
@@ -1139,3 +1139,63 @@ class OllamaAgenticProvider(LLMProvider):
                     })
 
         return codes
+
+
+# ---------------------------------------------------------------------------
+# Convenience subclasses — wire a default ChatBackend per vendor
+# ---------------------------------------------------------------------------
+
+class OllamaAgenticProvider(AgenticProvider):
+    """Backwards-compatible: AgenticProvider with an OllamaChatBackend."""
+
+    def __init__(
+        self,
+        model: str = "qwen2.5:7b",
+        fhir_base_url: str = "http://localhost:8080/fhir",
+        max_iterations: int = 20,
+        request_timeout: int = 30,
+        tier: int = 2,
+    ):
+        super().__init__(
+            chat_backend=OllamaChatBackend(model=model),
+            fhir_base_url=fhir_base_url,
+            max_iterations=max_iterations,
+            request_timeout=request_timeout,
+            tier=tier,
+        )
+
+
+class FoundryAgenticProvider(AgenticProvider):
+    """AgenticProvider backed by Foundry Local in-process SDK on the NPU.
+
+    Uses FoundryWinMLChatBackend (in-process) rather than the HTTP service,
+    because the .NET service crashes on agentic-shaped requests. The recovery
+    parser still applies — the auto-mode tool-call bug is the same in both
+    paths.
+    """
+
+    def __init__(
+        self,
+        model: str = "qwen2.5-7b",
+        fhir_base_url: str = "http://localhost:8080/fhir",
+        max_iterations: int = 20,
+        request_timeout: int = 30,
+        tier: int = 2,
+        # see FoundryWinMLChatBackend re: 300s streaming cap per chat call.
+        max_tokens: int = 1024,
+        temperature: float = 0.0,
+        # base_url accepted but ignored — the in-process SDK doesn't use it.
+        # Kept for CLI plumbing compatibility.
+        base_url: Optional[str] = None,
+        **_legacy_kwargs,
+    ):
+        backend = FoundryWinMLChatBackend(
+            model=model, max_tokens=max_tokens, temperature=temperature,
+        )
+        super().__init__(
+            chat_backend=backend,
+            fhir_base_url=fhir_base_url,
+            max_iterations=max_iterations,
+            request_timeout=request_timeout,
+            tier=tier,
+        )
