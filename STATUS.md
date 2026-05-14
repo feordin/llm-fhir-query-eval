@@ -465,7 +465,8 @@ Choose models that enable direct comparison with published results. Decision pen
 | **Gemini-2.5-Flash** | FHIR-AgentBench (44% agent) | Strong open alternative |
 | **Qwen3-32B** | FHIR-AgentBench (47% agent) | Ollama-compatible, no API cost |
 | **LLaMA-3.3-70B** | FHIR-AgentBench (46% agent) | Ollama-compatible, no API cost |
-| qwen2.5:7b | Our current baseline | Already tested (T1: 0.03, T2: 0.26) |
+| qwen3.5:9b | **Our current baseline** | Active local model — full `sanity-matrix-phekb-*` sweep run 2026-05-05 onward (see `results/`) |
+| qwen2.5:7b | Prior baseline (superseded) | Early runs (T1: 0.03, T2: 0.26) |
 | qwen3-coder:30b | Planned | Larger local model |
 
 ### Tier 3 — Skill-Guided Evaluation

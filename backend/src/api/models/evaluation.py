@@ -49,6 +49,8 @@ class RunMetadata(BaseModel):
     tool_calls_count: Optional[int] = None       # total tool invocations
     host: Optional[str] = None                   # machine hostname
     benchmark_track: Optional[str] = None        # "standardized", "optimized", "copilot"
+    tokens_per_sec: Optional[float] = None       # decode throughput (OpenAI-compatible backends)
+    ttft_sec: Optional[float] = None             # time to first token (OpenAI-compatible backends)
 
 
 class ExecutionMatchResult(BaseModel):
