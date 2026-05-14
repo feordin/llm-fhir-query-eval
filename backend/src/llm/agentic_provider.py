@@ -133,6 +133,36 @@ Observation?code=http://loinc.org|4548-4&value-quantity=ge6.5||%25
 """
 
 
+# Lean, imperative-first variant for smaller models (e.g. Lemonade/GAIA).
+# The full AGENTIC_SYSTEM_PROMPT's descriptive framing lets smaller models
+# shortcut straight to a memorized answer without calling tools; this variant
+# leads with hard imperatives and keeps only the essential FHIR guidance.
+# Versioned separately so benchmark runs trace score changes to prompt edits.
+LEAN_AGENTIC_SYSTEM_PROMPT_VERSION = "0.1.0"
+
+LEAN_AGENTIC_SYSTEM_PROMPT = """\
+You are a FHIR query agent with tools to inspect a live FHIR server and look up clinical codes (NIH UMLS, VSAC value sets).
+
+RULES (follow exactly):
+1. You MUST call tools to gather evidence. NEVER answer from memory. Your FIRST action must be a tool call.
+2. Typical workflow: find the concept's codes (`vsac_search_value_sets` then `vsac_expand_value_set`, or `umls_search`) -> sample the server (`fhir_resource_sample`) to see which code systems it actually uses -> validate magnitude with `fhir_search` using `_summary=count`.
+3. If a query returns 0, your code list is too narrow -- search for subtypes/synonyms. If implausibly large, you missed a clinical filter.
+
+Code-system URIs (use EXACTLY):
+- SNOMED CT: http://snomed.info/sct
+- ICD-10-CM: http://hl7.org/fhir/sid/icd-10-cm
+- ICD-9-CM: http://hl7.org/fhir/sid/icd-9-cm
+- LOINC: http://loinc.org
+- RxNorm: http://www.nlm.nih.gov/research/umls/rxnorm
+- CPT: http://www.ama-assn.org/go/cpt
+
+Query format: `ResourceType?code=system|code` -- e.g. `Condition?code=http://snomed.info/sct|195967001`.
+Multi-code (any-of): comma-separate. Multi-resource cohorts: emit one query URL per line; the evaluator unions the patient sets.
+
+Only AFTER you have verified your query with tools, give your FINAL ANSWER as ONLY the FHIR query URL(s), one per line -- no prose, no explanation.
+"""
+
+
 # ---------------------------------------------------------------------------
 # Tool definitions in Ollama format
 # ---------------------------------------------------------------------------
@@ -434,6 +464,8 @@ class AgenticProvider(LLMProvider):
         max_iterations: int = 20,
         request_timeout: int = 30,
         tier: int = 2,
+        agentic_prompt: str = AGENTIC_SYSTEM_PROMPT,
+        agentic_prompt_version: str = AGENTIC_SYSTEM_PROMPT_VERSION,
     ):
         self.backend = backend
         self.model = model
@@ -441,6 +473,8 @@ class AgenticProvider(LLMProvider):
         self.max_iterations = max_iterations
         self.request_timeout = request_timeout
         self.tier = tier
+        self._agentic_prompt = agentic_prompt
+        self._agentic_prompt_version = agentic_prompt_version
         self.verify_ssl = not self.fhir_base_url.lower().startswith("https://")
         if not self.verify_ssl:
             import urllib3
@@ -461,9 +495,9 @@ class AgenticProvider(LLMProvider):
                     "Apply the playbooks below to recognize the phenotype category and choose strategy.\n\n"
                     + methodology
                     + "\n\n---\n\n# Base FHIR Query Construction Rules\n\n"
-                    + AGENTIC_SYSTEM_PROMPT
+                    + self._agentic_prompt
                 )
-        return AGENTIC_SYSTEM_PROMPT
+        return self._agentic_prompt
 
     def _build_run_metadata(self, iterations_used: int, stop_reason: str, elapsed_sec: float) -> RunMetadata:
         """Build audit metadata for the just-completed agentic run."""
@@ -473,7 +507,7 @@ class AgenticProvider(LLMProvider):
             model_version=self.model,
             tool_transport="http",
             tier=self.tier,
-            system_prompt_version=AGENTIC_SYSTEM_PROMPT_VERSION,
+            system_prompt_version=self._agentic_prompt_version,
             tool_schema_version=TOOL_SCHEMA_VERSION,
             iterations_used=iterations_used,
             max_iterations=self.max_iterations,
@@ -1159,9 +1193,15 @@ class OllamaAgenticProvider(AgenticProvider):
 
 
 class LemonadeAgenticProvider(AgenticProvider):
-    """Agentic provider backed by an OpenAI-compatible server (AMD GAIA Lemonade)."""
+    """Agentic provider backed by an OpenAI-compatible server (AMD GAIA Lemonade).
+
+    Uses LEAN_AGENTIC_SYSTEM_PROMPT by default: smaller Lemonade models
+    shortcut past tool use when given the full descriptive AGENTIC_SYSTEM_PROMPT.
+    """
 
     def __init__(self, model: str, base_url: str = "http://localhost:13305/api/v1",
                  request_timeout: int = 300, **kwargs):
         backend = OpenAIChatBackend(model, base_url=base_url, request_timeout=request_timeout)
+        kwargs.setdefault("agentic_prompt", LEAN_AGENTIC_SYSTEM_PROMPT)
+        kwargs.setdefault("agentic_prompt_version", LEAN_AGENTIC_SYSTEM_PROMPT_VERSION)
         super().__init__(backend=backend, model=model, **kwargs)

@@ -155,6 +155,31 @@ def test_openai_backend_run_metrics():
     assert m["ttft_sec"] == 0.47
 
 
+def test_openai_backend_retries_on_missing_choices():
+    """A 200 response with no 'choices' is retried; a later good response wins."""
+    bad = _FakeResp({"error": "model loading"})
+    good = _FakeResp(_fake_openai_response(content="Patient?_id=1"))
+    backend = OpenAIChatBackend(model="Qwen3-8B-Hybrid",
+                                base_url="http://localhost:13305/api/v1")
+    with patch("src.llm.chat_backend.requests.post", side_effect=[bad, good]):
+        msg = backend.chat([{"role": "user", "content": "hi"}], tools=[])
+    assert msg["content"] == "Patient?_id=1"
+
+
+def test_openai_backend_raises_after_exhausting_retries():
+    """If every attempt lacks 'choices', raise a clear error with the body."""
+    bad = _FakeResp({"error": "model loading"})
+    backend = OpenAIChatBackend(model="Qwen3-8B-Hybrid",
+                                base_url="http://localhost:13305/api/v1")
+    with patch("src.llm.chat_backend.requests.post", side_effect=[bad, bad, bad]):
+        try:
+            backend.chat([{"role": "user", "content": "hi"}], tools=[])
+            assert False, "expected RuntimeError"
+        except RuntimeError as e:
+            assert "no 'choices'" in str(e)
+            assert "model loading" in str(e)  # last body included
+
+
 def test_run_metadata_accepts_speed_fields():
     from src.api.models.evaluation import RunMetadata
     m = RunMetadata(provider_backend="lemonade", tokens_per_sec=29.6, ttft_sec=0.47)
