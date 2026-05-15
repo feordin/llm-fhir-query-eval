@@ -3,6 +3,11 @@
 list from the 2026-05-14 triage). Per-phenotype fail-fast: a failure logs
 and continues to the next phenotype rather than aborting the whole batch.
 
+Per-phenotype output is streamed live to the operator's terminal AND tee'd
+to ``results/regen-logs/regen-<phenotype>.log`` for post-hoc triage. Each
+phenotype is bounded by a 1-hour wall-clock cap; on timeout the subprocess
+is killed and the batch continues.
+
 Usage:
     python scripts/regenerate_batch.py                 # full 37-phenotype FAIL list
     python scripts/regenerate_batch.py stroke ckd      # specific phenotypes
@@ -18,6 +23,8 @@ from pathlib import Path
 REPO = Path(__file__).resolve().parent.parent
 PY = sys.executable
 REGEN = str(REPO / "scripts" / "regenerate_phenotype.py")
+LOGS_DIR = REPO / "results" / "regen-logs"
+PER_PHENOTYPE_TIMEOUT = 3600  # 1 hour cap; CHD pilot finished in ~4 min
 
 # 37 FAIL phenotypes from the 2026-05-14 contamination triage
 # (bykphfac8.output -- TRIAGE SUMMARY block).
@@ -37,6 +44,36 @@ DEFAULT_PHENOTYPES = [
 ]
 
 
+def _run_one(phenotype: str) -> int:
+    """Run regenerate_phenotype for one phenotype. Streams output to both the
+    operator's terminal and a per-phenotype log file. Bounded by
+    PER_PHENOTYPE_TIMEOUT; returns 124 (conventional timeout exit) on hang."""
+    LOGS_DIR.mkdir(parents=True, exist_ok=True)
+    log_path = LOGS_DIR / f"regen-{phenotype}.log"
+    with log_path.open("w", encoding="utf-8") as logf:
+        proc = subprocess.Popen(
+            [PY, REGEN, phenotype],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+            text=True,
+            bufsize=1,
+        )
+        try:
+            assert proc.stdout is not None
+            for line in proc.stdout:
+                sys.stdout.write(line)
+                sys.stdout.flush()
+                logf.write(line)
+            return proc.wait(timeout=PER_PHENOTYPE_TIMEOUT)
+        except subprocess.TimeoutExpired:
+            proc.kill()
+            proc.wait()
+            msg = f"\n!! [{phenotype}] TIMEOUT after {PER_PHENOTYPE_TIMEOUT}s -- killed\n"
+            sys.stdout.write(msg)
+            logf.write(msg)
+            return 124
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("phenotypes", nargs="*", help="empty = full FAIL list")
@@ -48,7 +85,7 @@ def main() -> int:
     for i, p in enumerate(phenos, 1):
         print(f"\n{'#' * 72}\n# [{i}/{len(phenos)}] {p}\n{'#' * 72}", flush=True)
         t0 = time.time()
-        rc = subprocess.run([PY, REGEN, p]).returncode
+        rc = _run_one(p)
         results.append((p, rc, int(time.time() - t0)))
 
     print(f"\n{'#' * 72}\n# BATCH SUMMARY ({int(time.time() - suite_t0)}s)\n{'#' * 72}")
