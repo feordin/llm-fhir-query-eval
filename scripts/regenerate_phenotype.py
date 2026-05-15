@@ -17,8 +17,16 @@ Usage:
     python scripts/regenerate_phenotype.py coronary-heart-disease
     python scripts/regenerate_phenotype.py heart-failure --dry-run-counts
 
+`--skip-generate` skips stages 2-3 only (no Synthea, no augmentation). Stages
+4-7 still run, so the FHIR server IS still wiped and reloaded from the existing
+synthea/output -- this flag is for "re-derive on current data," not "do nothing
+to the server."
+
 Note: augment_fhir_codes.py supports --phenotype filtering (verified via --help),
 so this script passes --phenotype rather than running a whole-tree augmentation.
+
+DO NOT run two instances concurrently for different phenotypes -- the server
+wipe in stage 5 is destructive across the entire FHIR server.
 """
 from __future__ import annotations
 
@@ -56,11 +64,17 @@ def compute_target(phenotype: str) -> tuple[int, int, int]:
     return expected_max, raw, controls
 
 
-def _run(label: str, cmd: list[str]) -> int:
+def _run(label: str, cmd: list[str], timeout: int | None = None) -> int:
+    """Run a stage subprocess with optional wall-clock timeout. Returns its
+    exit code, or 124 (conventional timeout exit) if the timeout fires."""
     print(f"\n--- {label} ---", flush=True)
     print(f"$ {' '.join(cmd)}", flush=True)
     t0 = time.time()
-    rc = subprocess.run(cmd).returncode
+    try:
+        rc = subprocess.run(cmd, timeout=timeout).returncode
+    except subprocess.TimeoutExpired:
+        print(f"--- {label}: TIMEOUT after {timeout}s ---", flush=True)
+        return 124
     print(f"--- {label}: rc={rc} ({int(time.time() - t0)}s) ---", flush=True)
     return rc
 
@@ -77,14 +91,21 @@ def main() -> int:
     expected_max, raw, controls = compute_target(args.phenotype)
     print(f"[{args.phenotype}] expected_max={expected_max} -> "
           f"generate {raw} positive + {controls} control patients", flush=True)
+    if expected_max == 0:
+        print(f"WARNING: no test cases with expected_patient_ids found for "
+              f"'{args.phenotype}'; using RAW_FLOOR={RAW_FLOOR}. "
+              f"Check the phenotype name matches a synthea/output dir.", flush=True)
     if args.dry_run_counts:
         return 0
 
     t0 = time.time()
     if not args.skip_generate:
+        # Synthea can run for an hour+ at 3000 patients; bound it at 2 hours
+        # to recover from the rare JVM hang (see batch 21 memory note).
         rc = _run("synthea generate",
                   [PY, str(SYNTHEA_GEN), "--phenotype", args.phenotype,
-                   "--patients", str(raw), "--controls", str(controls)])
+                   "--patients", str(raw), "--controls", str(controls)],
+                  timeout=7200)
         if rc != 0:
             return rc
         rc = _run("augment_fhir_codes",
