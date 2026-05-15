@@ -38,7 +38,9 @@ def rederive_test_case(client, tc_file: Path) -> bool:
         return False
     tc.setdefault("test_data", {})["expected_patient_ids"] = new_sorted
     tc["test_data"]["expected_result_count"] = len(new_sorted)
-    tc_file.write_text(json.dumps(tc, indent=2), encoding="utf-8")
+    # Trailing newline matches the project's other test-case JSON writers
+    # (populate_patient_ids.py) so subsequent diffs stay clean.
+    tc_file.write_text(json.dumps(tc, indent=2) + "\n", encoding="utf-8")
     return True
 
 
