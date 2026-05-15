@@ -6,6 +6,40 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Evaluation framework for testing LLM capabilities in generating FHIR queries from natural language. Benchmarks how well LLMs can translate clinical requirements into syntactically and semantically correct FHIR queries with proper clinical code systems (LOINC, SNOMED CT, ICD-10, etc.).
 
+## Goal & Evaluation Framework — read first, every task
+
+**The goal we are measuring:** how accurately can an LLM — with and without an
+agentic loop — find a cohort of patients described by a human in plain English,
+against a realistic case/control patient mix?
+
+Every architectural and data decision serves this goal. When in doubt, ask:
+*does this make our measurement more accurate or more realistic?*
+
+**Three prompt levels** (the "human" side):
+- **naive** — what an untrained user would type
+- **broad** — a clinically-aware request without code knowledge
+- **expert** — a precise, code-aware specification
+
+**Three evaluation tiers** (the "model" side):
+- **Tier 1 — closed-book.** Single chat completion, no tools. Tests pure recall of FHIR + clinical codes.
+- **Tier 2 — agentic with tools.** Loop with FHIR introspection, UMLS/VSAC lookup, sample-the-server. Tests whether tools recover what the model alone can't.
+- **Tier 3 — agentic + methodology.** Tier 2 plus a prepended phenotype-methodology playbook.
+
+**Test case mix per phenotype** (in `test-cases/phekb/phekb-<phenotype>-<variant>.json`):
+- **`-dx`** — code-based (Condition queries)
+- **`-meds`** — medication-based (MedicationRequest queries)
+- **`-labs`** — lab-based (Observation queries with thresholds)
+- **`-procedures`** — procedure-based
+- **"trick" variants** — `-meds-only`, `-labs-only`, `biologic-without-dx`, etc. Cross-indication and negation cases that catch over- or under-querying. These exist because real EHRs have patients on the medication without the diagnosis (outside-provider scripts), with abnormal labs but no diagnosis, etc.
+- **`-comprehensive`** — **the most important test case.** The "all" cohort: union of every path that finds the phenotype. A multi-resource query that catches every patient — straightforward AND tricky — across `Condition` ∪ `MedicationRequest` ∪ `Observation` ∪ `Procedure`. This is what most clinical phenotyping actually needs in practice.
+
+**Realistic patient mix** (the "data" side):
+- Each phenotype's Synthea module follows a **3-path template** (per `phenotype_workflow` skill): Path A (dx + meds — the obvious cases), Path B (dx-only — diagnosed but untreated), Path C (meds-only — *the trick path*: treated but undiagnosed; cross-indication cases), and often Path D (labs-only — abnormal labs, no diagnosis). Plus negative-control patients without the phenotype. The trick paths are essential — without them, the eval would only test naive coding and miss the harder real-world cases.
+- Conditions/Procedures/Observations/MedicationRequests carry **multiple codings** (SNOMED + ICD-10-CM + ICD-9-CM + RxNorm/CPT) via the `scripts/augment_fhir_codes.py` post-Synthea pipeline. This means a model that queries in *any* code system should find the same cohort — and a model that queries only one system tests whether tools/sampling recover the others.
+- **Per-phenotype isolation at evaluation time** (since 2026-05-15): the FHIR server is wiped and only one phenotype's minimal bundle (`data/minimal-bundles/<phenotype>.json.gz`) is loaded before its tests run. This eliminates cross-phenotype contamination — patients from one phenotype's Synthea run no longer appear in another's gold queries. See `scripts/reload_phenotype.py` and `scripts/run_isolated_suite.py`.
+
+**The score that matters:** P/R/F1 on patient sets across (phenotype × test-case-variant × prompt-level × tier). The `-comprehensive` cell is the headline number — does the model find the *whole* cohort? — and the trick variants reveal *why* it does or doesn't.
+
 ## Development Commands
 
 ### Backend (Python/FastAPI)
