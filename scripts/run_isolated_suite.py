@@ -34,7 +34,13 @@ def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("phenotypes", nargs="+", help="phenotype names (synthea/output dir names)")
     ap.add_argument("--model", default="qwen3.5:9b")
-    ap.add_argument("--backend", default="ollama", choices=["ollama", "lemonade"])
+    ap.add_argument("--provider", default="ollama",
+                    choices=["ollama", "foundry-local", "openai-compat"],
+                    help="LLM provider (matches run_sanity_matrix's --provider)")
+    ap.add_argument("--base-url", default=None,
+                    help="Override LLM endpoint URL (e.g. for openai-compat)")
+    ap.add_argument("--lean-prompt", action="store_true",
+                    help="Use the lean agentic prompt (small openai-compat models)")
     ap.add_argument("--tiers", default="2")
     ap.add_argument("--prompt-variants", default="naive,broad,expert")
     ap.add_argument("--fhir-url", default="https://jaerwinllm.azurewebsites.net")
@@ -63,16 +69,21 @@ def main() -> int:
             continue
         for tc in tcs:
             print(f"\n--- matrix: {tc.stem}", flush=True)
-            subprocess.run([
+            cmd = [
                 PY, MATRIX,
                 "-t", tc.stem,
                 "--model", args.model,
-                "--backend", args.backend,
+                "--provider", args.provider,
                 "--tiers", args.tiers,
                 "--prompt-variants", args.prompt_variants,
                 "--fhir-url", args.fhir_url,
                 "--cell-timeout-sec", str(args.cell_timeout_sec),
-            ])
+            ]
+            if args.base_url:
+                cmd += ["--base-url", args.base_url]
+            if args.lean_prompt:
+                cmd += ["--lean-prompt"]
+            subprocess.run(cmd)
         results.append((pheno, f"ran {len(tcs)} test case(s) in {int(time.time() - t0)}s"))
 
     print(f"\n{'=' * 72}\n=== SUITE SUMMARY ({int(time.time() - suite_t0)}s total) ===")
