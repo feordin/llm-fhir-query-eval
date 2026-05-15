@@ -80,3 +80,21 @@ def test_rederive_no_change_returns_false(tmp_path):
     }))
     client = _make_client({"Condition?code=snomed|1": {"p1", "p2"}})
     assert rederive_test_case(client, tc_file) is False  # no diff -> no rewrite
+
+
+def test_rederive_no_gold_query_returns_false(tmp_path):
+    """A test case with neither expected_query.url nor metadata.expected_queries
+    has no gold query at all -- rederive should return False without writing
+    or raising, leaving the file untouched."""
+    tc_file = tmp_path / "phekb-x-stub.json"
+    original = json.dumps({
+        "id": "phekb-x-stub",
+        "expected_query": {},  # no url
+        "metadata": {},        # no expected_queries
+        "test_data": {"expected_patient_ids": ["unchanged"], "expected_result_count": 1},
+    })
+    tc_file.write_text(original)
+    client = _make_client({})  # would never be called
+    assert rederive_test_case(client, tc_file) is False
+    assert tc_file.read_text() == original  # file untouched
+    client.get_patient_ids_from_query.assert_not_called()
