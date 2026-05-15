@@ -123,17 +123,40 @@ def _test_cases_for(phenotype: str) -> list[Path]:
     return owned
 
 
+def _safe_query(client: FHIRClient, url: str) -> set[str] | None:
+    """Run a gold query, returning None (with a printed warning) if the URL
+    is malformed enough that the FHIR server rejects it (HTTP 4xx). A few
+    legacy test cases hold placeholder text or aspirational queries in the
+    URL field; we don't want one bad test case to abort a phenotype's regen.
+    Real network/server errors still propagate."""
+    import requests
+    try:
+        return set(client.get_patient_ids_from_query(url))
+    except requests.HTTPError as e:
+        status = getattr(e.response, "status_code", "?")
+        if isinstance(status, int) and 400 <= status < 500:
+            print(f"  WARNING: gold query rejected (HTTP {status}); "
+                  f"treating as no-gold-query: {url[:120]}", flush=True)
+            return None
+        raise
+
+
 def _expected_patient_set(client: FHIRClient, tc: dict) -> set[str] | None:
     """Run a test case's gold query/queries and return the patient set they
-    identify -- handling single-query, multi-query union, and negation."""
+    identify -- handling single-query, multi-query union, and negation.
+    Returns None if no gold query is defined, or if the gold query is a
+    placeholder/malformed URL that the FHIR server can't parse."""
     meta = tc.get("metadata", {})
     queries = meta.get("expected_queries") or []
     if not queries:
         url = (tc.get("expected_query") or {}).get("url")
         if not url:
             return None
-        return set(client.get_patient_ids_from_query(url))
-    sets = [set(client.get_patient_ids_from_query(u)) for u in queries]
+        return _safe_query(client, url)
+    sets_or_none = [_safe_query(client, u) for u in queries]
+    if any(s is None for s in sets_or_none):
+        return None  # at least one query is unrunnable; skip this test case
+    sets = sets_or_none
     if meta.get("negation"):  # negation_operation: query[0]_patients - query[1..]
         result = set(sets[0])
         for s in sets[1:]:
