@@ -47,3 +47,45 @@ def test_ollama_agentic_still_uses_full_prompt():
     """Regression: the Ollama path is untouched by the lean-prompt port."""
     p = get_provider("ollama-agentic", model="qwen3.5:9b", fhir_url="https://x", tier=2)
     assert p._agentic_prompt == AGENTIC_SYSTEM_PROMPT
+
+
+# --------------------------------------------------------------------------
+# Azure OpenAI Service deployment factory
+# --------------------------------------------------------------------------
+
+def test_factory_azure_openai_requires_base_url(monkeypatch):
+    """azure-openai must refuse to build without a base_url (no silent default)."""
+    monkeypatch.delenv("AZURE_OPENAI_ENDPOINT", raising=False)
+    try:
+        get_provider("azure-openai", model="gpt-4o", api_key="fake-key",
+                     fhir_url="https://x", tier=2)
+        assert False, "expected ValueError"
+    except ValueError as e:
+        assert "base_url" in str(e) or "AZURE_OPENAI_ENDPOINT" in str(e)
+
+
+def test_factory_azure_openai_requires_api_key(monkeypatch):
+    """azure-openai must refuse to build without an api_key."""
+    for var in ("AZURE_OPENAI_API_KEY", "AZURE_API_KEY"):
+        monkeypatch.delenv(var, raising=False)
+    try:
+        get_provider("azure-openai", model="gpt-4o",
+                     base_url="https://r.openai.azure.com",
+                     fhir_url="https://x", tier=2)
+        assert False, "expected ValueError"
+    except ValueError as e:
+        assert "api_key" in str(e) or "AZURE_OPENAI_API_KEY" in str(e)
+
+
+def test_factory_azure_openai_builds_with_required_args():
+    """Happy path: with both base_url and api_key, the factory returns an
+    AzureOpenAIAgenticProvider with the deployment name preserved as model."""
+    from src.llm.agentic_provider import AzureOpenAIAgenticProvider
+    p = get_provider("azure-openai", model="my-gpt4o-deployment",
+                     base_url="https://r.openai.azure.com",
+                     api_key="fake-key",
+                     fhir_url="https://x", tier=2)
+    assert isinstance(p, AzureOpenAIAgenticProvider)
+    assert p.model == "my-gpt4o-deployment"
+    # Frontier model -- default keeps full prompt (lean is opt-in)
+    assert p._agentic_prompt == AGENTIC_SYSTEM_PROMPT
