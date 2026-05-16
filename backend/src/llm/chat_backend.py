@@ -238,6 +238,47 @@ class FoundryChatBackend(OpenAICompatChatBackend):
         return _extract_foundry_assistant_message(choice)
 
 
+class AzureOpenAIChatBackend(OpenAICompatChatBackend):
+    """Backend for Azure OpenAI Service deployments.
+
+    Different surface from a generic OpenAI-compatible endpoint:
+    - URL: ``https://<resource>.openai.azure.com`` (NOT a /chat/completions URL)
+    - Auth: ``api-key`` header instead of ``Authorization: Bearer``
+    - Requires ``api_version`` (e.g. ``2024-08-01-preview``)
+    - The ``model`` parameter is the Azure DEPLOYMENT NAME, not a base model name
+
+    For Azure AI Foundry serverless endpoints (``*.services.ai.azure.com`` /
+    ``*.inference.ai.azure.com``), use the generic OpenAICompatChatBackend
+    instead -- those speak the standard OpenAI protocol over a base_url.
+
+    Reuses chat() and translation logic from OpenAICompatChatBackend; only
+    swaps the client construction.
+    """
+
+    backend_name = "azure-openai"
+
+    def __init__(
+        self,
+        model: str,
+        base_url: str,
+        api_key: str,
+        api_version: str = "2024-08-01-preview",
+        max_tokens: int = 2048,
+        temperature: float = 0.0,
+    ):
+        from openai import AzureOpenAI
+        # AzureOpenAI uses azure_endpoint=, NOT base_url=. azure_endpoint is the
+        # resource root (e.g. https://<resource>.openai.azure.com), and the SDK
+        # appends /openai/deployments/<model>/... internally.
+        self.client = AzureOpenAI(
+            azure_endpoint=base_url, api_key=api_key, api_version=api_version,
+        )
+        self.model = model  # = the Azure deployment name
+        self.max_tokens = max_tokens
+        self.temperature = temperature
+        self.api_version = api_version
+
+
 # ---------------------------------------------------------------------------
 # Foundry Local in-process SDK (Windows ML / NPU). Bypasses the HTTP service
 # entirely — same QNN execution provider, but inference happens inside the

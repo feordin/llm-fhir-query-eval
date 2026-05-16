@@ -18,6 +18,7 @@ from typing import Any, Dict, List, Optional
 
 from .chat_backend import (
     AssistantMessage,
+    AzureOpenAIChatBackend,
     ChatBackend,
     OllamaChatBackend,
     FoundryChatBackend,
@@ -1260,6 +1261,50 @@ class OpenAICompatAgenticProvider(AgenticProvider):
         **_legacy_kwargs,
     ):
         backend = OpenAICompatChatBackend(model=model, base_url=base_url, api_key=api_key)
+        prompt_kwargs = {}
+        if lean_prompt:
+            prompt_kwargs = {
+                "agentic_prompt": LEAN_AGENTIC_SYSTEM_PROMPT,
+                "agentic_prompt_version": LEAN_AGENTIC_SYSTEM_PROMPT_VERSION,
+            }
+        super().__init__(
+            chat_backend=backend,
+            fhir_base_url=fhir_base_url,
+            max_iterations=max_iterations,
+            request_timeout=request_timeout,
+            tier=tier,
+            **prompt_kwargs,
+        )
+
+
+class AzureOpenAIAgenticProvider(AgenticProvider):
+    """AgenticProvider backed by an Azure OpenAI Service deployment.
+
+    `model` is the Azure DEPLOYMENT NAME (not a base model identifier).
+    `base_url` is the resource root (e.g. https://<resource>.openai.azure.com).
+    `api_version` defaults to a recent preview; override if your deployment
+    pins a specific version.
+
+    Lean prompt is opt-in via `lean_prompt=True` -- frontier models on Azure
+    (GPT-4 family) should keep the full AGENTIC_SYSTEM_PROMPT.
+    """
+
+    def __init__(
+        self,
+        model: str,
+        base_url: str,
+        api_key: str,
+        api_version: str = "2024-08-01-preview",
+        fhir_base_url: str = "http://localhost:8080/fhir",
+        max_iterations: int = 20,
+        request_timeout: int = 30,
+        tier: int = 2,
+        lean_prompt: bool = False,
+        **_legacy_kwargs,
+    ):
+        backend = AzureOpenAIChatBackend(
+            model=model, base_url=base_url, api_key=api_key, api_version=api_version,
+        )
         prompt_kwargs = {}
         if lean_prompt:
             prompt_kwargs = {

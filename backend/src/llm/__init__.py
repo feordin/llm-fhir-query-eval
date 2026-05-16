@@ -6,13 +6,13 @@ import os
 
 from .agentic_provider import (
     AgenticProvider, OllamaAgenticProvider, FoundryAgenticProvider,
-    OpenAICompatAgenticProvider,
+    OpenAICompatAgenticProvider, AzureOpenAIAgenticProvider,
 )
 from .foundry_local_provider import FoundryLocalProvider
 from .openai_chat_provider import OpenAIChatProvider
 from .chat_backend import (
     ChatBackend, OllamaChatBackend, OpenAICompatChatBackend,
-    FoundryChatBackend, FoundryWinMLChatBackend,
+    FoundryChatBackend, FoundryWinMLChatBackend, AzureOpenAIChatBackend,
 )
 
 
@@ -58,7 +58,8 @@ def get_provider(name: str, model: str = None, **kwargs) -> LLMProvider:
     elif name == "openai-compat":
         # Any OpenAI-compatible endpoint. base_url via arg / OPENAI_COMPAT_BASE_URL
         # env / Lemonade's default. Tier 1 (closed-book) when no fhir_url is given,
-        # otherwise the agentic loop.
+        # otherwise the agentic loop. api_key via arg / kwargs (falls through to the
+        # backend, which defaults to "not-used" for endpoints that don't auth).
         base_url = kwargs.pop("base_url", None) or os.environ.get(
             "OPENAI_COMPAT_BASE_URL", "http://localhost:13305/api/v1")
         if "fhir_url" in kwargs or "tier" in kwargs:
@@ -69,10 +70,27 @@ def get_provider(name: str, model: str = None, **kwargs) -> LLMProvider:
                 max_iterations=max_iterations, **kwargs,
             )
         return OpenAIChatProvider(model=model, base_url=base_url, **kwargs)
+    elif name == "azure-openai":
+        # Azure OpenAI Service deployment. base_url is the resource root
+        # (https://<resource>.openai.azure.com). api_key is required.
+        # api_version defaults to 2024-08-01-preview; override per deployment.
+        base_url = kwargs.pop("base_url", None) or os.environ.get("AZURE_OPENAI_ENDPOINT")
+        if not base_url:
+            raise ValueError("azure-openai requires --base-url or AZURE_OPENAI_ENDPOINT env")
+        api_key = kwargs.pop("api_key", None) or os.environ.get("AZURE_OPENAI_API_KEY") \
+            or os.environ.get("AZURE_API_KEY")
+        if not api_key:
+            raise ValueError("azure-openai requires --api-key or AZURE_OPENAI_API_KEY env")
+        fhir_url = kwargs.pop("fhir_url", "http://localhost:8080/fhir")
+        max_iterations = kwargs.pop("max_iterations", 10)
+        return AzureOpenAIAgenticProvider(
+            model=model, base_url=base_url, api_key=api_key,
+            fhir_base_url=fhir_url, max_iterations=max_iterations, **kwargs,
+        )
     else:
         raise ValueError(
             f"Unknown provider: '{name}'. Choose from: anthropic, claude-cli, command, "
-            "ollama-agentic, foundry-local, foundry-agentic, openai-compat"
+            "ollama-agentic, foundry-local, foundry-agentic, openai-compat, azure-openai"
         )
 
 
@@ -81,7 +99,8 @@ __all__ = [
     "FHIR_SYSTEM_PROMPT_VERSION", "build_generated_query",
     "AnthropicProvider", "CLIDelegateProvider", "CommandProvider",
     "AgenticProvider", "OllamaAgenticProvider", "FoundryAgenticProvider",
-    "OpenAICompatAgenticProvider", "FoundryLocalProvider", "OpenAIChatProvider",
+    "OpenAICompatAgenticProvider", "AzureOpenAIAgenticProvider",
+    "FoundryLocalProvider", "OpenAIChatProvider",
     "ChatBackend", "OllamaChatBackend", "OpenAICompatChatBackend",
-    "FoundryChatBackend", "FoundryWinMLChatBackend",
+    "FoundryChatBackend", "FoundryWinMLChatBackend", "AzureOpenAIChatBackend",
 ]

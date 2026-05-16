@@ -52,7 +52,7 @@ from src.api.models.test_case import TestCase  # noqa: E402
 
 PROMPT_VARIANTS = ["naive", "broad", "expert"]
 TIERS = [1, 2, 3]
-SUPPORTED_PROVIDERS = ["ollama", "foundry-local", "openai-compat"]
+SUPPORTED_PROVIDERS = ["ollama", "foundry-local", "openai-compat", "azure-openai"]
 
 # Reduce the agent's spin ceiling to keep cells bounded
 AGENT_MAX_ITERATIONS = 20
@@ -75,7 +75,8 @@ def _agentic_fhir_url(fhir_url: str) -> str:
 
 def make_provider(tier: int, provider: str, model: str, fhir_url: str,
                   base_url: str | None = None, cell_timeout_sec: int = 300,
-                  lean_prompt: bool = False):
+                  lean_prompt: bool = False, api_key: str | None = None,
+                  api_version: str | None = None):
     """Construct the LLM provider for a given (tier, provider, model)."""
     if provider == "ollama":
         if tier == 1:
@@ -110,13 +111,32 @@ def make_provider(tier: int, provider: str, model: str, fhir_url: str,
             max_iterations=AGENT_MAX_ITERATIONS,
         )
     if provider == "openai-compat":
-        # Any OpenAI-compatible endpoint (AMD GAIA Lemonade, Azure OpenAI, ...).
-        # base_url defaults are handled inside get_provider / the backend.
-        kw = {} if base_url is None else {"base_url": base_url}
+        # Any OpenAI-compatible endpoint (AMD GAIA Lemonade, Azure AI Foundry
+        # serverless, OpenAI direct, ...). base_url and api_key default via
+        # the factory's env-var lookups.
+        kw = {}
+        if base_url is not None: kw["base_url"] = base_url
+        if api_key is not None: kw["api_key"] = api_key
         if tier == 1:
             return get_provider("openai-compat", model=model, **kw)
         return get_provider(
             "openai-compat",
+            model=model,
+            fhir_url=_agentic_fhir_url(fhir_url),
+            tier=tier,
+            max_iterations=AGENT_MAX_ITERATIONS,
+            lean_prompt=lean_prompt,
+            **kw,
+        )
+    if provider == "azure-openai":
+        # Azure OpenAI Service deployment. base_url is the resource root,
+        # `model` is the Azure deployment name, api_key + api_version required.
+        kw = {}
+        if base_url is not None: kw["base_url"] = base_url
+        if api_key is not None: kw["api_key"] = api_key
+        if api_version is not None: kw["api_version"] = api_version
+        return get_provider(
+            "azure-openai",
             model=model,
             fhir_url=_agentic_fhir_url(fhir_url),
             tier=tier,
@@ -139,7 +159,8 @@ def make_fhir_client(fhir_url: str) -> FHIRClient:
 
 def run_one_cell(tc_id: str, tier: int, variant: str, provider_name: str,
                  model: str, fhir_url: str, base_url: str | None = None,
-                 cell_timeout_sec: int = 300, lean_prompt: bool = False) -> dict:
+                 cell_timeout_sec: int = 300, lean_prompt: bool = False,
+                 api_key: str | None = None, api_version: str | None = None) -> dict:
     """Execute a single (tier, variant) cell and return the result dict.
 
     Called both directly (in --single-cell mode by the subprocess) and from
@@ -151,7 +172,7 @@ def run_one_cell(tc_id: str, tier: int, variant: str, provider_name: str,
     t0 = time.time()
     try:
         provider = make_provider(tier, provider_name, model, fhir_url, base_url,
-                                 cell_timeout_sec, lean_prompt)
+                                 cell_timeout_sec, lean_prompt, api_key, api_version)
         runner = EvaluationRunner(fhir_client, provider)
         cell_prompt_text = tc.get_prompt(variant)
         cell_tc = tc.model_copy(update={
@@ -183,7 +204,9 @@ def run_one_cell(tc_id: str, tier: int, variant: str, provider_name: str,
 
 def run_cell_subprocess(tc_id: str, tier: int, variant: str, provider_name: str,
                         model: str, fhir_url: str, base_url: str | None,
-                        timeout_sec: int, lean_prompt: bool = False) -> dict:
+                        timeout_sec: int, lean_prompt: bool = False,
+                        api_key: str | None = None,
+                        api_version: str | None = None) -> dict:
     """Run a single cell in a subprocess with a hard wall-clock timeout."""
     out_dir = REPO / "results"
     out_dir.mkdir(exist_ok=True)
@@ -204,6 +227,10 @@ def run_cell_subprocess(tc_id: str, tier: int, variant: str, provider_name: str,
         cmd += ["--base-url", base_url]
     if lean_prompt:
         cmd += ["--lean-prompt"]
+    if api_key:
+        cmd += ["--api-key", api_key]
+    if api_version:
+        cmd += ["--api-version", api_version]
     cell = {"tier": tier, "prompt_variant": variant}
     t0 = time.time()
     try:
@@ -238,6 +265,14 @@ def main() -> int:
     p.add_argument("--lean-prompt", action="store_true",
                    help="Use LEAN_AGENTIC_SYSTEM_PROMPT for Tier 2/3 (openai-compat) -- "
                         "recommended for small models that shortcut past tool use")
+    p.add_argument("--api-key", default=os.environ.get("AZURE_OPENAI_API_KEY")
+                   or os.environ.get("AZURE_API_KEY")
+                   or os.environ.get("OPENAI_COMPAT_API_KEY"),
+                   help="API key for openai-compat / azure-openai providers "
+                        "(falls back to AZURE_OPENAI_API_KEY / AZURE_API_KEY / "
+                        "OPENAI_COMPAT_API_KEY env vars)")
+    p.add_argument("--api-version", default=None,
+                   help="Azure OpenAI api-version (default: 2024-08-01-preview)")
     p.add_argument("--tiers", default="1,2,3")
     p.add_argument("--prompt-variants", default="naive,broad,expert")
     p.add_argument("--cell-timeout-sec", type=int, default=300,
@@ -252,7 +287,8 @@ def main() -> int:
     if args.single_cell:
         cell = run_one_cell(args.test_case, args.cell_tier, args.cell_variant,
                             args.provider, args.model, args.fhir_url,
-                            args.base_url, args.cell_timeout_sec, args.lean_prompt)
+                            args.base_url, args.cell_timeout_sec, args.lean_prompt,
+                            args.api_key, args.api_version)
         with open(args.cell_out, "w", encoding="utf-8") as f:
             json.dump(cell, f, indent=2)
         return 0
@@ -279,7 +315,8 @@ def main() -> int:
             print(f"--- {label} starting...", flush=True)
             cell = run_cell_subprocess(tc.id, tier, variant, args.provider,
                                        args.model, args.fhir_url, args.base_url,
-                                       args.cell_timeout_sec, args.lean_prompt)
+                                       args.cell_timeout_sec, args.lean_prompt,
+                                       args.api_key, args.api_version)
             if "f1" in cell:
                 print(f"    {label} -> P={cell['precision']} R={cell['recall']} F1={cell['f1']} "
                       f"(expected={cell['expected_count']}, got={cell['actual_count']}, {cell['elapsed_sec']}s)")
