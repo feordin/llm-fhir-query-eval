@@ -36,7 +36,7 @@ def main() -> int:
     ap.add_argument("phenotypes", nargs="+", help="phenotype names (synthea/output dir names)")
     ap.add_argument("--model", default="qwen3.5:9b")
     ap.add_argument("--provider", default="ollama",
-                    choices=["ollama", "foundry-local", "openai-compat", "azure-openai"],
+                    choices=["ollama", "foundry-local", "openai-compat", "azure-openai", "copilot"],
                     help="LLM provider (matches run_sanity_matrix's --provider)")
     ap.add_argument("--base-url", default=None,
                     help="Override LLM endpoint URL (e.g. for openai-compat / azure-openai)")
