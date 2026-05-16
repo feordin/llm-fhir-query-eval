@@ -10,6 +10,7 @@ from .agentic_provider import (
 )
 from .foundry_local_provider import FoundryLocalProvider
 from .openai_chat_provider import OpenAIChatProvider
+from .copilot_provider import CopilotProvider, CopilotAgenticProvider
 from .chat_backend import (
     ChatBackend, OllamaChatBackend, OpenAICompatChatBackend,
     FoundryChatBackend, FoundryWinMLChatBackend, AzureOpenAIChatBackend,
@@ -70,6 +71,20 @@ def get_provider(name: str, model: str = None, **kwargs) -> LLMProvider:
                 max_iterations=max_iterations, **kwargs,
             )
         return OpenAIChatProvider(model=model, base_url=base_url, **kwargs)
+    elif name == "copilot":
+        # GitHub Copilot SDK. No api_key needed -- auth uses your `gh auth login`
+        # subscription. The SDK spawns the Copilot CLI as a subprocess and runs
+        # the agent loop internally. Tier 1 (no fhir_url/tier) -> closed-book;
+        # otherwise -> agentic with our 10 FHIR/UMLS/VSAC tools registered.
+        if "fhir_url" in kwargs or "tier" in kwargs:
+            fhir_url = kwargs.pop("fhir_url", "http://localhost:8080/fhir")
+            # max_iterations is meaningless here -- Copilot caps internally
+            kwargs.pop("max_iterations", None)
+            return CopilotAgenticProvider(
+                model=model or "claude-sonnet-4.6",
+                fhir_base_url=fhir_url, **kwargs,
+            )
+        return CopilotProvider(model=model or "claude-sonnet-4.6", **kwargs)
     elif name == "azure-openai":
         # Azure OpenAI Service deployment. base_url is the resource root
         # (https://<resource>.openai.azure.com). api_key is required.
@@ -90,7 +105,8 @@ def get_provider(name: str, model: str = None, **kwargs) -> LLMProvider:
     else:
         raise ValueError(
             f"Unknown provider: '{name}'. Choose from: anthropic, claude-cli, command, "
-            "ollama-agentic, foundry-local, foundry-agentic, openai-compat, azure-openai"
+            "ollama-agentic, foundry-local, foundry-agentic, openai-compat, "
+            "azure-openai, copilot"
         )
 
 
@@ -100,6 +116,7 @@ __all__ = [
     "AnthropicProvider", "CLIDelegateProvider", "CommandProvider",
     "AgenticProvider", "OllamaAgenticProvider", "FoundryAgenticProvider",
     "OpenAICompatAgenticProvider", "AzureOpenAIAgenticProvider",
+    "CopilotProvider", "CopilotAgenticProvider",
     "FoundryLocalProvider", "OpenAIChatProvider",
     "ChatBackend", "OllamaChatBackend", "OpenAICompatChatBackend",
     "FoundryChatBackend", "FoundryWinMLChatBackend", "AzureOpenAIChatBackend",

@@ -52,7 +52,7 @@ from src.api.models.test_case import TestCase  # noqa: E402
 
 PROMPT_VARIANTS = ["naive", "broad", "expert"]
 TIERS = [1, 2, 3]
-SUPPORTED_PROVIDERS = ["ollama", "foundry-local", "openai-compat", "azure-openai"]
+SUPPORTED_PROVIDERS = ["ollama", "foundry-local", "openai-compat", "azure-openai", "copilot"]
 
 # Reduce the agent's spin ceiling to keep cells bounded
 AGENT_MAX_ITERATIONS = 20
@@ -127,6 +127,19 @@ def make_provider(tier: int, provider: str, model: str, fhir_url: str,
             max_iterations=AGENT_MAX_ITERATIONS,
             lean_prompt=lean_prompt,
             **kw,
+        )
+    if provider == "copilot":
+        # GitHub Copilot SDK. Auth via gh auth login (no --api-key needed).
+        # Tier 1 -> closed-book CopilotProvider; Tier 2/3 -> CopilotAgenticProvider
+        # with our 10 FHIR/UMLS/VSAC tools.
+        if tier == 1:
+            return get_provider("copilot", model=model)
+        return get_provider(
+            "copilot",
+            model=model,
+            fhir_url=_agentic_fhir_url(fhir_url),
+            tier=tier,
+            lean_prompt=lean_prompt,
         )
     if provider == "azure-openai":
         # Azure OpenAI Service deployment. base_url is the resource root,
