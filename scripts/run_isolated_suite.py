@@ -32,13 +32,20 @@ MATRIX = str(REPO / "scripts" / "run_sanity_matrix.py")
 
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__)
+    import os
     ap.add_argument("phenotypes", nargs="+", help="phenotype names (synthea/output dir names)")
     ap.add_argument("--model", default="qwen3.5:9b")
     ap.add_argument("--provider", default="ollama",
-                    choices=["ollama", "foundry-local", "openai-compat"],
+                    choices=["ollama", "foundry-local", "openai-compat", "azure-openai"],
                     help="LLM provider (matches run_sanity_matrix's --provider)")
     ap.add_argument("--base-url", default=None,
-                    help="Override LLM endpoint URL (e.g. for openai-compat)")
+                    help="Override LLM endpoint URL (e.g. for openai-compat / azure-openai)")
+    ap.add_argument("--api-key", default=os.environ.get("AZURE_OPENAI_API_KEY")
+                    or os.environ.get("AZURE_API_KEY")
+                    or os.environ.get("OPENAI_COMPAT_API_KEY"),
+                    help="API key for openai-compat / azure-openai (env fallback)")
+    ap.add_argument("--api-version", default=None,
+                    help="Azure OpenAI api-version (azure-openai provider only)")
     ap.add_argument("--lean-prompt", action="store_true",
                     help="Use the lean agentic prompt (small openai-compat models)")
     ap.add_argument("--tiers", default="2")
@@ -83,6 +90,10 @@ def main() -> int:
                 cmd += ["--base-url", args.base_url]
             if args.lean_prompt:
                 cmd += ["--lean-prompt"]
+            if args.api_key:
+                cmd += ["--api-key", args.api_key]
+            if args.api_version:
+                cmd += ["--api-version", args.api_version]
             subprocess.run(cmd)
         results.append((pheno, f"ran {len(tcs)} test case(s) in {int(time.time() - t0)}s"))
 
