@@ -71,6 +71,19 @@ def _system_replace(text: str) -> SystemMessageReplaceConfig:
     return {"mode": "replace", "content": text}  # type: ignore[return-value]
 
 
+# All Copilot CLI built-in tools, as reported by the model when no restriction
+# is set. Passing ``available_tools=[]`` blocks BOTH built-ins AND custom tools
+# (verified empirically -- Copilot CLI treats empty allowlist as "no tools at
+# all"); the correct way to keep only our custom tools available is to denylist
+# every built-in via ``excluded_tools``.
+COPILOT_BUILT_IN_TOOLS = [
+    "powershell", "write_powershell", "read_powershell", "stop_powershell",
+    "list_powershell", "view", "create", "edit", "web_fetch", "report_intent",
+    "show_file", "skill", "sql", "session_store_sql", "read_agent",
+    "list_agents", "write_agent", "grep", "glob", "task",
+]
+
+
 # --- Tier 1 closed-book -----------------------------------------------------
 
 class CopilotProvider(LLMProvider):
@@ -88,7 +101,7 @@ class CopilotProvider(LLMProvider):
                 session = await client.create_session(
                     model=self.model,
                     on_permission_request=PermissionHandler.approve_all,
-                    available_tools=[],  # drop Copilot's built-in tools
+                    excluded_tools=COPILOT_BUILT_IN_TOOLS,  # only our tools (if any) usable
                     system_message=_system_replace(FHIR_SYSTEM_PROMPT),
                 )
                 resp = await session.send_and_wait(user_msg, timeout=self.timeout_sec)
@@ -308,7 +321,7 @@ class CopilotAgenticProvider(LLMProvider):
                 session = await client.create_session(
                     model=self.model,
                     on_permission_request=PermissionHandler.approve_all,
-                    available_tools=[],  # drop Copilot's built-ins
+                    excluded_tools=COPILOT_BUILT_IN_TOOLS,  # only our 10 FHIR/UMLS/VSAC tools
                     tools=tools,
                     system_message=_system_replace(system_prompt),
                 )
