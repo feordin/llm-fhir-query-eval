@@ -194,6 +194,11 @@ def run_one_cell(tc_id: str, tier: int, variant: str, provider_name: str,
         })
         result = runner.run_single(cell_tc, provider_name=provider_name, model_name=model)
         exec_r = result.evaluation_results.execution_match
+        gen = result.generated_query
+        # Capture the actual artefacts so post-hoc analysis doesn't need a re-run.
+        # raw_response is capped at 8KB per cell to keep result JSONs reasonable.
+        primary_url = gen.parsed_query.url if gen.parsed_query else None
+        additional_urls = [q.url for q in gen.additional_queries]
         cell.update({
             "elapsed_sec": round(time.time() - t0, 1),
             "passed": exec_r.passed,
@@ -202,7 +207,11 @@ def run_one_cell(tc_id: str, tier: int, variant: str, provider_name: str,
             "f1": exec_r.f1_score,
             "expected_count": exec_r.expected_count,
             "actual_count": exec_r.actual_count,
-            "queries_generated": len(result.generated_query.all_queries),
+            "queries_generated": len(gen.all_queries),
+            "primary_query_url": primary_url,
+            "additional_query_urls": additional_urls,
+            "raw_response": (gen.raw_response or "")[:8000],
+            "prompt_text": cell_prompt_text,
         })
         # Attach run metadata from the provider if available
         if result.run_metadata:
