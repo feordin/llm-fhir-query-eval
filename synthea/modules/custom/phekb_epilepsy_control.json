@@ -5,12 +5,140 @@
     "Generates patients without epilepsy."
   ],
   "states": {
-    "Initial": { "type": "Initial", "direct_transition": "Age_Guard" },
-    "Age_Guard": { "type": "Guard", "allow": { "condition_type": "Age", "operator": ">=", "quantity": 18, "unit": "years" }, "direct_transition": "Set_Control_Flag" },
-    "Set_Control_Flag": { "type": "SetAttribute", "attribute": "epi_positive", "value": false, "direct_transition": "Wellness_Encounter" },
-    "Wellness_Encounter": { "type": "Encounter", "wellness": true, "direct_transition": "End_Wellness_Encounter" },
-    "End_Wellness_Encounter": { "type": "EncounterEnd", "direct_transition": "Followup_Delay" },
-    "Followup_Delay": { "type": "Delay", "range": { "low": 12, "high": 24, "unit": "months" }, "direct_transition": "Wellness_Encounter" }
+    "Initial": {
+      "type": "Initial",
+      "direct_transition": "Age_Guard"
+    },
+    "Age_Guard": {
+      "type": "Guard",
+      "allow": {
+        "condition_type": "Age",
+        "operator": ">=",
+        "quantity": 18,
+        "unit": "years"
+      },
+      "direct_transition": "Set_Control_Flag"
+    },
+    "Set_Control_Flag": {
+      "type": "SetAttribute",
+      "attribute": "epi_positive",
+      "value": false,
+      "direct_transition": "Wellness_Encounter"
+    },
+    "Wellness_Encounter": {
+      "type": "Encounter",
+      "wellness": true,
+      "direct_transition": "Maybe_Mimicker_Syncope"
+    },
+    "End_Wellness_Encounter": {
+      "type": "EncounterEnd",
+      "direct_transition": "Followup_Delay"
+    },
+    "Followup_Delay": {
+      "type": "Delay",
+      "range": {
+        "low": 12,
+        "high": 24,
+        "unit": "months"
+      },
+      "direct_transition": "Wellness_Encounter"
+    },
+    "Maybe_Mimicker_Syncope": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Syncope",
+          "distribution": 0.2
+        },
+        {
+          "transition": "Maybe_Mimicker_Psychogenic_non_epileptic_seizures",
+          "distribution": 0.8
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Syncope": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "271594007",
+          "display": "Syncope"
+        }
+      ],
+      "direct_transition": "Maybe_Mimicker_Psychogenic_non_epileptic_seizures"
+    },
+    "Maybe_Mimicker_Psychogenic_non_epileptic_seizures": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Psychogenic_non_epileptic_seizures",
+          "distribution": 0.05
+        },
+        {
+          "transition": "Maybe_Mimicker_Transient_ischemic_attack",
+          "distribution": 0.95
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Psychogenic_non_epileptic_seizures": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "191714002",
+          "display": "Dissociative convulsions"
+        }
+      ],
+      "direct_transition": "Maybe_Mimicker_Transient_ischemic_attack"
+    },
+    "Maybe_Mimicker_Transient_ischemic_attack": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Transient_ischemic_attack",
+          "distribution": 0.05
+        },
+        {
+          "transition": "Maybe_Mimicker_Migraine_with_aura",
+          "distribution": 0.95
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Transient_ischemic_attack": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "266257000",
+          "display": "Transient cerebral ischemia"
+        }
+      ],
+      "direct_transition": "Maybe_Mimicker_Migraine_with_aura"
+    },
+    "Maybe_Mimicker_Migraine_with_aura": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Migraine_with_aura",
+          "distribution": 0.1
+        },
+        {
+          "transition": "End_Wellness_Encounter",
+          "distribution": 0.9
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Migraine_with_aura": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "4473006",
+          "display": "Migraine with aura"
+        }
+      ],
+      "direct_transition": "End_Wellness_Encounter"
+    }
   },
   "gmf_version": 2
 }
