@@ -15,54 +15,202 @@
     "Controls get NO Condition resources for RA and NO RA medications."
   ],
   "states": {
-    "Initial": { "type": "Initial", "direct_transition": "Age_Guard" },
-
+    "Initial": {
+      "type": "Initial",
+      "direct_transition": "Age_Guard"
+    },
     "Age_Guard": {
       "type": "Guard",
-      "allow": { "condition_type": "Age", "operator": ">=", "quantity": 30, "unit": "years" },
+      "allow": {
+        "condition_type": "Age",
+        "operator": ">=",
+        "quantity": 30,
+        "unit": "years"
+      },
       "direct_transition": "Set_Control_Flag"
     },
-
-    "Set_Control_Flag": { "type": "SetAttribute", "attribute": "ra_positive", "value": false, "direct_transition": "Set_Needs_First_Visit" },
-
-    "Set_Needs_First_Visit": { "type": "SetAttribute", "attribute": "ra_needs_first_visit", "value": true, "direct_transition": "Wellness_Encounter" },
-
-    "Wellness_Encounter": { "type": "Encounter", "wellness": true, "direct_transition": "Check_First_Visit" },
-
+    "Set_Control_Flag": {
+      "type": "SetAttribute",
+      "attribute": "ra_positive",
+      "value": false,
+      "direct_transition": "Set_Needs_First_Visit"
+    },
+    "Set_Needs_First_Visit": {
+      "type": "SetAttribute",
+      "attribute": "ra_needs_first_visit",
+      "value": true,
+      "direct_transition": "Wellness_Encounter"
+    },
+    "Wellness_Encounter": {
+      "type": "Encounter",
+      "wellness": true,
+      "direct_transition": "Maybe_Mimicker_Osteoarthritis"
+    },
     "Check_First_Visit": {
       "type": "Simple",
       "conditional_transition": [
-        { "condition": { "condition_type": "Attribute", "attribute": "ra_needs_first_visit", "operator": "==", "value": true }, "transition": "Record_Negative_RF" },
-        { "transition": "Record_Followup_Negative_RF" }
+        {
+          "condition": {
+            "condition_type": "Attribute",
+            "attribute": "ra_needs_first_visit",
+            "operator": "==",
+            "value": true
+          },
+          "transition": "Record_Negative_RF"
+        },
+        {
+          "transition": "Record_Followup_Negative_RF"
+        }
       ]
     },
-
     "Record_Negative_RF": {
       "type": "Observation",
       "category": "laboratory",
       "unit": "[IU]/mL",
-      "codes": [{ "system": "LOINC", "code": "11572-5", "display": "Rheumatoid factor [Units/volume] in Serum or Plasma" }],
-      "range": { "low": 2, "high": 12 },
+      "codes": [
+        {
+          "system": "LOINC",
+          "code": "11572-5",
+          "display": "Rheumatoid factor [Units/volume] in Serum or Plasma"
+        }
+      ],
+      "range": {
+        "low": 2,
+        "high": 12
+      },
       "direct_transition": "Clear_First_Visit_Flag"
     },
-
-    "Clear_First_Visit_Flag": { "type": "SetAttribute", "attribute": "ra_needs_first_visit", "value": false, "direct_transition": "End_Wellness_Encounter" },
-
+    "Clear_First_Visit_Flag": {
+      "type": "SetAttribute",
+      "attribute": "ra_needs_first_visit",
+      "value": false,
+      "direct_transition": "End_Wellness_Encounter"
+    },
     "Record_Followup_Negative_RF": {
       "type": "Observation",
       "category": "laboratory",
       "unit": "[IU]/mL",
-      "codes": [{ "system": "LOINC", "code": "11572-5", "display": "Rheumatoid factor [Units/volume] in Serum or Plasma" }],
-      "range": { "low": 2, "high": 11 },
+      "codes": [
+        {
+          "system": "LOINC",
+          "code": "11572-5",
+          "display": "Rheumatoid factor [Units/volume] in Serum or Plasma"
+        }
+      ],
+      "range": {
+        "low": 2,
+        "high": 11
+      },
       "direct_transition": "End_Wellness_Encounter"
     },
-
-    "End_Wellness_Encounter": { "type": "EncounterEnd", "direct_transition": "Followup_Delay" },
-
+    "End_Wellness_Encounter": {
+      "type": "EncounterEnd",
+      "direct_transition": "Followup_Delay"
+    },
     "Followup_Delay": {
       "type": "Delay",
-      "range": { "low": 12, "high": 24, "unit": "months" },
+      "range": {
+        "low": 12,
+        "high": 24,
+        "unit": "months"
+      },
       "direct_transition": "Wellness_Encounter"
+    },
+    "Maybe_Mimicker_Osteoarthritis": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Osteoarthritis",
+          "distribution": 0.4
+        },
+        {
+          "transition": "Maybe_Mimicker_Psoriatic_arthritis",
+          "distribution": 0.6
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Osteoarthritis": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "225655006",
+          "display": "Degenerative polyarthritis"
+        }
+      ],
+      "direct_transition": "Maybe_Mimicker_Psoriatic_arthritis"
+    },
+    "Maybe_Mimicker_Psoriatic_arthritis": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Psoriatic_arthritis",
+          "distribution": 0.03
+        },
+        {
+          "transition": "Maybe_Mimicker_Systemic_lupus_erythematosus",
+          "distribution": 0.97
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Psoriatic_arthritis": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "156370009",
+          "display": "Psoriatic arthritis"
+        }
+      ],
+      "direct_transition": "Maybe_Mimicker_Systemic_lupus_erythematosus"
+    },
+    "Maybe_Mimicker_Systemic_lupus_erythematosus": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Systemic_lupus_erythematosus",
+          "distribution": 0.02
+        },
+        {
+          "transition": "Maybe_Mimicker_Fibromyalgia",
+          "distribution": 0.98
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Systemic_lupus_erythematosus": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "55464009",
+          "display": "Systemic lupus erythematosus"
+        }
+      ],
+      "direct_transition": "Maybe_Mimicker_Fibromyalgia"
+    },
+    "Maybe_Mimicker_Fibromyalgia": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Fibromyalgia",
+          "distribution": 0.1
+        },
+        {
+          "transition": "Check_First_Visit",
+          "distribution": 0.9
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Fibromyalgia": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "203082005",
+          "display": "Fibromyalgia"
+        }
+      ],
+      "direct_transition": "Check_First_Visit"
     }
   },
   "gmf_version": 2
