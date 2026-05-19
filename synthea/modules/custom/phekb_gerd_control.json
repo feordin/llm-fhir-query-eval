@@ -12,24 +12,139 @@
     "Controls get NO Condition resources for GERD and NO PPIs."
   ],
   "states": {
-    "Initial": { "type": "Initial", "direct_transition": "Age_Guard" },
-
+    "Initial": {
+      "type": "Initial",
+      "direct_transition": "Age_Guard"
+    },
     "Age_Guard": {
       "type": "Guard",
-      "allow": { "condition_type": "Age", "operator": ">=", "quantity": 18, "unit": "years" },
+      "allow": {
+        "condition_type": "Age",
+        "operator": ">=",
+        "quantity": 18,
+        "unit": "years"
+      },
       "direct_transition": "Set_Control_Flag"
     },
-
-    "Set_Control_Flag": { "type": "SetAttribute", "attribute": "gerd_positive", "value": false, "direct_transition": "Wellness_Encounter" },
-
-    "Wellness_Encounter": { "type": "Encounter", "wellness": true, "direct_transition": "End_Wellness_Encounter" },
-
-    "End_Wellness_Encounter": { "type": "EncounterEnd", "direct_transition": "Followup_Delay" },
-
+    "Set_Control_Flag": {
+      "type": "SetAttribute",
+      "attribute": "gerd_positive",
+      "value": false,
+      "direct_transition": "Wellness_Encounter"
+    },
+    "Wellness_Encounter": {
+      "type": "Encounter",
+      "wellness": true,
+      "direct_transition": "Maybe_Mimicker_Peptic_ulcer"
+    },
+    "End_Wellness_Encounter": {
+      "type": "EncounterEnd",
+      "direct_transition": "Followup_Delay"
+    },
     "Followup_Delay": {
       "type": "Delay",
-      "range": { "low": 12, "high": 24, "unit": "months" },
+      "range": {
+        "low": 12,
+        "high": 24,
+        "unit": "months"
+      },
       "direct_transition": "Wellness_Encounter"
+    },
+    "Maybe_Mimicker_Peptic_ulcer": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Peptic_ulcer",
+          "distribution": 0.1
+        },
+        {
+          "transition": "Maybe_Mimicker_Eosinophilic_esophagitis",
+          "distribution": 0.9
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Peptic_ulcer": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "13200003",
+          "display": "Peptic ulcer"
+        }
+      ],
+      "direct_transition": "Maybe_Mimicker_Eosinophilic_esophagitis"
+    },
+    "Maybe_Mimicker_Eosinophilic_esophagitis": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Eosinophilic_esophagitis",
+          "distribution": 0.03
+        },
+        {
+          "transition": "Maybe_Mimicker_Functional_dyspepsia",
+          "distribution": 0.97
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Eosinophilic_esophagitis": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "235599003",
+          "display": "Eosinophilic esophagitis"
+        }
+      ],
+      "direct_transition": "Maybe_Mimicker_Functional_dyspepsia"
+    },
+    "Maybe_Mimicker_Functional_dyspepsia": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Functional_dyspepsia",
+          "distribution": 0.2
+        },
+        {
+          "transition": "Maybe_Mimicker_Angina_pectoris",
+          "distribution": 0.8
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Functional_dyspepsia": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "3696007",
+          "display": "Nonulcer dyspepsia"
+        }
+      ],
+      "direct_transition": "Maybe_Mimicker_Angina_pectoris"
+    },
+    "Maybe_Mimicker_Angina_pectoris": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Angina_pectoris",
+          "distribution": 0.05
+        },
+        {
+          "transition": "End_Wellness_Encounter",
+          "distribution": 0.95
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Angina_pectoris": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "194828000",
+          "display": "Angina pectoris"
+        }
+      ],
+      "direct_transition": "End_Wellness_Encounter"
     }
   },
   "gmf_version": 2
