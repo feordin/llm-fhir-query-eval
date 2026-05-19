@@ -5,12 +5,140 @@
     "Generates patients without migraine."
   ],
   "states": {
-    "Initial": { "type": "Initial", "direct_transition": "Age_Guard" },
-    "Age_Guard": { "type": "Guard", "allow": { "condition_type": "Age", "operator": ">=", "quantity": 18, "unit": "years" }, "direct_transition": "Set_Control_Flag" },
-    "Set_Control_Flag": { "type": "SetAttribute", "attribute": "migraine_positive", "value": false, "direct_transition": "Wellness_Encounter" },
-    "Wellness_Encounter": { "type": "Encounter", "wellness": true, "direct_transition": "End_Wellness_Encounter" },
-    "End_Wellness_Encounter": { "type": "EncounterEnd", "direct_transition": "Followup_Delay" },
-    "Followup_Delay": { "type": "Delay", "range": { "low": 12, "high": 24, "unit": "months" }, "direct_transition": "Wellness_Encounter" }
+    "Initial": {
+      "type": "Initial",
+      "direct_transition": "Age_Guard"
+    },
+    "Age_Guard": {
+      "type": "Guard",
+      "allow": {
+        "condition_type": "Age",
+        "operator": ">=",
+        "quantity": 18,
+        "unit": "years"
+      },
+      "direct_transition": "Set_Control_Flag"
+    },
+    "Set_Control_Flag": {
+      "type": "SetAttribute",
+      "attribute": "migraine_positive",
+      "value": false,
+      "direct_transition": "Wellness_Encounter"
+    },
+    "Wellness_Encounter": {
+      "type": "Encounter",
+      "wellness": true,
+      "direct_transition": "Maybe_Mimicker_Tension_type_headache"
+    },
+    "End_Wellness_Encounter": {
+      "type": "EncounterEnd",
+      "direct_transition": "Followup_Delay"
+    },
+    "Followup_Delay": {
+      "type": "Delay",
+      "range": {
+        "low": 12,
+        "high": 24,
+        "unit": "months"
+      },
+      "direct_transition": "Wellness_Encounter"
+    },
+    "Maybe_Mimicker_Tension_type_headache": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Tension_type_headache",
+          "distribution": 0.4
+        },
+        {
+          "transition": "Maybe_Mimicker_Cluster_headache",
+          "distribution": 0.6
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Tension_type_headache": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "66551002",
+          "display": "Psychogenic headache"
+        }
+      ],
+      "direct_transition": "Maybe_Mimicker_Cluster_headache"
+    },
+    "Maybe_Mimicker_Cluster_headache": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Cluster_headache",
+          "distribution": 0.02
+        },
+        {
+          "transition": "Maybe_Mimicker_Medication_overuse_headache",
+          "distribution": 0.98
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Cluster_headache": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "193031009",
+          "display": "Cluster headache"
+        }
+      ],
+      "direct_transition": "Maybe_Mimicker_Medication_overuse_headache"
+    },
+    "Maybe_Mimicker_Medication_overuse_headache": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Medication_overuse_headache",
+          "distribution": 0.05
+        },
+        {
+          "transition": "Maybe_Mimicker_Acute_sinusitis",
+          "distribution": 0.95
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Medication_overuse_headache": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "103012002",
+          "display": "Analgesic overuse headache"
+        }
+      ],
+      "direct_transition": "Maybe_Mimicker_Acute_sinusitis"
+    },
+    "Maybe_Mimicker_Acute_sinusitis": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Acute_sinusitis",
+          "distribution": 0.1
+        },
+        {
+          "transition": "End_Wellness_Encounter",
+          "distribution": 0.9
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Acute_sinusitis": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "15805002",
+          "display": "Acute sinusitis"
+        }
+      ],
+      "direct_transition": "End_Wellness_Encounter"
+    }
   },
   "gmf_version": 2
 }
