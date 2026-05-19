@@ -24,7 +24,6 @@
       "type": "Initial",
       "direct_transition": "Age_Guard"
     },
-
     "Age_Guard": {
       "type": "Guard",
       "allow": {
@@ -35,23 +34,22 @@
       },
       "direct_transition": "Set_Control_Flag"
     },
-
     "Set_Control_Flag": {
       "type": "SetAttribute",
       "attribute": "af_control",
       "value": true,
       "direct_transition": "Wellness_Encounter"
     },
-
     "Wellness_Encounter": {
       "type": "Encounter",
       "wellness": true,
-      "direct_transition": "Check_Other_Conditions"
+      "direct_transition": "Maybe_Mimicker_Atrial_flutter"
     },
-
     "Check_Other_Conditions": {
       "type": "Simple",
-      "remarks": ["Some control patients have non-AF cardiac conditions for variety"],
+      "remarks": [
+        "Some control patients have non-AF cardiac conditions for variety"
+      ],
       "distributed_transition": [
         {
           "transition": "Diagnose_Hypertension",
@@ -63,15 +61,14 @@
         },
         {
           "transition": "Diagnose_Heart_Failure",
-          "distribution": 0.10
+          "distribution": 0.1
         },
         {
           "transition": "End_Wellness_Encounter",
-          "distribution": 0.30
+          "distribution": 0.3
         }
       ]
     },
-
     "Diagnose_Hypertension": {
       "type": "ConditionOnset",
       "assign_to_attribute": "hypertension",
@@ -82,10 +79,11 @@
           "display": "Hypertensive disorder"
         }
       ],
-      "remarks": ["Non-AF condition - hypertension is common in the same age group"],
+      "remarks": [
+        "Non-AF condition - hypertension is common in the same age group"
+      ],
       "direct_transition": "Prescribe_Antihypertensive"
     },
-
     "Prescribe_Antihypertensive": {
       "type": "MedicationOrder",
       "codes": [
@@ -98,7 +96,6 @@
       "reason": "hypertension",
       "direct_transition": "End_Wellness_Encounter"
     },
-
     "Diagnose_Hyperlipidemia": {
       "type": "ConditionOnset",
       "assign_to_attribute": "hyperlipidemia",
@@ -109,10 +106,11 @@
           "display": "Hyperlipidemia"
         }
       ],
-      "remarks": ["Non-AF condition for control population variety"],
+      "remarks": [
+        "Non-AF condition for control population variety"
+      ],
       "direct_transition": "Prescribe_Statin"
     },
-
     "Prescribe_Statin": {
       "type": "MedicationOrder",
       "codes": [
@@ -125,7 +123,6 @@
       "reason": "hyperlipidemia",
       "direct_transition": "End_Wellness_Encounter"
     },
-
     "Diagnose_Heart_Failure": {
       "type": "ConditionOnset",
       "assign_to_attribute": "heart_failure",
@@ -136,10 +133,11 @@
           "display": "Heart failure"
         }
       ],
-      "remarks": ["Heart failure without AF - tests specificity of AF queries"],
+      "remarks": [
+        "Heart failure without AF - tests specificity of AF queries"
+      ],
       "direct_transition": "Prescribe_HF_Med"
     },
-
     "Prescribe_HF_Med": {
       "type": "MedicationOrder",
       "codes": [
@@ -152,15 +150,87 @@
       "reason": "heart_failure",
       "direct_transition": "End_Wellness_Encounter"
     },
-
     "End_Wellness_Encounter": {
       "type": "EncounterEnd",
       "direct_transition": "Terminal_Control"
     },
-
     "Terminal_Control": {
       "type": "Terminal",
-      "remarks": ["Control patient - should NOT be found by AF phenotype query"]
+      "remarks": [
+        "Control patient - should NOT be found by AF phenotype query"
+      ]
+    },
+    "Maybe_Mimicker_Atrial_flutter": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Atrial_flutter",
+          "distribution": 0.1
+        },
+        {
+          "transition": "Maybe_Mimicker_Supraventricular_tachycardia",
+          "distribution": 0.9
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Atrial_flutter": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "5370000",
+          "display": "Atrial flutter"
+        }
+      ],
+      "direct_transition": "Maybe_Mimicker_Supraventricular_tachycardia"
+    },
+    "Maybe_Mimicker_Supraventricular_tachycardia": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Supraventricular_tachycardia",
+          "distribution": 0.05
+        },
+        {
+          "transition": "Maybe_Mimicker_Sinus_tachycardia",
+          "distribution": 0.95
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Supraventricular_tachycardia": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "6456007",
+          "display": "Supraventricular tachycardia"
+        }
+      ],
+      "direct_transition": "Maybe_Mimicker_Sinus_tachycardia"
+    },
+    "Maybe_Mimicker_Sinus_tachycardia": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Sinus_tachycardia",
+          "distribution": 0.2
+        },
+        {
+          "transition": "Check_Other_Conditions",
+          "distribution": 0.8
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Sinus_tachycardia": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "11092001",
+          "display": "Sinus tachycardia"
+        }
+      ],
+      "direct_transition": "Check_Other_Conditions"
     }
   },
   "gmf_version": 2
