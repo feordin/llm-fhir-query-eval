@@ -1,13 +1,143 @@
 {
   "name": "PheKB COPD Control",
-  "remarks": ["Control module for COPD. Generates patients age 40+ without COPD dx or bronchodilators."],
+  "remarks": [
+    "Control module for COPD. Generates patients age 40+ without COPD dx or bronchodilators."
+  ],
   "states": {
-    "Initial": { "type": "Initial", "direct_transition": "Age_Guard" },
-    "Age_Guard": { "type": "Guard", "allow": { "condition_type": "Age", "operator": ">=", "quantity": 40, "unit": "years" }, "direct_transition": "Set_Control_Flag" },
-    "Set_Control_Flag": { "type": "SetAttribute", "attribute": "copd_positive", "value": false, "direct_transition": "Wellness_Encounter" },
-    "Wellness_Encounter": { "type": "Encounter", "wellness": true, "direct_transition": "End_Wellness_Encounter" },
-    "End_Wellness_Encounter": { "type": "EncounterEnd", "direct_transition": "Followup_Delay" },
-    "Followup_Delay": { "type": "Delay", "range": { "low": 12, "high": 24, "unit": "months" }, "direct_transition": "Wellness_Encounter" }
+    "Initial": {
+      "type": "Initial",
+      "direct_transition": "Age_Guard"
+    },
+    "Age_Guard": {
+      "type": "Guard",
+      "allow": {
+        "condition_type": "Age",
+        "operator": ">=",
+        "quantity": 40,
+        "unit": "years"
+      },
+      "direct_transition": "Set_Control_Flag"
+    },
+    "Set_Control_Flag": {
+      "type": "SetAttribute",
+      "attribute": "copd_positive",
+      "value": false,
+      "direct_transition": "Wellness_Encounter"
+    },
+    "Wellness_Encounter": {
+      "type": "Encounter",
+      "wellness": true,
+      "direct_transition": "Maybe_Mimicker_Asthma"
+    },
+    "End_Wellness_Encounter": {
+      "type": "EncounterEnd",
+      "direct_transition": "Followup_Delay"
+    },
+    "Followup_Delay": {
+      "type": "Delay",
+      "range": {
+        "low": 12,
+        "high": 24,
+        "unit": "months"
+      },
+      "direct_transition": "Wellness_Encounter"
+    },
+    "Maybe_Mimicker_Asthma": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Asthma",
+          "distribution": 0.2
+        },
+        {
+          "transition": "Maybe_Mimicker_Bronchiectasis",
+          "distribution": 0.8
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Asthma": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "195967001",
+          "display": "Asthma"
+        }
+      ],
+      "direct_transition": "Maybe_Mimicker_Bronchiectasis"
+    },
+    "Maybe_Mimicker_Bronchiectasis": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Bronchiectasis",
+          "distribution": 0.05
+        },
+        {
+          "transition": "Maybe_Mimicker_Heart_failure",
+          "distribution": 0.95
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Bronchiectasis": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "12295008",
+          "display": "Bronchiectasis"
+        }
+      ],
+      "direct_transition": "Maybe_Mimicker_Heart_failure"
+    },
+    "Maybe_Mimicker_Heart_failure": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Heart_failure",
+          "distribution": 0.15
+        },
+        {
+          "transition": "Maybe_Mimicker_Pulmonary_fibrosis",
+          "distribution": 0.85
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Heart_failure": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "84114007",
+          "display": "Heart failure"
+        }
+      ],
+      "direct_transition": "Maybe_Mimicker_Pulmonary_fibrosis"
+    },
+    "Maybe_Mimicker_Pulmonary_fibrosis": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Pulmonary_fibrosis",
+          "distribution": 0.03
+        },
+        {
+          "transition": "End_Wellness_Encounter",
+          "distribution": 0.97
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Pulmonary_fibrosis": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "51615001",
+          "display": "Fibrosis of lung"
+        }
+      ],
+      "direct_transition": "End_Wellness_Encounter"
+    }
   },
   "gmf_version": 2
 }
