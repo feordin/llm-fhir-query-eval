@@ -21,7 +21,6 @@
       "type": "Initial",
       "direct_transition": "Age_Guard"
     },
-
     "Age_Guard": {
       "type": "Guard",
       "allow": {
@@ -32,27 +31,23 @@
       },
       "direct_transition": "Set_Control_Flag"
     },
-
     "Set_Control_Flag": {
       "type": "SetAttribute",
       "attribute": "hypo_positive",
       "value": false,
       "direct_transition": "Set_Needs_First_Visit"
     },
-
     "Set_Needs_First_Visit": {
       "type": "SetAttribute",
       "attribute": "hypo_needs_first_visit",
       "value": true,
       "direct_transition": "Wellness_Encounter"
     },
-
     "Wellness_Encounter": {
       "type": "Encounter",
       "wellness": true,
-      "direct_transition": "Check_First_Visit"
+      "direct_transition": "Maybe_Mimicker_Major_depressive_disorder"
     },
-
     "Check_First_Visit": {
       "type": "Simple",
       "conditional_transition": [
@@ -70,7 +65,6 @@
         }
       ]
     },
-
     "Record_Normal_TSH": {
       "type": "Observation",
       "category": "laboratory",
@@ -82,10 +76,12 @@
           "display": "Thyrotropin [Units/volume] in Serum or Plasma"
         }
       ],
-      "range": { "low": 0.6, "high": 4.5 },
+      "range": {
+        "low": 0.6,
+        "high": 4.5
+      },
       "direct_transition": "Record_Normal_FT4"
     },
-
     "Record_Normal_FT4": {
       "type": "Observation",
       "category": "laboratory",
@@ -97,17 +93,18 @@
           "display": "Thyroxine (T4) free [Mass/volume] in Serum or Plasma"
         }
       ],
-      "range": { "low": 0.7, "high": 1.6 },
+      "range": {
+        "low": 0.7,
+        "high": 1.6
+      },
       "direct_transition": "Clear_First_Visit_Flag"
     },
-
     "Clear_First_Visit_Flag": {
       "type": "SetAttribute",
       "attribute": "hypo_needs_first_visit",
       "value": false,
       "direct_transition": "End_Wellness_Encounter"
     },
-
     "Record_Followup_Normal_TSH": {
       "type": "Observation",
       "category": "laboratory",
@@ -119,19 +116,96 @@
           "display": "Thyrotropin [Units/volume] in Serum or Plasma"
         }
       ],
-      "range": { "low": 0.8, "high": 4.0 },
+      "range": {
+        "low": 0.8,
+        "high": 4.0
+      },
       "direct_transition": "End_Wellness_Encounter"
     },
-
     "End_Wellness_Encounter": {
       "type": "EncounterEnd",
       "direct_transition": "Followup_Delay"
     },
-
     "Followup_Delay": {
       "type": "Delay",
-      "range": { "low": 6, "high": 18, "unit": "months" },
+      "range": {
+        "low": 6,
+        "high": 18,
+        "unit": "months"
+      },
       "direct_transition": "Wellness_Encounter"
+    },
+    "Maybe_Mimicker_Major_depressive_disorder": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Major_depressive_disorder",
+          "distribution": 0.1
+        },
+        {
+          "transition": "Maybe_Mimicker_Iron_deficiency_anemia",
+          "distribution": 0.9
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Major_depressive_disorder": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "370143000",
+          "display": "Major depressive disorder"
+        }
+      ],
+      "direct_transition": "Maybe_Mimicker_Iron_deficiency_anemia"
+    },
+    "Maybe_Mimicker_Iron_deficiency_anemia": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Iron_deficiency_anemia",
+          "distribution": 0.1
+        },
+        {
+          "transition": "Maybe_Mimicker_Chronic_fatigue_syndrome",
+          "distribution": 0.9
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Iron_deficiency_anemia": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "87522002",
+          "display": "Iron deficiency anemia"
+        }
+      ],
+      "direct_transition": "Maybe_Mimicker_Chronic_fatigue_syndrome"
+    },
+    "Maybe_Mimicker_Chronic_fatigue_syndrome": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Chronic_fatigue_syndrome",
+          "distribution": 0.03
+        },
+        {
+          "transition": "Check_First_Visit",
+          "distribution": 0.97
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Chronic_fatigue_syndrome": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "52702003",
+          "display": "Chronic fatigue syndrome"
+        }
+      ],
+      "direct_transition": "Check_First_Visit"
     }
   },
   "gmf_version": 2
