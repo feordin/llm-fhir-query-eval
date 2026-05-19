@@ -69,3 +69,33 @@ def test_build_codes_map_preserves_cached_entries(tmp_path):
     # Resolver returns None for everything; cache should still be honored
     result = build_codes_map(packs, lambda t: None, cache_path)
     assert result["Pre-cached condition"]["code"] == "999"
+
+
+def test_build_codes_map_handles_corrupt_cache(tmp_path, capsys):
+    """A corrupt cache file is logged and treated as empty — no traceback."""
+    cache_path = tmp_path / "codes.json"
+    cache_path.write_text("{not valid json", encoding="utf-8")
+    packs = {
+        "asthma": [{"display": "Bronchiectasis", "prevalence": 0.05}],
+    }
+    result = build_codes_map(packs, _fake_resolver, cache_path)
+    assert result == {"Bronchiectasis": FAKE_UMLS["Bronchiectasis"]}
+    captured = capsys.readouterr()
+    assert "corrupt cache" in captured.out.lower()
+
+
+def test_build_codes_map_skips_write_when_no_new_terms(tmp_path):
+    """Re-running with all terms already cached does NOT rewrite the file (mtime stable)."""
+    cache_path = tmp_path / "codes.json"
+    cache_path.write_text(
+        json.dumps({"Bronchiectasis": FAKE_UMLS["Bronchiectasis"]},
+                   indent=2, sort_keys=True),
+        encoding="utf-8",
+    )
+    mtime_before = cache_path.stat().st_mtime_ns
+    packs = {"copd": [{"display": "Bronchiectasis", "prevalence": 0.05}]}
+    # Sleep-free mtime check via stat comparison after the call.
+    result = build_codes_map(packs, _fake_resolver, cache_path)
+    mtime_after = cache_path.stat().st_mtime_ns
+    assert result == {"Bronchiectasis": FAKE_UMLS["Bronchiectasis"]}
+    assert mtime_after == mtime_before, "cache file was rewritten despite no changes"

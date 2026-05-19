@@ -40,7 +40,11 @@ def build_codes_map(
     """
     existing: dict = {}
     if cache_path.exists():
-        existing = json.loads(cache_path.read_text(encoding="utf-8"))
+        try:
+            existing = json.loads(cache_path.read_text(encoding="utf-8"))
+        except json.JSONDecodeError as exc:
+            print(f"WARNING: corrupt cache at {cache_path}: {exc}. Starting from empty cache.")
+            existing = {}
 
     terms = sorted({m["display"] for pack in packs.values() for m in pack})
     result = dict(existing)
@@ -51,6 +55,8 @@ def build_codes_map(
         if resolved:
             result[term] = resolved
         # silently skip unresolved -- log handled by caller via main()
+    if result == existing:
+        return result
     cache_path.write_text(json.dumps(result, indent=2, sort_keys=True),
                           encoding="utf-8")
     return result
