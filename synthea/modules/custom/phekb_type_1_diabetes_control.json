@@ -5,19 +5,127 @@
     "Generates patients without diabetes (HbA1c < 5.7%, no insulin, no diabetes diagnosis)."
   ],
   "states": {
-    "Initial": { "type": "Initial", "direct_transition": "Age_Guard" },
-    "Age_Guard": { "type": "Guard", "allow": { "condition_type": "Age", "operator": ">=", "quantity": 12, "unit": "years" }, "direct_transition": "Wellness_Encounter" },
-    "Wellness_Encounter": { "type": "Encounter", "wellness": true, "direct_transition": "Record_Normal_HbA1c" },
+    "Initial": {
+      "type": "Initial",
+      "direct_transition": "Age_Guard"
+    },
+    "Age_Guard": {
+      "type": "Guard",
+      "allow": {
+        "condition_type": "Age",
+        "operator": ">=",
+        "quantity": 12,
+        "unit": "years"
+      },
+      "direct_transition": "Wellness_Encounter"
+    },
+    "Wellness_Encounter": {
+      "type": "Encounter",
+      "wellness": true,
+      "direct_transition": "Maybe_Mimicker_Type_2_diabetes_mellitus"
+    },
     "Record_Normal_HbA1c": {
       "type": "Observation",
       "category": "laboratory",
       "unit": "%",
-      "codes": [{ "system": "LOINC", "code": "4548-4", "display": "Hemoglobin A1c/Hemoglobin.total in Blood" }],
-      "range": { "low": 4.5, "high": 5.5 },
+      "codes": [
+        {
+          "system": "LOINC",
+          "code": "4548-4",
+          "display": "Hemoglobin A1c/Hemoglobin.total in Blood"
+        }
+      ],
+      "range": {
+        "low": 4.5,
+        "high": 5.5
+      },
       "direct_transition": "End_Wellness_Encounter"
     },
-    "End_Wellness_Encounter": { "type": "EncounterEnd", "direct_transition": "Followup_Delay" },
-    "Followup_Delay": { "type": "Delay", "range": { "low": 12, "high": 24, "unit": "months" }, "direct_transition": "Wellness_Encounter" }
+    "End_Wellness_Encounter": {
+      "type": "EncounterEnd",
+      "direct_transition": "Followup_Delay"
+    },
+    "Followup_Delay": {
+      "type": "Delay",
+      "range": {
+        "low": 12,
+        "high": 24,
+        "unit": "months"
+      },
+      "direct_transition": "Wellness_Encounter"
+    },
+    "Maybe_Mimicker_Type_2_diabetes_mellitus": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Type_2_diabetes_mellitus",
+          "distribution": 0.3
+        },
+        {
+          "transition": "Maybe_Mimicker_Latent_autoimmune_diabetes_in_adults",
+          "distribution": 0.7
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Type_2_diabetes_mellitus": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "44054006",
+          "display": "Type 2 diabetes mellitus"
+        }
+      ],
+      "direct_transition": "Maybe_Mimicker_Latent_autoimmune_diabetes_in_adults"
+    },
+    "Maybe_Mimicker_Latent_autoimmune_diabetes_in_adults": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Latent_autoimmune_diabetes_in_adults",
+          "distribution": 0.02
+        },
+        {
+          "transition": "Maybe_Mimicker_Maturity_onset_diabetes_of_the_young",
+          "distribution": 0.98
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Latent_autoimmune_diabetes_in_adults": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "426875007",
+          "display": "Latent autoimmune diabetes mellitus in adult"
+        }
+      ],
+      "direct_transition": "Maybe_Mimicker_Maturity_onset_diabetes_of_the_young"
+    },
+    "Maybe_Mimicker_Maturity_onset_diabetes_of_the_young": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Maturity_onset_diabetes_of_the_young",
+          "distribution": 0.01
+        },
+        {
+          "transition": "Record_Normal_HbA1c",
+          "distribution": 0.99
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Maturity_onset_diabetes_of_the_young": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "609561005",
+          "display": "Maturity-onset diabetes of the young"
+        }
+      ],
+      "direct_transition": "Record_Normal_HbA1c"
+    }
   },
   "gmf_version": 2
 }
