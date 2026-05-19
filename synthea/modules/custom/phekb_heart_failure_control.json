@@ -6,7 +6,7 @@
     "",
     "Controls per PheKB algorithm must:",
     "  - Have no HF diagnosis",
-    "  - Have no HF GDMT medications (we record normal EF only — no diuretics or GDMT)",
+    "  - Have no HF GDMT medications (we record normal EF only \u2014 no diuretics or GDMT)",
     "  - Have normal ejection fraction (>= 55%)",
     "",
     "Lab values (intentionally above the case threshold of EF < 50):",
@@ -19,7 +19,6 @@
       "type": "Initial",
       "direct_transition": "Age_Guard"
     },
-
     "Age_Guard": {
       "type": "Guard",
       "allow": {
@@ -30,69 +29,188 @@
       },
       "direct_transition": "Set_Control_Flag"
     },
-
     "Set_Control_Flag": {
       "type": "SetAttribute",
       "attribute": "hf_positive",
       "value": false,
       "direct_transition": "Set_Needs_First_Visit"
     },
-
     "Set_Needs_First_Visit": {
       "type": "SetAttribute",
       "attribute": "hf_needs_first_visit",
       "value": true,
       "direct_transition": "Wellness_Encounter"
     },
-
     "Wellness_Encounter": {
       "type": "Encounter",
       "wellness": true,
-      "direct_transition": "Check_First_Visit"
+      "direct_transition": "Maybe_Mimicker_Chronic_obstructive_lung_disease"
     },
-
     "Check_First_Visit": {
       "type": "Simple",
       "conditional_transition": [
-        { "condition": { "condition_type": "Attribute", "attribute": "hf_needs_first_visit", "operator": "==", "value": true }, "transition": "Record_Normal_EF" },
-        { "transition": "Record_Followup_Normal_EF" }
+        {
+          "condition": {
+            "condition_type": "Attribute",
+            "attribute": "hf_needs_first_visit",
+            "operator": "==",
+            "value": true
+          },
+          "transition": "Record_Normal_EF"
+        },
+        {
+          "transition": "Record_Followup_Normal_EF"
+        }
       ]
     },
-
     "Record_Normal_EF": {
       "type": "Observation",
       "category": "laboratory",
       "unit": "%",
-      "codes": [{ "system": "LOINC", "code": "8806-2", "display": "Left ventricular Ejection fraction by 2D echo" }],
-      "range": { "low": 55, "high": 70 },
+      "codes": [
+        {
+          "system": "LOINC",
+          "code": "8806-2",
+          "display": "Left ventricular Ejection fraction by 2D echo"
+        }
+      ],
+      "range": {
+        "low": 55,
+        "high": 70
+      },
       "direct_transition": "Clear_First_Visit_Flag"
     },
-
     "Clear_First_Visit_Flag": {
       "type": "SetAttribute",
       "attribute": "hf_needs_first_visit",
       "value": false,
       "direct_transition": "End_Wellness_Encounter"
     },
-
     "Record_Followup_Normal_EF": {
       "type": "Observation",
       "category": "laboratory",
       "unit": "%",
-      "codes": [{ "system": "LOINC", "code": "8806-2", "display": "Left ventricular Ejection fraction by 2D echo" }],
-      "range": { "low": 55, "high": 68 },
+      "codes": [
+        {
+          "system": "LOINC",
+          "code": "8806-2",
+          "display": "Left ventricular Ejection fraction by 2D echo"
+        }
+      ],
+      "range": {
+        "low": 55,
+        "high": 68
+      },
       "direct_transition": "End_Wellness_Encounter"
     },
-
     "End_Wellness_Encounter": {
       "type": "EncounterEnd",
       "direct_transition": "Followup_Delay"
     },
-
     "Followup_Delay": {
       "type": "Delay",
-      "range": { "low": 12, "high": 24, "unit": "months" },
+      "range": {
+        "low": 12,
+        "high": 24,
+        "unit": "months"
+      },
       "direct_transition": "Wellness_Encounter"
+    },
+    "Maybe_Mimicker_Chronic_obstructive_lung_disease": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Chronic_obstructive_lung_disease",
+          "distribution": 0.2
+        },
+        {
+          "transition": "Maybe_Mimicker_Pulmonary_embolism",
+          "distribution": 0.8
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Chronic_obstructive_lung_disease": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "13645005",
+          "display": "Chronic obstructive pulmonary disease"
+        }
+      ],
+      "direct_transition": "Maybe_Mimicker_Pulmonary_embolism"
+    },
+    "Maybe_Mimicker_Pulmonary_embolism": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Pulmonary_embolism",
+          "distribution": 0.03
+        },
+        {
+          "transition": "Maybe_Mimicker_Liver_cirrhosis",
+          "distribution": 0.97
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Pulmonary_embolism": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "59282003",
+          "display": "Pulmonary embolism"
+        }
+      ],
+      "direct_transition": "Maybe_Mimicker_Liver_cirrhosis"
+    },
+    "Maybe_Mimicker_Liver_cirrhosis": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Liver_cirrhosis",
+          "distribution": 0.04
+        },
+        {
+          "transition": "Maybe_Mimicker_Chronic_kidney_disease",
+          "distribution": 0.96
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Liver_cirrhosis": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "19943007",
+          "display": "Cirrhosis of liver"
+        }
+      ],
+      "direct_transition": "Maybe_Mimicker_Chronic_kidney_disease"
+    },
+    "Maybe_Mimicker_Chronic_kidney_disease": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Chronic_kidney_disease",
+          "distribution": 0.15
+        },
+        {
+          "transition": "Check_First_Visit",
+          "distribution": 0.85
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Chronic_kidney_disease": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "709044004",
+          "display": "Chronic kidney disease"
+        }
+      ],
+      "direct_transition": "Check_First_Visit"
     }
   },
   "gmf_version": 2
