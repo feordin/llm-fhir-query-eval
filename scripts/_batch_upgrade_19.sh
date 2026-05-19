@@ -5,11 +5,12 @@
 set -uo pipefail
 
 PHENOS=(
-  hypertension heart_failure coronary_heart_disease atrial_fibrillation stroke
-  copd type_1_diabetes type_2_diabetes hypothyroidism hyperthyroidism ckd
-  epilepsy migraine dementia depression anxiety bipolar_disorder
-  rheumatoid_arthritis crohns_disease gerd
+  heart-failure coronary-heart-disease atrial-fibrillation stroke
+  copd type-1-diabetes type-2-diabetes hypothyroidism hyperthyroidism ckd
+  epilepsy migraine dementia depression anxiety bipolar-disorder
+  rheumatoid-arthritis crohns-disease gerd
 )
+# hypertension already done in the first batch attempt (commit d0d546f7).
 
 set -a
 source .env
