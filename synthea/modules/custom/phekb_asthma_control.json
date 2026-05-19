@@ -17,7 +17,6 @@
       "type": "Initial",
       "direct_transition": "Age_Guard"
     },
-
     "Age_Guard": {
       "type": "Guard",
       "allow": {
@@ -28,23 +27,22 @@
       },
       "direct_transition": "Set_Control_Flag"
     },
-
     "Set_Control_Flag": {
       "type": "SetAttribute",
       "attribute": "asthma_control",
       "value": true,
       "direct_transition": "Wellness_Encounter"
     },
-
     "Wellness_Encounter": {
       "type": "Encounter",
       "wellness": true,
-      "direct_transition": "Check_Other_Conditions"
+      "direct_transition": "Maybe_Mimicker_Chronic_obstructive_lung_disease"
     },
-
     "Check_Other_Conditions": {
       "type": "Simple",
-      "remarks": ["Some control patients have non-asthma conditions for variety"],
+      "remarks": [
+        "Some control patients have non-asthma conditions for variety"
+      ],
       "distributed_transition": [
         {
           "transition": "Diagnose_Hypertension",
@@ -64,7 +62,6 @@
         }
       ]
     },
-
     "Diagnose_Hypertension": {
       "type": "ConditionOnset",
       "assign_to_attribute": "hypertension",
@@ -75,10 +72,11 @@
           "display": "Hypertensive disorder"
         }
       ],
-      "remarks": ["Non-asthma condition for control population variety"],
+      "remarks": [
+        "Non-asthma condition for control population variety"
+      ],
       "direct_transition": "Prescribe_Antihypertensive"
     },
-
     "Prescribe_Antihypertensive": {
       "type": "MedicationOrder",
       "codes": [
@@ -91,7 +89,6 @@
       "reason": "hypertension",
       "direct_transition": "End_Wellness_Encounter"
     },
-
     "Diagnose_Allergic_Rhinitis": {
       "type": "ConditionOnset",
       "assign_to_attribute": "allergic_rhinitis",
@@ -102,10 +99,11 @@
           "display": "Allergic rhinitis"
         }
       ],
-      "remarks": ["Allergic rhinitis is NOT asthma -- a valid control condition"],
+      "remarks": [
+        "Allergic rhinitis is NOT asthma -- a valid control condition"
+      ],
       "direct_transition": "Prescribe_Antihistamine"
     },
-
     "Prescribe_Antihistamine": {
       "type": "MedicationOrder",
       "codes": [
@@ -118,7 +116,6 @@
       "reason": "allergic_rhinitis",
       "direct_transition": "End_Wellness_Encounter"
     },
-
     "Diagnose_GERD": {
       "type": "ConditionOnset",
       "assign_to_attribute": "gerd",
@@ -129,18 +126,116 @@
           "display": "Gastroesophageal reflux disease"
         }
       ],
-      "remarks": ["GERD is a common comorbidity but NOT asthma"],
+      "remarks": [
+        "GERD is a common comorbidity but NOT asthma"
+      ],
       "direct_transition": "End_Wellness_Encounter"
     },
-
     "End_Wellness_Encounter": {
       "type": "EncounterEnd",
       "direct_transition": "Terminal_Control"
     },
-
     "Terminal_Control": {
       "type": "Terminal",
-      "remarks": ["Control patient - should NOT be found by asthma phenotype query"]
+      "remarks": [
+        "Control patient - should NOT be found by asthma phenotype query"
+      ]
+    },
+    "Maybe_Mimicker_Chronic_obstructive_lung_disease": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Chronic_obstructive_lung_disease",
+          "distribution": 0.2
+        },
+        {
+          "transition": "Maybe_Mimicker_Chronic_bronchitis",
+          "distribution": 0.8
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Chronic_obstructive_lung_disease": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "13645005",
+          "display": "Chronic obstructive pulmonary disease"
+        }
+      ],
+      "direct_transition": "Maybe_Mimicker_Chronic_bronchitis"
+    },
+    "Maybe_Mimicker_Chronic_bronchitis": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Chronic_bronchitis",
+          "distribution": 0.1
+        },
+        {
+          "transition": "Maybe_Mimicker_Eosinophilic_bronchitis",
+          "distribution": 0.9
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Chronic_bronchitis": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "63480004",
+          "display": "Chronic bronchitis"
+        }
+      ],
+      "direct_transition": "Maybe_Mimicker_Eosinophilic_bronchitis"
+    },
+    "Maybe_Mimicker_Eosinophilic_bronchitis": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Eosinophilic_bronchitis",
+          "distribution": 0.02
+        },
+        {
+          "transition": "Maybe_Mimicker_Vocal_cord_dysfunction",
+          "distribution": 0.98
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Eosinophilic_bronchitis": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "451981000124108",
+          "display": "Eosinophilic bronchitis"
+        }
+      ],
+      "direct_transition": "Maybe_Mimicker_Vocal_cord_dysfunction"
+    },
+    "Maybe_Mimicker_Vocal_cord_dysfunction": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Vocal_cord_dysfunction",
+          "distribution": 0.03
+        },
+        {
+          "transition": "Check_Other_Conditions",
+          "distribution": 0.97
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Vocal_cord_dysfunction": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "134290008",
+          "display": "Vocal cord dysfunction"
+        }
+      ],
+      "direct_transition": "Check_Other_Conditions"
     }
   },
   "gmf_version": 2
