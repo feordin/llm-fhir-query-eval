@@ -8,6 +8,7 @@ Idempotent: re-running honors the existing cache; only NEW terms hit UMLS.
 from __future__ import annotations
 
 import json
+import os
 import sys
 from pathlib import Path
 from typing import Callable, Optional
@@ -15,6 +16,8 @@ from typing import Callable, Optional
 REPO = Path(__file__).resolve().parent.parent
 PACKS = REPO / "data" / "mimicker_packs.json"
 CODES = REPO / "data" / "mimicker_codes.json"
+UMLS_BASE = "https://uts-ws.nlm.nih.gov/rest"
+SNOMED_SYSTEM = "http://snomed.info/sct"
 
 
 def resolve_one(term: str, resolver: Callable[[str], Optional[dict]]) -> Optional[dict]:
@@ -62,22 +65,62 @@ def build_codes_map(
     return result
 
 
-def _umls_mcp_resolver(term: str) -> Optional[dict]:
-    """Real resolver: call the nih-umls MCP via the helper in the umls skill.
+def _umls_rest_resolver(term: str) -> Optional[dict]:
+    """Resolve a term to a SNOMEDCT_US code via the UMLS REST API directly.
 
-    Returns the best SNOMED CT match (rootSource == 'SNOMEDCT_US') or None.
+    Two-step lookup matching the nih-umls MCP pattern:
+      1. /search exact -> first CUI
+      2. /CUI/{cui}/atoms?sabs=SNOMEDCT_US&ttys=PT -> first SNOMED atom
 
-    Implementation note: the umls MCP is invoked from the LLM client side,
-    not directly from this script. For this script, the operator runs it in a
-    Claude Code session where the MCP is available, OR the operator pre-
-    populates data/mimicker_codes.json from a manual UMLS session (using
-    /umls codes-for <term>) and re-runs this script idempotently to fill
-    in any gaps.
+    Requires UMLS_API_KEY in env. Returns None on any failure (missing key,
+    404 atoms, network error) so the caller can log + skip cleanly.
     """
-    print(f"  [MANUAL] '{term}' not in cache and no MCP access from this script.")
-    print(f"           Run in Claude Code: /umls codes-for {term!r}")
-    print(f"           Then add to {CODES.relative_to(REPO)} and re-run.")
-    return None
+    import requests  # local import: not needed for unit tests
+    api_key = os.environ.get("UMLS_API_KEY")
+    if not api_key:
+        print(f"  [SKIP] UMLS_API_KEY not set; cannot resolve {term!r}")
+        return None
+    try:
+        # Step 1: search for the exact term
+        r = requests.get(
+            f"{UMLS_BASE}/search/current",
+            params={"string": term, "searchType": "exact",
+                    "pageSize": 1, "apiKey": api_key},
+            timeout=10,
+        )
+        r.raise_for_status()
+        results = r.json().get("result", {}).get("results", [])
+        if not results or not results[0].get("ui"):
+            return None
+        cui = results[0]["ui"]
+        # Step 2: get a SNOMED atom -- try PT first, fall back to any TTY.
+        # Many concepts have SY/FN atoms but no PT; retry without the TTY filter
+        # before giving up.
+        atom = None
+        for ttys in ("PT", None):
+            params: dict = {"sabs": "SNOMEDCT_US", "pageSize": 1,
+                            "apiKey": api_key}
+            if ttys:
+                params["ttys"] = ttys
+            r = requests.get(
+                f"{UMLS_BASE}/content/current/CUI/{cui}/atoms",
+                params=params, timeout=10,
+            )
+            if r.status_code == 404:
+                continue
+            r.raise_for_status()
+            atoms = r.json().get("result", [])
+            if atoms:
+                atom = atoms[0]
+                break
+        if not atom:
+            return None
+        # atom["code"] is a URL like .../SNOMEDCT_US/13645005 -- take the tail
+        code = atom["code"].rsplit("/", 1)[-1]
+        return {"system": SNOMED_SYSTEM, "code": code, "display": atom["name"]}
+    except Exception as exc:  # noqa: BLE001
+        print(f"  [ERROR] {term!r}: {exc}")
+        return None
 
 
 def main() -> int:
@@ -85,7 +128,7 @@ def main() -> int:
         print(f"missing {PACKS}; run Task 1 first")
         return 1
     packs = json.loads(PACKS.read_text(encoding="utf-8"))
-    result = build_codes_map(packs, _umls_mcp_resolver, CODES)
+    result = build_codes_map(packs, _umls_rest_resolver, CODES)
 
     # Report
     all_terms = sorted({m["display"] for pack in packs.values() for m in pack})
