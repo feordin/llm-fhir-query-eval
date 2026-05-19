@@ -97,7 +97,9 @@ def main() -> int:
                     help="Path B share of total patient distribution (default 0.15)")
     args = ap.parse_args()
 
-    mod_path = MODULES_DIR / f"phekb_{args.phenotype}.json"
+    # Canonical input is kebab-case; module file is snake_case.
+    snake = args.phenotype.replace("-", "_")
+    mod_path = MODULES_DIR / f"phekb_{snake}.json"
     if not mod_path.exists():
         print(f"missing {mod_path}")
         return 1

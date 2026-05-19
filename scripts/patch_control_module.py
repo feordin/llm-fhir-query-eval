@@ -119,13 +119,16 @@ def main() -> int:
     ap.add_argument("phenotype")
     args = ap.parse_args()
 
+    # Canonical input convention is kebab-case (matches synthea/output dir +
+    # test cases); module files + pack keys are snake_case, so normalize.
+    snake = args.phenotype.replace("-", "_")
     packs = json.loads(PACKS.read_text(encoding="utf-8"))
-    if args.phenotype not in packs:
-        print(f"no pack defined for '{args.phenotype}' in {PACKS}")
+    if snake not in packs:
+        print(f"no pack defined for '{snake}' in {PACKS}")
         return 1
     codes = json.loads(CODES.read_text(encoding="utf-8")) if CODES.exists() else {}
 
-    mod_path = MODULES_DIR / f"phekb_{args.phenotype}_control.json"
+    mod_path = MODULES_DIR / f"phekb_{snake}_control.json"
     if not mod_path.exists():
         print(f"missing {mod_path}")
         return 1
@@ -133,7 +136,7 @@ def main() -> int:
     module = json.loads(mod_path.read_text(encoding="utf-8"))
     n_before = sum(1 for s in module.get("states", {}).values()
                    if s.get("type") == "ConditionOnset")
-    patch_control(module, packs[args.phenotype], codes)
+    patch_control(module, packs[snake], codes)
     n_after = sum(1 for s in module.get("states", {}).values()
                   if s.get("type") == "ConditionOnset")
     added = n_after - n_before
