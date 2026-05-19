@@ -113,8 +113,11 @@ def main() -> int:
               f"manual edit required")
         return 2
     mod_path.write_text(json.dumps(module, indent=2) + "\n", encoding="utf-8")
+    new_b_next = module["states"]["Set_Path_B"]["direct_transition"]
     print(f"{args.phenotype}: added Path B "
           f"(prevalence={args.prevalence}); new states: {sorted(added)}")
+    print(f"  Set_Path_B -> {new_b_next!r}; VERIFY this is wellness-level, "
+          f"not a *_Meds state (Path B patients would otherwise get meds)")
     return 0
 
 
