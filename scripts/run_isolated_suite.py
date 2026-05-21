@@ -100,6 +100,7 @@ def _run_one_matrix(
         "--prompt-variants", args.prompt_variants,
         "--fhir-url", args.fhir_url,
         "--cell-timeout-sec", str(args.cell_timeout_sec),
+        "--max-cell-workers", str(args.max_cell_workers),
     ]
     if args.base_url:
         cmd += ["--base-url", args.base_url]
@@ -182,6 +183,10 @@ def main() -> int:
     ap.add_argument("--prompt-variants", default="naive,broad,expert")
     ap.add_argument("--fhir-url", default="https://jaerwinllm.azurewebsites.net")
     ap.add_argument("--cell-timeout-sec", type=int, default=700)
+    ap.add_argument("--max-cell-workers", type=int, default=6,
+                    help="Concurrent (tier x variant) cells per matrix. Total "
+                         "concurrent LLM subprocesses is (num provider specs) x "
+                         "this -- keep modest on a single host (default: 6).")
     ap.add_argument("--matrix-timeout-sec", type=int, default=DEFAULT_MATRIX_TIMEOUT,
                     help="Wall-clock timeout per matrix invocation in seconds (default: 3600).")
     args = ap.parse_args()

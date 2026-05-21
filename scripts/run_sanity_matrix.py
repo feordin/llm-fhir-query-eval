@@ -37,6 +37,7 @@ import socket
 import subprocess
 import sys
 import time
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime
 from pathlib import Path
 
@@ -332,6 +333,13 @@ def main() -> int:
     p.add_argument("--prompt-variants", default="naive,broad,expert")
     p.add_argument("--cell-timeout-sec", type=int, default=300,
                    help="Per-cell wall-clock timeout (default: 300 = 5 min)")
+    p.add_argument("--max-cell-workers", type=int, default=6,
+                   help="How many (tier x variant) cells to run concurrently. "
+                        "Cells are read-only against the loaded FHIR data, so "
+                        "they parallelize safely. NOTE: when run_isolated_suite "
+                        "sweeps M model specs at once, total concurrent LLM "
+                        "subprocesses is M x this value -- keep it modest "
+                        "(default: 6).")
     # Internal flags for the subprocess single-cell mode
     p.add_argument("--single-cell", action="store_true", help=argparse.SUPPRESS)
     p.add_argument("--cell-tier", type=int, help=argparse.SUPPRESS)
@@ -363,21 +371,44 @@ def main() -> int:
     print(f"Per-cell timeout: {args.cell_timeout_sec}s | Agent max iterations: {AGENT_MAX_ITERATIONS}")
     print()
 
+    # All (tier x variant) cells are read-only against the loaded FHIR data,
+    # so they run concurrently. Only the wipe/load (done by the caller, before
+    # this script) is exclusive. Each cell is its own subprocess writing a
+    # tier+variant-unique temp file, so threads don't collide.
+    cell_specs = [(tier, variant) for tier in tiers for variant in variants]
+    workers = max(1, min(args.max_cell_workers, len(cell_specs)))
+    print(f"Running {len(cell_specs)} cells, {workers} at a time...\n", flush=True)
+
     results = []
-    for tier in tiers:
-        for variant in variants:
+    with ThreadPoolExecutor(max_workers=workers) as ex:
+        futures = {
+            ex.submit(run_cell_subprocess, tc.id, tier, variant, args.provider,
+                      args.model, args.fhir_url, args.base_url,
+                      args.cell_timeout_sec, args.lean_prompt,
+                      args.api_key, args.api_version): (tier, variant)
+            for tier, variant in cell_specs
+        }
+        for fut in as_completed(futures):
+            tier, variant = futures[fut]
             label = f"T{tier} | {variant:6s}"
-            print(f"--- {label} starting...", flush=True)
-            cell = run_cell_subprocess(tc.id, tier, variant, args.provider,
-                                       args.model, args.fhir_url, args.base_url,
-                                       args.cell_timeout_sec, args.lean_prompt,
-                                       args.api_key, args.api_version)
+            try:
+                cell = fut.result()
+            except Exception as exc:  # noqa: BLE001
+                cell = {"tier": tier, "prompt_variant": variant,
+                        "error": f"cell thread crashed: {exc}"}
             if "f1" in cell:
-                print(f"    {label} -> P={cell['precision']} R={cell['recall']} F1={cell['f1']} "
-                      f"(expected={cell['expected_count']}, got={cell['actual_count']}, {cell['elapsed_sec']}s)")
+                print(f"    {label} -> P={cell['precision']} R={cell['recall']} "
+                      f"F1={cell['f1']} (expected={cell['expected_count']}, "
+                      f"got={cell['actual_count']}, {cell['elapsed_sec']}s)",
+                      flush=True)
             else:
-                print(f"    {label} -> ERROR: {cell.get('error','')[:200]}")
+                print(f"    {label} -> ERROR: {cell.get('error','')[:200]}",
+                      flush=True)
             results.append(cell)
+
+    # Stable order for the summary + JSON regardless of completion order.
+    results.sort(key=lambda c: (c["tier"], variants.index(c["prompt_variant"])
+                                if c["prompt_variant"] in variants else 99))
 
     # Summary
     print("\n=== Matrix summary ===")
