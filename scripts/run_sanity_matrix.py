@@ -133,7 +133,12 @@ def make_provider(tier: int, provider: str, model: str, fhir_url: str,
         # Tier 1 -> closed-book CopilotProvider; Tier 2/3 -> CopilotAgenticProvider
         # with our 10 FHIR/UMLS/VSAC tools.
         if tier == 1:
-            return get_provider("copilot", model=model)
+            # Closed-book CopilotProvider's internal session.idle wait defaults
+            # to 180s -- too tight for long expert prompts on big phenotypes.
+            # Scale it to just under the cell subprocess timeout so a genuine
+            # Copilot error surfaces before the subprocess is hard-killed.
+            return get_provider("copilot", model=model,
+                                timeout_sec=max(180, cell_timeout_sec - 30))
         return get_provider(
             "copilot",
             model=model,
@@ -253,25 +258,53 @@ def run_cell_subprocess(tc_id: str, tier: int, variant: str, provider_name: str,
         cmd += ["--api-key", api_key]
     if api_version:
         cmd += ["--api-version", api_version]
+    # Transient failures worth a retry: the Copilot SDK intermittently returns
+    # an empty completion or the subprocess crashes before writing. A genuine
+    # wall-clock timeout is retried at most once (it is expensive and often a
+    # real "model too slow", but server hiccups do happen).
+    TRANSIENT = ("empty content", "produced no output", "Connection",
+                 "session.idle")
+    MAX_ATTEMPTS = 3
+
     cell = {"tier": tier, "prompt_variant": variant}
-    t0 = time.time()
-    try:
-        subprocess.run(cmd, timeout=timeout_sec, check=False,
-                       capture_output=True, text=True)
-        if cell_out.exists():
-            with cell_out.open(encoding="utf-8") as f:
-                cell = json.load(f)
-            cell_out.unlink()
-        else:
-            cell["elapsed_sec"] = round(time.time() - t0, 1)
-            cell["error"] = "subprocess produced no output (likely crashed before writing)"
-    except subprocess.TimeoutExpired:
-        cell["elapsed_sec"] = timeout_sec
-        cell["error"] = f"timeout after {timeout_sec}s — cell killed"
+    for attempt in range(1, MAX_ATTEMPTS + 1):
+        cell = {"tier": tier, "prompt_variant": variant}
+        t0 = time.time()
+        timed_out = False
         try:
-            cell_out.unlink()
-        except FileNotFoundError:
-            pass
+            subprocess.run(cmd, timeout=timeout_sec, check=False,
+                           capture_output=True, text=True)
+            if cell_out.exists():
+                with cell_out.open(encoding="utf-8") as f:
+                    cell = json.load(f)
+                cell_out.unlink()
+            else:
+                cell["elapsed_sec"] = round(time.time() - t0, 1)
+                cell["error"] = ("subprocess produced no output "
+                                 "(likely crashed before writing)")
+        except subprocess.TimeoutExpired:
+            timed_out = True
+            cell["elapsed_sec"] = timeout_sec
+            cell["error"] = f"timeout after {timeout_sec}s — cell killed"
+            try:
+                cell_out.unlink()
+            except FileNotFoundError:
+                pass
+
+        err = cell.get("error")
+        if not err:
+            break  # success
+        is_transient = any(p in err for p in TRANSIENT)
+        # Retry transient errors; retry a timeout only once (attempt 1 -> 2).
+        retryable = is_transient or (timed_out and attempt == 1)
+        if attempt < MAX_ATTEMPTS and retryable:
+            print(f"      retry {attempt}/{MAX_ATTEMPTS - 1} "
+                  f"(T{tier} {variant}): {err[:70]}", flush=True)
+            cell["retry_attempts"] = attempt
+            continue
+        if attempt > 1:
+            cell["retry_attempts"] = attempt - 1
+        break
     return cell
 
 

@@ -1,7 +1,32 @@
 import json
+import logging
+import re
 from typing import Optional
 
 import requests
+
+logger = logging.getLogger(__name__)
+
+# Matches a search-parameter subsumption modifier, e.g. "code:below=" or
+# "code:above=". Capturing group 1 is the bare parameter name.
+_SUBSUMPTION_MODIFIER = re.compile(r"(\b[\w-]+):(below|above)=")
+
+
+def strip_subsumption_modifiers(query_url: str) -> str:
+    """Rewrite ``param:below=`` / ``param:above=`` to plain ``param=``.
+
+    The Azure Microsoft FHIR server has no terminology hierarchy loaded, so
+    subsumption queries (``code:below=http://snomed.info/sct|195967001``)
+    return zero results. Our synthetic Synthea data is *flat* — every patient
+    carries the exact phenotype code, never a descendant — so ``:below`` and a
+    plain ``code=`` are functionally equivalent for scoring. Rewriting here
+    means a model that issues the (more clinically correct) ``:below`` form is
+    neither rewarded nor penalised for it against this server.
+    """
+    rewritten = _SUBSUMPTION_MODIFIER.sub(r"\1=", query_url)
+    if rewritten != query_url:
+        logger.debug("rewrote subsumption modifier: %s -> %s", query_url, rewritten)
+    return rewritten
 
 
 class FHIRClient:
@@ -174,6 +199,10 @@ class FHIRClient:
             Sorted list of unique patient ID strings. Empty list when no patient
             references are found.
         """
+        # Rewrite SNOMED :below/:above subsumption modifiers -- the Azure FHIR
+        # server has no terminology hierarchy, and our synthetic data is flat.
+        query_url = strip_subsumption_modifiers(query_url)
+
         # Inject _count if not present
         if "_count=" not in query_url:
             sep = "&" if "?" in query_url else "?"
