@@ -12,24 +12,139 @@
     "Controls get NO Condition resources for MS and NO MS DMTs."
   ],
   "states": {
-    "Initial": { "type": "Initial", "direct_transition": "Age_Guard" },
-
+    "Initial": {
+      "type": "Initial",
+      "direct_transition": "Age_Guard"
+    },
     "Age_Guard": {
       "type": "Guard",
-      "allow": { "condition_type": "Age", "operator": ">=", "quantity": 20, "unit": "years" },
+      "allow": {
+        "condition_type": "Age",
+        "operator": ">=",
+        "quantity": 20,
+        "unit": "years"
+      },
       "direct_transition": "Set_Control_Flag"
     },
-
-    "Set_Control_Flag": { "type": "SetAttribute", "attribute": "ms_positive", "value": false, "direct_transition": "Wellness_Encounter" },
-
-    "Wellness_Encounter": { "type": "Encounter", "wellness": true, "direct_transition": "End_Wellness_Encounter" },
-
-    "End_Wellness_Encounter": { "type": "EncounterEnd", "direct_transition": "Followup_Delay" },
-
+    "Set_Control_Flag": {
+      "type": "SetAttribute",
+      "attribute": "ms_positive",
+      "value": false,
+      "direct_transition": "Wellness_Encounter"
+    },
+    "Wellness_Encounter": {
+      "type": "Encounter",
+      "wellness": true,
+      "direct_transition": "Maybe_Mimicker_Neuromyelitis_optica"
+    },
+    "End_Wellness_Encounter": {
+      "type": "EncounterEnd",
+      "direct_transition": "Followup_Delay"
+    },
     "Followup_Delay": {
       "type": "Delay",
-      "range": { "low": 12, "high": 24, "unit": "months" },
+      "range": {
+        "low": 12,
+        "high": 24,
+        "unit": "months"
+      },
       "direct_transition": "Wellness_Encounter"
+    },
+    "Maybe_Mimicker_Neuromyelitis_optica": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Neuromyelitis_optica",
+          "distribution": 0.05
+        },
+        {
+          "transition": "Maybe_Mimicker_Acute_disseminated_encephalomyelitis",
+          "distribution": 0.95
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Neuromyelitis_optica": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "25044007",
+          "display": "Neuromyelitis optica"
+        }
+      ],
+      "direct_transition": "Maybe_Mimicker_Acute_disseminated_encephalomyelitis"
+    },
+    "Maybe_Mimicker_Acute_disseminated_encephalomyelitis": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Acute_disseminated_encephalomyelitis",
+          "distribution": 0.02
+        },
+        {
+          "transition": "Maybe_Mimicker_Migraine_with_aura",
+          "distribution": 0.98
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Acute_disseminated_encephalomyelitis": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "83942000",
+          "display": "Acute disseminated encephalomyelitis"
+        }
+      ],
+      "direct_transition": "Maybe_Mimicker_Migraine_with_aura"
+    },
+    "Maybe_Mimicker_Migraine_with_aura": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Migraine_with_aura",
+          "distribution": 0.1
+        },
+        {
+          "transition": "Maybe_Mimicker_Vitamin_B12_deficiency",
+          "distribution": 0.9
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Migraine_with_aura": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "4473006",
+          "display": "Migraine with aura"
+        }
+      ],
+      "direct_transition": "Maybe_Mimicker_Vitamin_B12_deficiency"
+    },
+    "Maybe_Mimicker_Vitamin_B12_deficiency": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Vitamin_B12_deficiency",
+          "distribution": 0.1
+        },
+        {
+          "transition": "End_Wellness_Encounter",
+          "distribution": 0.9
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Vitamin_B12_deficiency": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "190634004",
+          "display": "Cobalamin deficiency"
+        }
+      ],
+      "direct_transition": "End_Wellness_Encounter"
     }
   },
   "gmf_version": 2
