@@ -1,13 +1,143 @@
 {
   "name": "PheKB Pneumonia Control",
-  "remarks": ["Control module for PheKB pneumonia phenotype. Generates patients without pneumonia."],
+  "remarks": [
+    "Control module for PheKB pneumonia phenotype. Generates patients without pneumonia."
+  ],
   "states": {
-    "Initial": { "type": "Initial", "direct_transition": "Age_Guard" },
-    "Age_Guard": { "type": "Guard", "allow": { "condition_type": "Age", "operator": ">=", "quantity": 18, "unit": "years" }, "direct_transition": "Set_Control_Flag" },
-    "Set_Control_Flag": { "type": "SetAttribute", "attribute": "pna_positive", "value": false, "direct_transition": "Wellness_Encounter" },
-    "Wellness_Encounter": { "type": "Encounter", "wellness": true, "direct_transition": "End_Wellness_Encounter" },
-    "End_Wellness_Encounter": { "type": "EncounterEnd", "direct_transition": "Followup_Delay" },
-    "Followup_Delay": { "type": "Delay", "range": { "low": 12, "high": 24, "unit": "months" }, "direct_transition": "Wellness_Encounter" }
+    "Initial": {
+      "type": "Initial",
+      "direct_transition": "Age_Guard"
+    },
+    "Age_Guard": {
+      "type": "Guard",
+      "allow": {
+        "condition_type": "Age",
+        "operator": ">=",
+        "quantity": 18,
+        "unit": "years"
+      },
+      "direct_transition": "Set_Control_Flag"
+    },
+    "Set_Control_Flag": {
+      "type": "SetAttribute",
+      "attribute": "pna_positive",
+      "value": false,
+      "direct_transition": "Wellness_Encounter"
+    },
+    "Wellness_Encounter": {
+      "type": "Encounter",
+      "wellness": true,
+      "direct_transition": "Maybe_Mimicker_Acute_bronchitis"
+    },
+    "End_Wellness_Encounter": {
+      "type": "EncounterEnd",
+      "direct_transition": "Followup_Delay"
+    },
+    "Followup_Delay": {
+      "type": "Delay",
+      "range": {
+        "low": 12,
+        "high": 24,
+        "unit": "months"
+      },
+      "direct_transition": "Wellness_Encounter"
+    },
+    "Maybe_Mimicker_Acute_bronchitis": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Acute_bronchitis",
+          "distribution": 0.25
+        },
+        {
+          "transition": "Maybe_Mimicker_Chronic_obstructive_lung_disease",
+          "distribution": 0.75
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Acute_bronchitis": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "10509002",
+          "display": "Acute bronchitis"
+        }
+      ],
+      "direct_transition": "Maybe_Mimicker_Chronic_obstructive_lung_disease"
+    },
+    "Maybe_Mimicker_Chronic_obstructive_lung_disease": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Chronic_obstructive_lung_disease",
+          "distribution": 0.15
+        },
+        {
+          "transition": "Maybe_Mimicker_Asthma",
+          "distribution": 0.85
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Chronic_obstructive_lung_disease": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "13645005",
+          "display": "Chronic obstructive pulmonary disease"
+        }
+      ],
+      "direct_transition": "Maybe_Mimicker_Asthma"
+    },
+    "Maybe_Mimicker_Asthma": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Asthma",
+          "distribution": 0.1
+        },
+        {
+          "transition": "Maybe_Mimicker_Heart_failure",
+          "distribution": 0.9
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Asthma": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "195967001",
+          "display": "Asthma"
+        }
+      ],
+      "direct_transition": "Maybe_Mimicker_Heart_failure"
+    },
+    "Maybe_Mimicker_Heart_failure": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Heart_failure",
+          "distribution": 0.15
+        },
+        {
+          "transition": "End_Wellness_Encounter",
+          "distribution": 0.85
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Heart_failure": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "84114007",
+          "display": "Heart failure"
+        }
+      ],
+      "direct_transition": "End_Wellness_Encounter"
+    }
   },
   "gmf_version": 2
 }
