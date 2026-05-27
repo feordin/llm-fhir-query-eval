@@ -13,20 +13,133 @@
     "  Control D-dimer range: 0.10-0.40 mcg/mL"
   ],
   "states": {
-    "Initial": { "type": "Initial", "direct_transition": "Age_Guard" },
-    "Age_Guard": { "type": "Guard", "allow": { "condition_type": "Age", "operator": ">=", "quantity": 30, "unit": "years" }, "direct_transition": "Set_Control_Flag" },
-    "Set_Control_Flag": { "type": "SetAttribute", "attribute": "vte_positive", "value": false, "direct_transition": "Wellness_Encounter" },
-    "Wellness_Encounter": { "type": "Encounter", "wellness": true, "direct_transition": "Record_Normal_DDimer" },
+    "Initial": {
+      "type": "Initial",
+      "direct_transition": "Age_Guard"
+    },
+    "Age_Guard": {
+      "type": "Guard",
+      "allow": {
+        "condition_type": "Age",
+        "operator": ">=",
+        "quantity": 30,
+        "unit": "years"
+      },
+      "direct_transition": "Set_Control_Flag"
+    },
+    "Set_Control_Flag": {
+      "type": "SetAttribute",
+      "attribute": "vte_positive",
+      "value": false,
+      "direct_transition": "Wellness_Encounter"
+    },
+    "Wellness_Encounter": {
+      "type": "Encounter",
+      "wellness": true,
+      "direct_transition": "Maybe_Mimicker_Cellulitis"
+    },
     "Record_Normal_DDimer": {
       "type": "Observation",
       "category": "laboratory",
       "unit": "ug/mL",
-      "codes": [{ "system": "LOINC", "code": "48065-7", "display": "Fibrin D-dimer FEU [Mass/volume] in Platelet poor plasma" }],
-      "range": { "low": 0.10, "high": 0.40 },
+      "codes": [
+        {
+          "system": "LOINC",
+          "code": "48065-7",
+          "display": "Fibrin D-dimer FEU [Mass/volume] in Platelet poor plasma"
+        }
+      ],
+      "range": {
+        "low": 0.1,
+        "high": 0.4
+      },
       "direct_transition": "End_Wellness_Encounter"
     },
-    "End_Wellness_Encounter": { "type": "EncounterEnd", "direct_transition": "Followup_Delay" },
-    "Followup_Delay": { "type": "Delay", "range": { "low": 12, "high": 24, "unit": "months" }, "direct_transition": "Wellness_Encounter" }
+    "End_Wellness_Encounter": {
+      "type": "EncounterEnd",
+      "direct_transition": "Followup_Delay"
+    },
+    "Followup_Delay": {
+      "type": "Delay",
+      "range": {
+        "low": 12,
+        "high": 24,
+        "unit": "months"
+      },
+      "direct_transition": "Wellness_Encounter"
+    },
+    "Maybe_Mimicker_Cellulitis": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Cellulitis",
+          "distribution": 0.15
+        },
+        {
+          "transition": "Maybe_Mimicker_Baker_s_cyst",
+          "distribution": 0.85
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Cellulitis": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "128045006",
+          "display": "Cellulitis"
+        }
+      ],
+      "direct_transition": "Maybe_Mimicker_Baker_s_cyst"
+    },
+    "Maybe_Mimicker_Baker_s_cyst": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Baker_s_cyst",
+          "distribution": 0.05
+        },
+        {
+          "transition": "Maybe_Mimicker_Muscle_strain",
+          "distribution": 0.95
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Baker_s_cyst": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "1290249005",
+          "display": "Synovial popliteal cyst"
+        }
+      ],
+      "direct_transition": "Maybe_Mimicker_Muscle_strain"
+    },
+    "Maybe_Mimicker_Muscle_strain": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Muscle_strain",
+          "distribution": 0.2
+        },
+        {
+          "transition": "Record_Normal_DDimer",
+          "distribution": 0.8
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Muscle_strain": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "48532005",
+          "display": "Muscle strain"
+        }
+      ],
+      "direct_transition": "Record_Normal_DDimer"
+    }
   },
   "gmf_version": 2
 }
