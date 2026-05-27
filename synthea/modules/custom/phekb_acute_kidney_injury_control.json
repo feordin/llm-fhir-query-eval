@@ -22,7 +22,6 @@
       "type": "Initial",
       "direct_transition": "Age_Guard"
     },
-
     "Age_Guard": {
       "type": "Guard",
       "allow": {
@@ -33,20 +32,17 @@
       },
       "direct_transition": "Set_Control_Flag"
     },
-
     "Set_Control_Flag": {
       "type": "SetAttribute",
       "attribute": "aki_control",
       "value": true,
       "direct_transition": "Wellness_Encounter"
     },
-
     "Wellness_Encounter": {
       "type": "Encounter",
       "wellness": true,
-      "direct_transition": "Record_Normal_Creatinine"
+      "direct_transition": "Maybe_Mimicker_Chronic_kidney_disease"
     },
-
     "Record_Normal_Creatinine": {
       "type": "Observation",
       "category": "laboratory",
@@ -62,10 +58,11 @@
         "low": 0.6,
         "high": 1.2
       },
-      "remarks": ["Normal serum creatinine 0.6-1.2 mg/dL"],
+      "remarks": [
+        "Normal serum creatinine 0.6-1.2 mg/dL"
+      ],
       "direct_transition": "Record_Normal_BUN"
     },
-
     "Record_Normal_BUN": {
       "type": "Observation",
       "category": "laboratory",
@@ -81,17 +78,20 @@
         "low": 7,
         "high": 20
       },
-      "remarks": ["Normal BUN 7-20 mg/dL"],
+      "remarks": [
+        "Normal BUN 7-20 mg/dL"
+      ],
       "direct_transition": "Check_Other_Conditions"
     },
-
     "Check_Other_Conditions": {
       "type": "Simple",
-      "remarks": ["Some control patients have non-AKI conditions for variety"],
+      "remarks": [
+        "Some control patients have non-AKI conditions for variety"
+      ],
       "distributed_transition": [
         {
           "transition": "Diagnose_Hypertension",
-          "distribution": 0.30
+          "distribution": 0.3
         },
         {
           "transition": "Diagnose_UTI",
@@ -103,7 +103,6 @@
         }
       ]
     },
-
     "Diagnose_Hypertension": {
       "type": "ConditionOnset",
       "assign_to_attribute": "hypertension",
@@ -114,10 +113,11 @@
           "display": "Hypertensive disorder"
         }
       ],
-      "remarks": ["Non-AKI condition for control population variety"],
+      "remarks": [
+        "Non-AKI condition for control population variety"
+      ],
       "direct_transition": "Prescribe_Antihypertensive"
     },
-
     "Prescribe_Antihypertensive": {
       "type": "MedicationOrder",
       "codes": [
@@ -130,7 +130,6 @@
       "reason": "hypertension",
       "direct_transition": "End_Wellness_Encounter"
     },
-
     "Diagnose_UTI": {
       "type": "ConditionOnset",
       "assign_to_attribute": "uti",
@@ -141,18 +140,92 @@
           "display": "Urinary tract infectious disease"
         }
       ],
-      "remarks": ["Non-AKI condition - UTI is common in hospital settings"],
+      "remarks": [
+        "Non-AKI condition - UTI is common in hospital settings"
+      ],
       "direct_transition": "End_Wellness_Encounter"
     },
-
     "End_Wellness_Encounter": {
       "type": "EncounterEnd",
       "direct_transition": "Terminal_Control"
     },
-
     "Terminal_Control": {
       "type": "Terminal",
-      "remarks": ["Control patient - should NOT be found by AKI phenotype query"]
+      "remarks": [
+        "Control patient - should NOT be found by AKI phenotype query"
+      ]
+    },
+    "Maybe_Mimicker_Chronic_kidney_disease": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Chronic_kidney_disease",
+          "distribution": 0.2
+        },
+        {
+          "transition": "Maybe_Mimicker_Dehydration",
+          "distribution": 0.8
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Chronic_kidney_disease": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "709044004",
+          "display": "Chronic kidney disease"
+        }
+      ],
+      "direct_transition": "Maybe_Mimicker_Dehydration"
+    },
+    "Maybe_Mimicker_Dehydration": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Dehydration",
+          "distribution": 0.15
+        },
+        {
+          "transition": "Maybe_Mimicker_Urinary_tract_obstruction",
+          "distribution": 0.85
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Dehydration": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "34095006",
+          "display": "Dehydration"
+        }
+      ],
+      "direct_transition": "Maybe_Mimicker_Urinary_tract_obstruction"
+    },
+    "Maybe_Mimicker_Urinary_tract_obstruction": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Urinary_tract_obstruction",
+          "distribution": 0.05
+        },
+        {
+          "transition": "Record_Normal_Creatinine",
+          "distribution": 0.95
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Urinary_tract_obstruction": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "7163005",
+          "display": "Urinary tract obstruction"
+        }
+      ],
+      "direct_transition": "Record_Normal_Creatinine"
     }
   },
   "gmf_version": 2
