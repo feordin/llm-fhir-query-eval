@@ -49,6 +49,20 @@ DEFAULT_MATRIX_TIMEOUT = 3600  # 1 hour per matrix invocation
 # Helpers
 # ---------------------------------------------------------------------------
 
+# Small / context-limited model patterns. When a spec's model name matches
+# any of these substrings (case-insensitive), the harness auto-enables
+# --lean-prompt for that spec -- the full 6.4 KB agentic prompt + 16 KB T3
+# methodology overwhelms <=10B local models. Use --no-auto-lean to disable.
+SMALL_MODEL_PATTERNS = ("qwen", "phi-", "phi3", "phi4", "llama", "gemma",
+                        "mistral-7b", "deepseek-r1:7", "deepseek-r1:8")
+
+
+def _is_small_model(provider: str, model: str) -> bool:
+    """True if the model spec matches a known small-context pattern."""
+    name = model.lower()
+    return any(pat in name for pat in SMALL_MODEL_PATTERNS)
+
+
 def _parse_specs(specs: list[str]) -> list[tuple[str, str]]:
     """Parse 'provider:model' strings; model may itself contain colons.
 
@@ -108,10 +122,18 @@ def _run_one_matrix(
         cmd += ["--api-key", args.api_key]
     if args.api_version:
         cmd += ["--api-version", args.api_version]
-    if args.lean_prompt:
+    # Per-spec lean prompt: forced via --lean-prompt for all specs, OR
+    # auto-enabled for specs matching SMALL_MODEL_PATTERNS unless the operator
+    # passed --no-auto-lean.
+    use_lean = args.lean_prompt or (
+        not args.no_auto_lean and _is_small_model(provider, model)
+    )
+    if use_lean:
         cmd += ["--lean-prompt"]
 
-    print(f"    [START] {label}  tc={tc.stem}  log={log_path.name}", flush=True)
+    lean_tag = "  [lean]" if use_lean else ""
+    print(f"    [START] {label}{lean_tag}  tc={tc.stem}  log={log_path.name}",
+          flush=True)
     t0 = time.time()
     rc: int
 
@@ -178,7 +200,13 @@ def main() -> int:
     ap.add_argument("--api-version", default=None,
                     help="Azure OpenAI api-version (azure-openai provider only).")
     ap.add_argument("--lean-prompt", action="store_true",
-                    help="Use the lean agentic prompt (for small openai-compat models).")
+                    help="Force the lean agentic prompt for ALL specs. Useful "
+                         "for measuring lean-prompt effect on frontier models. "
+                         "By default, lean is auto-enabled only for small "
+                         "models (qwen, phi, llama, gemma, mistral-7b...).")
+    ap.add_argument("--no-auto-lean", action="store_true",
+                    help="Disable the auto-enable of --lean-prompt for small "
+                         "models. Only --lean-prompt (if passed) is honored.")
     ap.add_argument("--tiers", default="2")
     ap.add_argument("--prompt-variants", default="naive,broad,expert")
     ap.add_argument("--fhir-url", default="https://jaerwinllm.azurewebsites.net")

@@ -492,10 +492,15 @@ class AgenticProvider(LLMProvider):
         self._system_prompt = self._build_system_prompt()
 
     def _build_system_prompt(self) -> str:
-        """Compose the system prompt. In Tier 3 mode, prepend the methodology skill."""
+        """Compose the system prompt. In Tier 3 mode, prepend the methodology
+        skill. When the agentic prompt is the LEAN variant (small-model path),
+        also use the LEAN methodology -- the full 16 KB playbook drowns small
+        models, while the lean 4 KB version still gives them the decision tree."""
         if self.tier >= 3:
             from pathlib import Path
-            methodology_path = Path(__file__).parent / "tier3_methodology.md"
+            is_lean = self._agentic_prompt_version == LEAN_AGENTIC_SYSTEM_PROMPT_VERSION
+            filename = "tier3_methodology_lean.md" if is_lean else "tier3_methodology.md"
+            methodology_path = Path(__file__).parent / filename
             if methodology_path.exists():
                 methodology = methodology_path.read_text(encoding="utf-8")
                 return (
