@@ -52,9 +52,33 @@ DEFAULT_MATRIX_TIMEOUT = 3600  # 1 hour per matrix invocation
 # Small / context-limited model patterns. When a spec's model name matches
 # any of these substrings (case-insensitive), the harness auto-enables
 # --lean-prompt for that spec -- the full 6.4 KB agentic prompt + 16 KB T3
-# methodology overwhelms <=10B local models. Use --no-auto-lean to disable.
-SMALL_MODEL_PATTERNS = ("qwen", "phi-", "phi3", "phi4", "llama", "gemma",
-                        "mistral-7b", "deepseek-r1:7", "deepseek-r1:8")
+# methodology overwhelms <=~14B models. Use --no-auto-lean to disable.
+#
+# Patterns are SIZE-SPECIFIC so we don't accidentally match a 70B+ variant
+# that happens to share a family name (e.g. qwen-2.5-72b is frontier-class).
+# Examples that auto-lean:  qwen3.5:9b, qwen-2.5-7b, qwen3-14b, phi-4-mini,
+#                           llama-3.1-8b, llama-3.2-3b, gemma2:9b, mistral-7b.
+# Examples that do NOT:     qwen-2.5-72b, qwen3-235b, llama-3.3-70b,
+#                           gemini-2.5-pro, claude-sonnet-4.6, gpt-5.4.
+SMALL_MODEL_PATTERNS = (
+    # Qwen <=14B (the 9b ollama tag, 7b/14b families, and qwen3-8/14b)
+    "qwen3.5:", "qwen2.5:", "qwen-2.5-7b", "qwen-2.5-3b", "qwen-2.5-1.5b",
+    "qwen3-4b", "qwen3-8b", "qwen3-14b",
+    # Phi (all phi variants are small)
+    "phi-4-mini", "phi-4", "phi-3", "phi3", "phi4-mini", "microsoft/phi-",
+    # Llama 8B and smaller
+    "llama-3.1-8b", "llama-3-8b", "llama-3.2-1b", "llama-3.2-3b",
+    "llama3.1:8b", "llama3.2:",
+    # Gemma 9B and smaller (large gemmas don't exist on OpenRouter today)
+    "gemma2:9b", "gemma2:2b", "gemma-2-9b", "gemma-2-2b",
+    "gemma3:", "gemma-3-",
+    # Mistral 7B
+    "mistral-7b", "mistral:7b",
+    # Deepseek R1 distill small
+    "deepseek-r1-distill-qwen-7b", "deepseek-r1-distill-qwen-14b",
+    "deepseek-r1-distill-llama-8b",
+    "deepseek-r1:7b", "deepseek-r1:8b", "deepseek-r1:14b",
+)
 
 
 def _is_small_model(provider: str, model: str) -> bool:
