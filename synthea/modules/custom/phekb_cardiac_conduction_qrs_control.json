@@ -1,13 +1,167 @@
 {
   "name": "PheKB Cardiac Conduction QRS Control",
-  "remarks": ["Control: age 18+ without ECG procedure."],
+  "remarks": [
+    "Control: age 18+ without ECG procedure."
+  ],
   "states": {
-    "Initial": { "type": "Initial", "direct_transition": "Age_Guard" },
-    "Age_Guard": { "type": "Guard", "allow": { "condition_type": "Age", "operator": ">=", "quantity": 18, "unit": "years" }, "direct_transition": "Set_Control_Flag" },
-    "Set_Control_Flag": { "type": "SetAttribute", "attribute": "qrs_positive", "value": false, "direct_transition": "Wellness_Encounter" },
-    "Wellness_Encounter": { "type": "Encounter", "wellness": true, "direct_transition": "End_Wellness_Encounter" },
-    "End_Wellness_Encounter": { "type": "EncounterEnd", "direct_transition": "Followup_Delay" },
-    "Followup_Delay": { "type": "Delay", "range": { "low": 12, "high": 24, "unit": "months" }, "direct_transition": "Wellness_Encounter" }
+    "Initial": {
+      "type": "Initial",
+      "direct_transition": "Age_Guard"
+    },
+    "Age_Guard": {
+      "type": "Guard",
+      "allow": {
+        "condition_type": "Age",
+        "operator": ">=",
+        "quantity": 18,
+        "unit": "years"
+      },
+      "direct_transition": "Set_Control_Flag"
+    },
+    "Set_Control_Flag": {
+      "type": "SetAttribute",
+      "attribute": "qrs_positive",
+      "value": false,
+      "direct_transition": "Wellness_Encounter"
+    },
+    "Wellness_Encounter": {
+      "type": "Encounter",
+      "wellness": true,
+      "direct_transition": "Maybe_Mimicker_Left_bundle_branch_block"
+    },
+    "End_Wellness_Encounter": {
+      "type": "EncounterEnd",
+      "direct_transition": "Followup_Delay"
+    },
+    "Followup_Delay": {
+      "type": "Delay",
+      "range": {
+        "low": 12,
+        "high": 24,
+        "unit": "months"
+      },
+      "direct_transition": "Wellness_Encounter"
+    },
+    "Maybe_Mimicker_Left_bundle_branch_block": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Left_bundle_branch_block",
+          "distribution": 0.15
+        },
+        {
+          "transition": "Maybe_Mimicker_Right_bundle_branch_block",
+          "distribution": 0.85
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Left_bundle_branch_block": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "63467002",
+          "display": "Left bundle branch block"
+        }
+      ],
+      "direct_transition": "Maybe_Mimicker_Right_bundle_branch_block"
+    },
+    "Maybe_Mimicker_Right_bundle_branch_block": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Right_bundle_branch_block",
+          "distribution": 0.1
+        },
+        {
+          "transition": "Maybe_Mimicker_Atrioventricular_block",
+          "distribution": 0.9
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Right_bundle_branch_block": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "59118001",
+          "display": "Right bundle branch block"
+        }
+      ],
+      "direct_transition": "Maybe_Mimicker_Atrioventricular_block"
+    },
+    "Maybe_Mimicker_Atrioventricular_block": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Atrioventricular_block",
+          "distribution": 0.06
+        },
+        {
+          "transition": "Maybe_Mimicker_Wolff_Parkinson_White_pattern",
+          "distribution": 0.94
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Atrioventricular_block": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "233917008",
+          "display": "Atrioventricular block"
+        }
+      ],
+      "direct_transition": "Maybe_Mimicker_Wolff_Parkinson_White_pattern"
+    },
+    "Maybe_Mimicker_Wolff_Parkinson_White_pattern": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Wolff_Parkinson_White_pattern",
+          "distribution": 0.02
+        },
+        {
+          "transition": "Maybe_Mimicker_Long_QT_syndrome",
+          "distribution": 0.98
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Wolff_Parkinson_White_pattern": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "74390002",
+          "display": "Wolff-Parkinson-White pattern"
+        }
+      ],
+      "direct_transition": "Maybe_Mimicker_Long_QT_syndrome"
+    },
+    "Maybe_Mimicker_Long_QT_syndrome": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Long_QT_syndrome",
+          "distribution": 0.02
+        },
+        {
+          "transition": "End_Wellness_Encounter",
+          "distribution": 0.98
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Long_QT_syndrome": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "9651007",
+          "display": "Long QT syndrome"
+        }
+      ],
+      "direct_transition": "End_Wellness_Encounter"
+    }
   },
   "gmf_version": 2
 }

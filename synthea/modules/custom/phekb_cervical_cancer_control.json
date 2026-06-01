@@ -1,14 +1,175 @@
 {
   "name": "PheKB Cervical Cancer Control",
-  "remarks": ["Control module for cervical cancer. Generates female patients age 21+ without cervical cancer dx or hysterectomy."],
+  "remarks": [
+    "Control module for cervical cancer. Generates female patients age 21+ without cervical cancer dx or hysterectomy."
+  ],
   "states": {
-    "Initial": { "type": "Initial", "direct_transition": "Sex_Guard" },
-    "Sex_Guard": { "type": "Guard", "allow": { "condition_type": "Gender", "gender": "F" }, "direct_transition": "Age_Guard" },
-    "Age_Guard": { "type": "Guard", "allow": { "condition_type": "Age", "operator": ">=", "quantity": 21, "unit": "years" }, "direct_transition": "Set_Control_Flag" },
-    "Set_Control_Flag": { "type": "SetAttribute", "attribute": "cervical_positive", "value": false, "direct_transition": "Wellness_Encounter" },
-    "Wellness_Encounter": { "type": "Encounter", "wellness": true, "direct_transition": "End_Wellness_Encounter" },
-    "End_Wellness_Encounter": { "type": "EncounterEnd", "direct_transition": "Followup_Delay" },
-    "Followup_Delay": { "type": "Delay", "range": { "low": 12, "high": 24, "unit": "months" }, "direct_transition": "Wellness_Encounter" }
+    "Initial": {
+      "type": "Initial",
+      "direct_transition": "Sex_Guard"
+    },
+    "Sex_Guard": {
+      "type": "Guard",
+      "allow": {
+        "condition_type": "Gender",
+        "gender": "F"
+      },
+      "direct_transition": "Age_Guard"
+    },
+    "Age_Guard": {
+      "type": "Guard",
+      "allow": {
+        "condition_type": "Age",
+        "operator": ">=",
+        "quantity": 21,
+        "unit": "years"
+      },
+      "direct_transition": "Set_Control_Flag"
+    },
+    "Set_Control_Flag": {
+      "type": "SetAttribute",
+      "attribute": "cervical_positive",
+      "value": false,
+      "direct_transition": "Wellness_Encounter"
+    },
+    "Wellness_Encounter": {
+      "type": "Encounter",
+      "wellness": true,
+      "direct_transition": "Maybe_Mimicker_Cervical_intraepithelial_neoplasia"
+    },
+    "End_Wellness_Encounter": {
+      "type": "EncounterEnd",
+      "direct_transition": "Followup_Delay"
+    },
+    "Followup_Delay": {
+      "type": "Delay",
+      "range": {
+        "low": 12,
+        "high": 24,
+        "unit": "months"
+      },
+      "direct_transition": "Wellness_Encounter"
+    },
+    "Maybe_Mimicker_Cervical_intraepithelial_neoplasia": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Cervical_intraepithelial_neoplasia",
+          "distribution": 0.2
+        },
+        {
+          "transition": "Maybe_Mimicker_Human_papilloma_virus_infection",
+          "distribution": 0.8
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Cervical_intraepithelial_neoplasia": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "285636001",
+          "display": "Cervical intraepithelial neoplasia"
+        }
+      ],
+      "direct_transition": "Maybe_Mimicker_Human_papilloma_virus_infection"
+    },
+    "Maybe_Mimicker_Human_papilloma_virus_infection": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Human_papilloma_virus_infection",
+          "distribution": 0.25
+        },
+        {
+          "transition": "Maybe_Mimicker_Inflammation_of_cervix",
+          "distribution": 0.75
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Human_papilloma_virus_infection": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "240532009",
+          "display": "Human papilloma virus infection"
+        }
+      ],
+      "direct_transition": "Maybe_Mimicker_Inflammation_of_cervix"
+    },
+    "Maybe_Mimicker_Inflammation_of_cervix": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Inflammation_of_cervix",
+          "distribution": 0.15
+        },
+        {
+          "transition": "Maybe_Mimicker_Malignant_neoplasm_of_endometrium_of_corpus_uteri",
+          "distribution": 0.85
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Inflammation_of_cervix": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "37610005",
+          "display": "Inflammation of cervix"
+        }
+      ],
+      "direct_transition": "Maybe_Mimicker_Malignant_neoplasm_of_endometrium_of_corpus_uteri"
+    },
+    "Maybe_Mimicker_Malignant_neoplasm_of_endometrium_of_corpus_uteri": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Malignant_neoplasm_of_endometrium_of_corpus_uteri",
+          "distribution": 0.04
+        },
+        {
+          "transition": "Maybe_Mimicker_Malignant_neoplasm_of_vagina",
+          "distribution": 0.96
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Malignant_neoplasm_of_endometrium_of_corpus_uteri": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "188192002",
+          "display": "Malignant neoplasm of endometrium of corpus uteri"
+        }
+      ],
+      "direct_transition": "Maybe_Mimicker_Malignant_neoplasm_of_vagina"
+    },
+    "Maybe_Mimicker_Malignant_neoplasm_of_vagina": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Malignant_neoplasm_of_vagina",
+          "distribution": 0.02
+        },
+        {
+          "transition": "End_Wellness_Encounter",
+          "distribution": 0.98
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Malignant_neoplasm_of_vagina": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "363445000",
+          "display": "Malignant neoplasm of vagina"
+        }
+      ],
+      "direct_transition": "End_Wellness_Encounter"
+    }
   },
   "gmf_version": 2
 }

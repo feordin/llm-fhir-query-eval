@@ -12,24 +12,163 @@
     "Controls get NO Condition resources for breast cancer and NO endocrine/HER2 therapy."
   ],
   "states": {
-    "Initial": { "type": "Initial", "direct_transition": "Age_Guard" },
-
+    "Initial": {
+      "type": "Initial",
+      "direct_transition": "Age_Guard"
+    },
     "Age_Guard": {
       "type": "Guard",
-      "allow": { "condition_type": "Age", "operator": ">=", "quantity": 40, "unit": "years" },
+      "allow": {
+        "condition_type": "Age",
+        "operator": ">=",
+        "quantity": 40,
+        "unit": "years"
+      },
       "direct_transition": "Set_Control_Flag"
     },
-
-    "Set_Control_Flag": { "type": "SetAttribute", "attribute": "bc_positive", "value": false, "direct_transition": "Wellness_Encounter" },
-
-    "Wellness_Encounter": { "type": "Encounter", "wellness": true, "direct_transition": "End_Wellness_Encounter" },
-
-    "End_Wellness_Encounter": { "type": "EncounterEnd", "direct_transition": "Followup_Delay" },
-
+    "Set_Control_Flag": {
+      "type": "SetAttribute",
+      "attribute": "bc_positive",
+      "value": false,
+      "direct_transition": "Wellness_Encounter"
+    },
+    "Wellness_Encounter": {
+      "type": "Encounter",
+      "wellness": true,
+      "direct_transition": "Maybe_Mimicker_Fibrocystic_disease_of_breast"
+    },
+    "End_Wellness_Encounter": {
+      "type": "EncounterEnd",
+      "direct_transition": "Followup_Delay"
+    },
     "Followup_Delay": {
       "type": "Delay",
-      "range": { "low": 12, "high": 24, "unit": "months" },
+      "range": {
+        "low": 12,
+        "high": 24,
+        "unit": "months"
+      },
       "direct_transition": "Wellness_Encounter"
+    },
+    "Maybe_Mimicker_Fibrocystic_disease_of_breast": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Fibrocystic_disease_of_breast",
+          "distribution": 0.25
+        },
+        {
+          "transition": "Maybe_Mimicker_Fibroadenoma_of_breast",
+          "distribution": 0.75
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Fibrocystic_disease_of_breast": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "27431007",
+          "display": "Fibrocystic disease of breast"
+        }
+      ],
+      "direct_transition": "Maybe_Mimicker_Fibroadenoma_of_breast"
+    },
+    "Maybe_Mimicker_Fibroadenoma_of_breast": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Fibroadenoma_of_breast",
+          "distribution": 0.15
+        },
+        {
+          "transition": "Maybe_Mimicker_Cyst_of_breast",
+          "distribution": 0.85
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Fibroadenoma_of_breast": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "254845004",
+          "display": "Fibroadenoma of breast"
+        }
+      ],
+      "direct_transition": "Maybe_Mimicker_Cyst_of_breast"
+    },
+    "Maybe_Mimicker_Cyst_of_breast": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Cyst_of_breast",
+          "distribution": 0.12
+        },
+        {
+          "transition": "Maybe_Mimicker_Atypical_ductal_hyperplasia_of_breast",
+          "distribution": 0.88
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Cyst_of_breast": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "399294002",
+          "display": "Cyst of breast"
+        }
+      ],
+      "direct_transition": "Maybe_Mimicker_Atypical_ductal_hyperplasia_of_breast"
+    },
+    "Maybe_Mimicker_Atypical_ductal_hyperplasia_of_breast": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Atypical_ductal_hyperplasia_of_breast",
+          "distribution": 0.03
+        },
+        {
+          "transition": "Maybe_Mimicker_Acute_mastitis",
+          "distribution": 0.97
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Atypical_ductal_hyperplasia_of_breast": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "427785007",
+          "display": "Atypical ductal hyperplasia of breast"
+        }
+      ],
+      "direct_transition": "Maybe_Mimicker_Acute_mastitis"
+    },
+    "Maybe_Mimicker_Acute_mastitis": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Acute_mastitis",
+          "distribution": 0.04
+        },
+        {
+          "transition": "End_Wellness_Encounter",
+          "distribution": 0.96
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Acute_mastitis": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "82789004",
+          "display": "Acute mastitis"
+        }
+      ],
+      "direct_transition": "End_Wellness_Encounter"
     }
   },
   "gmf_version": 2

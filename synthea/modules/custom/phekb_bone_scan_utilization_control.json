@@ -1,14 +1,175 @@
 {
   "name": "PheKB Bone Scan Utilization Control",
-  "remarks": ["Control: male age 35+ without prostate cancer or bone scan."],
+  "remarks": [
+    "Control: male age 35+ without prostate cancer or bone scan."
+  ],
   "states": {
-    "Initial": { "type": "Initial", "direct_transition": "Sex_Guard" },
-    "Sex_Guard": { "type": "Guard", "allow": { "condition_type": "Gender", "gender": "M" }, "direct_transition": "Age_Guard" },
-    "Age_Guard": { "type": "Guard", "allow": { "condition_type": "Age", "operator": ">=", "quantity": 35, "unit": "years" }, "direct_transition": "Set_Control_Flag" },
-    "Set_Control_Flag": { "type": "SetAttribute", "attribute": "bs_positive", "value": false, "direct_transition": "Wellness_Encounter" },
-    "Wellness_Encounter": { "type": "Encounter", "wellness": true, "direct_transition": "End_Wellness_Encounter" },
-    "End_Wellness_Encounter": { "type": "EncounterEnd", "direct_transition": "Followup_Delay" },
-    "Followup_Delay": { "type": "Delay", "range": { "low": 12, "high": 24, "unit": "months" }, "direct_transition": "Wellness_Encounter" }
+    "Initial": {
+      "type": "Initial",
+      "direct_transition": "Sex_Guard"
+    },
+    "Sex_Guard": {
+      "type": "Guard",
+      "allow": {
+        "condition_type": "Gender",
+        "gender": "M"
+      },
+      "direct_transition": "Age_Guard"
+    },
+    "Age_Guard": {
+      "type": "Guard",
+      "allow": {
+        "condition_type": "Age",
+        "operator": ">=",
+        "quantity": 35,
+        "unit": "years"
+      },
+      "direct_transition": "Set_Control_Flag"
+    },
+    "Set_Control_Flag": {
+      "type": "SetAttribute",
+      "attribute": "bs_positive",
+      "value": false,
+      "direct_transition": "Wellness_Encounter"
+    },
+    "Wellness_Encounter": {
+      "type": "Encounter",
+      "wellness": true,
+      "direct_transition": "Maybe_Mimicker_Malignant_neoplasm_of_breast"
+    },
+    "End_Wellness_Encounter": {
+      "type": "EncounterEnd",
+      "direct_transition": "Followup_Delay"
+    },
+    "Followup_Delay": {
+      "type": "Delay",
+      "range": {
+        "low": 12,
+        "high": 24,
+        "unit": "months"
+      },
+      "direct_transition": "Wellness_Encounter"
+    },
+    "Maybe_Mimicker_Malignant_neoplasm_of_breast": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Malignant_neoplasm_of_breast",
+          "distribution": 0.1
+        },
+        {
+          "transition": "Maybe_Mimicker_Malignant_neoplasm_of_lung",
+          "distribution": 0.9
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Malignant_neoplasm_of_breast": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "254837009",
+          "display": "Malignant neoplasm of breast"
+        }
+      ],
+      "direct_transition": "Maybe_Mimicker_Malignant_neoplasm_of_lung"
+    },
+    "Maybe_Mimicker_Malignant_neoplasm_of_lung": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Malignant_neoplasm_of_lung",
+          "distribution": 0.07
+        },
+        {
+          "transition": "Maybe_Mimicker_Pathological_fracture",
+          "distribution": 0.9299999999999999
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Malignant_neoplasm_of_lung": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "363358000",
+          "display": "Malignant neoplasm of lung"
+        }
+      ],
+      "direct_transition": "Maybe_Mimicker_Pathological_fracture"
+    },
+    "Maybe_Mimicker_Pathological_fracture": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Pathological_fracture",
+          "distribution": 0.04
+        },
+        {
+          "transition": "Maybe_Mimicker_Osteomyelitis",
+          "distribution": 0.96
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Pathological_fracture": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "268029009",
+          "display": "Pathological fracture"
+        }
+      ],
+      "direct_transition": "Maybe_Mimicker_Osteomyelitis"
+    },
+    "Maybe_Mimicker_Osteomyelitis": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Osteomyelitis",
+          "distribution": 0.03
+        },
+        {
+          "transition": "Maybe_Mimicker_Osteitis_deformans",
+          "distribution": 0.97
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Osteomyelitis": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "60168000",
+          "display": "Osteomyelitis"
+        }
+      ],
+      "direct_transition": "Maybe_Mimicker_Osteitis_deformans"
+    },
+    "Maybe_Mimicker_Osteitis_deformans": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Osteitis_deformans",
+          "distribution": 0.02
+        },
+        {
+          "transition": "End_Wellness_Encounter",
+          "distribution": 0.98
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Osteitis_deformans": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "2089002",
+          "display": "Osteitis deformans"
+        }
+      ],
+      "direct_transition": "End_Wellness_Encounter"
+    }
   },
   "gmf_version": 2
 }

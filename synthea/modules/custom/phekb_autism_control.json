@@ -17,7 +17,6 @@
       "type": "Initial",
       "direct_transition": "Age_Guard"
     },
-
     "Age_Guard": {
       "type": "Guard",
       "allow": {
@@ -28,27 +27,26 @@
       },
       "direct_transition": "Set_Control_Flag"
     },
-
     "Set_Control_Flag": {
       "type": "SetAttribute",
       "attribute": "asd_control",
       "value": true,
       "direct_transition": "Wellness_Encounter"
     },
-
     "Wellness_Encounter": {
       "type": "Encounter",
       "wellness": true,
-      "direct_transition": "Check_Other_Conditions"
+      "direct_transition": "Maybe_Mimicker_Attention_deficit_hyperactivity_disorder"
     },
-
     "Check_Other_Conditions": {
       "type": "Simple",
-      "remarks": ["Some control patients have common pediatric conditions for variety"],
+      "remarks": [
+        "Some control patients have common pediatric conditions for variety"
+      ],
       "distributed_transition": [
         {
           "transition": "Diagnose_Otitis_Media",
-          "distribution": 0.30
+          "distribution": 0.3
         },
         {
           "transition": "Diagnose_URI",
@@ -60,7 +58,6 @@
         }
       ]
     },
-
     "Diagnose_Otitis_Media": {
       "type": "ConditionOnset",
       "assign_to_attribute": "otitis_media",
@@ -71,10 +68,11 @@
           "display": "Otitis media"
         }
       ],
-      "remarks": ["Common pediatric condition for control population variety"],
+      "remarks": [
+        "Common pediatric condition for control population variety"
+      ],
       "direct_transition": "Prescribe_Amoxicillin"
     },
-
     "Prescribe_Amoxicillin": {
       "type": "MedicationOrder",
       "codes": [
@@ -87,7 +85,6 @@
       "reason": "otitis_media",
       "direct_transition": "End_Wellness_Encounter"
     },
-
     "Diagnose_URI": {
       "type": "ConditionOnset",
       "assign_to_attribute": "upper_respiratory_infection",
@@ -98,18 +95,140 @@
           "display": "Upper respiratory infection"
         }
       ],
-      "remarks": ["Common pediatric condition for control population variety"],
+      "remarks": [
+        "Common pediatric condition for control population variety"
+      ],
       "direct_transition": "End_Wellness_Encounter"
     },
-
     "End_Wellness_Encounter": {
       "type": "EncounterEnd",
       "direct_transition": "Terminal_Control"
     },
-
     "Terminal_Control": {
       "type": "Terminal",
-      "remarks": ["Control patient - should NOT be found by ASD phenotype query"]
+      "remarks": [
+        "Control patient - should NOT be found by ASD phenotype query"
+      ]
+    },
+    "Maybe_Mimicker_Attention_deficit_hyperactivity_disorder": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Attention_deficit_hyperactivity_disorder",
+          "distribution": 0.2
+        },
+        {
+          "transition": "Maybe_Mimicker_Intellectual_disability",
+          "distribution": 0.8
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Attention_deficit_hyperactivity_disorder": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "406506008",
+          "display": "Attention deficit hyperactivity disorder"
+        }
+      ],
+      "direct_transition": "Maybe_Mimicker_Intellectual_disability"
+    },
+    "Maybe_Mimicker_Intellectual_disability": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Intellectual_disability",
+          "distribution": 0.1
+        },
+        {
+          "transition": "Maybe_Mimicker_Developmental_language_disorder",
+          "distribution": 0.9
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Intellectual_disability": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "110359009",
+          "display": "Intellectual disability"
+        }
+      ],
+      "direct_transition": "Maybe_Mimicker_Developmental_language_disorder"
+    },
+    "Maybe_Mimicker_Developmental_language_disorder": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Developmental_language_disorder",
+          "distribution": 0.12
+        },
+        {
+          "transition": "Maybe_Mimicker_Social_phobia",
+          "distribution": 0.88
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Developmental_language_disorder": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "280032002",
+          "display": "Developmental language disorder"
+        }
+      ],
+      "direct_transition": "Maybe_Mimicker_Social_phobia"
+    },
+    "Maybe_Mimicker_Social_phobia": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Social_phobia",
+          "distribution": 0.04
+        },
+        {
+          "transition": "Maybe_Mimicker_Reactive_attachment_disorder_of_childhood",
+          "distribution": 0.96
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Social_phobia": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "25501002",
+          "display": "Social phobia"
+        }
+      ],
+      "direct_transition": "Maybe_Mimicker_Reactive_attachment_disorder_of_childhood"
+    },
+    "Maybe_Mimicker_Reactive_attachment_disorder_of_childhood": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Reactive_attachment_disorder_of_childhood",
+          "distribution": 0.02
+        },
+        {
+          "transition": "Check_Other_Conditions",
+          "distribution": 0.98
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Reactive_attachment_disorder_of_childhood": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "44124003",
+          "display": "Reactive attachment disorder of early childhood"
+        }
+      ],
+      "direct_transition": "Check_Other_Conditions"
     }
   },
   "gmf_version": 2

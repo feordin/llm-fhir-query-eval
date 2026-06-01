@@ -17,10 +17,11 @@
       "type": "Initial",
       "direct_transition": "Age_Guard"
     },
-
     "Age_Guard": {
       "type": "Guard",
-      "remarks": ["Match the same age range as the phenotype (>= 5)"],
+      "remarks": [
+        "Match the same age range as the phenotype (>= 5)"
+      ],
       "allow": {
         "condition_type": "Age",
         "operator": ">=",
@@ -29,11 +30,12 @@
       },
       "direct_transition": "Wellness_Visit"
     },
-
     "Wellness_Visit": {
       "type": "Encounter",
       "encounter_class": "ambulatory",
-      "remarks": ["Routine encounter for control patients"],
+      "remarks": [
+        "Routine encounter for control patients"
+      ],
       "codes": [
         {
           "system": "SNOMED-CT",
@@ -41,9 +43,8 @@
           "display": "Encounter for check up"
         }
       ],
-      "direct_transition": "Record_Vital_Signs"
+      "direct_transition": "Maybe_Mimicker_Constipation"
     },
-
     "Record_Vital_Signs": {
       "type": "Observation",
       "category": "vital-signs",
@@ -61,7 +62,6 @@
       },
       "direct_transition": "Check_Comorbidities"
     },
-
     "Check_Comorbidities": {
       "type": "Simple",
       "remarks": [
@@ -71,27 +71,34 @@
       "distributed_transition": [
         {
           "transition": "Has_Gastroenteritis",
-          "distribution": 0.30,
-          "remarks": ["30% have gastroenteritis - abdominal but not appendicitis"]
+          "distribution": 0.3,
+          "remarks": [
+            "30% have gastroenteritis - abdominal but not appendicitis"
+          ]
         },
         {
           "transition": "Has_Abdominal_Pain",
           "distribution": 0.25,
-          "remarks": ["25% have abdominal pain - similar presentation but not appendicitis"]
+          "remarks": [
+            "25% have abdominal pain - similar presentation but not appendicitis"
+          ]
         },
         {
           "transition": "Has_GERD",
-          "distribution": 0.20,
-          "remarks": ["20% have GERD - GI condition but not appendicitis"]
+          "distribution": 0.2,
+          "remarks": [
+            "20% have GERD - GI condition but not appendicitis"
+          ]
         },
         {
           "transition": "Healthy_Patient",
           "distribution": 0.25,
-          "remarks": ["25% are generally healthy"]
+          "remarks": [
+            "25% are generally healthy"
+          ]
         }
       ]
     },
-
     "Has_Gastroenteritis": {
       "type": "ConditionOnset",
       "codes": [
@@ -103,7 +110,6 @@
       ],
       "direct_transition": "End_Encounter"
     },
-
     "Has_Abdominal_Pain": {
       "type": "ConditionOnset",
       "codes": [
@@ -115,7 +121,6 @@
       ],
       "direct_transition": "End_Encounter"
     },
-
     "Has_GERD": {
       "type": "ConditionOnset",
       "codes": [
@@ -127,21 +132,142 @@
       ],
       "direct_transition": "End_Encounter"
     },
-
     "Healthy_Patient": {
       "type": "Simple",
-      "remarks": ["No additional conditions"],
+      "remarks": [
+        "No additional conditions"
+      ],
       "direct_transition": "End_Encounter"
     },
-
     "End_Encounter": {
       "type": "EncounterEnd",
       "direct_transition": "Terminal_Control"
     },
-
     "Terminal_Control": {
       "type": "Terminal",
-      "remarks": ["Control patient - should NOT be found by appendicitis phenotype query"]
+      "remarks": [
+        "Control patient - should NOT be found by appendicitis phenotype query"
+      ]
+    },
+    "Maybe_Mimicker_Constipation": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Constipation",
+          "distribution": 0.2
+        },
+        {
+          "transition": "Maybe_Mimicker_Acute_gastroenteritis",
+          "distribution": 0.8
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Constipation": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "14760008",
+          "display": "Constipation"
+        }
+      ],
+      "direct_transition": "Maybe_Mimicker_Acute_gastroenteritis"
+    },
+    "Maybe_Mimicker_Acute_gastroenteritis": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Acute_gastroenteritis",
+          "distribution": 0.15
+        },
+        {
+          "transition": "Maybe_Mimicker_Mesenteric_lymphadenitis",
+          "distribution": 0.85
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Acute_gastroenteritis": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "69776003",
+          "display": "Acute gastroenteritis"
+        }
+      ],
+      "direct_transition": "Maybe_Mimicker_Mesenteric_lymphadenitis"
+    },
+    "Maybe_Mimicker_Mesenteric_lymphadenitis": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Mesenteric_lymphadenitis",
+          "distribution": 0.1
+        },
+        {
+          "transition": "Maybe_Mimicker_Cyst_of_ovary",
+          "distribution": 0.9
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Mesenteric_lymphadenitis": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "44897000",
+          "display": "Mesenteric lymphadenitis"
+        }
+      ],
+      "direct_transition": "Maybe_Mimicker_Cyst_of_ovary"
+    },
+    "Maybe_Mimicker_Cyst_of_ovary": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Cyst_of_ovary",
+          "distribution": 0.05
+        },
+        {
+          "transition": "Maybe_Mimicker_Female_pelvic_inflammatory_disease",
+          "distribution": 0.95
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Cyst_of_ovary": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "79883001",
+          "display": "Cyst of ovary"
+        }
+      ],
+      "direct_transition": "Maybe_Mimicker_Female_pelvic_inflammatory_disease"
+    },
+    "Maybe_Mimicker_Female_pelvic_inflammatory_disease": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Female_pelvic_inflammatory_disease",
+          "distribution": 0.03
+        },
+        {
+          "transition": "Record_Vital_Signs",
+          "distribution": 0.97
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Female_pelvic_inflammatory_disease": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "198130006",
+          "display": "Female pelvic inflammatory disease"
+        }
+      ],
+      "direct_transition": "Record_Vital_Signs"
     }
   },
   "gmf_version": 2
