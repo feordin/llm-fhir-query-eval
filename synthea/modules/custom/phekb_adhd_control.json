@@ -18,7 +18,6 @@
       "type": "Initial",
       "direct_transition": "Age_Guard"
     },
-
     "Age_Guard": {
       "type": "Guard",
       "allow": {
@@ -29,23 +28,22 @@
       },
       "direct_transition": "Set_Control_Flag"
     },
-
     "Set_Control_Flag": {
       "type": "SetAttribute",
       "attribute": "adhd_control",
       "value": true,
       "direct_transition": "Wellness_Encounter"
     },
-
     "Wellness_Encounter": {
       "type": "Encounter",
       "wellness": true,
-      "direct_transition": "Check_Other_Conditions"
+      "direct_transition": "Maybe_Mimicker_Developmental_academic_disorder"
     },
-
     "Check_Other_Conditions": {
       "type": "Simple",
-      "remarks": ["Some control patients have non-ADHD conditions for variety"],
+      "remarks": [
+        "Some control patients have non-ADHD conditions for variety"
+      ],
       "distributed_transition": [
         {
           "transition": "Diagnose_Common_Cold",
@@ -53,7 +51,7 @@
         },
         {
           "transition": "Diagnose_Otitis_Media",
-          "distribution": 0.20
+          "distribution": 0.2
         },
         {
           "transition": "Diagnose_Allergic_Rhinitis",
@@ -61,11 +59,10 @@
         },
         {
           "transition": "End_Wellness_Encounter",
-          "distribution": 0.40
+          "distribution": 0.4
         }
       ]
     },
-
     "Diagnose_Common_Cold": {
       "type": "ConditionOnset",
       "assign_to_attribute": "common_cold",
@@ -76,10 +73,11 @@
           "display": "Common cold"
         }
       ],
-      "remarks": ["Non-ADHD condition for control population variety"],
+      "remarks": [
+        "Non-ADHD condition for control population variety"
+      ],
       "direct_transition": "End_Wellness_Encounter"
     },
-
     "Diagnose_Otitis_Media": {
       "type": "ConditionOnset",
       "assign_to_attribute": "otitis_media",
@@ -90,10 +88,11 @@
           "display": "Otitis media"
         }
       ],
-      "remarks": ["Non-ADHD condition - ear infection, common in pediatric population"],
+      "remarks": [
+        "Non-ADHD condition - ear infection, common in pediatric population"
+      ],
       "direct_transition": "Prescribe_Amoxicillin"
     },
-
     "Prescribe_Amoxicillin": {
       "type": "MedicationOrder",
       "codes": [
@@ -106,7 +105,6 @@
       "reason": "otitis_media",
       "direct_transition": "End_Wellness_Encounter"
     },
-
     "Diagnose_Allergic_Rhinitis": {
       "type": "ConditionOnset",
       "assign_to_attribute": "allergic_rhinitis",
@@ -117,10 +115,11 @@
           "display": "Allergic rhinitis"
         }
       ],
-      "remarks": ["Non-ADHD condition for control population variety"],
+      "remarks": [
+        "Non-ADHD condition for control population variety"
+      ],
       "direct_transition": "Prescribe_Cetirizine"
     },
-
     "Prescribe_Cetirizine": {
       "type": "MedicationOrder",
       "codes": [
@@ -133,15 +132,159 @@
       "reason": "allergic_rhinitis",
       "direct_transition": "End_Wellness_Encounter"
     },
-
     "End_Wellness_Encounter": {
       "type": "EncounterEnd",
       "direct_transition": "Terminal_Control"
     },
-
     "Terminal_Control": {
       "type": "Terminal",
-      "remarks": ["Control patient - should NOT be found by ADHD phenotype query"]
+      "remarks": [
+        "Control patient - should NOT be found by ADHD phenotype query"
+      ]
+    },
+    "Maybe_Mimicker_Anxiety_disorder": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Anxiety_disorder",
+          "distribution": 0.15
+        },
+        {
+          "transition": "Maybe_Mimicker_Learning_disability",
+          "distribution": 0.85
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Anxiety_disorder": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "197480006",
+          "display": "Anxiety disorder"
+        }
+      ],
+      "direct_transition": "Maybe_Mimicker_Learning_disability"
+    },
+    "Maybe_Mimicker_Learning_disability": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Learning_disability",
+          "distribution": 0.08
+        },
+        {
+          "transition": "Maybe_Mimicker_Depressive_disorder",
+          "distribution": 0.92
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Learning_disability": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "408468001",
+          "display": "Learning disability - specialty"
+        }
+      ],
+      "direct_transition": "Maybe_Mimicker_Depressive_disorder"
+    },
+    "Maybe_Mimicker_Depressive_disorder": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Depressive_disorder",
+          "distribution": 0.06
+        },
+        {
+          "transition": "Maybe_Mimicker_Oppositional_defiant_disorder",
+          "distribution": 0.94
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Depressive_disorder": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "35489007",
+          "display": "Depressive disorder"
+        }
+      ],
+      "direct_transition": "Maybe_Mimicker_Oppositional_defiant_disorder"
+    },
+    "Maybe_Mimicker_Oppositional_defiant_disorder": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Oppositional_defiant_disorder",
+          "distribution": 0.04
+        },
+        {
+          "transition": "Check_Other_Conditions",
+          "distribution": 0.96
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Oppositional_defiant_disorder": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "18941000",
+          "display": "Oppositional defiant disorder"
+        }
+      ],
+      "direct_transition": "Check_Other_Conditions"
+    },
+    "Maybe_Mimicker_Pervasive_developmental_disorder": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Pervasive_developmental_disorder",
+          "distribution": 0.04
+        },
+        {
+          "transition": "Maybe_Mimicker_Anxiety_disorder",
+          "distribution": 0.96
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Pervasive_developmental_disorder": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "35919005",
+          "display": "Autism spectrum disorder"
+        }
+      ],
+      "direct_transition": "Maybe_Mimicker_Anxiety_disorder"
+    },
+    "Maybe_Mimicker_Developmental_academic_disorder": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Developmental_academic_disorder",
+          "distribution": 0.08
+        },
+        {
+          "transition": "Maybe_Mimicker_Pervasive_developmental_disorder",
+          "distribution": 0.92
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Developmental_academic_disorder": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "1855002",
+          "display": "Developmental academic disorder"
+        }
+      ],
+      "direct_transition": "Maybe_Mimicker_Pervasive_developmental_disorder"
     }
   },
   "gmf_version": 2

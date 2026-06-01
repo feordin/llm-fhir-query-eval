@@ -22,7 +22,6 @@
       "type": "Initial",
       "direct_transition": "Age_Guard"
     },
-
     "Age_Guard": {
       "type": "Guard",
       "allow": {
@@ -33,27 +32,26 @@
       },
       "direct_transition": "Set_Control_Flag"
     },
-
     "Set_Control_Flag": {
       "type": "SetAttribute",
       "attribute": "acei_cough_control",
       "value": true,
       "direct_transition": "Wellness_Encounter"
     },
-
     "Wellness_Encounter": {
       "type": "Encounter",
       "wellness": true,
-      "direct_transition": "Check_Conditions"
+      "direct_transition": "Maybe_Mimicker_Gastroesophageal_reflux_disease"
     },
-
     "Check_Conditions": {
       "type": "Simple",
-      "remarks": ["Some control patients have non-ACEi conditions for variety"],
+      "remarks": [
+        "Some control patients have non-ACEi conditions for variety"
+      ],
       "distributed_transition": [
         {
           "transition": "Diagnose_Hypertension_ARB",
-          "distribution": 0.30
+          "distribution": 0.3
         },
         {
           "transition": "Diagnose_Hypertension_CCB",
@@ -61,7 +59,7 @@
         },
         {
           "transition": "Diagnose_Hyperlipidemia",
-          "distribution": 0.20
+          "distribution": 0.2
         },
         {
           "transition": "End_Wellness_Encounter",
@@ -69,7 +67,6 @@
         }
       ]
     },
-
     "Diagnose_Hypertension_ARB": {
       "type": "ConditionOnset",
       "assign_to_attribute": "hypertension_ctrl",
@@ -80,10 +77,11 @@
           "display": "Hypertensive disorder"
         }
       ],
-      "remarks": ["Hypertension treated with ARB (not ACEi) - should not match ACEi queries"],
+      "remarks": [
+        "Hypertension treated with ARB (not ACEi) - should not match ACEi queries"
+      ],
       "direct_transition": "Prescribe_Losartan"
     },
-
     "Prescribe_Losartan": {
       "type": "MedicationOrder",
       "codes": [
@@ -96,7 +94,6 @@
       "reason": "hypertension_ctrl",
       "direct_transition": "End_Wellness_Encounter"
     },
-
     "Diagnose_Hypertension_CCB": {
       "type": "ConditionOnset",
       "assign_to_attribute": "hypertension_ctrl",
@@ -107,10 +104,11 @@
           "display": "Hypertensive disorder"
         }
       ],
-      "remarks": ["Hypertension treated with calcium channel blocker (not ACEi)"],
+      "remarks": [
+        "Hypertension treated with calcium channel blocker (not ACEi)"
+      ],
       "direct_transition": "Prescribe_Amlodipine"
     },
-
     "Prescribe_Amlodipine": {
       "type": "MedicationOrder",
       "codes": [
@@ -123,7 +121,6 @@
       "reason": "hypertension_ctrl",
       "direct_transition": "End_Wellness_Encounter"
     },
-
     "Diagnose_Hyperlipidemia": {
       "type": "ConditionOnset",
       "assign_to_attribute": "hyperlipidemia_ctrl",
@@ -134,18 +131,140 @@
           "display": "Hyperlipidemia"
         }
       ],
-      "remarks": ["Non-cardiovascular medication condition for variety"],
+      "remarks": [
+        "Non-cardiovascular medication condition for variety"
+      ],
       "direct_transition": "End_Wellness_Encounter"
     },
-
     "End_Wellness_Encounter": {
       "type": "EncounterEnd",
       "direct_transition": "Terminal_Control"
     },
-
     "Terminal_Control": {
       "type": "Terminal",
-      "remarks": ["Control patient - should NOT be found by ACEi medication or cough queries"]
+      "remarks": [
+        "Control patient - should NOT be found by ACEi medication or cough queries"
+      ]
+    },
+    "Maybe_Mimicker_Gastroesophageal_reflux_disease": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Gastroesophageal_reflux_disease",
+          "distribution": 0.2
+        },
+        {
+          "transition": "Maybe_Mimicker_Posterior_rhinorrhea",
+          "distribution": 0.8
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Gastroesophageal_reflux_disease": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "235595009",
+          "display": "Gastroesophageal reflux disease"
+        }
+      ],
+      "direct_transition": "Maybe_Mimicker_Posterior_rhinorrhea"
+    },
+    "Maybe_Mimicker_Posterior_rhinorrhea": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Posterior_rhinorrhea",
+          "distribution": 0.15
+        },
+        {
+          "transition": "Maybe_Mimicker_Cough_variant_asthma",
+          "distribution": 0.85
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Posterior_rhinorrhea": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "75803007",
+          "display": "Posterior rhinorrhea"
+        }
+      ],
+      "direct_transition": "Maybe_Mimicker_Cough_variant_asthma"
+    },
+    "Maybe_Mimicker_Cough_variant_asthma": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Cough_variant_asthma",
+          "distribution": 0.08
+        },
+        {
+          "transition": "Maybe_Mimicker_Chronic_bronchitis",
+          "distribution": 0.92
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Cough_variant_asthma": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "409663006",
+          "display": "Cough variant asthma"
+        }
+      ],
+      "direct_transition": "Maybe_Mimicker_Chronic_bronchitis"
+    },
+    "Maybe_Mimicker_Chronic_bronchitis": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Chronic_bronchitis",
+          "distribution": 0.06
+        },
+        {
+          "transition": "Maybe_Mimicker_Bronchiectasis",
+          "distribution": 0.94
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Chronic_bronchitis": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "63480004",
+          "display": "Chronic bronchitis"
+        }
+      ],
+      "direct_transition": "Maybe_Mimicker_Bronchiectasis"
+    },
+    "Maybe_Mimicker_Bronchiectasis": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Bronchiectasis",
+          "distribution": 0.02
+        },
+        {
+          "transition": "Check_Conditions",
+          "distribution": 0.98
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Bronchiectasis": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "12295008",
+          "display": "Bronchiectasis"
+        }
+      ],
+      "direct_transition": "Check_Conditions"
     }
   },
   "gmf_version": 2
