@@ -1,13 +1,167 @@
 {
   "name": "PheKB Melanoma Control",
-  "remarks": ["Control module for melanoma. Generates patients age 30+ without melanoma dx."],
+  "remarks": [
+    "Control module for melanoma. Generates patients age 30+ without melanoma dx."
+  ],
   "states": {
-    "Initial": { "type": "Initial", "direct_transition": "Age_Guard" },
-    "Age_Guard": { "type": "Guard", "allow": { "condition_type": "Age", "operator": ">=", "quantity": 30, "unit": "years" }, "direct_transition": "Set_Control_Flag" },
-    "Set_Control_Flag": { "type": "SetAttribute", "attribute": "mel_positive", "value": false, "direct_transition": "Wellness_Encounter" },
-    "Wellness_Encounter": { "type": "Encounter", "wellness": true, "direct_transition": "End_Wellness_Encounter" },
-    "End_Wellness_Encounter": { "type": "EncounterEnd", "direct_transition": "Followup_Delay" },
-    "Followup_Delay": { "type": "Delay", "range": { "low": 12, "high": 24, "unit": "months" }, "direct_transition": "Wellness_Encounter" }
+    "Initial": {
+      "type": "Initial",
+      "direct_transition": "Age_Guard"
+    },
+    "Age_Guard": {
+      "type": "Guard",
+      "allow": {
+        "condition_type": "Age",
+        "operator": ">=",
+        "quantity": 30,
+        "unit": "years"
+      },
+      "direct_transition": "Set_Control_Flag"
+    },
+    "Set_Control_Flag": {
+      "type": "SetAttribute",
+      "attribute": "mel_positive",
+      "value": false,
+      "direct_transition": "Wellness_Encounter"
+    },
+    "Wellness_Encounter": {
+      "type": "Encounter",
+      "wellness": true,
+      "direct_transition": "Maybe_Mimicker_Melanocytic_nevus"
+    },
+    "End_Wellness_Encounter": {
+      "type": "EncounterEnd",
+      "direct_transition": "Followup_Delay"
+    },
+    "Followup_Delay": {
+      "type": "Delay",
+      "range": {
+        "low": 12,
+        "high": 24,
+        "unit": "months"
+      },
+      "direct_transition": "Wellness_Encounter"
+    },
+    "Maybe_Mimicker_Melanocytic_nevus": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Melanocytic_nevus",
+          "distribution": 0.4
+        },
+        {
+          "transition": "Maybe_Mimicker_Dysplastic_nevus",
+          "distribution": 0.6
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Melanocytic_nevus": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "400096001",
+          "display": "Melanocytic nevus"
+        }
+      ],
+      "direct_transition": "Maybe_Mimicker_Dysplastic_nevus"
+    },
+    "Maybe_Mimicker_Dysplastic_nevus": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Dysplastic_nevus",
+          "distribution": 0.1
+        },
+        {
+          "transition": "Maybe_Mimicker_Seborrheic_keratosis",
+          "distribution": 0.9
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Dysplastic_nevus": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "61814002",
+          "display": "Dysplastic nevus"
+        }
+      ],
+      "direct_transition": "Maybe_Mimicker_Seborrheic_keratosis"
+    },
+    "Maybe_Mimicker_Seborrheic_keratosis": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Seborrheic_keratosis",
+          "distribution": 0.2
+        },
+        {
+          "transition": "Maybe_Mimicker_Basal_cell_carcinoma_of_skin",
+          "distribution": 0.8
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Seborrheic_keratosis": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "25499005",
+          "display": "Seborrheic keratosis"
+        }
+      ],
+      "direct_transition": "Maybe_Mimicker_Basal_cell_carcinoma_of_skin"
+    },
+    "Maybe_Mimicker_Basal_cell_carcinoma_of_skin": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Basal_cell_carcinoma_of_skin",
+          "distribution": 0.15
+        },
+        {
+          "transition": "Maybe_Mimicker_Squamous_cell_carcinoma_of_skin",
+          "distribution": 0.85
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Basal_cell_carcinoma_of_skin": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "254701007",
+          "display": "Basal cell carcinoma of skin"
+        }
+      ],
+      "direct_transition": "Maybe_Mimicker_Squamous_cell_carcinoma_of_skin"
+    },
+    "Maybe_Mimicker_Squamous_cell_carcinoma_of_skin": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Squamous_cell_carcinoma_of_skin",
+          "distribution": 0.08
+        },
+        {
+          "transition": "End_Wellness_Encounter",
+          "distribution": 0.92
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Squamous_cell_carcinoma_of_skin": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "254651007",
+          "display": "Squamous cell carcinoma of skin"
+        }
+      ],
+      "direct_transition": "End_Wellness_Encounter"
+    }
   },
   "gmf_version": 2
 }

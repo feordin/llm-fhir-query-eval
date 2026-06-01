@@ -1,13 +1,167 @@
 {
   "name": "PheKB Tuberculosis Control",
-  "remarks": ["Control module for TB. Generates adult patients without TB dx or anti-TB meds."],
+  "remarks": [
+    "Control module for TB. Generates adult patients without TB dx or anti-TB meds."
+  ],
   "states": {
-    "Initial": { "type": "Initial", "direct_transition": "Age_Guard" },
-    "Age_Guard": { "type": "Guard", "allow": { "condition_type": "Age", "operator": ">=", "quantity": 18, "unit": "years" }, "direct_transition": "Set_Control_Flag" },
-    "Set_Control_Flag": { "type": "SetAttribute", "attribute": "tb_positive", "value": false, "direct_transition": "Wellness_Encounter" },
-    "Wellness_Encounter": { "type": "Encounter", "wellness": true, "direct_transition": "End_Wellness_Encounter" },
-    "End_Wellness_Encounter": { "type": "EncounterEnd", "direct_transition": "Followup_Delay" },
-    "Followup_Delay": { "type": "Delay", "range": { "low": 12, "high": 24, "unit": "months" }, "direct_transition": "Wellness_Encounter" }
+    "Initial": {
+      "type": "Initial",
+      "direct_transition": "Age_Guard"
+    },
+    "Age_Guard": {
+      "type": "Guard",
+      "allow": {
+        "condition_type": "Age",
+        "operator": ">=",
+        "quantity": 18,
+        "unit": "years"
+      },
+      "direct_transition": "Set_Control_Flag"
+    },
+    "Set_Control_Flag": {
+      "type": "SetAttribute",
+      "attribute": "tb_positive",
+      "value": false,
+      "direct_transition": "Wellness_Encounter"
+    },
+    "Wellness_Encounter": {
+      "type": "Encounter",
+      "wellness": true,
+      "direct_transition": "Maybe_Mimicker_Pneumonia"
+    },
+    "End_Wellness_Encounter": {
+      "type": "EncounterEnd",
+      "direct_transition": "Followup_Delay"
+    },
+    "Followup_Delay": {
+      "type": "Delay",
+      "range": {
+        "low": 12,
+        "high": 24,
+        "unit": "months"
+      },
+      "direct_transition": "Wellness_Encounter"
+    },
+    "Maybe_Mimicker_Pneumonia": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Pneumonia",
+          "distribution": 0.3
+        },
+        {
+          "transition": "Maybe_Mimicker_Malignant_neoplasm_of_lung",
+          "distribution": 0.7
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Pneumonia": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "233604007",
+          "display": "Pneumonia"
+        }
+      ],
+      "direct_transition": "Maybe_Mimicker_Malignant_neoplasm_of_lung"
+    },
+    "Maybe_Mimicker_Malignant_neoplasm_of_lung": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Malignant_neoplasm_of_lung",
+          "distribution": 0.08
+        },
+        {
+          "transition": "Maybe_Mimicker_Atypical_mycobacterial_infection",
+          "distribution": 0.92
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Malignant_neoplasm_of_lung": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "363358000",
+          "display": "Malignant neoplasm of lung"
+        }
+      ],
+      "direct_transition": "Maybe_Mimicker_Atypical_mycobacterial_infection"
+    },
+    "Maybe_Mimicker_Atypical_mycobacterial_infection": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Atypical_mycobacterial_infection",
+          "distribution": 0.05
+        },
+        {
+          "transition": "Maybe_Mimicker_Sarcoidosis",
+          "distribution": 0.95
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Atypical_mycobacterial_infection": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "111812000",
+          "display": "Atypical mycobacterial infection"
+        }
+      ],
+      "direct_transition": "Maybe_Mimicker_Sarcoidosis"
+    },
+    "Maybe_Mimicker_Sarcoidosis": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Sarcoidosis",
+          "distribution": 0.04
+        },
+        {
+          "transition": "Maybe_Mimicker_Histoplasmosis",
+          "distribution": 0.96
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Sarcoidosis": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "31541009",
+          "display": "Sarcoidosis"
+        }
+      ],
+      "direct_transition": "Maybe_Mimicker_Histoplasmosis"
+    },
+    "Maybe_Mimicker_Histoplasmosis": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Histoplasmosis",
+          "distribution": 0.03
+        },
+        {
+          "transition": "End_Wellness_Encounter",
+          "distribution": 0.97
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Histoplasmosis": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "12962009",
+          "display": "Histoplasmosis"
+        }
+      ],
+      "direct_transition": "End_Wellness_Encounter"
+    }
   },
   "gmf_version": 2
 }

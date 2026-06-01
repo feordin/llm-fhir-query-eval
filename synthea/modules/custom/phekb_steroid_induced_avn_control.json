@@ -1,13 +1,167 @@
 {
   "name": "PheKB Steroid-Induced Osteonecrosis Control",
-  "remarks": ["Control module. Generates patients age 30+ without AVN dx or prednisone."],
+  "remarks": [
+    "Control module. Generates patients age 30+ without AVN dx or prednisone."
+  ],
   "states": {
-    "Initial": { "type": "Initial", "direct_transition": "Age_Guard" },
-    "Age_Guard": { "type": "Guard", "allow": { "condition_type": "Age", "operator": ">=", "quantity": 30, "unit": "years" }, "direct_transition": "Set_Control_Flag" },
-    "Set_Control_Flag": { "type": "SetAttribute", "attribute": "avn_positive", "value": false, "direct_transition": "Wellness_Encounter" },
-    "Wellness_Encounter": { "type": "Encounter", "wellness": true, "direct_transition": "End_Wellness_Encounter" },
-    "End_Wellness_Encounter": { "type": "EncounterEnd", "direct_transition": "Followup_Delay" },
-    "Followup_Delay": { "type": "Delay", "range": { "low": 12, "high": 24, "unit": "months" }, "direct_transition": "Wellness_Encounter" }
+    "Initial": {
+      "type": "Initial",
+      "direct_transition": "Age_Guard"
+    },
+    "Age_Guard": {
+      "type": "Guard",
+      "allow": {
+        "condition_type": "Age",
+        "operator": ">=",
+        "quantity": 30,
+        "unit": "years"
+      },
+      "direct_transition": "Set_Control_Flag"
+    },
+    "Set_Control_Flag": {
+      "type": "SetAttribute",
+      "attribute": "avn_positive",
+      "value": false,
+      "direct_transition": "Wellness_Encounter"
+    },
+    "Wellness_Encounter": {
+      "type": "Encounter",
+      "wellness": true,
+      "direct_transition": "Maybe_Mimicker_Osteoarthritis_of_hip"
+    },
+    "End_Wellness_Encounter": {
+      "type": "EncounterEnd",
+      "direct_transition": "Followup_Delay"
+    },
+    "Followup_Delay": {
+      "type": "Delay",
+      "range": {
+        "low": 12,
+        "high": 24,
+        "unit": "months"
+      },
+      "direct_transition": "Wellness_Encounter"
+    },
+    "Maybe_Mimicker_Osteoarthritis_of_hip": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Osteoarthritis_of_hip",
+          "distribution": 0.3
+        },
+        {
+          "transition": "Maybe_Mimicker_Fracture_of_neck_of_femur",
+          "distribution": 0.7
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Osteoarthritis_of_hip": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "239872002",
+          "display": "Osteoarthritis of hip"
+        }
+      ],
+      "direct_transition": "Maybe_Mimicker_Fracture_of_neck_of_femur"
+    },
+    "Maybe_Mimicker_Fracture_of_neck_of_femur": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Fracture_of_neck_of_femur",
+          "distribution": 0.05
+        },
+        {
+          "transition": "Maybe_Mimicker_Transient_osteoporosis",
+          "distribution": 0.95
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Fracture_of_neck_of_femur": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "5913000",
+          "display": "Fracture of neck of femur"
+        }
+      ],
+      "direct_transition": "Maybe_Mimicker_Transient_osteoporosis"
+    },
+    "Maybe_Mimicker_Transient_osteoporosis": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Transient_osteoporosis",
+          "distribution": 0.03
+        },
+        {
+          "transition": "Maybe_Mimicker_Bacterial_arthritis",
+          "distribution": 0.97
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Transient_osteoporosis": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "699528002",
+          "display": "Transient osteoporosis"
+        }
+      ],
+      "direct_transition": "Maybe_Mimicker_Bacterial_arthritis"
+    },
+    "Maybe_Mimicker_Bacterial_arthritis": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Bacterial_arthritis",
+          "distribution": 0.05
+        },
+        {
+          "transition": "Maybe_Mimicker_Osteomyelitis",
+          "distribution": 0.95
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Bacterial_arthritis": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "48245008",
+          "display": "Bacterial arthritis"
+        }
+      ],
+      "direct_transition": "Maybe_Mimicker_Osteomyelitis"
+    },
+    "Maybe_Mimicker_Osteomyelitis": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Osteomyelitis",
+          "distribution": 0.04
+        },
+        {
+          "transition": "End_Wellness_Encounter",
+          "distribution": 0.96
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Osteomyelitis": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "60168000",
+          "display": "Osteomyelitis"
+        }
+      ],
+      "direct_transition": "End_Wellness_Encounter"
+    }
   },
   "gmf_version": 2
 }

@@ -1,22 +1,194 @@
 {
   "name": "PheKB Severe Childhood Obesity Control",
-  "remarks": ["Control module for severe pediatric obesity. Generates pediatric patients (5-17) with normal BMI (15-22)."],
+  "remarks": [
+    "Control module for severe pediatric obesity. Generates pediatric patients (5-17) with normal BMI (15-22)."
+  ],
   "states": {
-    "Initial": { "type": "Initial", "direct_transition": "Age_Guard_Min" },
-    "Age_Guard_Min": { "type": "Guard", "allow": { "condition_type": "Age", "operator": ">=", "quantity": 5, "unit": "years" }, "direct_transition": "Age_Guard_Max" },
-    "Age_Guard_Max": { "type": "Guard", "allow": { "condition_type": "Age", "operator": "<=", "quantity": 17, "unit": "years" }, "direct_transition": "Set_Control_Flag" },
-    "Set_Control_Flag": { "type": "SetAttribute", "attribute": "seco_positive", "value": false, "direct_transition": "Wellness_Encounter" },
-    "Wellness_Encounter": { "type": "Encounter", "wellness": true, "direct_transition": "Record_Normal_BMI" },
+    "Initial": {
+      "type": "Initial",
+      "direct_transition": "Age_Guard_Min"
+    },
+    "Age_Guard_Min": {
+      "type": "Guard",
+      "allow": {
+        "condition_type": "Age",
+        "operator": ">=",
+        "quantity": 5,
+        "unit": "years"
+      },
+      "direct_transition": "Age_Guard_Max"
+    },
+    "Age_Guard_Max": {
+      "type": "Guard",
+      "allow": {
+        "condition_type": "Age",
+        "operator": "<=",
+        "quantity": 17,
+        "unit": "years"
+      },
+      "direct_transition": "Set_Control_Flag"
+    },
+    "Set_Control_Flag": {
+      "type": "SetAttribute",
+      "attribute": "seco_positive",
+      "value": false,
+      "direct_transition": "Wellness_Encounter"
+    },
+    "Wellness_Encounter": {
+      "type": "Encounter",
+      "wellness": true,
+      "direct_transition": "Maybe_Mimicker_Hypothyroidism"
+    },
     "Record_Normal_BMI": {
       "type": "Observation",
       "category": "vital-signs",
       "unit": "kg/m2",
-      "codes": [{ "system": "LOINC", "code": "39156-5", "display": "Body mass index (BMI) [Ratio]" }],
-      "range": { "low": 15, "high": 22 },
+      "codes": [
+        {
+          "system": "LOINC",
+          "code": "39156-5",
+          "display": "Body mass index (BMI) [Ratio]"
+        }
+      ],
+      "range": {
+        "low": 15,
+        "high": 22
+      },
       "direct_transition": "End_Wellness_Encounter"
     },
-    "End_Wellness_Encounter": { "type": "EncounterEnd", "direct_transition": "Followup_Delay" },
-    "Followup_Delay": { "type": "Delay", "range": { "low": 12, "high": 24, "unit": "months" }, "direct_transition": "Wellness_Encounter" }
+    "End_Wellness_Encounter": {
+      "type": "EncounterEnd",
+      "direct_transition": "Followup_Delay"
+    },
+    "Followup_Delay": {
+      "type": "Delay",
+      "range": {
+        "low": 12,
+        "high": 24,
+        "unit": "months"
+      },
+      "direct_transition": "Wellness_Encounter"
+    },
+    "Maybe_Mimicker_Hypothyroidism": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Hypothyroidism",
+          "distribution": 0.1
+        },
+        {
+          "transition": "Maybe_Mimicker_Polycystic_ovary_syndrome",
+          "distribution": 0.9
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Hypothyroidism": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "40930008",
+          "display": "Hypothyroidism"
+        }
+      ],
+      "direct_transition": "Maybe_Mimicker_Polycystic_ovary_syndrome"
+    },
+    "Maybe_Mimicker_Polycystic_ovary_syndrome": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Polycystic_ovary_syndrome",
+          "distribution": 0.08
+        },
+        {
+          "transition": "Maybe_Mimicker_Type_2_diabetes_mellitus",
+          "distribution": 0.92
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Polycystic_ovary_syndrome": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "237055002",
+          "display": "Polycystic ovary syndrome"
+        }
+      ],
+      "direct_transition": "Maybe_Mimicker_Type_2_diabetes_mellitus"
+    },
+    "Maybe_Mimicker_Type_2_diabetes_mellitus": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Type_2_diabetes_mellitus",
+          "distribution": 0.1
+        },
+        {
+          "transition": "Maybe_Mimicker_Mixed_hyperlipidemia",
+          "distribution": 0.9
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Type_2_diabetes_mellitus": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "44054006",
+          "display": "Type 2 diabetes mellitus"
+        }
+      ],
+      "direct_transition": "Maybe_Mimicker_Mixed_hyperlipidemia"
+    },
+    "Maybe_Mimicker_Mixed_hyperlipidemia": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Mixed_hyperlipidemia",
+          "distribution": 0.2
+        },
+        {
+          "transition": "Maybe_Mimicker_Pituitary_dependent_hypercortisolism",
+          "distribution": 0.8
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Mixed_hyperlipidemia": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "267434003",
+          "display": "Mixed hyperlipidemia"
+        }
+      ],
+      "direct_transition": "Maybe_Mimicker_Pituitary_dependent_hypercortisolism"
+    },
+    "Maybe_Mimicker_Pituitary_dependent_hypercortisolism": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Pituitary_dependent_hypercortisolism",
+          "distribution": 0.02
+        },
+        {
+          "transition": "Record_Normal_BMI",
+          "distribution": 0.98
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Pituitary_dependent_hypercortisolism": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "190502001",
+          "display": "Pituitary dependent hypercortisolism"
+        }
+      ],
+      "direct_transition": "Record_Normal_BMI"
+    }
   },
   "gmf_version": 2
 }

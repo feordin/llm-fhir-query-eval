@@ -1,13 +1,167 @@
 {
   "name": "PheKB Neonatal Abstinence Syndrome Control",
-  "remarks": ["Control module. Generates infants age 0-1 years without NAS dx or morphine."],
+  "remarks": [
+    "Control module. Generates infants age 0-1 years without NAS dx or morphine."
+  ],
   "states": {
-    "Initial": { "type": "Initial", "direct_transition": "Age_Upper_Guard" },
-    "Age_Upper_Guard": { "type": "Guard", "allow": { "condition_type": "Age", "operator": "<=", "quantity": 1, "unit": "years" }, "direct_transition": "Set_Control_Flag" },
-    "Set_Control_Flag": { "type": "SetAttribute", "attribute": "nas_positive", "value": false, "direct_transition": "Wellness_Encounter" },
-    "Wellness_Encounter": { "type": "Encounter", "wellness": true, "direct_transition": "End_Wellness_Encounter" },
-    "End_Wellness_Encounter": { "type": "EncounterEnd", "direct_transition": "Followup_Delay" },
-    "Followup_Delay": { "type": "Delay", "range": { "low": 1, "high": 3, "unit": "months" }, "direct_transition": "Wellness_Encounter" }
+    "Initial": {
+      "type": "Initial",
+      "direct_transition": "Age_Upper_Guard"
+    },
+    "Age_Upper_Guard": {
+      "type": "Guard",
+      "allow": {
+        "condition_type": "Age",
+        "operator": "<=",
+        "quantity": 1,
+        "unit": "years"
+      },
+      "direct_transition": "Set_Control_Flag"
+    },
+    "Set_Control_Flag": {
+      "type": "SetAttribute",
+      "attribute": "nas_positive",
+      "value": false,
+      "direct_transition": "Wellness_Encounter"
+    },
+    "Wellness_Encounter": {
+      "type": "Encounter",
+      "wellness": true,
+      "direct_transition": "Maybe_Mimicker_Neonatal_sepsis"
+    },
+    "End_Wellness_Encounter": {
+      "type": "EncounterEnd",
+      "direct_transition": "Followup_Delay"
+    },
+    "Followup_Delay": {
+      "type": "Delay",
+      "range": {
+        "low": 1,
+        "high": 3,
+        "unit": "months"
+      },
+      "direct_transition": "Wellness_Encounter"
+    },
+    "Maybe_Mimicker_Neonatal_sepsis": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Neonatal_sepsis",
+          "distribution": 0.1
+        },
+        {
+          "transition": "Maybe_Mimicker_Neonatal_hypoglycemia",
+          "distribution": 0.9
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Neonatal_sepsis": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "206376005",
+          "display": "Neonatal sepsis"
+        }
+      ],
+      "direct_transition": "Maybe_Mimicker_Neonatal_hypoglycemia"
+    },
+    "Maybe_Mimicker_Neonatal_hypoglycemia": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Neonatal_hypoglycemia",
+          "distribution": 0.15
+        },
+        {
+          "transition": "Maybe_Mimicker_Neonatal_hypocalcemia",
+          "distribution": 0.85
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Neonatal_hypoglycemia": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "52767006",
+          "display": "Neonatal hypoglycemia"
+        }
+      ],
+      "direct_transition": "Maybe_Mimicker_Neonatal_hypocalcemia"
+    },
+    "Maybe_Mimicker_Neonatal_hypocalcemia": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Neonatal_hypocalcemia",
+          "distribution": 0.08
+        },
+        {
+          "transition": "Maybe_Mimicker_Neonatal_jaundice",
+          "distribution": 0.92
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Neonatal_hypocalcemia": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "268846006",
+          "display": "Neonatal hypocalcemia"
+        }
+      ],
+      "direct_transition": "Maybe_Mimicker_Neonatal_jaundice"
+    },
+    "Maybe_Mimicker_Neonatal_jaundice": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Neonatal_jaundice",
+          "distribution": 0.3
+        },
+        {
+          "transition": "Maybe_Mimicker_Meconium_aspiration_syndrome",
+          "distribution": 0.7
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Neonatal_jaundice": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "387712008",
+          "display": "Neonatal jaundice"
+        }
+      ],
+      "direct_transition": "Maybe_Mimicker_Meconium_aspiration_syndrome"
+    },
+    "Maybe_Mimicker_Meconium_aspiration_syndrome": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Meconium_aspiration_syndrome",
+          "distribution": 0.05
+        },
+        {
+          "transition": "End_Wellness_Encounter",
+          "distribution": 0.95
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Meconium_aspiration_syndrome": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "206292002",
+          "display": "Meconium aspiration syndrome"
+        }
+      ],
+      "direct_transition": "End_Wellness_Encounter"
+    }
   },
   "gmf_version": 2
 }

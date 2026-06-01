@@ -1,14 +1,177 @@
 {
   "name": "PheKB Peanut Allergy Control",
-  "remarks": ["Control module for peanut allergy. Generates pediatric patients (1-17) without peanut allergy or peanut IgE elevation."],
+  "remarks": [
+    "Control module for peanut allergy. Generates pediatric patients (1-17) without peanut allergy or peanut IgE elevation."
+  ],
   "states": {
-    "Initial": { "type": "Initial", "direct_transition": "Age_Guard_Min" },
-    "Age_Guard_Min": { "type": "Guard", "allow": { "condition_type": "Age", "operator": ">=", "quantity": 1, "unit": "years" }, "direct_transition": "Age_Guard_Max" },
-    "Age_Guard_Max": { "type": "Guard", "allow": { "condition_type": "Age", "operator": "<=", "quantity": 17, "unit": "years" }, "direct_transition": "Set_Control_Flag" },
-    "Set_Control_Flag": { "type": "SetAttribute", "attribute": "peanut_positive", "value": false, "direct_transition": "Wellness_Encounter" },
-    "Wellness_Encounter": { "type": "Encounter", "wellness": true, "direct_transition": "End_Wellness_Encounter" },
-    "End_Wellness_Encounter": { "type": "EncounterEnd", "direct_transition": "Followup_Delay" },
-    "Followup_Delay": { "type": "Delay", "range": { "low": 12, "high": 24, "unit": "months" }, "direct_transition": "Wellness_Encounter" }
+    "Initial": {
+      "type": "Initial",
+      "direct_transition": "Age_Guard_Min"
+    },
+    "Age_Guard_Min": {
+      "type": "Guard",
+      "allow": {
+        "condition_type": "Age",
+        "operator": ">=",
+        "quantity": 1,
+        "unit": "years"
+      },
+      "direct_transition": "Age_Guard_Max"
+    },
+    "Age_Guard_Max": {
+      "type": "Guard",
+      "allow": {
+        "condition_type": "Age",
+        "operator": "<=",
+        "quantity": 17,
+        "unit": "years"
+      },
+      "direct_transition": "Set_Control_Flag"
+    },
+    "Set_Control_Flag": {
+      "type": "SetAttribute",
+      "attribute": "peanut_positive",
+      "value": false,
+      "direct_transition": "Wellness_Encounter"
+    },
+    "Wellness_Encounter": {
+      "type": "Encounter",
+      "wellness": true,
+      "direct_transition": "Maybe_Mimicker_Allergy_to_nut"
+    },
+    "End_Wellness_Encounter": {
+      "type": "EncounterEnd",
+      "direct_transition": "Followup_Delay"
+    },
+    "Followup_Delay": {
+      "type": "Delay",
+      "range": {
+        "low": 12,
+        "high": 24,
+        "unit": "months"
+      },
+      "direct_transition": "Wellness_Encounter"
+    },
+    "Maybe_Mimicker_Allergy_to_nut": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Allergy_to_nut",
+          "distribution": 0.2
+        },
+        {
+          "transition": "Maybe_Mimicker_Allergy_to_cow_s_milk_protein",
+          "distribution": 0.8
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Allergy_to_nut": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "91934008",
+          "display": "Allergy to nut"
+        }
+      ],
+      "direct_transition": "Maybe_Mimicker_Allergy_to_cow_s_milk_protein"
+    },
+    "Maybe_Mimicker_Allergy_to_cow_s_milk_protein": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Allergy_to_cow_s_milk_protein",
+          "distribution": 0.1
+        },
+        {
+          "transition": "Maybe_Mimicker_Allergy_to_food",
+          "distribution": 0.9
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Allergy_to_cow_s_milk_protein": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "782555009",
+          "display": "Allergy to cow's milk protein"
+        }
+      ],
+      "direct_transition": "Maybe_Mimicker_Allergy_to_food"
+    },
+    "Maybe_Mimicker_Allergy_to_food": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Allergy_to_food",
+          "distribution": 0.2
+        },
+        {
+          "transition": "Maybe_Mimicker_Atopic_dermatitis",
+          "distribution": 0.8
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Allergy_to_food": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "414285001",
+          "display": "Allergy to food"
+        }
+      ],
+      "direct_transition": "Maybe_Mimicker_Atopic_dermatitis"
+    },
+    "Maybe_Mimicker_Atopic_dermatitis": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Atopic_dermatitis",
+          "distribution": 0.3
+        },
+        {
+          "transition": "Maybe_Mimicker_Asthma",
+          "distribution": 0.7
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Atopic_dermatitis": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "24079001",
+          "display": "Atopic dermatitis"
+        }
+      ],
+      "direct_transition": "Maybe_Mimicker_Asthma"
+    },
+    "Maybe_Mimicker_Asthma": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Asthma",
+          "distribution": 0.2
+        },
+        {
+          "transition": "End_Wellness_Encounter",
+          "distribution": 0.8
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Asthma": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "195967001",
+          "display": "Asthma"
+        }
+      ],
+      "direct_transition": "End_Wellness_Encounter"
+    }
   },
   "gmf_version": 2
 }

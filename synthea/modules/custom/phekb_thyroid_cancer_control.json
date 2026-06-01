@@ -1,13 +1,167 @@
 {
   "name": "PheKB Thyroid Cancer Control",
-  "remarks": ["Control module for thyroid cancer. Generates patients age 30+ without thyroid cancer dx."],
+  "remarks": [
+    "Control module for thyroid cancer. Generates patients age 30+ without thyroid cancer dx."
+  ],
   "states": {
-    "Initial": { "type": "Initial", "direct_transition": "Age_Guard" },
-    "Age_Guard": { "type": "Guard", "allow": { "condition_type": "Age", "operator": ">=", "quantity": 30, "unit": "years" }, "direct_transition": "Set_Control_Flag" },
-    "Set_Control_Flag": { "type": "SetAttribute", "attribute": "thy_positive", "value": false, "direct_transition": "Wellness_Encounter" },
-    "Wellness_Encounter": { "type": "Encounter", "wellness": true, "direct_transition": "End_Wellness_Encounter" },
-    "End_Wellness_Encounter": { "type": "EncounterEnd", "direct_transition": "Followup_Delay" },
-    "Followup_Delay": { "type": "Delay", "range": { "low": 12, "high": 24, "unit": "months" }, "direct_transition": "Wellness_Encounter" }
+    "Initial": {
+      "type": "Initial",
+      "direct_transition": "Age_Guard"
+    },
+    "Age_Guard": {
+      "type": "Guard",
+      "allow": {
+        "condition_type": "Age",
+        "operator": ">=",
+        "quantity": 30,
+        "unit": "years"
+      },
+      "direct_transition": "Set_Control_Flag"
+    },
+    "Set_Control_Flag": {
+      "type": "SetAttribute",
+      "attribute": "thy_positive",
+      "value": false,
+      "direct_transition": "Wellness_Encounter"
+    },
+    "Wellness_Encounter": {
+      "type": "Encounter",
+      "wellness": true,
+      "direct_transition": "Maybe_Mimicker_Thyroid_nodule"
+    },
+    "End_Wellness_Encounter": {
+      "type": "EncounterEnd",
+      "direct_transition": "Followup_Delay"
+    },
+    "Followup_Delay": {
+      "type": "Delay",
+      "range": {
+        "low": 12,
+        "high": 24,
+        "unit": "months"
+      },
+      "direct_transition": "Wellness_Encounter"
+    },
+    "Maybe_Mimicker_Thyroid_nodule": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Thyroid_nodule",
+          "distribution": 0.4
+        },
+        {
+          "transition": "Maybe_Mimicker_Multinodular_goiter",
+          "distribution": 0.6
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Thyroid_nodule": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "237495005",
+          "display": "Thyroid nodule"
+        }
+      ],
+      "direct_transition": "Maybe_Mimicker_Multinodular_goiter"
+    },
+    "Maybe_Mimicker_Multinodular_goiter": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Multinodular_goiter",
+          "distribution": 0.2
+        },
+        {
+          "transition": "Maybe_Mimicker_Hashimoto_thyroiditis",
+          "distribution": 0.8
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Multinodular_goiter": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "237570007",
+          "display": "Multinodular goiter"
+        }
+      ],
+      "direct_transition": "Maybe_Mimicker_Hashimoto_thyroiditis"
+    },
+    "Maybe_Mimicker_Hashimoto_thyroiditis": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Hashimoto_thyroiditis",
+          "distribution": 0.15
+        },
+        {
+          "transition": "Maybe_Mimicker_Hyperthyroidism",
+          "distribution": 0.85
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Hashimoto_thyroiditis": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "21983002",
+          "display": "Hashimoto thyroiditis"
+        }
+      ],
+      "direct_transition": "Maybe_Mimicker_Hyperthyroidism"
+    },
+    "Maybe_Mimicker_Hyperthyroidism": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Hyperthyroidism",
+          "distribution": 0.08
+        },
+        {
+          "transition": "Maybe_Mimicker_Thyroiditis",
+          "distribution": 0.92
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Hyperthyroidism": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "34486009",
+          "display": "Hyperthyroidism"
+        }
+      ],
+      "direct_transition": "Maybe_Mimicker_Thyroiditis"
+    },
+    "Maybe_Mimicker_Thyroiditis": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Thyroiditis",
+          "distribution": 0.04
+        },
+        {
+          "transition": "End_Wellness_Encounter",
+          "distribution": 0.96
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Thyroiditis": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "82119001",
+          "display": "Thyroiditis"
+        }
+      ],
+      "direct_transition": "End_Wellness_Encounter"
+    }
   },
   "gmf_version": 2
 }

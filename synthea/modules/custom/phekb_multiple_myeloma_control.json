@@ -1,13 +1,167 @@
 {
   "name": "PheKB Multiple Myeloma Control",
-  "remarks": ["Control module for multiple myeloma. Generates patients age 45+ without multiple myeloma dx."],
+  "remarks": [
+    "Control module for multiple myeloma. Generates patients age 45+ without multiple myeloma dx."
+  ],
   "states": {
-    "Initial": { "type": "Initial", "direct_transition": "Age_Guard" },
-    "Age_Guard": { "type": "Guard", "allow": { "condition_type": "Age", "operator": ">=", "quantity": 45, "unit": "years" }, "direct_transition": "Set_Control_Flag" },
-    "Set_Control_Flag": { "type": "SetAttribute", "attribute": "mm_positive", "value": false, "direct_transition": "Wellness_Encounter" },
-    "Wellness_Encounter": { "type": "Encounter", "wellness": true, "direct_transition": "End_Wellness_Encounter" },
-    "End_Wellness_Encounter": { "type": "EncounterEnd", "direct_transition": "Followup_Delay" },
-    "Followup_Delay": { "type": "Delay", "range": { "low": 12, "high": 24, "unit": "months" }, "direct_transition": "Wellness_Encounter" }
+    "Initial": {
+      "type": "Initial",
+      "direct_transition": "Age_Guard"
+    },
+    "Age_Guard": {
+      "type": "Guard",
+      "allow": {
+        "condition_type": "Age",
+        "operator": ">=",
+        "quantity": 45,
+        "unit": "years"
+      },
+      "direct_transition": "Set_Control_Flag"
+    },
+    "Set_Control_Flag": {
+      "type": "SetAttribute",
+      "attribute": "mm_positive",
+      "value": false,
+      "direct_transition": "Wellness_Encounter"
+    },
+    "Wellness_Encounter": {
+      "type": "Encounter",
+      "wellness": true,
+      "direct_transition": "Maybe_Mimicker_Monoclonal_gammopathy_of_undetermined_significance"
+    },
+    "End_Wellness_Encounter": {
+      "type": "EncounterEnd",
+      "direct_transition": "Followup_Delay"
+    },
+    "Followup_Delay": {
+      "type": "Delay",
+      "range": {
+        "low": 12,
+        "high": 24,
+        "unit": "months"
+      },
+      "direct_transition": "Wellness_Encounter"
+    },
+    "Maybe_Mimicker_Monoclonal_gammopathy_of_undetermined_significance": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Monoclonal_gammopathy_of_undetermined_significance",
+          "distribution": 0.2
+        },
+        {
+          "transition": "Maybe_Mimicker_Plasmacytoma",
+          "distribution": 0.8
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Monoclonal_gammopathy_of_undetermined_significance": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "35601003",
+          "display": "Monoclonal gammopathy of undetermined significance"
+        }
+      ],
+      "direct_transition": "Maybe_Mimicker_Plasmacytoma"
+    },
+    "Maybe_Mimicker_Plasmacytoma": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Plasmacytoma",
+          "distribution": 0.05
+        },
+        {
+          "transition": "Maybe_Mimicker_Amyloidosis",
+          "distribution": 0.95
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Plasmacytoma": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "1187107005",
+          "display": "Plasmacytoma"
+        }
+      ],
+      "direct_transition": "Maybe_Mimicker_Amyloidosis"
+    },
+    "Maybe_Mimicker_Amyloidosis": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Amyloidosis",
+          "distribution": 0.04
+        },
+        {
+          "transition": "Maybe_Mimicker_Anemia_of_chronic_disease",
+          "distribution": 0.96
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Amyloidosis": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "17602002",
+          "display": "Amyloidosis"
+        }
+      ],
+      "direct_transition": "Maybe_Mimicker_Anemia_of_chronic_disease"
+    },
+    "Maybe_Mimicker_Anemia_of_chronic_disease": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Anemia_of_chronic_disease",
+          "distribution": 0.2
+        },
+        {
+          "transition": "Maybe_Mimicker_Hypercalcemia",
+          "distribution": 0.8
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Anemia_of_chronic_disease": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "234347009",
+          "display": "Anemia of chronic disease"
+        }
+      ],
+      "direct_transition": "Maybe_Mimicker_Hypercalcemia"
+    },
+    "Maybe_Mimicker_Hypercalcemia": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Hypercalcemia",
+          "distribution": 0.08
+        },
+        {
+          "transition": "End_Wellness_Encounter",
+          "distribution": 0.92
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Hypercalcemia": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "66931009",
+          "display": "Hypercalcemia"
+        }
+      ],
+      "direct_transition": "End_Wellness_Encounter"
+    }
   },
   "gmf_version": 2
 }

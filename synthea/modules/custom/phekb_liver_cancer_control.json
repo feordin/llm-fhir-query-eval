@@ -1,21 +1,184 @@
 {
   "name": "PheKB Liver Cancer (HCC) Control",
-  "remarks": ["Control module for HCC. Generates patients age 40+ without HCC dx and with normal AFP."],
+  "remarks": [
+    "Control module for HCC. Generates patients age 40+ without HCC dx and with normal AFP."
+  ],
   "states": {
-    "Initial": { "type": "Initial", "direct_transition": "Age_Guard" },
-    "Age_Guard": { "type": "Guard", "allow": { "condition_type": "Age", "operator": ">=", "quantity": 40, "unit": "years" }, "direct_transition": "Set_Control_Flag" },
-    "Set_Control_Flag": { "type": "SetAttribute", "attribute": "hcc_positive", "value": false, "direct_transition": "Wellness_Encounter" },
-    "Wellness_Encounter": { "type": "Encounter", "wellness": true, "direct_transition": "Record_Normal_AFP" },
+    "Initial": {
+      "type": "Initial",
+      "direct_transition": "Age_Guard"
+    },
+    "Age_Guard": {
+      "type": "Guard",
+      "allow": {
+        "condition_type": "Age",
+        "operator": ">=",
+        "quantity": 40,
+        "unit": "years"
+      },
+      "direct_transition": "Set_Control_Flag"
+    },
+    "Set_Control_Flag": {
+      "type": "SetAttribute",
+      "attribute": "hcc_positive",
+      "value": false,
+      "direct_transition": "Wellness_Encounter"
+    },
+    "Wellness_Encounter": {
+      "type": "Encounter",
+      "wellness": true,
+      "direct_transition": "Maybe_Mimicker_Cirrhosis_of_liver"
+    },
     "Record_Normal_AFP": {
       "type": "Observation",
       "category": "laboratory",
       "unit": "ng/mL",
-      "codes": [{ "system": "LOINC", "code": "1834-1", "display": "Alpha-1-Fetoprotein [Mass/volume] in Serum or Plasma" }],
-      "range": { "low": 1, "high": 8 },
+      "codes": [
+        {
+          "system": "LOINC",
+          "code": "1834-1",
+          "display": "Alpha-1-Fetoprotein [Mass/volume] in Serum or Plasma"
+        }
+      ],
+      "range": {
+        "low": 1,
+        "high": 8
+      },
       "direct_transition": "End_Wellness_Encounter"
     },
-    "End_Wellness_Encounter": { "type": "EncounterEnd", "direct_transition": "Followup_Delay" },
-    "Followup_Delay": { "type": "Delay", "range": { "low": 12, "high": 24, "unit": "months" }, "direct_transition": "Wellness_Encounter" }
+    "End_Wellness_Encounter": {
+      "type": "EncounterEnd",
+      "direct_transition": "Followup_Delay"
+    },
+    "Followup_Delay": {
+      "type": "Delay",
+      "range": {
+        "low": 12,
+        "high": 24,
+        "unit": "months"
+      },
+      "direct_transition": "Wellness_Encounter"
+    },
+    "Maybe_Mimicker_Cirrhosis_of_liver": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Cirrhosis_of_liver",
+          "distribution": 0.3
+        },
+        {
+          "transition": "Maybe_Mimicker_Viral_hepatitis_C",
+          "distribution": 0.7
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Cirrhosis_of_liver": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "19943007",
+          "display": "Cirrhosis of liver"
+        }
+      ],
+      "direct_transition": "Maybe_Mimicker_Viral_hepatitis_C"
+    },
+    "Maybe_Mimicker_Viral_hepatitis_C": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Viral_hepatitis_C",
+          "distribution": 0.2
+        },
+        {
+          "transition": "Maybe_Mimicker_Metabolic_dysfunction_associated_steatotic_liver_disease",
+          "distribution": 0.8
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Viral_hepatitis_C": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "50711007",
+          "display": "Viral hepatitis C"
+        }
+      ],
+      "direct_transition": "Maybe_Mimicker_Metabolic_dysfunction_associated_steatotic_liver_disease"
+    },
+    "Maybe_Mimicker_Metabolic_dysfunction_associated_steatotic_liver_disease": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Metabolic_dysfunction_associated_steatotic_liver_disease",
+          "distribution": 0.25
+        },
+        {
+          "transition": "Maybe_Mimicker_Metastatic_malignant_neoplasm_to_liver",
+          "distribution": 0.75
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Metabolic_dysfunction_associated_steatotic_liver_disease": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "1231824009",
+          "display": "Metabolic dysfunction-associated steatotic liver disease"
+        }
+      ],
+      "direct_transition": "Maybe_Mimicker_Metastatic_malignant_neoplasm_to_liver"
+    },
+    "Maybe_Mimicker_Metastatic_malignant_neoplasm_to_liver": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Metastatic_malignant_neoplasm_to_liver",
+          "distribution": 0.15
+        },
+        {
+          "transition": "Maybe_Mimicker_Hemangioma_of_liver",
+          "distribution": 0.85
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Metastatic_malignant_neoplasm_to_liver": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "94381002",
+          "display": "Metastatic malignant neoplasm to liver"
+        }
+      ],
+      "direct_transition": "Maybe_Mimicker_Hemangioma_of_liver"
+    },
+    "Maybe_Mimicker_Hemangioma_of_liver": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Hemangioma_of_liver",
+          "distribution": 0.08
+        },
+        {
+          "transition": "Record_Normal_AFP",
+          "distribution": 0.92
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Hemangioma_of_liver": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "93469006",
+          "display": "Hemangioma of liver"
+        }
+      ],
+      "direct_transition": "Record_Normal_AFP"
+    }
   },
   "gmf_version": 2
 }

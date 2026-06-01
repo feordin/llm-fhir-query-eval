@@ -5,21 +5,189 @@
     "Generates male patients without PCa. Normal PSA values (0.5-3 ng/mL)."
   ],
   "states": {
-    "Initial": { "type": "Initial", "direct_transition": "Sex_Guard" },
-    "Sex_Guard": { "type": "Guard", "allow": { "condition_type": "Gender", "gender": "M" }, "direct_transition": "Age_Guard" },
-    "Age_Guard": { "type": "Guard", "allow": { "condition_type": "Age", "operator": ">=", "quantity": 50, "unit": "years" }, "direct_transition": "Set_Control_Flag" },
-    "Set_Control_Flag": { "type": "SetAttribute", "attribute": "pca_positive", "value": false, "direct_transition": "Wellness_Encounter" },
-    "Wellness_Encounter": { "type": "Encounter", "wellness": true, "direct_transition": "Record_Normal_PSA" },
+    "Initial": {
+      "type": "Initial",
+      "direct_transition": "Sex_Guard"
+    },
+    "Sex_Guard": {
+      "type": "Guard",
+      "allow": {
+        "condition_type": "Gender",
+        "gender": "M"
+      },
+      "direct_transition": "Age_Guard"
+    },
+    "Age_Guard": {
+      "type": "Guard",
+      "allow": {
+        "condition_type": "Age",
+        "operator": ">=",
+        "quantity": 50,
+        "unit": "years"
+      },
+      "direct_transition": "Set_Control_Flag"
+    },
+    "Set_Control_Flag": {
+      "type": "SetAttribute",
+      "attribute": "pca_positive",
+      "value": false,
+      "direct_transition": "Wellness_Encounter"
+    },
+    "Wellness_Encounter": {
+      "type": "Encounter",
+      "wellness": true,
+      "direct_transition": "Maybe_Mimicker_Hyperplasia_of_prostate"
+    },
     "Record_Normal_PSA": {
       "type": "Observation",
       "category": "laboratory",
       "unit": "ng/mL",
-      "codes": [{ "system": "LOINC", "code": "2857-1", "display": "Prostate specific Ag [Mass/volume] in Serum or Plasma" }],
-      "range": { "low": 0.5, "high": 3.0 },
+      "codes": [
+        {
+          "system": "LOINC",
+          "code": "2857-1",
+          "display": "Prostate specific Ag [Mass/volume] in Serum or Plasma"
+        }
+      ],
+      "range": {
+        "low": 0.5,
+        "high": 3.0
+      },
       "direct_transition": "End_Wellness_Encounter"
     },
-    "End_Wellness_Encounter": { "type": "EncounterEnd", "direct_transition": "Followup_Delay" },
-    "Followup_Delay": { "type": "Delay", "range": { "low": 12, "high": 24, "unit": "months" }, "direct_transition": "Wellness_Encounter" }
+    "End_Wellness_Encounter": {
+      "type": "EncounterEnd",
+      "direct_transition": "Followup_Delay"
+    },
+    "Followup_Delay": {
+      "type": "Delay",
+      "range": {
+        "low": 12,
+        "high": 24,
+        "unit": "months"
+      },
+      "direct_transition": "Wellness_Encounter"
+    },
+    "Maybe_Mimicker_Hyperplasia_of_prostate": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Hyperplasia_of_prostate",
+          "distribution": 0.4
+        },
+        {
+          "transition": "Maybe_Mimicker_Prostatitis",
+          "distribution": 0.6
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Hyperplasia_of_prostate": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "433234005",
+          "display": "Hyperplasia of prostate"
+        }
+      ],
+      "direct_transition": "Maybe_Mimicker_Prostatitis"
+    },
+    "Maybe_Mimicker_Prostatitis": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Prostatitis",
+          "distribution": 0.15
+        },
+        {
+          "transition": "Maybe_Mimicker_Prostatic_intraepithelial_neoplasia",
+          "distribution": 0.85
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Prostatitis": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "9713002",
+          "display": "Prostatitis"
+        }
+      ],
+      "direct_transition": "Maybe_Mimicker_Prostatic_intraepithelial_neoplasia"
+    },
+    "Maybe_Mimicker_Prostatic_intraepithelial_neoplasia": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Prostatic_intraepithelial_neoplasia",
+          "distribution": 0.1
+        },
+        {
+          "transition": "Maybe_Mimicker_Urinary_tract_infectious_disease",
+          "distribution": 0.9
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Prostatic_intraepithelial_neoplasia": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "254901000",
+          "display": "Prostatic intraepithelial neoplasia"
+        }
+      ],
+      "direct_transition": "Maybe_Mimicker_Urinary_tract_infectious_disease"
+    },
+    "Maybe_Mimicker_Urinary_tract_infectious_disease": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Urinary_tract_infectious_disease",
+          "distribution": 0.1
+        },
+        {
+          "transition": "Maybe_Mimicker_Malignant_neoplasm_of_urinary_bladder",
+          "distribution": 0.9
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Urinary_tract_infectious_disease": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "68566005",
+          "display": "Urinary tract infectious disease"
+        }
+      ],
+      "direct_transition": "Maybe_Mimicker_Malignant_neoplasm_of_urinary_bladder"
+    },
+    "Maybe_Mimicker_Malignant_neoplasm_of_urinary_bladder": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Malignant_neoplasm_of_urinary_bladder",
+          "distribution": 0.05
+        },
+        {
+          "transition": "Record_Normal_PSA",
+          "distribution": 0.95
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Malignant_neoplasm_of_urinary_bladder": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "399326009",
+          "display": "Malignant neoplasm of urinary bladder"
+        }
+      ],
+      "direct_transition": "Record_Normal_PSA"
+    }
   },
   "gmf_version": 2
 }

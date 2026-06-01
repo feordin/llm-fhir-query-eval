@@ -1,13 +1,167 @@
 {
   "name": "PheKB Resistant Hypertension Control",
-  "remarks": ["Control module. Generates patients age 40+ without resistant HTN dx or 3-drug antihypertensive regimen."],
+  "remarks": [
+    "Control module. Generates patients age 40+ without resistant HTN dx or 3-drug antihypertensive regimen."
+  ],
   "states": {
-    "Initial": { "type": "Initial", "direct_transition": "Age_Guard" },
-    "Age_Guard": { "type": "Guard", "allow": { "condition_type": "Age", "operator": ">=", "quantity": 40, "unit": "years" }, "direct_transition": "Set_Control_Flag" },
-    "Set_Control_Flag": { "type": "SetAttribute", "attribute": "rhtn_positive", "value": false, "direct_transition": "Wellness_Encounter" },
-    "Wellness_Encounter": { "type": "Encounter", "wellness": true, "direct_transition": "End_Wellness_Encounter" },
-    "End_Wellness_Encounter": { "type": "EncounterEnd", "direct_transition": "Followup_Delay" },
-    "Followup_Delay": { "type": "Delay", "range": { "low": 12, "high": 24, "unit": "months" }, "direct_transition": "Wellness_Encounter" }
+    "Initial": {
+      "type": "Initial",
+      "direct_transition": "Age_Guard"
+    },
+    "Age_Guard": {
+      "type": "Guard",
+      "allow": {
+        "condition_type": "Age",
+        "operator": ">=",
+        "quantity": 40,
+        "unit": "years"
+      },
+      "direct_transition": "Set_Control_Flag"
+    },
+    "Set_Control_Flag": {
+      "type": "SetAttribute",
+      "attribute": "rhtn_positive",
+      "value": false,
+      "direct_transition": "Wellness_Encounter"
+    },
+    "Wellness_Encounter": {
+      "type": "Encounter",
+      "wellness": true,
+      "direct_transition": "Maybe_Mimicker_Secondary_hypertension"
+    },
+    "End_Wellness_Encounter": {
+      "type": "EncounterEnd",
+      "direct_transition": "Followup_Delay"
+    },
+    "Followup_Delay": {
+      "type": "Delay",
+      "range": {
+        "low": 12,
+        "high": 24,
+        "unit": "months"
+      },
+      "direct_transition": "Wellness_Encounter"
+    },
+    "Maybe_Mimicker_Secondary_hypertension": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Secondary_hypertension",
+          "distribution": 0.1
+        },
+        {
+          "transition": "Maybe_Mimicker_Renovascular_hypertension",
+          "distribution": 0.9
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Secondary_hypertension": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "31992008",
+          "display": "Secondary hypertension"
+        }
+      ],
+      "direct_transition": "Maybe_Mimicker_Renovascular_hypertension"
+    },
+    "Maybe_Mimicker_Renovascular_hypertension": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Renovascular_hypertension",
+          "distribution": 0.05
+        },
+        {
+          "transition": "Maybe_Mimicker_Obstructive_sleep_apnea_syndrome",
+          "distribution": 0.95
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Renovascular_hypertension": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "123799005",
+          "display": "Renovascular hypertension"
+        }
+      ],
+      "direct_transition": "Maybe_Mimicker_Obstructive_sleep_apnea_syndrome"
+    },
+    "Maybe_Mimicker_Obstructive_sleep_apnea_syndrome": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Obstructive_sleep_apnea_syndrome",
+          "distribution": 0.25
+        },
+        {
+          "transition": "Maybe_Mimicker_Chronic_kidney_disease",
+          "distribution": 0.75
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Obstructive_sleep_apnea_syndrome": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "78275009",
+          "display": "Obstructive sleep apnea syndrome"
+        }
+      ],
+      "direct_transition": "Maybe_Mimicker_Chronic_kidney_disease"
+    },
+    "Maybe_Mimicker_Chronic_kidney_disease": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Chronic_kidney_disease",
+          "distribution": 0.3
+        },
+        {
+          "transition": "Maybe_Mimicker_Labile_hypertension_due_to_being_in_a_clinical_environment",
+          "distribution": 0.7
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Chronic_kidney_disease": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "709044004",
+          "display": "Chronic kidney disease"
+        }
+      ],
+      "direct_transition": "Maybe_Mimicker_Labile_hypertension_due_to_being_in_a_clinical_environment"
+    },
+    "Maybe_Mimicker_Labile_hypertension_due_to_being_in_a_clinical_environment": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Labile_hypertension_due_to_being_in_a_clinical_environment",
+          "distribution": 0.08
+        },
+        {
+          "transition": "End_Wellness_Encounter",
+          "distribution": 0.92
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Labile_hypertension_due_to_being_in_a_clinical_environment": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "697930002",
+          "display": "Labile hypertension due to being in a clinical environment"
+        }
+      ],
+      "direct_transition": "End_Wellness_Encounter"
+    }
   },
   "gmf_version": 2
 }

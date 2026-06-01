@@ -1,13 +1,167 @@
 {
   "name": "PheKB Urinary Incontinence Control",
-  "remarks": ["Control module. Generates patients age 50+ without UI dx or anticholinergic OAB meds."],
+  "remarks": [
+    "Control module. Generates patients age 50+ without UI dx or anticholinergic OAB meds."
+  ],
   "states": {
-    "Initial": { "type": "Initial", "direct_transition": "Age_Guard" },
-    "Age_Guard": { "type": "Guard", "allow": { "condition_type": "Age", "operator": ">=", "quantity": 50, "unit": "years" }, "direct_transition": "Set_Control_Flag" },
-    "Set_Control_Flag": { "type": "SetAttribute", "attribute": "ui_positive", "value": false, "direct_transition": "Wellness_Encounter" },
-    "Wellness_Encounter": { "type": "Encounter", "wellness": true, "direct_transition": "End_Wellness_Encounter" },
-    "End_Wellness_Encounter": { "type": "EncounterEnd", "direct_transition": "Followup_Delay" },
-    "Followup_Delay": { "type": "Delay", "range": { "low": 12, "high": 24, "unit": "months" }, "direct_transition": "Wellness_Encounter" }
+    "Initial": {
+      "type": "Initial",
+      "direct_transition": "Age_Guard"
+    },
+    "Age_Guard": {
+      "type": "Guard",
+      "allow": {
+        "condition_type": "Age",
+        "operator": ">=",
+        "quantity": 50,
+        "unit": "years"
+      },
+      "direct_transition": "Set_Control_Flag"
+    },
+    "Set_Control_Flag": {
+      "type": "SetAttribute",
+      "attribute": "ui_positive",
+      "value": false,
+      "direct_transition": "Wellness_Encounter"
+    },
+    "Wellness_Encounter": {
+      "type": "Encounter",
+      "wellness": true,
+      "direct_transition": "Maybe_Mimicker_Urinary_tract_infectious_disease"
+    },
+    "End_Wellness_Encounter": {
+      "type": "EncounterEnd",
+      "direct_transition": "Followup_Delay"
+    },
+    "Followup_Delay": {
+      "type": "Delay",
+      "range": {
+        "low": 12,
+        "high": 24,
+        "unit": "months"
+      },
+      "direct_transition": "Wellness_Encounter"
+    },
+    "Maybe_Mimicker_Urinary_tract_infectious_disease": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Urinary_tract_infectious_disease",
+          "distribution": 0.2
+        },
+        {
+          "transition": "Maybe_Mimicker_Hyperplasia_of_prostate",
+          "distribution": 0.8
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Urinary_tract_infectious_disease": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "68566005",
+          "display": "Urinary tract infectious disease"
+        }
+      ],
+      "direct_transition": "Maybe_Mimicker_Hyperplasia_of_prostate"
+    },
+    "Maybe_Mimicker_Hyperplasia_of_prostate": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Hyperplasia_of_prostate",
+          "distribution": 0.2
+        },
+        {
+          "transition": "Maybe_Mimicker_Overactive_urinary_bladder",
+          "distribution": 0.8
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Hyperplasia_of_prostate": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "433234005",
+          "display": "Hyperplasia of prostate"
+        }
+      ],
+      "direct_transition": "Maybe_Mimicker_Overactive_urinary_bladder"
+    },
+    "Maybe_Mimicker_Overactive_urinary_bladder": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Overactive_urinary_bladder",
+          "distribution": 0.3
+        },
+        {
+          "transition": "Maybe_Mimicker_Female_cystocele",
+          "distribution": 0.7
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Overactive_urinary_bladder": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "786457000",
+          "display": "Overactive urinary bladder"
+        }
+      ],
+      "direct_transition": "Maybe_Mimicker_Female_cystocele"
+    },
+    "Maybe_Mimicker_Female_cystocele": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Female_cystocele",
+          "distribution": 0.1
+        },
+        {
+          "transition": "Maybe_Mimicker_Diabetic_peripheral_neuropathy",
+          "distribution": 0.9
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Female_cystocele": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "252005008",
+          "display": "Female cystocele"
+        }
+      ],
+      "direct_transition": "Maybe_Mimicker_Diabetic_peripheral_neuropathy"
+    },
+    "Maybe_Mimicker_Diabetic_peripheral_neuropathy": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Diabetic_peripheral_neuropathy",
+          "distribution": 0.1
+        },
+        {
+          "transition": "End_Wellness_Encounter",
+          "distribution": 0.9
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Diabetic_peripheral_neuropathy": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "424736006",
+          "display": "Diabetic peripheral neuropathy"
+        }
+      ],
+      "direct_transition": "End_Wellness_Encounter"
+    }
   },
   "gmf_version": 2
 }
