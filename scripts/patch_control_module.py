@@ -58,10 +58,19 @@ def patch_control(module: dict, pack: list[dict], codes: dict) -> dict:
         modified module (also mutates `module` in place for convenience)
     """
     states = module.setdefault("states", {})
-    # Find the wellness entry transition we'll splice into.
-    wellness = states.get("Wellness_Encounter")
-    if not wellness or "direct_transition" not in wellness:
-        # No splice point -- skip patching.
+    # Find the wellness entry transition we'll splice into. Older modules use
+    # `Wellness_Encounter`; newer ones use `Wellness_Visit`. Accept either.
+    wellness = None
+    for candidate in ("Wellness_Encounter", "Wellness_Visit"):
+        s = states.get(candidate)
+        if s and "direct_transition" in s:
+            wellness = s
+            break
+    if wellness is None:
+        # No splice point -- emit a warning so the operator notices instead of
+        # the prior silent no-op that left mimickers unpatched.
+        print(f"  [WARN] no Wellness_Encounter/Wellness_Visit splice point in module; "
+              f"skipping mimicker injection")
         return module
     original_next = wellness["direct_transition"]
 

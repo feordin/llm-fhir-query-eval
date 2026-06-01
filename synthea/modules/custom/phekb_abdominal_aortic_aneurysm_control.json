@@ -18,10 +18,11 @@
       "type": "Initial",
       "direct_transition": "Age_Guard"
     },
-
     "Age_Guard": {
       "type": "Guard",
-      "remarks": ["Match the same age range as the phenotype (40-89)"],
+      "remarks": [
+        "Match the same age range as the phenotype (40-89)"
+      ],
       "allow": {
         "condition_type": "Age",
         "operator": ">=",
@@ -30,14 +31,14 @@
       },
       "direct_transition": "Wellness_Visit"
     },
-
     "Wellness_Visit": {
       "type": "Encounter",
       "wellness": true,
-      "remarks": ["Recent encounter - controls must have visit within 5 years. Uses wellness: true for proper Synthea scheduling."],
-      "direct_transition": "Record_Normal_Blood_Pressure"
+      "remarks": [
+        "Recent encounter - controls must have visit within 5 years. Uses wellness: true for proper Synthea scheduling."
+      ],
+      "direct_transition": "Maybe_Mimicker_Atherosclerosis_of_aorta"
     },
-
     "Record_Normal_Blood_Pressure": {
       "type": "Observation",
       "category": "vital-signs",
@@ -55,7 +56,6 @@
       },
       "direct_transition": "Record_Lipid_Panel"
     },
-
     "Record_Lipid_Panel": {
       "type": "Observation",
       "category": "laboratory",
@@ -73,7 +73,6 @@
       },
       "direct_transition": "Check_Comorbidities"
     },
-
     "Check_Comorbidities": {
       "type": "Simple",
       "remarks": [
@@ -84,26 +83,33 @@
         {
           "transition": "Has_Hypertension",
           "distribution": 0.35,
-          "remarks": ["35% have hypertension - common but not AAA-specific"]
+          "remarks": [
+            "35% have hypertension - common but not AAA-specific"
+          ]
         },
         {
           "transition": "Has_Peripheral_Artery_Disease",
-          "distribution": 0.10,
-          "remarks": ["10% have PAD - vascular but not AAA"]
+          "distribution": 0.1,
+          "remarks": [
+            "10% have PAD - vascular but not AAA"
+          ]
         },
         {
           "transition": "Has_Hyperlipidemia",
           "distribution": 0.25,
-          "remarks": ["25% have hyperlipidemia"]
+          "remarks": [
+            "25% have hyperlipidemia"
+          ]
         },
         {
           "transition": "Healthy_Patient",
-          "distribution": 0.30,
-          "remarks": ["30% are generally healthy"]
+          "distribution": 0.3,
+          "remarks": [
+            "30% are generally healthy"
+          ]
         }
       ]
     },
-
     "Has_Hypertension": {
       "type": "ConditionOnset",
       "codes": [
@@ -115,7 +121,6 @@
       ],
       "direct_transition": "Prescribe_Antihypertensive"
     },
-
     "Prescribe_Antihypertensive": {
       "type": "MedicationOrder",
       "codes": [
@@ -128,10 +133,11 @@
       "reason": "Has_Hypertension",
       "direct_transition": "End_Encounter"
     },
-
     "Has_Peripheral_Artery_Disease": {
       "type": "ConditionOnset",
-      "remarks": ["PAD is a vascular condition but NOT AAA - good discriminator for control"],
+      "remarks": [
+        "PAD is a vascular condition but NOT AAA - good discriminator for control"
+      ],
       "codes": [
         {
           "system": "SNOMED-CT",
@@ -141,7 +147,6 @@
       ],
       "direct_transition": "Prescribe_Antiplatelet"
     },
-
     "Prescribe_Antiplatelet": {
       "type": "MedicationOrder",
       "codes": [
@@ -154,7 +159,6 @@
       "reason": "Has_Peripheral_Artery_Disease",
       "direct_transition": "End_Encounter"
     },
-
     "Has_Hyperlipidemia": {
       "type": "ConditionOnset",
       "codes": [
@@ -166,7 +170,6 @@
       ],
       "direct_transition": "Prescribe_Statin"
     },
-
     "Prescribe_Statin": {
       "type": "MedicationOrder",
       "codes": [
@@ -179,21 +182,142 @@
       "reason": "Has_Hyperlipidemia",
       "direct_transition": "End_Encounter"
     },
-
     "Healthy_Patient": {
       "type": "Simple",
-      "remarks": ["No additional conditions"],
+      "remarks": [
+        "No additional conditions"
+      ],
       "direct_transition": "End_Encounter"
     },
-
     "End_Encounter": {
       "type": "EncounterEnd",
       "direct_transition": "Terminal_Control"
     },
-
     "Terminal_Control": {
       "type": "Terminal",
-      "remarks": ["Control patient - should NOT be found by AAA phenotype query"]
+      "remarks": [
+        "Control patient - should NOT be found by AAA phenotype query"
+      ]
+    },
+    "Maybe_Mimicker_Atherosclerosis_of_aorta": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Atherosclerosis_of_aorta",
+          "distribution": 0.2
+        },
+        {
+          "transition": "Maybe_Mimicker_Aneurysm_of_thoracic_aorta",
+          "distribution": 0.8
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Atherosclerosis_of_aorta": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "81817003",
+          "display": "Atherosclerosis of aorta"
+        }
+      ],
+      "direct_transition": "Maybe_Mimicker_Aneurysm_of_thoracic_aorta"
+    },
+    "Maybe_Mimicker_Aneurysm_of_thoracic_aorta": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Aneurysm_of_thoracic_aorta",
+          "distribution": 0.1
+        },
+        {
+          "transition": "Maybe_Mimicker_Dilatation_of_aorta",
+          "distribution": 0.9
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Aneurysm_of_thoracic_aorta": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "433068007",
+          "display": "Aneurysm of thoracic aorta"
+        }
+      ],
+      "direct_transition": "Maybe_Mimicker_Dilatation_of_aorta"
+    },
+    "Maybe_Mimicker_Dilatation_of_aorta": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Dilatation_of_aorta",
+          "distribution": 0.05
+        },
+        {
+          "transition": "Maybe_Mimicker_Aneurysm_of_iliac_artery",
+          "distribution": 0.95
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Dilatation_of_aorta": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "26660001",
+          "display": "Dilatation of aorta"
+        }
+      ],
+      "direct_transition": "Maybe_Mimicker_Aneurysm_of_iliac_artery"
+    },
+    "Maybe_Mimicker_Aneurysm_of_iliac_artery": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Aneurysm_of_iliac_artery",
+          "distribution": 0.03
+        },
+        {
+          "transition": "Maybe_Mimicker_Dissection_of_aorta",
+          "distribution": 0.97
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Aneurysm_of_iliac_artery": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "13290008",
+          "display": "Aneurysm of iliac artery"
+        }
+      ],
+      "direct_transition": "Maybe_Mimicker_Dissection_of_aorta"
+    },
+    "Maybe_Mimicker_Dissection_of_aorta": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Dissection_of_aorta",
+          "distribution": 0.02
+        },
+        {
+          "transition": "Record_Normal_Blood_Pressure",
+          "distribution": 0.98
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Dissection_of_aorta": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "308546005",
+          "display": "Dissection of aorta"
+        }
+      ],
+      "direct_transition": "Record_Normal_Blood_Pressure"
     }
   },
   "gmf_version": 2
