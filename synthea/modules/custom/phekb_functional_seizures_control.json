@@ -1,13 +1,167 @@
 {
   "name": "PheKB Functional Seizures Control",
-  "remarks": ["Control module. Generates patients age 18+ without PNES dx."],
+  "remarks": [
+    "Control module. Generates patients age 18+ without PNES dx."
+  ],
   "states": {
-    "Initial": { "type": "Initial", "direct_transition": "Age_Guard" },
-    "Age_Guard": { "type": "Guard", "allow": { "condition_type": "Age", "operator": ">=", "quantity": 18, "unit": "years" }, "direct_transition": "Set_Control_Flag" },
-    "Set_Control_Flag": { "type": "SetAttribute", "attribute": "pnes_positive", "value": false, "direct_transition": "Wellness_Encounter" },
-    "Wellness_Encounter": { "type": "Encounter", "wellness": true, "direct_transition": "End_Wellness_Encounter" },
-    "End_Wellness_Encounter": { "type": "EncounterEnd", "direct_transition": "Followup_Delay" },
-    "Followup_Delay": { "type": "Delay", "range": { "low": 12, "high": 24, "unit": "months" }, "direct_transition": "Wellness_Encounter" }
+    "Initial": {
+      "type": "Initial",
+      "direct_transition": "Age_Guard"
+    },
+    "Age_Guard": {
+      "type": "Guard",
+      "allow": {
+        "condition_type": "Age",
+        "operator": ">=",
+        "quantity": 18,
+        "unit": "years"
+      },
+      "direct_transition": "Set_Control_Flag"
+    },
+    "Set_Control_Flag": {
+      "type": "SetAttribute",
+      "attribute": "pnes_positive",
+      "value": false,
+      "direct_transition": "Wellness_Encounter"
+    },
+    "Wellness_Encounter": {
+      "type": "Encounter",
+      "wellness": true,
+      "direct_transition": "Maybe_Mimicker_Epilepsy"
+    },
+    "End_Wellness_Encounter": {
+      "type": "EncounterEnd",
+      "direct_transition": "Followup_Delay"
+    },
+    "Followup_Delay": {
+      "type": "Delay",
+      "range": {
+        "low": 12,
+        "high": 24,
+        "unit": "months"
+      },
+      "direct_transition": "Wellness_Encounter"
+    },
+    "Maybe_Mimicker_Epilepsy": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Epilepsy",
+          "distribution": 0.3
+        },
+        {
+          "transition": "Maybe_Mimicker_Syncope",
+          "distribution": 0.7
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Epilepsy": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "84757009",
+          "display": "Epilepsy"
+        }
+      ],
+      "direct_transition": "Maybe_Mimicker_Syncope"
+    },
+    "Maybe_Mimicker_Syncope": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Syncope",
+          "distribution": 0.25
+        },
+        {
+          "transition": "Maybe_Mimicker_Migraine",
+          "distribution": 0.75
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Syncope": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "271594007",
+          "display": "Syncope"
+        }
+      ],
+      "direct_transition": "Maybe_Mimicker_Migraine"
+    },
+    "Maybe_Mimicker_Migraine": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Migraine",
+          "distribution": 0.15
+        },
+        {
+          "transition": "Maybe_Mimicker_Parasomnia",
+          "distribution": 0.85
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Migraine": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "37796009",
+          "display": "Migraine"
+        }
+      ],
+      "direct_transition": "Maybe_Mimicker_Parasomnia"
+    },
+    "Maybe_Mimicker_Parasomnia": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Parasomnia",
+          "distribution": 0.08
+        },
+        {
+          "transition": "Maybe_Mimicker_Dystonia",
+          "distribution": 0.92
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Parasomnia": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "58690002",
+          "display": "Parasomnia"
+        }
+      ],
+      "direct_transition": "Maybe_Mimicker_Dystonia"
+    },
+    "Maybe_Mimicker_Dystonia": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Dystonia",
+          "distribution": 0.05
+        },
+        {
+          "transition": "End_Wellness_Encounter",
+          "distribution": 0.95
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Dystonia": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "15802004",
+          "display": "Dystonia"
+        }
+      ],
+      "direct_transition": "End_Wellness_Encounter"
+    }
   },
   "gmf_version": 2
 }

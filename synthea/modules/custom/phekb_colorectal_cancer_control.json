@@ -5,20 +5,181 @@
     "Generates patients without CRC. Normal CEA values (1-4 ng/mL)."
   ],
   "states": {
-    "Initial": { "type": "Initial", "direct_transition": "Age_Guard" },
-    "Age_Guard": { "type": "Guard", "allow": { "condition_type": "Age", "operator": ">=", "quantity": 45, "unit": "years" }, "direct_transition": "Set_Control_Flag" },
-    "Set_Control_Flag": { "type": "SetAttribute", "attribute": "crc_positive", "value": false, "direct_transition": "Wellness_Encounter" },
-    "Wellness_Encounter": { "type": "Encounter", "wellness": true, "direct_transition": "Record_Normal_CEA" },
+    "Initial": {
+      "type": "Initial",
+      "direct_transition": "Age_Guard"
+    },
+    "Age_Guard": {
+      "type": "Guard",
+      "allow": {
+        "condition_type": "Age",
+        "operator": ">=",
+        "quantity": 45,
+        "unit": "years"
+      },
+      "direct_transition": "Set_Control_Flag"
+    },
+    "Set_Control_Flag": {
+      "type": "SetAttribute",
+      "attribute": "crc_positive",
+      "value": false,
+      "direct_transition": "Wellness_Encounter"
+    },
+    "Wellness_Encounter": {
+      "type": "Encounter",
+      "wellness": true,
+      "direct_transition": "Maybe_Mimicker_Polyp_of_colon"
+    },
     "Record_Normal_CEA": {
       "type": "Observation",
       "category": "laboratory",
       "unit": "ng/mL",
-      "codes": [{ "system": "LOINC", "code": "2039-6", "display": "Carcinoembryonic Ag [Mass/volume] in Serum or Plasma" }],
-      "range": { "low": 1, "high": 4 },
+      "codes": [
+        {
+          "system": "LOINC",
+          "code": "2039-6",
+          "display": "Carcinoembryonic Ag [Mass/volume] in Serum or Plasma"
+        }
+      ],
+      "range": {
+        "low": 1,
+        "high": 4
+      },
       "direct_transition": "End_Wellness_Encounter"
     },
-    "End_Wellness_Encounter": { "type": "EncounterEnd", "direct_transition": "Followup_Delay" },
-    "Followup_Delay": { "type": "Delay", "range": { "low": 12, "high": 24, "unit": "months" }, "direct_transition": "Wellness_Encounter" }
+    "End_Wellness_Encounter": {
+      "type": "EncounterEnd",
+      "direct_transition": "Followup_Delay"
+    },
+    "Followup_Delay": {
+      "type": "Delay",
+      "range": {
+        "low": 12,
+        "high": 24,
+        "unit": "months"
+      },
+      "direct_transition": "Wellness_Encounter"
+    },
+    "Maybe_Mimicker_Polyp_of_colon": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Polyp_of_colon",
+          "distribution": 0.25
+        },
+        {
+          "transition": "Maybe_Mimicker_Hemorrhoids",
+          "distribution": 0.75
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Polyp_of_colon": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "68496003",
+          "display": "Polyp of colon"
+        }
+      ],
+      "direct_transition": "Maybe_Mimicker_Hemorrhoids"
+    },
+    "Maybe_Mimicker_Hemorrhoids": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Hemorrhoids",
+          "distribution": 0.2
+        },
+        {
+          "transition": "Maybe_Mimicker_Diverticulitis_of_colon",
+          "distribution": 0.8
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Hemorrhoids": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "70153002",
+          "display": "Hemorrhoids"
+        }
+      ],
+      "direct_transition": "Maybe_Mimicker_Diverticulitis_of_colon"
+    },
+    "Maybe_Mimicker_Diverticulitis_of_colon": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Diverticulitis_of_colon",
+          "distribution": 0.08
+        },
+        {
+          "transition": "Maybe_Mimicker_Inflammatory_bowel_disease",
+          "distribution": 0.92
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Diverticulitis_of_colon": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "111359004",
+          "display": "Diverticulitis of colon"
+        }
+      ],
+      "direct_transition": "Maybe_Mimicker_Inflammatory_bowel_disease"
+    },
+    "Maybe_Mimicker_Inflammatory_bowel_disease": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Inflammatory_bowel_disease",
+          "distribution": 0.05
+        },
+        {
+          "transition": "Maybe_Mimicker_Malignant_neoplasm_of_anal_canal",
+          "distribution": 0.95
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Inflammatory_bowel_disease": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "24526004",
+          "display": "Inflammatory bowel disease"
+        }
+      ],
+      "direct_transition": "Maybe_Mimicker_Malignant_neoplasm_of_anal_canal"
+    },
+    "Maybe_Mimicker_Malignant_neoplasm_of_anal_canal": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Malignant_neoplasm_of_anal_canal",
+          "distribution": 0.02
+        },
+        {
+          "transition": "Record_Normal_CEA",
+          "distribution": 0.98
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Malignant_neoplasm_of_anal_canal": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "363352004",
+          "display": "Malignant neoplasm of anal canal"
+        }
+      ],
+      "direct_transition": "Record_Normal_CEA"
+    }
   },
   "gmf_version": 2
 }

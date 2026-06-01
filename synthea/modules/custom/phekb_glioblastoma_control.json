@@ -1,13 +1,167 @@
 {
   "name": "PheKB Glioblastoma Control",
-  "remarks": ["Control module for glioblastoma. Generates patients age 30+ without GBM dx."],
+  "remarks": [
+    "Control module for glioblastoma. Generates patients age 30+ without GBM dx."
+  ],
   "states": {
-    "Initial": { "type": "Initial", "direct_transition": "Age_Guard" },
-    "Age_Guard": { "type": "Guard", "allow": { "condition_type": "Age", "operator": ">=", "quantity": 30, "unit": "years" }, "direct_transition": "Set_Control_Flag" },
-    "Set_Control_Flag": { "type": "SetAttribute", "attribute": "gbm_positive", "value": false, "direct_transition": "Wellness_Encounter" },
-    "Wellness_Encounter": { "type": "Encounter", "wellness": true, "direct_transition": "End_Wellness_Encounter" },
-    "End_Wellness_Encounter": { "type": "EncounterEnd", "direct_transition": "Followup_Delay" },
-    "Followup_Delay": { "type": "Delay", "range": { "low": 12, "high": 24, "unit": "months" }, "direct_transition": "Wellness_Encounter" }
+    "Initial": {
+      "type": "Initial",
+      "direct_transition": "Age_Guard"
+    },
+    "Age_Guard": {
+      "type": "Guard",
+      "allow": {
+        "condition_type": "Age",
+        "operator": ">=",
+        "quantity": 30,
+        "unit": "years"
+      },
+      "direct_transition": "Set_Control_Flag"
+    },
+    "Set_Control_Flag": {
+      "type": "SetAttribute",
+      "attribute": "gbm_positive",
+      "value": false,
+      "direct_transition": "Wellness_Encounter"
+    },
+    "Wellness_Encounter": {
+      "type": "Encounter",
+      "wellness": true,
+      "direct_transition": "Maybe_Mimicker_Metastatic_malignant_neoplasm_to_brain"
+    },
+    "End_Wellness_Encounter": {
+      "type": "EncounterEnd",
+      "direct_transition": "Followup_Delay"
+    },
+    "Followup_Delay": {
+      "type": "Delay",
+      "range": {
+        "low": 12,
+        "high": 24,
+        "unit": "months"
+      },
+      "direct_transition": "Wellness_Encounter"
+    },
+    "Maybe_Mimicker_Metastatic_malignant_neoplasm_to_brain": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Metastatic_malignant_neoplasm_to_brain",
+          "distribution": 0.3
+        },
+        {
+          "transition": "Maybe_Mimicker_Meningioma",
+          "distribution": 0.7
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Metastatic_malignant_neoplasm_to_brain": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "94225005",
+          "display": "Metastatic malignant neoplasm to brain"
+        }
+      ],
+      "direct_transition": "Maybe_Mimicker_Meningioma"
+    },
+    "Maybe_Mimicker_Meningioma": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Meningioma",
+          "distribution": 0.1
+        },
+        {
+          "transition": "Maybe_Mimicker_Cerebral_infarction",
+          "distribution": 0.9
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Meningioma": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "1373614004",
+          "display": "Meningioma"
+        }
+      ],
+      "direct_transition": "Maybe_Mimicker_Cerebral_infarction"
+    },
+    "Maybe_Mimicker_Cerebral_infarction": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Cerebral_infarction",
+          "distribution": 0.08
+        },
+        {
+          "transition": "Maybe_Mimicker_Cerebral_abscess",
+          "distribution": 0.92
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Cerebral_infarction": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "432504007",
+          "display": "Cerebral infarction"
+        }
+      ],
+      "direct_transition": "Maybe_Mimicker_Cerebral_abscess"
+    },
+    "Maybe_Mimicker_Cerebral_abscess": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Cerebral_abscess",
+          "distribution": 0.03
+        },
+        {
+          "transition": "Maybe_Mimicker_Multiple_sclerosis",
+          "distribution": 0.97
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Cerebral_abscess": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "60404007",
+          "display": "Cerebral abscess"
+        }
+      ],
+      "direct_transition": "Maybe_Mimicker_Multiple_sclerosis"
+    },
+    "Maybe_Mimicker_Multiple_sclerosis": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Multiple_sclerosis",
+          "distribution": 0.02
+        },
+        {
+          "transition": "End_Wellness_Encounter",
+          "distribution": 0.98
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Multiple_sclerosis": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "24700007",
+          "display": "Multiple sclerosis"
+        }
+      ],
+      "direct_transition": "End_Wellness_Encounter"
+    }
   },
   "gmf_version": 2
 }

@@ -1,13 +1,167 @@
 {
   "name": "PheKB Influenza Control",
-  "remarks": ["Control module for influenza. Generates patients age 1+ without influenza dx or oseltamivir."],
+  "remarks": [
+    "Control module for influenza. Generates patients age 1+ without influenza dx or oseltamivir."
+  ],
   "states": {
-    "Initial": { "type": "Initial", "direct_transition": "Age_Guard" },
-    "Age_Guard": { "type": "Guard", "allow": { "condition_type": "Age", "operator": ">=", "quantity": 1, "unit": "years" }, "direct_transition": "Set_Control_Flag" },
-    "Set_Control_Flag": { "type": "SetAttribute", "attribute": "flu_positive", "value": false, "direct_transition": "Wellness_Encounter" },
-    "Wellness_Encounter": { "type": "Encounter", "wellness": true, "direct_transition": "End_Wellness_Encounter" },
-    "End_Wellness_Encounter": { "type": "EncounterEnd", "direct_transition": "Followup_Delay" },
-    "Followup_Delay": { "type": "Delay", "range": { "low": 12, "high": 24, "unit": "months" }, "direct_transition": "Wellness_Encounter" }
+    "Initial": {
+      "type": "Initial",
+      "direct_transition": "Age_Guard"
+    },
+    "Age_Guard": {
+      "type": "Guard",
+      "allow": {
+        "condition_type": "Age",
+        "operator": ">=",
+        "quantity": 1,
+        "unit": "years"
+      },
+      "direct_transition": "Set_Control_Flag"
+    },
+    "Set_Control_Flag": {
+      "type": "SetAttribute",
+      "attribute": "flu_positive",
+      "value": false,
+      "direct_transition": "Wellness_Encounter"
+    },
+    "Wellness_Encounter": {
+      "type": "Encounter",
+      "wellness": true,
+      "direct_transition": "Maybe_Mimicker_Common_cold"
+    },
+    "End_Wellness_Encounter": {
+      "type": "EncounterEnd",
+      "direct_transition": "Followup_Delay"
+    },
+    "Followup_Delay": {
+      "type": "Delay",
+      "range": {
+        "low": 12,
+        "high": 24,
+        "unit": "months"
+      },
+      "direct_transition": "Wellness_Encounter"
+    },
+    "Maybe_Mimicker_Common_cold": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Common_cold",
+          "distribution": 0.3
+        },
+        {
+          "transition": "Maybe_Mimicker_Respiratory_syncytial_virus_infection",
+          "distribution": 0.7
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Common_cold": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "82272006",
+          "display": "Common cold"
+        }
+      ],
+      "direct_transition": "Maybe_Mimicker_Respiratory_syncytial_virus_infection"
+    },
+    "Maybe_Mimicker_Respiratory_syncytial_virus_infection": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Respiratory_syncytial_virus_infection",
+          "distribution": 0.15
+        },
+        {
+          "transition": "Maybe_Mimicker_Streptococcal_sore_throat",
+          "distribution": 0.85
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Respiratory_syncytial_virus_infection": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "55735004",
+          "display": "Respiratory syncytial virus infection"
+        }
+      ],
+      "direct_transition": "Maybe_Mimicker_Streptococcal_sore_throat"
+    },
+    "Maybe_Mimicker_Streptococcal_sore_throat": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Streptococcal_sore_throat",
+          "distribution": 0.1
+        },
+        {
+          "transition": "Maybe_Mimicker_Acute_bronchitis",
+          "distribution": 0.9
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Streptococcal_sore_throat": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "43878008",
+          "display": "Streptococcal sore throat"
+        }
+      ],
+      "direct_transition": "Maybe_Mimicker_Acute_bronchitis"
+    },
+    "Maybe_Mimicker_Acute_bronchitis": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Acute_bronchitis",
+          "distribution": 0.15
+        },
+        {
+          "transition": "Maybe_Mimicker_COVID_19",
+          "distribution": 0.85
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Acute_bronchitis": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "10509002",
+          "display": "Acute bronchitis"
+        }
+      ],
+      "direct_transition": "Maybe_Mimicker_COVID_19"
+    },
+    "Maybe_Mimicker_COVID_19": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_COVID_19",
+          "distribution": 0.1
+        },
+        {
+          "transition": "End_Wellness_Encounter",
+          "distribution": 0.9
+        }
+      ]
+    },
+    "Diagnose_Mimicker_COVID_19": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "840539006",
+          "display": "COVID-19"
+        }
+      ],
+      "direct_transition": "End_Wellness_Encounter"
+    }
   },
   "gmf_version": 2
 }

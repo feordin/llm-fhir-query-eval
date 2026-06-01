@@ -1,13 +1,167 @@
 {
   "name": "PheKB Intellectual Disability Control",
-  "remarks": ["Control module. Generates patients age 5+ without intellectual disability dx."],
+  "remarks": [
+    "Control module. Generates patients age 5+ without intellectual disability dx."
+  ],
   "states": {
-    "Initial": { "type": "Initial", "direct_transition": "Age_Guard" },
-    "Age_Guard": { "type": "Guard", "allow": { "condition_type": "Age", "operator": ">=", "quantity": 5, "unit": "years" }, "direct_transition": "Set_Control_Flag" },
-    "Set_Control_Flag": { "type": "SetAttribute", "attribute": "id_positive", "value": false, "direct_transition": "Wellness_Encounter" },
-    "Wellness_Encounter": { "type": "Encounter", "wellness": true, "direct_transition": "End_Wellness_Encounter" },
-    "End_Wellness_Encounter": { "type": "EncounterEnd", "direct_transition": "Followup_Delay" },
-    "Followup_Delay": { "type": "Delay", "range": { "low": 12, "high": 24, "unit": "months" }, "direct_transition": "Wellness_Encounter" }
+    "Initial": {
+      "type": "Initial",
+      "direct_transition": "Age_Guard"
+    },
+    "Age_Guard": {
+      "type": "Guard",
+      "allow": {
+        "condition_type": "Age",
+        "operator": ">=",
+        "quantity": 5,
+        "unit": "years"
+      },
+      "direct_transition": "Set_Control_Flag"
+    },
+    "Set_Control_Flag": {
+      "type": "SetAttribute",
+      "attribute": "id_positive",
+      "value": false,
+      "direct_transition": "Wellness_Encounter"
+    },
+    "Wellness_Encounter": {
+      "type": "Encounter",
+      "wellness": true,
+      "direct_transition": "Maybe_Mimicker_Global_developmental_delay"
+    },
+    "End_Wellness_Encounter": {
+      "type": "EncounterEnd",
+      "direct_transition": "Followup_Delay"
+    },
+    "Followup_Delay": {
+      "type": "Delay",
+      "range": {
+        "low": 12,
+        "high": 24,
+        "unit": "months"
+      },
+      "direct_transition": "Wellness_Encounter"
+    },
+    "Maybe_Mimicker_Global_developmental_delay": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Global_developmental_delay",
+          "distribution": 0.3
+        },
+        {
+          "transition": "Maybe_Mimicker_Pervasive_developmental_disorder",
+          "distribution": 0.7
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Global_developmental_delay": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "224958001",
+          "display": "Global developmental delay"
+        }
+      ],
+      "direct_transition": "Maybe_Mimicker_Pervasive_developmental_disorder"
+    },
+    "Maybe_Mimicker_Pervasive_developmental_disorder": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Pervasive_developmental_disorder",
+          "distribution": 0.15
+        },
+        {
+          "transition": "Maybe_Mimicker_Cerebral_palsy",
+          "distribution": 0.85
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Pervasive_developmental_disorder": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "35919005",
+          "display": "Autism spectrum disorder"
+        }
+      ],
+      "direct_transition": "Maybe_Mimicker_Cerebral_palsy"
+    },
+    "Maybe_Mimicker_Cerebral_palsy": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Cerebral_palsy",
+          "distribution": 0.1
+        },
+        {
+          "transition": "Maybe_Mimicker_Complete_trisomy_21_syndrome",
+          "distribution": 0.9
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Cerebral_palsy": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "128188000",
+          "display": "Cerebral palsy"
+        }
+      ],
+      "direct_transition": "Maybe_Mimicker_Complete_trisomy_21_syndrome"
+    },
+    "Maybe_Mimicker_Complete_trisomy_21_syndrome": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Complete_trisomy_21_syndrome",
+          "distribution": 0.08
+        },
+        {
+          "transition": "Maybe_Mimicker_Developmental_academic_disorder",
+          "distribution": 0.92
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Complete_trisomy_21_syndrome": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "41040004",
+          "display": "Complete trisomy 21 syndrome"
+        }
+      ],
+      "direct_transition": "Maybe_Mimicker_Developmental_academic_disorder"
+    },
+    "Maybe_Mimicker_Developmental_academic_disorder": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Developmental_academic_disorder",
+          "distribution": 0.1
+        },
+        {
+          "transition": "End_Wellness_Encounter",
+          "distribution": 0.9
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Developmental_academic_disorder": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "1855002",
+          "display": "Developmental academic disorder"
+        }
+      ],
+      "direct_transition": "End_Wellness_Encounter"
+    }
   },
   "gmf_version": 2
 }

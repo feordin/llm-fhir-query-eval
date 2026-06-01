@@ -1,13 +1,167 @@
 {
   "name": "PheKB Leukemia Control",
-  "remarks": ["Control module for leukemia. Generates adult patients without leukemia dx."],
+  "remarks": [
+    "Control module for leukemia. Generates adult patients without leukemia dx."
+  ],
   "states": {
-    "Initial": { "type": "Initial", "direct_transition": "Age_Guard" },
-    "Age_Guard": { "type": "Guard", "allow": { "condition_type": "Age", "operator": ">=", "quantity": 18, "unit": "years" }, "direct_transition": "Set_Control_Flag" },
-    "Set_Control_Flag": { "type": "SetAttribute", "attribute": "leuk_positive", "value": false, "direct_transition": "Wellness_Encounter" },
-    "Wellness_Encounter": { "type": "Encounter", "wellness": true, "direct_transition": "End_Wellness_Encounter" },
-    "End_Wellness_Encounter": { "type": "EncounterEnd", "direct_transition": "Followup_Delay" },
-    "Followup_Delay": { "type": "Delay", "range": { "low": 12, "high": 24, "unit": "months" }, "direct_transition": "Wellness_Encounter" }
+    "Initial": {
+      "type": "Initial",
+      "direct_transition": "Age_Guard"
+    },
+    "Age_Guard": {
+      "type": "Guard",
+      "allow": {
+        "condition_type": "Age",
+        "operator": ">=",
+        "quantity": 18,
+        "unit": "years"
+      },
+      "direct_transition": "Set_Control_Flag"
+    },
+    "Set_Control_Flag": {
+      "type": "SetAttribute",
+      "attribute": "leuk_positive",
+      "value": false,
+      "direct_transition": "Wellness_Encounter"
+    },
+    "Wellness_Encounter": {
+      "type": "Encounter",
+      "wellness": true,
+      "direct_transition": "Maybe_Mimicker_Malignant_lymphoma"
+    },
+    "End_Wellness_Encounter": {
+      "type": "EncounterEnd",
+      "direct_transition": "Followup_Delay"
+    },
+    "Followup_Delay": {
+      "type": "Delay",
+      "range": {
+        "low": 12,
+        "high": 24,
+        "unit": "months"
+      },
+      "direct_transition": "Wellness_Encounter"
+    },
+    "Maybe_Mimicker_Malignant_lymphoma": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Malignant_lymphoma",
+          "distribution": 0.1
+        },
+        {
+          "transition": "Maybe_Mimicker_Myelodysplastic_syndrome_clinical",
+          "distribution": 0.9
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Malignant_lymphoma": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "1163043007",
+          "display": "Malignant lymphoma"
+        }
+      ],
+      "direct_transition": "Maybe_Mimicker_Myelodysplastic_syndrome_clinical"
+    },
+    "Maybe_Mimicker_Myelodysplastic_syndrome_clinical": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Myelodysplastic_syndrome_clinical",
+          "distribution": 0.08
+        },
+        {
+          "transition": "Maybe_Mimicker_Aplastic_anemia",
+          "distribution": 0.92
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Myelodysplastic_syndrome_clinical": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "109995007",
+          "display": "Myelodysplastic syndrome (clinical)"
+        }
+      ],
+      "direct_transition": "Maybe_Mimicker_Aplastic_anemia"
+    },
+    "Maybe_Mimicker_Aplastic_anemia": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Aplastic_anemia",
+          "distribution": 0.04
+        },
+        {
+          "transition": "Maybe_Mimicker_Iron_deficiency_anemia",
+          "distribution": 0.96
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Aplastic_anemia": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "306058006",
+          "display": "Aplastic anemia"
+        }
+      ],
+      "direct_transition": "Maybe_Mimicker_Iron_deficiency_anemia"
+    },
+    "Maybe_Mimicker_Iron_deficiency_anemia": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Iron_deficiency_anemia",
+          "distribution": 0.2
+        },
+        {
+          "transition": "Maybe_Mimicker_Infectious_mononucleosis",
+          "distribution": 0.8
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Iron_deficiency_anemia": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "87522002",
+          "display": "Iron deficiency anemia"
+        }
+      ],
+      "direct_transition": "Maybe_Mimicker_Infectious_mononucleosis"
+    },
+    "Maybe_Mimicker_Infectious_mononucleosis": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Infectious_mononucleosis",
+          "distribution": 0.06
+        },
+        {
+          "transition": "End_Wellness_Encounter",
+          "distribution": 0.94
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Infectious_mononucleosis": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "271558008",
+          "display": "Infectious mononucleosis"
+        }
+      ],
+      "direct_transition": "End_Wellness_Encounter"
+    }
   },
   "gmf_version": 2
 }

@@ -1,13 +1,167 @@
 {
   "name": "PheKB Diverticulitis Control",
-  "remarks": ["Control module for diverticulitis. Generates patients age 50+ without diverticulitis dx or cipro/metro Rx."],
+  "remarks": [
+    "Control module for diverticulitis. Generates patients age 50+ without diverticulitis dx or cipro/metro Rx."
+  ],
   "states": {
-    "Initial": { "type": "Initial", "direct_transition": "Age_Guard" },
-    "Age_Guard": { "type": "Guard", "allow": { "condition_type": "Age", "operator": ">=", "quantity": 50, "unit": "years" }, "direct_transition": "Set_Control_Flag" },
-    "Set_Control_Flag": { "type": "SetAttribute", "attribute": "div_positive", "value": false, "direct_transition": "Wellness_Encounter" },
-    "Wellness_Encounter": { "type": "Encounter", "wellness": true, "direct_transition": "End_Wellness_Encounter" },
-    "End_Wellness_Encounter": { "type": "EncounterEnd", "direct_transition": "Followup_Delay" },
-    "Followup_Delay": { "type": "Delay", "range": { "low": 12, "high": 24, "unit": "months" }, "direct_transition": "Wellness_Encounter" }
+    "Initial": {
+      "type": "Initial",
+      "direct_transition": "Age_Guard"
+    },
+    "Age_Guard": {
+      "type": "Guard",
+      "allow": {
+        "condition_type": "Age",
+        "operator": ">=",
+        "quantity": 50,
+        "unit": "years"
+      },
+      "direct_transition": "Set_Control_Flag"
+    },
+    "Set_Control_Flag": {
+      "type": "SetAttribute",
+      "attribute": "div_positive",
+      "value": false,
+      "direct_transition": "Wellness_Encounter"
+    },
+    "Wellness_Encounter": {
+      "type": "Encounter",
+      "wellness": true,
+      "direct_transition": "Maybe_Mimicker_Irritable_bowel_syndrome"
+    },
+    "End_Wellness_Encounter": {
+      "type": "EncounterEnd",
+      "direct_transition": "Followup_Delay"
+    },
+    "Followup_Delay": {
+      "type": "Delay",
+      "range": {
+        "low": 12,
+        "high": 24,
+        "unit": "months"
+      },
+      "direct_transition": "Wellness_Encounter"
+    },
+    "Maybe_Mimicker_Irritable_bowel_syndrome": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Irritable_bowel_syndrome",
+          "distribution": 0.2
+        },
+        {
+          "transition": "Maybe_Mimicker_Inflammatory_bowel_disease",
+          "distribution": 0.8
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Irritable_bowel_syndrome": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "10743008",
+          "display": "Irritable bowel syndrome"
+        }
+      ],
+      "direct_transition": "Maybe_Mimicker_Inflammatory_bowel_disease"
+    },
+    "Maybe_Mimicker_Inflammatory_bowel_disease": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Inflammatory_bowel_disease",
+          "distribution": 0.08
+        },
+        {
+          "transition": "Maybe_Mimicker_Urinary_tract_infectious_disease",
+          "distribution": 0.92
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Inflammatory_bowel_disease": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "24526004",
+          "display": "Inflammatory bowel disease"
+        }
+      ],
+      "direct_transition": "Maybe_Mimicker_Urinary_tract_infectious_disease"
+    },
+    "Maybe_Mimicker_Urinary_tract_infectious_disease": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Urinary_tract_infectious_disease",
+          "distribution": 0.15
+        },
+        {
+          "transition": "Maybe_Mimicker_Functional_disorder_of_intestine",
+          "distribution": 0.85
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Urinary_tract_infectious_disease": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "68566005",
+          "display": "Urinary tract infectious disease"
+        }
+      ],
+      "direct_transition": "Maybe_Mimicker_Functional_disorder_of_intestine"
+    },
+    "Maybe_Mimicker_Functional_disorder_of_intestine": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Functional_disorder_of_intestine",
+          "distribution": 0.1
+        },
+        {
+          "transition": "Maybe_Mimicker_Female_pelvic_inflammatory_disease",
+          "distribution": 0.9
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Functional_disorder_of_intestine": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "81120009",
+          "display": "Functional disorder of intestine"
+        }
+      ],
+      "direct_transition": "Maybe_Mimicker_Female_pelvic_inflammatory_disease"
+    },
+    "Maybe_Mimicker_Female_pelvic_inflammatory_disease": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Female_pelvic_inflammatory_disease",
+          "distribution": 0.03
+        },
+        {
+          "transition": "End_Wellness_Encounter",
+          "distribution": 0.97
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Female_pelvic_inflammatory_disease": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "198130006",
+          "display": "Female pelvic inflammatory disease"
+        }
+      ],
+      "direct_transition": "End_Wellness_Encounter"
+    }
   },
   "gmf_version": 2
 }

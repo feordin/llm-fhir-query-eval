@@ -1,13 +1,167 @@
 {
   "name": "PheKB Febrile Neutropenia Pediatric Control",
-  "remarks": ["Control module. Generates pediatric patients age 0-17 without FN dx, ANC<500, or cefepime."],
+  "remarks": [
+    "Control module. Generates pediatric patients age 0-17 without FN dx, ANC<500, or cefepime."
+  ],
   "states": {
-    "Initial": { "type": "Initial", "direct_transition": "Age_Upper_Guard" },
-    "Age_Upper_Guard": { "type": "Guard", "allow": { "condition_type": "Age", "operator": "<=", "quantity": 17, "unit": "years" }, "direct_transition": "Set_Control_Flag" },
-    "Set_Control_Flag": { "type": "SetAttribute", "attribute": "fn_positive", "value": false, "direct_transition": "Wellness_Encounter" },
-    "Wellness_Encounter": { "type": "Encounter", "wellness": true, "direct_transition": "End_Wellness_Encounter" },
-    "End_Wellness_Encounter": { "type": "EncounterEnd", "direct_transition": "Followup_Delay" },
-    "Followup_Delay": { "type": "Delay", "range": { "low": 6, "high": 12, "unit": "months" }, "direct_transition": "Wellness_Encounter" }
+    "Initial": {
+      "type": "Initial",
+      "direct_transition": "Age_Upper_Guard"
+    },
+    "Age_Upper_Guard": {
+      "type": "Guard",
+      "allow": {
+        "condition_type": "Age",
+        "operator": "<=",
+        "quantity": 17,
+        "unit": "years"
+      },
+      "direct_transition": "Set_Control_Flag"
+    },
+    "Set_Control_Flag": {
+      "type": "SetAttribute",
+      "attribute": "fn_positive",
+      "value": false,
+      "direct_transition": "Wellness_Encounter"
+    },
+    "Wellness_Encounter": {
+      "type": "Encounter",
+      "wellness": true,
+      "direct_transition": "Maybe_Mimicker_Sepsis"
+    },
+    "End_Wellness_Encounter": {
+      "type": "EncounterEnd",
+      "direct_transition": "Followup_Delay"
+    },
+    "Followup_Delay": {
+      "type": "Delay",
+      "range": {
+        "low": 6,
+        "high": 12,
+        "unit": "months"
+      },
+      "direct_transition": "Wellness_Encounter"
+    },
+    "Maybe_Mimicker_Sepsis": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Sepsis",
+          "distribution": 0.2
+        },
+        {
+          "transition": "Maybe_Mimicker_Viral_disease",
+          "distribution": 0.8
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Sepsis": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "91302008",
+          "display": "Sepsis"
+        }
+      ],
+      "direct_transition": "Maybe_Mimicker_Viral_disease"
+    },
+    "Maybe_Mimicker_Viral_disease": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Viral_disease",
+          "distribution": 0.3
+        },
+        {
+          "transition": "Maybe_Mimicker_Leukopenia",
+          "distribution": 0.7
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Viral_disease": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "34014006",
+          "display": "Viral disease"
+        }
+      ],
+      "direct_transition": "Maybe_Mimicker_Leukopenia"
+    },
+    "Maybe_Mimicker_Leukopenia": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Leukopenia",
+          "distribution": 0.15
+        },
+        {
+          "transition": "Maybe_Mimicker_Acute_lymphoid_leukemia",
+          "distribution": 0.85
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Leukopenia": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "84828003",
+          "display": "Leukopenia"
+        }
+      ],
+      "direct_transition": "Maybe_Mimicker_Acute_lymphoid_leukemia"
+    },
+    "Maybe_Mimicker_Acute_lymphoid_leukemia": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Acute_lymphoid_leukemia",
+          "distribution": 0.05
+        },
+        {
+          "transition": "Maybe_Mimicker_Acute_myeloid_leukemia",
+          "distribution": 0.95
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Acute_lymphoid_leukemia": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "128822004",
+          "display": "Precursor cell lymphoblastic leukemia"
+        }
+      ],
+      "direct_transition": "Maybe_Mimicker_Acute_myeloid_leukemia"
+    },
+    "Maybe_Mimicker_Acute_myeloid_leukemia": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Acute_myeloid_leukemia",
+          "distribution": 0.02
+        },
+        {
+          "transition": "End_Wellness_Encounter",
+          "distribution": 0.98
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Acute_myeloid_leukemia": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "1162928000",
+          "display": "Acute myeloid leukemia"
+        }
+      ],
+      "direct_transition": "End_Wellness_Encounter"
+    }
   },
   "gmf_version": 2
 }

@@ -1,13 +1,167 @@
 {
   "name": "PheKB Drug-Induced Liver Injury Control",
-  "remarks": ["Control module. Generates patients age 18+ without DILI dx or elevated ALT/AST."],
+  "remarks": [
+    "Control module. Generates patients age 18+ without DILI dx or elevated ALT/AST."
+  ],
   "states": {
-    "Initial": { "type": "Initial", "direct_transition": "Age_Guard" },
-    "Age_Guard": { "type": "Guard", "allow": { "condition_type": "Age", "operator": ">=", "quantity": 18, "unit": "years" }, "direct_transition": "Set_Control_Flag" },
-    "Set_Control_Flag": { "type": "SetAttribute", "attribute": "dili_positive", "value": false, "direct_transition": "Wellness_Encounter" },
-    "Wellness_Encounter": { "type": "Encounter", "wellness": true, "direct_transition": "End_Wellness_Encounter" },
-    "End_Wellness_Encounter": { "type": "EncounterEnd", "direct_transition": "Followup_Delay" },
-    "Followup_Delay": { "type": "Delay", "range": { "low": 12, "high": 24, "unit": "months" }, "direct_transition": "Wellness_Encounter" }
+    "Initial": {
+      "type": "Initial",
+      "direct_transition": "Age_Guard"
+    },
+    "Age_Guard": {
+      "type": "Guard",
+      "allow": {
+        "condition_type": "Age",
+        "operator": ">=",
+        "quantity": 18,
+        "unit": "years"
+      },
+      "direct_transition": "Set_Control_Flag"
+    },
+    "Set_Control_Flag": {
+      "type": "SetAttribute",
+      "attribute": "dili_positive",
+      "value": false,
+      "direct_transition": "Wellness_Encounter"
+    },
+    "Wellness_Encounter": {
+      "type": "Encounter",
+      "wellness": true,
+      "direct_transition": "Maybe_Mimicker_Viral_hepatitis"
+    },
+    "End_Wellness_Encounter": {
+      "type": "EncounterEnd",
+      "direct_transition": "Followup_Delay"
+    },
+    "Followup_Delay": {
+      "type": "Delay",
+      "range": {
+        "low": 12,
+        "high": 24,
+        "unit": "months"
+      },
+      "direct_transition": "Wellness_Encounter"
+    },
+    "Maybe_Mimicker_Viral_hepatitis": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Viral_hepatitis",
+          "distribution": 0.1
+        },
+        {
+          "transition": "Maybe_Mimicker_Alcoholic_hepatitis",
+          "distribution": 0.9
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Viral_hepatitis": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "3738000",
+          "display": "Viral hepatitis"
+        }
+      ],
+      "direct_transition": "Maybe_Mimicker_Alcoholic_hepatitis"
+    },
+    "Maybe_Mimicker_Alcoholic_hepatitis": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Alcoholic_hepatitis",
+          "distribution": 0.08
+        },
+        {
+          "transition": "Maybe_Mimicker_Metabolic_dysfunction_associated_steatotic_liver_disease",
+          "distribution": 0.92
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Alcoholic_hepatitis": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "235875008",
+          "display": "Alcoholic hepatitis"
+        }
+      ],
+      "direct_transition": "Maybe_Mimicker_Metabolic_dysfunction_associated_steatotic_liver_disease"
+    },
+    "Maybe_Mimicker_Metabolic_dysfunction_associated_steatotic_liver_disease": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Metabolic_dysfunction_associated_steatotic_liver_disease",
+          "distribution": 0.25
+        },
+        {
+          "transition": "Maybe_Mimicker_Chronic_autoimmune_hepatitis",
+          "distribution": 0.75
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Metabolic_dysfunction_associated_steatotic_liver_disease": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "1231824009",
+          "display": "Metabolic dysfunction-associated steatotic liver disease"
+        }
+      ],
+      "direct_transition": "Maybe_Mimicker_Chronic_autoimmune_hepatitis"
+    },
+    "Maybe_Mimicker_Chronic_autoimmune_hepatitis": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Chronic_autoimmune_hepatitis",
+          "distribution": 0.03
+        },
+        {
+          "transition": "Maybe_Mimicker_Gallstone",
+          "distribution": 0.97
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Chronic_autoimmune_hepatitis": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "16098491000119109",
+          "display": "Chronic autoimmune hepatitis"
+        }
+      ],
+      "direct_transition": "Maybe_Mimicker_Gallstone"
+    },
+    "Maybe_Mimicker_Gallstone": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Gallstone",
+          "distribution": 0.15
+        },
+        {
+          "transition": "End_Wellness_Encounter",
+          "distribution": 0.85
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Gallstone": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "256896000",
+          "display": "Gallstone"
+        }
+      ],
+      "direct_transition": "End_Wellness_Encounter"
+    }
   },
   "gmf_version": 2
 }

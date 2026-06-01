@@ -1,14 +1,177 @@
 {
   "name": "PheKB Developmental Language Disorder Control",
-  "remarks": ["Control module. Generates pediatric patients age 5-17 without DLD dx."],
+  "remarks": [
+    "Control module. Generates pediatric patients age 5-17 without DLD dx."
+  ],
   "states": {
-    "Initial": { "type": "Initial", "direct_transition": "Age_Lower_Guard" },
-    "Age_Lower_Guard": { "type": "Guard", "allow": { "condition_type": "Age", "operator": ">=", "quantity": 5, "unit": "years" }, "direct_transition": "Age_Upper_Guard" },
-    "Age_Upper_Guard": { "type": "Guard", "allow": { "condition_type": "Age", "operator": "<=", "quantity": 17, "unit": "years" }, "direct_transition": "Set_Control_Flag" },
-    "Set_Control_Flag": { "type": "SetAttribute", "attribute": "dld_positive", "value": false, "direct_transition": "Wellness_Encounter" },
-    "Wellness_Encounter": { "type": "Encounter", "wellness": true, "direct_transition": "End_Wellness_Encounter" },
-    "End_Wellness_Encounter": { "type": "EncounterEnd", "direct_transition": "Followup_Delay" },
-    "Followup_Delay": { "type": "Delay", "range": { "low": 12, "high": 24, "unit": "months" }, "direct_transition": "Wellness_Encounter" }
+    "Initial": {
+      "type": "Initial",
+      "direct_transition": "Age_Lower_Guard"
+    },
+    "Age_Lower_Guard": {
+      "type": "Guard",
+      "allow": {
+        "condition_type": "Age",
+        "operator": ">=",
+        "quantity": 5,
+        "unit": "years"
+      },
+      "direct_transition": "Age_Upper_Guard"
+    },
+    "Age_Upper_Guard": {
+      "type": "Guard",
+      "allow": {
+        "condition_type": "Age",
+        "operator": "<=",
+        "quantity": 17,
+        "unit": "years"
+      },
+      "direct_transition": "Set_Control_Flag"
+    },
+    "Set_Control_Flag": {
+      "type": "SetAttribute",
+      "attribute": "dld_positive",
+      "value": false,
+      "direct_transition": "Wellness_Encounter"
+    },
+    "Wellness_Encounter": {
+      "type": "Encounter",
+      "wellness": true,
+      "direct_transition": "Maybe_Mimicker_Attention_deficit_hyperactivity_disorder"
+    },
+    "End_Wellness_Encounter": {
+      "type": "EncounterEnd",
+      "direct_transition": "Followup_Delay"
+    },
+    "Followup_Delay": {
+      "type": "Delay",
+      "range": {
+        "low": 12,
+        "high": 24,
+        "unit": "months"
+      },
+      "direct_transition": "Wellness_Encounter"
+    },
+    "Maybe_Mimicker_Attention_deficit_hyperactivity_disorder": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Attention_deficit_hyperactivity_disorder",
+          "distribution": 0.2
+        },
+        {
+          "transition": "Maybe_Mimicker_Developmental_academic_disorder",
+          "distribution": 0.8
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Attention_deficit_hyperactivity_disorder": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "406506008",
+          "display": "Attention deficit hyperactivity disorder"
+        }
+      ],
+      "direct_transition": "Maybe_Mimicker_Developmental_academic_disorder"
+    },
+    "Maybe_Mimicker_Developmental_academic_disorder": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Developmental_academic_disorder",
+          "distribution": 0.12
+        },
+        {
+          "transition": "Maybe_Mimicker_Pervasive_developmental_disorder",
+          "distribution": 0.88
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Developmental_academic_disorder": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "1855002",
+          "display": "Developmental academic disorder"
+        }
+      ],
+      "direct_transition": "Maybe_Mimicker_Pervasive_developmental_disorder"
+    },
+    "Maybe_Mimicker_Pervasive_developmental_disorder": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Pervasive_developmental_disorder",
+          "distribution": 0.1
+        },
+        {
+          "transition": "Maybe_Mimicker_Global_developmental_delay",
+          "distribution": 0.9
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Pervasive_developmental_disorder": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "35919005",
+          "display": "Autism spectrum disorder"
+        }
+      ],
+      "direct_transition": "Maybe_Mimicker_Global_developmental_delay"
+    },
+    "Maybe_Mimicker_Global_developmental_delay": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Global_developmental_delay",
+          "distribution": 0.08
+        },
+        {
+          "transition": "Maybe_Mimicker_Sensorineural_hearing_loss",
+          "distribution": 0.92
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Global_developmental_delay": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "224958001",
+          "display": "Global developmental delay"
+        }
+      ],
+      "direct_transition": "Maybe_Mimicker_Sensorineural_hearing_loss"
+    },
+    "Maybe_Mimicker_Sensorineural_hearing_loss": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Sensorineural_hearing_loss",
+          "distribution": 0.04
+        },
+        {
+          "transition": "End_Wellness_Encounter",
+          "distribution": 0.96
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Sensorineural_hearing_loss": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "60700002",
+          "display": "Sensorineural hearing loss"
+        }
+      ],
+      "direct_transition": "End_Wellness_Encounter"
+    }
   },
   "gmf_version": 2
 }

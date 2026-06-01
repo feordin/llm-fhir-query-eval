@@ -1,13 +1,167 @@
 {
   "name": "PheKB Clopidogrel Poor Metabolizers Control",
-  "remarks": ["Control: age 40+ without clopidogrel or AMI."],
+  "remarks": [
+    "Control: age 40+ without clopidogrel or AMI."
+  ],
   "states": {
-    "Initial": { "type": "Initial", "direct_transition": "Age_Guard" },
-    "Age_Guard": { "type": "Guard", "allow": { "condition_type": "Age", "operator": ">=", "quantity": 40, "unit": "years" }, "direct_transition": "Set_Control_Flag" },
-    "Set_Control_Flag": { "type": "SetAttribute", "attribute": "cl_positive", "value": false, "direct_transition": "Wellness_Encounter" },
-    "Wellness_Encounter": { "type": "Encounter", "wellness": true, "direct_transition": "End_Wellness_Encounter" },
-    "End_Wellness_Encounter": { "type": "EncounterEnd", "direct_transition": "Followup_Delay" },
-    "Followup_Delay": { "type": "Delay", "range": { "low": 12, "high": 24, "unit": "months" }, "direct_transition": "Wellness_Encounter" }
+    "Initial": {
+      "type": "Initial",
+      "direct_transition": "Age_Guard"
+    },
+    "Age_Guard": {
+      "type": "Guard",
+      "allow": {
+        "condition_type": "Age",
+        "operator": ">=",
+        "quantity": 40,
+        "unit": "years"
+      },
+      "direct_transition": "Set_Control_Flag"
+    },
+    "Set_Control_Flag": {
+      "type": "SetAttribute",
+      "attribute": "cl_positive",
+      "value": false,
+      "direct_transition": "Wellness_Encounter"
+    },
+    "Wellness_Encounter": {
+      "type": "Encounter",
+      "wellness": true,
+      "direct_transition": "Maybe_Mimicker_Stable_angina"
+    },
+    "End_Wellness_Encounter": {
+      "type": "EncounterEnd",
+      "direct_transition": "Followup_Delay"
+    },
+    "Followup_Delay": {
+      "type": "Delay",
+      "range": {
+        "low": 12,
+        "high": 24,
+        "unit": "months"
+      },
+      "direct_transition": "Wellness_Encounter"
+    },
+    "Maybe_Mimicker_Stable_angina": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Stable_angina",
+          "distribution": 0.2
+        },
+        {
+          "transition": "Maybe_Mimicker_Acute_coronary_syndrome",
+          "distribution": 0.8
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Stable_angina": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "233819005",
+          "display": "Stable angina"
+        }
+      ],
+      "direct_transition": "Maybe_Mimicker_Acute_coronary_syndrome"
+    },
+    "Maybe_Mimicker_Acute_coronary_syndrome": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Acute_coronary_syndrome",
+          "distribution": 0.1
+        },
+        {
+          "transition": "Maybe_Mimicker_Atrial_fibrillation",
+          "distribution": 0.9
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Acute_coronary_syndrome": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "394659003",
+          "display": "Acute coronary syndrome"
+        }
+      ],
+      "direct_transition": "Maybe_Mimicker_Atrial_fibrillation"
+    },
+    "Maybe_Mimicker_Atrial_fibrillation": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Atrial_fibrillation",
+          "distribution": 0.12
+        },
+        {
+          "transition": "Maybe_Mimicker_Cerebral_infarction",
+          "distribution": 0.88
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Atrial_fibrillation": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "164889003",
+          "display": "ECG: atrial fibrillation"
+        }
+      ],
+      "direct_transition": "Maybe_Mimicker_Cerebral_infarction"
+    },
+    "Maybe_Mimicker_Cerebral_infarction": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Cerebral_infarction",
+          "distribution": 0.05
+        },
+        {
+          "transition": "Maybe_Mimicker_Impending_infarction",
+          "distribution": 0.95
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Cerebral_infarction": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "432504007",
+          "display": "Cerebral infarction"
+        }
+      ],
+      "direct_transition": "Maybe_Mimicker_Impending_infarction"
+    },
+    "Maybe_Mimicker_Impending_infarction": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Impending_infarction",
+          "distribution": 0.04
+        },
+        {
+          "transition": "End_Wellness_Encounter",
+          "distribution": 0.96
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Impending_infarction": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "25106000",
+          "display": "Impending infarction"
+        }
+      ],
+      "direct_transition": "End_Wellness_Encounter"
+    }
   },
   "gmf_version": 2
 }

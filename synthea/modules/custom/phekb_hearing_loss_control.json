@@ -1,13 +1,167 @@
 {
   "name": "PheKB Hearing Loss Control",
-  "remarks": ["Control module for hearing loss. Generates patients age 50+ without hearing loss dx."],
+  "remarks": [
+    "Control module for hearing loss. Generates patients age 50+ without hearing loss dx."
+  ],
   "states": {
-    "Initial": { "type": "Initial", "direct_transition": "Age_Guard" },
-    "Age_Guard": { "type": "Guard", "allow": { "condition_type": "Age", "operator": ">=", "quantity": 50, "unit": "years" }, "direct_transition": "Set_Control_Flag" },
-    "Set_Control_Flag": { "type": "SetAttribute", "attribute": "hl_positive", "value": false, "direct_transition": "Wellness_Encounter" },
-    "Wellness_Encounter": { "type": "Encounter", "wellness": true, "direct_transition": "End_Wellness_Encounter" },
-    "End_Wellness_Encounter": { "type": "EncounterEnd", "direct_transition": "Followup_Delay" },
-    "Followup_Delay": { "type": "Delay", "range": { "low": 12, "high": 24, "unit": "months" }, "direct_transition": "Wellness_Encounter" }
+    "Initial": {
+      "type": "Initial",
+      "direct_transition": "Age_Guard"
+    },
+    "Age_Guard": {
+      "type": "Guard",
+      "allow": {
+        "condition_type": "Age",
+        "operator": ">=",
+        "quantity": 50,
+        "unit": "years"
+      },
+      "direct_transition": "Set_Control_Flag"
+    },
+    "Set_Control_Flag": {
+      "type": "SetAttribute",
+      "attribute": "hl_positive",
+      "value": false,
+      "direct_transition": "Wellness_Encounter"
+    },
+    "Wellness_Encounter": {
+      "type": "Encounter",
+      "wellness": true,
+      "direct_transition": "Maybe_Mimicker_Tinnitus"
+    },
+    "End_Wellness_Encounter": {
+      "type": "EncounterEnd",
+      "direct_transition": "Followup_Delay"
+    },
+    "Followup_Delay": {
+      "type": "Delay",
+      "range": {
+        "low": 12,
+        "high": 24,
+        "unit": "months"
+      },
+      "direct_transition": "Wellness_Encounter"
+    },
+    "Maybe_Mimicker_Tinnitus": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Tinnitus",
+          "distribution": 0.3
+        },
+        {
+          "transition": "Maybe_Mimicker_Impacted_cerumen",
+          "distribution": 0.7
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Tinnitus": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "60862001",
+          "display": "Tinnitus"
+        }
+      ],
+      "direct_transition": "Maybe_Mimicker_Impacted_cerumen"
+    },
+    "Maybe_Mimicker_Impacted_cerumen": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Impacted_cerumen",
+          "distribution": 0.2
+        },
+        {
+          "transition": "Maybe_Mimicker_Chronic_purulent_otitis_media",
+          "distribution": 0.8
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Impacted_cerumen": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "18070006",
+          "display": "Impacted cerumen"
+        }
+      ],
+      "direct_transition": "Maybe_Mimicker_Chronic_purulent_otitis_media"
+    },
+    "Maybe_Mimicker_Chronic_purulent_otitis_media": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Chronic_purulent_otitis_media",
+          "distribution": 0.08
+        },
+        {
+          "transition": "Maybe_Mimicker_M_ni_re_s_disease",
+          "distribution": 0.92
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Chronic_purulent_otitis_media": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "38394007",
+          "display": "Chronic purulent otitis media"
+        }
+      ],
+      "direct_transition": "Maybe_Mimicker_M_ni_re_s_disease"
+    },
+    "Maybe_Mimicker_M_ni_re_s_disease": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_M_ni_re_s_disease",
+          "distribution": 0.04
+        },
+        {
+          "transition": "Maybe_Mimicker_Acoustic_neuroma",
+          "distribution": 0.96
+        }
+      ]
+    },
+    "Diagnose_Mimicker_M_ni_re_s_disease": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "13445001",
+          "display": "M\u00e9ni\u00e8re's disease"
+        }
+      ],
+      "direct_transition": "Maybe_Mimicker_Acoustic_neuroma"
+    },
+    "Maybe_Mimicker_Acoustic_neuroma": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Acoustic_neuroma",
+          "distribution": 0.02
+        },
+        {
+          "transition": "End_Wellness_Encounter",
+          "distribution": 0.98
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Acoustic_neuroma": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "126949007",
+          "display": "Acoustic neuroma"
+        }
+      ],
+      "direct_transition": "End_Wellness_Encounter"
+    }
   },
   "gmf_version": 2
 }

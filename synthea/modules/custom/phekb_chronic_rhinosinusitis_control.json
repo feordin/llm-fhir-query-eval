@@ -1,13 +1,167 @@
 {
   "name": "PheKB Chronic Rhinosinusitis Control",
-  "remarks": ["Control module. Generates patients age 18+ without CRS dx or mometasone."],
+  "remarks": [
+    "Control module. Generates patients age 18+ without CRS dx or mometasone."
+  ],
   "states": {
-    "Initial": { "type": "Initial", "direct_transition": "Age_Guard" },
-    "Age_Guard": { "type": "Guard", "allow": { "condition_type": "Age", "operator": ">=", "quantity": 18, "unit": "years" }, "direct_transition": "Set_Control_Flag" },
-    "Set_Control_Flag": { "type": "SetAttribute", "attribute": "crs_positive", "value": false, "direct_transition": "Wellness_Encounter" },
-    "Wellness_Encounter": { "type": "Encounter", "wellness": true, "direct_transition": "End_Wellness_Encounter" },
-    "End_Wellness_Encounter": { "type": "EncounterEnd", "direct_transition": "Followup_Delay" },
-    "Followup_Delay": { "type": "Delay", "range": { "low": 12, "high": 24, "unit": "months" }, "direct_transition": "Wellness_Encounter" }
+    "Initial": {
+      "type": "Initial",
+      "direct_transition": "Age_Guard"
+    },
+    "Age_Guard": {
+      "type": "Guard",
+      "allow": {
+        "condition_type": "Age",
+        "operator": ">=",
+        "quantity": 18,
+        "unit": "years"
+      },
+      "direct_transition": "Set_Control_Flag"
+    },
+    "Set_Control_Flag": {
+      "type": "SetAttribute",
+      "attribute": "crs_positive",
+      "value": false,
+      "direct_transition": "Wellness_Encounter"
+    },
+    "Wellness_Encounter": {
+      "type": "Encounter",
+      "wellness": true,
+      "direct_transition": "Maybe_Mimicker_Allergic_rhinitis"
+    },
+    "End_Wellness_Encounter": {
+      "type": "EncounterEnd",
+      "direct_transition": "Followup_Delay"
+    },
+    "Followup_Delay": {
+      "type": "Delay",
+      "range": {
+        "low": 12,
+        "high": 24,
+        "unit": "months"
+      },
+      "direct_transition": "Wellness_Encounter"
+    },
+    "Maybe_Mimicker_Allergic_rhinitis": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Allergic_rhinitis",
+          "distribution": 0.3
+        },
+        {
+          "transition": "Maybe_Mimicker_Vasomotor_rhinitis",
+          "distribution": 0.7
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Allergic_rhinitis": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "61582004",
+          "display": "Allergic rhinitis"
+        }
+      ],
+      "direct_transition": "Maybe_Mimicker_Vasomotor_rhinitis"
+    },
+    "Maybe_Mimicker_Vasomotor_rhinitis": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Vasomotor_rhinitis",
+          "distribution": 0.1
+        },
+        {
+          "transition": "Maybe_Mimicker_Polyp_of_nasal_cavity",
+          "distribution": 0.9
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Vasomotor_rhinitis": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "8229003",
+          "display": "Vasomotor rhinitis"
+        }
+      ],
+      "direct_transition": "Maybe_Mimicker_Polyp_of_nasal_cavity"
+    },
+    "Maybe_Mimicker_Polyp_of_nasal_cavity": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Polyp_of_nasal_cavity",
+          "distribution": 0.08
+        },
+        {
+          "transition": "Maybe_Mimicker_Deviated_nasal_septum",
+          "distribution": 0.92
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Polyp_of_nasal_cavity": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "736500007",
+          "display": "Polyp of nasal cavity"
+        }
+      ],
+      "direct_transition": "Maybe_Mimicker_Deviated_nasal_septum"
+    },
+    "Maybe_Mimicker_Deviated_nasal_septum": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Deviated_nasal_septum",
+          "distribution": 0.15
+        },
+        {
+          "transition": "Maybe_Mimicker_Acute_upper_respiratory_infection",
+          "distribution": 0.85
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Deviated_nasal_septum": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "126660000",
+          "display": "Deviated nasal septum"
+        }
+      ],
+      "direct_transition": "Maybe_Mimicker_Acute_upper_respiratory_infection"
+    },
+    "Maybe_Mimicker_Acute_upper_respiratory_infection": {
+      "type": "Simple",
+      "distributed_transition": [
+        {
+          "transition": "Diagnose_Mimicker_Acute_upper_respiratory_infection",
+          "distribution": 0.2
+        },
+        {
+          "transition": "End_Wellness_Encounter",
+          "distribution": 0.8
+        }
+      ]
+    },
+    "Diagnose_Mimicker_Acute_upper_respiratory_infection": {
+      "type": "ConditionOnset",
+      "codes": [
+        {
+          "system": "http://snomed.info/sct",
+          "code": "54398005",
+          "display": "Acute upper respiratory infection"
+        }
+      ],
+      "direct_transition": "End_Wellness_Encounter"
+    }
   },
   "gmf_version": 2
 }
