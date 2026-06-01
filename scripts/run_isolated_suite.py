@@ -263,8 +263,11 @@ def main() -> int:
         print(f"\n{'=' * 72}\n=== PHENOTYPE: {pheno}\n{'=' * 72}", flush=True)
         pheno_t0 = time.time()
 
-        # 1. wipe + load + verify (sequential; fail-fast)
-        reload = subprocess.run([PY, RELOAD, pheno])
+        # 1. wipe + load + verify (sequential; fail-fast). Pass --fhir-url
+        # through via env so sharded runs hit their assigned server.
+        reload_env = os.environ.copy()
+        reload_env["FHIR_RELOAD_URL"] = args.fhir_url
+        reload = subprocess.run([PY, RELOAD, pheno], env=reload_env)
         if reload.returncode != 0:
             print(f"!! {pheno}: reload/verify FAILED -- skipping test cases", flush=True)
             suite_results.append((pheno, "RELOAD-FAILED", []))

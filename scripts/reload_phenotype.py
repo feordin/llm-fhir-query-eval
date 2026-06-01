@@ -24,6 +24,7 @@ from __future__ import annotations
 import argparse
 import gzip
 import json
+import os
 import sys
 import time
 from pathlib import Path
@@ -32,7 +33,7 @@ REPO = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO / "backend"))
 from src.fhir.client import FHIRClient  # noqa: E402
 
-BASE_URL = "https://jaerwinllm.azurewebsites.net"
+BASE_URL = os.environ.get("FHIR_RELOAD_URL", "https://jaerwinllm.azurewebsites.net")
 BUNDLES = REPO / "data" / "minimal-bundles"
 TEST_CASES = REPO / "test-cases" / "phekb"
 COUNT_TYPES = ["Patient", "Condition", "MedicationRequest", "Observation",

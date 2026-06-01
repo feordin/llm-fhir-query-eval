@@ -150,22 +150,32 @@ class OpenAICompatChatBackend(ChatBackend):
         api_key: str = "not-used",
         max_tokens: int = 2048,
         temperature: float = 0.0,
+        extra_body: dict | None = None,
     ):
         from openai import OpenAI
         self.client = OpenAI(base_url=base_url, api_key=api_key)
         self.model = model
         self.max_tokens = max_tokens
         self.temperature = temperature
+        # OpenRouter routes some Qwen3 variants through a "thinking" mode by
+        # default, which spends max_tokens on reasoning_content and returns
+        # content=null. Disable reasoning unless the caller asked otherwise.
+        if extra_body is None and "openrouter.ai" in (base_url or ""):
+            extra_body = {"reasoning": {"enabled": False}}
+        self.extra_body = extra_body
 
     def chat(self, messages: list[dict], tools: list[dict]) -> AssistantMessage:
-        resp = self.client.chat.completions.create(
-            model=self.model,
-            messages=messages,
-            tools=tools,
-            tool_choice="auto",
-            max_tokens=self.max_tokens,
-            temperature=self.temperature,
-        )
+        kwargs: dict = {
+            "model": self.model,
+            "messages": messages,
+            "tools": tools,
+            "tool_choice": "auto",
+            "max_tokens": self.max_tokens,
+            "temperature": self.temperature,
+        }
+        if self.extra_body:
+            kwargs["extra_body"] = self.extra_body
+        resp = self.client.chat.completions.create(**kwargs)
         return self._extract_assistant_message(resp.choices[0].message)
 
     def _extract_assistant_message(self, choice) -> AssistantMessage:
