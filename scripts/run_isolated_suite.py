@@ -64,6 +64,9 @@ SMALL_MODEL_PATTERNS = (
     # Qwen <=14B (the 9b ollama tag, 7b/14b families, and qwen3-8/14b)
     "qwen3.5:", "qwen2.5:", "qwen-2.5-7b", "qwen-2.5-3b", "qwen-2.5-1.5b",
     "qwen3-4b", "qwen3-8b", "qwen3-14b",
+    # Same families on OpenRouter use dash-form (e.g. qwen/qwen3.5-9b)
+    "qwen3.5-9b", "qwen3.5-4b", "qwen3.5-14b",
+    "qwen-2.5-14b",
     # Phi (all phi variants are small)
     "phi-4-mini", "phi-4", "phi-3", "phi3", "phi4-mini", "microsoft/phi-",
     # Llama 8B and smaller
