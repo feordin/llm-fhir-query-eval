@@ -44,10 +44,18 @@ def _tc_to_phenotype(tc: str, phenotypes: list[str]) -> str | None:
     return best
 
 
-def _collect_latest(since: str, phenotypes: list[str]) -> dict:
-    """Map (test_case, provider:model) -> (timestamp, path) for the newest
-    matching result file. Earlier files are dropped."""
-    latest: dict = {}
+def _collect_latest_cells(since: str, phenotypes: list[str]) -> tuple[dict, set]:
+    """For each (test_case, spec, tier, variant), pick the latest *non-empty*
+    F1 cell across all matching result files. If no non-empty cell exists for
+    that key, fall back to the latest cell so empty-rate stays accurate.
+
+    Returns (cells, files_used) where cells maps (tc, spec, tier, variant) ->
+    (ts, cell_dict) and files_used is the set of source files actually
+    contributing data."""
+    best_nonnull: dict = {}
+    best_any: dict = {}
+    file_for: dict = {}  # key -> source path
+
     for f in sorted(RESULTS.glob("sanity-matrix-phekb-*.json")):
         m = _FILENAME_RE.search(f.name)
         if not m:
@@ -55,17 +63,37 @@ def _collect_latest(since: str, phenotypes: list[str]) -> dict:
         tc, prov, model, ts = m.group(1), m.group(2), m.group(3), m.group(4)
         if ts < since:
             continue
-        pheno = _tc_to_phenotype(tc, phenotypes)
-        if pheno is None:
+        if _tc_to_phenotype(tc, phenotypes) is None:
             continue
-        key = (tc, f"{prov}:{model}")
-        if key not in latest or ts > latest[key][0]:
-            latest[key] = (ts, f)
-    return latest
+        try:
+            d = json.loads(f.read_text(encoding="utf-8"))
+        except json.JSONDecodeError:
+            continue
+        spec = f"{prov}:{model}"
+        for c in d.get("results", []):
+            tier = c.get("tier")
+            variant = c.get("prompt_variant")
+            if tier is None or variant is None:
+                continue
+            key = (tc, spec, tier, variant)
+            f1 = c.get("f1")
+            if key not in best_any or ts > best_any[key][0]:
+                best_any[key] = (ts, c)
+                if key not in best_nonnull:
+                    file_for[key] = f
+            if f1 is not None and (key not in best_nonnull or ts > best_nonnull[key][0]):
+                best_nonnull[key] = (ts, c)
+                file_for[key] = f
+
+    merged: dict = {}
+    for key in best_any:
+        merged[key] = best_nonnull[key] if key in best_nonnull else best_any[key]
+    files_used = set(file_for.values())
+    return merged, files_used
 
 
 def aggregate(label: str, since: str, phenotypes: list[str]) -> Path:
-    latest = _collect_latest(since, phenotypes)
+    cell_map, files_used = _collect_latest_cells(since, phenotypes)
 
     # [model] -> {tier -> [f1s]}; per-phenotype: [pheno][model][tier] -> [f1s]
     agg = defaultdict(lambda: defaultdict(list))
@@ -75,31 +103,24 @@ def aggregate(label: str, since: str, phenotypes: list[str]) -> Path:
     cells = defaultdict(int)
     tc_seen = defaultdict(set)
 
-    for (tc, model_key), (ts, f) in latest.items():
-        d = json.loads(f.read_text(encoding="utf-8"))
-        model = d["model"]
-        provider = d["provider"]
-        spec = f"{provider}:{model}"
+    for (tc, spec, tier, variant), (ts, c) in cell_map.items():
         pheno = _tc_to_phenotype(tc, phenotypes)
         tc_seen[spec].add(tc)
-        for c in d["results"]:
-            cells[spec] += 1
-            f1 = c.get("f1")
-            tier = c.get("tier")
-            variant = c.get("prompt_variant")
-            if f1 is None:
-                empties[spec] += 1
-            else:
-                agg[spec][tier].append(f1)
-                per_pheno[pheno][spec][tier].append(f1)
-                per_variant[spec][tier][variant].append(f1)
+        cells[spec] += 1
+        f1 = c.get("f1")
+        if f1 is None:
+            empties[spec] += 1
+        else:
+            agg[spec][tier].append(f1)
+            per_pheno[pheno][spec][tier].append(f1)
+            per_variant[spec][tier][variant].append(f1)
 
     models = sorted(agg)
     timestamp = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%MZ")
     lines: list[str] = []
     lines.append(f"# Sweep results: {label}\n")
-    lines.append(f"_Aggregated {timestamp} from {len(latest)} result files "
-                 f"(filenames since {since})._\n")
+    lines.append(f"_Aggregated {timestamp} from {len(files_used)} result files "
+                 f"(filenames since {since}; cell-level non-empty-wins dedup)._\n")
     lines.append(f"Phenotypes in scope: **{len(phenotypes)}**. Models compared: "
                  f"**{len(models)}**.\n")
 
@@ -145,7 +166,7 @@ def aggregate(label: str, since: str, phenotypes: list[str]) -> Path:
     OUT_DIR.mkdir(parents=True, exist_ok=True)
     out_path = OUT_DIR / f"{datetime.now(timezone.utc).strftime('%Y-%m-%d')}-{label}.md"
     out_path.write_text("\n".join(lines) + "\n", encoding="utf-8")
-    print(f"wrote {out_path.relative_to(REPO)} ({len(latest)} cells across "
+    print(f"wrote {out_path.relative_to(REPO)} ({len(cell_map)} cells across "
           f"{len(models)} models, {len(per_pheno)} phenotypes)")
     return out_path
 
