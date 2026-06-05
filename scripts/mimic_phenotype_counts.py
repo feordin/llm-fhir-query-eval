@@ -33,6 +33,37 @@ def icd_matches(mimic_code: str, pheno_codes: set) -> bool:
     return False
 
 
+import re as _re  # noqa: E402
+
+_VQ = _re.compile(r"([a-z]{2})(-?\d+\.?\d*)")
+
+
+def parse_value_quantity(s: str) -> tuple:
+    """Parse a FHIR value-quantity token '<comp><value>|system|unit' -> (comp, value).
+
+    >>> parse_value_quantity("ge6.5||%")
+    ('ge', 6.5)
+    >>> parse_value_quantity("le-2.5")
+    ('le', -2.5)
+    """
+    m = _VQ.match(s.strip())
+    if not m:
+        raise ValueError(f"unparseable value-quantity: {s!r}")
+    return m.group(1), float(m.group(2).rstrip("."))
+
+
+def value_meets(value: float, comparator: str, threshold: float) -> bool:
+    """Apply a FHIR quantity comparator (ge/gt/le/lt/eq/ne)."""
+    return {
+        "ge": value >= threshold,
+        "gt": value > threshold,
+        "le": value <= threshold,
+        "lt": value < threshold,
+        "eq": value == threshold,
+        "ne": value != threshold,
+    }.get(comparator, False)
+
+
 # ---------------------------------------------------------------------------
 # Data loading + counting
 # ---------------------------------------------------------------------------
@@ -160,6 +191,95 @@ def build_patient_index(standardized_dir: Path) -> dict:
     return idx
 
 
+def _lab_criteria_from_url(url: str) -> list:
+    """Extract (loinc, comparator, threshold) criteria from a FHIR query URL.
+
+    Handles both the composite `code-value-quantity=SYS|LOINC$<comp><val>` form
+    and the separate `code=SYS|LOINC ... value-quantity=<comp><val>` form.
+    Only threshold-bearing criteria are returned.
+    """
+    crits = []
+    for m in re.finditer(r"code-value-quantity=([^&]+)", url):
+        for part in m.group(1).split(","):
+            if "$" in part and "|" in part:
+                codepart, vq = part.split("$", 1)
+                loinc = codepart.split("|")[-1]
+                try:
+                    comp, val = parse_value_quantity(vq)
+                    crits.append((loinc, comp, val))
+                except ValueError:
+                    pass
+    last_loinc = None
+    for tok in re.split(r"[&?]", url):
+        if tok.startswith("code=") and "loinc" in tok.lower():
+            last_loinc = tok.split("|")[-1].split(",")[0]
+        elif tok.startswith("value-quantity=") and last_loinc:
+            try:
+                comp, val = parse_value_quantity(tok[len("value-quantity="):])
+                crits.append((last_loinc, comp, val))
+            except ValueError:
+                pass
+            last_loinc = None
+    return crits
+
+
+def load_phenotype_lab_criteria(phenotype: str) -> list:
+    """Distinct (loinc, comparator, threshold) lab criteria for a phenotype."""
+    crits = set()
+    for fn in glob.glob(str(TEST_CASES / f"phekb-{phenotype}-*.json")) + \
+              glob.glob(str(TEST_CASES / f"phekb-{phenotype}.json")):
+        d = json.load(open(fn, encoding="utf-8"))
+        blob = json.dumps(d.get("expected_query", {})) + json.dumps((d.get("metadata") or {}).get("expected_queries", []))
+        for c in _lab_criteria_from_url(blob):
+            crits.add(c)
+    return list(crits)
+
+
+def build_patient_lab_index(standardized_dir: Path) -> dict:
+    """patient_id -> list of (loinc_code, numeric_value) from standardized labs."""
+    idx = defaultdict(list)
+    for fn in ["MimicObservationLabevents.ndjson", "MimicObservationED.ndjson"]:
+        path = standardized_dir / fn
+        if not path.exists():
+            continue
+        with path.open(encoding="utf-8") as f:
+            for line in f:
+                line = line.strip()
+                if not line:
+                    continue
+                r = json.loads(line)
+                ref = (r.get("subject") or {}).get("reference", "")
+                pid = ref.split("/")[-1] if ref else None
+                vq = r.get("valueQuantity") or {}
+                val = vq.get("value")
+                if not pid or not isinstance(val, (int, float)):
+                    continue
+                for cd in r.get("code", {}).get("coding", []):
+                    if cd.get("system") == "http://loinc.org" and cd.get("code"):
+                        idx[pid].append((cd["code"], float(val)))
+    return idx
+
+
+def count_phenotype_labs(criteria: list, lab_index: dict) -> int:
+    """Distinct patients with a lab observation meeting any criterion."""
+    by_loinc = defaultdict(list)
+    for loinc, comp, thr in criteria:
+        by_loinc[loinc].append((comp, thr))
+    if not by_loinc:
+        return 0
+    hits = set()
+    for pid, obs in lab_index.items():
+        for loinc, val in obs:
+            for comp, thr in by_loinc.get(loinc, ()):
+                if value_meets(val, comp, thr):
+                    hits.add(pid)
+                    break
+            else:
+                continue
+            break
+    return len(hits)
+
+
 def count_phenotype(pheno_codes: dict, patient_index: dict) -> dict:
     """Return {'dx': n_patients, 'procedure': n_patients} for one phenotype."""
     dx_codes = {"icd10cm": pheno_codes["icd10cm"], "icd9cm": pheno_codes["icd9cm"]}
@@ -185,25 +305,27 @@ def main(argv=None):
     args = ap.parse_args(argv)
 
     aug = _load_augmentations()
-    print("Building patient index from standardized MIMIC...", file=sys.stderr)
-    pidx = build_patient_index(Path(args.standardized_dir))
-    print(f"  indexed {len(pidx)} patients with conditions/procedures", file=sys.stderr)
+    sdir = Path(args.standardized_dir)
+    print("Building patient indexes from standardized MIMIC...", file=sys.stderr)
+    pidx = build_patient_index(sdir)
+    lidx = build_patient_lab_index(sdir)
+    print(f"  {len(pidx)} patients w/ conditions+procedures, {len(lidx)} w/ labs", file=sys.stderr)
 
     rows = []
     for ph in args.phenotypes:
         codes = load_phenotype_icd_codes(ph, aug)
-        n_codes = sum(len(v) for v in codes.values())
         res = count_phenotype(codes, pidx)
-        rows.append((ph, res["dx"], res["procedure"], n_codes))
+        lab = count_phenotype_labs(load_phenotype_lab_criteria(ph), lidx)
+        rows.append((ph, res["dx"], res["procedure"], lab))
 
-    rows.sort(key=lambda r: -r[1])
-    print(f"\n{'phenotype':36s} {'dx_pts':>7s} {'proc_pts':>9s} {'#codes':>7s}")
+    rows.sort(key=lambda r: (-max(r[1], r[3]), -r[1]))
+    print(f"\n{'phenotype':36s} {'dx_pts':>7s} {'proc_pts':>9s} {'lab_pts':>8s}")
     print("-" * 64)
-    for ph, dx, proc, nc in rows:
-        if dx >= args.min_dx:
-            print(f"{ph:36s} {dx:7d} {proc:9d} {nc:7d}")
-    total_any = sum(1 for _, dx, proc, _ in rows if dx or proc)
-    print(f"\n{total_any}/{len(rows)} phenotypes have >=1 matching MIMIC patient (dx or procedure).")
+    for ph, dx, proc, lab in rows:
+        if max(dx, proc, lab) >= args.min_dx:
+            print(f"{ph:36s} {dx:7d} {proc:9d} {lab:8d}")
+    total_any = sum(1 for _, dx, proc, lab in rows if dx or proc or lab)
+    print(f"\n{total_any}/{len(rows)} phenotypes have >=1 matching MIMIC patient (dx, procedure, or lab).")
 
 
 if __name__ == "__main__":
