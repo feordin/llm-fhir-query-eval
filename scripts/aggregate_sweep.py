@@ -44,7 +44,7 @@ def _tc_to_phenotype(tc: str, phenotypes: list[str]) -> str | None:
     return best
 
 
-def _collect_latest_cells(since: str, phenotypes: list[str]) -> tuple[dict, set]:
+def _collect_latest_cells(since: str, phenotypes: list[str], exclude: tuple = ()) -> tuple[dict, set]:
     """For each (test_case, spec, tier, variant), pick the latest *non-empty*
     F1 cell across all matching result files. If no non-empty cell exists for
     that key, fall back to the latest cell so empty-rate stays accurate.
@@ -70,6 +70,8 @@ def _collect_latest_cells(since: str, phenotypes: list[str]) -> tuple[dict, set]
         except json.JSONDecodeError:
             continue
         spec = f"{prov}:{model}"
+        if any(x in spec for x in exclude):
+            continue
         for c in d.get("results", []):
             tier = c.get("tier")
             variant = c.get("prompt_variant")
@@ -92,8 +94,8 @@ def _collect_latest_cells(since: str, phenotypes: list[str]) -> tuple[dict, set]
     return merged, files_used
 
 
-def aggregate(label: str, since: str, phenotypes: list[str]) -> Path:
-    cell_map, files_used = _collect_latest_cells(since, phenotypes)
+def aggregate(label: str, since: str, phenotypes: list[str], exclude: tuple = ()) -> Path:
+    cell_map, files_used = _collect_latest_cells(since, phenotypes, exclude)
 
     # [model] -> {tier -> [f1s]}; per-phenotype: [pheno][model][tier] -> [f1s]
     agg = defaultdict(lambda: defaultdict(list))
@@ -180,8 +182,11 @@ def main() -> int:
                     help="Report slug used in output filename")
     ap.add_argument("--phenotypes", nargs="+", required=True,
                     help="Kebab-case phenotype names in scope for this report")
+    ap.add_argument("--exclude-models", nargs="*", default=[],
+                    help="Substrings; any provider:model spec containing one is dropped "
+                         "(e.g. 'ollama' to drop a stray local run from the headline).")
     args = ap.parse_args()
-    aggregate(args.label, args.since, args.phenotypes)
+    aggregate(args.label, args.since, args.phenotypes, tuple(args.exclude_models))
     return 0
 
 
