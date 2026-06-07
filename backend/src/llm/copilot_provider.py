@@ -86,12 +86,24 @@ COPILOT_BUILT_IN_TOOLS = [
 
 # --- Tier 1 closed-book -----------------------------------------------------
 
+def compose_system_message(system_prefix: str, base: str) -> str:
+    """Prepend an optional skill/context block to the base system prompt.
+
+    Used to inject an off-the-shelf agent skill (e.g. Anthropic's fhir-developer
+    skill) ahead of our task framing for the closed-book baseline. Empty/None
+    prefix returns the base unchanged.
+    """
+    return f"{system_prefix}\n\n---\n\n{base}" if system_prefix else base
+
+
 class CopilotProvider(LLMProvider):
     """Closed-book FHIR query generation via a Copilot session with no tools."""
 
-    def __init__(self, model: str = "claude-sonnet-4.6", timeout_sec: int = 180):
+    def __init__(self, model: str = "claude-sonnet-4.6", timeout_sec: int = 180,
+                 system_prefix: str = ""):
         self.model = model
         self.timeout_sec = timeout_sec
+        self.system_prefix = system_prefix
 
     def generate_fhir_query(self, prompt: str, context: str = "") -> GeneratedQuery:
         user_msg = prompt if not context else f"{context}\n\n{prompt}"
@@ -102,7 +114,8 @@ class CopilotProvider(LLMProvider):
                     model=self.model,
                     on_permission_request=PermissionHandler.approve_all,
                     excluded_tools=COPILOT_BUILT_IN_TOOLS,  # only our tools (if any) usable
-                    system_message=_system_replace(FHIR_SYSTEM_PROMPT),
+                    system_message=_system_replace(
+                        compose_system_message(self.system_prefix, FHIR_SYSTEM_PROMPT)),
                 )
                 resp = await session.send_and_wait(user_msg, timeout=self.timeout_sec)
                 return _final_text(resp)
