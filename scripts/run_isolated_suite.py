@@ -149,6 +149,8 @@ def _run_one_matrix(
         cmd += ["--api-key", args.api_key]
     if args.api_version:
         cmd += ["--api-version", args.api_version]
+    if args.skill_file:
+        cmd += ["--skill-file", args.skill_file]
     # Per-spec lean prompt: forced via --lean-prompt for all specs, OR
     # auto-enabled for specs matching SMALL_MODEL_PATTERNS unless the operator
     # passed --no-auto-lean.
@@ -234,6 +236,11 @@ def main() -> int:
     ap.add_argument("--no-auto-lean", action="store_true",
                     help="Disable the auto-enable of --lean-prompt for small "
                          "models. Only --lean-prompt (if passed) is honored.")
+    ap.add_argument("--skill-file", default=None,
+                    help="Passed through to run_sanity_matrix: comma-separated "
+                         "file(s) prepended to the closed-book (Tier 1) system "
+                         "prompt for the off-the-shelf skill baseline. Tags the "
+                         "spec '+fhirskill'. Use with --tiers 1.")
     ap.add_argument("--tiers", default="2")
     ap.add_argument("--prompt-variants", default="naive,broad,expert")
     ap.add_argument("--fhir-url", default="https://jaerwinllm.azurewebsites.net")

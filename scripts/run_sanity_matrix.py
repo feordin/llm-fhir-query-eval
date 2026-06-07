@@ -77,7 +77,7 @@ def _agentic_fhir_url(fhir_url: str) -> str:
 def make_provider(tier: int, provider: str, model: str, fhir_url: str,
                   base_url: str | None = None, cell_timeout_sec: int = 300,
                   lean_prompt: bool = False, api_key: str | None = None,
-                  api_version: str | None = None):
+                  api_version: str | None = None, system_prefix: str = ""):
     """Construct the LLM provider for a given (tier, provider, model)."""
     if provider == "ollama":
         if tier == 1:
@@ -138,8 +138,11 @@ def make_provider(tier: int, provider: str, model: str, fhir_url: str,
             # to 180s -- too tight for long expert prompts on big phenotypes.
             # Scale it to just under the cell subprocess timeout so a genuine
             # Copilot error surfaces before the subprocess is hard-killed.
+            # system_prefix injects an off-the-shelf skill (e.g. Anthropic
+            # fhir-developer) ahead of FHIR_SYSTEM_PROMPT for the baseline run.
             return get_provider("copilot", model=model,
-                                timeout_sec=max(180, cell_timeout_sec - 30))
+                                timeout_sec=max(180, cell_timeout_sec - 30),
+                                system_prefix=system_prefix)
         return get_provider(
             "copilot",
             model=model,
@@ -176,10 +179,36 @@ def make_fhir_client(fhir_url: str) -> FHIRClient:
     )
 
 
+def _strip_frontmatter(text: str) -> str:
+    """Drop a leading YAML frontmatter block (--- ... ---) if present.
+
+    The frontmatter is skill-discovery metadata, not instructional content, so we
+    inject only the skill body for a faithful 'model gets the skill' baseline.
+    """
+    if text.startswith("---"):
+        end = text.find("\n---", 3)
+        if end != -1:
+            return text[text.find("\n", end + 1) + 1:].lstrip("\n")
+    return text
+
+
+def _read_skill(skill_file: str | None) -> str:
+    """Read + concatenate one or more (comma-separated) skill files into one block."""
+    if not skill_file:
+        return ""
+    parts = []
+    for p in skill_file.split(","):
+        p = p.strip()
+        if p:
+            parts.append(_strip_frontmatter(Path(p).read_text(encoding="utf-8")))
+    return "\n\n".join(parts)
+
+
 def run_one_cell(tc_id: str, tier: int, variant: str, provider_name: str,
                  model: str, fhir_url: str, base_url: str | None = None,
                  cell_timeout_sec: int = 300, lean_prompt: bool = False,
-                 api_key: str | None = None, api_version: str | None = None) -> dict:
+                 api_key: str | None = None, api_version: str | None = None,
+                 skill_file: str | None = None) -> dict:
     """Execute a single (tier, variant) cell and return the result dict.
 
     Called both directly (in --single-cell mode by the subprocess) and from
@@ -191,7 +220,8 @@ def run_one_cell(tc_id: str, tier: int, variant: str, provider_name: str,
     t0 = time.time()
     try:
         provider = make_provider(tier, provider_name, model, fhir_url, base_url,
-                                 cell_timeout_sec, lean_prompt, api_key, api_version)
+                                 cell_timeout_sec, lean_prompt, api_key, api_version,
+                                 system_prefix=_read_skill(skill_file))
         runner = EvaluationRunner(fhir_client, provider)
         cell_prompt_text = tc.get_prompt(variant)
         cell_tc = tc.model_copy(update={
@@ -234,7 +264,8 @@ def run_cell_subprocess(tc_id: str, tier: int, variant: str, provider_name: str,
                         model: str, fhir_url: str, base_url: str | None,
                         timeout_sec: int, lean_prompt: bool = False,
                         api_key: str | None = None,
-                        api_version: str | None = None) -> dict:
+                        api_version: str | None = None,
+                        skill_file: str | None = None) -> dict:
     """Run a single cell in a subprocess with a hard wall-clock timeout."""
     out_dir = REPO / "results"
     out_dir.mkdir(exist_ok=True)
@@ -259,6 +290,8 @@ def run_cell_subprocess(tc_id: str, tier: int, variant: str, provider_name: str,
         cmd += ["--api-key", api_key]
     if api_version:
         cmd += ["--api-version", api_version]
+    if skill_file:
+        cmd += ["--skill-file", skill_file]
     # Transient failures worth a retry: the Copilot SDK intermittently returns
     # an empty completion or the subprocess crashes before writing. A genuine
     # wall-clock timeout is retried at most once (it is expensive and often a
@@ -340,6 +373,12 @@ def main() -> int:
                         "sweeps M model specs at once, total concurrent LLM "
                         "subprocesses is M x this value -- keep it modest "
                         "(default: 6).")
+    p.add_argument("--skill-file", default=None,
+                   help="Comma-separated file(s) whose text is prepended to the "
+                        "closed-book (Tier 1) system prompt -- injects an "
+                        "off-the-shelf agent skill (e.g. the vendored Anthropic "
+                        "fhir-developer skill). Tags the output spec '+fhirskill'. "
+                        "Copilot Tier 1 only; ignored by agentic tiers/providers.")
     # Internal flags for the subprocess single-cell mode
     p.add_argument("--single-cell", action="store_true", help=argparse.SUPPRESS)
     p.add_argument("--cell-tier", type=int, help=argparse.SUPPRESS)
@@ -351,7 +390,7 @@ def main() -> int:
         cell = run_one_cell(args.test_case, args.cell_tier, args.cell_variant,
                             args.provider, args.model, args.fhir_url,
                             args.base_url, args.cell_timeout_sec, args.lean_prompt,
-                            args.api_key, args.api_version)
+                            args.api_key, args.api_version, skill_file=args.skill_file)
         with open(args.cell_out, "w", encoding="utf-8") as f:
             json.dump(cell, f, indent=2)
         return 0
@@ -385,7 +424,7 @@ def main() -> int:
             ex.submit(run_cell_subprocess, tc.id, tier, variant, args.provider,
                       args.model, args.fhir_url, args.base_url,
                       args.cell_timeout_sec, args.lean_prompt,
-                      args.api_key, args.api_version): (tier, variant)
+                      args.api_key, args.api_version, args.skill_file): (tier, variant)
             for tier, variant in cell_specs
         }
         for fut in as_completed(futures):
@@ -424,13 +463,16 @@ def main() -> int:
     out_dir = REPO / "results"
     out_dir.mkdir(exist_ok=True)
     ts = datetime.utcnow().strftime("%Y%m%dT%H%M%SZ")
-    safe_model = args.model.replace(":", "-").replace("/", "-")
+    # Tag skill-augmented runs as a distinct spec so the aggregator treats
+    # '<model>+fhirskill' as its own column (the model sent to Copilot is unchanged).
+    label_model = args.model + ("+fhirskill" if args.skill_file else "")
+    safe_model = label_model.replace(":", "-").replace("/", "-")
     out_path = out_dir / f"sanity-matrix-{tc.id}-{args.provider}-{safe_model}-{ts}.json"
     with out_path.open("w", encoding="utf-8") as f:
         json.dump({
             "test_case": tc.id,
             "provider": args.provider,
-            "model": args.model,
+            "model": label_model,
             "fhir_url": args.fhir_url,
             "host": socket.gethostname(),
             "timestamp": ts,

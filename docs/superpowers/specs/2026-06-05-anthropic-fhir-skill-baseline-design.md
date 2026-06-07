@@ -31,7 +31,14 @@ outcome — it argues for our custom skill (Thread B).
 | Spec label | Tier | Tools | System prompt | Measures |
 |---|---|---|---|---|
 | `copilot:claude-opus-4.7+fhirskill` | T1 closed-book | none | `FHIR_SYSTEM_PROMPT` + injected skill text | Best off-the-shelf, no agent |
-| `copilot:claude-opus-4.7` | T3 | full 10-tool loop | `FHIR_SYSTEM_PROMPT` + `tier3_methodology.md` | Our full in-house stack |
+| `copilot:claude-opus-4.7` | T2 | full 10-tool loop | `FHIR_SYSTEM_PROMPT` (agentic) | Our best in-house stack |
+
+**Comparator changed T3 → T2 (2026-06-07):** the full-sweep leaderboard shows
+frontier models PEAK at T2, not T3 (sonnet T2 0.917 > T3 0.896; gpt T2 0.913 ≳ T3
+0.906). T3's prepended methodology only helps the small qwen (T3 0.778 ≫ T2 0.533).
+So for an Opus ceiling-vs-ceiling matchup, T2 (agentic+tools) is the fair "best
+in-house" config. T3 can be added trivially (`--tiers 2,3`) if we want Opus's full
+tier curve.
 
 ### Injected skill text
 
