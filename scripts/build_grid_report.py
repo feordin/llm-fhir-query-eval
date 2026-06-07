@@ -28,6 +28,28 @@ VARIANTS = ["naive", "broad", "expert"]
 TIERS = [1, 2, 3]
 
 
+def canonical_cases() -> dict:
+    """phenotype -> its 'all-patients' test case: -comprehensive if present, else
+    the base `phekb-<p>`, else the shortest-named case."""
+    import glob
+    import os
+    by: dict = {}
+    for f in glob.glob(str(REPO / "test-cases" / "phekb" / "phekb-*.json")):
+        tc = os.path.basename(f)[:-5]
+        name = tc[len("phekb-"):]
+        ph = next((p for p in sorted(PHENOTYPES, key=len, reverse=True)
+                   if name == p or name.startswith(p + "-")), None)
+        if ph:
+            by.setdefault(ph, []).append(tc)
+    canon = {}
+    for p in PHENOTYPES:
+        tcs = by.get(p, [])
+        comp = [t for t in tcs if t.endswith("-comprehensive")]
+        exact = [t for t in tcs if t == f"phekb-{p}"]
+        canon[p] = comp[0] if comp else (exact[0] if exact else (sorted(tcs, key=len)[0] if tcs else None))
+    return canon
+
+
 def fmt_cell(cell: dict | None) -> str:
     """'P/R/F1' for a scored cell, '—' for missing/empty."""
     if not cell or cell.get("f1") is None:
@@ -57,6 +79,37 @@ def render_markdown(tree: dict, since: str) -> str:
         "- **T1** = closed-book · **T2** = agentic+tools · **T3** = +methodology",
         "",
     ]
+    # all-up leaderboard: mean F1 of the canonical "all-patients" cell per model x tier
+    canon = canonical_cases()
+    canon_tc = {tc for tc in canon.values() if tc}
+    lead = defaultdict(lambda: defaultdict(list))   # spec -> tier -> [f1]
+    lead_cov = defaultdict(lambda: defaultdict(lambda: [0, 0]))
+    for spec in tree:
+        for pheno in tree[spec]:
+            for tc in tree[spec][pheno]:
+                if tc not in canon_tc:
+                    continue
+                for (tier, variant), c in tree[spec][pheno][tc].items():
+                    lead_cov[spec][tier][1] += 1
+                    if c.get("f1") is not None:
+                        lead[spec][tier].append(c["f1"])
+                        lead_cov[spec][tier][0] += 1
+    lines.append("## All-up F1 leaderboard (comprehensive / all-patients cell)\n")
+    lines.append("Mean F1 over each phenotype's **all-patients** test case "
+                 "(`-comprehensive` where it exists, else the base case), averaged across "
+                 "the naive/broad/expert prompts. This is the high-level model comparison: "
+                 "*how well does each model find the whole cohort?*\n")
+    lines.append("| model | T1 closed-book | T2 agentic+tools | T3 +methodology |")
+    lines.append("|-------|----|----|----|")
+    for spec in sorted(tree):
+        cells = []
+        for t in TIERS:
+            xs = lead[spec][t]
+            s, tot = lead_cov[spec][t]
+            cells.append(f"**{sum(xs)/len(xs):.3f}** ({100*s/tot:.0f}%)" if xs else "—")
+        lines.append(f"| `{spec}` | " + " | ".join(cells) + " |")
+    lines.append("\n(Percentages = canonical-cell coverage; means are over scored cells.)\n")
+
     # coverage summary (scored cells / total, per model x tier)
     lines.append("## Coverage\n")
     lines.append("Share of cells with a scored result ('—' cells are unscored: timeout, "
