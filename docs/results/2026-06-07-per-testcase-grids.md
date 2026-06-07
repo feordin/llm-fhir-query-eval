@@ -11,9 +11,10 @@ Mean F1 over each phenotype's **all-patients** test case (`-comprehensive` where
 
 | model | T1 closed-book | T2 agentic+tools | T3 +methodology |
 |-------|----|----|----|
+| `copilot:claude-opus-4.7+fhirskill` | **0.836** (100%) | — | — |
 | `copilot:claude-sonnet-4.6` | **0.760** (97%) | **0.917** (97%) | **0.896** (97%) |
-| `copilot:gpt-5.4` | **0.704** (100%) | **0.913** (95%) | **0.906** (96%) |
-| `openai-compat:qwen-qwen3.5-9b` | **0.294** (99%) | **0.533** (99%) | **0.778** (100%) |
+| `copilot:gpt-5.4` | **0.705** (100%) | **0.914** (95%) | **0.906** (96%) |
+| `openai-compat:qwen-qwen3.5-9b` | **0.298** (100%) | **0.529** (99%) | **0.779** (100%) |
 
 (Percentages = canonical-cell coverage; means are over scored cells.)
 
@@ -23,9 +24,25 @@ Share of cells with a scored result ('—' cells are unscored: timeout, agentic 
 
 | model | T1 | T2 | T3 |
 |-------|----|----|----|
+| `copilot:claude-opus-4.7+fhirskill` | 1/1 (100%) | — | — |
 | `copilot:claude-sonnet-4.6` | 1149/1164 (99%) | 1132/1164 (97%) | 1145/1164 (98%) |
-| `copilot:gpt-5.4` | 1158/1161 (100%) | 1111/1161 (96%) | 1137/1161 (98%) |
-| `openai-compat:qwen-qwen3.5-9b` | 1140/1164 (98%) | 1151/1164 (99%) | 1156/1164 (99%) |
+| `copilot:gpt-5.4` | 1161/1164 (100%) | 1114/1164 (96%) | 1140/1164 (98%) |
+| `openai-compat:qwen-qwen3.5-9b` | 1143/1164 (98%) | 1153/1164 (99%) | 1157/1164 (99%) |
+
+
+## Model: `copilot:claude-opus-4.7+fhirskill`
+
+
+### gout
+
+
+**`phekb-gout-comprehensive`**
+
+| prompt | T1 | T2 | T3 |
+|--------|----|----|----|
+| naive | 1.00/0.72/0.84 | — | — |
+| broad | — | — | — |
+| expert | — | — | — |
 
 
 ## Model: `copilot:claude-sonnet-4.6`
@@ -7015,6 +7032,15 @@ Share of cells with a scored result ('—' cells are unscored: timeout, agentic 
 ### sepsis
 
 
+**`phekb-sepsis-comprehensive`**
+
+| prompt | T1 | T2 | T3 |
+|--------|----|----|----|
+| naive | 1.00/0.40/0.57 | 1.00/0.81/0.89 | 1.00/0.81/0.89 |
+| broad | 1.00/1.00/1.00 | 1.00/1.00/1.00 | 1.00/1.00/1.00 |
+| expert | 1.00/1.00/1.00 | 1.00/1.00/1.00 | 0.81/1.00/0.89 |
+
+
 **`phekb-sepsis-dx`**
 
 | prompt | T1 | T2 | T3 |
@@ -9638,7 +9664,7 @@ Share of cells with a scored result ('—' cells are unscored: timeout, agentic 
 
 | prompt | T1 | T2 | T3 |
 |--------|----|----|----|
-| naive | 0.00/0.00/0.00 | — | 1.00/1.00/1.00 |
+| naive | 0.00/0.00/0.00 | 0.00/0.00/0.00 | 1.00/1.00/1.00 |
 | broad | 0.00/0.00/0.00 | 1.00/0.70/0.82 | 1.00/1.00/1.00 |
 | expert | 0.00/0.00/0.00 | 0.00/0.00/0.00 | 1.00/0.99/0.99 |
 
@@ -10347,7 +10373,7 @@ Share of cells with a scored result ('—' cells are unscored: timeout, agentic 
 | prompt | T1 | T2 | T3 |
 |--------|----|----|----|
 | naive | 0.00/0.00/0.00 | 0.00/0.00/0.00 | 0.29/1.00/0.45 |
-| broad | 0.29/1.00/0.45 | — | 0.77/0.88/0.82 |
+| broad | 0.29/1.00/0.45 | 0.00/0.00/0.00 | 0.77/0.88/0.82 |
 | expert | 0.29/1.00/0.45 | 1.00/0.28/0.44 | 1.00/0.69/0.82 |
 
 
@@ -11195,7 +11221,7 @@ Share of cells with a scored result ('—' cells are unscored: timeout, agentic 
 
 | prompt | T1 | T2 | T3 |
 |--------|----|----|----|
-| naive | 0.00/0.00/0.00 | 0.00/0.00/0.00 | — |
+| naive | 0.00/0.00/0.00 | 0.00/0.00/0.00 | 1.00/0.93/0.96 |
 | broad | 0.00/0.00/0.00 | 0.34/0.11/0.17 | 1.00/0.91/0.95 |
 | expert | 0.00/0.00/0.00 | 1.00/0.47/0.64 | 1.00/0.91/0.95 |
 
@@ -11252,9 +11278,9 @@ Share of cells with a scored result ('—' cells are unscored: timeout, agentic 
 
 | prompt | T1 | T2 | T3 |
 |--------|----|----|----|
-| naive | — | 0.00/0.00/0.00 | 1.00/0.97/0.99 |
-| broad | — | 1.00/0.41/0.58 | 1.00/0.99/0.99 |
-| expert | — | 1.00/0.82/0.90 | 1.00/0.99/0.99 |
+| naive | 0.62/1.00/0.77 | 0.00/0.00/0.00 | 1.00/0.97/0.99 |
+| broad | 0.62/1.00/0.77 | 1.00/0.41/0.58 | 1.00/0.99/0.99 |
+| expert | 1.00/0.41/0.58 | 1.00/0.82/0.90 | 1.00/0.99/0.99 |
 
 
 **`phekb-type-2-diabetes-dx`**
