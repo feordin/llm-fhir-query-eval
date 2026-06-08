@@ -1,4 +1,7 @@
-import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom'
+import { BrowserRouter as Router, Routes, Route, Link, NavLink } from 'react-router-dom'
+import Leaderboard from './pages/Leaderboard'
+import PhenotypeMatrix from './pages/PhenotypeMatrix'
+import PhenotypeDetail from './pages/PhenotypeDetail'
 import Dashboard from './pages/Dashboard'
 import TestCaseDetail from './pages/TestCaseDetail'
 import EvaluationDetail from './pages/EvaluationDetail'
@@ -14,18 +17,23 @@ function App() {
             <h1>FHIR Query Evaluation</h1>
           </Link>
           <div className="nav-links">
-            <Link to="/">Dashboard</Link>
-            <Link to="/test-cases">Test Cases</Link>
-            <Link to="/evaluate">Evaluate</Link>
+            <NavLink to="/">Leaderboard</NavLink>
+            <NavLink to="/phenotypes">Phenotypes</NavLink>
+            <NavLink to="/live">Live tooling</NavLink>
           </div>
         </nav>
         <main className="main-content">
           <Routes>
-            <Route path="/" element={<Dashboard />} />
-            <Route path="/test-cases" element={<TestCases />} />
-            <Route path="/test-cases/:id" element={<TestCaseDetail />} />
-            <Route path="/evaluations/:id" element={<EvaluationDetail />} />
-            <Route path="/evaluate" element={<Evaluate />} />
+            {/* Static report */}
+            <Route path="/" element={<Leaderboard />} />
+            <Route path="/phenotypes" element={<PhenotypeMatrix />} />
+            <Route path="/phenotypes/:id" element={<PhenotypeDetail />} />
+            {/* Live tooling (backend API) */}
+            <Route path="/live" element={<Dashboard />} />
+            <Route path="/live/test-cases" element={<TestCases />} />
+            <Route path="/live/test-cases/:id" element={<TestCaseDetail />} />
+            <Route path="/live/evaluations/:id" element={<EvaluationDetail />} />
+            <Route path="/live/evaluate" element={<Evaluate />} />
           </Routes>
         </main>
       </div>
