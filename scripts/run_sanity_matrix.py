@@ -373,6 +373,10 @@ def main() -> int:
                         "sweeps M model specs at once, total concurrent LLM "
                         "subprocesses is M x this value -- keep it modest "
                         "(default: 6).")
+    p.add_argument("--label-suffix", default=None,
+                   help="Append this suffix to the recorded model/spec label (e.g. "
+                        "'+T3lean') so a variant run is a distinct aggregator column "
+                        "without overwriting the base spec. Model sent to provider is unchanged.")
     p.add_argument("--skill-file", default=None,
                    help="Comma-separated file(s) whose text is prepended to the "
                         "closed-book (Tier 1) system prompt -- injects an "
@@ -463,9 +467,11 @@ def main() -> int:
     out_dir = REPO / "results"
     out_dir.mkdir(exist_ok=True)
     ts = datetime.utcnow().strftime("%Y%m%dT%H%M%SZ")
-    # Tag skill-augmented runs as a distinct spec so the aggregator treats
-    # '<model>+fhirskill' as its own column (the model sent to Copilot is unchanged).
-    label_model = args.model + ("+fhirskill" if args.skill_file else "")
+    # Tag the run as a distinct spec so the aggregator treats '<model><suffix>'
+    # as its own column (the model sent to the provider is unchanged). Explicit
+    # --label-suffix wins; otherwise skill runs auto-tag '+fhirskill'.
+    suffix = args.label_suffix if args.label_suffix else ("+fhirskill" if args.skill_file else "")
+    label_model = args.model + suffix
     safe_model = label_model.replace(":", "-").replace("/", "-")
     out_path = out_dir / f"sanity-matrix-{tc.id}-{args.provider}-{safe_model}-{ts}.json"
     with out_path.open("w", encoding="utf-8") as f:

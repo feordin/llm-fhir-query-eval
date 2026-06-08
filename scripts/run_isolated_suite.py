@@ -151,6 +151,8 @@ def _run_one_matrix(
         cmd += ["--api-version", args.api_version]
     if args.skill_file:
         cmd += ["--skill-file", args.skill_file]
+    if args.label_suffix:
+        cmd += ["--label-suffix", args.label_suffix]
     # Per-spec lean prompt: forced via --lean-prompt for all specs, OR
     # auto-enabled for specs matching SMALL_MODEL_PATTERNS unless the operator
     # passed --no-auto-lean.
@@ -236,6 +238,9 @@ def main() -> int:
     ap.add_argument("--no-auto-lean", action="store_true",
                     help="Disable the auto-enable of --lean-prompt for small "
                          "models. Only --lean-prompt (if passed) is honored.")
+    ap.add_argument("--label-suffix", default=None,
+                    help="Passed through to run_sanity_matrix: tag the spec label "
+                         "(e.g. '+T3lean') so a variant run is a distinct column.")
     ap.add_argument("--skill-file", default=None,
                     help="Passed through to run_sanity_matrix: comma-separated "
                          "file(s) prepended to the closed-book (Tier 1) system "
