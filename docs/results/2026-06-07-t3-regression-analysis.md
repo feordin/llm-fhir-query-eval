@@ -82,3 +82,28 @@ The collapses are NOT one failure mode:
 So "why isn't T3 better" is multi-causal: partly methodology over-constraint, partly
 single-run agentic/server variance. Experiments A (full-T3 rerun = variance test) and
 B (lean-T3 = "lean for all?") are running to quantify which dominates per phenotype.
+
+## VERDICT — Experiments A (full-T3 rerun) + B (lean-T3), 2026-06-07
+Three-way mean F1 on the 5 regressed phenotypes (comprehensive T3):
+
+| model | original | full-T3 rerun | lean-T3 |
+|---|---|---|---|
+| sonnet | 0.603 | 0.727 | **0.807** |
+| gpt-5.4 | 0.684 | 0.595 | **0.752** |
+
+1. **Variance is large.** glaucoma swings 0.60→0.93 (sonnet rerun) and 0.94→0.80→1.00
+   (gpt); NAS-gpt 0.35→0.02. Several "regressions" were unlucky single runs — n=1
+   inflated the apparent T3<T2 gap. **Use n≥3 before trusting sub-0.05 tier deltas.**
+2. **Lean for all = YES.** Lean matches or beats both original and a fresh full run in
+   every cell, and fixes the full-methodology over-constraints (IDA-sonnet 0.65→0.93,
+   febrile-neutropenia-gpt 0.27→0.52). It never meaningfully hurts. **Recommend lean
+   methodology as the default for ALL models, not just small ones.**
+3. **Some failures are systematic.** NAS is deterministic (sonnet 0.657 across all
+   three) — the `patient.birthdate` over-constraint persists under lean. **Targeted
+   fix:** the methodology should not induce age/birthdate filters from "neonatal/
+   pediatric" reasoning when the data spans many birth years.
+
+### Actions
+- Make lean the default T3 methodology for all models (drop the small-model-only auto-lean gate).
+- Patch the methodology to suppress spurious patient.birthdate/age constraints.
+- Adopt n≥3 repeat runs (median) for the headline tier comparison.
