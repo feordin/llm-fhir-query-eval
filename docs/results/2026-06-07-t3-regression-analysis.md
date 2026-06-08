@@ -64,3 +64,21 @@ Lead with: *"methodology is a big lever for a small open model (+25 pts) and rou
 neutral for frontier models, where its only effect is a handful of variance-driven
 query collapses."* That's the honest, defensible story — and it motivates the
 follow-up experiments above rather than over-claiming "methodology hurts."
+
+## Experiment C — inspecting the catastrophic queries (2026-06-07)
+The collapses are NOT one failure mode:
+
+- **neonatal-abstinence-syndrome, sonnet T3/broad (68 / 6250):** codes correct, but
+  the methodology/reasoning injected a spurious filter
+  `&patient.birthdate=ge2025-06-02` ("NAS is neonatal → recent birth"). The synthetic
+  cohort spans many birth years, so this over-constraint killed recall. T2 didn't add
+  it and found all 6250. **→ real methodology-induced over-constraint.**
+- **glaucoma, sonnet T3/expert (0 / 218):** the emitted SNOMED codes are *exactly*
+  the gold codes (84494001/23986001/392288006), yet 0 results. The raw response shows
+  the agent's tool calls hit `null` server totals during exploration ("No server
+  totals… paged beyond the first 10"). **→ looks like an agentic/server-state variance
+  fluke, not a methodology error.**
+
+So "why isn't T3 better" is multi-causal: partly methodology over-constraint, partly
+single-run agentic/server variance. Experiments A (full-T3 rerun = variance test) and
+B (lean-T3 = "lean for all?") are running to quantify which dominates per phenotype.
