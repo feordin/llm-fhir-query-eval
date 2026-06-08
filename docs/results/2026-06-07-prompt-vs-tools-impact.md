@@ -25,10 +25,21 @@ prompt adds only the last ~+0.05.
 - qwen: naive+T2 only 0.48, but naive+**T3** 0.77 — methodology is what lets the
   small model recover a naive prompt.
 
-## Lever impact (Opus 8-pheno subset, preliminary while T1-plain run completes)
-- Better prompt (naive→expert): +0.011
-- + Anthropic FHIR skill (closed-book): +0.077
-- + our agentic tools/methodology (T2): +0.179
+## Lever impact (Opus 8-pheno subset, FINAL — T1-plain run complete)
+Baseline = Opus one-shot closed-book 0.885 (comprehensive). Prompt × lever:
+| prompt | T1 plain | T1 +skill | T2 ours |
+|---|---|---|---|
+| naive | 0.888 | 0.882 | 0.987 |
+| broad | 0.881 | 0.898 | 0.985 |
+| expert | 0.885 | 0.880 | 0.993 |
+
+- Better prompt (naive→expert): **−0.002** (≈ nothing)
+- + Anthropic FHIR skill: **+0.002** (≈ nothing — Opus already knows FHIR)
+- + our agentic tools (T2): **+0.104** (the only lever that moves)
+
+(NB: earlier +0.077 skill / +0.179 tools were from a PARTIAL run with T1-plain
+biased low; the complete run shows skill≈0 and tools≈+0.10. For a frontier model
+only tools matter; for the weaker qwen, prompt AND methodology both matter a lot.)
 
 ## Headline
 **Tools collapse the prompt gap.** Closed-book is brutally prompt-sensitive; the

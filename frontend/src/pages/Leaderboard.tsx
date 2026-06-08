@@ -4,8 +4,8 @@ import {
 } from 'recharts'
 import { fetchLeaderboard } from '../data/reportClient'
 import {
-  TIERS, shortModel, isFullCoverageModel,
-  type LeaderboardRow,
+  TIERS, VARIANTS, shortModel, isFullCoverageModel,
+  type Leaderboard as LB, type LeaderboardRow,
 } from '../data/reportTypes'
 
 const TIER_LABEL: Record<string, string> = {
@@ -13,18 +13,87 @@ const TIER_LABEL: Record<string, string> = {
 }
 const TIER_COLOR: Record<string, string> = { '1': '#94a3b8', '2': '#3b82f6', '3': '#8b5cf6' }
 
-function fmt(x: number | null | undefined) {
-  return x == null ? '—' : x.toFixed(3)
+const fmt = (x: number | null | undefined) => (x == null ? '—' : x.toFixed(3))
+
+// green→red heat color for an F1 in [0,1]
+function heat(f1: number | null | undefined): string {
+  if (f1 == null) return '#f1f3f5'
+  const h = Math.max(0, Math.min(120, f1 * 120)) // 0=red,120=green
+  return `hsl(${h} 65% 88%)`
+}
+
+function getRow(data: LB, pred: (m: string) => boolean) {
+  return data.rows.find(r => pred(r.model))
+}
+
+// ---- "What moves the needle?" lever-impact hero (Opus controlled subset) ----
+function ImpactHero({ data }: { data: LB }) {
+  const plain = getRow(data, m => m === 'copilot:claude-opus-4.7')
+  const skill = getRow(data, m => m.includes('opus') && m.includes('fhirskill'))
+  if (!plain) return null
+  const base = plain.tiers['1']?.f1
+  const naive = plain.tiers['1']?.by_prompt?.naive
+  const expert = plain.tiers['1']?.by_prompt?.expert
+  const levers = [
+    { label: 'Better prompt (naive → expert)', delta: (expert != null && naive != null) ? expert - naive : null },
+    { label: '+ Anthropic FHIR skill', delta: (skill?.tiers['1']?.f1 != null && base != null) ? skill.tiers['1'].f1! - base : null },
+    { label: '+ our agentic tools (T2)', delta: (plain.tiers['2']?.f1 != null && base != null) ? plain.tiers['2'].f1! - base : null },
+  ]
+  const max = Math.max(0.12, ...levers.map(l => Math.abs(l.delta ?? 0)))
+  return (
+    <div className="impact-hero">
+      <h2>What moves the needle?</h2>
+      <p className="subtitle">F1 lift from the same Opus baseline ({fmt(base)}) on a controlled
+        8-phenotype subset — isolating each lever. <strong>Only tools matter for a frontier model.</strong></p>
+      {levers.map(l => (
+        <div key={l.label} className="lever">
+          <div className="lever-label">{l.label}</div>
+          <div className="lever-track">
+            <div className="lever-bar" style={{
+              width: `${(Math.abs(l.delta ?? 0) / max) * 100}%`,
+              background: (l.delta ?? 0) >= 0.03 ? '#3b82f6' : '#cbd5e1',
+            }} />
+          </div>
+          <div className="lever-val">{l.delta == null ? '—' : (l.delta >= 0 ? '+' : '') + l.delta.toFixed(3)}</div>
+        </div>
+      ))}
+    </div>
+  )
+}
+
+// ---- 2D prompt × tier heatmap per model ------------------------------------
+function Heatmap({ rows }: { rows: LeaderboardRow[] }) {
+  return (
+    <div className="grid-row">
+      {rows.map(r => (
+        <div key={r.model} className="grid-card">
+          <div className="grid-model">{shortModel(r.model)}</div>
+          <table className="mini-grid">
+            <thead><tr><th></th>{TIERS.map(t => <th key={t}>T{t}</th>)}</tr></thead>
+            <tbody>
+              {VARIANTS.map(v => (
+                <tr key={v}>
+                  <td className="grid-rowlabel">{v}</td>
+                  {TIERS.map(t => {
+                    const f1 = r.tiers[t]?.by_prompt?.[v]
+                    return <td key={t} className="mini-cell" style={{ background: heat(f1) }}>
+                      {f1 == null ? '—' : f1.toFixed(2)}</td>
+                  })}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      ))}
+    </div>
+  )
 }
 
 function LeaderTable({ rows }: { rows: LeaderboardRow[] }) {
   return (
     <table className="score-table">
       <thead>
-        <tr>
-          <th className="col-name">Model</th>
-          {TIERS.map(t => <th key={t} className="col-score">{TIER_LABEL[t]}</th>)}
-        </tr>
+        <tr><th className="col-name">Model</th>{TIERS.map(t => <th key={t} className="col-score">{TIER_LABEL[t]}</th>)}</tr>
       </thead>
       <tbody>
         {rows.map(r => {
@@ -38,11 +107,7 @@ function LeaderTable({ rows }: { rows: LeaderboardRow[] }) {
                 return (
                   <td key={t} className="score-cell" style={isBest ? { fontWeight: 700 } : undefined}>
                     {fmt(s?.f1)}
-                    {s?.coverage != null && (
-                      <span className="mode-indicator" title="coverage">
-                        {' '}{Math.round(s.coverage * 100)}%
-                      </span>
-                    )}
+                    {s?.coverage != null && <span className="mode-indicator" title="coverage"> {Math.round(s.coverage * 100)}%</span>}
                   </td>
                 )
               })}
@@ -62,40 +127,37 @@ export default function Leaderboard() {
 
   const full = data.rows.filter(r => isFullCoverageModel(r.model))
   const opus = data.rows.filter(r => !isFullCoverageModel(r.model))
-
   const chartData = full.map(r => ({
     model: shortModel(r.model),
-    T1: r.tiers['1']?.f1 ?? null,
-    T2: r.tiers['2']?.f1 ?? null,
-    T3: r.tiers['3']?.f1 ?? null,
+    T1: r.tiers['1']?.f1 ?? null, T2: r.tiers['2']?.f1 ?? null, T3: r.tiers['3']?.f1 ?? null,
   }))
 
   return (
     <div className="dashboard">
       <div className="dashboard-header">
-        <h1>All-up F1 Leaderboard</h1>
-        <p className="subtitle">
-          Mean F1 on each phenotype's <strong>all-patients (comprehensive)</strong> cohort —
-          the high-level comparison: <em>does the model find the whole cohort?</em> Rows are the
-          three full-coverage (108-phenotype) models.
-        </p>
+        <h1>FHIR Cohort-Finding: Model Comparison</h1>
+        <p className="subtitle">All-up F1 on each phenotype's <strong>all-patients</strong> cohort —
+          <em>does the model find the whole cohort?</em></p>
       </div>
 
-      <div className="table-container">
-        <LeaderTable rows={full} />
-      </div>
+      <ImpactHero data={data} />
 
-      <div style={{ height: 360, marginTop: 24 }}>
+      <h2 style={{ marginTop: 28 }}>Prompt × tier, per model</h2>
+      <p className="subtitle">Rows = prompt sophistication, columns = capability tier. Watch the rows
+        <strong> converge</strong> as you move right: tools make the prompt matter less. For qwen the
+        gradient runs both ways — a weak model needs both.</p>
+      <Heatmap rows={full} />
+
+      <h2 style={{ marginTop: 28 }}>All-up leaderboard (full 108 phenotypes)</h2>
+      <div className="table-container"><LeaderTable rows={full} /></div>
+
+      <div style={{ height: 340, marginTop: 16 }}>
         <ResponsiveContainer width="100%" height="100%">
           <BarChart data={chartData} margin={{ top: 8, right: 16, bottom: 8, left: 0 }}>
             <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
-            <XAxis dataKey="model" />
-            <YAxis domain={[0, 1]} />
-            <Tooltip formatter={(v: number) => v?.toFixed(3)} />
-            <Legend />
-            {TIERS.map(t => (
-              <Bar key={t} dataKey={`T${t}`} name={TIER_LABEL[t]} fill={TIER_COLOR[t]} />
-            ))}
+            <XAxis dataKey="model" /><YAxis domain={[0, 1]} />
+            <Tooltip formatter={(v: number) => v?.toFixed(3)} /><Legend />
+            {TIERS.map(t => <Bar key={t} dataKey={`T${t}`} name={TIER_LABEL[t]} fill={TIER_COLOR[t]} />)}
           </BarChart>
         </ResponsiveContainer>
       </div>
@@ -103,14 +165,9 @@ export default function Leaderboard() {
       {opus.length > 0 && (
         <div style={{ marginTop: 32 }}>
           <h2>Opus skill baseline <span className="badge badge-multi">8-phenotype subset</span></h2>
-          <p className="subtitle">
-            Best off-the-shelf vs our methodology. <code>+fhirskill</code> = closed-book Opus with
-            Anthropic's FHIR skill (no tools); plain Opus T1 = frontier one-shot; Opus T2 = our
-            agentic stack. (Subset only — not comparable to the 108-phenotype rows above.)
-          </p>
-          <div className="table-container">
-            <LeaderTable rows={opus} />
-          </div>
+          <p className="subtitle">Best off-the-shelf vs our methodology. <code>+fhirskill</code> = closed-book
+            Opus + Anthropic's FHIR skill (no tools); plain T1 = frontier one-shot; T2 = our agentic stack.</p>
+          <div className="table-container"><LeaderTable rows={opus} /></div>
         </div>
       )}
 
