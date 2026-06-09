@@ -30,6 +30,8 @@ run_phase() {
   echo "PHASE $label done"
 }
 
-run_phase "rerun" "+T3rerun" ""
+# NOTE (2026-06): lean is now the harness default, so the FULL-methodology
+# "rerun" phase must opt in explicitly via --full-prompt to stay an A/B control.
+run_phase "rerun" "+T3rerun" "--full-prompt"
 run_phase "lean"  "+T3lean"  "--lean-prompt"
 echo "T3 EXPERIMENT COMPLETE"

@@ -15,7 +15,7 @@ State explicitly: **"This request matches Playbook(s) X [+ Y + Z]."** Then build
 | "without", "but not", "MINUS", "lacking" | **10 — Negation**: two queries on separate lines |
 | "≥", "above", "over", numeric thresholds | **7 — Threshold**: `value-quantity=ge<value>\|\|<unit>` |
 | "men/women/male/female" | **4 — Sex**: chain `patient.gender` |
-| "pediatric/children/neonatal/elderly" | **3 — Age**: chain `patient.birthdate` |
+| restricts by **current age** ("currently under 18", "adults over 65") | **3 — Age**: chain `patient.birthdate`. NOT for age words in the disease *name* (neonatal/juvenile/congenital) — the code already encodes that; a birthdate filter over-constrains. |
 | "all my patients", "complete cohort" | **12 — Cohort = OR**: multi-resource union |
 | "validated cases", "research cohort" | **12 — Case = AND**: `_has` cross-resource |
 | "drug-induced", "iatrogenic" | **5 — Iatrogenic**: drug exposure is primary |
@@ -29,7 +29,7 @@ Most phenotypes match >1 playbook — combine them.
 
 1. **Subtypes** (cancers, NDD, diabetes families). Query the umbrella SNOMED + each subtype code; union with `,` in one `code=` param. Don't pick only one subtype.
 2. **PGx / drug response** (warfarin INR, clopidogrel post-AMI). Always two resources: `MedicationRequest` for the drug + `Observation` (or `Condition`) for the outcome.
-3. **Age-restricted**. Add `&patient.birthdate=gt<YYYY-MM-DD>&patient.birthdate=lt<YYYY-MM-DD>` (FHIR has no `age` param; chain through Patient).
+3. **Age-restricted** — ONLY when the request restricts the patient's *current* age. Add `&patient.birthdate=gt<YYYY-MM-DD>&patient.birthdate=lt<YYYY-MM-DD>` (FHIR has no `age` param; chain through Patient). Do NOT add this for a disease whose *name* contains an age word (neonatal/juvenile/congenital) — the condition code already encodes the age and the filter drops valid patients.
 4. **Sex-specific**. Add `&patient.gender=male` or `=female`.
 5. **Iatrogenic / complication**. Drug exposure is the PRIMARY signal, not the dx. Query `MedicationRequest?code=<drug>` first; the dx may be absent.
 6. **Procedurally defined**. Use `Procedure?code=<CPT-or-SNOMED>`. Cross-walk CPT↔SNOMED via UMLS if only one is in the prompt.

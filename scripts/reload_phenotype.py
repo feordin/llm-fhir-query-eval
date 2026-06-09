@@ -47,10 +47,15 @@ def _counts(client: FHIRClient) -> dict:
 def wipe_server(client: FHIRClient, poll_timeout: int = 3600) -> None:
     """Issue $bulk-delete and poll the async job to completion."""
     print("WIPE: issuing $bulk-delete (_hardDelete=true, _purgeHistory=true)...", flush=True)
-    # Microsoft FHIR async operations require Prefer: respond-async.
+    # Microsoft FHIR async operations require Prefer: respond-async. The server
+    # also REFUSES an unconditional system-wide delete ("search criteria was not
+    # selective enough", HTTP 412) -- so we pass a _lastUpdated bound that matches
+    # every resource (everything was created before this far-future date). This
+    # satisfies the selectivity guard while still clearing the whole server.
     resp = client._session.delete(
         f"{BASE_URL}/$bulk-delete",
-        params={"_hardDelete": "true", "_purgeHistory": "true"},
+        params={"_lastUpdated": "le2099-12-31", "_hardDelete": "true",
+                "_purgeHistory": "true"},
         headers={"Prefer": "respond-async"},
         timeout=60,
     )
