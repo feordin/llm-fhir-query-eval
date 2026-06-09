@@ -1,6 +1,6 @@
 # fhir-phenotyping — Shareable Claude Code Plugin
 
-**Date:** 2026-06-05
+**Date:** 2026-06-05 (updated 2026-06-09: methodology = lean playbook)
 **Status:** Approved design, pending implementation plan
 **Task:** #4 (dev-days goals)
 
@@ -139,6 +139,21 @@ Regeneration is idempotent and re-runs whenever phenotypes/test-cases change, so
 the plugin stays in lockstep with the eval truth.
 
 ## SKILL.md (the methodology)
+
+**Methodology source = the LEAN tier-3 playbook**, not the full one. The 2026-06
+"lean for all" sweep verdict proved the lean methodology (`backend/src/llm/
+tier3_methodology_lean.md` — decision tree + one-line-per-playbook) **matches or
+beats** the full ~16 KB version for *every* model size, while the full version
+over-constrains (it induced a spurious `patient.birthdate` filter that tanked
+NAS). The plugin therefore ships the lean playbooks as its methodology core, so a
+practitioner gets the verified-best guidance and the smallest context footprint.
+
+Two correctness rules to bake in verbatim (both landed in the lean file 2026-06):
+- **Age filters only on an explicit *current-age* restriction.** Never add a
+  `patient.birthdate` clause just because a disease *name* contains an age word
+  (neonatal / juvenile / congenital / adult-onset) — the condition code already
+  encodes the age group; the filter silently drops valid patients.
+- Multi-coding union + negation-via-two-query-subtraction stay as in the lean file.
 
 Distilled from the `phenotype_workflow` skill for a *practitioner* (not our Synthea
 pipeline):

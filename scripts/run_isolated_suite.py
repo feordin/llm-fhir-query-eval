@@ -85,9 +85,40 @@ SMALL_MODEL_PATTERNS = (
 
 
 def _is_small_model(provider: str, model: str) -> bool:
-    """True if the model spec matches a known small-context pattern."""
+    """True if the model spec matches a known small-context pattern.
+
+    Retained for diagnostics/logging only -- as of the 2026-06 "lean for all"
+    verdict the lean decision no longer depends on model size (see decide_lean).
+    """
     name = model.lower()
     return any(pat in name for pat in SMALL_MODEL_PATTERNS)
+
+
+def decide_lean(provider: str, model: str, *, lean_prompt: bool = False,
+                full_prompt: bool = False, no_auto_lean: bool = False) -> bool:
+    """Whether to use the lean agentic + T3-methodology prompt for a spec.
+
+    Lean is now the DEFAULT for ALL models (2026-06 "lean for all" verdict:
+    the full ~16 KB methodology over-constrains frontier models -- e.g. it
+    induced spurious patient.birthdate filters on NAS -- and lean matched or
+    beat it on every regressed phenotype). To run the full methodology for an
+    A/B experiment, pass --full-prompt. --lean-prompt is now redundant (lean is
+    the default) but kept for back-compat; if both are given, lean wins.
+    --no-auto-lean is obsolete (there is no longer a size-based gate to
+    disable) and is ignored.
+
+    >>> decide_lean('copilot', 'claude-sonnet-4.6')
+    True
+    >>> decide_lean('openai-compat', 'qwen/qwen3.5-9b')
+    True
+    >>> decide_lean('copilot', 'gpt-5.4', full_prompt=True)
+    False
+    >>> decide_lean('copilot', 'gpt-5.4', full_prompt=True, lean_prompt=True)
+    True
+    """
+    if lean_prompt:
+        return True
+    return not full_prompt
 
 
 def _parse_specs(specs: list[str]) -> list[tuple[str, str]]:
@@ -153,11 +184,13 @@ def _run_one_matrix(
         cmd += ["--skill-file", args.skill_file]
     if args.label_suffix:
         cmd += ["--label-suffix", args.label_suffix]
-    # Per-spec lean prompt: forced via --lean-prompt for all specs, OR
-    # auto-enabled for specs matching SMALL_MODEL_PATTERNS unless the operator
-    # passed --no-auto-lean.
-    use_lean = args.lean_prompt or (
-        not args.no_auto_lean and _is_small_model(provider, model)
+    # Lean prompt is the DEFAULT for all models ("lean for all" verdict);
+    # --full-prompt opts back into the full methodology for A/B experiments.
+    use_lean = decide_lean(
+        provider, model,
+        lean_prompt=args.lean_prompt,
+        full_prompt=args.full_prompt,
+        no_auto_lean=args.no_auto_lean,
     )
     if use_lean:
         cmd += ["--lean-prompt"]
@@ -231,13 +264,16 @@ def main() -> int:
     ap.add_argument("--api-version", default=None,
                     help="Azure OpenAI api-version (azure-openai provider only).")
     ap.add_argument("--lean-prompt", action="store_true",
-                    help="Force the lean agentic prompt for ALL specs. Useful "
-                         "for measuring lean-prompt effect on frontier models. "
-                         "By default, lean is auto-enabled only for small "
-                         "models (qwen, phi, llama, gemma, mistral-7b...).")
+                    help="Redundant as of 2026-06: lean is now the default for "
+                         "ALL models. Kept for back-compat; if combined with "
+                         "--full-prompt, lean wins.")
+    ap.add_argument("--full-prompt", action="store_true",
+                    help="Opt back into the FULL ~16 KB agentic + T3 methodology "
+                         "prompt (the pre-2026-06 frontier default). Use only for "
+                         "A/B experiments -- lean matched or beat full everywhere.")
     ap.add_argument("--no-auto-lean", action="store_true",
-                    help="Disable the auto-enable of --lean-prompt for small "
-                         "models. Only --lean-prompt (if passed) is honored.")
+                    help="Obsolete (no size-based gate remains); ignored. Kept so "
+                         "older launch scripts don't error.")
     ap.add_argument("--label-suffix", default=None,
                     help="Passed through to run_sanity_matrix: tag the spec label "
                          "(e.g. '+T3lean') so a variant run is a distinct column.")

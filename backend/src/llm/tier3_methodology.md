@@ -22,7 +22,7 @@ Watch especially for these keywords in the request — they are strong signals f
 | "without", "MINUS", "do NOT have", "but not", "lacking" | **Playbook 10 (Negation)** — emit two queries on separate lines |
 | "≥", "above", "over", "below", numeric thresholds (e.g., "HbA1c ≥ 6.5") | **Playbook 7 (Threshold)** — `value-quantity=ge<value>||<unit>` |
 | "men", "women", "male", "female" | **Playbook 4 (Sex-specific)** — chain `patient.gender` |
-| "pediatric", "children", "neonatal", "elderly" | **Playbook 3 (Age-restricted)** — chain `patient.birthdate` |
+| request restricts by the patient's **current age** ("currently under 18", "adults over 65 with X") | **Playbook 3 (Age-restricted)** — chain `patient.birthdate`. **Do NOT** add an age filter just because the *disease name* contains an age word (neonatal/pediatric/juvenile/congenital/adult-onset) — the condition code already encodes that. |
 | "all my patients", "complete cohort", "find all" | **Playbook 12 (Cohort = OR)** — multi-resource union |
 | "validated cases", "research cohort", "confirmed" | **Playbook 12 (Case = AND)** — `_has` cross-resource |
 | "drug-induced", "iatrogenic", "complication of" | **Playbook 5 (Iatrogenic)** — drug exposure is primary signal |
@@ -38,7 +38,7 @@ Read the clinical request and ask:
 
 1. Is the disease one with **clinical subtypes**? (cancers, neurodegenerative disorders, diabetes families, demyelinating diseases, seizure disorders, chronic cardiac conditions with morphologic variants)
 2. Is it a **pharmacogenomics / drug response** phenotype? (anticoagulant dosing, antiplatelet metabolizer status, inhaled-medication responsiveness, drug-class adverse-reaction phenotypes)
-3. Is it **age-restricted**? (pediatric: neonatal, infant, school-age, adolescent phenotypes; geriatric: ≥50 cognitive, bone, GU phenotypes)
+3. Does the request **restrict by the patient's current age**? (e.g. "patients currently under 18", "adults ≥65 with X"). NOTE: a disease whose *name* contains an age word — neonatal abstinence syndrome, juvenile arthritis, congenital X — is **not** by itself age-restricted: the condition code already captures it, so do **not** add a birthdate filter (see Playbook 3).
 4. Is it **sex-specific**? (male-only: prostate / male-GU phenotypes; female-only: ovarian, uterine, cervical, breast, female-reproductive phenotypes)
 5. Is it an **iatrogenic / complication** phenotype? (drug-induced organ toxicity, cardiovascular events on chronic preventive therapy, post-treatment complications)
 6. Is it **procedurally defined**? (GI screening, cardiac revascularization, vascular repair, urologic surgery, biopsy-based staging, imaging utilization)
@@ -87,20 +87,28 @@ Most phenotypes match more than one category. Combine the playbooks below.
 
 ---
 
-## Playbook 3 — Age-restricted (pediatric, geriatric)
+## Playbook 3 — Age-restricted (only when the request restricts by *current age*)
 
-**Common patterns (pediatric):** neonatal substance withdrawal (<28 days); food-allergy phenotypes in school-age children; severe early-childhood growth disorders; post-procedural pain in adolescents; neurodevelopmental disorders with childhood onset.
-**Common patterns (geriatric):** cognitive disorders of aging (≥50); age-related bone-density loss; age-related male genitourinary phenotypes (≥40).
+**FIRST, decide whether this playbook even applies.** An age filter is correct
+ONLY when the request explicitly constrains the patient's age at query time
+(e.g. "patients currently under 18", "adults ≥65 with X"). It is **wrong** when
+the phenotype merely *has an age word in its name* — neonatal abstinence
+syndrome, juvenile idiopathic arthritis, congenital hypothyroidism, adult-onset
+Still's. In those cases the **condition code already encodes the age group**, and
+the patients span many birth years; adding a `patient.birthdate` clause
+over-constrains and silently drops valid patients. When in doubt, query by code
+ONLY and do not add a birthdate filter.
 
-**Why they're hard:** FHIR has no `Patient.age` parameter. You must compute via `patient.birthdate`.
+**When it DOES apply (an explicit current-age cutoff):**
+- **Why it's hard:** FHIR has no `Patient.age` parameter. You compute via `patient.birthdate`.
 
 **Strategy:**
 1. Compute the birthdate range from the age cutoff and current date.
 2. Chain on the Condition / MedicationRequest / Observation: `?code=...&patient.birthdate=ge2010-01-01` (born 2010 or later = ≤16 today, etc.).
-3. For neonatal phenotypes, use `patient.birthdate=gt2024-08-01` (within last few months).
-4. Confirm via `fhir_resource_sample` — check that the returned patients' actual ages match.
+3. Confirm via `fhir_resource_sample` — check that the returned patients' actual ages match, and that the filter didn't drop patients who legitimately have the condition.
 
 **Common mistakes:**
+- **Adding a birthdate filter for a disease whose name implies an age (neonatal/pediatric/juvenile/congenital).** This is the #1 over-constraint error — don't. Query by code alone.
 - Filtering Patient resources separately and trying to intersect — easier to chain.
 - Forgetting that PheKB age cutoffs are at *encounter* time, not current date — close enough for cohort identification.
 
