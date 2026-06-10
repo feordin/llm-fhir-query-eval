@@ -28,7 +28,11 @@ if [[ -f .env ]]; then
   set +o allexport
 fi
 
-PROVIDERS="copilot:claude-sonnet-4.6 copilot:gpt-5.4"
+# sonnet-4.6 + gpt-5.4 are FREE Copilot models; opus-4.7 is PREMIUM (counts
+# against the Copilot premium-request quota with a multiplier) -- added per the
+# 2026-06-09 "include opus" decision after the 5-pheno smoke test confirmed the
+# lean+guard gains hold (sonnet 0.88 / gpt 0.81 vs lean target 0.81 / 0.75).
+PROVIDERS="copilot:claude-sonnet-4.6 copilot:gpt-5.4 copilot:claude-opus-4.7"
 SUFFIX="+T3fix"
 SERVERS=(
   "https://jaerwinllm.azurewebsites.net"  "https://jaerwinllm2.azurewebsites.net"
