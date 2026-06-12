@@ -1,9 +1,35 @@
-# Opus-specific T3 regression: the methodology playbook narrows code-system breadth
+# Opus T3 "regression": a per-case concept-enumeration failure mode (NOT a leaderboard effect)
 
-**Date:** 2026-06-11 · follows the 2026-06-10 T3 lean refresh
-(`docs/results/2026-06-10-t3-lean-refresh.md`).
+**Date:** 2026-06-11, **resolved 2026-06-12 on full coverage** · follows the
+2026-06-10 T3 lean refresh (`docs/results/2026-06-10-t3-lean-refresh.md`).
 
-## TL;DR
+> ## UPDATE 2026-06-12 — RESOLVED on full Opus T2 coverage (read this first)
+>
+> The dramatic "Opus T3 < T2 by 0.06" below was a **48-test-case-subset artifact**.
+> With the Opus T2 backfill now at **full 388-tc coverage**, the paired comparison
+> (1164 cells) is:
+>
+> | | T2 | T3 | Δ |
+> |---|---|---|---|
+> | **F1** | 0.862 | 0.867 | **+0.004** |
+> | distinct concepts/query | 6.96 | **8.17** | **+1.21** |
+>
+> **Opus T3 ≈ T2 on full coverage** (T3 is a hair *higher*), and under T3 Opus
+> queries *more* concepts on average, not fewer — i.e. **the "concept-narrowing"
+> does NOT hold model-wide.** It was concentrated in the cross-coded hard cases that
+> dominated the unrepresentative 48-tc subset (the skill-baseline set).
+>
+> **What's still true and useful:** the *mechanism* — recall depends on concept
+> coverage, and the methodology can make Opus under-enumerate subtype concepts on a
+> *specific* hard phenotype (the CHD worked example: 32→7 concepts, recall 1.0→0.39).
+> That is a **real per-case failure mode** worth knowing (it's why the plugin should
+> say "enumerate all subtype concepts"), but it is **not** a leaderboard-level
+> regression. Frame Slide 16B accordingly: a failure-mode example, not a headline.
+>
+> The original (pre-resolution) analysis is preserved below for the record; treat its
+> "code-system narrowing" framing as the *initial, confounded* read.
+
+## TL;DR (original, 2026-06-11 — superseded by the update above)
 
 In the v7 leaderboard, **Opus is the only model whose T3 (+methodology) F1 sits
 *below* its T2 (tools-only)** — 0.867 vs 0.904. We chased this down and it is
@@ -12,7 +38,8 @@ It is a real, mechanistic, **Opus-specific** effect:
 
 > Under the prepended phenotype-methodology playbook, **Opus collapses the number
 > of clinical code systems it queries** (SNOMED + ICD-10 + ICD-9 + CPT → mostly
-> SNOMED-only). Because our Synthea data multi-codes every resource on purpose, a
+> SNOMED-only). Because our Synthea **diagnoses and procedures are multi-coded** on
+> purpose (Conditions: SNOMED + ICD-10 + ICD-9; Procedures: SNOMED + CPT), a
 > SNOMED-only query systematically under-recalls. Sonnet and GPT do **not** narrow
 > this way under the same playbook, so their recall — and F1 — holds or improves.
 
@@ -145,8 +172,11 @@ instance of the negative tail, and now we know the *channel*: code-system breadt
   publish "Opus T3 < T2" as a headline leaderboard claim. Until then we frame it
   as *"on the cases measured, the methodology narrows Opus's code systems and costs
   recall."*
-- **Not a data bug:** the Synthea multi-coding is intentional and correct; T2 Opus
-  exploits it fully. The playbook, not the data, suppresses it.
+- **Not a data bug:** the Synthea dx/procedure multi-coding (SNOMED↔ICD-9/ICD-10 via
+  `augment_fhir_codes.py`, 189 curated crosswalk entries; +CPT for procedures) is
+  intentional and correct; T2 Opus exploits it fully. The playbook, not the data,
+  suppresses it. (Meds are RxNorm-only and labs LOINC-only — single-system — so this
+  finding is specific to the diagnosis/procedure-coded cohorts.)
 
 ## Implications
 

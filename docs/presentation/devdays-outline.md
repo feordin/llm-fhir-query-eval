@@ -16,8 +16,8 @@ placeholders are flagged **[PENDING BACKFILL]**.
 ### Slide 1 — Title
 - **Title:** Can an LLM find the patients? Measuring FHIR-query accuracy for clinical phenotyping
 - **Subtitle:** A 108-phenotype benchmark across 4 models, 3 prompt styles, and 3 levels of tooling
-- **Visual:** one hero number, large — e.g. "0.65 → 0.88 F1 when we give the model tools" with model logos.
-- **Speaker notes:** Set the hook: clinical cohort-finding is a real, expensive task; can today's LLMs do it, and what actually makes them better?
+- **Visual:** one hero statement, large — **"Plain English + tools ≈ an expert hand-writing codes"** with the supporting jump *0.66 → 0.88 F1* and model logos. (Alt hero for drama: the small open model goes **0.26 → 0.71** with tools+methodology.)
+- **Speaker notes:** Set the hook: clinical cohort-finding is a real, expensive task; can today's LLMs do it, and what actually makes them better? The answer (tease): it's not a bigger model or a better prompt — it's tools, because the task is really about covering the code systems patients are coded in.
 
 ### Slide 2 — The goal (the question we're answering)
 - **On-slide:**
@@ -59,7 +59,9 @@ placeholders are flagged **[PENDING BACKFILL]**.
 ### Slide 6 — Realistic test data: custom Synthea modules
 - **On-slide:**
   - Synthetic patients generated with **custom Synthea modules**, one per phenotype, authored from the PheKB expert descriptions.
-  - Each resource carries **multiple codings** (SNOMED + ICD-10 + ICD-9 + RxNorm/CPT) — so a model querying in *any* code system can find the same cohort.
+  - **Diagnoses and procedures carry multiple codings** — Conditions as **SNOMED + ICD-10-CM + ICD-9-CM**, Procedures as **SNOMED + CPT** (injected by a post-Synthea crosswalk of the phenotype-defining codes). (Medications use **RxNorm** and labs use **LOINC** — single standards, not crosswalked.)
+  - **This is a deliberate *generosity* to the model:** because each diagnosed patient carries the concept in every system, **whichever code system the model queries, it still finds the patient.** So the benchmark does *not* test "did you pick the right code system" — it tests "did you enumerate the right clinical *concepts*." (Caveat / future work: a real single-EHR uses one system per site; a sharper design would give each patient *one* randomly-chosen system and test whether the model covers them all — see Slide 21.)
+  - Per-phenotype **isolation**: the server is wiped and loaded with one phenotype's data before its tests run — no cross-phenotype contamination.
   - Per-phenotype **isolation**: the server is wiped and loaded with one phenotype's data before its tests run — no cross-phenotype contamination.
 - **Visual:** Synthea module → FHIR bundles → FHIR server pipeline diagram.
 - **Speaker notes:** We control the ground truth exactly because we generated it — that's why patient-set scoring is valid.
@@ -108,21 +110,27 @@ placeholders are flagged **[PENDING BACKFILL]**.
 
 ## Section 3 — Giving the model help: tools & methodology
 
-### Slide 11 — Tier 2: agentic + tools
+### Slide 11 — Tier 2: the agentic loop (what it actually does)
 - **On-slide:**
-  - **Tier 2** = an agentic loop with real tools:
-    - **FHIR server introspection** (capabilities, profiles, valueset bindings, sample-the-data)
-    - **UMLS / VSAC** code lookup & crosswalk (via an MCP server)
-  - The model can *check its codes* and *probe the server* instead of recalling from memory.
-- **Visual:** agent loop diagram: model ⇄ {FHIR introspection, UMLS/VSAC MCP, count-the-results}.
-- **Speaker notes:** The hypothesis: most T1 failures are *recall* failures (wrong/missing codes); tools should recover them.
+  - **Tier 2** = an agentic loop with **10 tools** — FHIR (`server_metadata`, `search`, `resource_sample`) + UMLS (`search`, `crosswalk`) + VSAC (`search`/`expand`/`validate`/`lookup`/`subsumption`). The model is told **never answer from memory — the first action must be a tool call.** The actual workflow it's instructed to run:
+    1. **Find the concept's codes** — `umls_search` (concept → CUI → codes across vocabularies), or a VSAC value set (`vsac_search_value_sets` → `vsac_expand_value_set`).
+    2. **Sample the live server** (`fhir_resource_sample`) to see *which code systems the data actually uses*; `fhir_server_metadata` to confirm a search param exists.
+    3. **Validate the magnitude** — run the query with `_summary=count` (`fhir_search`) and **self-correct: 0 results → codes too narrow (add subtypes/synonyms); implausibly large → a clinical filter is missing.**
+    4. Emit the final FHIR query URL(s) — multi-resource cohorts as one URL per line (the evaluator unions the patient sets).
+- **Visual:** loop diagram — find codes (UMLS/VSAC) → sample server (which systems?) → count & validate → **revise** (the 0/too-many self-correction arrow) → final query.
+- **Speaker notes:** The key shift from T1 is *evidence-gathering, not recall* — it checks codes against UMLS/VSAC and probes the real server before answering. The count-and-revise step is what recovers the codes T1 missed. (Implementation: a system prompt with these rules + the 10 tools; the model runs the loop until it emits query URLs.)
 
-### Slide 12 — Tier 3: agentic + methodology playbook
+### Slide 12 — Tier 3: + a phenotyping playbook (what it adds)
 - **On-slide:**
-  - **Tier 3** = Tier 2 **plus a prepended phenotype-methodology "playbook"** — how an expert phenotyper approaches the task (handle subtypes, use multiple code systems, validate counts, don't over-constrain).
-  - We ship a **lean** version of the playbook (a long version over-constrained strong models).
-- **Visual:** T1 / T2 / T3 as three stacked capability tiers (lock → toolbox → toolbox+playbook).
-- **Speaker notes:** T1→T2 adds *capability*; T2→T3 adds *strategy*. Keep this distinction crisp — it's the spine of the analysis.
+  - **Tier 3** = the same T2 loop **plus a prepended methodology playbook**. Its core is a mandatory **STEP 0 — categorize the request** into one or more of **~12 named playbooks** via a keyword cheat-sheet, *then* build the query:
+    - "without / but not" → **Negation** (two queries; subtract patient sets)
+    - "≥ / above / threshold" → **Threshold** (`value-quantity=ge…`)
+    - "men / women" → **Sex** (`patient.gender`); "all my patients" → **Cohort = OR** (multi-resource union); "validated case" → **AND** via `_has`
+    - subtypes (cancers, diabetes families) → query the **umbrella code + every subtype**, not just one
+  - Plus universal tactics: **sample the server first, crosswalk unknown codes via UMLS, always include the system URI, don't over-constrain.**
+  - Two hard-won fixes baked in: a **lean** playbook (the long one over-constrained strong models) and an **age-filter guard** (don't add a `patient.birthdate` filter just because a disease *name* contains an age word — the code already encodes it).
+- **Visual:** the STEP-0 keyword→playbook cheat-sheet (a few rows) feeding into the T2 loop from Slide 11.
+- **Speaker notes:** T1→T2 adds *capability* (tools); T2→T3 adds *strategy* (which playbook + tactics). The playbook is real expert-phenotyper structure condensed to a decision tree — most requests match more than one playbook and combine them. Keep the capability-vs-strategy distinction crisp; it's the spine of the analysis.
 
 ### Slide 13 — The three tiers, side by side
 - **On-slide:** one comparison table:
@@ -140,12 +148,12 @@ placeholders are flagged **[PENDING BACKFILL]**.
   |---|---|---|---|
   | GPT-5.4 | 0.656 | 0.878 | 0.884 |
   | Claude Sonnet 4.6 | 0.623 | 0.846 | 0.857 |
-  | Claude Opus 4.7 | 0.678 | 0.90* | 0.867 |
+  | Claude Opus 4.7 | 0.679 | 0.862 | 0.867 |
   | Qwen3.5-9B | 0.257 | 0.476 | 0.710 |
-  - `*` Opus **T1 and T3 are full-108** (388 tc); **Opus T2 is a 48-tc subset** (0.904 on that slice) — not yet backfilled, so don't compare Opus T2 to its own T3 as a leaderboard fact (see Slide 16B).
+  - All four models are now **full-108 (388 test cases)** on every tier.
   - And the **comprehensive-cohort** headline (T3): Sonnet **0.95**, GPT **0.96**, Opus **0.94**.
-- **Visual:** grouped bar chart, model × tier (T1/T2/T3), with the comprehensive numbers called out. Mark the Opus T2 bar as partial-coverage (hatched/asterisk).
-- **Speaker notes:** The big jump is T1→T2. Land that, then unpack *why* next. Opus posts the best closed-book T1 (0.678) but, uniquely, its T3 doesn't beat its T2 — which is the hook for Slide 16B (the methodology over-steers Opus into code-system parsimony). Be honest that the Opus T2 cell is a 48-tc subset.
+- **Visual:** grouped bar chart, model × tier (T1/T2/T3), with the comprehensive numbers called out.
+- **Speaker notes:** The big jump is T1→T2 (every model gains ~0.20). Land that, then unpack *why* next. For Opus on full coverage, **T3 (0.867) ≈ T2 (0.862)** — the methodology is ~neutral for a strong model (the earlier "T3 < T2" was a 48-tc-subset artifact; see Slide 16B for the per-case concept-enumeration failure mode that's real but averages out).
 
 ---
 
@@ -170,16 +178,14 @@ placeholders are flagged **[PENDING BACKFILL]**.
 - **Visual:** delta chart — T2→T3 gain per model (big green bar for Qwen, ~flat for frontier).
 - **Speaker notes:** Nuance sells credibility: methodology is a big lever for a weak model, a small one for a strong model. Don't over-claim. Tee up the next slide: for the *most* instruction-following frontier model, the playbook can actually backfire — and we found exactly why.
 
-### Slide 16B — When methodology backfires: the Opus code-narrowing case (deep-dive)
+### Slide 16B — A methodology failure mode: concept under-enumeration (deep-dive, optional)
 - **On-slide:**
-  - **Opus is the one model whose T3 lands *below* its T2** (0.84 vs 0.90 on the cases measured). Sonnet and GPT both *gain* from T3.
-  - Root cause we traced: under the methodology playbook, **Opus collapses how many clinical code systems it queries** — from a SNOMED + ICD-10 + ICD-9 + CPT union down to **SNOMED-only**. Our data is deliberately multi-coded, so a one-system query silently under-recalls.
-  - **The number:** mean distinct code-systems per query, T2→T3 — **Opus 2.46 → 1.83 (−0.63)**; Sonnet 2.31 → 2.13; **GPT 2.11 → 2.11 (flat)**. Only Opus narrows; only Opus regresses.
-  - **Deterministic mechanism:** code systems in the query → F1 is monotone (1 sys → 0.82, 2 → 0.86, 3 → **0.96**). Under T3, Opus drops to a single system on **~half** of cross-coded cells; that drop is what costs recall. (Confirmed by a rerun — the narrowing *propensity* is stable and Opus-specific; which exact cells narrow is agentic noise.)
-  - **One case (coronary heart disease, same prompt):** T2 = 21 codes across 4 systems, recall **1.00** → T3 = 7 SNOMED-only codes, recall **0.39**.
-  - **Theory:** Opus follows the playbook's "pick the principled, canonical code" guidance *most literally* and over-applies it as "pick the canonical code *system*." The same lever that *supplies* competence to a weak model (Qwen) *displaces* a better default in the most obedient strong model.
-- **Visual:** two-panel — (left) grouped bars of code-systems-per-query T2 vs T3 for the 3 models (Opus bar drops, others flat); (right) the CHD before/after query with recall 1.00 → 0.39.
-- **Speaker notes:** This is the credibility centerpiece of the analysis section. The story: methodology isn't free — for the most instruction-adherent model it can suppress the very multi-system exploration that tools unlocked. The fix for the shareable plugin is explicit: tell the model to enumerate *all* code systems present, not just the canonical one. Full write-up: `docs/results/2026-06-11-opus-t3-code-narrowing.md`. (Honest caveat for Q&A: the Opus T2 baseline here is a 48-test-case subset; a full-coverage backfill is in progress, but the mechanism — code-system narrowing — is unambiguous in the queries themselves.)
+  - Because the benchmark is **generous on code systems** (any system finds the multi-coded patients), the *only* way to under-recall is to **enumerate too few clinical concepts** (subtype codes).
+  - On **heterogeneous, cross-coded phenotypes**, the T3 playbook makes **Opus do exactly that.** Coronary heart disease, same prompt: **T2 enumerated 32 distinct concepts → recall 1.00; T3 enumerated 7 → recall 0.39.** Opus reads "pick the principled, canonical code" as "pick the *few* canonical concepts" and drops the long tail of subtypes.
+  - **Scope it honestly:** averaged over all 388 test cases (most are simple single-concept phenotypes scoring ~1.0 regardless), this **washes out** — full-coverage Opus T2→T3 ≈ **−0.02, within agentic noise.** Opus is simply the one frontier model that doesn't *gain* from T3 (sonnet/gpt ≈ +0.02). It's a **per-phenotype failure mode on hard cases, not a leaderboard regression.**
+  - **Theory + plugin fix:** the methodology should say "enumerate *all* subtype concepts, not just the canonical one."
+- **Visual:** CHD before/after — T2 (32 concepts, recall 1.00) vs T3 (7 concepts, recall 0.39), with an inset noting it averages out across all phenotypes.
+- **Speaker notes:** Treat this as an honest *failure-mode* example, **not** a headline number. The dramatic early read ("Opus T3 < T2 by 0.06") was an artifact of an unrepresentative 48-test-case subset plus n=1 agentic variance; on full coverage it's ~neutral. What's real and reproducible is the *mechanism* on hard cross-coded phenotypes (CHD / Crohn's / SLE): the playbook makes Opus under-enumerate subtype concepts. It's worth a slide because it tells you what to put in the playbook (enumerate the long tail), not because Opus is "worse." If the talk is tight, this is the first cut. Full write-up: `docs/results/2026-06-11-opus-t3-code-narrowing.md`.
 
 ### Slide 17 — What moves the needle (the lever summary)
 - **On-slide:** for a frontier model, ranked impact:
@@ -189,6 +195,14 @@ placeholders are flagged **[PENDING BACKFILL]**.
   - Off-the-shelf generic skill: ~0 for a model that already knows FHIR
 - **Visual:** tornado/lever chart ranking the interventions by F1 impact.
 - **Speaker notes:** The one-slide takeaway if they remember nothing else: **give the model tools.**
+
+### Slide 17B — What recall actually depends on: concept coverage
+- **On-slide:**
+  - We deliberately made the benchmark **generous on code systems** (diagnoses multi-coded across SNOMED/ICD-9/ICD-10), so a model is never penalized for *which* system it picks — only for **how many of the cohort's clinical concepts it enumerates.**
+  - So the through-line is **concept coverage:** the expert prompt hands the model the concepts; **tools win because they let the model *discover* the concepts present** (sample the server, see which codes exist, crosswalk via UMLS) instead of recalling them; a generic skill stalls when it can't; over-tight methodology can prune the long tail.
+  - Net: cohort recall is mostly **"did you enumerate every clinical concept/subtype the population is coded with?"** — and tools are what make that possible from a plain-English prompt.
+- **Visual:** the plain-English prompt → (tools discover concepts on the server) → enumerated concept list → patient set. Contrast a 7-concept query vs a 32-concept query for the same phenotype.
+- **Speaker notes:** Keep this modest and accurate: the clean "coverage→recall" story holds *within a heterogeneous phenotype* (more of its concepts → higher recall), but concept counts aren't comparable *across* phenotypes (a simple phenotype needs one concept and scores ~1.0). So don't show a single universal curve — show it as "tools let the model discover the concepts the cohort is coded with." This is the honest version of "give the model tools."
 
 ---
 
@@ -219,10 +233,10 @@ placeholders are flagged **[PENDING BACKFILL]**.
 ### Slide 20 — Caveats (be honest)
 - **On-slide:**
   - **Synthetic data** (Synthea), not real EHR — controlled ground truth, but a known gap from messy reality.
-  - **n=1 agentic runs** — single non-deterministic runs per cell; sub-0.05 tier deltas are within variance (we use the comprehensive recoveries, which are far above noise).
-  - **Opus T1/T2** coverage being finalized at presentation time.
+  - **n=1 agentic runs** — single non-deterministic runs per cell; sub-0.05 tier deltas are within variance (we use the comprehensive recoveries and the code-system *mechanism*, both far above noise). The Opus code-narrowing finding (16B) is framed as a *propensity*, confirmed by rerun, not a per-cell certainty.
+  - **Coverage:** all four models are now full-108 on T1 and T3; Opus T2 backfilled to full coverage (was a 48-tc subset).
 - **Visual:** simple list, no chart.
-- **Speaker notes:** Pre-empt the obvious questions; it builds trust.
+- **Speaker notes:** Pre-empt the obvious questions; it builds trust. The synthetic-data point is the big one — lead with it, and note MIMIC (Slide 21) is the answer.
 
 ### Slide 21 — What's next
 - **On-slide:**
@@ -233,12 +247,14 @@ placeholders are flagged **[PENDING BACKFILL]**.
 - **Speaker notes:** The natural next question is "does this hold on real data?" — that's the next experiment.
 
 ### Slide 22 — Takeaways
-- **On-slide:** three lines:
-  1. **Closed-book, even frontier LLMs are mediocre at clinical FHIR queries** (~0.62–0.66 F1) and very prompt-sensitive.
-  2. **Tools are the dominant lever** (+0.10–0.20) and they *erase* the prompt-skill gap — plain English + tools ≈ expert prompt.
-  3. **Methodology helps weak models a lot, strong models a little** — and we shipped it as a reusable plugin.
-- **Visual:** three icons (lock / toolbox / playbook) with the one-line each.
-- **Speaker notes:** Close on the democratization message: the right tooling lets a clinician ask in plain English and get a research-grade cohort.
+- **On-slide:** five lines (the ones worth remembering):
+  1. **Closed-book, even the best frontier LLM is mediocre** (~0.68 F1) and very prompt-sensitive (Opus naive 0.53 → expert 0.86). Clinical FHIR phenotyping is **not "solved" by scale alone.**
+  2. **Tools are the dominant lever** (+0.10–0.22) and they **erase the prompt gap** — plain English + tools ≈ an expert hand-writing codes. **Tooling > skill > prompt.**
+  3. **Recall is really about concept coverage** — did the query enumerate every clinical concept/subtype the cohort is coded with? Tools win because they let the model **discover** those concepts on the server instead of recalling them. (We make the benchmark *generous on code systems* — any system finds the patient — so concepts, not systems, are the axis.)
+  4. **Methodology is a model-dependent lever** — huge for a weak model (Qwen T2→T3 **+0.23**), ~0 for the frontier (sonnet/gpt +0.02, Opus ~−0.02). On hard cross-coded phenotypes the playbook can make Opus **under-enumerate subtype concepts** (a real failure mode, though it averages out). **Match the strategy to the model; "more guidance" isn't universally better.**
+  5. **We shipped the win as a reusable plugin** (lean playbook + age-guard + server-introspection + UMLS/VSAC) — point it at any FHIR server and a clinician's plain-English ask becomes a research-grade cohort.
+- **Visual:** five one-liners with icons (lock / toolbox / code-systems funnel / playbook-with-caution / plugin). Bold lines 2 and 3 as the headline.
+- **Speaker notes:** Close on the democratization message: the right tooling lets a clinician ask in plain English and get a research-grade cohort. If they remember two things: **(1) give the model tools, (2) because cohort recall is a code-system-coverage problem.** Lines 1, 4 are the credibility/nuance; line 5 is the deliverable.
 
 ---
 

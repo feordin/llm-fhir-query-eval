@@ -292,6 +292,12 @@ def main() -> int:
                          "this -- keep modest on a single host (default: 6).")
     ap.add_argument("--matrix-timeout-sec", type=int, default=DEFAULT_MATRIX_TIMEOUT,
                     help="Wall-clock timeout per matrix invocation in seconds (default: 3600).")
+    ap.add_argument("--no-reload", action="store_true",
+                    help="Skip the per-phenotype wipe/load/verify and run every "
+                         "phenotype's test cases against the ALREADY-LOADED static "
+                         "server. Use for a single shared dataset (e.g. MIMIC-IV "
+                         "loaded once via $import), where per-phenotype isolation "
+                         "doesn't apply and there are no reloads to contend.")
     args = ap.parse_args()
 
     # Resolve specs
@@ -316,13 +322,17 @@ def main() -> int:
 
         # 1. wipe + load + verify (sequential; fail-fast). Pass --fhir-url
         # through via env so sharded runs hit their assigned server.
-        reload_env = os.environ.copy()
-        reload_env["FHIR_RELOAD_URL"] = args.fhir_url
-        reload = subprocess.run([PY, RELOAD, pheno], env=reload_env)
-        if reload.returncode != 0:
-            print(f"!! {pheno}: reload/verify FAILED -- skipping test cases", flush=True)
-            suite_results.append((pheno, "RELOAD-FAILED", []))
-            continue
+        # Skipped entirely with --no-reload (static shared dataset, e.g. MIMIC):
+        # the data is loaded once out-of-band, so there is no per-phenotype reload
+        # and therefore none of the concurrent-reload contention.
+        if not args.no_reload:
+            reload_env = os.environ.copy()
+            reload_env["FHIR_RELOAD_URL"] = args.fhir_url
+            reload = subprocess.run([PY, RELOAD, pheno], env=reload_env)
+            if reload.returncode != 0:
+                print(f"!! {pheno}: reload/verify FAILED -- skipping test cases", flush=True)
+                suite_results.append((pheno, "RELOAD-FAILED", []))
+                continue
 
         # 2. iterate test cases sequentially; parallelize specs within each
         tcs = _test_cases_for(pheno)
