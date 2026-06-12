@@ -34,7 +34,9 @@ sys.path.insert(0, str(REPO / "backend"))
 from src.fhir.client import FHIRClient  # noqa: E402
 
 BASE_URL = os.environ.get("FHIR_RELOAD_URL", "https://jaerwinllm.azurewebsites.net")
-BUNDLES = REPO / "data" / "minimal-bundles"
+# Bundle dir can be overridden to a location outside the repo (avoids any
+# repo-path file-watcher / search-indexer contention under concurrent reloads).
+BUNDLES = Path(os.environ.get("FHIR_BUNDLES_DIR", str(REPO / "data" / "minimal-bundles")))
 TEST_CASES = REPO / "test-cases" / "phekb"
 COUNT_TYPES = ["Patient", "Condition", "MedicationRequest", "Observation",
                "Procedure", "Encounter"]
@@ -92,8 +94,34 @@ def wipe_server(client: FHIRClient, poll_timeout: int = 3600) -> None:
 
 def load_phenotype(client: FHIRClient, phenotype: str) -> int:
     """POST every minimal bundle chunk for the phenotype. Returns resources loaded."""
-    chunks = sorted(BUNDLES.glob(f"{phenotype}.json.gz")) + \
-        sorted(BUNDLES.glob(f"{phenotype}-[0-9][0-9][0-9].json.gz"))
+    # Discover bundle chunks by PROBING EXACT PATHS rather than globbing.
+    # BUNDLES holds ~1.8k files; a glob enumerates the whole directory on every
+    # call, and under many concurrent reloads (a fast closed-book T1 sweep with a
+    # multi-server fan-out, with Windows Defender scanning the .gz files) that
+    # enumeration intermittently returns empty for seconds at a time, so reloads
+    # spuriously "find no bundles". A direct `is_file()` stat on a known path does
+    # not enumerate the directory and is immune to that contention. Chunks are
+    # named "<pheno>.json.gz" and/or a contiguous-ish "<pheno>-001.json.gz"...
+    # series; probe a generous ceiling and keep every file that exists (tolerates
+    # gaps). Each stat is retried briefly to absorb any transient FS hiccup.
+    def _isfile(p: Path) -> bool:
+        for _ in range(5):
+            try:
+                if p.is_file():
+                    return True
+                return False
+            except OSError:
+                time.sleep(0.3)
+        return False
+
+    chunks: list = []
+    single = BUNDLES / f"{phenotype}.json.gz"
+    if _isfile(single):
+        chunks.append(single)
+    for i in range(1, 300):
+        p = BUNDLES / f"{phenotype}-{i:03d}.json.gz"
+        if _isfile(p):
+            chunks.append(p)
     if not chunks:
         raise RuntimeError(f"no minimal bundles found for '{phenotype}' in {BUNDLES}")
     total = 0
