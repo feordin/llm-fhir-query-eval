@@ -93,16 +93,16 @@ placeholders are flagged **[PENDING BACKFILL]**.
 - **Speaker notes:** This is the floor — what's baked into the weights.
 
 ### Slide 10 — Tier 1 results + the prompt effect
-- **On-slide:** T1 F1 by model (all-test-case):
+- **On-slide:** T1 F1 by model (all-test-case, full 388-tc coverage):
   | Model | T1 |
   |---|---|
+  | Claude Opus 4.7 | **0.678** |
   | GPT-5.4 | 0.656 |
   | Claude Sonnet 4.6 | 0.623 |
-  | Claude Opus 4.7 | **[PENDING BACKFILL — full 108]** |
   | Qwen3.5-9B | 0.257 |
-  - Within T1, **expert > broad > naive** — code-aware phrasing helps a lot when the model has no tools.
-- **Visual:** grouped bar chart, model × prompt-level, T1 only.
-- **Speaker notes:** Closed-book, even frontier models are mediocre and very prompt-sensitive; the small open model is poor. Now the interesting part — what fixes it?
+  - Within T1, **expert ≫ broad > naive** — code-aware phrasing helps a lot when the model has no tools. Opus is the sharpest example: **naive 0.53 → broad 0.64 → expert 0.86** (a +0.33 swing from phrasing alone).
+- **Visual:** grouped bar chart, model × prompt-level, T1 only. Opus's naive→expert slope is the steepest — use it to make the "closed-book is prompt-sensitive" point.
+- **Speaker notes:** Closed-book, even frontier models are mediocre (~0.62–0.68) and very prompt-sensitive; the small open model is poor (0.26). Opus tops the frontier T1 trio — strongest built-in FHIR/code recall — but still needs an expert prompt to do well without tools. Now the interesting part — what fixes it? (Opus T1 is now full-108 coverage from the decoupled backfill; earlier partial-subset reads of ~0.70 were on an easier 91-tc slice.)
 
 ---
 
@@ -140,11 +140,12 @@ placeholders are flagged **[PENDING BACKFILL]**.
   |---|---|---|---|
   | GPT-5.4 | 0.656 | 0.878 | 0.884 |
   | Claude Sonnet 4.6 | 0.623 | 0.846 | 0.857 |
-  | Claude Opus 4.7 | [PENDING] | [PENDING] | 0.867 |
+  | Claude Opus 4.7 | 0.678 | 0.90* | 0.867 |
   | Qwen3.5-9B | 0.257 | 0.476 | 0.710 |
+  - `*` Opus **T1 and T3 are full-108** (388 tc); **Opus T2 is a 48-tc subset** (0.904 on that slice) — not yet backfilled, so don't compare Opus T2 to its own T3 as a leaderboard fact (see Slide 16B).
   - And the **comprehensive-cohort** headline (T3): Sonnet **0.95**, GPT **0.96**, Opus **0.94**.
-- **Visual:** grouped bar chart, model × tier (T1/T2/T3), with the comprehensive numbers called out.
-- **Speaker notes:** The big jump is T1→T2. Land that, then unpack *why* next.
+- **Visual:** grouped bar chart, model × tier (T1/T2/T3), with the comprehensive numbers called out. Mark the Opus T2 bar as partial-coverage (hatched/asterisk).
+- **Speaker notes:** The big jump is T1→T2. Land that, then unpack *why* next. Opus posts the best closed-book T1 (0.678) but, uniquely, its T3 doesn't beat its T2 — which is the hook for Slide 16B (the methodology over-steers Opus into code-system parsimony). Be honest that the Opus T2 cell is a 48-tc subset.
 
 ---
 
@@ -167,7 +168,18 @@ placeholders are flagged **[PENDING BACKFILL]**.
     - **Lean playbook for all** (the long one over-constrained strong models).
     - **Age-filter guard** — stop the model from bolting on a spurious `birthdate` filter when a disease *name* contains an age word (fixed the neonatal-abstinence collapse).
 - **Visual:** delta chart — T2→T3 gain per model (big green bar for Qwen, ~flat for frontier).
-- **Speaker notes:** Nuance sells credibility: methodology is a big lever for a weak model, a small one for a strong model. Don't over-claim.
+- **Speaker notes:** Nuance sells credibility: methodology is a big lever for a weak model, a small one for a strong model. Don't over-claim. Tee up the next slide: for the *most* instruction-following frontier model, the playbook can actually backfire — and we found exactly why.
+
+### Slide 16B — When methodology backfires: the Opus code-narrowing case (deep-dive)
+- **On-slide:**
+  - **Opus is the one model whose T3 lands *below* its T2** (0.84 vs 0.90 on the cases measured). Sonnet and GPT both *gain* from T3.
+  - Root cause we traced: under the methodology playbook, **Opus collapses how many clinical code systems it queries** — from a SNOMED + ICD-10 + ICD-9 + CPT union down to **SNOMED-only**. Our data is deliberately multi-coded, so a one-system query silently under-recalls.
+  - **The number:** mean distinct code-systems per query, T2→T3 — **Opus 2.46 → 1.83 (−0.63)**; Sonnet 2.31 → 2.13; **GPT 2.11 → 2.11 (flat)**. Only Opus narrows; only Opus regresses.
+  - **Deterministic mechanism:** code systems in the query → F1 is monotone (1 sys → 0.82, 2 → 0.86, 3 → **0.96**). Under T3, Opus drops to a single system on **~half** of cross-coded cells; that drop is what costs recall. (Confirmed by a rerun — the narrowing *propensity* is stable and Opus-specific; which exact cells narrow is agentic noise.)
+  - **One case (coronary heart disease, same prompt):** T2 = 21 codes across 4 systems, recall **1.00** → T3 = 7 SNOMED-only codes, recall **0.39**.
+  - **Theory:** Opus follows the playbook's "pick the principled, canonical code" guidance *most literally* and over-applies it as "pick the canonical code *system*." The same lever that *supplies* competence to a weak model (Qwen) *displaces* a better default in the most obedient strong model.
+- **Visual:** two-panel — (left) grouped bars of code-systems-per-query T2 vs T3 for the 3 models (Opus bar drops, others flat); (right) the CHD before/after query with recall 1.00 → 0.39.
+- **Speaker notes:** This is the credibility centerpiece of the analysis section. The story: methodology isn't free — for the most instruction-adherent model it can suppress the very multi-system exploration that tools unlocked. The fix for the shareable plugin is explicit: tell the model to enumerate *all* code systems present, not just the canonical one. Full write-up: `docs/results/2026-06-11-opus-t3-code-narrowing.md`. (Honest caveat for Q&A: the Opus T2 baseline here is a 48-test-case subset; a full-coverage backfill is in progress, but the mechanism — code-system narrowing — is unambiguous in the queries themselves.)
 
 ### Slide 17 — What moves the needle (the lever summary)
 - **On-slide:** for a frontier model, ranked impact:
@@ -187,6 +199,7 @@ placeholders are flagged **[PENDING BACKFILL]**.
   - We ran **Opus with Anthropic's published FHIR-developer skill** (closed-book) as a "strong generic agent" baseline.
   - Result: **~0.88** vs **our in-house Tier-2 stack ~0.99** on the same cases.
   - The gap is concentrated in the **hard cross-indication phenotypes** (e.g., Crohn's 0.74, asthma 0.46) — exactly the Path-C trick cases.
+  - **The skill's *marginal* lift is ~0** (newly measured at full scale): Opus T1 **plain 0.678 vs +skill 0.693 (+0.015)** across all 108 phenotypes. A generic skill barely helps a model that already knows FHIR — the win is the **tools**, not the prompt/skill text.
 - **Visual:** two bars — off-the-shelf Opus+skill (0.88) vs our T2 (0.99) — with a callout on which phenotypes drive the gap.
 - **Speaker notes:** A generic skill gets you most of the way; the last mile is domain-specific tooling + the trick-path handling we built.
 
@@ -238,6 +251,24 @@ placeholders are flagged **[PENDING BACKFILL]**.
 ---
 
 ### Numbers to refresh before presenting
-- **[PENDING BACKFILL]** Opus T1 (plain) and T2 full-108 coverage — currently 8-phenotype subset; full run in progress. Fill Slides 10 & 14.
-- Confirm the prompt-vs-tools chart values (Slide 15) against `docs/results/2026-06-07-prompt-vs-tools-impact.md`.
-- Confirm Opus-skill-baseline numbers (Slide 18) against `docs/results/2026-06-07-opus-skill-baseline.md`.
+- ✅ **Opus T1 backfilled to full 108** (decoupled generate/score harness, sharded
+  across 6 servers; 0 reload-starvation — the blocker is fixed). **Opus T1 plain
+  0.678, +fhirskill 0.693** (Slides 10 & 14 filled). Report:
+  `docs/results/2026-06-12-opus-t1-backfill-decoupled.md`. **Opus T2 still a 48-tc
+  subset** (intentionally not backfilled) — Slide 14 flags it `*`; backfill it too
+  (agentic, via single/low-shard isolated suite) if you want a fair leaderboard T2
+  row, which would turn the Slide 16B "T3 < T2" observation into a headline.
+- ✅ **Slide 15 (prompt-vs-tools) verified** against `2026-06-07-prompt-vs-tools-impact.md`:
+  naive·T2 0.907–0.925, broad·T2 0.95, expert·T2 0.982–0.998. Accurate.
+- ✅ **Slide 18 (Opus skill baseline) verified** against `2026-06-07-opus-skill-baseline.md`:
+  off-the-shelf 0.878 (≈0.88), ours-T2 0.989 (≈0.99), Crohn's 0.74, asthma 0.46. Accurate.
+- ⚠ **Slide 17 lever range** — the "tools +0.10–0.20" is defensible but mixes metrics:
+  the *final* Opus comprehensive run is **+0.104**; the all-test-case frontier T1→T2 is
+  **~+0.22**. State which you mean, or cite "+0.10 (comprehensive cohort) to +0.22 (all cases)."
+- **NEW — skill marginal lift now computable.** The skill-baseline doc's open caveat
+  ("measure the skill's *marginal* lift via Opus T1 *without* skill — not run yet") is
+  closed by this backfill: T1 plain vs T1 +fhirskill on full coverage. On the 8-pheno
+  subset it was ≈ +0.002 (skill ≈ 0 for a model that already knows FHIR); confirm at
+  full scale and add to Slide 17/18.
+- **NEW — Slide 16B** added (Opus T3 code-narrowing finding); full write-up at
+  `docs/results/2026-06-11-opus-t3-code-narrowing.md`.
