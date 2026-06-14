@@ -4,7 +4,7 @@ import {
 } from 'recharts'
 import { fetchLeaderboard } from '../data/reportClient'
 import {
-  TIERS, VARIANTS, shortModel, isFullCoverageModel,
+  TIERS, VARIANTS, shortModel, isCanonicalModel, isSkillSpec,
   type Leaderboard as LB, type LeaderboardRow,
 } from '../data/reportTypes'
 
@@ -43,8 +43,8 @@ function ImpactHero({ data }: { data: LB }) {
   return (
     <div className="impact-hero">
       <h2>What moves the needle?</h2>
-      <p className="subtitle">F1 lift from the same Opus baseline ({fmt(base)}) on a controlled
-        8-phenotype subset — isolating each lever. <strong>Only tools matter for a frontier model.</strong></p>
+      <p className="subtitle">F1 lift from the same Opus baseline ({fmt(base)}) across all 108
+        phenotypes (comprehensive cohort) — isolating each lever. <strong>Only tools matter for a frontier model.</strong></p>
       {levers.map(l => (
         <div key={l.label} className="lever">
           <div className="lever-label">{l.label}</div>
@@ -119,14 +119,53 @@ function LeaderTable({ rows }: { rows: LeaderboardRow[] }) {
   )
 }
 
+// ---- Off-the-shelf skill vs our agentic stack (Opus, by prompt) ------------
+function SkillBaseline({ data }: { data: LB }) {
+  const plain = getRow(data, m => m === 'copilot:claude-opus-4.7')
+  const skill = getRow(data, m => isSkillSpec(m) && m.includes('opus'))
+  if (!plain || !skill) return null
+  const rows = [
+    { label: 'Opus closed-book (no skill)', t: plain.tiers['1'] },
+    { label: 'Opus + Anthropic FHIR skill (closed-book, no tools)', t: skill.tiers['1'] },
+    { label: 'Opus + our agentic tools (T2)', t: plain.tiers['2'] },
+  ]
+  return (
+    <div style={{ marginTop: 32 }}>
+      <h2>Off-the-shelf skill vs our agentic stack
+        <span className="badge badge-multi"> Opus · comprehensive cohort · full 108</span></h2>
+      <p className="subtitle"><code>+fhirskill</code> = closed-book Opus + Anthropic's published
+        FHIR-developer skill (prepended text, no tools). The skill barely helps a model that already
+        knows FHIR — and helps least on the expert prompt; the win is the agentic <strong>tools</strong>.</p>
+      <div className="table-container">
+        <table className="score-table">
+          <thead><tr><th className="col-name">Configuration</th>
+            {VARIANTS.map(v => <th key={v} className="col-score">{v}</th>)}
+            <th className="col-score">overall</th></tr></thead>
+          <tbody>
+            {rows.map(r => (
+              <tr key={r.label}>
+                <td className="cell-name">{r.label}</td>
+                {VARIANTS.map(v => (
+                  <td key={v} className="score-cell" style={{ background: heat(r.t?.by_prompt?.[v]) }}>
+                    {fmt(r.t?.by_prompt?.[v])}</td>
+                ))}
+                <td className="score-cell" style={{ fontWeight: 700 }}>{fmt(r.t?.f1)}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  )
+}
+
 export default function Leaderboard() {
   const { data, isLoading, error } = useQuery({ queryKey: ['leaderboard'], queryFn: fetchLeaderboard })
   if (isLoading) return <div className="loading">Loading leaderboard…</div>
   if (error) return <div className="error">Error: {(error as Error).message}</div>
   if (!data) return null
 
-  const full = data.rows.filter(r => isFullCoverageModel(r.model))
-  const opus = data.rows.filter(r => !isFullCoverageModel(r.model))
+  const full = data.rows.filter(r => isCanonicalModel(r.model))
   const chartData = full.map(r => ({
     model: shortModel(r.model),
     T1: r.tiers['1']?.f1 ?? null, T2: r.tiers['2']?.f1 ?? null, T3: r.tiers['3']?.f1 ?? null,
@@ -162,14 +201,7 @@ export default function Leaderboard() {
         </ResponsiveContainer>
       </div>
 
-      {opus.length > 0 && (
-        <div style={{ marginTop: 32 }}>
-          <h2>Opus skill baseline <span className="badge badge-multi">8-phenotype subset</span></h2>
-          <p className="subtitle">Best off-the-shelf vs our methodology. <code>+fhirskill</code> = closed-book
-            Opus + Anthropic's FHIR skill (no tools); plain T1 = frontier one-shot; T2 = our agentic stack.</p>
-          <div className="table-container"><LeaderTable rows={opus} /></div>
-        </div>
-      )}
+      <SkillBaseline data={data} />
 
       <div className="table-footer">Generated {data.stamp}</div>
     </div>

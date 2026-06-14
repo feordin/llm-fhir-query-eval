@@ -2,7 +2,7 @@ import { useState, useMemo } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { Link } from 'react-router-dom'
 import { fetchPhenotypeMatrix } from '../data/reportClient'
-import { shortModel, isFullCoverageModel, type PhenotypeRow } from '../data/reportTypes'
+import { shortModel, isCanonicalModel, type PhenotypeRow } from '../data/reportTypes'
 
 const TIER_LABEL: Record<string, string> = { '1': 'T1 closed-book', '2': 'T2 +tools', '3': 'T3 +methodology' }
 
@@ -18,7 +18,7 @@ export default function PhenotypeMatrix() {
   const [tier, setTier] = useState('2')
   const [q, setQ] = useState('')
 
-  const models = useMemo(() => (data?.models ?? []).filter(isFullCoverageModel), [data])
+  const models = useMemo(() => (data?.models ?? []).filter(isCanonicalModel), [data])
   const rows = useMemo(() => {
     if (!data) return []
     return data.phenotypes.filter((p: PhenotypeRow) => !q || p.phenotype.includes(q.toLowerCase()))
