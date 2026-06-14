@@ -79,7 +79,11 @@ export function shortModel(spec: string): string {
   return spec.replace(/^copilot:/, '').replace(/^openai-compat:/, '')
 }
 
-// The three full-coverage (108-phenotype) models vs subset-only baselines (Opus).
-export function isFullCoverageModel(spec: string): boolean {
-  return !spec.includes('opus')
+// Canonical models (the main leaderboard) vs suffix-tagged baselines like
+// '+fhirskill'. All four canonical models are now full-108 coverage.
+export function isCanonicalModel(spec: string): boolean {
+  return !spec.includes('+')
+}
+export function isSkillSpec(spec: string): boolean {
+  return spec.includes('fhirskill')
 }

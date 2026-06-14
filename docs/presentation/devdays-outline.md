@@ -120,6 +120,18 @@ placeholders are flagged **[PENDING BACKFILL]**.
 - **Visual:** loop diagram — find codes (UMLS/VSAC) → sample server (which systems?) → count & validate → **revise** (the 0/too-many self-correction arrow) → final query.
 - **Speaker notes:** The key shift from T1 is *evidence-gathering, not recall* — it checks codes against UMLS/VSAC and probes the real server before answering. The count-and-revise step is what recovers the codes T1 missed. (Implementation: a system prompt with these rules + the 10 tools; the model runs the loop until it emits query URLs.)
 
+### Slide 11B — Tier 2 under the hood: how the agent actually talks to the data
+- **On-slide:**
+  - **The harness:** the model runs inside the **GitHub Copilot Agent SDK**, which runs the tool-calling loop internally — we hand it the system prompt + the 10 tools (registered as `@define_tool` wrappers); it iterates (model → tool call → result → model …) and returns the final query. A single T2 turn touches **three services**: the LLM, the FHIR server, and a clinical-terminology server.
+  - **① The live FHIR server — direct FHIR REST (no MCP needed; FHIR *is* a REST API).** The FHIR tools issue plain HTTPS GETs against the real Microsoft FHIR server — exactly what an engineer would `curl`:
+    - `GET /metadata` → CapabilityStatement (which resources & search params exist)
+    - `GET /{ResourceType}?…&_summary=count` → cohort magnitude (the count-and-revise step)
+    - `GET /{ResourceType}?_count=N` → sample real resources to see *which code systems the data uses*
+  - **② The NIH UMLS MCP server (`nih-umls`) — the clinical-terminology backend.** The code-lookup tools call it: `umls_search` / `umls_crosswalk` → **NIH UTS** (UMLS Terminology Services) REST API; `vsac_*` → the **VSAC** (Value Set Authority Center) FHIR API. Authenticated with a **UMLS API key**. This is the *same engine* exposed as the `/umls` MCP server elsewhere in the project.
+  - **So "the agent" = LLM (Copilot) ⇄ { FHIR REST on the live server, UMLS/VSAC via the NIH UMLS MCP server }.** Example trace for type-2-diabetes: `vsac_search_value_sets("type 2 diabetes")` → `vsac_expand_value_set(oid)` (full code family) → `fhir_resource_sample(Condition)` (see SNOMED vs ICD) → `fhir_search(Condition?code=…&_summary=count)` (validate) → emit query.
+- **Visual:** center node = **model (Copilot Agent SDK loop)**; arrow right to **FHIR server** labeled with the 3 REST calls (`/metadata`, `?_summary=count`, `?_count=N`); arrow left to **NIH UMLS MCP server** labeled UMLS UTS + VSAC FHIR. A small key: "FHIR = direct REST · terminology = MCP server."
+- **Speaker notes:** This is the slide that answers "what's the MCP server and how does it hit FHIR." Two distinct channels: **clinical terminology** (concepts → codes, code families, crosswalks) comes from the **NIH UMLS MCP server** (UMLS + VSAC, API-key'd); the **FHIR data access** is plain **FHIR REST** straight to the live server (FHIR is already a RESTful HTTP API, so no MCP layer is needed — the tool just does authenticated GETs). The agent is doing exactly what a clinical-informatics engineer does by hand — discover codes from UMLS/VSAC, sample the server to learn its coding, count to sanity-check — just in an automated loop.
+
 ### Slide 12 — Tier 3: + a phenotyping playbook (what it adds)
 - **On-slide:**
   - **Tier 3** = the same T2 loop **plus a prepended methodology playbook**. Its core is a mandatory **STEP 0 — categorize the request** into one or more of **~12 named playbooks** via a keyword cheat-sheet, *then* build the query:
@@ -210,12 +222,20 @@ placeholders are flagged **[PENDING BACKFILL]**.
 
 ### Slide 18 — Best off-the-shelf agent: Opus + the Anthropic FHIR skill
 - **On-slide:**
-  - We ran **Opus with Anthropic's published FHIR-developer skill** (closed-book) as a "strong generic agent" baseline.
-  - Result: **~0.88** vs **our in-house Tier-2 stack ~0.99** on the same cases.
-  - The gap is concentrated in the **hard cross-indication phenotypes** (e.g., Crohn's 0.74, asthma 0.46) — exactly the Path-C trick cases.
-  - **The skill's *marginal* lift is ~0** (newly measured at full scale): Opus T1 **plain 0.678 vs +skill 0.693 (+0.015)** across all 108 phenotypes. A generic skill barely helps a model that already knows FHIR — the win is the **tools**, not the prompt/skill text.
-- **Visual:** two bars — off-the-shelf Opus+skill (0.88) vs our T2 (0.99) — with a callout on which phenotypes drive the gap.
-- **Speaker notes:** A generic skill gets you most of the way; the last mile is domain-specific tooling + the trick-path handling we built.
+  - We ran **Opus with Anthropic's published FHIR-developer skill** (closed-book — the skill is prepended text, no tools) as a "strong generic" baseline, across **all 108 phenotypes × 3 prompts**.
+  - **Headline (comprehensive cohort, full 108): off-the-shelf Opus+skill 0.84 vs our agentic stack 0.95** (T2; T3 0.94). All-test-case: **0.69 vs 0.86**.
+  - The gap is concentrated in the **hard cross-indication phenotypes** (e.g., Crohn's, asthma) — exactly the Path-C trick cases where you must discover/crosswalk codes.
+  - **The skill's *marginal* lift is ~0:** Opus closed-book **plain 0.679 vs +skill 0.693 (+0.014)** over all 108. A generic skill barely helps a model that already knows FHIR — the win is the **tools**, not the prompt/skill text.
+  - **By prompt (all-tc, T1) — where the tiny lift lands:**
+    | prompt | plain | + skill | Δ |
+    |---|---|---|---|
+    | naive | 0.533 | 0.552 | +0.019 |
+    | broad | 0.644 | 0.666 | +0.022 |
+    | expert | 0.859 | 0.862 | +0.003 |
+
+    The skill helps the **naive/broad** prompts (+0.02) but is **noise on expert** (+0.003) — it supplies FHIR guidance an expert prompt already encodes. (Comprehensive-cohort shows the same shape: naive 0.681→0.698, broad 0.772→0.791, expert 0.875→0.886.)
+- **Visual:** two bars — off-the-shelf Opus+skill (**0.84**) vs our agentic (**0.95**) on the comprehensive cohort — with a callout on the cross-indication phenotypes driving the gap.
+- **Speaker notes:** A generic skill gets you most of the way (0.84); the last mile to 0.95 is domain-specific tooling + the trick-path handling we built. Numbers are now **full-108** (the earlier "0.88 vs 0.99" was an 8-phenotype subset; full coverage gives 0.84 vs 0.95 — same story, honest denominator). Source: `docs/results/2026-06-12-opus-full-leaderboard.md` + the +fhirskill cells.
 
 ---
 
