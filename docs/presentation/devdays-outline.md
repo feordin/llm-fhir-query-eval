@@ -167,6 +167,20 @@ placeholders are flagged **[PENDING BACKFILL]**.
 - **Visual:** grouped bar chart, model × tier (T1/T2/T3), with the comprehensive numbers called out.
 - **Speaker notes:** The big jump is T1→T2 (every model gains ~0.20). Land that, then unpack *why* next. For Opus on full coverage, **T3 (0.867) ≈ T2 (0.862)** — the methodology is ~neutral for a strong model (the earlier "T3 < T2" was a 48-tc-subset artifact; see Slide 16B for the per-case concept-enumeration failure mode that's real but averages out).
 
+### Slide 14B — Best achievable per model (the ceiling)
+- **On-slide:** Slide 14 averages over the 3 prompts (the realistic "what you'd get"). This is each model's **best possible** score — the single best **tier × prompt** combination, averaged over all 108 phenotypes:
+  | Model | Best config | Best F1 |
+  |---|---|---|
+  | GPT-5.4 | **T2 + expert** | **0.919** |
+  | Claude Opus 4.7 | **T2 + expert** | **0.903** |
+  | Claude Sonnet 4.6 | T3 + broad | 0.871 |
+  | Qwen3.5-9B | **T3 + expert** | 0.809 |
+  - **Frontier models peak at T2 + expert** — tools plus a code-aware prompt — and **cap around ~0.90**. Tools do most of the work; the expert prompt adds the last bit.
+  - **The small open model needs the *full stack*** (T3 + expert: methodology *and* a code-aware prompt) just to reach **0.81** — what frontier models clear with tools alone.
+  - Even the best configuration tops out ~0.92: the residual is the genuinely hard cases (cross-indication trick paths, granular code families) — there's real headroom.
+- **Visual:** bar chart, best-F1 per model, each bar annotated with its winning config (e.g., "T2·expert"). Optionally overlay the Slide-14 tier-mean as a ghost bar to show the prompt-choice uplift (~+0.04).
+- **Speaker notes:** Frame the contrast with Slide 14 explicitly: that slide was the *prompt-averaged* tier score (honest expectation); this is the *ceiling* (cherry-pick the best prompt). Two takeaways — (1) for a frontier model the ceiling is "tools + a precise prompt," and even then it's ~0.90, not 1.0; (2) a weak model can *approach* frontier territory but only by stacking every lever (methodology + expert prompt). Note Sonnet's best is T3-broad, not T2-expert — its T2-expert actually dips (0.82), a known sonnet quirk where the expert prompt over-constrains its agentic run.
+
 ---
 
 ## Section 4 — Analysis: why did it help?
