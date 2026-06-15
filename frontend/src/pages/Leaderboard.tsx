@@ -119,6 +119,46 @@ function LeaderTable({ rows }: { rows: LeaderboardRow[] }) {
   )
 }
 
+// ---- Best achievable per model (best tier × prompt, all test cases) --------
+const TIER_SHORT: Record<number, string> = { 1: 'T1 closed-book', 2: 'T2 tools', 3: 'T3 +methodology' }
+function BestAchievable({ rows }: { rows: LeaderboardRow[] }) {
+  const withBest = rows.filter(r => r.best).sort((a, b) => b.best!.f1 - a.best!.f1)
+  if (!withBest.length) return null
+  const max = Math.max(...withBest.map(r => r.best!.f1))
+  return (
+    <div style={{ marginTop: 32 }}>
+      <h2>Best achievable per model
+        <span className="badge badge-multi"> best tier × prompt · all 388 test cases</span></h2>
+      <p className="subtitle">Each model's <strong>ceiling</strong> — its single best tier+prompt
+        combination, averaged over all 108 phenotypes (Slide 14 was the prompt-<em>average</em>; this is
+        the best cell). Frontier models peak at <strong>tools + an expert prompt</strong> (~0.90); the small
+        open model needs the full stack (methodology + expert) to approach them.</p>
+      <div className="table-container">
+        <table className="score-table">
+          <thead><tr>
+            <th className="col-name">Model</th><th className="col-score">Best config</th>
+            <th className="col-score">Best F1</th><th></th>
+          </tr></thead>
+          <tbody>
+            {withBest.map(r => (
+              <tr key={r.model}>
+                <td className="cell-name">{shortModel(r.model)}</td>
+                <td className="score-cell">{TIER_SHORT[r.best!.tier]} · {r.best!.variant}</td>
+                <td className="score-cell" style={{ fontWeight: 700 }}>{r.best!.f1.toFixed(3)}</td>
+                <td className="score-cell" style={{ width: '38%' }}>
+                  <div className="lever-track">
+                    <div className="lever-bar" style={{ width: `${(r.best!.f1 / max) * 100}%`, background: '#3b82f6' }} />
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  )
+}
+
 // ---- Off-the-shelf skill vs our agentic stack (Opus, by prompt) ------------
 function SkillBaseline({ data }: { data: LB }) {
   const plain = getRow(data, m => m === 'copilot:claude-opus-4.7')
@@ -200,6 +240,8 @@ export default function Leaderboard() {
           </BarChart>
         </ResponsiveContainer>
       </div>
+
+      <BestAchievable rows={full} />
 
       <SkillBaseline data={data} />
 

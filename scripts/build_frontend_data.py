@@ -58,6 +58,23 @@ def build(since: str, exclude: tuple, stamp: str) -> dict:
         tree[spec][tc][(tier, variant)] = cell
     specs = sorted(specs)
 
+    # ---- best tier x prompt per spec, over ALL test cases (the "ceiling") ------
+    # Distinct from the per-tier comprehensive-cohort means above: this is each
+    # model's single best (tier, variant) combination averaged across every test
+    # case (matches presentation Slide 14B).
+    all_tv = defaultdict(lambda: defaultdict(list))  # spec -> (tier,variant) -> f1s
+    for (tc, spec, tier, variant), (ts, cell) in cell_map.items():
+        f1 = cell.get("f1")
+        if f1 is not None:
+            all_tv[spec][(tier, variant)].append(f1)
+
+    def _best_combo(spec):
+        means = {k: sum(v) / len(v) for k, v in all_tv[spec].items() if v}
+        if not means:
+            return None
+        (t, v), f1 = max(means.items(), key=lambda kv: kv[1])
+        return {"tier": t, "variant": v, "f1": f1}
+
     # ---- leaderboard.json: all-up over canonical cells, per model x tier -------
     lb_rows = []
     for spec in specs:
@@ -79,7 +96,7 @@ def build(since: str, exclude: tuple, stamp: str) -> dict:
                 "coverage": (cov[0] / cov[1]) if cov[1] else None,
                 "by_prompt": {v: _mean(by_prompt[v]) for v in VARIANTS},
             }
-        lb_rows.append({"model": spec, "tiers": per_tier})
+        lb_rows.append({"model": spec, "tiers": per_tier, "best": _best_combo(spec)})
 
     leaderboard = {"models": specs, "tiers": TIERS, "rows": lb_rows, "stamp": stamp}
 
