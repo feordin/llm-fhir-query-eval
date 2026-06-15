@@ -6,9 +6,16 @@ export interface TierStat {
   by_prompt: Record<string, number | null>
 }
 
+export interface BestCombo {
+  tier: number
+  variant: string
+  f1: number
+}
+
 export interface LeaderboardRow {
   model: string
   tiers: Record<string, TierStat> // "1" | "2" | "3"
+  best?: BestCombo | null // best (tier, variant) over ALL test cases
 }
 
 export interface Leaderboard {
