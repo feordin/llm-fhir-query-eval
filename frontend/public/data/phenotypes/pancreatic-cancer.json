@@ -1,0 +1,2236 @@
+{
+ "phenotype": "pancreatic-cancer",
+ "canonical_tc": "phekb-pancreatic-cancer-comprehensive",
+ "cases": [
+  {
+   "test_case": "phekb-pancreatic-cancer-comprehensive",
+   "grids": {
+    "copilot:claude-opus-4.7": {
+     "1-naive": {
+      "precision": 1.0,
+      "recall": 0.5808,
+      "f1": 0.7348,
+      "passed": false,
+      "expected_count": 167,
+      "actual_count": 97,
+      "elapsed_sec": 4.6,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|363418001",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|363418001",
+      "prompt_text": "Find all my pancreatic cancer patients."
+     },
+     "1-broad": {
+      "precision": 1.0,
+      "recall": 0.7006,
+      "f1": 0.8239,
+      "passed": true,
+      "expected_count": 167,
+      "actual_count": 117,
+      "elapsed_sec": 1.2,
+      "queries_generated": 4,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|363418001,372003004",
+      "additional_query_urls": [
+       "Condition?code:text=pancreatic",
+       "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|C25.0,C25.1,C25.2,C25.3,C25.4,C25.7,C25.8,C25.9",
+       "Observation?code=http://loinc.org|24108-3&value-quantity=gt100|http://unitsofmeasure.org|U/mL"
+      ],
+      "raw_response": "Condition?code=http://snomed.info/sct|363418001,372003004\nCondition?code:text=pancreatic carcinoma,pancreatic cancer,malignant neoplasm of pancreas\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|C25.0,C25.1,C25.2,C25.3,C25.4,C25.7,C25.8,C25.9\nObservation?code=http://loinc.org|24108-3&value-quantity=gt100|http://unitsofmeasure.org|U/mL",
+      "prompt_text": "Find all pancreatic cancer patients \u2014 by diagnosis (malignant or carcinoma variants) or by elevated CA 19-9 (>100 U/mL). Run multiple queries and union the patient sets."
+     },
+     "1-expert": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 167,
+      "actual_count": 167,
+      "elapsed_sec": 2.4,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|363418001,http://snomed.info/sct|372142002",
+      "additional_query_urls": [
+       "Observation?code=http://loinc.org|24108-3&value-quantity=gt100||U/mL"
+      ],
+      "raw_response": "Condition?code=http://snomed.info/sct|363418001,http://snomed.info/sct|372142002\nObservation?code=http://loinc.org|24108-3&value-quantity=gt100||U/mL",
+      "prompt_text": "Run two queries. (1) Condition?code=http://snomed.info/sct|363418001,http://snomed.info/sct|372142002 \u2014 pancreatic cancer dx variants. (2) Observation?code=http://loinc.org|24108-3&value-quantity=gt100||U/mL \u2014 elevated CA 19-9. Union the patient IDs."
+     },
+     "2-naive": {
+      "precision": 1.0,
+      "recall": 0.9581,
+      "f1": 0.9786,
+      "passed": true,
+      "expected_count": 167,
+      "actual_count": 160,
+      "elapsed_sec": 28.6,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|363418001,http://snomed.info/sct|372142002,http://snomed.info/sct|187791002,http://snomed.info/sct|187792009,http://snomed.info/sct|372003004,http://snomed.info/sct|372119009,http://snomed.info/sct|735735001,http://snomed.info/sct|93715005,http://snomed.info/sct|93939009,http://snomed.info/sct|94082003",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|363418001,http://snomed.info/sct|372142002,http://snomed.info/sct|187791002,http://snomed.info/sct|187792009,http://snomed.info/sct|372003004,http://snomed.info/sct|372119009,http://snomed.info/sct|735735001,http://snomed.info/sct|93715005,http://snomed.info/sct|93939009,http://snomed.info/sct|94082003",
+      "prompt_text": "Find all my pancreatic cancer patients.",
+      "run_metadata": {
+       "output_tokens": 159,
+       "tool_calls_count": 4,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     },
+     "2-broad": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 167,
+      "actual_count": 167,
+      "elapsed_sec": 38.0,
+      "queries_generated": 3,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|363418001,http://snomed.info/sct|372142002&subject:Patient._has:Patient:_id:_id=*",
+      "additional_query_urls": [
+       "Condition?code=http://snomed.info/sct|363418001,http://snomed.info/sct|372142002",
+       "Observation?code=http://loinc.org|24108-3,http://loinc.org|1825-4&value-quantity=gt100"
+      ],
+      "raw_response": "Condition?code=http://snomed.info/sct|363418001,http://snomed.info/sct|372142002&subject:Patient._has:Patient:_id:_id=*\nCondition?code=http://snomed.info/sct|363418001,http://snomed.info/sct|372142002\nObservation?code=http://loinc.org|24108-3,http://loinc.org|1825-4&value-quantity=gt100",
+      "prompt_text": "Find all pancreatic cancer patients \u2014 by diagnosis (malignant or carcinoma variants) or by elevated CA 19-9 (>100 U/mL). Run multiple queries and union the patient sets.",
+      "run_metadata": {
+       "output_tokens": 138,
+       "tool_calls_count": 9,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     },
+     "2-expert": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 167,
+      "actual_count": 167,
+      "elapsed_sec": 17.7,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|363418001,http://snomed.info/sct|372142002",
+      "additional_query_urls": [
+       "Observation?code=http://loinc.org|24108-3&value-quantity=gt100||U/mL"
+      ],
+      "raw_response": "Condition?code=http://snomed.info/sct|363418001,http://snomed.info/sct|372142002\nObservation?code=http://loinc.org|24108-3&value-quantity=gt100||U/mL",
+      "prompt_text": "Run two queries. (1) Condition?code=http://snomed.info/sct|363418001,http://snomed.info/sct|372142002 \u2014 pancreatic cancer dx variants. (2) Observation?code=http://loinc.org|24108-3&value-quantity=gt100||U/mL \u2014 elevated CA 19-9. Union the patient IDs.",
+      "run_metadata": {
+       "output_tokens": 113,
+       "tool_calls_count": 0,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     },
+     "3-naive": {
+      "precision": 1.0,
+      "recall": 0.9581,
+      "f1": 0.9786,
+      "passed": true,
+      "expected_count": 167,
+      "actual_count": 160,
+      "elapsed_sec": 23.5,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|363418001,http://snomed.info/sct|372142002",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|363418001,http://snomed.info/sct|372142002",
+      "prompt_text": "Find all my pancreatic cancer patients.",
+      "run_metadata": {
+       "output_tokens": 39,
+       "tool_calls_count": 3,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     },
+     "3-broad": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 167,
+      "actual_count": 167,
+      "elapsed_sec": 36.1,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|363418001,http://snomed.info/sct|372003004,http://snomed.info/sct|372142002,http://snomed.info/sct|187791002,http://snomed.info/sct|187792009,http://snomed.info/sct|372119009,http://snomed.info/sct|735735001,http://snomed.info/sct|93715005,http://snomed.info/sct|93939009,http://snomed.info/sct|94082003",
+      "additional_query_urls": [
+       "Observation?code=http://loinc.org|24108-3&value-quantity=gt100"
+      ],
+      "raw_response": "Condition?code=http://snomed.info/sct|363418001,http://snomed.info/sct|372003004,http://snomed.info/sct|372142002,http://snomed.info/sct|187791002,http://snomed.info/sct|187792009,http://snomed.info/sct|372119009,http://snomed.info/sct|735735001,http://snomed.info/sct|93715005,http://snomed.info/sct|93939009,http://snomed.info/sct|94082003\nObservation?code=http://loinc.org|24108-3&value-quantity=gt100",
+      "prompt_text": "Find all pancreatic cancer patients \u2014 by diagnosis (malignant or carcinoma variants) or by elevated CA 19-9 (>100 U/mL). Run multiple queries and union the patient sets.",
+      "run_metadata": {
+       "output_tokens": 188,
+       "tool_calls_count": 9,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     },
+     "3-expert": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 167,
+      "actual_count": 167,
+      "elapsed_sec": 15.2,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|363418001,http://snomed.info/sct|372142002",
+      "additional_query_urls": [
+       "Observation?code=http://loinc.org|24108-3&value-quantity=gt100||U/mL"
+      ],
+      "raw_response": "Condition?code=http://snomed.info/sct|363418001,http://snomed.info/sct|372142002\nObservation?code=http://loinc.org|24108-3&value-quantity=gt100||U/mL",
+      "prompt_text": "Run two queries. (1) Condition?code=http://snomed.info/sct|363418001,http://snomed.info/sct|372142002 \u2014 pancreatic cancer dx variants. (2) Observation?code=http://loinc.org|24108-3&value-quantity=gt100||U/mL \u2014 elevated CA 19-9. Union the patient IDs.",
+      "run_metadata": {
+       "output_tokens": 106,
+       "tool_calls_count": 0,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     }
+    },
+    "copilot:claude-opus-4.7+fhirskill": {
+     "1-naive": {
+      "precision": 1.0,
+      "recall": 0.5808,
+      "f1": 0.7348,
+      "passed": false,
+      "expected_count": 167,
+      "actual_count": 97,
+      "elapsed_sec": 0.1,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|363418001",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|363418001",
+      "prompt_text": "Find all my pancreatic cancer patients."
+     },
+     "1-broad": {
+      "precision": 1.0,
+      "recall": 0.7006,
+      "f1": 0.8239,
+      "passed": true,
+      "expected_count": 167,
+      "actual_count": 117,
+      "elapsed_sec": 0.2,
+      "queries_generated": 3,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|363418001,http://snomed.info/sct|372003004,http://snomed.info/sct|681000119107,http://snomed.info/sct|93939009",
+      "additional_query_urls": [
+       "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|C25.0,http://hl7.org/fhir/sid/icd-10-cm|C25.1,http://hl7.org/fhir/sid/icd-10-cm|C25.2,http://hl7.org/fhir/sid/icd-10-cm|C25.3,http://hl7.org/fhir/sid/icd-10-cm|C25.4,http://hl7.org/fhir/sid/icd-10-cm|C25.7,http://hl7.org/fhir/sid/icd-10-cm|C25.8,http://hl7.org/fhir/sid/icd-10-cm|C25.9",
+       "Observation?code=http://loinc.org|24108-3&value-quantity=gt100|http://unitsofmeasure.org|U/mL"
+      ],
+      "raw_response": "Condition?code=http://snomed.info/sct|363418001,http://snomed.info/sct|372003004,http://snomed.info/sct|681000119107,http://snomed.info/sct|93939009\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|C25.0,http://hl7.org/fhir/sid/icd-10-cm|C25.1,http://hl7.org/fhir/sid/icd-10-cm|C25.2,http://hl7.org/fhir/sid/icd-10-cm|C25.3,http://hl7.org/fhir/sid/icd-10-cm|C25.4,http://hl7.org/fhir/sid/icd-10-cm|C25.7,http://hl7.org/fhir/sid/icd-10-cm|C25.8,http://hl7.org/fhir/sid/icd-10-cm|C25.9\nObservation?code=http://loinc.org|24108-3&value-quantity=gt100|http://unitsofmeasure.org|U/mL",
+      "prompt_text": "Find all pancreatic cancer patients \u2014 by diagnosis (malignant or carcinoma variants) or by elevated CA 19-9 (>100 U/mL). Run multiple queries and union the patient sets."
+     },
+     "1-expert": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 167,
+      "actual_count": 167,
+      "elapsed_sec": 0.1,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|363418001,http://snomed.info/sct|372142002",
+      "additional_query_urls": [
+       "Observation?code=http://loinc.org|24108-3&value-quantity=gt100||U/mL"
+      ],
+      "raw_response": "Condition?code=http://snomed.info/sct|363418001,http://snomed.info/sct|372142002\nObservation?code=http://loinc.org|24108-3&value-quantity=gt100||U/mL",
+      "prompt_text": "Run two queries. (1) Condition?code=http://snomed.info/sct|363418001,http://snomed.info/sct|372142002 \u2014 pancreatic cancer dx variants. (2) Observation?code=http://loinc.org|24108-3&value-quantity=gt100||U/mL \u2014 elevated CA 19-9. Union the patient IDs."
+     }
+    },
+    "copilot:claude-sonnet-4.6": {
+     "1-naive": {
+      "precision": 1.0,
+      "recall": 0.5808,
+      "f1": 0.7348,
+      "passed": false,
+      "expected_count": 167,
+      "actual_count": 97,
+      "elapsed_sec": 31.5,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|363418001&_include=Condition:patient",
+      "additional_query_urls": [
+       "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|C25.0,http://hl7.org/fhir/sid/icd-10-cm|C25.1,http://hl7.org/fhir/sid/icd-10-cm|C25.2,http://hl7.org/fhir/sid/icd-10-cm|C25.3,http://hl7.org/fhir/sid/icd-10-cm|C25.4,http://hl7.org/fhir/sid/icd-10-cm|C25.7,http://hl7.org/fhir/sid/icd-10-cm|C25.8,http://hl7.org/fhir/sid/icd-10-cm|C25.9&_include=Condition:patient"
+      ],
+      "raw_response": "Here are the FHIR queries to find all pancreatic cancer patients, covering both SNOMED CT and ICD-10-CM coding systems:\n\n**SNOMED CT:**\n```\nCondition?code=http://snomed.info/sct|363418001&_include=Condition:patient\n```\n\n**ICD-10-CM (all pancreatic malignancy subcategories):**\n```\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|C25.0,http://hl7.org/fhir/sid/icd-10-cm|C25.1,http://hl7.org/fhir/sid/icd-10-cm|C25.2,http://hl7.org/fhir/sid/icd-10-cm|C25.3,http://hl7.org/fhir/sid/icd-10-cm|C25.4,http://hl7.org/fhir/sid/icd-10-cm|C25.7,http://hl7.org/fhir/sid/icd-10-cm|C25.8,http://hl7.org/fhir/sid/icd-10-cm|C25.9&_include=Condition:patient\n```\n\n---\n\n### Notes:\n| Code | Description |\n|------|-------------|\n| SNOMED `363418001` | Malignant tumor of pancreas |\n| ICD-10 `C25.0` | Head of pancreas |\n| ICD-10 `C25.1` | Body of pancreas |\n| ICD-10 `C25.2` | Tail of pancreas |\n| ICD-10 `C25.3` | Pancreatic duct |\n| ICD-10 `C25.4` | Endocrine pancreas |\n| ICD-10 `C25.7\u2013C25.9` | Other/overlapping/unspecified |\n\n- `_include=Condition:patient` pulls the associated **Patient** resources in the same bundle response.\n- Run **both queries** and de-duplicate by patient ID to get a complete list across coding systems.",
+      "prompt_text": "Find all my pancreatic cancer patients."
+     },
+     "1-broad": {
+      "precision": 1.0,
+      "recall": 0.7006,
+      "f1": 0.8239,
+      "passed": true,
+      "expected_count": 167,
+      "actual_count": 117,
+      "elapsed_sec": 90.0,
+      "queries_generated": 4,
+      "primary_query_url": "Condition?code:below=http://snomed.info/sct|363418001&_include=Condition:subject",
+      "additional_query_urls": [
+       "Condition?code=http://snomed.info/sct|372138000,http://snomed.info/sct|363349007,http://snomed.info/sct|254620000,http://snomed.info/sct|254621001,http://snomed.info/sct|254622008&_include=Condition:subject",
+       "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|C25.0,http://hl7.org/fhir/sid/icd-10-cm|C25.1,http://hl7.org/fhir/sid/icd-10-cm|C25.2,http://hl7.org/fhir/sid/icd-10-cm|C25.3,http://hl7.org/fhir/sid/icd-10-cm|C25.4,http://hl7.org/fhir/sid/icd-10-cm|C25.7,http://hl7.org/fhir/sid/icd-10-cm|C25.8,http://hl7.org/fhir/sid/icd-10-cm|C25.9&_include=Condition:subject",
+       "Observation?code=http://loinc.org|24108-3,http://loinc.org|19165-0&value-quantity=gt100||U/mL&_include=Observation:subject"
+      ],
+      "raw_response": "## FHIR Queries: Pancreatic Cancer Patient Discovery\n\n### \ud83e\uddec Arm 1 \u2014 SNOMED CT: Malignant Neoplasm of Pancreas (Subsumption Hierarchy)\n```\nCondition?code:below=http://snomed.info/sct|363418001&_include=Condition:subject\n```\n\n### \ud83e\uddec Arm 2 \u2014 SNOMED CT: Explicit Carcinoma Variants (Flat Fallback)\n```\nCondition?code=http://snomed.info/sct|372138000,http://snomed.info/sct|363349007,http://snomed.info/sct|254620000,http://snomed.info/sct|254621001,http://snomed.info/sct|254622008&_include=Condition:subject\n```\n\n### \ud83c\udfe5 Arm 3 \u2014 ICD-10-CM: Full C25.x Pancreatic Malignancy Range\n```\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|C25.0,http://hl7.org/fhir/sid/icd-10-cm|C25.1,http://hl7.org/fhir/sid/icd-10-cm|C25.2,http://hl7.org/fhir/sid/icd-10-cm|C25.3,http://hl7.org/fhir/sid/icd-10-cm|C25.4,http://hl7.org/fhir/sid/icd-10-cm|C25.7,http://hl7.org/fhir/sid/icd-10-cm|C25.8,http://hl7.org/fhir/sid/icd-10-cm|C25.9&_include=Condition:subject\n```\n\n### \ud83d\udd2c Arm 4 \u2014 Lab: Elevated CA 19-9 (>100 U/mL)\n```\nObservation?code=http://loinc.org|24108-3,http://loinc.org|19165-0&value-quantity=gt100||U/mL&_include=Observation:subject\n```\n\n---\n\n## \ud83d\udccb Reference Table\n\n| Arm | Resource | System | Coverage |\n|-----|----------|--------|----------|\n| 1 | Condition | SNOMED `363418001` `:below` | All malignant pancreatic neoplasms via hierarchy |\n| 2 | Condition | SNOMED explicit codes | Carcinoma (`372138000`), Adenocarcinoma (`363349007`), Head/Body/Tail carcinoma (`254620000`, `254621001`, `254622008`) \u2014 flat fallback if `:below` unsupported |\n| 3 | Condition | ICD-10-CM `C25.0\u2013C25.9` | Head, body, tail, duct, endocrine, overlapping, unspecified pancreatic malignancies |\n| 4 | Observation | LOINC `24108-3` + `19165-0` | CA 19-9 serum/plasma > 100 U/mL (serologic surrogate) |\n\n## \u26a0\ufe0f Union & Deduplication Notes\n\n- **Union patient IDs** extracted from `Condition.subject` and `Observation.subject` across all 4 arms\n- **Arm 1 \u2287 Arm 2** when SNOMED subsumption (`:below`) is supported \u2014 run Arm 2 only as fallback\n- **CA 19-9 elevation is non-specific** (also elevated in cholangiocarcinoma, pancreatitis); consider intersecting Arm 4 results with imaging or clinical context\n- Add `&clinical-status=active` to Condition queries if only currently active diagnoses are needed",
+      "prompt_text": "Find all pancreatic cancer patients \u2014 by diagnosis (malignant or carcinoma variants) or by elevated CA 19-9 (>100 U/mL). Run multiple queries and union the patient sets."
+     },
+     "1-expert": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 167,
+      "actual_count": 167,
+      "elapsed_sec": 24.6,
+      "queries_generated": 5,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|363418001,http://snomed.info/sct|372142002&_include=Condition:subject",
+      "additional_query_urls": [
+       "Observation?code=http://loinc.org|24108-3&value-quantity=gt100||U/mL&_include=Observation:subject",
+       "Condition?code=...363418001,372142002",
+       "Observation?code=...24108-3&value-quantity=gt100",
+       "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|C25"
+      ],
+      "raw_response": "Here are the two FHIR queries to union patient IDs across pancreatic cancer diagnoses and elevated CA 19-9 results:\n\n```\nCondition?code=http://snomed.info/sct|363418001,http://snomed.info/sct|372142002&_include=Condition:subject\n```\n\n```\nObservation?code=http://loinc.org|24108-3&value-quantity=gt100||U/mL&_include=Observation:subject\n```\n\n---\n\n### Query Logic & Union Notes\n\n| # | Query | Purpose |\n|---|-------|---------|\n| 1 | `Condition?code=...363418001,372142002` | Malignant neoplasm of pancreas (SNOMED) + Carcinoma of pancreas variant |\n| 2 | `Observation?code=...24108-3&value-quantity=gt100` | CA 19-9 serum level > 100 U/mL (LOINC 24108-3) |\n\n### Post-Processing \u2014 Union Patient IDs\nAfter retrieving results from both queries:\n\n```\npatients_from_q1 = { c.subject.reference for c in Condition results }\npatients_from_q2 = { o.subject.reference for o in Observation results }\n\nunion_patient_ids = patients_from_q1 | patients_from_q2\n```\n\n### Clinical Context\n- **SNOMED `363418001`** \u2014 Malignant tumor of pancreas\n- **SNOMED `372142002`** \u2014 Carcinoma of pancreas\n- **LOINC `24108-3`** \u2014 CA 19-9 [Units/volume] in Serum; >100 U/mL is typically considered significantly elevated (normal <37 U/mL)\n- Union ensures patients flagged **by either criterion** are captured (diagnosis *or* biomarker signal)\n\n> \u26a0\ufe0f Consider also querying `ICD-10 C25.*` codes via `Condition?code=http://hl7.org/fhir/sid/icd-10-cm|C25` if your system uses ICD-10 coding alongside SNOMED.",
+      "prompt_text": "Run two queries. (1) Condition?code=http://snomed.info/sct|363418001,http://snomed.info/sct|372142002 \u2014 pancreatic cancer dx variants. (2) Observation?code=http://loinc.org|24108-3&value-quantity=gt100||U/mL \u2014 elevated CA 19-9. Union the patient IDs."
+     },
+     "2-naive": {
+      "precision": 1.0,
+      "recall": 0.9581,
+      "f1": 0.9786,
+      "passed": true,
+      "expected_count": 167,
+      "actual_count": 160,
+      "elapsed_sec": 75.4,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|363418001,http://snomed.info/sct|372142002,http://snomed.info/sct|187791002,http://snomed.info/sct|187792009,http://snomed.info/sct|372003004,http://snomed.info/sct|372119009,http://snomed.info/sct|735735001,http://snomed.info/sct|93715005,http://snomed.info/sct|93939009,http://snomed.info/sct|94082003,http://snomed.info/sct|1237416003,http://snomed.info/sct|1259311005,http://snomed.info/sct|235966007,http://snomed.info/sct|255088001,http://snomed.info/sct|770602005,http://hl7.org/fhir/sid/icd-10-cm|C25,http://hl7.org/fhir/sid/icd-10-cm|C25.0,http://hl7.org/fhir/sid/icd-10-cm|C25.1,http://hl7.org/fhir/sid/icd-10-cm|C25.2,http://hl7.org/fhir/sid/icd-10-cm|C25.3,http://hl7.org/fhir/sid/icd-10-cm|C25.4,http://hl7.org/fhir/sid/icd-10-cm|C25.7,http://hl7.org/fhir/sid/icd-10-cm|C25.8,http://hl7.org/fhir/sid/icd-10-cm|C25.9",
+      "additional_query_urls": [],
+      "raw_response": "Results confirmed \u2014 all SNOMED CT coded, returning valid pancreatic cancer diagnoses. Here is your final query:\n\n---\n\n**What I found:**\n- **Server:** FHIR R4 (Azure), Condition resources coded exclusively with **SNOMED CT**\n- **Code sources:** ASCO \"Pancreatic Cancer\" VSAC value set (8 SNOMED codes) + Optum \"Exocrine Pancreatic Cancer SCT\" VSAC value set (5 codes) + 2 additional codes observed directly on the server (`363418001`, `372142002`) + ICD-10-CM C25.x family (9 codes) as a safety net\n- **Cohort size:** **160 Condition records** matching pancreatic cancer diagnoses\n\n---\n\n```\nCondition?code=http://snomed.info/sct|363418001,http://snomed.info/sct|372142002,http://snomed.info/sct|187791002,http://snomed.info/sct|187792009,http://snomed.info/sct|372003004,http://snomed.info/sct|372119009,http://snomed.info/sct|735735001,http://snomed.info/sct|93715005,http://snomed.info/sct|93939009,http://snomed.info/sct|94082003,http://snomed.info/sct|1237416003,http://snomed.info/sct|1259311005,http://snomed.info/sct|235966007,http://snomed.info/sct|255088001,http://snomed.info/sct|770602005,http://hl7.org/fhir/sid/icd-10-cm|C25,http://hl7.org/fhir/sid/icd-10-cm|C25.0,http://hl7.org/fhir/sid/icd-10-cm|C25.1,http://hl7.org/fhir/sid/icd-10-cm|C25.2,http://hl7.org/fhir/sid/icd-10-cm|C25.3,http://hl7.org/fhir/sid/icd-10-cm|C25.4,http://hl7.org/fhir/sid/icd-10-cm|C25.7,http://hl7.org/fhir/sid/icd-10-cm|C25.8,http://hl7.org/fhir/sid/icd-10-cm|C25.9\n```\n\n**SNOMED codes covered:**\n\n| Code | Description |\n|---|---|\n| 363418001 | Malignant neoplasm of pancreas *(seen on server)* |\n| 372142002 | Carcinoma of pancreas *(seen on server)* |\n| 372003004 | Primary malignant neoplasm of pancreas |\n| 372119009 | Primary malignant neoplasm of head of pancreas |\n| 187791002 | Malignant neoplasm of body of pancreas |\n| 187792009 | Malignant neoplasm of tail of pancreas |\n| 93715005 | Primary malignant neoplasm of body of pancreas |\n| 93939009 | Primary malignant neoplasm of pancreatic duct |\n| 94082003 | Primary malignant neoplasm of tail of pancreas |\n| 735735001 | Primary malignant neuroendocrine neoplasm of pancreas |\n| 255088001 | Malignant neoplasm of exocrine pancreas |\n| 235966007 | Cystadenocarcinoma of pancreas |\n| 1259311005 | Primary cystadenocarcinoma of pancreas |\n| 1237416003 | Metastatic cystadenocarcinoma to pancreas |\n| 770602005 | Squamous cell carcinoma of exocrine pancreas |",
+      "prompt_text": "Find all my pancreatic cancer patients.",
+      "run_metadata": {
+       "output_tokens": 1086,
+       "tool_calls_count": 8,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     },
+     "2-broad": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 167,
+      "actual_count": 167,
+      "elapsed_sec": 121.4,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|363418001,http://snomed.info/sct|372142002,http://snomed.info/sct|372003004,http://snomed.info/sct|372119009,http://snomed.info/sct|187791002,http://snomed.info/sct|187792009,http://snomed.info/sct|93715005,http://snomed.info/sct|94082003,http://snomed.info/sct|93939009,http://snomed.info/sct|735735001,http://snomed.info/sct|255088001,http://snomed.info/sct|235966007,http://snomed.info/sct|1259311005,http://snomed.info/sct|1237416003,http://snomed.info/sct|770602005",
+      "additional_query_urls": [
+       "Observation?code=http://loinc.org|24108-3&value-quantity=gt100||U/mL"
+      ],
+      "raw_response": "All results validated:\n- **SNOMED Condition query \u2192 160 results** \u2705 (ICD-10 \u2192 0, confirming this server is SNOMED-only for Conditions)\n- **CA 19-9 > 100 U/mL (LOINC 24108-3) \u2192 42 results** \u2705 (units confirmed as `U/mL`)\n\nHere is a full summary of what was assembled and why, followed by the final queries:\n\n---\n\n## \ud83d\udd2c Cohort Decomposition & Code Assembly\n\n### Arm 1 \u2014 Diagnosis (Condition)\n| Source | SNOMED Code | Display |\n|--------|-------------|---------|\n| Server sample | `363418001` | Malignant neoplasm of pancreas *(parent; subsumes 372142002)* |\n| Server sample | `372142002` | Carcinoma of pancreas |\n| ASCO VSAC | `372003004` | Primary malignant neoplasm of pancreas |\n| ASCO VSAC | `372119009` | Primary malignant neoplasm of head of pancreas |\n| ASCO VSAC | `187791002` | Malignant neoplasm of body of pancreas |\n| ASCO VSAC | `187792009` | Malignant neoplasm of tail of pancreas |\n| ASCO VSAC | `93715005` | Primary malignant neoplasm of body of pancreas |\n| ASCO VSAC | `94082003` | Primary malignant neoplasm of tail of pancreas |\n| ASCO VSAC | `93939009` | Primary malignant neoplasm of pancreatic duct |\n| ASCO VSAC | `735735001` | Primary malignant neuroendocrine neoplasm of pancreas |\n| Optum VSAC | `255088001` | Malignant neoplasm of exocrine pancreas |\n| Optum VSAC | `235966007` | Cystadenocarcinoma of pancreas |\n| Optum VSAC | `1259311005` | Primary cystadenocarcinoma of pancreas |\n| Optum VSAC | `1237416003` | Metastatic cystadenocarcinoma to pancreas |\n| Optum VSAC | `770602005` | Squamous cell carcinoma of exocrine pancreas |\n\n> **ICD-10-CM** codes C25.0\u2013C25.9 return 0 on this server \u2014 SNOMED is the only coding system used in Conditions here.\n\n### Arm 2 \u2014 Elevated CA 19-9 Lab (Observation)\n| LOINC | Display | Threshold |\n|-------|---------|-----------|\n| `24108-3` | Cancer Ag 19-9 [Units/volume] in Serum or Plasma | > 100 U/mL |\n\n> 327 total CA 19-9 observations on the server; 42 exceed the 100 U/mL threshold.\n\n---\n\n## \u2705 Final FHIR Queries (union the patient sets)\n\n```\nCondition?code=http://snomed.info/sct|363418001,http://snomed.info/sct|372142002,http://snomed.info/sct|372003004,http://snomed.info/sct|372119009,http://snomed.info/sct|187791002,http://snomed.info/sct|187792009,http://snomed.info/sct|93715005,http://snomed.info/sct|94082003,http://snomed.info/sct|93939009,http://snomed.info/sct|735735001,http://snomed.info/sct|255088001,http://snomed.info/sct|235966007,http://snomed.info/sct|1259311005,http://snomed.info/sct|1237416003,http://snomed.info/sct|770602005\nObservation?code=http://loinc.org|24108-3&value-quantity=gt100||U/mL\n```",
+      "prompt_text": "Find all pancreatic cancer patients \u2014 by diagnosis (malignant or carcinoma variants) or by elevated CA 19-9 (>100 U/mL). Run multiple queries and union the patient sets.",
+      "run_metadata": {
+       "output_tokens": 1770,
+       "tool_calls_count": 18,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     },
+     "2-expert": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 167,
+      "actual_count": 167,
+      "elapsed_sec": 40.6,
+      "queries_generated": 3,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|363418001,http://snomed.info/sct|372142002",
+      "additional_query_urls": [
+       "Observation?code=http://loinc.org|24108-3&value-quantity=gt100||U/mL",
+       "Condition?code=http://snomed.info/sct|363418001,http://snomed.info/sct|372142002,http://hl7.org/fhir/sid/icd-10-cm|C25.0,http://hl7.org/fhir/sid/icd-10-cm|C25.1,http://hl7.org/fhir/sid/icd-10-cm|C25.2,http://hl7.org/fhir/sid/icd-10-cm|C25.3,http://hl7.org/fhir/sid/icd-10-cm|C25.4,http://hl7.org/fhir/sid/icd-10-cm|C25.9"
+      ],
+      "raw_response": "Both queries executed successfully and returned matching records. Here's the full breakdown:\n\n---\n\n## \u2705 Query Results\n\n### Query 1 \u2014 Pancreatic Cancer Diagnoses (Condition)\n```\nCondition?code=http://snomed.info/sct|363418001,http://snomed.info/sct|372142002\n```\n| Detail | Value |\n|---|---|\n| **Resources returned** | 10+ (server did not report `total`) |\n| **Code hits** | `363418001` \u2013 *Malignant neoplasm of pancreas* \u2714 |\n| | `372142002` \u2013 *Carcinoma of pancreas* \u2714 |\n| **Category** | `encounter-diagnosis` (all records) |\n\n---\n\n### Query 2 \u2014 Elevated CA 19-9 Labs (Observation)\n```\nObservation?code=http://loinc.org|24108-3&value-quantity=gt100||U/mL\n```\n| Detail | Value |\n|---|---|\n| **Resources returned** | 10+ (server did not report `total`) |\n| **Code hit** | `24108-3` \u2013 *Cancer Ag 19-9 [Units/volume] in Serum or Plasma* \u2714 |\n| **Category** | `laboratory` (all records) |\n| **Value filter** | `> 100 U/mL` applied and confirmed active |\n\n---\n\n## \ud83d\udd17 How to Union Patient IDs (Client-side)\n\nSince FHIR has no native cross-resource union, extract `subject.reference` from each result bundle and deduplicate:\n\n```python\n# Pseudocode\ncond_patients  = {r['subject']['reference'] for r in condition_results}\nobs_patients   = {r['subject']['reference'] for r in observation_results}\n\ncohort = cond_patients | obs_patients   # union \u2014 patients with EITHER dx OR elevated CA 19-9\n```\n\n---\n\n## \u26a0\ufe0f Caveats & Recommended Enhancements\n\n1. **Missing ICD-10-CM codes** \u2014 The server is returning `encounter-diagnosis`-categorized records, meaning ICD codes are likely also present. Pancreatic cancer maps to `C25.0\u2013C25.9` in ICD-10-CM. To maximize recall, consider expanding the Condition query:\n   ```\n   Condition?code=http://snomed.info/sct|363418001,http://snomed.info/sct|372142002,http://hl7.org/fhir/sid/icd-10-cm|C25.0,http://hl7.org/fhir/sid/icd-10-cm|C25.1,http://hl7.org/fhir/sid/icd-10-cm|C25.2,http://hl7.org/fhir/sid/icd-10-cm|C25.3,http://hl7.org/fhir/sid/icd-10-cm|C25.4,http://hl7.org/fhir/sid/icd-10-cm|C25.9\n   ```\n\n2. **No `total` returned** \u2014 The server omitted bundle totals; paginate using `_count` + `_getpagesoffset` or `Bundle.link[next]` to retrieve all records beyond the first 10.\n\n3. **CA 19-9 unit consistency** \u2014 Confirm all stored observations use `U/mL`; some systems store in `kU/L` (numerically equivalent) or `IU/mL`. A unit mismatch would silently exclude valid records.",
+      "prompt_text": "Run two queries. (1) Condition?code=http://snomed.info/sct|363418001,http://snomed.info/sct|372142002 \u2014 pancreatic cancer dx variants. (2) Observation?code=http://loinc.org|24108-3&value-quantity=gt100||U/mL \u2014 elevated CA 19-9. Union the patient IDs.",
+      "run_metadata": {
+       "output_tokens": 1242,
+       "tool_calls_count": 2,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     },
+     "3-naive": {
+      "precision": 1.0,
+      "recall": 0.9581,
+      "f1": 0.9786,
+      "passed": true,
+      "expected_count": 167,
+      "actual_count": 160,
+      "elapsed_sec": 55.9,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|363418001,http://snomed.info/sct|372142002,http://snomed.info/sct|372003004,http://snomed.info/sct|372119009,http://snomed.info/sct|187791002,http://snomed.info/sct|187792009,http://snomed.info/sct|93715005,http://snomed.info/sct|93939009,http://snomed.info/sct|94082003,http://snomed.info/sct|735735001,http://snomed.info/sct|255088001,http://snomed.info/sct|235966007,http://snomed.info/sct|1259311005,http://snomed.info/sct|1237416003,http://snomed.info/sct|770602005",
+      "additional_query_urls": [],
+      "raw_response": "160 matching Condition records \u2014 a clinically plausible count for a pancreatic cancer cohort. Here is the final query:\n\n---\n\n**FINAL ANSWER:**\n\n```\nCondition?code=http://snomed.info/sct|363418001,http://snomed.info/sct|372142002,http://snomed.info/sct|372003004,http://snomed.info/sct|372119009,http://snomed.info/sct|187791002,http://snomed.info/sct|187792009,http://snomed.info/sct|93715005,http://snomed.info/sct|93939009,http://snomed.info/sct|94082003,http://snomed.info/sct|735735001,http://snomed.info/sct|255088001,http://snomed.info/sct|235966007,http://snomed.info/sct|1259311005,http://snomed.info/sct|1237416003,http://snomed.info/sct|770602005\n```\n\n---\n\n**What was done & why:**\n\n| Step | Finding |\n|---|---|\n| **Server sampling** | Server uses **SNOMED CT** exclusively for Condition codes |\n| **VSAC \u2013 ASCO \"Pancreatic Cancer\"** | 8 site-specific subtypes (head, body, tail, duct, neuroendocrine) |\n| **VSAC \u2013 Exocrine Pancreatic Cancer SCT** | 5 additional codes (cystadenocarcinoma, squamous cell, exocrine) |\n| **Server sample** | Confirmed live codes `363418001` + `372142002` (carcinoma of pancreas) |\n| **Result count** | **160 Condition records** across 15 SNOMED codes |\n\n**Codes covered:**\n- `363418001` Malignant neoplasm of pancreas\n- `372142002` Carcinoma of pancreas\n- `372003004` Primary malignant neoplasm of pancreas\n- `372119009` Primary malignant neoplasm of head of pancreas\n- `187791002/93715005` Body of pancreas\n- `187792009/94082003` Tail of pancreas\n- `93939009` Pancreatic duct\n- `735735001` Malignant neuroendocrine neoplasm of pancreas\n- `255088001` Exocrine pancreas\n- `235966007/1259311005/1237416003` Cystadenocarcinoma variants\n- `770602005` Squamous cell carcinoma of exocrine pancreas",
+      "prompt_text": "Find all my pancreatic cancer patients.",
+      "run_metadata": {
+       "output_tokens": 687,
+       "tool_calls_count": 7,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     },
+     "3-broad": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 167,
+      "actual_count": 167,
+      "elapsed_sec": 74.3,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|363418001,http://snomed.info/sct|372142002,http://snomed.info/sct|372003004,http://snomed.info/sct|372119009,http://snomed.info/sct|187791002,http://snomed.info/sct|187792009,http://snomed.info/sct|93715005,http://snomed.info/sct|93939009,http://snomed.info/sct|94082003,http://snomed.info/sct|735735001,http://snomed.info/sct|255088001,http://snomed.info/sct|235966007,http://snomed.info/sct|1259311005,http://snomed.info/sct|1237416003,http://snomed.info/sct|770602005",
+      "additional_query_urls": [
+       "Observation?code=http://loinc.org|24108-3&value-quantity=gt100||U/mL"
+      ],
+      "raw_response": "Confirmed \u2014 ICD-10-CM returns 0 (server is SNOMED-only for Conditions). All signals validated. Here is my complete evidence summary:\n\n---\n\n## \ud83d\udd2c Evidence Summary\n\n| Signal | Resource | Codes Found | Server Count |\n|---|---|---|---|\n| **Pancreatic malignancy / carcinoma (SNOMED)** | `Condition` | 15 SNOMED codes (umbrella + head/body/tail/duct/exocrine/cystadeno/squamous subtypes) | **160** |\n| **ICD-10-CM C25.x** | `Condition` | C25\u2013C25.9 | **0** (server is SNOMED-only) |\n| **Elevated CA 19-9 > 100 U/mL** | `Observation` | LOINC `24108-3` | **42** |\n\n### SNOMED codes used (15 codes, all validated against VSAC + server sample):\n\n| Code | Display |\n|---|---|\n| `363418001` | Malignant neoplasm of pancreas *(umbrella)* |\n| `372142002` | Carcinoma of pancreas |\n| `372003004` | Primary malignant neoplasm of pancreas |\n| `372119009` | Primary malignant neoplasm of head of pancreas |\n| `187791002` | Malignant neoplasm of body of pancreas |\n| `187792009` | Malignant neoplasm of tail of pancreas |\n| `93715005` | Primary malignant neoplasm of body of pancreas |\n| `93939009` | Primary malignant neoplasm of pancreatic duct |\n| `94082003` | Primary malignant neoplasm of tail of pancreas |\n| `735735001` | Primary malignant neuroendocrine neoplasm of pancreas |\n| `255088001` | Malignant neoplasm of exocrine pancreas |\n| `235966007` | Cystadenocarcinoma of pancreas |\n| `1259311005` | Primary cystadenocarcinoma of pancreas |\n| `1237416003` | Metastatic cystadenocarcinoma to pancreas |\n| `770602005` | Squamous cell carcinoma of exocrine pancreas |\n\n---\n\n## \u2705 FINAL ANSWER\n\n```\nCondition?code=http://snomed.info/sct|363418001,http://snomed.info/sct|372142002,http://snomed.info/sct|372003004,http://snomed.info/sct|372119009,http://snomed.info/sct|187791002,http://snomed.info/sct|187792009,http://snomed.info/sct|93715005,http://snomed.info/sct|93939009,http://snomed.info/sct|94082003,http://snomed.info/sct|735735001,http://snomed.info/sct|255088001,http://snomed.info/sct|235966007,http://snomed.info/sct|1259311005,http://snomed.info/sct|1237416003,http://snomed.info/sct|770602005\nObservation?code=http://loinc.org|24108-3&value-quantity=gt100||U/mL\n```\n\n**The evaluator should union the patient sets from both queries.** Query 1 captures patients with a coded pancreatic malignancy/carcinoma diagnosis (160 records); Query 2 captures patients with CA 19-9 serum > 100 U/mL (42 records) \u2014 including cases that may not yet have a formal diagnosis code. ICD-10-CM was tested and confirmed absent on this server.",
+      "prompt_text": "Find all pancreatic cancer patients \u2014 by diagnosis (malignant or carcinoma variants) or by elevated CA 19-9 (>100 U/mL). Run multiple queries and union the patient sets.",
+      "run_metadata": {
+       "output_tokens": 1397,
+       "tool_calls_count": 12,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     },
+     "3-expert": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 167,
+      "actual_count": 167,
+      "elapsed_sec": 35.3,
+      "queries_generated": 4,
+      "primary_query_url": "Condition?code=\u2026363418001,\u2026372142002",
+      "additional_query_urls": [
+       "Observation?code=\u202624108-3&value-quantity=gt100\\|\\|U/mL",
+       "Condition?code=http://snomed.info/sct|363418001,http://snomed.info/sct|372142002",
+       "Observation?code=http://loinc.org|24108-3&value-quantity=gt100||U/mL"
+      ],
+      "raw_response": "All five lookups validated cleanly. Here's the full picture before the final answer:\n\n---\n\n### \u2705 Code Validation\n\n| Code | System | Display | Status |\n|---|---|---|---|\n| `363418001` | SNOMED CT | Malignant neoplasm of pancreas (disorder) | \u2705 Valid |\n| `372142002` | SNOMED CT | Carcinoma of pancreas (disorder) | \u2705 Valid |\n| `24108-3` | LOINC | Cancer Ag 19-9 \\[Units/volume\\] in Serum or Plasma | \u2705 Valid |\n\n---\n\n### \ud83d\udcca Query Results\n\n| # | Query | Purpose | Count |\n|---|---|---|---|\n| 1 | `Condition?code=\u2026363418001,\u2026372142002` | Pancreatic cancer diagnosis (2 SNOMED subtypes) | **160 records** |\n| 2 | `Observation?code=\u202624108-3&value-quantity=gt100\\|\\|U/mL` | Elevated CA 19-9 > 100 U/mL | **42 records** |\n\nBoth counts are clinically plausible (no zeroes, no implausible explosion). The **union** of patient IDs across both queries forms your cohort \u2014 capturing patients identified by either a formal diagnosis *or* a biomarker-driven flag.\n\n---\n\n### \ud83d\udd0d Methodology Notes\n- **Playbook 1 (Subtypes):** Both `363418001` (broader malignant neoplasm) and `372142002` (carcinoma-specific) are correctly comma-unioned in a single `code=` parameter.\n- **Playbook 7 (Threshold):** `value-quantity=gt100||U/mL` correctly applies `>100 U/mL` threshold for CA 19-9 (normal upper limit ~37 U/mL).\n- **Playbook 12 (Cohort = OR):** Two separate resource-type queries are unioned by patient ID \u2014 patients may appear in one or both.\n\n---\n\n**FINAL ANSWER:**\n\n```\nCondition?code=http://snomed.info/sct|363418001,http://snomed.info/sct|372142002\nObservation?code=http://loinc.org|24108-3&value-quantity=gt100||U/mL\n```",
+      "prompt_text": "Run two queries. (1) Condition?code=http://snomed.info/sct|363418001,http://snomed.info/sct|372142002 \u2014 pancreatic cancer dx variants. (2) Observation?code=http://loinc.org|24108-3&value-quantity=gt100||U/mL \u2014 elevated CA 19-9. Union the patient IDs.",
+      "run_metadata": {
+       "output_tokens": 761,
+       "tool_calls_count": 5,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     }
+    },
+    "copilot:gpt-5.4": {
+     "1-naive": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 167,
+      "actual_count": 0,
+      "elapsed_sec": 70.7,
+      "queries_generated": 1,
+      "primary_query_url": "Patient?_has:Condition:patient:code:below=http://hl7.org/fhir/sid/icd-10-cm|C25",
+      "additional_query_urls": [],
+      "raw_response": "Patient?_has:Condition:patient:code:below=http://hl7.org/fhir/sid/icd-10-cm|C25",
+      "prompt_text": "Find all my pancreatic cancer patients."
+     },
+     "1-broad": {
+      "precision": 1.0,
+      "recall": 0.2515,
+      "f1": 0.4019,
+      "passed": false,
+      "expected_count": 167,
+      "actual_count": 42,
+      "elapsed_sec": 105.1,
+      "queries_generated": 3,
+      "primary_query_url": "Patient?_has:Condition:patient:code:below=http://snomed.info/sct|372003004",
+      "additional_query_urls": [
+       "Patient?_has:Condition:patient:code=http://hl7.org/fhir/sid/icd-10-cm|C25.0,http://hl7.org/fhir/sid/icd-10-cm|C25.1,http://hl7.org/fhir/sid/icd-10-cm|C25.2,http://hl7.org/fhir/sid/icd-10-cm|C25.3,http://hl7.org/fhir/sid/icd-10-cm|C25.4,http://hl7.org/fhir/sid/icd-10-cm|C25.7,http://hl7.org/fhir/sid/icd-10-cm|C25.8,http://hl7.org/fhir/sid/icd-10-cm|C25.9",
+       "Patient?_has:Observation:patient:code-value-quantity=http://loinc.org|24108-3$gt100|http://unitsofmeasure.org|U/mL"
+      ],
+      "raw_response": "Patient?_has:Condition:patient:code:below=http://snomed.info/sct|372003004\nPatient?_has:Condition:patient:code=http://hl7.org/fhir/sid/icd-10-cm|C25.0,http://hl7.org/fhir/sid/icd-10-cm|C25.1,http://hl7.org/fhir/sid/icd-10-cm|C25.2,http://hl7.org/fhir/sid/icd-10-cm|C25.3,http://hl7.org/fhir/sid/icd-10-cm|C25.4,http://hl7.org/fhir/sid/icd-10-cm|C25.7,http://hl7.org/fhir/sid/icd-10-cm|C25.8,http://hl7.org/fhir/sid/icd-10-cm|C25.9\nPatient?_has:Observation:patient:code-value-quantity=http://loinc.org|24108-3$gt100|http://unitsofmeasure.org|U/mL",
+      "prompt_text": "Find all pancreatic cancer patients \u2014 by diagnosis (malignant or carcinoma variants) or by elevated CA 19-9 (>100 U/mL). Run multiple queries and union the patient sets."
+     },
+     "1-expert": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 167,
+      "actual_count": 167,
+      "elapsed_sec": 24.7,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|363418001,http://snomed.info/sct|372142002",
+      "additional_query_urls": [
+       "Observation?code=http://loinc.org|24108-3&value-quantity=gt100||U/mL"
+      ],
+      "raw_response": "Condition?code=http://snomed.info/sct|363418001,http://snomed.info/sct|372142002\nObservation?code=http://loinc.org|24108-3&value-quantity=gt100||U/mL",
+      "prompt_text": "Run two queries. (1) Condition?code=http://snomed.info/sct|363418001,http://snomed.info/sct|372142002 \u2014 pancreatic cancer dx variants. (2) Observation?code=http://loinc.org|24108-3&value-quantity=gt100||U/mL \u2014 elevated CA 19-9. Union the patient IDs."
+     },
+     "2-naive": {
+      "precision": 1.0,
+      "recall": 0.9581,
+      "f1": 0.9786,
+      "passed": true,
+      "expected_count": 167,
+      "actual_count": 160,
+      "elapsed_sec": 131.1,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|363418001,http://snomed.info/sct|372142002,http://snomed.info/sct|372003004,http://snomed.info/sct|372119009,http://snomed.info/sct|187791002,http://snomed.info/sct|187792009,http://snomed.info/sct|735735001,http://snomed.info/sct|93715005,http://snomed.info/sct|93939009,http://snomed.info/sct|94082003,http://snomed.info/sct|255088001,http://snomed.info/sct|235966007,http://snomed.info/sct|1259311005,http://snomed.info/sct|1237416003,http://snomed.info/sct|770602005,http://hl7.org/fhir/sid/icd-10-cm|C25,http://hl7.org/fhir/sid/icd-10-cm|C25.0,http://hl7.org/fhir/sid/icd-10-cm|C25.1,http://hl7.org/fhir/sid/icd-10-cm|C25.2,http://hl7.org/fhir/sid/icd-10-cm|C25.3,http://hl7.org/fhir/sid/icd-10-cm|C25.4,http://hl7.org/fhir/sid/icd-10-cm|C25.7,http://hl7.org/fhir/sid/icd-10-cm|C25.8,http://hl7.org/fhir/sid/icd-10-cm|C25.9,http://hl7.org/fhir/sid/icd-9-cm|157,http://hl7.org/fhir/sid/icd-9-cm|157.0,http://hl7.org/fhir/sid/icd-9-cm|157.1,http://hl7.org/fhir/sid/icd-9-cm|157.2,http://hl7.org/fhir/sid/icd-9-cm|157.3,http://hl7.org/fhir/sid/icd-9-cm|157.4,http://hl7.org/fhir/sid/icd-9-cm|157.8,http://hl7.org/fhir/sid/icd-9-cm|157.9",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|363418001,http://snomed.info/sct|372142002,http://snomed.info/sct|372003004,http://snomed.info/sct|372119009,http://snomed.info/sct|187791002,http://snomed.info/sct|187792009,http://snomed.info/sct|735735001,http://snomed.info/sct|93715005,http://snomed.info/sct|93939009,http://snomed.info/sct|94082003,http://snomed.info/sct|255088001,http://snomed.info/sct|235966007,http://snomed.info/sct|1259311005,http://snomed.info/sct|1237416003,http://snomed.info/sct|770602005,http://hl7.org/fhir/sid/icd-10-cm|C25,http://hl7.org/fhir/sid/icd-10-cm|C25.0,http://hl7.org/fhir/sid/icd-10-cm|C25.1,http://hl7.org/fhir/sid/icd-10-cm|C25.2,http://hl7.org/fhir/sid/icd-10-cm|C25.3,http://hl7.org/fhir/sid/icd-10-cm|C25.4,http://hl7.org/fhir/sid/icd-10-cm|C25.7,http://hl7.org/fhir/sid/icd-10-cm|C25.8,http://hl7.org/fhir/sid/icd-10-cm|C25.9,http://hl7.org/fhir/sid/icd-9-cm|157,http://hl7.org/fhir/sid/icd-9-cm|157.0,http://hl7.org/fhir/sid/icd-9-cm|157.1,http://hl7.org/fhir/sid/icd-9-cm|157.2,http://hl7.org/fhir/sid/icd-9-cm|157.3,http://hl7.org/fhir/sid/icd-9-cm|157.4,http://hl7.org/fhir/sid/icd-9-cm|157.8,http://hl7.org/fhir/sid/icd-9-cm|157.9",
+      "prompt_text": "Find all my pancreatic cancer patients.",
+      "run_metadata": {
+       "output_tokens": 677,
+       "tool_calls_count": 21,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     },
+     "2-broad": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 167,
+      "actual_count": 167,
+      "elapsed_sec": 210.0,
+      "queries_generated": 4,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|363418001,http://snomed.info/sct|372142002,http://snomed.info/sct|372003004,http://snomed.info/sct|372119009,http://snomed.info/sct|187791002,http://snomed.info/sct|187792009,http://snomed.info/sct|735735001,http://snomed.info/sct|93715005,http://snomed.info/sct|93939009,http://snomed.info/sct|94082003,http://snomed.info/sct|1259311005,http://snomed.info/sct|235966007,http://snomed.info/sct|255088001,http://snomed.info/sct|770602005",
+      "additional_query_urls": [
+       "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|C25,http://hl7.org/fhir/sid/icd-10-cm|C25.0,http://hl7.org/fhir/sid/icd-10-cm|C25.1,http://hl7.org/fhir/sid/icd-10-cm|C25.2,http://hl7.org/fhir/sid/icd-10-cm|C25.3,http://hl7.org/fhir/sid/icd-10-cm|C25.4,http://hl7.org/fhir/sid/icd-10-cm|C25.7,http://hl7.org/fhir/sid/icd-10-cm|C25.8,http://hl7.org/fhir/sid/icd-10-cm|C25.9",
+       "Condition?code=http://hl7.org/fhir/sid/icd-9-cm|157,http://hl7.org/fhir/sid/icd-9-cm|157.0,http://hl7.org/fhir/sid/icd-9-cm|157.1,http://hl7.org/fhir/sid/icd-9-cm|157.2,http://hl7.org/fhir/sid/icd-9-cm|157.3,http://hl7.org/fhir/sid/icd-9-cm|157.4,http://hl7.org/fhir/sid/icd-9-cm|157.8,http://hl7.org/fhir/sid/icd-9-cm|157.9",
+       "Observation?code=http://loinc.org|24108-3&value-quantity=gt100||U/mL"
+      ],
+      "raw_response": "Condition?code=http://snomed.info/sct|363418001,http://snomed.info/sct|372142002,http://snomed.info/sct|372003004,http://snomed.info/sct|372119009,http://snomed.info/sct|187791002,http://snomed.info/sct|187792009,http://snomed.info/sct|735735001,http://snomed.info/sct|93715005,http://snomed.info/sct|93939009,http://snomed.info/sct|94082003,http://snomed.info/sct|1259311005,http://snomed.info/sct|235966007,http://snomed.info/sct|255088001,http://snomed.info/sct|770602005\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|C25,http://hl7.org/fhir/sid/icd-10-cm|C25.0,http://hl7.org/fhir/sid/icd-10-cm|C25.1,http://hl7.org/fhir/sid/icd-10-cm|C25.2,http://hl7.org/fhir/sid/icd-10-cm|C25.3,http://hl7.org/fhir/sid/icd-10-cm|C25.4,http://hl7.org/fhir/sid/icd-10-cm|C25.7,http://hl7.org/fhir/sid/icd-10-cm|C25.8,http://hl7.org/fhir/sid/icd-10-cm|C25.9\nCondition?code=http://hl7.org/fhir/sid/icd-9-cm|157,http://hl7.org/fhir/sid/icd-9-cm|157.0,http://hl7.org/fhir/sid/icd-9-cm|157.1,http://hl7.org/fhir/sid/icd-9-cm|157.2,http://hl7.org/fhir/sid/icd-9-cm|157.3,http://hl7.org/fhir/sid/icd-9-cm|157.4,http://hl7.org/fhir/sid/icd-9-cm|157.8,http://hl7.org/fhir/sid/icd-9-cm|157.9\nObservation?code=http://loinc.org|24108-3&value-quantity=gt100||U/mL",
+      "prompt_text": "Find all pancreatic cancer patients \u2014 by diagnosis (malignant or carcinoma variants) or by elevated CA 19-9 (>100 U/mL). Run multiple queries and union the patient sets.",
+      "run_metadata": {
+       "output_tokens": 1807,
+       "tool_calls_count": 30,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     },
+     "2-expert": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 167,
+      "actual_count": 167,
+      "elapsed_sec": 22.4,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|363418001,http://snomed.info/sct|372142002",
+      "additional_query_urls": [
+       "Observation?code=http://loinc.org|24108-3&value-quantity=gt100||U/mL"
+      ],
+      "raw_response": "Condition?code=http://snomed.info/sct|363418001,http://snomed.info/sct|372142002\nObservation?code=http://loinc.org|24108-3&value-quantity=gt100||U/mL",
+      "prompt_text": "Run two queries. (1) Condition?code=http://snomed.info/sct|363418001,http://snomed.info/sct|372142002 \u2014 pancreatic cancer dx variants. (2) Observation?code=http://loinc.org|24108-3&value-quantity=gt100||U/mL \u2014 elevated CA 19-9. Union the patient IDs.",
+      "run_metadata": {
+       "output_tokens": 267,
+       "tool_calls_count": 0,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     },
+     "3-naive": {
+      "precision": 1.0,
+      "recall": 0.9581,
+      "f1": 0.9786,
+      "passed": true,
+      "expected_count": 167,
+      "actual_count": 160,
+      "elapsed_sec": 76.4,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|363418001,http://snomed.info/sct|372142002",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|363418001,http://snomed.info/sct|372142002",
+      "prompt_text": "Find all my pancreatic cancer patients.",
+      "run_metadata": {
+       "output_tokens": 201,
+       "tool_calls_count": 11,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     },
+     "3-broad": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 167,
+      "actual_count": 167,
+      "elapsed_sec": 58.5,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|363418001,http://snomed.info/sct|372142002",
+      "additional_query_urls": [
+       "Observation?code=http://loinc.org|24108-3&value-quantity=gt100||U/mL"
+      ],
+      "raw_response": "Condition?code=http://snomed.info/sct|363418001,http://snomed.info/sct|372142002\nObservation?code=http://loinc.org|24108-3&value-quantity=gt100||U/mL",
+      "prompt_text": "Find all pancreatic cancer patients \u2014 by diagnosis (malignant or carcinoma variants) or by elevated CA 19-9 (>100 U/mL). Run multiple queries and union the patient sets.",
+      "run_metadata": {
+       "output_tokens": 1022,
+       "tool_calls_count": 11,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     },
+     "3-expert": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 167,
+      "actual_count": 167,
+      "elapsed_sec": 30.5,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|363418001,http://snomed.info/sct|372142002",
+      "additional_query_urls": [
+       "Observation?code=http://loinc.org|24108-3&value-quantity=gt100||U/mL"
+      ],
+      "raw_response": "Condition?code=http://snomed.info/sct|363418001,http://snomed.info/sct|372142002\nObservation?code=http://loinc.org|24108-3&value-quantity=gt100||U/mL",
+      "prompt_text": "Run two queries. (1) Condition?code=http://snomed.info/sct|363418001,http://snomed.info/sct|372142002 \u2014 pancreatic cancer dx variants. (2) Observation?code=http://loinc.org|24108-3&value-quantity=gt100||U/mL \u2014 elevated CA 19-9. Union the patient IDs.",
+      "run_metadata": {
+       "output_tokens": 345,
+       "tool_calls_count": 3,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     }
+    },
+    "openai-compat:qwen-qwen3.5-9b": {
+     "1-naive": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 167,
+      "actual_count": 0,
+      "elapsed_sec": 3.4,
+      "queries_generated": 2,
+      "primary_query_url": "Patient?name=pancreatic",
+      "additional_query_urls": [
+       "Condition?code=http://snomed.info/sct|191622008"
+      ],
+      "raw_response": "Patient?name=pancreatic cancer&gender=any&_include=Patient:condition|Condition?code=http://snomed.info/sct|191622008",
+      "prompt_text": "Find all my pancreatic cancer patients."
+     },
+     "1-broad": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 167,
+      "actual_count": 0,
+      "elapsed_sec": 6.0,
+      "queries_generated": 3,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|195967003&code-system=http://snomed.info/sct",
+      "additional_query_urls": [
+       "Condition?code=http://snomed.info/sct|49787009&code-system=http://snomed.info/sct",
+       "Observation?code=http://loinc.org|24331-1&value-quantity=gt100&value-quantity-comparator=U%2FmL"
+      ],
+      "raw_response": "Condition?code=http://snomed.info/sct|195967003&code-system=http://snomed.info/sct\nCondition?code=http://snomed.info/sct|49787009&code-system=http://snomed.info/sct\nObservation?code=http://loinc.org|24331-1&value-quantity=gt100&value-quantity-comparator=U%2FmL",
+      "prompt_text": "Find all pancreatic cancer patients \u2014 by diagnosis (malignant or carcinoma variants) or by elevated CA 19-9 (>100 U/mL). Run multiple queries and union the patient sets."
+     },
+     "1-expert": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 167,
+      "actual_count": 167,
+      "elapsed_sec": 16.0,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|363418001,http://snomed.info/sct|372142002",
+      "additional_query_urls": [
+       "Observation?code=http://loinc.org|24108-3&value-quantity=gt100||U/mL"
+      ],
+      "raw_response": "Condition?code=http://snomed.info/sct|363418001,http://snomed.info/sct|372142002\nObservation?code=http://loinc.org|24108-3&value-quantity=gt100||U/mL",
+      "prompt_text": "Run two queries. (1) Condition?code=http://snomed.info/sct|363418001,http://snomed.info/sct|372142002 \u2014 pancreatic cancer dx variants. (2) Observation?code=http://loinc.org|24108-3&value-quantity=gt100||U/mL \u2014 elevated CA 19-9. Union the patient IDs."
+     },
+     "2-naive": {
+      "precision": 0.292,
+      "recall": 1.0,
+      "f1": 0.452,
+      "passed": false,
+      "expected_count": 167,
+      "actual_count": 572,
+      "elapsed_sec": 110.9,
+      "queries_generated": 1,
+      "primary_query_url": "Patient?condition=http://snomed.info/sct|363418001",
+      "additional_query_urls": [],
+      "raw_response": "The query returns results. The FHIR query to find all pancreatic cancer patients is:\n\n```\nPatient?condition=http://snomed.info/sct|363418001\n```",
+      "prompt_text": "Find all my pancreatic cancer patients.",
+      "run_metadata": {
+       "tool_calls_count": 19,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     },
+     "2-broad": {
+      "precision": 0.3853,
+      "recall": 0.2515,
+      "f1": 0.3043,
+      "passed": false,
+      "expected_count": 167,
+      "actual_count": 109,
+      "elapsed_sec": 197.0,
+      "queries_generated": 4,
+      "primary_query_url": "Observation?_summary=count",
+      "additional_query_urls": [
+       "Observation?code=http://loinc.org|24108-3&value-quantity=100&value-quantity-comparator=gt",
+       "Observation?code=http://loinc.org|24108-3&_summary=count",
+       "Observation?code=http://loinc.org|24108-3"
+      ],
+      "raw_response": "[FALLBACK: parser couldn't extract URL from final response; using fhir_search queries from tool trace]\nObservation?_summary=count\nObservation?code=http://loinc.org|24108-3&value-quantity=100&value-quantity-comparator=gt\nObservation?code=http://loinc.org|24108-3&_summary=count\nObservation?code=http://loinc.org|24108-3\n\nOriginal last assistant message:\nSo 363418001 (Malignant neoplasm of pancreas) subsumes 372142002 (Carcinoma of pancreas). This means if I query with 363418001, I should get all patients with malignant neoplasm of pancreas, including those with carcinoma.\n\nLet me also check if 363418001 is in the value sets. Looking at the value sets I expanded, I don't see 363418001 directly, but I see 372003004 and 372119009. Let me check if 363418001 subsumes any of the codes in the value sets.\n\n",
+      "prompt_text": "Find all pancreatic cancer patients \u2014 by diagnosis (malignant or carcinoma variants) or by elevated CA 19-9 (>100 U/mL). Run multiple queries and union the patient sets.",
+      "run_metadata": {
+       "tool_calls_count": 35,
+       "stop_reason": "fallback_tool_trace",
+       "fallback_used": true
+      }
+     },
+     "2-expert": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 167,
+      "actual_count": 167,
+      "elapsed_sec": 171.7,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|363418001,http://snomed.info/sct|372142002",
+      "additional_query_urls": [
+       "Observation?code=http://loinc.org|24108-3&value-quantity=gt100||U/mL"
+      ],
+      "raw_response": "[FALLBACK: parser couldn't extract URL from final response; using fhir_search queries from tool trace]\nCondition?code=http://snomed.info/sct|363418001,http://snomed.info/sct|372142002\nObservation?code=http://loinc.org|24108-3&value-quantity=gt100||U/mL\n\nOriginal last assistant message:\nThe queries have been executed successfully. Both queries returned results showing that the FHIR server contains data matching the requested criteria.\n\nThe user asked me to run these two queries and union the patient IDs. The queries are working correctly and returning results. Now I need to provide the final answer as the FHIR query URLs, one per line, as requested.\n\n",
+      "prompt_text": "Run two queries. (1) Condition?code=http://snomed.info/sct|363418001,http://snomed.info/sct|372142002 \u2014 pancreatic cancer dx variants. (2) Observation?code=http://loinc.org|24108-3&value-quantity=gt100||U/mL \u2014 elevated CA 19-9. Union the patient IDs.",
+      "run_metadata": {
+       "tool_calls_count": 40,
+       "stop_reason": "fallback_tool_trace",
+       "fallback_used": true
+      }
+     },
+     "3-naive": {
+      "precision": 1.0,
+      "recall": 0.9581,
+      "f1": 0.9786,
+      "passed": true,
+      "expected_count": 167,
+      "actual_count": 160,
+      "elapsed_sec": 64.5,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|363418001,372142002",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|363418001,372142002",
+      "prompt_text": "Find all my pancreatic cancer patients.",
+      "run_metadata": {
+       "tool_calls_count": 12,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     },
+     "3-broad": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 167,
+      "actual_count": 167,
+      "elapsed_sec": 134.1,
+      "queries_generated": 6,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|255088001&_summary=count",
+      "additional_query_urls": [
+       "Condition?code=http://snomed.info/sct|372142002,363418001,187791002,187792009,372003004,372119009,735735001,93715005,93939009,94082003,1237416003,1259311005,235966007,255088001,770602005&_summary=count",
+       "Observation?code=http://loinc.org|24108-3&_summary=count",
+       "Observation?code=http://loinc.org|24108-3&value-quantity=ge100||U/mL&_summary=count",
+       "Condition?code=http://snomed.info/sct|1237416003,1259311005,235966007,255088001,770602005,187791002,187792009,372003004,372119009,735735001,93715005,93939009,94082003,372142002,363418001",
+       "Observation?code=http://loinc.org|24108-3&value-quantity=ge100||U/mL"
+      ],
+      "raw_response": "[FALLBACK: parser couldn't extract URL from final response; using fhir_search queries from tool trace]\nCondition?code=http://snomed.info/sct|255088001&_summary=count\nCondition?code=http://snomed.info/sct|372142002,363418001,187791002,187792009,372003004,372119009,735735001,93715005,93939009,94082003,1237416003,1259311005,235966007,255088001,770602005&_summary=count\nObservation?code=http://loinc.org|24108-3&_summary=count\nObservation?code=http://loinc.org|24108-3&value-quantity=ge100||U/mL&_summary=count\nCondition?code=http://snomed.info/sct|1237416003,1259311005,235966007,255088001,770602005,187791002,187792009,372003004,372119009,735735001,93715005,93939009,94082003,372142002,363418001\nObservation?code=http://loinc.org|24108-3&value-quantity=ge100||U/mL\n\nOriginal last assistant message:\nThe queries are confirmed to work. Now I'll provide the final answer as just the FHIR query URLs, one per line.\n\n\n",
+      "prompt_text": "Find all pancreatic cancer patients \u2014 by diagnosis (malignant or carcinoma variants) or by elevated CA 19-9 (>100 U/mL). Run multiple queries and union the patient sets.",
+      "run_metadata": {
+       "tool_calls_count": 45,
+       "stop_reason": "fallback_tool_trace",
+       "fallback_used": true
+      }
+     },
+     "3-expert": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 167,
+      "actual_count": 167,
+      "elapsed_sec": 31.6,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|363418001,http://snomed.info/sct|372142002",
+      "additional_query_urls": [
+       "Observation?code=http://loinc.org|24108-3&value-quantity=gt100||U/mL"
+      ],
+      "raw_response": "Both queries executed successfully and returned results. The queries are:\n\n1. `Condition?code=http://snomed.info/sct|363418001,http://snomed.info/sct|372142002` - Returns patients with pancreatic cancer diagnoses (malignant neoplasm or carcinoma of pancreas)\n2. `Observation?code=http://loinc.org|24108-3&value-quantity=gt100||U/mL` - Returns patients with elevated CA 19-9 levels (>100 U/mL)\n\nTo get the union of patient IDs from both queries, you would execute both queries and combine the patient identifiers from the results.\n\n**Final Answer:**\n```\nCondition?code=http://snomed.info/sct|363418001,http://snomed.info/sct|372142002\nObservation?code=http://loinc.org|24108-3&value-quantity=gt100||U/mL\n```",
+      "prompt_text": "Run two queries. (1) Condition?code=http://snomed.info/sct|363418001,http://snomed.info/sct|372142002 \u2014 pancreatic cancer dx variants. (2) Observation?code=http://loinc.org|24108-3&value-quantity=gt100||U/mL \u2014 elevated CA 19-9. Union the patient IDs.",
+      "run_metadata": {
+       "tool_calls_count": 2,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     }
+    }
+   }
+  },
+  {
+   "test_case": "phekb-pancreatic-cancer-dx",
+   "grids": {
+    "copilot:claude-opus-4.7": {
+     "1-naive": {
+      "precision": 1.0,
+      "recall": 0.6062,
+      "f1": 0.7549,
+      "passed": false,
+      "expected_count": 160,
+      "actual_count": 97,
+      "elapsed_sec": 0.1,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|363418001",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|363418001",
+      "prompt_text": "Find patients with pancreatic cancer."
+     },
+     "1-broad": {
+      "precision": 1.0,
+      "recall": 0.6062,
+      "f1": 0.7549,
+      "passed": false,
+      "expected_count": 160,
+      "actual_count": 97,
+      "elapsed_sec": 0.1,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|363418001,http://snomed.info/sct|372003004",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|363418001,http://snomed.info/sct|372003004",
+      "prompt_text": "Find patients diagnosed with pancreatic cancer \u2014 including the broader malignant neoplasm of pancreas concept and the more specific carcinoma of pancreas."
+     },
+     "1-expert": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 160,
+      "actual_count": 160,
+      "elapsed_sec": 0.1,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|363418001,http://snomed.info/sct|372142002",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|363418001,http://snomed.info/sct|372142002",
+      "prompt_text": "Search Condition resources for SNOMED codes Malignant neoplasm of pancreas (363418001) and Carcinoma of pancreas (372142002). Query: Condition?code=http://snomed.info/sct|363418001,http://snomed.info/sct|372142002"
+     },
+     "2-naive": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 160,
+      "actual_count": 160,
+      "elapsed_sec": 21.3,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|363418001,http://snomed.info/sct|372142002",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|363418001,http://snomed.info/sct|372142002",
+      "prompt_text": "Find patients with pancreatic cancer.",
+      "run_metadata": {
+       "output_tokens": 39,
+       "tool_calls_count": 3,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     },
+     "2-broad": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 160,
+      "actual_count": 160,
+      "elapsed_sec": 26.6,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|363418001,http://snomed.info/sct|372142002",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|363418001,http://snomed.info/sct|372142002",
+      "prompt_text": "Find patients diagnosed with pancreatic cancer \u2014 including the broader malignant neoplasm of pancreas concept and the more specific carcinoma of pancreas.",
+      "run_metadata": {
+       "output_tokens": 39,
+       "tool_calls_count": 5,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     },
+     "2-expert": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 160,
+      "actual_count": 160,
+      "elapsed_sec": 19.2,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|363418001,http://snomed.info/sct|372142002",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|363418001,http://snomed.info/sct|372142002",
+      "prompt_text": "Search Condition resources for SNOMED codes Malignant neoplasm of pancreas (363418001) and Carcinoma of pancreas (372142002). Query: Condition?code=http://snomed.info/sct|363418001,http://snomed.info/sct|372142002",
+      "run_metadata": {
+       "output_tokens": 39,
+       "tool_calls_count": 1,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     },
+     "3-naive": {
+      "precision": 1.0,
+      "recall": 0.6062,
+      "f1": 0.7549,
+      "passed": false,
+      "expected_count": 160,
+      "actual_count": 97,
+      "elapsed_sec": 28.0,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|363418001,http://snomed.info/sct|187791002,http://snomed.info/sct|187792009,http://snomed.info/sct|372003004,http://snomed.info/sct|372119009,http://snomed.info/sct|735735001,http://snomed.info/sct|93715005,http://snomed.info/sct|93939009,http://snomed.info/sct|94082003",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|363418001,http://snomed.info/sct|187791002,http://snomed.info/sct|187792009,http://snomed.info/sct|372003004,http://snomed.info/sct|372119009,http://snomed.info/sct|735735001,http://snomed.info/sct|93715005,http://snomed.info/sct|93939009,http://snomed.info/sct|94082003",
+      "prompt_text": "Find patients with pancreatic cancer.",
+      "run_metadata": {
+       "output_tokens": 144,
+       "tool_calls_count": 4,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     },
+     "3-broad": {
+      "precision": 1.0,
+      "recall": 0.6062,
+      "f1": 0.7549,
+      "passed": false,
+      "expected_count": 160,
+      "actual_count": 97,
+      "elapsed_sec": 21.5,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|363418001,http://snomed.info/sct|372003004",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|363418001,http://snomed.info/sct|372003004",
+      "prompt_text": "Find patients diagnosed with pancreatic cancer \u2014 including the broader malignant neoplasm of pancreas concept and the more specific carcinoma of pancreas.",
+      "run_metadata": {
+       "output_tokens": 39,
+       "tool_calls_count": 1,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     },
+     "3-expert": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 160,
+      "actual_count": 160,
+      "elapsed_sec": 17.5,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|363418001,http://snomed.info/sct|372142002",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|363418001,http://snomed.info/sct|372142002",
+      "prompt_text": "Search Condition resources for SNOMED codes Malignant neoplasm of pancreas (363418001) and Carcinoma of pancreas (372142002). Query: Condition?code=http://snomed.info/sct|363418001,http://snomed.info/sct|372142002",
+      "run_metadata": {
+       "output_tokens": 39,
+       "tool_calls_count": 1,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     }
+    },
+    "copilot:claude-opus-4.7+fhirskill": {
+     "1-naive": {
+      "precision": 1.0,
+      "recall": 0.6062,
+      "f1": 0.7549,
+      "passed": false,
+      "expected_count": 160,
+      "actual_count": 97,
+      "elapsed_sec": 0.1,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|363418001",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|363418001",
+      "prompt_text": "Find patients with pancreatic cancer."
+     },
+     "1-broad": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 160,
+      "actual_count": 160,
+      "elapsed_sec": 0.1,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|363418001,http://snomed.info/sct|372142002",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|363418001,http://snomed.info/sct|372142002",
+      "prompt_text": "Find patients diagnosed with pancreatic cancer \u2014 including the broader malignant neoplasm of pancreas concept and the more specific carcinoma of pancreas."
+     },
+     "1-expert": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 160,
+      "actual_count": 160,
+      "elapsed_sec": 0.1,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|363418001,http://snomed.info/sct|372142002",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|363418001,http://snomed.info/sct|372142002",
+      "prompt_text": "Search Condition resources for SNOMED codes Malignant neoplasm of pancreas (363418001) and Carcinoma of pancreas (372142002). Query: Condition?code=http://snomed.info/sct|363418001,http://snomed.info/sct|372142002"
+     }
+    },
+    "copilot:claude-sonnet-4.6": {
+     "1-naive": {
+      "precision": 1.0,
+      "recall": 0.6062,
+      "f1": 0.7549,
+      "passed": false,
+      "expected_count": 160,
+      "actual_count": 97,
+      "elapsed_sec": 28.8,
+      "queries_generated": 4,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|363418001&_include=Condition:patient",
+      "additional_query_urls": [
+       "Condition?code=http://snomed.info/sct|372003004&_include=Condition:patient",
+       "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|C25.9&_include=Condition:patient",
+       "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|C25.0,http://hl7.org/fhir/sid/icd-10-cm|C25.1,http://hl7.org/fhir/sid/icd-10-cm|C25.2,http://hl7.org/fhir/sid/icd-10-cm|C25.3,http://hl7.org/fhir/sid/icd-10-cm|C25.4,http://hl7.org/fhir/sid/icd-10-cm|C25.7,http://hl7.org/fhir/sid/icd-10-cm|C25.8,http://hl7.org/fhir/sid/icd-10-cm|C25.9&_include=Condition:patient"
+      ],
+      "raw_response": "Here are FHIR queries to find patients with pancreatic cancer using both SNOMED CT and ICD-10-CM coding systems:\n\n```\nCondition?code=http://snomed.info/sct|363418001&_include=Condition:patient\nCondition?code=http://snomed.info/sct|372003004&_include=Condition:patient\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|C25.9&_include=Condition:patient\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|C25.0,http://hl7.org/fhir/sid/icd-10-cm|C25.1,http://hl7.org/fhir/sid/icd-10-cm|C25.2,http://hl7.org/fhir/sid/icd-10-cm|C25.3,http://hl7.org/fhir/sid/icd-10-cm|C25.4,http://hl7.org/fhir/sid/icd-10-cm|C25.7,http://hl7.org/fhir/sid/icd-10-cm|C25.8,http://hl7.org/fhir/sid/icd-10-cm|C25.9&_include=Condition:patient\n```\n\n### Code Reference:\n| Code System | Code | Description |\n|---|---|---|\n| SNOMED CT | `363418001` | Malignant tumor of pancreas |\n| SNOMED CT | `372003004` | Malignant neoplasm of pancreas (primary) |\n| ICD-10-CM | `C25.0` | Head of pancreas |\n| ICD-10-CM | `C25.1` | Body of pancreas |\n| ICD-10-CM | `C25.2` | Tail of pancreas |\n| ICD-10-CM | `C25.3` | Pancreatic duct |\n| ICD-10-CM | `C25.7` | Other parts of pancreas |\n| ICD-10-CM | `C25.8` | Overlapping lesion |\n| ICD-10-CM | `C25.9` | Pancreas, unspecified |\n\n> **Note:** `_include=Condition:patient` retrieves the associated `Patient` resources in the same bundle. You may also add `&clinical-status=active` to filter for active diagnoses only.",
+      "prompt_text": "Find patients with pancreatic cancer."
+     },
+     "1-broad": {
+      "precision": 1.0,
+      "recall": 0.6062,
+      "f1": 0.7549,
+      "passed": false,
+      "expected_count": 160,
+      "actual_count": 97,
+      "elapsed_sec": 50.5,
+      "queries_generated": 3,
+      "primary_query_url": "Condition?code:below=http://snomed.info/sct|363418001",
+      "additional_query_urls": [
+       "Condition?code=http://snomed.info/sct|363418001,http://snomed.info/sct|372142002",
+       "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|C25.0,http://hl7.org/fhir/sid/icd-10-cm|C25.1,http://hl7.org/fhir/sid/icd-10-cm|C25.2,http://hl7.org/fhir/sid/icd-10-cm|C25.3,http://hl7.org/fhir/sid/icd-10-cm|C25.4,http://hl7.org/fhir/sid/icd-10-cm|C25.7,http://hl7.org/fhir/sid/icd-10-cm|C25.8,http://hl7.org/fhir/sid/icd-10-cm|C25.9"
+      ],
+      "raw_response": "## FHIR Queries: Pancreatic Cancer Diagnoses\n\n### SNOMED CT \u2014 Hierarchical Search (`:below` captures broader + all subtypes)\n```\nCondition?code:below=http://snomed.info/sct|363418001\n```\n\n### SNOMED CT \u2014 Explicit Codes (broader + specific carcinoma)\n```\nCondition?code=http://snomed.info/sct|363418001,http://snomed.info/sct|372142002\n```\n\n### ICD-10-CM \u2014 Full C25 Category (all malignant neoplasms of pancreas)\n```\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|C25.0,http://hl7.org/fhir/sid/icd-10-cm|C25.1,http://hl7.org/fhir/sid/icd-10-cm|C25.2,http://hl7.org/fhir/sid/icd-10-cm|C25.3,http://hl7.org/fhir/sid/icd-10-cm|C25.4,http://hl7.org/fhir/sid/icd-10-cm|C25.7,http://hl7.org/fhir/sid/icd-10-cm|C25.8,http://hl7.org/fhir/sid/icd-10-cm|C25.9\n```\n\n---\n\n### Code Reference\n\n| Code | System | Description |\n|------|--------|-------------|\n| `363418001` | SNOMED CT | Malignant neoplasm of pancreas *(broader)* |\n| `372142002` | SNOMED CT | Carcinoma of pancreas *(more specific)* |\n| `C25.0\u2013C25.9` | ICD-10-CM | Malignant neoplasm of pancreas *(all anatomical sites)* |\n\n### Notes\n- **`:below` modifier** (Query 1) traverses the SNOMED hierarchy, automatically including `372142002` (carcinoma) and any other subtypes of `363418001` \u2014 use this when your server supports hierarchical expansion.\n- **Explicit SNOMED query** (Query 2) is the fallback when `:below` is not supported.\n- **ICD-10-CM query** covers real-world clinical coding; all `C25.x` subcategories are listed since ICD-10-CM hierarchical search is not universally supported in FHIR servers.",
+      "prompt_text": "Find patients diagnosed with pancreatic cancer \u2014 including the broader malignant neoplasm of pancreas concept and the more specific carcinoma of pancreas."
+     },
+     "1-expert": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 160,
+      "actual_count": 160,
+      "elapsed_sec": 24.4,
+      "queries_generated": 3,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|363418001,http://snomed.info/sct|372142002",
+      "additional_query_urls": [
+       "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|C25",
+       "Condition?code:below=http://snomed.info/sct|363418001"
+      ],
+      "raw_response": "## FHIR Query: Pancreatic Cancer Conditions (SNOMED)\n\n```\nCondition?code=http://snomed.info/sct|363418001,http://snomed.info/sct|372142002\n```\n\n---\n\n### Query Breakdown\n\n| Component | Detail |\n|-----------|--------|\n| **Resource** | `Condition` |\n| **Search Parameter** | `code` |\n| **Code System** | `http://snomed.info/sct` |\n| **Code 1** | `363418001` \u2014 *Malignant neoplasm of pancreas* |\n| **Code 2** | `372142002` \u2014 *Carcinoma of pancreas* |\n| **Logic** | Comma-separated `,` = **OR** (returns matches for either code) |\n\n---\n\n### Notes\n\n- The **comma (`,`)** separator acts as a logical **OR**, returning `Condition` resources matching **either** SNOMED code.\n- To broaden coverage, consider adding **ICD-10-CM** codes (e.g., `C25.0`\u2013`C25.9`) in a parallel query:\n  ```\n  Condition?code=http://hl7.org/fhir/sid/icd-10-cm|C25\n  ```\n- To include related subconcepts, use **`$subsumes`** or enable **`:below`** modifier if the server supports SNOMED hierarchy expansion:\n  ```\n  Condition?code:below=http://snomed.info/sct|363418001\n  ```\n- Add `_include=Condition:patient` to retrieve associated patient demographics in the same response.",
+      "prompt_text": "Search Condition resources for SNOMED codes Malignant neoplasm of pancreas (363418001) and Carcinoma of pancreas (372142002). Query: Condition?code=http://snomed.info/sct|363418001,http://snomed.info/sct|372142002"
+     },
+     "2-naive": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 160,
+      "actual_count": 160,
+      "elapsed_sec": 59.7,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|363418001,http://snomed.info/sct|372142002,http://snomed.info/sct|372003004,http://snomed.info/sct|372119009,http://snomed.info/sct|187791002,http://snomed.info/sct|187792009,http://snomed.info/sct|93715005,http://snomed.info/sct|94082003,http://snomed.info/sct|93939009,http://snomed.info/sct|735735001,http://snomed.info/sct|255088001,http://snomed.info/sct|235966007,http://snomed.info/sct|770602005,http://snomed.info/sct|1237416003,http://snomed.info/sct|1259311005",
+      "additional_query_urls": [],
+      "raw_response": "Results confirmed \u2014 all 5 spot-checked records carry correct SNOMED CT pancreatic cancer codes. The query returns **160 Condition records** across 15 SNOMED CT codes sourced from:\n- **Server samples**: `363418001` (Malignant neoplasm of pancreas), `372142002` (Carcinoma of pancreas)\n- **ASCO Pancreatic Cancer value set** (8 codes): primary malignant neoplasms by anatomic site (head, body, tail, duct, neuroendocrine)\n- **Optum Exocrine Pancreatic Cancer SCT value set** (5 codes): cystadenocarcinoma subtypes and squamous cell variants\n\n---\n\n```\nCondition?code=http://snomed.info/sct|363418001,http://snomed.info/sct|372142002,http://snomed.info/sct|372003004,http://snomed.info/sct|372119009,http://snomed.info/sct|187791002,http://snomed.info/sct|187792009,http://snomed.info/sct|93715005,http://snomed.info/sct|94082003,http://snomed.info/sct|93939009,http://snomed.info/sct|735735001,http://snomed.info/sct|255088001,http://snomed.info/sct|235966007,http://snomed.info/sct|770602005,http://snomed.info/sct|1237416003,http://snomed.info/sct|1259311005\n```",
+      "prompt_text": "Find patients with pancreatic cancer.",
+      "run_metadata": {
+       "output_tokens": 451,
+       "tool_calls_count": 7,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     },
+     "2-broad": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 160,
+      "actual_count": 160,
+      "elapsed_sec": 113.2,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|363418001,http://snomed.info/sct|372142002,http://snomed.info/sct|372003004,http://snomed.info/sct|372119009,http://snomed.info/sct|187791002,http://snomed.info/sct|187792009,http://snomed.info/sct|93715005,http://snomed.info/sct|93939009,http://snomed.info/sct|94082003,http://snomed.info/sct|255088001,http://snomed.info/sct|235966007,http://snomed.info/sct|735735001",
+      "additional_query_urls": [],
+      "raw_response": "All results confirm SNOMED-only coding with exactly the two expected codes. Let me now summarize the full picture before delivering the final answer.\n\n---\n\n## \ud83d\udd0d Investigative Summary\n\n### Server profile\n- **FHIR 4.0.1** (Azure), no IGs loaded\n- **Condition codings**: SNOMED CT only \u2014 no ICD-10-CM observed across all samples\n\n### Key SNOMED findings\n| Code | Display | Source |\n|---|---|---|\n| `363418001` | Malignant neoplasm of pancreas (**broader parent**) | Live server sample |\n| `372142002` | Carcinoma of pancreas (**specific child** \u2014 subsumption confirmed \u2705) | Live server sample |\n| `372003004` | Primary malignant neoplasm of pancreas | ASCO VSAC |\n| `372119009` | Primary malignant neoplasm of head of pancreas | ASCO VSAC |\n| `187791002` | Malignant neoplasm of body of pancreas | ASCO VSAC |\n| `187792009` | Malignant neoplasm of tail of pancreas | ASCO VSAC |\n| `93715005` | Primary malignant neoplasm of body of pancreas | ASCO VSAC |\n| `93939009` | Primary malignant neoplasm of pancreatic duct | ASCO VSAC |\n| `94082003` | Primary malignant neoplasm of tail of pancreas | ASCO VSAC |\n| `255088001` | Malignant neoplasm of exocrine pancreas | Optum VSAC |\n| `235966007` | Cystadenocarcinoma of pancreas | Optum VSAC |\n| `735735001` | Primary malignant neuroendocrine neoplasm of pancreas | ASCO VSAC |\n\n- **Subsumption**: `363418001` \u2287 `372142002` (parent subsumes child) \u2014 both must be listed explicitly since the server stores each as a discrete code\n- **Validated count**: 160 Condition records matched across the full code family\n\n---\n\n`Condition?code=http://snomed.info/sct|363418001,http://snomed.info/sct|372142002,http://snomed.info/sct|372003004,http://snomed.info/sct|372119009,http://snomed.info/sct|187791002,http://snomed.info/sct|187792009,http://snomed.info/sct|93715005,http://snomed.info/sct|93939009,http://snomed.info/sct|94082003,http://snomed.info/sct|255088001,http://snomed.info/sct|235966007,http://snomed.info/sct|735735001`",
+      "prompt_text": "Find patients diagnosed with pancreatic cancer \u2014 including the broader malignant neoplasm of pancreas concept and the more specific carcinoma of pancreas.",
+      "run_metadata": {
+       "output_tokens": 1179,
+       "tool_calls_count": 11,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     },
+     "2-expert": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 160,
+      "actual_count": 160,
+      "elapsed_sec": 32.2,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|363418001,http://snomed.info/sct|372142002",
+      "additional_query_urls": [],
+      "raw_response": "Here are the full results from the live FHIR server:\n\n---\n\n## \ud83d\udd0d Query Executed\n```\nCondition?code=http://snomed.info/sct|363418001,http://snomed.info/sct|372142002\n```\n\n---\n\n## \ud83d\udcca Results Summary\n\n| Field | Value |\n|---|---|\n| **Resources Returned** | 10 Condition records |\n| **Resource Types** | `Condition` |\n| **Total (server-reported)** | Not paginated (null \u2014 server did not return a bundle total) |\n\n---\n\n## \u2705 Matched SNOMED Codes Confirmed in Results\n\n| SNOMED Code | Display | Hits in Sample |\n|---|---|---|\n| `363418001` | Malignant neoplasm of pancreas | \u2705 Present |\n| `372142002` | Carcinoma of pancreas | \u2705 Present |\n\n---\n\n## \ud83c\udff7\ufe0f Condition Category Observed\nAll matched records are categorized as **`encounter-diagnosis`** (from `http://terminology.hl7.org/CodeSystem/condition-category`), meaning these diagnoses were captured in the context of clinical encounters \u2014 not as chronic problem-list items.\n\n---\n\n## \ud83d\udca1 Notes & Potential Enhancements\n\n1. **Both SNOMED codes fired successfully** \u2014 the OR (`','`) logic worked as expected.\n2. **No ICD-10-CM codes appeared** in the sample codings, but if you want broader coverage, consider adding ICD-10-CM equivalents:\n   - `C25.9` \u2014 Malignant neoplasm of pancreas, unspecified\n   - `C25.0\u2013C25.4` \u2014 Site-specific pancreatic cancers (head, body, tail, etc.)\n3. **Subsumption note:** `363418001` (Malignant neoplasm of pancreas) is the broader parent concept, while `372142002` (Carcinoma of pancreas) is a histological subtype. If the server supports SNOMED subsumption (`_subsumes` modifier), a single parent code query could catch all child codes automatically.\n4. **To widen the cohort**, consider adding a `MedicationRequest` query for pancreatic cancer chemotherapy agents (e.g., gemcitabine, nab-paclitaxel) and/or VSAC value set expansion for a validated pancreatic cancer code set.\n\n---\n\n**Final validated query:**\n```\nCondition?code=http://snomed.info/sct|363418001,http://snomed.info/sct|372142002\n```",
+      "prompt_text": "Search Condition resources for SNOMED codes Malignant neoplasm of pancreas (363418001) and Carcinoma of pancreas (372142002). Query: Condition?code=http://snomed.info/sct|363418001,http://snomed.info/sct|372142002",
+      "run_metadata": {
+       "output_tokens": 666,
+       "tool_calls_count": 1,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     },
+     "3-naive": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 160,
+      "actual_count": 160,
+      "elapsed_sec": 50.5,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|363418001,http://snomed.info/sct|372142002,http://snomed.info/sct|372003004,http://snomed.info/sct|372119009,http://snomed.info/sct|187791002,http://snomed.info/sct|187792009,http://snomed.info/sct|93715005,http://snomed.info/sct|93939009,http://snomed.info/sct|94082003,http://snomed.info/sct|735735001,http://snomed.info/sct|255088001,http://snomed.info/sct|235966007,http://snomed.info/sct|1259311005,http://snomed.info/sct|770602005",
+      "additional_query_urls": [],
+      "raw_response": "160 results \u2014 a clinically plausible count for pancreatic cancer. The query is well-calibrated.\n\n---\n\n**FINAL ANSWER:**\n\n```\nCondition?code=http://snomed.info/sct|363418001,http://snomed.info/sct|372142002,http://snomed.info/sct|372003004,http://snomed.info/sct|372119009,http://snomed.info/sct|187791002,http://snomed.info/sct|187792009,http://snomed.info/sct|93715005,http://snomed.info/sct|93939009,http://snomed.info/sct|94082003,http://snomed.info/sct|735735001,http://snomed.info/sct|255088001,http://snomed.info/sct|235966007,http://snomed.info/sct|1259311005,http://snomed.info/sct|770602005\n```\n\n---\n\n**How this was built:**\n\n| Code | Display |\n|------|---------|\n| `363418001` | Malignant neoplasm of pancreas *(seen live on server)* |\n| `372142002` | Carcinoma of pancreas *(seen live on server)* |\n| `372003004` | Primary malignant neoplasm of pancreas |\n| `372119009` | Primary malignant neoplasm of head of pancreas |\n| `187791002` | Malignant neoplasm of body of pancreas |\n| `187792009` | Malignant neoplasm of tail of pancreas |\n| `93715005` | Primary malignant neoplasm of body of pancreas |\n| `93939009` | Primary malignant neoplasm of pancreatic duct |\n| `94082003` | Primary malignant neoplasm of tail of pancreas |\n| `735735001` | Primary malignant neuroendocrine neoplasm of pancreas |\n| `255088001` | Malignant neoplasm of exocrine pancreas |\n| `235966007` | Cystadenocarcinoma of pancreas |\n| `1259311005` | Primary cystadenocarcinoma of pancreas |\n| `770602005` | Squamous cell carcinoma of exocrine pancreas |\n\n- **Playbooks applied:** #1 (Subtypes \u2014 head/body/tail/duct/neuroendocrine/exocrine) + #8 (SNOMED code list, confirmed as the server's primary code system)\n- **Source value sets:** ASCO *Pancreatic Cancer* (2.16.840.1.113883.3.1444.3.110) + Optum *Exocrine pancreatic cancer SCT* (2.16.840.1.113762.1.4.1078.1215)\n- **Result:** **160 conditions** found across 14 SNOMED codes",
+      "prompt_text": "Find patients with pancreatic cancer.",
+      "run_metadata": {
+       "output_tokens": 760,
+       "tool_calls_count": 7,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     },
+     "3-broad": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 160,
+      "actual_count": 160,
+      "elapsed_sec": 58.3,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|363418001,http://snomed.info/sct|372142002",
+      "additional_query_urls": [],
+      "raw_response": "The subsumption check confirms that **`363418001` (Malignant neoplasm of pancreas) subsumes `372142002` (Carcinoma of pancreas)** in the SNOMED hierarchy \u2014 carcinoma is a proper subtype of the umbrella concept. Since most FHIR servers do **exact code matching** (not hierarchy traversal), both codes must be explicitly included in the query to capture all records, which is exactly what the user requested.\n\n---\n\n### Summary of Evidence\n\n| SNOMED Code | Display | Role | Confirmed on Server |\n|---|---|---|---|\n| `363418001` | Malignant neoplasm of pancreas | **Umbrella / broader concept** | \u2705 Yes |\n| `372142002` | Carcinoma of pancreas | **Specific subtype** | \u2705 Yes |\n\n- **Subsumption**: `363418001` is the parent of `372142002` in SNOMED CT \u2014 carcinoma *is-a* malignant neoplasm of pancreas\n- **Code system on server**: SNOMED CT exclusively (no ICD-10/ICD-9 coding observed in samples)\n- **Total matching Conditions**: **160 records** across both codes\n\n---\n\n**FINAL ANSWER**\n\n```\nCondition?code=http://snomed.info/sct|363418001,http://snomed.info/sct|372142002\n```",
+      "prompt_text": "Find patients diagnosed with pancreatic cancer \u2014 including the broader malignant neoplasm of pancreas concept and the more specific carcinoma of pancreas.",
+      "run_metadata": {
+       "output_tokens": 545,
+       "tool_calls_count": 8,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     },
+     "3-expert": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 160,
+      "actual_count": 160,
+      "elapsed_sec": 28.1,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|363418001,http://snomed.info/sct|372142002",
+      "additional_query_urls": [],
+      "raw_response": "Both tool calls confirm strong alignment. Here's a full summary of findings:\n\n---\n\n## \ud83d\udd2c Search Results Summary\n\n### \u2705 FHIR Query Executed\n```\nCondition?code=http://snomed.info/sct|363418001,http://snomed.info/sct|372142002\n```\n\n### \ud83d\udcca Results\n| Metric | Detail |\n|---|---|\n| **Entries Returned** | 10 matching Condition resources |\n| **Resource Types** | `Condition` only |\n| **Code System Confirmed** | `http://snomed.info/sct` \u2705 |\n\n### \ud83e\uddec SNOMED Codes Matched\n| SNOMED Code | Display | Hits Observed |\n|---|---|---|\n| `363418001` | Malignant neoplasm of pancreas | \u2705 Multiple records |\n| `372142002` | Carcinoma of pancreas | \u2705 Multiple records |\n\n### \ud83c\udfe5 Server Code System Validation (from sample)\n- The server **natively stores Condition codes as SNOMED CT** (`http://snomed.info/sct`) \u2014 no translation needed.\n- All sampled conditions are categorized as **`encounter-diagnosis`**, confirming these are clinically recorded diagnoses.\n\n---\n\n## \u2705 Final FHIR Query\n\n```\nCondition?code=http://snomed.info/sct|363418001,http://snomed.info/sct|372142002\n```\n\n> **Design note (Playbook 1 \u2014 Subtypes):** Both codes are unioned via a single comma-separated `code=` parameter. `363418001` (Malignant neoplasm of pancreas) is the broader umbrella concept, while `372142002` (Carcinoma of pancreas) captures the specific carcinoma subtype \u2014 together they maximize recall without requiring multiple round-trips to the server.",
+      "prompt_text": "Search Condition resources for SNOMED codes Malignant neoplasm of pancreas (363418001) and Carcinoma of pancreas (372142002). Query: Condition?code=http://snomed.info/sct|363418001,http://snomed.info/sct|372142002",
+      "run_metadata": {
+       "output_tokens": 459,
+       "tool_calls_count": 2,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     }
+    },
+    "copilot:gpt-5.4": {
+     "1-naive": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 160,
+      "actual_count": 0,
+      "elapsed_sec": 64.0,
+      "queries_generated": 1,
+      "primary_query_url": "Patient?_has:Condition:subject:code=http://hl7.org/fhir/sid/icd-10-cm|C25,http://hl7.org/fhir/sid/icd-10-cm|C25.0,http://hl7.org/fhir/sid/icd-10-cm|C25.1,http://hl7.org/fhir/sid/icd-10-cm|C25.2,http://hl7.org/fhir/sid/icd-10-cm|C25.3,http://hl7.org/fhir/sid/icd-10-cm|C25.4,http://hl7.org/fhir/sid/icd-10-cm|C25.7,http://hl7.org/fhir/sid/icd-10-cm|C25.8,http://hl7.org/fhir/sid/icd-10-cm|C25.9",
+      "additional_query_urls": [],
+      "raw_response": "Patient?_has:Condition:subject:code=http://hl7.org/fhir/sid/icd-10-cm|C25,http://hl7.org/fhir/sid/icd-10-cm|C25.0,http://hl7.org/fhir/sid/icd-10-cm|C25.1,http://hl7.org/fhir/sid/icd-10-cm|C25.2,http://hl7.org/fhir/sid/icd-10-cm|C25.3,http://hl7.org/fhir/sid/icd-10-cm|C25.4,http://hl7.org/fhir/sid/icd-10-cm|C25.7,http://hl7.org/fhir/sid/icd-10-cm|C25.8,http://hl7.org/fhir/sid/icd-10-cm|C25.9",
+      "prompt_text": "Find patients with pancreatic cancer."
+     },
+     "1-broad": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 160,
+      "actual_count": 160,
+      "elapsed_sec": 95.2,
+      "queries_generated": 1,
+      "primary_query_url": "Patient?_has:Condition:patient:code=http://snomed.info/sct|363418001,http://snomed.info/sct|372142002",
+      "additional_query_urls": [],
+      "raw_response": "Patient?_has:Condition:patient:code=http://snomed.info/sct|363418001,http://snomed.info/sct|372142002",
+      "prompt_text": "Find patients diagnosed with pancreatic cancer \u2014 including the broader malignant neoplasm of pancreas concept and the more specific carcinoma of pancreas."
+     },
+     "1-expert": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 160,
+      "actual_count": 160,
+      "elapsed_sec": 21.8,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|363418001,http://snomed.info/sct|372142002",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|363418001,http://snomed.info/sct|372142002",
+      "prompt_text": "Search Condition resources for SNOMED codes Malignant neoplasm of pancreas (363418001) and Carcinoma of pancreas (372142002). Query: Condition?code=http://snomed.info/sct|363418001,http://snomed.info/sct|372142002"
+     },
+     "2-naive": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 160,
+      "actual_count": 160,
+      "elapsed_sec": 159.9,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|363418001,http://snomed.info/sct|372142002,http://snomed.info/sct|187791002,http://snomed.info/sct|187792009,http://snomed.info/sct|372003004,http://snomed.info/sct|372119009,http://snomed.info/sct|735735001,http://snomed.info/sct|93715005,http://snomed.info/sct|93939009,http://snomed.info/sct|94082003",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|363418001,http://snomed.info/sct|372142002,http://snomed.info/sct|187791002,http://snomed.info/sct|187792009,http://snomed.info/sct|372003004,http://snomed.info/sct|372119009,http://snomed.info/sct|735735001,http://snomed.info/sct|93715005,http://snomed.info/sct|93939009,http://snomed.info/sct|94082003",
+      "prompt_text": "Find patients with pancreatic cancer.",
+      "run_metadata": {
+       "output_tokens": 738,
+       "tool_calls_count": 33,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     },
+     "2-broad": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 160,
+      "actual_count": 160,
+      "elapsed_sec": 111.5,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|363418001,http://snomed.info/sct|372142002",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|363418001,http://snomed.info/sct|372142002",
+      "prompt_text": "Find patients diagnosed with pancreatic cancer \u2014 including the broader malignant neoplasm of pancreas concept and the more specific carcinoma of pancreas.",
+      "run_metadata": {
+       "output_tokens": 300,
+       "tool_calls_count": 28,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     },
+     "2-expert": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 160,
+      "actual_count": 160,
+      "elapsed_sec": 19.5,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|363418001,http://snomed.info/sct|372142002",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|363418001,http://snomed.info/sct|372142002",
+      "prompt_text": "Search Condition resources for SNOMED codes Malignant neoplasm of pancreas (363418001) and Carcinoma of pancreas (372142002). Query: Condition?code=http://snomed.info/sct|363418001,http://snomed.info/sct|372142002",
+      "run_metadata": {
+       "output_tokens": 83,
+       "tool_calls_count": 0,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     },
+     "3-naive": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 160,
+      "actual_count": 160,
+      "elapsed_sec": 101.1,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|363418001,http://snomed.info/sct|372142002",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|363418001,http://snomed.info/sct|372142002",
+      "prompt_text": "Find patients with pancreatic cancer.",
+      "run_metadata": {
+       "output_tokens": 517,
+       "tool_calls_count": 14,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     },
+     "3-broad": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 160,
+      "actual_count": 160,
+      "elapsed_sec": 44.6,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|363418001,http://snomed.info/sct|372142002",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|363418001,http://snomed.info/sct|372142002",
+      "prompt_text": "Find patients diagnosed with pancreatic cancer \u2014 including the broader malignant neoplasm of pancreas concept and the more specific carcinoma of pancreas.",
+      "run_metadata": {
+       "output_tokens": 187,
+       "tool_calls_count": 7,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     },
+     "3-expert": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 160,
+      "actual_count": 160,
+      "elapsed_sec": 38.3,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|363418001,http://snomed.info/sct|372142002",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|363418001,http://snomed.info/sct|372142002",
+      "prompt_text": "Search Condition resources for SNOMED codes Malignant neoplasm of pancreas (363418001) and Carcinoma of pancreas (372142002). Query: Condition?code=http://snomed.info/sct|363418001,http://snomed.info/sct|372142002",
+      "run_metadata": {
+       "output_tokens": 87,
+       "tool_calls_count": 3,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     }
+    },
+    "openai-compat:qwen-qwen3.5-9b": {
+     "1-naive": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 160,
+      "actual_count": 0,
+      "elapsed_sec": 12.6,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|49950003&subject=Patient",
+      "additional_query_urls": [
+       "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|C25&subject=Patient"
+      ],
+      "raw_response": "Condition?code=http://snomed.info/sct|49950003&subject=Patient\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|C25&subject=Patient",
+      "prompt_text": "Find patients with pancreatic cancer."
+     },
+     "1-broad": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 160,
+      "actual_count": 0,
+      "elapsed_sec": 11.7,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|191680005",
+      "additional_query_urls": [
+       "Condition?code=http://snomed.info/sct|128131003"
+      ],
+      "raw_response": "Condition?code=http://snomed.info/sct|191680005\nCondition?code=http://snomed.info/sct|128131003",
+      "prompt_text": "Find patients diagnosed with pancreatic cancer \u2014 including the broader malignant neoplasm of pancreas concept and the more specific carcinoma of pancreas."
+     },
+     "1-expert": {
+      "precision": 1.0,
+      "recall": 0.6062,
+      "f1": 0.7549,
+      "passed": false,
+      "expected_count": 160,
+      "actual_count": 97,
+      "elapsed_sec": 11.5,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|363418001",
+      "additional_query_urls": [
+       "Condition?code=http://snomed.info/sct|372142002"
+      ],
+      "raw_response": "Condition?code=http://snomed.info/sct|363418001\nCondition?code=http://snomed.info/sct|372142002",
+      "prompt_text": "Search Condition resources for SNOMED codes Malignant neoplasm of pancreas (363418001) and Carcinoma of pancreas (372142002). Query: Condition?code=http://snomed.info/sct|363418001,http://snomed.info/sct|372142002"
+     },
+     "2-naive": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 160,
+      "actual_count": 0,
+      "elapsed_sec": 66.8,
+      "queries_generated": 10,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|363418001&_summary=count",
+      "additional_query_urls": [
+       "Condition?code=http://snomed.info/sct|372003004&_summary=count",
+       "Condition?code=http://snomed.info/sct|372119009&_summary=count",
+       "Condition?code=http://snomed.info/sct|735735001&_summary=count",
+       "Condition?code=http://snomed.info/sct|93715005&_summary=count",
+       "Condition?code=http://snomed.info/sct|93939009&_summary=count",
+       "Condition?code=http://snomed.info/sct|94082003&_summary=count",
+       "Condition?code=http://snomed.info/sct|187791002&_summary=count",
+       "Condition?code=http://snomed.info/sct|187792009&_summary=count",
+       "Condition?code=http://snomed.info/sct|372142002&_summary=count"
+      ],
+      "raw_response": "[FALLBACK: parser couldn't extract URL from final response; using fhir_search queries from tool trace]\nCondition?code=http://snomed.info/sct|363418001&_summary=count\nCondition?code=http://snomed.info/sct|372003004&_summary=count\nCondition?code=http://snomed.info/sct|372119009&_summary=count\nCondition?code=http://snomed.info/sct|735735001&_summary=count\nCondition?code=http://snomed.info/sct|93715005&_summary=count\nCondition?code=http://snomed.info/sct|93939009&_summary=count\nCondition?code=http://snomed.info/sct|94082003&_summary=count\nCondition?code=http://snomed.info/sct|187791002&_summary=count\nCondition?code=http://snomed.info/sct|187792009&_summary=count\nCondition?code=http://snomed.info/sct|372142002&_summary=count\n\nOriginal last assistant message:\nGood, there are 63 conditions with code 372142002 (Carcinoma of pancreas). Let me also check if there are other related codes. Let me search for more pancreatic cancer terms to find additional codes.\n\n",
+      "prompt_text": "Find patients with pancreatic cancer.",
+      "run_metadata": {
+       "tool_calls_count": 20,
+       "stop_reason": "fallback_tool_trace",
+       "fallback_used": true
+      }
+     },
+     "2-broad": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 160,
+      "actual_count": 0,
+      "elapsed_sec": 108.6,
+      "queries_generated": 3,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|363418001&_summary=count",
+      "additional_query_urls": [
+       "Condition?code=http://snomed.info/sct|372142002&_summary=count",
+       "Condition?code=http://snomed.info/sct|363418001,372142002&_summary=count"
+      ],
+      "raw_response": "[FALLBACK: parser couldn't extract URL from final response; using fhir_search queries from tool trace]\nCondition?code=http://snomed.info/sct|363418001&_summary=count\nCondition?code=http://snomed.info/sct|372142002&_summary=count\nCondition?code=http://snomed.info/sct|363418001,372142002&_summary=count\n\nOriginal last assistant message:\nThe combined query returns 160 patients (97 + 63 = 160), which confirms that there's no overlap between the two codes (they are distinct but related).\n\nWait, but the subsumption check said 363418001 subsumes 372142002. This means that conceptually, carcinoma of pancreas is a type of malignant neoplasm of pancreas. However, in the FHIR data, they might be stored as separate codes, and the subsumption relationship is about the clinical concept hierarchy, not necessarily about the data storage.\n\nSi",
+      "prompt_text": "Find patients diagnosed with pancreatic cancer \u2014 including the broader malignant neoplasm of pancreas concept and the more specific carcinoma of pancreas.",
+      "run_metadata": {
+       "tool_calls_count": 20,
+       "stop_reason": "fallback_tool_trace",
+       "fallback_used": true
+      }
+     },
+     "2-expert": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 160,
+      "actual_count": 160,
+      "elapsed_sec": 14.2,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|363418001,http://snomed.info/sct|372142002",
+      "additional_query_urls": [],
+      "raw_response": "The search returned results showing both SNOMED codes are present in the Condition resources:\n- 363418001: Malignant neoplasm of pancreas\n- 372142002: Carcinoma of pancreas\n\nThe query successfully found Condition resources with these codes. The FHIR query URL is:\n\nCondition?code=http://snomed.info/sct|363418001,http://snomed.info/sct|372142002",
+      "prompt_text": "Search Condition resources for SNOMED codes Malignant neoplasm of pancreas (363418001) and Carcinoma of pancreas (372142002). Query: Condition?code=http://snomed.info/sct|363418001,http://snomed.info/sct|372142002",
+      "run_metadata": {
+       "tool_calls_count": 1,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     },
+     "3-naive": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 160,
+      "actual_count": 160,
+      "elapsed_sec": 80.9,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|363418001,372142002,187791002,187792009,372003004,372119009,735735001,93715005,93939009,94082003",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|363418001,372142002,187791002,187792009,372003004,372119009,735735001,93715005,93939009,94082003",
+      "prompt_text": "Find patients with pancreatic cancer.",
+      "run_metadata": {
+       "tool_calls_count": 11,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     },
+     "3-broad": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 160,
+      "actual_count": 160,
+      "elapsed_sec": 25.3,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|363418001,372142002",
+      "additional_query_urls": [],
+      "raw_response": "The query works and returns results with both codes. The query successfully finds patients diagnosed with pancreatic cancer including both the broader malignant neoplasm of pancreas (363418001) and the more specific carcinoma of pancreas (372142002).\n\nHere is the final FHIR query:\n\n```\nCondition?code=http://snomed.info/sct|363418001,372142002\n```",
+      "prompt_text": "Find patients diagnosed with pancreatic cancer \u2014 including the broader malignant neoplasm of pancreas concept and the more specific carcinoma of pancreas.",
+      "run_metadata": {
+       "tool_calls_count": 7,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     },
+     "3-expert": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 160,
+      "actual_count": 160,
+      "elapsed_sec": 23.5,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|363418001,http://snomed.info/sct|372142002",
+      "additional_query_urls": [],
+      "raw_response": "Perfect! The server has both codes:\n- 363418001: Malignant neoplasm of pancreas\n- 372142002: Carcinoma of pancreas\n\nBoth are present in the Condition resource samples. Now I can construct the final query using comma-separated codes as specified in the user's request and Playbook 1.\n\nCondition?code=http://snomed.info/sct|363418001,http://snomed.info/sct|372142002",
+      "prompt_text": "Search Condition resources for SNOMED codes Malignant neoplasm of pancreas (363418001) and Carcinoma of pancreas (372142002). Query: Condition?code=http://snomed.info/sct|363418001,http://snomed.info/sct|372142002",
+      "run_metadata": {
+       "tool_calls_count": 1,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     }
+    }
+   }
+  },
+  {
+   "test_case": "phekb-pancreatic-cancer-labs",
+   "grids": {
+    "copilot:claude-opus-4.7": {
+     "1-naive": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 42,
+      "actual_count": 42,
+      "elapsed_sec": 0.2,
+      "queries_generated": 1,
+      "primary_query_url": "Observation?code=http://loinc.org|24108-3&value-quantity=gt37",
+      "additional_query_urls": [],
+      "raw_response": "Observation?code=http://loinc.org|24108-3&value-quantity=gt37",
+      "prompt_text": "Find patients with high CA 19-9."
+     },
+     "1-broad": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 42,
+      "actual_count": 42,
+      "elapsed_sec": 0.1,
+      "queries_generated": 1,
+      "primary_query_url": "Observation?code=http://loinc.org|24108-3&value-quantity=gt100|http://unitsofmeasure.org|U/mL",
+      "additional_query_urls": [],
+      "raw_response": "Observation?code=http://loinc.org|24108-3&value-quantity=gt100|http://unitsofmeasure.org|U/mL",
+      "prompt_text": "Find patients with CA 19-9 (cancer antigen 19-9) measurements above 100 U/mL \u2014 highly suggestive of pancreatic cancer (also elevated in cholangiocarcinoma and pancreatitis)."
+     },
+     "1-expert": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 42,
+      "actual_count": 42,
+      "elapsed_sec": 0.1,
+      "queries_generated": 1,
+      "primary_query_url": "Observation?code=http://loinc.org|24108-3&value-quantity=gt100||U/mL",
+      "additional_query_urls": [],
+      "raw_response": "Observation?code=http://loinc.org|24108-3&value-quantity=gt100||U/mL",
+      "prompt_text": "Search Observation resources with LOINC 24108-3 (Cancer Ag 19-9) where value-quantity > 100 U/mL. Query: Observation?code=http://loinc.org|24108-3&value-quantity=gt100||U/mL"
+     },
+     "2-naive": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 42,
+      "actual_count": 42,
+      "elapsed_sec": 19.7,
+      "queries_generated": 1,
+      "primary_query_url": "Observation?code=http://loinc.org|24108-3&value-quantity=gt37",
+      "additional_query_urls": [],
+      "raw_response": "Observation?code=http://loinc.org|24108-3&value-quantity=gt37",
+      "prompt_text": "Find patients with high CA 19-9.",
+      "run_metadata": {
+       "output_tokens": 32,
+       "tool_calls_count": 3,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     },
+     "2-broad": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 42,
+      "actual_count": 42,
+      "elapsed_sec": 19.5,
+      "queries_generated": 1,
+      "primary_query_url": "Observation?code=http://loinc.org|24108-3&value-quantity=gt100",
+      "additional_query_urls": [],
+      "raw_response": "FINAL ANSWER:\n\nObservation?code=http://loinc.org|24108-3&value-quantity=gt100",
+      "prompt_text": "Find patients with CA 19-9 (cancer antigen 19-9) measurements above 100 U/mL \u2014 highly suggestive of pancreatic cancer (also elevated in cholangiocarcinoma and pancreatitis).",
+      "run_metadata": {
+       "output_tokens": 43,
+       "tool_calls_count": 3,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     },
+     "2-expert": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 42,
+      "actual_count": 42,
+      "elapsed_sec": 13.5,
+      "queries_generated": 1,
+      "primary_query_url": "Observation?code=http://loinc.org|24108-3&value-quantity=gt100||U/mL",
+      "additional_query_urls": [],
+      "raw_response": "Observation?code=http://loinc.org|24108-3&value-quantity=gt100||U/mL",
+      "prompt_text": "Search Observation resources with LOINC 24108-3 (Cancer Ag 19-9) where value-quantity > 100 U/mL. Query: Observation?code=http://loinc.org|24108-3&value-quantity=gt100||U/mL",
+      "run_metadata": {
+       "output_tokens": 37,
+       "tool_calls_count": 1,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     },
+     "3-naive": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 42,
+      "actual_count": 42,
+      "elapsed_sec": 16.8,
+      "queries_generated": 1,
+      "primary_query_url": "Observation?code=http://loinc.org|24108-3&value-quantity=gt37",
+      "additional_query_urls": [],
+      "raw_response": "Observation?code=http://loinc.org|24108-3&value-quantity=gt37",
+      "prompt_text": "Find patients with high CA 19-9.",
+      "run_metadata": {
+       "output_tokens": 32,
+       "tool_calls_count": 3,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     },
+     "3-broad": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 42,
+      "actual_count": 42,
+      "elapsed_sec": 13.1,
+      "queries_generated": 1,
+      "primary_query_url": "Observation?code=http://loinc.org|24108-3&value-quantity=gt100||U/mL",
+      "additional_query_urls": [],
+      "raw_response": "Observation?code=http://loinc.org|24108-3&value-quantity=gt100||U/mL",
+      "prompt_text": "Find patients with CA 19-9 (cancer antigen 19-9) measurements above 100 U/mL \u2014 highly suggestive of pancreatic cancer (also elevated in cholangiocarcinoma and pancreatitis).",
+      "run_metadata": {
+       "output_tokens": 37,
+       "tool_calls_count": 2,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     },
+     "3-expert": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 42,
+      "actual_count": 42,
+      "elapsed_sec": 11.5,
+      "queries_generated": 1,
+      "primary_query_url": "Observation?code=http://loinc.org|24108-3&value-quantity=gt100||U/mL",
+      "additional_query_urls": [],
+      "raw_response": "Observation?code=http://loinc.org|24108-3&value-quantity=gt100||U/mL",
+      "prompt_text": "Search Observation resources with LOINC 24108-3 (Cancer Ag 19-9) where value-quantity > 100 U/mL. Query: Observation?code=http://loinc.org|24108-3&value-quantity=gt100||U/mL",
+      "run_metadata": {
+       "output_tokens": 37,
+       "tool_calls_count": 1,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     }
+    },
+    "copilot:claude-opus-4.7+fhirskill": {
+     "1-naive": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 42,
+      "actual_count": 42,
+      "elapsed_sec": 0.1,
+      "queries_generated": 1,
+      "primary_query_url": "Observation?code=http://loinc.org|24108-3&value-quantity=gt37",
+      "additional_query_urls": [],
+      "raw_response": "Observation?code=http://loinc.org|24108-3&value-quantity=gt37",
+      "prompt_text": "Find patients with high CA 19-9."
+     },
+     "1-broad": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 42,
+      "actual_count": 42,
+      "elapsed_sec": 0.1,
+      "queries_generated": 1,
+      "primary_query_url": "Observation?code=http://loinc.org|24108-3&value-quantity=gt100|http://unitsofmeasure.org|U/mL",
+      "additional_query_urls": [],
+      "raw_response": "Observation?code=http://loinc.org|24108-3&value-quantity=gt100|http://unitsofmeasure.org|U/mL",
+      "prompt_text": "Find patients with CA 19-9 (cancer antigen 19-9) measurements above 100 U/mL \u2014 highly suggestive of pancreatic cancer (also elevated in cholangiocarcinoma and pancreatitis)."
+     },
+     "1-expert": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 42,
+      "actual_count": 42,
+      "elapsed_sec": 0.1,
+      "queries_generated": 1,
+      "primary_query_url": "Observation?code=http://loinc.org|24108-3&value-quantity=gt100||U/mL",
+      "additional_query_urls": [],
+      "raw_response": "Observation?code=http://loinc.org|24108-3&value-quantity=gt100||U/mL",
+      "prompt_text": "Search Observation resources with LOINC 24108-3 (Cancer Ag 19-9) where value-quantity > 100 U/mL. Query: Observation?code=http://loinc.org|24108-3&value-quantity=gt100||U/mL"
+     }
+    },
+    "copilot:claude-sonnet-4.6": {
+     "1-naive": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 42,
+      "actual_count": 42,
+      "elapsed_sec": 21.9,
+      "queries_generated": 2,
+      "primary_query_url": "Observation?code=http://loinc.org|24108-3&value-quantity=gt37||U/mL&status=final",
+      "additional_query_urls": [
+       "Observation?code=http://loinc.org|24108-3&value-quantity=gt37||U/mL&status=final&_include=Observation:patient"
+      ],
+      "raw_response": "## FHIR Query: High CA 19-9 Observations\n\nCA 19-9 (Cancer Antigen 19-9) is measured as a tumor marker. The upper limit of normal is typically **37 U/mL**.\n\n```\nObservation?code=http://loinc.org|24108-3&value-quantity=gt37||U/mL&status=final\n```\n\n---\n\n### Details\n\n| Parameter | Value |\n|---|---|\n| **LOINC Code** | `24108-3` \u2014 CA 19-9 \\[Units/volume\\] in Serum or Plasma |\n| **Threshold** | `> 37 U/mL` (standard upper limit of normal) |\n| **Status** | `final` (confirmed results only) |\n\n---\n\n### Optional: Include Patient Demographics\n\nTo retrieve patient information alongside the observations:\n\n```\nObservation?code=http://loinc.org|24108-3&value-quantity=gt37||U/mL&status=final&_include=Observation:patient\n```\n\n---\n\n### Notes\n- **CA 19-9** is primarily used as a tumor marker for **pancreatic, biliary, and GI cancers**.\n- Elevated values (especially **>100 U/mL**) may suggest malignancy, though benign conditions (cholangitis, pancreatitis) can also elevate it.\n- For markedly elevated results only, adjust threshold (e.g., `gt100`).",
+      "prompt_text": "Find patients with high CA 19-9."
+     },
+     "1-broad": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 42,
+      "actual_count": 42,
+      "elapsed_sec": 39.2,
+      "queries_generated": 3,
+      "primary_query_url": "Observation?code=http://loinc.org|24108-3,http://loinc.org|19163-7&value-quantity=gt100||U/mL&_include=Observation:patient&_include=Observation:subject",
+      "additional_query_urls": [
+       "Observation?code=http://loinc.org|24108-3,http://loinc.org|19163-7&value-quantity=gt100||kU/L&_include=Observation:patient&_include=Observation:subject",
+       "Observation?code=http://loinc.org|85319-2&value-quantity=gt100||U/mL&_include=Observation:patient&_include=Observation:subject"
+      ],
+      "raw_response": "## FHIR Query: CA 19-9 Observations > 100 U/mL\n\nCA 19-9 is reported in **U/mL** (equivalent to **kU/L**). Queries are split by unit representation since systems vary, using the two primary LOINC codes for serum/plasma.\n\n---\n\n**Serum or Plasma \u2014 U/mL units (most common):**\n```\nObservation?code=http://loinc.org|24108-3,http://loinc.org|19163-7&value-quantity=gt100||U/mL&_include=Observation:patient&_include=Observation:subject\n```\n\n**Serum or Plasma \u2014 kU/L units (equivalent, alternate representation):**\n```\nObservation?code=http://loinc.org|24108-3,http://loinc.org|19163-7&value-quantity=gt100||kU/L&_include=Observation:patient&_include=Observation:subject\n```\n\n**Body fluid specimen (e.g., ascites, cyst fluid):**\n```\nObservation?code=http://loinc.org|85319-2&value-quantity=gt100||U/mL&_include=Observation:patient&_include=Observation:subject\n```\n\n---\n\n### Key Details\n\n| Parameter | Value |\n|-----------|-------|\n| **LOINC 24108-3** | Carbohydrate Ag 19-9 \\[Units/vol\\] in Serum or Plasma |\n| **LOINC 19163-7** | Cancer Ag 19-9 \\[Units/vol\\] in Serum or Plasma |\n| **LOINC 85319-2** | CA 19-9 \\[Units/vol\\] in Body fluid |\n| **Threshold** | `gt100` U/mL |\n| **Normal upper limit** | ~37 U/mL |\n| **Clinical note** | >100 U/mL strongly associated with malignancy; >1000 U/mL highly specific for pancreatic adenocarcinoma |\n\n> \u26a0\ufe0f **Differential context:** Elevated CA 19-9 is not specific to pancreatic cancer \u2014 also seen in **cholangiocarcinoma**, **gastric cancer**, **pancreatitis**, and **biliary obstruction**. Combine with imaging and clinical findings.",
+      "prompt_text": "Find patients with CA 19-9 (cancer antigen 19-9) measurements above 100 U/mL \u2014 highly suggestive of pancreatic cancer (also elevated in cholangiocarcinoma and pancreatitis)."
+     },
+     "1-expert": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 42,
+      "actual_count": 42,
+      "elapsed_sec": 22.1,
+      "queries_generated": 4,
+      "primary_query_url": "Observation?code=http://loinc.org|24108-3&value-quantity=gt100||U/mL",
+      "additional_query_urls": [
+       "Observation?code=http://loinc.org|24108-3&value-quantity=gt100|http://unitsofmeasure.org|U/mL",
+       "Observation?code=http://loinc.org|24108-3&value-quantity=gt100|http://unitsofmeasure.org|U/mL&_include=Observation:subject",
+       "Observation?code=http://loinc.org|24108-3&value-quantity=gt100|http://unitsofmeasure.org|U/mL&status=final,amended"
+      ],
+      "raw_response": "## FHIR Query: CA 19-9 Observation > 100 U/mL\n\n```\nObservation?code=http://loinc.org|24108-3&value-quantity=gt100||U/mL\n```\n\n---\n\n### Query Breakdown\n\n| Component | Value | Description |\n|---|---|---|\n| **Resource** | `Observation` | Clinical measurement/result |\n| **code** | `http://loinc.org\\|24108-3` | Cancer Antigen 19-9 (CA 19-9) |\n| **value-quantity comparator** | `gt100` | Greater than 100 |\n| **Unit** | `U/mL` | Units per milliliter |\n\n---\n\n### Optional Enhancements\n\n**With explicit UCUM system (recommended for precision):**\n```\nObservation?code=http://loinc.org|24108-3&value-quantity=gt100|http://unitsofmeasure.org|U/mL\n```\n\n**Include Patient demographics:**\n```\nObservation?code=http://loinc.org|24108-3&value-quantity=gt100|http://unitsofmeasure.org|U/mL&_include=Observation:subject\n```\n\n**Limit to final/amended results only:**\n```\nObservation?code=http://loinc.org|24108-3&value-quantity=gt100|http://unitsofmeasure.org|U/mL&status=final,amended\n```\n\n---\n\n### Clinical Context\n> \u26a0\ufe0f **CA 19-9 Normal Range:** Typically **< 37 U/mL**. Values **> 100 U/mL** may indicate pancreatic, biliary, or gastrointestinal malignancy and warrant clinical correlation. CA 19-9 is not diagnostic alone due to variable sensitivity/specificity.",
+      "prompt_text": "Search Observation resources with LOINC 24108-3 (Cancer Ag 19-9) where value-quantity > 100 U/mL. Query: Observation?code=http://loinc.org|24108-3&value-quantity=gt100||U/mL"
+     },
+     "2-naive": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 42,
+      "actual_count": 42,
+      "elapsed_sec": 58.1,
+      "queries_generated": 1,
+      "primary_query_url": "Observation?code=http://loinc.org|24108-3&value-quantity=ge37||U%2FmL",
+      "additional_query_urls": [],
+      "raw_response": "\u2705 Query confirmed \u2014 42 elevated CA 19-9 results returned, all correctly coded as **LOINC `24108-3`** (Cancer Ag 19-9 [Units/volume] in Serum or Plasma), category `laboratory`.\n\n**Key decisions made:**\n- **LOINC `24108-3`** is the sole code the server uses for CA 19-9 (confirmed by direct resource sampling \u2014 no other code systems present).\n- **Threshold: \u2265 37 U/mL** \u2014 this is the universally accepted clinical upper limit of normal (ULN) for CA 19-9 in serum/plasma across major labs and guidelines.\n- **327 total** CA 19-9 Observations on the server \u2192 **42** are elevated (\u2265 37 U/mL), a realistic ~13% positive rate.\n\n---\n\n```\nObservation?code=http://loinc.org|24108-3&value-quantity=ge37||U%2FmL\n```",
+      "prompt_text": "Find patients with high CA 19-9.",
+      "run_metadata": {
+       "output_tokens": 379,
+       "tool_calls_count": 8,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     },
+     "2-broad": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 42,
+      "actual_count": 42,
+      "elapsed_sec": 71.0,
+      "queries_generated": 1,
+      "primary_query_url": "Observation?code=http://loinc.org|24108-3&value-quantity=gt100||U/mL",
+      "additional_query_urls": [],
+      "raw_response": "All the evidence is in \u2014 here's the full picture:\n\n| Finding | Detail |\n|---|---|\n| **LOINC code on server** | `24108-3` \u2014 *Cancer Ag 19-9 [Units/volume] in Serum or Plasma* (confirmed on all 3 sampled resources) |\n| **Code system** | `http://loinc.org` only (no alternative code systems present for this lab) |\n| **Unit** | `U/mL` (confirmed by successful threshold match) |\n| **Total CA 19-9 observations** | **327** across the server |\n| **CA 19-9 > 100 U/mL** | **42 observations** (~13% of all CA 19-9 tests \u2014 clinically plausible; normal upper limit is ~37 U/mL, values >100 are considered markedly elevated) |\n| **Category** | `laboratory` (all 3 sampled resources confirmed) |\n| **LOINC 19163-6 (alternate)** | Invalid / not found in VSAC \u2014 only `24108-3` is the current authoritative code |\n\n---\n\n### Clinical context applied\n- **Normal range:** \u2264 37 U/mL\n- **> 100 U/mL** is the clinically accepted cutoff highly suggestive of malignancy (pancreatic cancer, cholangiocarcinoma) or severe pancreatitis\n- The query uses the strict `gt` (greater-than) comparator \u2014 adjust to `ge100` if you want to include exactly 100 U/mL\n\n---\n\n```\nObservation?code=http://loinc.org|24108-3&value-quantity=gt100||U/mL\n```",
+      "prompt_text": "Find patients with CA 19-9 (cancer antigen 19-9) measurements above 100 U/mL \u2014 highly suggestive of pancreatic cancer (also elevated in cholangiocarcinoma and pancreatitis).",
+      "run_metadata": {
+       "output_tokens": 1461,
+       "tool_calls_count": 10,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     },
+     "2-expert": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 42,
+      "actual_count": 42,
+      "elapsed_sec": 36.5,
+      "queries_generated": 2,
+      "primary_query_url": "Observation?code=http://loinc.org|24108-3&value-quantity=gt100||U/mL",
+      "additional_query_urls": [
+       "Observation?code=http://loinc.org|24108-3"
+      ],
+      "raw_response": "Here's a full breakdown of the results and validation:\n\n---\n\n## \u2705 Query Validation Summary\n\n### \ud83d\udd2c LOINC Code Confirmed \u2014 `24108-3`\n| Field | Value |\n|---|---|\n| **Code** | `24108-3` |\n| **Display** | Cancer Ag 19-9 [Units/volume] in Serum or Plasma |\n| **System** | `http://loinc.org` |\n| **LOINC Version** | 2.82 |\n| **Category** | Laboratory (`http://terminology.hl7.org/CodeSystem/observation-category\\|laboratory`) |\n\n---\n\n### \ud83d\udcca Query Results\n```\nObservation?code=http://loinc.org|24108-3&value-quantity=gt100||U/mL\n```\n\n| Metric | Value |\n|---|---|\n| **Entries Returned** | 10 matching records |\n| **Resource Type** | `Observation` \u2705 |\n| **Code System Used** | `http://loinc.org` \u2014 consistent across all results |\n| **Filter Applied** | `value-quantity > 100 U/mL` \u2705 |\n\n---\n\n### \ud83e\uddea Sampled Resources (3 of 10)\nAll 3 sampled records confirmed **identical coding patterns**:\n\n| Sample ID | LOINC Code | Category |\n|---|---|---|\n| `946981ca-...` | `24108-3` \u2014 Cancer Ag 19-9 [Units/vol] in Serum or Plasma | `laboratory` |\n| `dbf107c6-...` | `24108-3` \u2014 Cancer Ag 19-9 [Units/vol] in Serum or Plasma | `laboratory` |\n| `bfe515b4-...` | `24108-3` \u2014 Cancer Ag 19-9 [Units/vol] in Serum or Plasma | `laboratory` |\n\n---\n\n### \ud83d\udca1 Notes & Recommendations\n\n1. **Query is accurate and well-formed.** The `value-quantity=gt100||U/mL` comparator correctly filters for CA 19-9 results greater than **100 U/mL** (normal upper limit is typically ~37 U/mL; >100 is considered markedly elevated and clinically significant for pancreatic/hepatobiliary malignancy).\n\n2. **Server uses LOINC exclusively** for this observation type \u2014 no secondary code systems (e.g., local codes) were seen in any sampled record.\n\n3. **Consider adding a category filter** if you want to be extra precise and ensure only lab results (not other observation categories) are returned:\n   ```\n   Observation?code=http://loinc.org|24108-3\n     &category=laboratory\n     &value-quantity=gt100||U/mL\n   ```\n\n4. **Unit consistency**: `U/mL` (Units per milliliter) is the standard unit for CA 19-9. Ensure the FHIR server stores values in `U/mL` and not `kU/L` \u2014 these are numerically equivalent (1 U/mL = 1 kU/L), but the unit string must match what the server stores for the comparator to work correctly.\n\n---\n\n### \u2705 Final Validated Query\n\n```\nObservation?code=http://loinc.org|24108-3&value-quantity=gt100||U/mL\n```",
+      "prompt_text": "Search Observation resources with LOINC 24108-3 (Cancer Ag 19-9) where value-quantity > 100 U/mL. Query: Observation?code=http://loinc.org|24108-3&value-quantity=gt100||U/mL",
+      "run_metadata": {
+       "output_tokens": 908,
+       "tool_calls_count": 3,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     },
+     "3-naive": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 42,
+      "actual_count": 42,
+      "elapsed_sec": 49.4,
+      "queries_generated": 1,
+      "primary_query_url": "Observation?code=http://loinc.org|24108-3&value-quantity=ge37|http://unitsofmeasure.org|U/mL",
+      "additional_query_urls": [],
+      "raw_response": "Both approaches return **42 records** \u2014 consistent and validated. Here's the summary of findings:\n\n| Step | Finding |\n|---|---|\n| **Playbook** | 7 \u2014 Threshold-based |\n| **LOINC code** | `24108-3` \u2014 Cancer Ag 19-9 [Units/volume] in Serum or Plasma |\n| **Code system on server** | `http://loinc.org` (confirmed by sampling) |\n| **Normal upper limit** | 37 U/mL (standard clinical cutoff) |\n| **Total CA 19-9 observations** | 327 |\n| **Elevated (\u2265 37 U/mL)** | **42 observations** across patients |\n\n---\n\n**FINAL ANSWER:**\n\n```\nObservation?code=http://loinc.org|24108-3&value-quantity=ge37|http://unitsofmeasure.org|U/mL\n```",
+      "prompt_text": "Find patients with high CA 19-9.",
+      "run_metadata": {
+       "output_tokens": 340,
+       "tool_calls_count": 8,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     },
+     "3-broad": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 42,
+      "actual_count": 0,
+      "elapsed_sec": 73.0,
+      "queries_generated": 2,
+      "primary_query_url": "Observation?code=<loinc>&value-quantity=gt100|<UCUM",
+      "additional_query_urls": [
+       "Observation?code=http://loinc.org|24108-3&value-quantity=gt100|http://unitsofmeasure.org|U/mL"
+      ],
+      "raw_response": "All evidence is consistent. Here's what I found:\n\n---\n\n### \ud83d\udd2c Clinical Context\n- **CA 19-9** (Cancer Antigen 19-9) is a serum tumor marker used in oncologic workup.\n- **>100 U/mL** is a widely-cited threshold highly suspicious for pancreatic cancer, cholangiocarcinoma, or severe pancreatitis.\n\n### \ud83d\udccb Evidence Trail\n\n| Step | Finding |\n|---|---|\n| **Server sampling** (5 Observations) | All CA 19-9 records use **LOINC `24108-3`** \u2014 *\"Cancer Ag 19-9 [Units/volume] in Serum or Plasma\"* |\n| **LOINC lookup** | Confirmed valid in LOINC v2.82; no alternate CA 19-9 quantitative codes found on this server |\n| **Threshold query** `gt100\\|http://unitsofmeasure.org\\|U/mL` | \u2705 **42 patients** identified |\n| **Alternative LOINC codes** checked | 0 additional records \u2014 `24108-3` is the sole CA 19-9 code in use |\n\n### \ud83e\udde0 Playbook Applied\n- **Playbook 7 \u2014 Threshold**: `Observation?code=<loinc>&value-quantity=gt100|<UCUM system>|U/mL`\n- Unit encoded using full UCUM system URI (`http://unitsofmeasure.org`) for precise matching.\n\n---\n\n**FINAL ANSWER:**\n\n```\nObservation?code=http://loinc.org|24108-3&value-quantity=gt100|http://unitsofmeasure.org|U/mL\n```",
+      "prompt_text": "Find patients with CA 19-9 (cancer antigen 19-9) measurements above 100 U/mL \u2014 highly suggestive of pancreatic cancer (also elevated in cholangiocarcinoma and pancreatitis).",
+      "run_metadata": {
+       "output_tokens": 854,
+       "tool_calls_count": 11,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     },
+     "3-expert": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 42,
+      "actual_count": 42,
+      "elapsed_sec": 38.7,
+      "queries_generated": 1,
+      "primary_query_url": "Observation?code=http://loinc.org|24108-3&value-quantity=gt100||U/mL",
+      "additional_query_urls": [],
+      "raw_response": "All evidence checks out. Let me summarize what was found:\n\n---\n\n## \ud83d\udd2c Evidence Summary\n\n| Check | Result |\n|---|---|\n| **FHIR Server** | R4 (4.0.1) \u2014 Azure FHIR Server |\n| **LOINC `24108-3` display** | *Cancer Ag 19-9 [Units/volume] in Serum or Plasma* \u2705 |\n| **Code system on server** | `http://loinc.org` \u2014 confirmed across all 5 sampled Observations \u2705 |\n| **`value-quantity` param** | Supported and functional \u2705 |\n| **Total CA 19-9 observations** | 327 |\n| **CA 19-9 > 100 U/mL** | **42 observations** \u2705 (clinically plausible ~13% above threshold) |\n\n### \ud83e\udde0 Playbook Applied\n- **Playbook 7 \u2014 Threshold-based**: `value-quantity=gt100||U/mL` correctly uses the `gt` comparator with double-pipe unit syntax (`||U/mL` = unit text match).\n\n---\n\n## \u2705 FINAL ANSWER\n\n```\nObservation?code=http://loinc.org|24108-3&value-quantity=gt100||U/mL\n```",
+      "prompt_text": "Search Observation resources with LOINC 24108-3 (Cancer Ag 19-9) where value-quantity > 100 U/mL. Query: Observation?code=http://loinc.org|24108-3&value-quantity=gt100||U/mL",
+      "run_metadata": {
+       "output_tokens": 635,
+       "tool_calls_count": 5,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     }
+    },
+    "copilot:gpt-5.4": {
+     "1-naive": {
+      "precision": 0.3853,
+      "recall": 1.0,
+      "f1": 0.5563,
+      "passed": false,
+      "expected_count": 42,
+      "actual_count": 109,
+      "elapsed_sec": 34.0,
+      "queries_generated": 1,
+      "primary_query_url": "Observation?code=http://loinc.org|24108-3&interpretation=http://terminology.hl7.org/CodeSystem/v3-ObservationInterpretation|H&_include=Observation:subject",
+      "additional_query_urls": [],
+      "raw_response": "Observation?code=http://loinc.org|24108-3&interpretation=http://terminology.hl7.org/CodeSystem/v3-ObservationInterpretation|H&_include=Observation:subject",
+      "prompt_text": "Find patients with high CA 19-9."
+     },
+     "1-broad": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 42,
+      "actual_count": 42,
+      "elapsed_sec": 47.0,
+      "queries_generated": 1,
+      "primary_query_url": "Observation?code=http://loinc.org|24108-3&value-quantity=gt100|http://unitsofmeasure.org|U/mL&_include=Observation:patient",
+      "additional_query_urls": [],
+      "raw_response": "Observation?code=http://loinc.org|24108-3&value-quantity=gt100|http://unitsofmeasure.org|U/mL&_include=Observation:patient",
+      "prompt_text": "Find patients with CA 19-9 (cancer antigen 19-9) measurements above 100 U/mL \u2014 highly suggestive of pancreatic cancer (also elevated in cholangiocarcinoma and pancreatitis)."
+     },
+     "1-expert": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 42,
+      "actual_count": 42,
+      "elapsed_sec": 20.1,
+      "queries_generated": 1,
+      "primary_query_url": "Observation?code=http://loinc.org|24108-3&value-quantity=gt100|http://unitsofmeasure.org|U/mL",
+      "additional_query_urls": [],
+      "raw_response": "Observation?code=http://loinc.org|24108-3&value-quantity=gt100|http://unitsofmeasure.org|U/mL",
+      "prompt_text": "Search Observation resources with LOINC 24108-3 (Cancer Ag 19-9) where value-quantity > 100 U/mL. Query: Observation?code=http://loinc.org|24108-3&value-quantity=gt100||U/mL"
+     },
+     "2-naive": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 42,
+      "actual_count": 42,
+      "elapsed_sec": 131.3,
+      "queries_generated": 1,
+      "primary_query_url": "Observation?code=http://loinc.org|24108-3&value-quantity=gt37||U/mL",
+      "additional_query_urls": [],
+      "raw_response": "Observation?code=http://loinc.org|24108-3&value-quantity=gt37||U/mL",
+      "prompt_text": "Find patients with high CA 19-9.",
+      "run_metadata": {
+       "output_tokens": 1464,
+       "tool_calls_count": 18,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     },
+     "2-broad": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 42,
+      "actual_count": 42,
+      "elapsed_sec": 44.7,
+      "queries_generated": 1,
+      "primary_query_url": "Observation?code=http://loinc.org|24108-3&value-quantity=gt100||U/mL",
+      "additional_query_urls": [],
+      "raw_response": "Observation?code=http://loinc.org|24108-3&value-quantity=gt100||U/mL",
+      "prompt_text": "Find patients with CA 19-9 (cancer antigen 19-9) measurements above 100 U/mL \u2014 highly suggestive of pancreatic cancer (also elevated in cholangiocarcinoma and pancreatitis).",
+      "run_metadata": {
+       "output_tokens": 918,
+       "tool_calls_count": 6,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     },
+     "2-expert": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 42,
+      "actual_count": 42,
+      "elapsed_sec": 14.5,
+      "queries_generated": 1,
+      "primary_query_url": "Observation?code=http://loinc.org|24108-3&value-quantity=gt100||U/mL",
+      "additional_query_urls": [],
+      "raw_response": "Observation?code=http://loinc.org|24108-3&value-quantity=gt100||U/mL",
+      "prompt_text": "Search Observation resources with LOINC 24108-3 (Cancer Ag 19-9) where value-quantity > 100 U/mL. Query: Observation?code=http://loinc.org|24108-3&value-quantity=gt100||U/mL",
+      "run_metadata": {
+       "output_tokens": 75,
+       "tool_calls_count": 0,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     },
+     "3-naive": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 42,
+      "actual_count": 42,
+      "elapsed_sec": 67.7,
+      "queries_generated": 1,
+      "primary_query_url": "Observation?code=http://loinc.org|24108-3&value-quantity=gt35||U/mL",
+      "additional_query_urls": [],
+      "raw_response": "Observation?code=http://loinc.org|24108-3&value-quantity=gt35||U/mL",
+      "prompt_text": "Find patients with high CA 19-9.",
+      "run_metadata": {
+       "output_tokens": 546,
+       "tool_calls_count": 12,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     },
+     "3-broad": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 42,
+      "actual_count": 42,
+      "elapsed_sec": 46.8,
+      "queries_generated": 1,
+      "primary_query_url": "Observation?code=http://loinc.org|24108-3&value-quantity=gt100||U/mL",
+      "additional_query_urls": [],
+      "raw_response": "Observation?code=http://loinc.org|24108-3&value-quantity=gt100||U/mL",
+      "prompt_text": "Find patients with CA 19-9 (cancer antigen 19-9) measurements above 100 U/mL \u2014 highly suggestive of pancreatic cancer (also elevated in cholangiocarcinoma and pancreatitis).",
+      "run_metadata": {
+       "output_tokens": 833,
+       "tool_calls_count": 6,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     },
+     "3-expert": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 42,
+      "actual_count": 42,
+      "elapsed_sec": 32.4,
+      "queries_generated": 1,
+      "primary_query_url": "Observation?code=http://loinc.org|24108-3&value-quantity=gt100||U/mL",
+      "additional_query_urls": [],
+      "raw_response": "Observation?code=http://loinc.org|24108-3&value-quantity=gt100||U/mL",
+      "prompt_text": "Search Observation resources with LOINC 24108-3 (Cancer Ag 19-9) where value-quantity > 100 U/mL. Query: Observation?code=http://loinc.org|24108-3&value-quantity=gt100||U/mL",
+      "run_metadata": {
+       "output_tokens": 117,
+       "tool_calls_count": 4,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     }
+    },
+    "openai-compat:qwen-qwen3.5-9b": {
+     "1-naive": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 42,
+      "actual_count": 0,
+      "elapsed_sec": 7.4,
+      "queries_generated": 1,
+      "primary_query_url": "Observation?code=http://loinc.org|24331-3&value-quantity=gt0",
+      "additional_query_urls": [],
+      "raw_response": "Observation?code=http://loinc.org|24331-3&value-quantity=gt0",
+      "prompt_text": "Find patients with high CA 19-9."
+     },
+     "1-broad": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 42,
+      "actual_count": 0,
+      "elapsed_sec": 5.7,
+      "queries_generated": 1,
+      "primary_query_url": "Observation?code=http://loinc.org|24331-1&value-quantity=gt100||%25U%252F%2520mL",
+      "additional_query_urls": [],
+      "raw_response": "Observation?code=http://loinc.org|24331-1&value-quantity=gt100||%25U%252F%2520mL",
+      "prompt_text": "Find patients with CA 19-9 (cancer antigen 19-9) measurements above 100 U/mL \u2014 highly suggestive of pancreatic cancer (also elevated in cholangiocarcinoma and pancreatitis)."
+     },
+     "1-expert": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 42,
+      "actual_count": 42,
+      "elapsed_sec": 5.8,
+      "queries_generated": 1,
+      "primary_query_url": "Observation?code=http://loinc.org|24108-3&value-quantity=gt100||U/mL",
+      "additional_query_urls": [],
+      "raw_response": "Observation?code=http://loinc.org|24108-3&value-quantity=gt100||U/mL",
+      "prompt_text": "Search Observation resources with LOINC 24108-3 (Cancer Ag 19-9) where value-quantity > 100 U/mL. Query: Observation?code=http://loinc.org|24108-3&value-quantity=gt100||U/mL"
+     },
+     "2-naive": {
+      "precision": 0.3853,
+      "recall": 1.0,
+      "f1": 0.5563,
+      "passed": false,
+      "expected_count": 42,
+      "actual_count": 109,
+      "elapsed_sec": 117.6,
+      "queries_generated": 4,
+      "primary_query_url": "Observation?code=http://loinc.org|24108-3&_include=Observation:subject",
+      "additional_query_urls": [
+       "Observation?code=http://loinc.org|24108-3&value-high=100",
+       "Observation?code=...&_include=Observation:subject",
+       "Observation?code=http://loinc.org|24108-3"
+      ],
+      "raw_response": "There are 572 patients. Now, the challenge is that \"high CA 19-9\" is a value-based query. In FHIR, observations have valueQuantity or valueRange elements that contain the actual numeric values.\n\nSince I can't directly filter by value in the search query, I need to think about this differently. The question might be asking for patients who have CA 19-9 observations, and \"high\" might need to be determined by looking at the actual values.\n\nHowever, looking at the available tools, I can only construct FHIR search queries. The standard approach would be to search for observations with the CA 19-9 code, and then the system would need to filter by value.\n\nBut wait - let me re-read the task. The user is asking for \"patients with high CA 19-9\". In a FHIR context, this would typically be a query that filters observations by value. However, the FHIR search API might support value-based filtering.\n\nLet me check if there's a way to search for observations with high values. In FHIR, you can use the `value-high` or `value-low` parameters for value-based filtering.\n\nActually, looking at the server metadata, I don't see Observation in the list of supported resource types for search. This is strange because we were able to search for Observation earlier.\n\nLet me try a different approach. Since the server has 327 observations with CA 19-9, and these observations are linked to patients, I need to find a way to get the patients associated with these observations.\n\nIn FHIR, observations have a `subject` element that references the patient. So I could search for observations with the CA 19-9 code and then get the subject (patient) references.\n\nHowever, the question is about \"high\" CA 19-9. Without being able to filter by value, I might need to assume that all CA 19-9 observations in this dataset are considered \"high\" or that the system will handle the value filtering.\n\nLet me try to construct a query that searches for patients who have CA 19-9 observations. In FHIR, you can use the `subject` parameter to filter observations by patient, but that's the reverse of what we want.\n\nActually, I think the best approach is to search for observations with the CA 19-9 code and then extract the patient references. But since I can only return FHIR query URLs, I need to think about how to express this.\n\nWait, let me re-read the instructions. The task says to find patients with high CA 19-9. In FHIR, this would typically be expressed as a query that filters observations by value. However, the standard FHIR search API doesn't directly support getting patients from observations.\n\nOne approach is to use the `Observation?code=http://loinc.org|24108-3&_include=Observation:subject` query to get observations with their subject (patient) references included.\n\nBut the question is about \"high\" CA 19-9. Without knowing the threshold for \"high\", I might need to assume a standard threshold or that the system will handle it.\n\nActually, let me think about this differently. The user might be expecting a query that would return patients who have CA 19-9 observations with values above a certain threshold. In FHIR, you can use the `value-high` parameter to filter observations.\n\nLet me try to construct a query that searches for observations with CA 19-9 code and high values. The standard approach would be:\n\n`Observation?code=http://loinc.org|24108-3&value-high=100`\n\nBut I don't know what the threshold for \"high\" CA 19-9 is. Normal CA 19-9 levels are typically < 37 U/mL, and elevated levels are often considered > 37 U/mL. However, \"high\" might mean something different in this context.\n\nLet me check if there's any information about value ranges in the observations.\n\nActually, I realize that the task might be simpler than I thought. The user might just want patients who have CA 19-9 observations, and the \"high\" part might be handled by the system or might not be a strict filter.\n\nLet me try to construct a query that searches for observations with the CA 19-9 code and includes the subject (patient) references.\n\nBut wait, the instructions say to return FHIR query URLs, one per line. So I need to provide the actual query that would be used to find patients with high CA 19-9.\n\nIn FHIR, to find patients with high CA 19-9, you would typically:\n1. Search for observations with the CA 19-9 code and high values\n2. Extract the patient references from those observations\n\nHowever, the FHIR search API doesn't directly support getting patients from observations. You would need to use the `Observation?code=...&_include=Observation:subject` query to get observations with their subject references.\n\nBut the question is about \"high\" CA 19-9. Without a specific threshold, I might need to assume a standard threshold or that the system will handle it.\n\nLet me try a different approach. Let me search for observations with the CA 19-9 code and see if I can get more details about the values.\n\nActually, I think the best approach is to provide a query that searches for observations with the CA 19-9 code, and the system will handle the value filtering. The query would be:\n\n`Observation?code=http://loinc.org|24108-3`\n\nBut this returns observations, not patients. To get patients, I would need to include the subject references.\n\nLet me try:\n\n`Observation?code=http://loinc.org|24108-3&_include=Observation:subject`\n\nThis would return observations with their subject (patient) references included.\n\nHowever, the question is about \"high\" CA 19-9. Without a specific threshold, I might need to assume that all CA 19-9 observations are considered \"high\" or that the system will handle the value filtering.\n\nActually, let me re-read the task. The user is asking for \"patients with high CA 19-9\". In a FHIR context, this would typically be a query that filters observations by value. However, the FHIR search API might support value-based filtering.\n\nLet me try to construct a query that searches for observations with the CA 19-9 code and high values. In FHIR, you can use the `value-high` parameter to filter observations.\n\nBut I don't know what the threshold for \"high\" CA 19-9 is. Let me assume a standard threshold of 37 U/mL (the upper limit of normal).\n\nActually, I think the best approach is to provide a query that searches for observations with the CA 19-9 code, and the system will handle the value filtering. The query would be:\n\n`Observation?code=http://loinc.org|24108-3`\n\nBut this returns observations, not patients. To get patients, I would need to include the subject references.\n\nWait, I think I'm overcomplicating this. The task is to find patients with high CA 19-9. In FHIR, this would typically be expressed as a query that filters observations by value and then extracts the patient references.\n\nHowever, the FHIR search API doesn't directly support getting patients from observations. You would need to use the `Observation?code=...&_include=Observation:subject` query to get observations with their subject references included.\n\nBut the question is about \"high\" CA 19-9. Without a specific threshold, I might need to assume that all CA 19-9 observations are considered \"high\" or that the system will handle the value filtering.\n\nLet me try a different approach. Let me search for observations with the CA 19-9 code and see if I can get more details about the values.\n\nActually, I think the best approach is to provide a query that searches for observations with the CA 19-9 code, and the system will handle the value filtering. The query would be:\n\n`Observation?code=http://loinc.org|24108-3`\n\nBut this returns observations, not patients. To get patients, I would need to include the subject references.\n\nHmm, let me think about this more carefully. The task says to find \"patients with high CA 19-9\". In FHIR, observations have a `subject` element that references the patient. So to find patients with high CA 19-9, I would need to:\n\n1. Search for observations with the CA 19-9 code and high values\n2. Extract the patient references from those observations\n\nHowever, the FHI",
+      "prompt_text": "Find patients with high CA 19-9.",
+      "run_metadata": {
+       "tool_calls_count": 16,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     },
+     "2-broad": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 42,
+      "actual_count": 0,
+      "elapsed_sec": 82.7,
+      "queries_generated": 7,
+      "primary_query_url": "Observation?_summary=count",
+      "additional_query_urls": [
+       "Observation?code=http://loinc.org|24108-3&_summary=count",
+       "Observation?code=http://loinc.org|24108-3",
+       "Observation?code=http://loinc.org|24108-3&_id=6582ad24-ba14-e20f-6d78-8174918e7451",
+       "Observation?code=http://loinc.org|24108-3&value-quantity>100",
+       "Observation?code=http://loinc.org|24108-3&value-quantity>100&_summary=count",
+       "Observation?code=http://loinc.org|24108-3&value-quantity=100"
+      ],
+      "raw_response": "[FALLBACK: parser couldn't extract URL from final response; using fhir_search queries from tool trace]\nObservation?_summary=count\nObservation?code=http://loinc.org|24108-3&_summary=count\nObservation?code=http://loinc.org|24108-3\nObservation?code=http://loinc.org|24108-3&_id=6582ad24-ba14-e20f-6d78-8174918e7451\nObservation?code=http://loinc.org|24108-3&value-quantity>100\nObservation?code=http://loinc.org|24108-3&value-quantity>100&_summary=count\nObservation?code=http://loinc.org|24108-3&value-quantity=100\nObservation/_id/6582ad24-ba14-e20f-6d78-8174918e7451\n\nOriginal last assistant message:\nThe value-quantity filter doesn't seem to work. Let me try to get all observations and see if I can find a way to filter by value. Perhaps I need to look at the actual observation resources to understand the value format.\n\nLet me try to get a specific observation by its ID to see the full structure.\n\n",
+      "prompt_text": "Find patients with CA 19-9 (cancer antigen 19-9) measurements above 100 U/mL \u2014 highly suggestive of pancreatic cancer (also elevated in cholangiocarcinoma and pancreatitis).",
+      "run_metadata": {
+       "tool_calls_count": 20,
+       "stop_reason": "fallback_tool_trace",
+       "fallback_used": true
+      }
+     },
+     "2-expert": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 42,
+      "actual_count": 42,
+      "elapsed_sec": 13.0,
+      "queries_generated": 1,
+      "primary_query_url": "Observation?code=http://loinc.org|24108-3&value-quantity=gt100||U/mL",
+      "additional_query_urls": [],
+      "raw_response": "The query returned results, showing that the FHIR server has Observation resources with LOINC code 24108-3 (Cancer Ag 19-9) and the value-quantity filter is working. The sample shows 10 entries returned with the correct code and display name.\n\nThe query appears to be working correctly. Let me verify the exact format needed for the final answer.\n\nBased on the successful search, the FHIR query URL is:\n\nObservation?code=http://loinc.org|24108-3&value-quantity=gt100||U/mL",
+      "prompt_text": "Search Observation resources with LOINC 24108-3 (Cancer Ag 19-9) where value-quantity > 100 U/mL. Query: Observation?code=http://loinc.org|24108-3&value-quantity=gt100||U/mL",
+      "run_metadata": {
+       "tool_calls_count": 1,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     },
+     "3-naive": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 42,
+      "actual_count": 42,
+      "elapsed_sec": 101.4,
+      "queries_generated": 2,
+      "primary_query_url": "Observation?code=http://loinc.org|24108-3&value-quantity=gt37||U%2FmL",
+      "additional_query_urls": [
+       "Observation?code=http://loinc.org|24108-3&value-quantity=gt100||U%2FmL"
+      ],
+      "raw_response": "The query is working and returning observations. To get the actual patient list, you would need to examine the full observation resources to extract the `subject` (patient) references.\n\nThe FHIR query to find observations of high CA 19-9 (>37 U/mL) is:\n\nObservation?code=http://loinc.org|24108-3&value-quantity=gt37||U%2FmL\n\nIf you need a different threshold (e.g., >100 U/mL for significantly elevated), you can adjust the query accordingly.\n\nObservation?code=http://loinc.org|24108-3&value-quantity=gt100||U%2FmL\n\nThis would find patients with CA 19-9 > 100 U/mL, which is often used as a threshold for pancreatic cancer screening.",
+      "prompt_text": "Find patients with high CA 19-9.",
+      "run_metadata": {
+       "tool_calls_count": 15,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     },
+     "3-broad": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 42,
+      "actual_count": 42,
+      "elapsed_sec": 98.5,
+      "queries_generated": 1,
+      "primary_query_url": "Observation?code=http://loinc.org|24108-3&value-quantity=ge100||U%2FmL",
+      "additional_query_urls": [],
+      "raw_response": "Observation?code=http://loinc.org|24108-3&value-quantity=ge100||U%2FmL",
+      "prompt_text": "Find patients with CA 19-9 (cancer antigen 19-9) measurements above 100 U/mL \u2014 highly suggestive of pancreatic cancer (also elevated in cholangiocarcinoma and pancreatitis).",
+      "run_metadata": {
+       "tool_calls_count": 12,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     },
+     "3-expert": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 42,
+      "actual_count": 42,
+      "elapsed_sec": 11.2,
+      "queries_generated": 1,
+      "primary_query_url": "Observation?code=http://loinc.org|24108-3&value-quantity=gt100||U/mL",
+      "additional_query_urls": [],
+      "raw_response": "The query was successful and returned 10 entries. The search found Observation resources with LOINC code 24108-3 (Cancer Ag 19-9) where the value-quantity is greater than 100 U/mL.\n\nThe query URL is:\n```\nObservation?code=http://loinc.org|24108-3&value-quantity=gt100||U/mL\n```",
+      "prompt_text": "Search Observation resources with LOINC 24108-3 (Cancer Ag 19-9) where value-quantity > 100 U/mL. Query: Observation?code=http://loinc.org|24108-3&value-quantity=gt100||U/mL",
+      "run_metadata": {
+       "tool_calls_count": 1,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     }
+    }
+   }
+  }
+ ]
+}

@@ -1,0 +1,2285 @@
+{
+ "phenotype": "tuberculosis",
+ "canonical_tc": "phekb-tuberculosis-comprehensive",
+ "cases": [
+  {
+   "test_case": "phekb-tuberculosis-comprehensive",
+   "grids": {
+    "copilot:claude-opus-4.7": {
+     "1-naive": {
+      "precision": 1.0,
+      "recall": 0.2645,
+      "f1": 0.4184,
+      "passed": false,
+      "expected_count": 465,
+      "actual_count": 123,
+      "elapsed_sec": 6.1,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|56717001",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|56717001",
+      "prompt_text": "Find all my TB patients."
+     },
+     "1-broad": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 465,
+      "actual_count": 465,
+      "elapsed_sec": 17.4,
+      "queries_generated": 3,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|56717001&_include=Condition:patient",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|9384&_include=MedicationRequest:patient",
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6038&_include=MedicationRequest:patient"
+      ],
+      "raw_response": "Condition?code=http://snomed.info/sct|56717001&_include=Condition:patient\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|9384&_include=MedicationRequest:patient\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6038&_include=MedicationRequest:patient",
+      "prompt_text": "Find all TB patients \u2014 by diagnosis or by anti-TB medications (rifampin, isoniazid). Run multiple queries and union the patient sets."
+     },
+     "1-expert": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 465,
+      "actual_count": 465,
+      "elapsed_sec": 0.7,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|154283005,http://snomed.info/sct|56717001",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|9384,http://www.nlm.nih.gov/research/umls/rxnorm|6038"
+      ],
+      "raw_response": "Condition?code=http://snomed.info/sct|154283005,http://snomed.info/sct|56717001\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|9384,http://www.nlm.nih.gov/research/umls/rxnorm|6038",
+      "prompt_text": "Run two queries. (1) Condition?code=http://snomed.info/sct|154283005,http://snomed.info/sct|56717001 \u2014 TB dx. (2) MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|9384,http://www.nlm.nih.gov/research/umls/rxnorm|6038 \u2014 anti-TB drugs. Union the patient IDs."
+     },
+     "2-naive": {
+      "precision": 1.0,
+      "recall": 0.7785,
+      "f1": 0.8755,
+      "passed": true,
+      "expected_count": 465,
+      "actual_count": 362,
+      "elapsed_sec": 31.5,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|56717001,http://snomed.info/sct|154283005",
+      "additional_query_urls": [],
+      "raw_response": "FINAL ANSWER:\n\nCondition?code=http://snomed.info/sct|56717001,http://snomed.info/sct|154283005",
+      "prompt_text": "Find all my TB patients.",
+      "run_metadata": {
+       "output_tokens": 50,
+       "tool_calls_count": 3,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     },
+     "2-broad": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 465,
+      "actual_count": 465,
+      "elapsed_sec": 45.0,
+      "queries_generated": 3,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|56717001,http://snomed.info/sct|154283005",
+      "additional_query_urls": [
+       "MedicationRequest?code:text=rifampin",
+       "MedicationRequest?code:text=isoniazid"
+      ],
+      "raw_response": "Condition?code=http://snomed.info/sct|56717001,http://snomed.info/sct|154283005\nMedicationRequest?code:text=rifampin\nMedicationRequest?code:text=isoniazid",
+      "prompt_text": "Find all TB patients \u2014 by diagnosis or by anti-TB medications (rifampin, isoniazid). Run multiple queries and union the patient sets.",
+      "run_metadata": {
+       "output_tokens": 74,
+       "tool_calls_count": 9,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     },
+     "2-expert": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 465,
+      "actual_count": 465,
+      "elapsed_sec": 33.7,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|154283005,http://snomed.info/sct|56717001",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|9384,http://www.nlm.nih.gov/research/umls/rxnorm|6038"
+      ],
+      "raw_response": "Condition?code=http://snomed.info/sct|154283005,http://snomed.info/sct|56717001\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|9384,http://www.nlm.nih.gov/research/umls/rxnorm|6038",
+      "prompt_text": "Run two queries. (1) Condition?code=http://snomed.info/sct|154283005,http://snomed.info/sct|56717001 \u2014 TB dx. (2) MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|9384,http://www.nlm.nih.gov/research/umls/rxnorm|6038 \u2014 anti-TB drugs. Union the patient IDs.",
+      "run_metadata": {
+       "output_tokens": 105,
+       "tool_calls_count": 2,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     },
+     "3-naive": {
+      "precision": 1.0,
+      "recall": 0.7785,
+      "f1": 0.8755,
+      "passed": true,
+      "expected_count": 465,
+      "actual_count": 362,
+      "elapsed_sec": 35.3,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|56717001,http://snomed.info/sct|154283005",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|56717001,http://snomed.info/sct|154283005",
+      "prompt_text": "Find all my TB patients.",
+      "run_metadata": {
+       "output_tokens": 39,
+       "tool_calls_count": 3,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     },
+     "3-broad": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 465,
+      "actual_count": 465,
+      "elapsed_sec": 45.3,
+      "queries_generated": 3,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|56717001,http://snomed.info/sct|154283005",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|9384",
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6038"
+      ],
+      "raw_response": "Condition?code=http://snomed.info/sct|56717001,http://snomed.info/sct|154283005\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|9384\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6038",
+      "prompt_text": "Find all TB patients \u2014 by diagnosis or by anti-TB medications (rifampin, isoniazid). Run multiple queries and union the patient sets.",
+      "run_metadata": {
+       "output_tokens": 115,
+       "tool_calls_count": 9,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     },
+     "3-expert": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 465,
+      "actual_count": 465,
+      "elapsed_sec": 30.3,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|154283005,http://snomed.info/sct|56717001",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|9384,http://www.nlm.nih.gov/research/umls/rxnorm|6038"
+      ],
+      "raw_response": "Condition?code=http://snomed.info/sct|154283005,http://snomed.info/sct|56717001\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|9384,http://www.nlm.nih.gov/research/umls/rxnorm|6038",
+      "prompt_text": "Run two queries. (1) Condition?code=http://snomed.info/sct|154283005,http://snomed.info/sct|56717001 \u2014 TB dx. (2) MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|9384,http://www.nlm.nih.gov/research/umls/rxnorm|6038 \u2014 anti-TB drugs. Union the patient IDs.",
+      "run_metadata": {
+       "output_tokens": 139,
+       "tool_calls_count": 0,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     }
+    },
+    "copilot:claude-opus-4.7+fhirskill": {
+     "1-naive": {
+      "precision": 1.0,
+      "recall": 0.2645,
+      "f1": 0.4184,
+      "passed": false,
+      "expected_count": 465,
+      "actual_count": 123,
+      "elapsed_sec": 0.1,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|56717001",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|56717001",
+      "prompt_text": "Find all my TB patients."
+     },
+     "1-broad": {
+      "precision": 1.0,
+      "recall": 0.8,
+      "f1": 0.8889,
+      "passed": true,
+      "expected_count": 465,
+      "actual_count": 372,
+      "elapsed_sec": 0.3,
+      "queries_generated": 4,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|56717001",
+      "additional_query_urls": [
+       "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|A15.9,http://hl7.org/fhir/sid/icd-10-cm|A19.9",
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|9384",
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|5691"
+      ],
+      "raw_response": "Condition?code=http://snomed.info/sct|56717001\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|A15.9,http://hl7.org/fhir/sid/icd-10-cm|A19.9\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|9384\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|5691",
+      "prompt_text": "Find all TB patients \u2014 by diagnosis or by anti-TB medications (rifampin, isoniazid). Run multiple queries and union the patient sets."
+     },
+     "1-expert": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 465,
+      "actual_count": 465,
+      "elapsed_sec": 0.6,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|154283005,http://snomed.info/sct|56717001",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|9384,http://www.nlm.nih.gov/research/umls/rxnorm|6038"
+      ],
+      "raw_response": "Condition?code=http://snomed.info/sct|154283005,http://snomed.info/sct|56717001\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|9384,http://www.nlm.nih.gov/research/umls/rxnorm|6038",
+      "prompt_text": "Run two queries. (1) Condition?code=http://snomed.info/sct|154283005,http://snomed.info/sct|56717001 \u2014 TB dx. (2) MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|9384,http://www.nlm.nih.gov/research/umls/rxnorm|6038 \u2014 anti-TB drugs. Union the patient IDs."
+     }
+    },
+    "copilot:claude-sonnet-4.6": {
+     "1-naive": {
+      "precision": 1.0,
+      "recall": 0.2645,
+      "f1": 0.4184,
+      "passed": false,
+      "expected_count": 465,
+      "actual_count": 123,
+      "elapsed_sec": 48.2,
+      "queries_generated": 6,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|56717001&_include=Condition:subject",
+      "additional_query_urls": [
+       "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|A15&_include=Condition:subject",
+       "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|A16&_include=Condition:subject",
+       "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|A17&_include=Condition:subject",
+       "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|A18&_include=Condition:subject",
+       "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|A19&_include=Condition:subject"
+      ],
+      "raw_response": "## FHIR Queries for TB (Tuberculosis) Patients\n\nTuberculosis is represented across SNOMED CT and ICD-10-CM (codes A15\u2013A19), so the following queries cover the full spectrum:\n\n```\nCondition?code=http://snomed.info/sct|56717001&_include=Condition:subject\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|A15&_include=Condition:subject\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|A16&_include=Condition:subject\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|A17&_include=Condition:subject\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|A18&_include=Condition:subject\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|A19&_include=Condition:subject\n```\n\n---\n\n### Key Details\n\n| Code System | Code(s) | Description |\n|---|---|---|\n| SNOMED CT | `56717001` | Tuberculosis (disorder) |\n| ICD-10-CM | `A15` | Respiratory tuberculosis |\n| ICD-10-CM | `A16` | Respiratory TB (unconfirmed) |\n| ICD-10-CM | `A17` | TB of nervous system |\n| ICD-10-CM | `A18` | TB of other organs |\n| ICD-10-CM | `A19` | Miliary tuberculosis |\n\n### Notes\n- `_include=Condition:subject` pulls the associated **Patient** resources alongside each condition.\n- If your FHIR server supports the **`:below`** modifier for hierarchical ICD-10 lookups, you can use `code:below=http://hl7.org/fhir/sid/icd-10-cm|A15` to catch all sub-codes (e.g., A15.0, A15.9) automatically.\n- Add `&clinical-status=active` to any query to filter for **currently active** TB diagnoses only.",
+      "prompt_text": "Find all my TB patients."
+     },
+     "1-broad": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 465,
+      "actual_count": 465,
+      "elapsed_sec": 120.7,
+      "queries_generated": 11,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|56717001&_include=Condition:subject",
+      "additional_query_urls": [
+       "Condition?code:below=http://snomed.info/sct|56717001&_include=Condition:subject",
+       "Condition?code:below=http://hl7.org/fhir/sid/icd-10-cm|A15&_include=Condition:subject",
+       "Condition?code:below=http://hl7.org/fhir/sid/icd-10-cm|A17&_include=Condition:subject",
+       "Condition?code:below=http://hl7.org/fhir/sid/icd-10-cm|A18&_include=Condition:subject",
+       "Condition?code:below=http://hl7.org/fhir/sid/icd-10-cm|A19&_include=Condition:subject",
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|9054&_include=MedicationRequest:subject",
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6038&_include=MedicationRequest:subject",
+       "MedicationStatement?code=http://www.nlm.nih.gov/research/umls/rxnorm|9054&_include=MedicationStatement:subject",
+       "MedicationStatement?code=http://www.nlm.nih.gov/research/umls/rxnorm|6038&_include=MedicationStatement:subject",
+       "MedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm\\|9054"
+      ],
+      "raw_response": "## FHIR Queries: Tuberculosis Patient Identification\n\n---\n\n### \ud83d\udd2c GROUP 1 \u2014 TB Diagnosis via SNOMED CT\n\n```\nCondition?code=http://snomed.info/sct|56717001&_include=Condition:subject\nCondition?code:below=http://snomed.info/sct|56717001&_include=Condition:subject\n```\n\n---\n\n### \ud83c\udfe5 GROUP 2 \u2014 TB Diagnosis via ICD-10-CM (Categories A15\u2013A19)\n\n```\nCondition?code:below=http://hl7.org/fhir/sid/icd-10-cm|A15&_include=Condition:subject\nCondition?code:below=http://hl7.org/fhir/sid/icd-10-cm|A17&_include=Condition:subject\nCondition?code:below=http://hl7.org/fhir/sid/icd-10-cm|A18&_include=Condition:subject\nCondition?code:below=http://hl7.org/fhir/sid/icd-10-cm|A19&_include=Condition:subject\n```\n\n---\n\n### \ud83d\udc8a GROUP 3 \u2014 Anti-TB Medications via MedicationRequest\n\n```\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|9054&_include=MedicationRequest:subject\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6038&_include=MedicationRequest:subject\n```\n\n---\n\n### \ud83d\udccb GROUP 4 \u2014 Anti-TB Medications via MedicationStatement\n\n```\nMedicationStatement?code=http://www.nlm.nih.gov/research/umls/rxnorm|9054&_include=MedicationStatement:subject\nMedicationStatement?code=http://www.nlm.nih.gov/research/umls/rxnorm|6038&_include=MedicationStatement:subject\n```\n\n---\n\n### \ud83d\udccc Code Reference Table\n\n| Query | Code | System | Meaning |\n|---|---|---|---|\n| SNOMED | `56717001` | SNOMED CT | Tuberculosis (disorder) |\n| ICD-10 | `A15` | ICD-10-CM | Respiratory tuberculosis |\n| ICD-10 | `A17` | ICD-10-CM | TB of nervous system |\n| ICD-10 | `A18` | ICD-10-CM | TB of other organs |\n| ICD-10 | `A19` | ICD-10-CM | Miliary tuberculosis |\n| RxNorm | `9054` | RxNorm | **Rifampin** (ingredient) |\n| RxNorm | `6038` | RxNorm | **Isoniazid** (ingredient) |\n\n---\n\n### \ud83d\udd17 Union Strategy Notes\n\n| Concern | Detail |\n|---|---|\n| `code:below` | Requires server-side code system hierarchy support (SNOMED + ICD-10-CM); catches all child concepts |\n| `_include=:subject` | Returns both the resource and its linked `Patient` resource in one bundle |\n| Deduplication | Collect all `Patient.id` values across all 10 result sets and `UNION` them to avoid double-counting patients found via both diagnosis and medication |\n| Chained medication refs | If medications are stored as `Reference(Medication)`, also run: `MedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm\\|9054` |",
+      "prompt_text": "Find all TB patients \u2014 by diagnosis or by anti-TB medications (rifampin, isoniazid). Run multiple queries and union the patient sets."
+     },
+     "1-expert": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 465,
+      "actual_count": 465,
+      "elapsed_sec": 62.0,
+      "queries_generated": 3,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|154283005,http://snomed.info/sct|56717001&_elements=subject,code,clinicalStatus",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|9384,http://www.nlm.nih.gov/research/umls/rxnorm|6038&_elements=subject,medication,status",
+       "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|A15"
+      ],
+      "raw_response": "Here are the two FHIR queries to retrieve TB-related records and union the patient IDs:\n\n---\n\n### Query 1 \u2014 TB Diagnoses (SNOMED)\n```\nCondition?code=http://snomed.info/sct|154283005,http://snomed.info/sct|56717001&_elements=subject,code,clinicalStatus\n```\n> Codes:\n> - `154283005` \u2014 Tuberculosis (SNOMED legacy)\n> - `56717001` \u2014 Tuberculosis (SNOMED CT preferred)\n\n---\n\n### Query 2 \u2014 Anti-TB Medications (RxNorm)\n```\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|9384,http://www.nlm.nih.gov/research/umls/rxnorm|6038&_elements=subject,medication,status\n```\n> Codes:\n> - `9384` \u2014 Isoniazid (INH)\n> - `6038` \u2014 Rifampin\n\n---\n\n### Post-Query Union Logic (Pseudo-code)\n\n```python\ntb_dx_patients    = {entry.resource.subject.reference for entry in query1_results}\ntb_med_patients   = {entry.resource.subject.reference for entry in query2_results}\n\nunion_patient_ids = tb_dx_patients | tb_med_patients\n```\n\n---\n\n### Notes\n| Step | Detail |\n|------|--------|\n| **Union** | Combines patients from **either** a TB diagnosis **or** an anti-TB prescription (or both) |\n| **Intersection** | If you later need confirmed + treated patients, use `tb_dx_patients & tb_med_patients` |\n| **Expand codes** | Consider adding `isoniazid + rifampin` combos (e.g., RxNorm `854990` for Rifater) and ICD-10 `A15.*` codes via `Condition?code=http://hl7.org/fhir/sid/icd-10-cm|A15` for broader coverage |\n| **Active only** | Append `&clinical-status=active` (Condition) or `&status=active` (MedicationRequest) to filter current cases |",
+      "prompt_text": "Run two queries. (1) Condition?code=http://snomed.info/sct|154283005,http://snomed.info/sct|56717001 \u2014 TB dx. (2) MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|9384,http://www.nlm.nih.gov/research/umls/rxnorm|6038 \u2014 anti-TB drugs. Union the patient IDs."
+     },
+     "2-naive": {
+      "precision": 1.0,
+      "recall": 0.7785,
+      "f1": 0.8755,
+      "passed": true,
+      "expected_count": 465,
+      "actual_count": 362,
+      "elapsed_sec": 278.9,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|56717001,http://snomed.info/sct|154283005,http://snomed.info/sct|25629007,http://snomed.info/sct|154281007,http://snomed.info/sct|187285000,http://snomed.info/sct|154292008,http://snomed.info/sct|186282009,http://snomed.info/sct|373576009",
+      "additional_query_urls": [],
+      "raw_response": "The server confirms:\n- \u2705 **SNOMED CT only** \u2014 all TB conditions use SNOMED (no ICD-10-CM TB codes present, no TB medication records)\n- \u2705 **362 TB Condition records** captured via the SNOMED codes\n- \u2705 Dominant codes: `56717001` (Tuberculosis, general) and `154283005` (Pulmonary tuberculosis), plus `25629007` (Acute tuberculosis)\n- \u2705 Crosswalk-confirmed equivalent SNOMED codes added for completeness (legacy/retired synonyms): `154281007`, `187285000`, `154292008`, `186282009`, `373576009`\n- \u274c No latent TB subtypes, ICD-10 codes, or TB-specific medication records found on this server\n\nHere is your final comprehensive query:\n\n---\n\n`Condition?code=http://snomed.info/sct|56717001,http://snomed.info/sct|154283005,http://snomed.info/sct|25629007,http://snomed.info/sct|154281007,http://snomed.info/sct|187285000,http://snomed.info/sct|154292008,http://snomed.info/sct|186282009,http://snomed.info/sct|373576009`",
+      "prompt_text": "Find all my TB patients.",
+      "run_metadata": {
+       "output_tokens": 1503,
+       "tool_calls_count": 22,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     },
+     "2-broad": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 465,
+      "actual_count": 465,
+      "elapsed_sec": 328.4,
+      "queries_generated": 3,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|56717001,http://snomed.info/sct|154283005,http://snomed.info/sct|25629007,http://snomed.info/sct|421571007,http://snomed.info/sct|111832004,http://snomed.info/sct|63309002,http://snomed.info/sct|186175002,http://snomed.info/sct|186177005,http://snomed.info/sct|186193001,http://snomed.info/sct|186194007,http://snomed.info/sct|186195008,http://snomed.info/sct|186199002,http://snomed.info/sct|186203002,http://snomed.info/sct|186204008,http://snomed.info/sct|62494007,http://snomed.info/sct|74387008,http://snomed.info/sct|88356006,http://snomed.info/sct|446946005,http://snomed.info/sct|446986002,http://snomed.info/sct|447006007,http://snomed.info/sct|473430007,http://snomed.info/sct|129211000119108,http://snomed.info/sct|10759881000119100",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|9384,http://www.nlm.nih.gov/research/umls/rxnorm|198201,http://www.nlm.nih.gov/research/umls/rxnorm|198202,http://www.nlm.nih.gov/research/umls/rxnorm|201867,http://www.nlm.nih.gov/research/umls/rxnorm|207436,http://www.nlm.nih.gov/research/umls/rxnorm|246297,http://www.nlm.nih.gov/research/umls/rxnorm|312821,http://www.nlm.nih.gov/research/umls/rxnorm|433775,http://www.nlm.nih.gov/research/umls/rxnorm|199802,http://www.nlm.nih.gov/research/umls/rxnorm|106876,http://www.nlm.nih.gov/research/umls/rxnorm|198203,http://www.nlm.nih.gov/research/umls/rxnorm|198384,http://www.nlm.nih.gov/research/umls/rxnorm|199755,http://www.nlm.nih.gov/research/umls/rxnorm|199756",
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6038,http://www.nlm.nih.gov/research/umls/rxnorm|105292,http://www.nlm.nih.gov/research/umls/rxnorm|105293,http://www.nlm.nih.gov/research/umls/rxnorm|197832,http://www.nlm.nih.gov/research/umls/rxnorm|204430,http://www.nlm.nih.gov/research/umls/rxnorm|311166,http://www.nlm.nih.gov/research/umls/rxnorm|311171,http://www.nlm.nih.gov/research/umls/rxnorm|106876,http://www.nlm.nih.gov/research/umls/rxnorm|198203,http://www.nlm.nih.gov/research/umls/rxnorm|198384,http://www.nlm.nih.gov/research/umls/rxnorm|199755,http://www.nlm.nih.gov/research/umls/rxnorm|199756"
+      ],
+      "raw_response": "All three queries are confirmed clean \u2014 SNOMED TB codes on Conditions, RxNorm `9384` (rifampin) and `6038` (isoniazid) on MedicationRequests \u2014 exactly as sampled. Here is the complete breakdown before the final answer:\n\n---\n\n### \ud83d\udd2c Discovery Summary\n\n| Arm | Resource | Code System | Validated Count | Source |\n|-----|----------|-------------|----------------|--------|\n| TB diagnosis | `Condition` | SNOMED CT | **362** | Server sample + VSAC COVID19/Urology TB SNOMED value sets |\n| Rifampin | `MedicationRequest` | RxNorm | **334** | VSAC \"Tuberculosis (Rifampin)\" OID 2.16.840.1.113762.1.4.1146.2366 + Rifampin OID .991 |\n| Isoniazid | `MedicationRequest` | RxNorm | **465** | VSAC \"Tuberculosis (Isoniazid [INH])\" OID 2.16.840.1.113762.1.4.1146.2363 |\n\n**Code logic applied:**\n- **Condition**: 20 SNOMED TB codes covering general TB (`56717001`), pulmonary subtypes (primary, progressive, cavitary, miliary, confirmed-by-culture, relapse, reinfection), extrapulmonary (hilar nodes, pleural, TB+AIDS), and obstetric TB\n- **Rifampin MedRequest**: RxNorm ingredient `9384` + 8 single-drug formulations (oral capsule/tablet/suspension, IV injection) + 5 combination products containing rifampin (isoniazid/rifampin, INH/PZA/RIF)\n- **Isoniazid MedRequest**: RxNorm ingredient `6038` + 6 single-drug formulations + 5 combination products containing isoniazid (overlapping combos with rifampin arm is intentional)\n\nUnion these three patient sets client-side. Patients on both drugs (as is standard for RIPE therapy) will appear in all three \u2014 de-duplicate by patient ID.\n\n---\n\n```\nCondition?code=http://snomed.info/sct|56717001,http://snomed.info/sct|154283005,http://snomed.info/sct|25629007,http://snomed.info/sct|421571007,http://snomed.info/sct|111832004,http://snomed.info/sct|63309002,http://snomed.info/sct|186175002,http://snomed.info/sct|186177005,http://snomed.info/sct|186193001,http://snomed.info/sct|186194007,http://snomed.info/sct|186195008,http://snomed.info/sct|186199002,http://snomed.info/sct|186203002,http://snomed.info/sct|186204008,http://snomed.info/sct|62494007,http://snomed.info/sct|74387008,http://snomed.info/sct|88356006,http://snomed.info/sct|446946005,http://snomed.info/sct|446986002,http://snomed.info/sct|447006007,http://snomed.info/sct|473430007,http://snomed.info/sct|129211000119108,http://snomed.info/sct|10759881000119100\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|9384,http://www.nlm.nih.gov/research/umls/rxnorm|198201,http://www.nlm.nih.gov/research/umls/rxnorm|198202,http://www.nlm.nih.gov/research/umls/rxnorm|201867,http://www.nlm.nih.gov/research/umls/rxnorm|207436,http://www.nlm.nih.gov/research/umls/rxnorm|246297,http://www.nlm.nih.gov/research/umls/rxnorm|312821,http://www.nlm.nih.gov/research/umls/rxnorm|433775,http://www.nlm.nih.gov/research/umls/rxnorm|199802,http://www.nlm.nih.gov/research/umls/rxnorm|106876,http://www.nlm.nih.gov/research/umls/rxnorm|198203,http://www.nlm.nih.gov/research/umls/rxnorm|198384,http://www.nlm.nih.gov/research/umls/rxnorm|199755,http://www.nlm.nih.gov/research/umls/rxnorm|199756\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6038,http://www.nlm.nih.gov/research/umls/rxnorm|105292,http://www.nlm.nih.gov/research/umls/rxnorm|105293,http://www.nlm.nih.gov/research/umls/rxnorm|197832,http://www.nlm.nih.gov/research/umls/rxnorm|204430,http://www.nlm.nih.gov/research/umls/rxnorm|311166,http://www.nlm.nih.gov/research/umls/rxnorm|311171,http://www.nlm.nih.gov/research/umls/rxnorm|106876,http://www.nlm.nih.gov/research/umls/rxnorm|198203,http://www.nlm.nih.gov/research/umls/rxnorm|198384,http://www.nlm.nih.gov/research/umls/rxnorm|199755,http://www.nlm.nih.gov/research/umls/rxnorm|199756\n```",
+      "prompt_text": "Find all TB patients \u2014 by diagnosis or by anti-TB medications (rifampin, isoniazid). Run multiple queries and union the patient sets.",
+      "run_metadata": {
+       "output_tokens": 2934,
+       "tool_calls_count": 28,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     },
+     "2-expert": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 465,
+      "actual_count": 465,
+      "elapsed_sec": 95.9,
+      "queries_generated": 3,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|154283005,http://snomed.info/sct|56717001",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|9384,http://www.nlm.nih.gov/research/umls/rxnorm|6038",
+       "Condition?code=...&_elements=subject"
+      ],
+      "raw_response": "Both queries fired cleanly and returned real matching resources. Here's a full summary:\n\n---\n\n## \u2705 Query Results\n\n### Query 1 \u2014 TB Diagnosis (`Condition`)\n| SNOMED Code | Display | Hits in sample |\n|---|---|---|\n| `154283005` | Pulmonary tuberculosis | \u2705 firing |\n| `56717001` | Tuberculosis (general) | \u2705 firing |\n\n- **Entries returned:** 10 (server did not expose a `total` count)\n- **Category observed:** `encounter-diagnosis` \u2014 these are encounter-level diagnoses, not just problem-list entries\n- Both codes are confirmed active on this server\n\n---\n\n### Query 2 \u2014 Anti-TB Medications (`MedicationRequest`)\n| RxNorm Code | Drug | Hits in sample |\n|---|---|---|\n| `9384` | Rifampin | \u2705 firing |\n| `6038` | Isoniazid | \u2705 firing |\n\n- **Entries returned:** 10 (no server total)\n- **Category observed:** `community` \u2014 scripts issued in outpatient/community settings, consistent with standard TB RIPE regimen prescribing\n- Both codes confirmed active on this server\n\n---\n\n## \ud83d\udd17 Union Strategy\n\nTo build your TB cohort, collect `subject.reference` (patient IDs) from **both** result sets and union them. Patients may appear in **one or both** buckets:\n\n| Scenario | Captured by |\n|---|---|\n| Diagnosed + treated | Both queries |\n| Diagnosed, not yet medicated (or meds elsewhere) | Condition only |\n| Treated without a local Condition record | MedicationRequest only \u2190 **would be missed by dx-only query** |\n\n---\n\n## \u2705 Final Confirmed Queries\n\n```\nCondition?code=http://snomed.info/sct|154283005,http://snomed.info/sct|56717001\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|9384,http://www.nlm.nih.gov/research/umls/rxnorm|6038\n```\n\n---\n\n### \u26a0\ufe0f Recommended Enhancements (optional but worth considering)\n\n1. **Broader TB code coverage** \u2014 the current SNOMED set covers pulmonary TB + generic TB, but misses extrapulmonary subtypes (miliary TB `59276001`, TB meningitis `95883001`, etc.). A VSAC TB value-set expansion would catch those.\n2. **Full RIPE regimen** \u2014 Rifampin + Isoniazid are 2 of 4 first-line drugs. Adding Pyrazinamide (`RxNorm 9344`) and Ethambutol (`RxNorm 3964`) to Query 2 would catch patients prescribed those without Rifampin/INH (e.g., MDR-TB regimens or drug intolerance switches).\n3. **Add `_elements=subject`** to each query to retrieve only patient references efficiently at scale: `Condition?code=...&_elements=subject`",
+      "prompt_text": "Run two queries. (1) Condition?code=http://snomed.info/sct|154283005,http://snomed.info/sct|56717001 \u2014 TB dx. (2) MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|9384,http://www.nlm.nih.gov/research/umls/rxnorm|6038 \u2014 anti-TB drugs. Union the patient IDs.",
+      "run_metadata": {
+       "output_tokens": 960,
+       "tool_calls_count": 2,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     },
+     "3-naive": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 465,
+      "actual_count": 465,
+      "elapsed_sec": 153.7,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|56717001,http://snomed.info/sct|154283005,http://snomed.info/sct|25629007",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6038,http://www.nlm.nih.gov/research/umls/rxnorm|9384,http://www.nlm.nih.gov/research/umls/rxnorm|8987,http://www.nlm.nih.gov/research/umls/rxnorm|4110"
+      ],
+      "raw_response": "All evidence is verified. Here's a summary of what was found before the final answer:\n\n| Signal | Resource | Codes Used | Count |\n|---|---|---|---|\n| TB diagnoses | `Condition` | SNOMED: Tuberculosis (56717001), Pulmonary TB (154283005), Acute TB (25629007) | **362** |\n| TB first-line drugs | `MedicationRequest` | RxNorm: isoniazid (6038), rifampin (9384), pyrazinamide (8987), ethambutol (4110) | **799** |\n\nThis matches **Playbook 12 (Cohort = OR)** \u2014 union patients identified by either a TB diagnosis *or* a TB first-line medication. The evaluator will union both patient sets.\n\n---\n\n```\nCondition?code=http://snomed.info/sct|56717001,http://snomed.info/sct|154283005,http://snomed.info/sct|25629007\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6038,http://www.nlm.nih.gov/research/umls/rxnorm|9384,http://www.nlm.nih.gov/research/umls/rxnorm|8987,http://www.nlm.nih.gov/research/umls/rxnorm|4110\n```",
+      "prompt_text": "Find all my TB patients.",
+      "run_metadata": {
+       "output_tokens": 1148,
+       "tool_calls_count": 22,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     },
+     "3-broad": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 465,
+      "actual_count": 465,
+      "elapsed_sec": 121.0,
+      "queries_generated": 3,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|56717001,http://snomed.info/sct|154283005,http://snomed.info/sct|25629007,http://snomed.info/sct|373576009",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|9384",
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6038"
+      ],
+      "raw_response": "All validated \u2014 combination code not used on this server; individual ingredient codes are what the server stores. Here is the complete picture:\n\n---\n\n## \ud83d\udd0d Discovery Summary\n\n| Signal | Resource | Code System | Code(s) | Count |\n|---|---|---|---|---|\n| TB diagnosis (umbrella + subtypes) | `Condition` | SNOMED CT | `56717001` (Tuberculosis), `154283005` (Pulmonary TB), `25629007` (Acute TB), `373576009` (M. tuberculosis infection) | **362** |\n| Rifampin prescription | `MedicationRequest` | RxNorm | `9384` (rifampin) | **334** |\n| Isoniazid prescription | `MedicationRequest` | RxNorm | `6038` (isoniazid) | **465** |\n| Combo product (rifampin+isoniazid) | `MedicationRequest` | RxNorm | `106876` | 0 \u2014 not used on server |\n\n**Playbooks applied:**\n- **Playbook 12 (Cohort / OR union)** \u2014 three separate evidence arms, patient sets unioned by the harness\n- **Playbook 8 (Multi-system code list)** \u2014 SNOMED subtypes bundled in one comma-separated `Condition` query\n- **Playbook 1 (Subtypes)** \u2014 umbrella TB code + pulmonary, acute, and M. tuberculosis-infection subtypes all included\n\n---\n\n## \u2705 FINAL ANSWER\n\n```\nCondition?code=http://snomed.info/sct|56717001,http://snomed.info/sct|154283005,http://snomed.info/sct|25629007,http://snomed.info/sct|373576009\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|9384\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6038\n```",
+      "prompt_text": "Find all TB patients \u2014 by diagnosis or by anti-TB medications (rifampin, isoniazid). Run multiple queries and union the patient sets.",
+      "run_metadata": {
+       "output_tokens": 804,
+       "tool_calls_count": 21,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     },
+     "3-expert": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 465,
+      "actual_count": 465,
+      "elapsed_sec": 44.3,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|154283005,http://snomed.info/sct|56717001",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|9384,http://www.nlm.nih.gov/research/umls/rxnorm|6038"
+      ],
+      "raw_response": "Both queries executed successfully and hit live data. Here's a full summary:\n\n---\n\n## Query Results\n\n### Query 1 \u2014 TB Diagnosis (`Condition`)\n| Code | System | Display | Hits |\n|---|---|---|---|\n| `154283005` | SNOMED CT | Pulmonary tuberculosis | \u2705 |\n| `56717001` | SNOMED CT | Tuberculosis | \u2705 |\n- **Entries returned:** 10 (server did not expose a total count)\n- Both SNOMED codes matched real records; all classified as `encounter-diagnosis`.\n\n---\n\n### Query 2 \u2014 Anti-TB Medications (`MedicationRequest`)\n| Code | System | Display | Hits |\n|---|---|---|---|\n| `9384` | RxNorm | Rifampin | \u2705 |\n| `6038` | RxNorm | Isoniazid | \u2705 |\n- **Entries returned:** 10 (server did not expose a total count)\n- Both drugs appeared in sample; predominantly isoniazid (`6038`), with rifampin (`9384`) also present.\n- All orders were `community` category.\n\n---\n\n## Union Logic\nThe two patient sets (Condition patients \u222a MedicationRequest patients) should be merged by `subject.reference` (Patient ID). A patient qualifies for the cohort if they appear in **either or both** result sets \u2014 classic Playbook 12 (Cohort = OR).\n\n---\n\n## \u2705 Final FHIR Queries\n\n```\nCondition?code=http://snomed.info/sct|154283005,http://snomed.info/sct|56717001\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|9384,http://www.nlm.nih.gov/research/umls/rxnorm|6038\n```\n\n> **Note:** To maximize cohort capture, consider expanding the TB `Condition` query with additional subtypes (e.g., miliary TB `SNOMED|57783008`, TB meningitis `SNOMED|95454007`) and anti-TB drug codes (e.g., pyrazinamide `RxNorm|8987`, ethambutol `RxNorm|3699`) if a broader phenotype is needed.",
+      "prompt_text": "Run two queries. (1) Condition?code=http://snomed.info/sct|154283005,http://snomed.info/sct|56717001 \u2014 TB dx. (2) MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|9384,http://www.nlm.nih.gov/research/umls/rxnorm|6038 \u2014 anti-TB drugs. Union the patient IDs.",
+      "run_metadata": {
+       "output_tokens": 711,
+       "tool_calls_count": 2,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     }
+    },
+    "copilot:gpt-5.4": {
+     "1-naive": {
+      "precision": 1.0,
+      "recall": 0.2645,
+      "f1": 0.4184,
+      "passed": false,
+      "expected_count": 465,
+      "actual_count": 123,
+      "elapsed_sec": 40.3,
+      "queries_generated": 1,
+      "primary_query_url": "Patient?_has:Condition:patient:code:below=http://snomed.info/sct|56717001",
+      "additional_query_urls": [],
+      "raw_response": "Patient?_has:Condition:patient:code:below=http://snomed.info/sct|56717001",
+      "prompt_text": "Find all my TB patients."
+     },
+     "1-broad": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 465,
+      "actual_count": 465,
+      "elapsed_sec": 151.2,
+      "queries_generated": 3,
+      "primary_query_url": "Patient?_has:Condition:patient:code:below=http://snomed.info/sct|56717001",
+      "additional_query_urls": [
+       "Patient?_has:MedicationRequest:patient:code:below=http://www.nlm.nih.gov/research/umls/rxnorm|9384",
+       "Patient?_has:MedicationRequest:patient:code:below=http://www.nlm.nih.gov/research/umls/rxnorm|6038"
+      ],
+      "raw_response": "Patient?_has:Condition:patient:code:below=http://snomed.info/sct|56717001\nPatient?_has:MedicationRequest:patient:code:below=http://www.nlm.nih.gov/research/umls/rxnorm|9384\nPatient?_has:MedicationRequest:patient:code:below=http://www.nlm.nih.gov/research/umls/rxnorm|6038",
+      "prompt_text": "Find all TB patients \u2014 by diagnosis or by anti-TB medications (rifampin, isoniazid). Run multiple queries and union the patient sets."
+     },
+     "1-expert": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 465,
+      "actual_count": 465,
+      "elapsed_sec": 77.7,
+      "queries_generated": 2,
+      "primary_query_url": "Patient?_has:Condition:subject:code=http://snomed.info/sct|154283005,http://snomed.info/sct|56717001&_elements=id",
+      "additional_query_urls": [
+       "Patient?_has:MedicationRequest:subject:code=http://www.nlm.nih.gov/research/umls/rxnorm|9384,http://www.nlm.nih.gov/research/umls/rxnorm|6038&_elements=id"
+      ],
+      "raw_response": "Patient?_has:Condition:subject:code=http://snomed.info/sct|154283005,http://snomed.info/sct|56717001&_elements=id\nPatient?_has:MedicationRequest:subject:code=http://www.nlm.nih.gov/research/umls/rxnorm|9384,http://www.nlm.nih.gov/research/umls/rxnorm|6038&_elements=id",
+      "prompt_text": "Run two queries. (1) Condition?code=http://snomed.info/sct|154283005,http://snomed.info/sct|56717001 \u2014 TB dx. (2) MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|9384,http://www.nlm.nih.gov/research/umls/rxnorm|6038 \u2014 anti-TB drugs. Union the patient IDs."
+     },
+     "2-naive": {
+      "precision": 1.0,
+      "recall": 0.7785,
+      "f1": 0.8755,
+      "passed": true,
+      "expected_count": 465,
+      "actual_count": 362,
+      "elapsed_sec": 386.0,
+      "queries_generated": 1,
+      "primary_query_url": "Patient?_has:Condition:patient:code=http://snomed.info/sct|56717001,http://snomed.info/sct|154283005",
+      "additional_query_urls": [],
+      "raw_response": "Patient?_has:Condition:patient:code=http://snomed.info/sct|56717001,http://snomed.info/sct|154283005",
+      "prompt_text": "Find all my TB patients.",
+      "run_metadata": {
+       "output_tokens": 1207,
+       "tool_calls_count": 43,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     },
+     "2-broad": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 465,
+      "actual_count": 465,
+      "elapsed_sec": 431.9,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|56717001,http://snomed.info/sct|154283005",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6038,http://www.nlm.nih.gov/research/umls/rxnorm|9384"
+      ],
+      "raw_response": "Condition?code=http://snomed.info/sct|56717001,http://snomed.info/sct|154283005\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6038,http://www.nlm.nih.gov/research/umls/rxnorm|9384",
+      "prompt_text": "Find all TB patients \u2014 by diagnosis or by anti-TB medications (rifampin, isoniazid). Run multiple queries and union the patient sets.",
+      "run_metadata": {
+       "output_tokens": 367,
+       "tool_calls_count": 47,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     },
+     "2-expert": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 465,
+      "actual_count": 465,
+      "elapsed_sec": 64.4,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|154283005,http://snomed.info/sct|56717001",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|9384,http://www.nlm.nih.gov/research/umls/rxnorm|6038"
+      ],
+      "raw_response": "Condition?code=http://snomed.info/sct|154283005,http://snomed.info/sct|56717001\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|9384,http://www.nlm.nih.gov/research/umls/rxnorm|6038",
+      "prompt_text": "Run two queries. (1) Condition?code=http://snomed.info/sct|154283005,http://snomed.info/sct|56717001 \u2014 TB dx. (2) MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|9384,http://www.nlm.nih.gov/research/umls/rxnorm|6038 \u2014 anti-TB drugs. Union the patient IDs.",
+      "run_metadata": {
+       "output_tokens": 142,
+       "tool_calls_count": 0,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     },
+     "3-naive": {
+      "precision": 1.0,
+      "recall": 0.7785,
+      "f1": 0.8755,
+      "passed": true,
+      "expected_count": 465,
+      "actual_count": 362,
+      "elapsed_sec": 220.1,
+      "queries_generated": 1,
+      "primary_query_url": "Patient?_has:Condition:patient:code=http://snomed.info/sct|56717001,http://snomed.info/sct|154283005",
+      "additional_query_urls": [],
+      "raw_response": "Patient?_has:Condition:patient:code=http://snomed.info/sct|56717001,http://snomed.info/sct|154283005",
+      "prompt_text": "Find all my TB patients.",
+      "run_metadata": {
+       "output_tokens": 190,
+       "tool_calls_count": 45,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     },
+     "3-broad": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 465,
+      "actual_count": 465,
+      "elapsed_sec": 176.0,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|56717001,http://snomed.info/sct|154283005",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|9384,http://www.nlm.nih.gov/research/umls/rxnorm|6038"
+      ],
+      "raw_response": "Condition?code=http://snomed.info/sct|56717001,http://snomed.info/sct|154283005\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|9384,http://www.nlm.nih.gov/research/umls/rxnorm|6038",
+      "prompt_text": "Find all TB patients \u2014 by diagnosis or by anti-TB medications (rifampin, isoniazid). Run multiple queries and union the patient sets.",
+      "run_metadata": {
+       "output_tokens": 690,
+       "tool_calls_count": 33,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     },
+     "3-expert": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 465,
+      "actual_count": 465,
+      "elapsed_sec": 45.6,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|154283005,http://snomed.info/sct|56717001",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|9384,http://www.nlm.nih.gov/research/umls/rxnorm|6038"
+      ],
+      "raw_response": "Condition?code=http://snomed.info/sct|154283005,http://snomed.info/sct|56717001\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|9384,http://www.nlm.nih.gov/research/umls/rxnorm|6038",
+      "prompt_text": "Run two queries. (1) Condition?code=http://snomed.info/sct|154283005,http://snomed.info/sct|56717001 \u2014 TB dx. (2) MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|9384,http://www.nlm.nih.gov/research/umls/rxnorm|6038 \u2014 anti-TB drugs. Union the patient IDs.",
+      "run_metadata": {
+       "output_tokens": 130,
+       "tool_calls_count": 5,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     }
+    },
+    "openai-compat:qwen-qwen3.5-9b": {
+     "1-naive": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 465,
+      "actual_count": 0,
+      "elapsed_sec": 3.0,
+      "queries_generated": 2,
+      "primary_query_url": "Patient?name=TB&identifier=system:TB&identifier=system:ActiveTB",
+      "additional_query_urls": [
+       "Condition?code=http://snomed.info/sct|13645007"
+      ],
+      "raw_response": "Patient?name=TB&identifier=system:TB&identifier=system:ActiveTB\nCondition?code=http://snomed.info/sct|13645007",
+      "prompt_text": "Find all my TB patients."
+     },
+     "1-broad": {
+      "precision": 0.5842,
+      "recall": 1.0,
+      "f1": 0.7375,
+      "passed": false,
+      "expected_count": 465,
+      "actual_count": 796,
+      "elapsed_sec": 49.8,
+      "queries_generated": 3,
+      "primary_query_url": "Patient?_has=Condition&Condition?code=http://snomed.info/sct|13645007",
+      "additional_query_urls": [
+       "Patient?_has=MedicationRequest&MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|651242",
+       "Patient?_has=MedicationRequest&MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|564095"
+      ],
+      "raw_response": "Patient?_has=Condition&Condition?code=http://snomed.info/sct|13645007\nPatient?_has=MedicationRequest&MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|651242\nPatient?_has=MedicationRequest&MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|564095",
+      "prompt_text": "Find all TB patients \u2014 by diagnosis or by anti-TB medications (rifampin, isoniazid). Run multiple queries and union the patient sets."
+     },
+     "1-expert": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 465,
+      "actual_count": 0,
+      "elapsed_sec": 3.7,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|154283005&code=http://snomed.info/sct|56717001",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|9384&code=http://www.nlm.nih.gov/research/umls/rxnorm|6038"
+      ],
+      "raw_response": "Condition?code=http://snomed.info/sct|154283005&code=http://snomed.info/sct|56717001\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|9384&code=http://www.nlm.nih.gov/research/umls/rxnorm|6038",
+      "prompt_text": "Run two queries. (1) Condition?code=http://snomed.info/sct|154283005,http://snomed.info/sct|56717001 \u2014 TB dx. (2) MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|9384,http://www.nlm.nih.gov/research/umls/rxnorm|6038 \u2014 anti-TB drugs. Union the patient IDs."
+     },
+     "2-naive": {
+      "precision": 0.5842,
+      "recall": 1.0,
+      "f1": 0.7375,
+      "passed": false,
+      "expected_count": 465,
+      "actual_count": 796,
+      "elapsed_sec": 163.7,
+      "queries_generated": 6,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|56717001",
+      "additional_query_urls": [
+       "Condition?code=http://snomed.info/sct|154283005",
+       "Patient?condition=http://snomed.info/sct|56717001",
+       "Patient?condition=http://snomed.info/sct|154283005",
+       "Condition?_summary=count",
+       "Condition?code=http://snomed.info/sct|56717001&_summary=count"
+      ],
+      "raw_response": "[FALLBACK: parser couldn't extract URL from final response; using fhir_search queries from tool trace]\nCondition?code=http://snomed.info/sct|56717001\nCondition?code=http://snomed.info/sct|154283005\nPatient?condition=http://snomed.info/sct|56717001\nPatient?condition=http://snomed.info/sct|154283005\nCondition?_summary=count\nCondition?code=http://snomed.info/sct|56717001&_summary=count\n\nOriginal last assistant message:\nThere are 586 conditions in the server. Let me search for conditions with tuberculosis-related codes to see how many there are and what codes are used.\n\n",
+      "prompt_text": "Find all my TB patients.",
+      "run_metadata": {
+       "tool_calls_count": 20,
+       "stop_reason": "fallback_tool_trace",
+       "fallback_used": true
+      }
+     },
+     "2-broad": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 465,
+      "actual_count": 465,
+      "elapsed_sec": 467.9,
+      "queries_generated": 12,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|56717001&_summary=count",
+      "additional_query_urls": [
+       "Condition?code=http://snomed.info/sct|154283005&_summary=count",
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|9384&_summary=count",
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6038&_summary=count",
+       "Condition?code=http://snomed.info/sct|56717001",
+       "Condition?code=http://snomed.info/sct|154283005",
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|9384",
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6038",
+       "Condition?code=http://snomed.info/sct|tuberculos&_summary=count",
+       "Condition?_summary=count",
+       "Condition?code=http://snomed.info/sct|56717001,154283005",
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|9384,6038"
+      ],
+      "raw_response": "[FALLBACK: parser couldn't extract URL from final response; using fhir_search queries from tool trace]\nCondition?code=http://snomed.info/sct|56717001&_summary=count\nCondition?code=http://snomed.info/sct|154283005&_summary=count\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|9384&_summary=count\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6038&_summary=count\nCondition?code=http://snomed.info/sct|56717001\nCondition?code=http://snomed.info/sct|154283005\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|9384\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6038\nCondition?code=http://snomed.info/sct|tuberculos&_summary=count\nCondition?_summary=count\nCondition?code=http://snomed.info/sct|56717001,154283005\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|9384,6038\n\nOriginal last assistant message:\nBased on my analysis, the server uses:\n- SNOMED CT codes for Condition resources (tuberculosis: 56717001, 154283005)\n- RxNorm codes for MedicationRequest resources (rifampin: 9384, isoniazid: 6038)\n\nNow I need to construct the final FHIR query URLs that will union all patient sets. The task asks for multiple queries and union the patient sets.\n\nThe queries should be:\n1. Condition with TB SNOMED CT codes (56717001, 154283005)\n2. MedicationRequest with rifampin RxNorm code (9384)\n3. MedicationRequ",
+      "prompt_text": "Find all TB patients \u2014 by diagnosis or by anti-TB medications (rifampin, isoniazid). Run multiple queries and union the patient sets.",
+      "run_metadata": {
+       "tool_calls_count": 39,
+       "stop_reason": "fallback_tool_trace",
+       "fallback_used": true
+      }
+     },
+     "2-expert": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 465,
+      "actual_count": 465,
+      "elapsed_sec": 153.0,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|154283005,http://snomed.info/sct|56717001",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|9384,http://www.nlm.nih.gov/research/umls/rxnorm|6038"
+      ],
+      "raw_response": "The queries have been executed successfully. Both queries returned results. The user asked for the union of patient IDs from these two queries.\n\nThe final answer should be the two FHIR query URLs, one per line, as specified in the instructions.\n\nCondition?code=http://snomed.info/sct|154283005,http://snomed.info/sct|56717001\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|9384,http://www.nlm.nih.gov/research/umls/rxnorm|6038",
+      "prompt_text": "Run two queries. (1) Condition?code=http://snomed.info/sct|154283005,http://snomed.info/sct|56717001 \u2014 TB dx. (2) MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|9384,http://www.nlm.nih.gov/research/umls/rxnorm|6038 \u2014 anti-TB drugs. Union the patient IDs.",
+      "run_metadata": {
+       "tool_calls_count": 8,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     },
+     "3-naive": {
+      "precision": 1.0,
+      "recall": 0.2645,
+      "f1": 0.4184,
+      "passed": false,
+      "expected_count": 465,
+      "actual_count": 123,
+      "elapsed_sec": 235.0,
+      "queries_generated": 5,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|25629007",
+      "additional_query_urls": [
+       "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|A15.0",
+       "Condition?code=http://snomed.info/sct|56717001",
+       "Patient?_summary=count",
+       "Condition?code=http://snomed.info/sct|56717001&_summary=count"
+      ],
+      "raw_response": "[FALLBACK: parser couldn't extract URL from final response; using fhir_search queries from tool trace]\nCondition?code=http://snomed.info/sct|25629007\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|A15.0\nCondition?code=http://snomed.info/sct|56717001\nPatient?_summary=count\nCondition?code=http://snomed.info/sct|56717001&_summary=count\n\nOriginal last assistant message:\nThere are 123 Condition records with TB code 56717001. Since the request is to \"find all my TB patients,\" I need to return the FHIR query that would retrieve these patients. The standard approach is to query Condition resources with the TB code, which will return the conditions (and implicitly the patients who have them).\n\nHowever, to get the actual patient list, I should query Patient resources that have a Condition with the TB code. Let me check if the server supports the `_has` parameter.\n\n",
+      "prompt_text": "Find all my TB patients.",
+      "run_metadata": {
+       "tool_calls_count": 23,
+       "stop_reason": "fallback_tool_trace",
+       "fallback_used": true
+      }
+     },
+     "3-broad": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 465,
+      "actual_count": 465,
+      "elapsed_sec": 328.2,
+      "queries_generated": 3,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|56717001,154283005,25629007",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|9384",
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6038"
+      ],
+      "raw_response": "I need to stop calling the search function and provide the final answer. The instructions say to provide ONLY the FHIR query URL(s), one per line, with no prose or explanation.\n\nThe final answer is:\n\n```\nCondition?code=http://snomed.info/sct|56717001,154283005,25629007\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|9384\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6038\n```\n\nThese three queries, when executed and unioned, will find all TB patients by either diagnosis (TB in Condition resource) or by anti-TB medications (rifampin or isoniazid in MedicationRequest resource).",
+      "prompt_text": "Find all TB patients \u2014 by diagnosis or by anti-TB medications (rifampin, isoniazid). Run multiple queries and union the patient sets.",
+      "run_metadata": {
+       "tool_calls_count": 42,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     },
+     "3-expert": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 465,
+      "actual_count": 465,
+      "elapsed_sec": 56.6,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|154283005,http://snomed.info/sct|56717001",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|9384,http://www.nlm.nih.gov/research/umls/rxnorm|6038"
+      ],
+      "raw_response": "Condition?code=http://snomed.info/sct|154283005,http://snomed.info/sct|56717001\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|9384,http://www.nlm.nih.gov/research/umls/rxnorm|6038",
+      "prompt_text": "Run two queries. (1) Condition?code=http://snomed.info/sct|154283005,http://snomed.info/sct|56717001 \u2014 TB dx. (2) MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|9384,http://www.nlm.nih.gov/research/umls/rxnorm|6038 \u2014 anti-TB drugs. Union the patient IDs.",
+      "run_metadata": {
+       "tool_calls_count": 2,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     }
+    }
+   }
+  },
+  {
+   "test_case": "phekb-tuberculosis-dx",
+   "grids": {
+    "copilot:claude-opus-4.7": {
+     "1-naive": {
+      "precision": 1.0,
+      "recall": 0.3398,
+      "f1": 0.5072,
+      "passed": false,
+      "expected_count": 362,
+      "actual_count": 123,
+      "elapsed_sec": 0.2,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|56717001",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|56717001",
+      "prompt_text": "Find patients with TB."
+     },
+     "1-broad": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 362,
+      "actual_count": 362,
+      "elapsed_sec": 0.4,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|154283005,http://snomed.info/sct|56717001",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|154283005,http://snomed.info/sct|56717001",
+      "prompt_text": "Find patients diagnosed with tuberculosis \u2014 including pulmonary tuberculosis (most common form) and the broader tuberculosis concept covering extrapulmonary disease."
+     },
+     "1-expert": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 362,
+      "actual_count": 362,
+      "elapsed_sec": 0.4,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|154283005,http://snomed.info/sct|56717001",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|154283005,http://snomed.info/sct|56717001",
+      "prompt_text": "Search Condition resources for SNOMED codes Pulmonary tuberculosis (154283005) and Tuberculosis (56717001). Query: Condition?code=http://snomed.info/sct|154283005,http://snomed.info/sct|56717001"
+     },
+     "2-naive": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 362,
+      "actual_count": 362,
+      "elapsed_sec": 30.7,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|56717001,http://snomed.info/sct|154283005",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|56717001,http://snomed.info/sct|154283005",
+      "prompt_text": "Find patients with TB.",
+      "run_metadata": {
+       "output_tokens": 39,
+       "tool_calls_count": 3,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     },
+     "2-broad": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 362,
+      "actual_count": 362,
+      "elapsed_sec": 31.4,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|56717001,http://snomed.info/sct|154283005",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|56717001,http://snomed.info/sct|154283005",
+      "prompt_text": "Find patients diagnosed with tuberculosis \u2014 including pulmonary tuberculosis (most common form) and the broader tuberculosis concept covering extrapulmonary disease.",
+      "run_metadata": {
+       "output_tokens": 39,
+       "tool_calls_count": 3,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     },
+     "2-expert": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 362,
+      "actual_count": 362,
+      "elapsed_sec": 27.6,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|154283005,http://snomed.info/sct|56717001",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|154283005,http://snomed.info/sct|56717001",
+      "prompt_text": "Search Condition resources for SNOMED codes Pulmonary tuberculosis (154283005) and Tuberculosis (56717001). Query: Condition?code=http://snomed.info/sct|154283005,http://snomed.info/sct|56717001",
+      "run_metadata": {
+       "output_tokens": 39,
+       "tool_calls_count": 1,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     },
+     "3-naive": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 362,
+      "actual_count": 362,
+      "elapsed_sec": 33.2,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|56717001,http://snomed.info/sct|154283005",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|56717001,http://snomed.info/sct|154283005",
+      "prompt_text": "Find patients with TB.",
+      "run_metadata": {
+       "output_tokens": 39,
+       "tool_calls_count": 3,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     },
+     "3-broad": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 362,
+      "actual_count": 362,
+      "elapsed_sec": 33.8,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|56717001,http://snomed.info/sct|154283005",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|56717001,http://snomed.info/sct|154283005",
+      "prompt_text": "Find patients diagnosed with tuberculosis \u2014 including pulmonary tuberculosis (most common form) and the broader tuberculosis concept covering extrapulmonary disease.",
+      "run_metadata": {
+       "output_tokens": 39,
+       "tool_calls_count": 3,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     },
+     "3-expert": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 362,
+      "actual_count": 362,
+      "elapsed_sec": 26.9,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|154283005,http://snomed.info/sct|56717001",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|154283005,http://snomed.info/sct|56717001",
+      "prompt_text": "Search Condition resources for SNOMED codes Pulmonary tuberculosis (154283005) and Tuberculosis (56717001). Query: Condition?code=http://snomed.info/sct|154283005,http://snomed.info/sct|56717001",
+      "run_metadata": {
+       "output_tokens": 39,
+       "tool_calls_count": 1,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     }
+    },
+    "copilot:claude-opus-4.7+fhirskill": {
+     "1-naive": {
+      "precision": 1.0,
+      "recall": 0.3398,
+      "f1": 0.5072,
+      "passed": false,
+      "expected_count": 362,
+      "actual_count": 123,
+      "elapsed_sec": 0.2,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|56717001",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|56717001",
+      "prompt_text": "Find patients with TB."
+     },
+     "1-broad": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 362,
+      "actual_count": 362,
+      "elapsed_sec": 0.4,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|154283005,http://snomed.info/sct|56717001",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|154283005,http://snomed.info/sct|56717001",
+      "prompt_text": "Find patients diagnosed with tuberculosis \u2014 including pulmonary tuberculosis (most common form) and the broader tuberculosis concept covering extrapulmonary disease."
+     },
+     "1-expert": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 362,
+      "actual_count": 362,
+      "elapsed_sec": 0.4,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|154283005,http://snomed.info/sct|56717001",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|154283005,http://snomed.info/sct|56717001",
+      "prompt_text": "Search Condition resources for SNOMED codes Pulmonary tuberculosis (154283005) and Tuberculosis (56717001). Query: Condition?code=http://snomed.info/sct|154283005,http://snomed.info/sct|56717001"
+     }
+    },
+    "copilot:claude-sonnet-4.6": {
+     "1-naive": {
+      "precision": 1.0,
+      "recall": 0.3398,
+      "f1": 0.5072,
+      "passed": false,
+      "expected_count": 362,
+      "actual_count": 123,
+      "elapsed_sec": 51.6,
+      "queries_generated": 6,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|56717001&_include=Condition:patient",
+      "additional_query_urls": [
+       "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|A15&_include=Condition:patient",
+       "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|A15.0&_include=Condition:patient",
+       "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|A15.9&_include=Condition:patient",
+       "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|A19&_include=Condition:patient",
+       "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|A19.9&_include=Condition:patient"
+      ],
+      "raw_response": "Here are the FHIR queries to find patients with Tuberculosis (TB), using both SNOMED CT and ICD-10-CM codes, including the Patient resources:\n\n```\nCondition?code=http://snomed.info/sct|56717001&_include=Condition:patient\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|A15&_include=Condition:patient\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|A15.0&_include=Condition:patient\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|A15.9&_include=Condition:patient\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|A19&_include=Condition:patient\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|A19.9&_include=Condition:patient\n```\n\n### Code Reference:\n| Code System | Code | Description |\n|---|---|---|\n| SNOMED CT | `56717001` | Tuberculosis (disorder) |\n| ICD-10-CM | `A15` | Respiratory TB (bacteriologically confirmed) |\n| ICD-10-CM | `A15.0` | Tuberculosis of lung |\n| ICD-10-CM | `A15.9` | Respiratory TB, unspecified |\n| ICD-10-CM | `A19` | Miliary tuberculosis |\n| ICD-10-CM | `A19.9` | Miliary tuberculosis, unspecified |\n\n> **Note:** `_include=Condition:patient` retrieves the associated `Patient` resources in the same bundle. You may also add `&clinical-status=active` to filter for currently active TB diagnoses only.",
+      "prompt_text": "Find patients with TB."
+     },
+     "1-broad": {
+      "precision": 1.0,
+      "recall": 0.6602,
+      "f1": 0.7953,
+      "passed": false,
+      "expected_count": 362,
+      "actual_count": 239,
+      "elapsed_sec": 122.6,
+      "queries_generated": 15,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|154283005",
+      "additional_query_urls": [
+       "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|A15.0",
+       "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|A15.7",
+       "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|A15.9",
+       "Condition?code=http://snomed.info/sct|56717001",
+       "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|A17.0",
+       "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|A17.9",
+       "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|A18.0",
+       "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|A18.2",
+       "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|A18.3",
+       "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|A18.7",
+       "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|A18.89",
+       "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|A19.0",
+       "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|A19.2",
+       "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|A19.9"
+      ],
+      "raw_response": "## FHIR Queries: Tuberculosis Diagnoses\n\n### \ud83e\udec1 Pulmonary Tuberculosis (Most Common Form)\n\n**SNOMED CT**\n```\nCondition?code=http://snomed.info/sct|154283005\n```\n\n**ICD-10-CM \u2014 Tuberculosis of Lung (A15.x)**\n```\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|A15.0\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|A15.7\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|A15.9\n```\n\n---\n\n### \ud83e\udda0 Broader Tuberculosis \u2014 Extrapulmonary & Disseminated Disease\n\n**SNOMED CT (Top-Level Concept \u2014 Covers All TB)**\n```\nCondition?code=http://snomed.info/sct|56717001\n```\n\n**ICD-10-CM \u2014 Tuberculosis of Nervous System (A17.x)**\n```\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|A17.0\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|A17.9\n```\n\n**ICD-10-CM \u2014 Tuberculosis of Other Organs (A18.x)**\n```\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|A18.0\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|A18.2\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|A18.3\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|A18.7\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|A18.89\n```\n\n**ICD-10-CM \u2014 Miliary Tuberculosis (A19.x)**\n```\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|A19.0\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|A19.2\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|A19.9\n```\n\n---\n\n### \ud83d\udccb Code Reference Summary\n\n| Code System | Code | Description |\n|---|---|---|\n| SNOMED CT | `56717001` | Tuberculosis *(all-encompassing concept)* |\n| SNOMED CT | `154283005` | Pulmonary tuberculosis |\n| ICD-10-CM | `A15.0` | Tuberculosis of lung |\n| ICD-10-CM | `A15.9` | Respiratory tuberculosis, unspecified |\n| ICD-10-CM | `A17.0` | Tuberculous meningitis |\n| ICD-10-CM | `A18.0` | TB of bones and joints |\n| ICD-10-CM | `A18.2` | Tuberculous peripheral lymphadenopathy |\n| ICD-10-CM | `A19.9` | Miliary tuberculosis, unspecified |\n\n> \ud83d\udca1 **Tip:** Append `&_include=Condition:subject` to any query to retrieve the associated **Patient** resources in the same Bundle response.",
+      "prompt_text": "Find patients diagnosed with tuberculosis \u2014 including pulmonary tuberculosis (most common form) and the broader tuberculosis concept covering extrapulmonary disease."
+     },
+     "1-expert": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 362,
+      "actual_count": 362,
+      "elapsed_sec": 54.8,
+      "queries_generated": 3,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|154283005,http://snomed.info/sct|56717001",
+      "additional_query_urls": [
+       "Condition?code:below=http://snomed.info/sct|56717001",
+       "Condition?code=http://snomed.info/sct|154283005,http://snomed.info/sct|56717001&clinical-status=active"
+      ],
+      "raw_response": "## FHIR Query for Tuberculosis Conditions\n\n```\nCondition?code=http://snomed.info/sct|154283005,http://snomed.info/sct|56717001\n```\n\n---\n\n### Query Breakdown\n\n| Component | Details |\n|-----------|---------|\n| **Resource Type** | `Condition` |\n| **Search Parameter** | `code` |\n| **Code System** | `http://snomed.info/sct` (SNOMED CT) |\n| **Code 1** | `154283005` \u2014 *Pulmonary tuberculosis* |\n| **Code 2** | `56717001` \u2014 *Tuberculosis* |\n| **Logic** | Comma (`,`) = **OR** \u2014 returns conditions matching **either** code |\n\n---\n\n### Behavior Notes\n\n- The **comma-separated values** act as a logical **OR**, returning `Condition` resources coded with *either* SNOMED concept.\n- `56717001` is the broader **Tuberculosis** parent concept; `154283005` is specific to **Pulmonary TB**.\n- To also capture descendant codes in a terminology-aware server, consider appending `:in` with a ValueSet or using `:below` if supported:\n  ```\n  Condition?code:below=http://snomed.info/sct|56717001\n  ```\n- Optionally add `&clinical-status=active` to filter for currently active diagnoses:\n  ```\n  Condition?code=http://snomed.info/sct|154283005,http://snomed.info/sct|56717001&clinical-status=active\n  ```",
+      "prompt_text": "Search Condition resources for SNOMED codes Pulmonary tuberculosis (154283005) and Tuberculosis (56717001). Query: Condition?code=http://snomed.info/sct|154283005,http://snomed.info/sct|56717001"
+     },
+     "2-naive": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 362,
+      "actual_count": 362,
+      "elapsed_sec": 200.5,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|56717001,http://snomed.info/sct|154283005",
+      "additional_query_urls": [],
+      "raw_response": "I've thoroughly explored the server. Here's what I found:\n\n**Server profile:** FHIR R4 (Azure), SNOMED CT only \u2014 no ICD-10-CM coding on Condition resources.\n\n**TB codes confirmed live on this server:**\n| SNOMED Code | Display | Count |\n|---|---|---|\n| `56717001` | Tuberculosis (general) | 123 |\n| `154283005` | Pulmonary tuberculosis | 239 |\n| Other subtypes (miliary, meningeal, latent, etc.) | \u2014 | 0 (not present) |\n| **Combined total** | | **362** |\n\nThe broader SNOMED subtype codes (acute TB, miliary, meningeal, latent, extrapulmonary) return zero results \u2014 this server uses only the two codes above for TB diagnoses.\n\n---\n\n```\nCondition?code=http://snomed.info/sct|56717001,http://snomed.info/sct|154283005\n```",
+      "prompt_text": "Find patients with TB.",
+      "run_metadata": {
+       "output_tokens": 400,
+       "tool_calls_count": 16,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     },
+     "2-broad": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 362,
+      "actual_count": 362,
+      "elapsed_sec": 188.0,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|56717001,http://snomed.info/sct|154283005",
+      "additional_query_urls": [],
+      "raw_response": "I now have everything I need. Here's a summary of findings:\n\n---\n\n### \ud83d\udd2c Analysis Summary\n\n| Finding | Detail |\n|---|---|\n| **FHIR Server** | R4, Azure \u2014 Conditions stored with **SNOMED CT only** (no ICD-10 observed in samples) |\n| **Subsumption** | `56717001` (Tuberculosis) **subsumes** `154283005` (Pulmonary tuberculosis) in the SNOMED ontology |\n| **Server behavior** | Both codes are used **independently** \u2014 not via hierarchy. The server stores `56717001` for broader/extrapulmonary TB (123 records) and `154283005` explicitly for pulmonary TB (239 records) |\n| **Combined total** | **362 unique Condition records** \u2014 `123 + 239` (zero overlap, confirmed) |\n| **ICD-10 coverage** | VSAC value set maps to full A15\u2013A19 range (A15.0 pulmonary \u2192 A19.9 miliary); not present in server samples but included for completeness |\n\n**Code roles:**\n- `154283005` \u2192 **Pulmonary tuberculosis** (lung parenchyma, most common form, bacteriologically and histologically confirmed)\n- `56717001` \u2192 **Tuberculosis (disorder)** \u2014 the broader parent concept, used for extrapulmonary sites (meningeal, skeletal, genitourinary, miliary, etc.) and unspecified TB\n\n---\n\n```\nCondition?code=http://snomed.info/sct|56717001,http://snomed.info/sct|154283005\n```",
+      "prompt_text": "Find patients diagnosed with tuberculosis \u2014 including pulmonary tuberculosis (most common form) and the broader tuberculosis concept covering extrapulmonary disease.",
+      "run_metadata": {
+       "output_tokens": 982,
+       "tool_calls_count": 20,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     },
+     "2-expert": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 362,
+      "actual_count": 362,
+      "elapsed_sec": 54.8,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|154283005,http://snomed.info/sct|56717001",
+      "additional_query_urls": [
+       "Condition?code=http://snomed.info/sct|154283005,http://snomed.info/sct|56717001&_count=50"
+      ],
+      "raw_response": "The query executed successfully! Here's a clean summary of the results:\n\n---\n\n## \u2705 FHIR Search Results\n\n**Query:**\n```\nCondition?code=http://snomed.info/sct|154283005,http://snomed.info/sct|56717001\n```\n\n---\n\n### \ud83d\udcca Result Summary\n\n| Field | Value |\n|---|---|\n| **Resource Type** | `Condition` |\n| **Entries Returned** | **10** |\n| **Total** | Not reported (server did not return a total count) |\n\n---\n\n### \ud83e\uddec Matched SNOMED Codes\n\n| SNOMED Code | Display | System |\n|---|---|---|\n| `56717001` | **Tuberculosis** | `http://snomed.info/sct` |\n| `154283005` | **Pulmonary tuberculosis** | `http://snomed.info/sct` |\n\n---\n\n### \ud83c\udff7\ufe0f Condition Category (all results)\n\nAll matched resources are categorized as:\n- **`encounter-diagnosis`** (`http://terminology.hl7.org/CodeSystem/condition-category`)\n\n---\n\n### \ud83d\udd0d Key Observations\n\n1. **Both SNOMED codes matched** \u2014 `154283005` (Pulmonary tuberculosis) and `56717001` (Tuberculosis) are both present in the returned results, confirming the server indexes and resolves both codes correctly.\n2. **Encounter-diagnosis category** \u2014 All matched Conditions are flagged as encounter diagnoses, meaning they were recorded during a clinical encounter rather than as problem-list items.\n3. **No total count** \u2014 The server did not return a `total` in the bundle, so the true population size may be larger than the 10 entries returned in this page.\n\n---\n\n### \ud83d\udca1 Tip: Paginate for Full Results\nTo retrieve all results beyond the first page, append `_count` and use the `next` link from the bundle:\n```\nCondition?code=http://snomed.info/sct|154283005,http://snomed.info/sct|56717001&_count=50\n```\n\n---\n\n**Final Query:**\n\n```\nCondition?code=http://snomed.info/sct|154283005,http://snomed.info/sct|56717001\n```",
+      "prompt_text": "Search Condition resources for SNOMED codes Pulmonary tuberculosis (154283005) and Tuberculosis (56717001). Query: Condition?code=http://snomed.info/sct|154283005,http://snomed.info/sct|56717001",
+      "run_metadata": {
+       "output_tokens": 552,
+       "tool_calls_count": 1,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     },
+     "3-naive": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 362,
+      "actual_count": 362,
+      "elapsed_sec": 132.1,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|56717001,http://snomed.info/sct|154283005,http://snomed.info/sct|25629007,http://snomed.info/sct|373576009",
+      "additional_query_urls": [],
+      "raw_response": "The count holds steady at **362** \u2014 adding the extra synonym codes yields no additional patients, meaning the three core codes cover all TB cases on this server. The query is verified and stable.\n\n---\n\n**FINAL ANSWER**\n\n```\nCondition?code=http://snomed.info/sct|56717001,http://snomed.info/sct|154283005,http://snomed.info/sct|25629007,http://snomed.info/sct|373576009\n```\n\n---\n\n**How this was built:**\n\n| Code | System | Meaning |\n|---|---|---|\n| `56717001` | SNOMED CT | Tuberculosis *(umbrella / general)* |\n| `154283005` | SNOMED CT | Pulmonary tuberculosis |\n| `25629007` | SNOMED CT | Acute tuberculosis |\n| `373576009` | SNOMED CT | Infection caused by *Mycobacterium tuberculosis* |\n\n- **Playbook 1 (Subtypes) + Playbook 8 (Multi-system):** TB has many subtypes; the umbrella SNOMED code `56717001` was confirmed via subsumption to be a *parent* of the pulmonary subtype, but since FHIR servers don't automatically traverse SNOMED hierarchies, all relevant subtype codes are included explicitly.\n- Server samples confirmed the data uses **SNOMED CT** (not ICD-10/ICD-9), so no cross-system codes were needed.\n- Validated count: **362 Condition records** across all TB subtypes.",
+      "prompt_text": "Find patients with TB.",
+      "run_metadata": {
+       "output_tokens": 607,
+       "tool_calls_count": 28,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     },
+     "3-broad": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 362,
+      "actual_count": 362,
+      "elapsed_sec": 107.3,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|56717001,http://snomed.info/sct|154283005,http://snomed.info/sct|25629007",
+      "additional_query_urls": [],
+      "raw_response": "I have all the evidence I need. Here's the complete picture:\n\n---\n\n## Analysis & Findings\n\n**Playbooks applied:** Playbook 1 (Subtypes) + Playbook 8 (Multi-system code lists)\n\n### Server Code System\nThe server uses **SNOMED CT** exclusively for Condition resources.\n\n### SNOMED Codes Identified & Validated\n\n| SNOMED Code | Display | Count on Server |\n|---|---|---|\n| `56717001` | Tuberculosis (disorder) \u2014 **umbrella / extrapulmonary** | 123 |\n| `154283005` | Pulmonary tuberculosis (disorder) \u2014 **most common form** | 239 |\n| `25629007` | Acute tuberculosis (disorder) \u2014 VSAC-validated subtype | 0 (included for completeness) |\n\n### Key Structural Insight\n\u2705 **Subsumption confirmed**: `56717001` (Tuberculosis) **subsumes** `154283005` (Pulmonary tuberculosis) in SNOMED \u2014 they are parent/child. Both are included explicitly since the server does not appear to use `:below` for hierarchical expansion.\n\n### Combined Count\n\u27a1\ufe0f **362 Condition records** across all three codes\n\n---\n\n## FINAL ANSWER\n\n```\nCondition?code=http://snomed.info/sct|56717001,http://snomed.info/sct|154283005,http://snomed.info/sct|25629007\n```",
+      "prompt_text": "Find patients diagnosed with tuberculosis \u2014 including pulmonary tuberculosis (most common form) and the broader tuberculosis concept covering extrapulmonary disease.",
+      "run_metadata": {
+       "output_tokens": 787,
+       "tool_calls_count": 20,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     },
+     "3-expert": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 362,
+      "actual_count": 362,
+      "elapsed_sec": 36.6,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|154283005,http://snomed.info/sct|56717001",
+      "additional_query_urls": [],
+      "raw_response": "## Results Summary\n\nThe query executed successfully and returned **10 matching Condition resources**. Here's a full breakdown:\n\n---\n\n### \ud83d\udd0d Query Executed\n```\nCondition?code=http://snomed.info/sct|154283005,http://snomed.info/sct|56717001\n```\n\n---\n\n### \ud83d\udcca Search Results\n\n| Metric | Value |\n|---|---|\n| **Entries Returned** | 10 |\n| **Resource Types** | Condition |\n| **Code System Used** | `http://snomed.info/sct` (SNOMED CT) \u2705 |\n\n---\n\n### \ud83e\udda0 Matching SNOMED Codes Found on Server\n\n| SNOMED Code | Display | Hits in Sample |\n|---|---|---|\n| `56717001` | Tuberculosis | Majority of results |\n| `154283005` | Pulmonary Tuberculosis | Present (confirmed in sample) |\n\n---\n\n### \ud83c\udff7\ufe0f Condition Categorization\nAll matching conditions are categorized as **`encounter-diagnosis`** (from `http://terminology.hl7.org/CodeSystem/condition-category`), indicating these are active encounter-linked diagnoses \u2014 clinically meaningful records.\n\n---\n\n### \u2705 Key Observations\n1. **Both SNOMED codes are actively used** on this server \u2014 no need for ICD-10 fallback.\n2. **`56717001` (Tuberculosis)** is the dominant code, serving as the broader umbrella concept.\n3. **`154283005` (Pulmonary Tuberculosis)** represents the more specific pulmonary subtype and is also present.\n4. The server encodes Conditions using **SNOMED CT exclusively** \u2014 no ICD-10-CM coding was observed in sampled resources.\n\n---\n\n### \u2705 Final FHIR Query\n\n```\nCondition?code=http://snomed.info/sct|154283005,http://snomed.info/sct|56717001\n```",
+      "prompt_text": "Search Condition resources for SNOMED codes Pulmonary tuberculosis (154283005) and Tuberculosis (56717001). Query: Condition?code=http://snomed.info/sct|154283005,http://snomed.info/sct|56717001",
+      "run_metadata": {
+       "output_tokens": 479,
+       "tool_calls_count": 2,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     }
+    },
+    "copilot:gpt-5.4": {
+     "1-naive": {
+      "precision": 1.0,
+      "recall": 0.3398,
+      "f1": 0.5072,
+      "passed": false,
+      "expected_count": 362,
+      "actual_count": 123,
+      "elapsed_sec": 48.2,
+      "queries_generated": 1,
+      "primary_query_url": "Patient?_has:Condition:patient:code:below=http://snomed.info/sct|56717001",
+      "additional_query_urls": [],
+      "raw_response": "Patient?_has:Condition:patient:code:below=http://snomed.info/sct|56717001",
+      "prompt_text": "Find patients with TB."
+     },
+     "1-broad": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 362,
+      "actual_count": 362,
+      "elapsed_sec": 97.2,
+      "queries_generated": 1,
+      "primary_query_url": "Patient?_has:Condition:patient:code=http://snomed.info/sct|154283005,http://snomed.info/sct|56717001",
+      "additional_query_urls": [],
+      "raw_response": "Patient?_has:Condition:patient:code=http://snomed.info/sct|154283005,http://snomed.info/sct|56717001",
+      "prompt_text": "Find patients diagnosed with tuberculosis \u2014 including pulmonary tuberculosis (most common form) and the broader tuberculosis concept covering extrapulmonary disease."
+     },
+     "1-expert": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 362,
+      "actual_count": 362,
+      "elapsed_sec": 44.7,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|154283005,http://snomed.info/sct|56717001",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|154283005,http://snomed.info/sct|56717001",
+      "prompt_text": "Search Condition resources for SNOMED codes Pulmonary tuberculosis (154283005) and Tuberculosis (56717001). Query: Condition?code=http://snomed.info/sct|154283005,http://snomed.info/sct|56717001"
+     },
+     "2-naive": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 362,
+      "actual_count": 362,
+      "elapsed_sec": 359.7,
+      "queries_generated": 1,
+      "primary_query_url": "Patient?_has:Condition:patient:code=http://snomed.info/sct|56717001,http://snomed.info/sct|154283005",
+      "additional_query_urls": [],
+      "raw_response": "Patient?_has:Condition:patient:code=http://snomed.info/sct|56717001,http://snomed.info/sct|154283005",
+      "prompt_text": "Find patients with TB.",
+      "run_metadata": {
+       "output_tokens": 1073,
+       "tool_calls_count": 38,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     },
+     "2-broad": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 362,
+      "actual_count": 362,
+      "elapsed_sec": 235.1,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|154283005,http://snomed.info/sct|56717001",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|154283005,http://snomed.info/sct|56717001",
+      "prompt_text": "Find patients diagnosed with tuberculosis \u2014 including pulmonary tuberculosis (most common form) and the broader tuberculosis concept covering extrapulmonary disease.",
+      "run_metadata": {
+       "output_tokens": 82,
+       "tool_calls_count": 24,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     },
+     "2-expert": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 362,
+      "actual_count": 362,
+      "elapsed_sec": 40.9,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|154283005,http://snomed.info/sct|56717001",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|154283005,http://snomed.info/sct|56717001",
+      "prompt_text": "Search Condition resources for SNOMED codes Pulmonary tuberculosis (154283005) and Tuberculosis (56717001). Query: Condition?code=http://snomed.info/sct|154283005,http://snomed.info/sct|56717001",
+      "run_metadata": {
+       "output_tokens": 73,
+       "tool_calls_count": 0,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     },
+     "3-naive": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 362,
+      "actual_count": 362,
+      "elapsed_sec": 68.5,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|56717001,http://snomed.info/sct|154283005",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|56717001,http://snomed.info/sct|154283005",
+      "prompt_text": "Find patients with TB.",
+      "run_metadata": {
+       "output_tokens": 477,
+       "tool_calls_count": 7,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     },
+     "3-broad": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 362,
+      "actual_count": 362,
+      "elapsed_sec": 51.3,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|56717001,http://snomed.info/sct|154283005",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|56717001,http://snomed.info/sct|154283005",
+      "prompt_text": "Find patients diagnosed with tuberculosis \u2014 including pulmonary tuberculosis (most common form) and the broader tuberculosis concept covering extrapulmonary disease.",
+      "run_metadata": {
+       "output_tokens": 235,
+       "tool_calls_count": 7,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     },
+     "3-expert": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 362,
+      "actual_count": 362,
+      "elapsed_sec": 37.5,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|154283005,http://snomed.info/sct|56717001",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|154283005,http://snomed.info/sct|56717001",
+      "prompt_text": "Search Condition resources for SNOMED codes Pulmonary tuberculosis (154283005) and Tuberculosis (56717001). Query: Condition?code=http://snomed.info/sct|154283005,http://snomed.info/sct|56717001",
+      "run_metadata": {
+       "output_tokens": 64,
+       "tool_calls_count": 2,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     }
+    },
+    "openai-compat:qwen-qwen3.5-9b": {
+     "1-naive": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 362,
+      "actual_count": 0,
+      "elapsed_sec": 23.4,
+      "queries_generated": 3,
+      "primary_query_url": "Patient?name=TB&identifier=TB",
+      "additional_query_urls": [
+       "Condition?code=http://snomed.info/sct|13645007",
+       "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|A15"
+      ],
+      "raw_response": "Patient?name=TB&identifier=TB\nCondition?code=http://snomed.info/sct|13645007\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|A15",
+      "prompt_text": "Find patients with TB."
+     },
+     "1-broad": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 362,
+      "actual_count": 0,
+      "elapsed_sec": 22.8,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|13645005&code-system=http://snomed.info/sct",
+      "additional_query_urls": [
+       "Condition?code=http://snomed.info/sct|195967001&code-system=http://snomed.info/sct"
+      ],
+      "raw_response": "Condition?code=http://snomed.info/sct|13645005&code-system=http://snomed.info/sct\nCondition?code=http://snomed.info/sct|195967001&code-system=http://snomed.info/sct",
+      "prompt_text": "Find patients diagnosed with tuberculosis \u2014 including pulmonary tuberculosis (most common form) and the broader tuberculosis concept covering extrapulmonary disease."
+     },
+     "1-expert": {
+      "precision": 1.0,
+      "recall": 0.6602,
+      "f1": 0.7953,
+      "passed": false,
+      "expected_count": 362,
+      "actual_count": 239,
+      "elapsed_sec": 24.9,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|154283005",
+      "additional_query_urls": [
+       "Condition?code=http://snomed.info/sct|56717001"
+      ],
+      "raw_response": "Condition?code=http://snomed.info/sct|154283005\nCondition?code=http://snomed.info/sct|56717001",
+      "prompt_text": "Search Condition resources for SNOMED codes Pulmonary tuberculosis (154283005) and Tuberculosis (56717001). Query: Condition?code=http://snomed.info/sct|154283005,http://snomed.info/sct|56717001"
+     },
+     "2-naive": {
+      "precision": 1.0,
+      "recall": 0.3398,
+      "f1": 0.5072,
+      "passed": false,
+      "expected_count": 362,
+      "actual_count": 123,
+      "elapsed_sec": 276.2,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|56717001",
+      "additional_query_urls": [
+       "Condition?code=http://snomed.info/sct|154283005"
+      ],
+      "raw_response": "[FALLBACK: parser couldn't extract URL from final response; using fhir_search queries from tool trace]\nCondition?code=http://snomed.info/sct|56717001\nCondition?code=http://snomed.info/sct|154283005\n\nOriginal last assistant message:\nLet me check if these specific tuberculous conditions are subsumed by 56717001. First, let me find the SNOMED codes for some of these.\n\n",
+      "prompt_text": "Find patients with TB.",
+      "run_metadata": {
+       "tool_calls_count": 20,
+       "stop_reason": "fallback_tool_trace",
+       "fallback_used": true
+      }
+     },
+     "2-broad": {
+      "precision": 1.0,
+      "recall": 0.6602,
+      "f1": 0.7953,
+      "passed": false,
+      "expected_count": 362,
+      "actual_count": 239,
+      "elapsed_sec": 354.9,
+      "queries_generated": 3,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|154283005",
+      "additional_query_urls": [
+       "Condition?code=http://snomed.info/sct|56717001",
+       "Condition?code=http://snomed.info/sct|154283005&_summary=count"
+      ],
+      "raw_response": "[FALLBACK: parser couldn't extract URL from final response; using fhir_search queries from tool trace]\nCondition?code=http://snomed.info/sct|154283005\nCondition?code=http://snomed.info/sct|56717001\nCondition?code=http://snomed.info/sct|154283005&_summary=count\n\nOriginal last assistant message:\nSo 56717001 is \"Tuberculosis (disorder)\" - the broader concept. And 154283005 is \"Pulmonary tuberculosis (disorder)\".\n\nSince 56717001 subsumes 154283005, querying with 56717001 alone would capture all tuberculosis cases including pulmonary. However, the user specifically asked for:\n1. Pulmonary tuberculosis (most common form)\n2. The broader tuberculosis concept covering extrapulmonary disease\n\nSince 56717001 covers both, I could just use that. But let me also check if there are other specific pu",
+      "prompt_text": "Find patients diagnosed with tuberculosis \u2014 including pulmonary tuberculosis (most common form) and the broader tuberculosis concept covering extrapulmonary disease.",
+      "run_metadata": {
+       "tool_calls_count": 20,
+       "stop_reason": "fallback_tool_trace",
+       "fallback_used": true
+      }
+     },
+     "2-expert": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 362,
+      "actual_count": 362,
+      "elapsed_sec": 40.7,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|154283005,http://snomed.info/sct|56717001",
+      "additional_query_urls": [],
+      "raw_response": "The search returned results showing both SNOMED codes are present in the Condition resources:\n- 154283005 (Pulmonary tuberculosis)\n- 56717001 (Tuberculosis)\n\nThe query successfully found Condition resources matching both codes. The FHIR query URL is:\n\nCondition?code=http://snomed.info/sct|154283005,http://snomed.info/sct|56717001",
+      "prompt_text": "Search Condition resources for SNOMED codes Pulmonary tuberculosis (154283005) and Tuberculosis (56717001). Query: Condition?code=http://snomed.info/sct|154283005,http://snomed.info/sct|56717001",
+      "run_metadata": {
+       "tool_calls_count": 1,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     },
+     "3-naive": {
+      "precision": 1.0,
+      "recall": 0.3398,
+      "f1": 0.5072,
+      "passed": false,
+      "expected_count": 362,
+      "actual_count": 123,
+      "elapsed_sec": 194.0,
+      "queries_generated": 4,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|56717001",
+      "additional_query_urls": [
+       "Condition?code=http://snomed.info/sct|154283005",
+       "Condition?code=http://snomed.info/sct|25629007",
+       "Condition?code=http://snomed.info/sct|56717001,154283005"
+      ],
+      "raw_response": "[FALLBACK: parser couldn't extract URL from final response; using fhir_search queries from tool trace]\nCondition?code=http://snomed.info/sct|56717001\nCondition?code=http://snomed.info/sct|154283005\nCondition?code=http://snomed.info/sct|25629007\nCondition?code=http://snomed.info/sct|56717001,154283005\n\nOriginal last assistant message:\n",
+      "prompt_text": "Find patients with TB.",
+      "run_metadata": {
+       "tool_calls_count": 24,
+       "stop_reason": "fallback_tool_trace",
+       "fallback_used": true
+      }
+     },
+     "3-broad": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 362,
+      "actual_count": 362,
+      "elapsed_sec": 145.8,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|56717001,154283005",
+      "additional_query_urls": [],
+      "raw_response": "Based on my analysis, I found the correct SNOMED CT codes for tuberculosis in the FHIR server:\n- **56717001** - Tuberculosis (broader concept, includes extrapulmonary disease)\n- **154283005** - Pulmonary tuberculosis (most common form)\n\nUsing Playbook 1 (Subtypes), I combined both codes in a single query with comma separation to find patients diagnosed with either form of tuberculosis.\n\n**Final Answer:**\n\n```\nCondition?code=http://snomed.info/sct|56717001,154283005\n```",
+      "prompt_text": "Find patients diagnosed with tuberculosis \u2014 including pulmonary tuberculosis (most common form) and the broader tuberculosis concept covering extrapulmonary disease.",
+      "run_metadata": {
+       "tool_calls_count": 9,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     },
+     "3-expert": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 362,
+      "actual_count": 362,
+      "elapsed_sec": 27.1,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|154283005,http://snomed.info/sct|56717001",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|154283005,http://snomed.info/sct|56717001",
+      "prompt_text": "Search Condition resources for SNOMED codes Pulmonary tuberculosis (154283005) and Tuberculosis (56717001). Query: Condition?code=http://snomed.info/sct|154283005,http://snomed.info/sct|56717001",
+      "run_metadata": {
+       "tool_calls_count": 0,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     }
+    }
+   }
+  },
+  {
+   "test_case": "phekb-tuberculosis-meds",
+   "grids": {
+    "copilot:claude-opus-4.7": {
+     "1-naive": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 465,
+      "actual_count": 465,
+      "elapsed_sec": 0.9,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6038,http://www.nlm.nih.gov/research/umls/rxnorm|9384,http://www.nlm.nih.gov/research/umls/rxnorm|8889,http://www.nlm.nih.gov/research/umls/rxnorm|4083&status=active",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6038,http://www.nlm.nih.gov/research/umls/rxnorm|9384,http://www.nlm.nih.gov/research/umls/rxnorm|8889,http://www.nlm.nih.gov/research/umls/rxnorm|4083&status=active",
+      "prompt_text": "Find patients on TB drugs."
+     },
+     "1-broad": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 465,
+      "actual_count": 465,
+      "elapsed_sec": 0.9,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|9384,http://www.nlm.nih.gov/research/umls/rxnorm|6038,http://www.nlm.nih.gov/research/umls/rxnorm|8988,http://www.nlm.nih.gov/research/umls/rxnorm|4083",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|9384,http://www.nlm.nih.gov/research/umls/rxnorm|6038,http://www.nlm.nih.gov/research/umls/rxnorm|8988,http://www.nlm.nih.gov/research/umls/rxnorm|4083",
+      "prompt_text": "Find patients prescribed anti-tuberculosis medications \u2014 including rifampin and isoniazid, two of the four cornerstone drugs in the standard TB regimen (RIPE: rifampin, isoniazid, pyrazinamide, ethambutol)."
+     },
+     "1-expert": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 465,
+      "actual_count": 465,
+      "elapsed_sec": 0.8,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|9384,http://www.nlm.nih.gov/research/umls/rxnorm|6038",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|9384,http://www.nlm.nih.gov/research/umls/rxnorm|6038",
+      "prompt_text": "Search MedicationRequest with RxNorm codes for rifampin (9384) and isoniazid (6038). Query: MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|9384,http://www.nlm.nih.gov/research/umls/rxnorm|6038"
+     },
+     "2-naive": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 465,
+      "actual_count": 465,
+      "elapsed_sec": 42.5,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6038,http://www.nlm.nih.gov/research/umls/rxnorm|9384,http://www.nlm.nih.gov/research/umls/rxnorm|8988,http://www.nlm.nih.gov/research/umls/rxnorm|4083",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6038,http://www.nlm.nih.gov/research/umls/rxnorm|9384,http://www.nlm.nih.gov/research/umls/rxnorm|8988,http://www.nlm.nih.gov/research/umls/rxnorm|4083",
+      "prompt_text": "Find patients on TB drugs.",
+      "run_metadata": {
+       "output_tokens": 125,
+       "tool_calls_count": 6,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     },
+     "2-broad": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 465,
+      "actual_count": 465,
+      "elapsed_sec": 36.0,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6038,http://www.nlm.nih.gov/research/umls/rxnorm|9384,http://www.nlm.nih.gov/research/umls/rxnorm|8988,http://www.nlm.nih.gov/research/umls/rxnorm|4083",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6038,http://www.nlm.nih.gov/research/umls/rxnorm|9384,http://www.nlm.nih.gov/research/umls/rxnorm|8988,http://www.nlm.nih.gov/research/umls/rxnorm|4083",
+      "prompt_text": "Find patients prescribed anti-tuberculosis medications \u2014 including rifampin and isoniazid, two of the four cornerstone drugs in the standard TB regimen (RIPE: rifampin, isoniazid, pyrazinamide, ethambutol).",
+      "run_metadata": {
+       "output_tokens": 125,
+       "tool_calls_count": 3,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     },
+     "2-expert": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 465,
+      "actual_count": 465,
+      "elapsed_sec": 32.4,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|9384,http://www.nlm.nih.gov/research/umls/rxnorm|6038",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|9384,http://www.nlm.nih.gov/research/umls/rxnorm|6038",
+      "prompt_text": "Search MedicationRequest with RxNorm codes for rifampin (9384) and isoniazid (6038). Query: MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|9384,http://www.nlm.nih.gov/research/umls/rxnorm|6038",
+      "run_metadata": {
+       "output_tokens": 69,
+       "tool_calls_count": 1,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     },
+     "3-naive": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 465,
+      "actual_count": 465,
+      "elapsed_sec": 56.9,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6038,http://www.nlm.nih.gov/research/umls/rxnorm|9384,http://www.nlm.nih.gov/research/umls/rxnorm|8988,http://www.nlm.nih.gov/research/umls/rxnorm|4083,http://www.nlm.nih.gov/research/umls/rxnorm|35617,http://www.nlm.nih.gov/research/umls/rxnorm|35619,http://www.nlm.nih.gov/research/umls/rxnorm|10109",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6038,http://www.nlm.nih.gov/research/umls/rxnorm|9384,http://www.nlm.nih.gov/research/umls/rxnorm|8988,http://www.nlm.nih.gov/research/umls/rxnorm|4083,http://www.nlm.nih.gov/research/umls/rxnorm|35617,http://www.nlm.nih.gov/research/umls/rxnorm|35619,http://www.nlm.nih.gov/research/umls/rxnorm|10109",
+      "prompt_text": "Find patients on TB drugs.",
+      "run_metadata": {
+       "output_tokens": 209,
+       "tool_calls_count": 5,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     },
+     "3-broad": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 465,
+      "actual_count": 465,
+      "elapsed_sec": 50.0,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|9384,http://www.nlm.nih.gov/research/umls/rxnorm|6038,http://www.nlm.nih.gov/research/umls/rxnorm|8987,http://www.nlm.nih.gov/research/umls/rxnorm|4083",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|9384,http://www.nlm.nih.gov/research/umls/rxnorm|6038,http://www.nlm.nih.gov/research/umls/rxnorm|8987,http://www.nlm.nih.gov/research/umls/rxnorm|4083",
+      "prompt_text": "Find patients prescribed anti-tuberculosis medications \u2014 including rifampin and isoniazid, two of the four cornerstone drugs in the standard TB regimen (RIPE: rifampin, isoniazid, pyrazinamide, ethambutol).",
+      "run_metadata": {
+       "output_tokens": 168,
+       "tool_calls_count": 10,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     },
+     "3-expert": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 465,
+      "actual_count": 465,
+      "elapsed_sec": 32.0,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|9384,http://www.nlm.nih.gov/research/umls/rxnorm|6038",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|9384,http://www.nlm.nih.gov/research/umls/rxnorm|6038",
+      "prompt_text": "Search MedicationRequest with RxNorm codes for rifampin (9384) and isoniazid (6038). Query: MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|9384,http://www.nlm.nih.gov/research/umls/rxnorm|6038",
+      "run_metadata": {
+       "output_tokens": 69,
+       "tool_calls_count": 1,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     }
+    },
+    "copilot:claude-opus-4.7+fhirskill": {
+     "1-naive": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 465,
+      "actual_count": 0,
+      "elapsed_sec": 0.5,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|11473,http://www.nlm.nih.gov/research/umls/rxnorm|7715,http://www.nlm.nih.gov/research/umls/rxnorm|6076,http://www.nlm.nih.gov/research/umls/rxnorm|1549",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|11473,http://www.nlm.nih.gov/research/umls/rxnorm|7715,http://www.nlm.nih.gov/research/umls/rxnorm|6076,http://www.nlm.nih.gov/research/umls/rxnorm|1549",
+      "prompt_text": "Find patients on TB drugs."
+     },
+     "1-broad": {
+      "precision": 1.0,
+      "recall": 0.7183,
+      "f1": 0.836,
+      "passed": true,
+      "expected_count": 465,
+      "actual_count": 334,
+      "elapsed_sec": 0.6,
+      "queries_generated": 4,
+      "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|9384",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6038",
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|8988",
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|4083"
+      ],
+      "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|9384\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6038\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|8988\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|4083",
+      "prompt_text": "Find patients prescribed anti-tuberculosis medications \u2014 including rifampin and isoniazid, two of the four cornerstone drugs in the standard TB regimen (RIPE: rifampin, isoniazid, pyrazinamide, ethambutol)."
+     },
+     "1-expert": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 465,
+      "actual_count": 465,
+      "elapsed_sec": 1.0,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|9384,http://www.nlm.nih.gov/research/umls/rxnorm|6038",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|9384,http://www.nlm.nih.gov/research/umls/rxnorm|6038",
+      "prompt_text": "Search MedicationRequest with RxNorm codes for rifampin (9384) and isoniazid (6038). Query: MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|9384,http://www.nlm.nih.gov/research/umls/rxnorm|6038"
+     }
+    },
+    "copilot:claude-sonnet-4.6": {
+     "1-naive": {
+      "precision": 1.0,
+      "recall": 0.7183,
+      "f1": 0.836,
+      "passed": true,
+      "expected_count": 465,
+      "actual_count": 334,
+      "elapsed_sec": 93.3,
+      "queries_generated": 4,
+      "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|5834,http://www.nlm.nih.gov/research/umls/rxnorm|9384,http://www.nlm.nih.gov/research/umls/rxnorm|8987,http://www.nlm.nih.gov/research/umls/rxnorm|4110,http://www.nlm.nih.gov/research/umls/rxnorm|10109,http://www.nlm.nih.gov/research/umls/rxnorm|35617,http://www.nlm.nih.gov/research/umls/rxnorm|55672&status=active&_include=MedicationRequest:subject",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1364504,http://www.nlm.nih.gov/research/umls/rxnorm|2200644,http://www.nlm.nih.gov/research/umls/rxnorm|2731,http://www.nlm.nih.gov/research/umls/rxnorm|4044,http://www.nlm.nih.gov/research/umls/rxnorm|7809,http://www.nlm.nih.gov/research/umls/rxnorm|190376,http://www.nlm.nih.gov/research/umls/rxnorm|1815&status=active&_include=MedicationRequest:subject",
+       "MedicationStatement?code=http://www.nlm.nih.gov/research/umls/rxnorm|5834,http://www.nlm.nih.gov/research/umls/rxnorm|9384,http://www.nlm.nih.gov/research/umls/rxnorm|8987,http://www.nlm.nih.gov/research/umls/rxnorm|4110,http://www.nlm.nih.gov/research/umls/rxnorm|10109,http://www.nlm.nih.gov/research/umls/rxnorm|35617,http://www.nlm.nih.gov/research/umls/rxnorm|55672&status=active&_include=MedicationStatement:subject",
+       "MedicationStatement?code=http://www.nlm.nih.gov/research/umls/rxnorm|1364504,http://www.nlm.nih.gov/research/umls/rxnorm|2200644,http://www.nlm.nih.gov/research/umls/rxnorm|2731,http://www.nlm.nih.gov/research/umls/rxnorm|4044,http://www.nlm.nih.gov/research/umls/rxnorm|7809,http://www.nlm.nih.gov/research/umls/rxnorm|190376,http://www.nlm.nih.gov/research/umls/rxnorm|1815&status=active&_include=MedicationStatement:subject"
+      ],
+      "raw_response": "## FHIR Queries: Patients on TB Drugs\n\n### \ud83d\udd34 First-Line TB Drugs (Active Prescriptions)\n*(Isoniazid, Rifampin, Pyrazinamide, Ethambutol, Streptomycin, Rifapentine, Rifabutin)*\n```\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|5834,http://www.nlm.nih.gov/research/umls/rxnorm|9384,http://www.nlm.nih.gov/research/umls/rxnorm|8987,http://www.nlm.nih.gov/research/umls/rxnorm|4110,http://www.nlm.nih.gov/research/umls/rxnorm|10109,http://www.nlm.nih.gov/research/umls/rxnorm|35617,http://www.nlm.nih.gov/research/umls/rxnorm|55672&status=active&_include=MedicationRequest:subject\n```\n\n### \ud83d\udfe0 Second-Line / MDR-TB Drugs (Active Prescriptions)\n*(Bedaquiline, Pretomanid, Cycloserine, Ethionamide, Para-aminosalicylic acid, Linezolid, Capreomycin)*\n```\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1364504,http://www.nlm.nih.gov/research/umls/rxnorm|2200644,http://www.nlm.nih.gov/research/umls/rxnorm|2731,http://www.nlm.nih.gov/research/umls/rxnorm|4044,http://www.nlm.nih.gov/research/umls/rxnorm|7809,http://www.nlm.nih.gov/research/umls/rxnorm|190376,http://www.nlm.nih.gov/research/umls/rxnorm|1815&status=active&_include=MedicationRequest:subject\n```\n\n### \ud83d\udfe1 Medication Statements \u2014 First-Line TB Drugs\n```\nMedicationStatement?code=http://www.nlm.nih.gov/research/umls/rxnorm|5834,http://www.nlm.nih.gov/research/umls/rxnorm|9384,http://www.nlm.nih.gov/research/umls/rxnorm|8987,http://www.nlm.nih.gov/research/umls/rxnorm|4110,http://www.nlm.nih.gov/research/umls/rxnorm|10109,http://www.nlm.nih.gov/research/umls/rxnorm|35617,http://www.nlm.nih.gov/research/umls/rxnorm|55672&status=active&_include=MedicationStatement:subject\n```\n\n### \ud83d\udfe1 Medication Statements \u2014 Second-Line TB Drugs\n```\nMedicationStatement?code=http://www.nlm.nih.gov/research/umls/rxnorm|1364504,http://www.nlm.nih.gov/research/umls/rxnorm|2200644,http://www.nlm.nih.gov/research/umls/rxnorm|2731,http://www.nlm.nih.gov/research/umls/rxnorm|4044,http://www.nlm.nih.gov/research/umls/rxnorm|7809,http://www.nlm.nih.gov/research/umls/rxnorm|190376,http://www.nlm.nih.gov/research/umls/rxnorm|1815&status=active&_include=MedicationStatement:subject\n```\n\n---\n\n### \ud83d\udccb Drug Code Reference\n\n| Drug | Class | RxNorm |\n|------|-------|--------|\n| Isoniazid (INH) | 1st-line | 5834 |\n| Rifampin (RIF) | 1st-line | 9384 |\n| Pyrazinamide (PZA) | 1st-line | 8987 |\n| Ethambutol (EMB) | 1st-line | 4110 |\n| Streptomycin | 1st-line | 10109 |\n| Rifapentine | 1st-line | 35617 |\n| Rifabutin | 1st-line | 55672 |\n| Bedaquiline | 2nd-line/MDR | 1364504 |\n| Pretomanid | 2nd-line/MDR | 2200644 |\n| Cycloserine | 2nd-line | 2731 |\n| Ethionamide | 2nd-line | 4044 |\n| Para-aminosalicylic acid | 2nd-line | 7809 |\n| Linezolid | 2nd-line/XDR | 190376 |\n| Capreomycin | 2nd-line | 1815 |",
+      "prompt_text": "Find patients on TB drugs."
+     },
+     "1-broad": {
+      "precision": 1.0,
+      "recall": 0.7183,
+      "f1": 0.836,
+      "passed": true,
+      "expected_count": 465,
+      "actual_count": 334,
+      "elapsed_sec": 81.3,
+      "queries_generated": 10,
+      "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|9384&_include=MedicationRequest:patient&status=active",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6038&_include=MedicationRequest:patient&status=active",
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|9054&_include=MedicationRequest:patient&status=active",
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|4110&_include=MedicationRequest:patient&status=active",
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1302827&_include=MedicationRequest:patient&status=active",
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1302821&_include=MedicationRequest:patient&status=active",
+       "MedicationStatement?code=http://www.nlm.nih.gov/research/umls/rxnorm|9384&_include=MedicationStatement:patient&status=active",
+       "MedicationStatement?code=http://www.nlm.nih.gov/research/umls/rxnorm|6038&_include=MedicationStatement:patient&status=active",
+       "MedicationStatement?code=http://www.nlm.nih.gov/research/umls/rxnorm|9054&_include=MedicationStatement:patient&status=active",
+       "MedicationStatement?code=http://www.nlm.nih.gov/research/umls/rxnorm|4110&_include=MedicationStatement:patient&status=active"
+      ],
+      "raw_response": "## FHIR Queries: Anti-Tuberculosis (RIPE Regimen) Medications\n\nThe queries cover all four cornerstone TB drugs \u2014 **R**ifampin, **I**soniazid, **P**yrazinamide, **E**thambutol \u2014 plus common fixed-dose combination products, across both MedicationRequest and MedicationStatement resources.\n\n---\n\n### \ud83d\udc8a MedicationRequest (Prescribed Orders)\n\n```\n// Rifampin (R)\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|9384&_include=MedicationRequest:patient&status=active\n\n// Isoniazid (I)\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6038&_include=MedicationRequest:patient&status=active\n\n// Pyrazinamide (P)\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|9054&_include=MedicationRequest:patient&status=active\n\n// Ethambutol (E)\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|4110&_include=MedicationRequest:patient&status=active\n\n// Rifamate \u2014 Fixed-dose combo: Rifampin + Isoniazid\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1302827&_include=MedicationRequest:patient&status=active\n\n// Rifater \u2014 Fixed-dose combo: Rifampin + Isoniazid + Pyrazinamide\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1302821&_include=MedicationRequest:patient&status=active\n```\n\n---\n\n### \ud83d\udccb MedicationStatement (Reported Medication Use)\n\n```\n// Rifampin (R)\nMedicationStatement?code=http://www.nlm.nih.gov/research/umls/rxnorm|9384&_include=MedicationStatement:patient&status=active\n\n// Isoniazid (I)\nMedicationStatement?code=http://www.nlm.nih.gov/research/umls/rxnorm|6038&_include=MedicationStatement:patient&status=active\n\n// Pyrazinamide (P)\nMedicationStatement?code=http://www.nlm.nih.gov/research/umls/rxnorm|9054&_include=MedicationStatement:patient&status=active\n\n// Ethambutol (E)\nMedicationStatement?code=http://www.nlm.nih.gov/research/umls/rxnorm|4110&_include=MedicationStatement:patient&status=active\n```\n\n---\n\n### \ud83d\udd0d Reference Summary\n\n| Drug | Role in RIPE | RxNorm Code |\n|------|-------------|-------------|\n| Rifampin | **R** \u2014 Bactericidal, core sterilizing agent | `9384` |\n| Isoniazid | **I** \u2014 Most potent bactericidal | `6038` |\n| Pyrazinamide | **P** \u2014 Sterilizes dormant bacilli | `9054` |\n| Ethambutol | **E** \u2014 Prevents resistance | `4110` |\n| Rifamate (RIF+INH) | Combo product | `1302827` |\n| Rifater (RIF+INH+PZA) | Combo product | `1302821` |\n\n> **Note:** Remove `&status=active` to retrieve historical/completed prescriptions. Add `&_include=MedicationRequest:medication` if medications are stored as external `Medication` resources rather than coded inline.",
+      "prompt_text": "Find patients prescribed anti-tuberculosis medications \u2014 including rifampin and isoniazid, two of the four cornerstone drugs in the standard TB regimen (RIPE: rifampin, isoniazid, pyrazinamide, ethambutol)."
+     },
+     "1-expert": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 465,
+      "actual_count": 465,
+      "elapsed_sec": 57.9,
+      "queries_generated": 2,
+      "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|9384,http://www.nlm.nih.gov/research/umls/rxnorm|6038",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|9384,http://www.nlm.nih.gov/research/umls/rxnorm|6038&status=active"
+      ],
+      "raw_response": "## FHIR Query\n\n```\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|9384,http://www.nlm.nih.gov/research/umls/rxnorm|6038\n```\n\n---\n\n### Query Breakdown\n\n| Component | Details |\n|---|---|\n| **Resource** | `MedicationRequest` |\n| **Parameter** | `code` |\n| **System** | `http://www.nlm.nih.gov/research/umls/rxnorm` |\n| **Rifampin Code** | `9384` |\n| **Isoniazid Code** | `6038` |\n| **Logic** | OR (comma-separated values) |\n\n---\n\n### Key Notes\n\n- **Comma-separated codes** act as an **OR** search \u2014 returns MedicationRequests coded with *either* rifampin **or** isoniazid\n- These two drugs are core components of **tuberculosis (TB) treatment regimens** (e.g., RIPE therapy)\n- Consider adding **`_include=MedicationRequest:patient`** to retrieve associated patient demographics\n- You may also want to add **`status=active`** to filter for currently active prescriptions:\n\n```\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|9384,http://www.nlm.nih.gov/research/umls/rxnorm|6038&status=active\n```\n\n- For combination TB therapy searches, consider also querying for **pyrazinamide (RxNorm: `9054`)** and **ethambutol (RxNorm: `4110`)**",
+      "prompt_text": "Search MedicationRequest with RxNorm codes for rifampin (9384) and isoniazid (6038). Query: MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|9384,http://www.nlm.nih.gov/research/umls/rxnorm|6038"
+     },
+     "2-naive": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 465,
+      "actual_count": 465,
+      "elapsed_sec": 649.1,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6038,http://www.nlm.nih.gov/research/umls/rxnorm|9384,http://www.nlm.nih.gov/research/umls/rxnorm|8987,http://www.nlm.nih.gov/research/umls/rxnorm|4736,http://www.nlm.nih.gov/research/umls/rxnorm|55672,http://www.nlm.nih.gov/research/umls/rxnorm|35617,http://www.nlm.nih.gov/research/umls/rxnorm|10109,http://www.nlm.nih.gov/research/umls/rxnorm|641,http://www.nlm.nih.gov/research/umls/rxnorm|6099,http://www.nlm.nih.gov/research/umls/rxnorm|78903,http://www.nlm.nih.gov/research/umls/rxnorm|3007,http://www.nlm.nih.gov/research/umls/rxnorm|4127,http://www.nlm.nih.gov/research/umls/rxnorm|7833,http://www.nlm.nih.gov/research/umls/rxnorm|190376,http://www.nlm.nih.gov/research/umls/rxnorm|2592,http://www.nlm.nih.gov/research/umls/rxnorm|1364504,http://www.nlm.nih.gov/research/umls/rxnorm|2198359,http://www.nlm.nih.gov/research/umls/rxnorm|106876,http://www.nlm.nih.gov/research/umls/rxnorm|214662,http://www.nlm.nih.gov/research/umls/rxnorm|814321",
+      "additional_query_urls": [],
+      "raw_response": "MedicationAdministration returns 0, so MedicationRequest is the complete source. The query is validated at **799 records** with confirmed TB drug codes.\n\nHere is a summary of my findings before the final answer:\n- **Server**: FHIR R4, uses **RxNorm ingredient-level codes** for medications\n- **VSAC source**: `Tuberculosis Additional Context Medication Codes` (OID 2.16.840.1.113762.1.4.1146.3022) provided the full TB drug vocabulary\n- **Codes included** (TB-specific drugs only, excluding broad-spectrum antibiotics used mainly for other conditions):\n\n| Group | Drug | RxNorm |\n|---|---|---|\n| First-line | isoniazid | 6038 |\n| First-line | rifampin | 9384 |\n| First-line | pyrazinamide | 8987 |\n| First-line | ethambutol | 4736 |\n| Rifamycin variant | rifabutin | 55672 |\n| Rifamycin variant | rifapentine | 35617 |\n| 2nd-line injectable | streptomycin | 10109 |\n| 2nd-line injectable | amikacin | 641 |\n| 2nd-line injectable | kanamycin | 6099 |\n| 2nd-line injectable | capreomycin | 78903 |\n| 2nd-line oral | cycloserine | 3007 |\n| 2nd-line oral | ethionamide | 4127 |\n| 2nd-line oral | aminosalicylic acid | 7833 |\n| 2nd-line oral | linezolid | 190376 |\n| 2nd-line oral | clofazimine | 2592 |\n| Novel (MDR/XDR-TB) | bedaquiline | 1364504 |\n| Novel (MDR/XDR-TB) | pretomanid | 2198359 |\n| Combination | isoniazid/rifampin | 106876 |\n| Combination | isoniazid/pyrazinamide/rifampin | 214662 |\n| Combination | ethambutol/isoniazid/rifampin | 814321 |\n\n---\n\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6038,http://www.nlm.nih.gov/research/umls/rxnorm|9384,http://www.nlm.nih.gov/research/umls/rxnorm|8987,http://www.nlm.nih.gov/research/umls/rxnorm|4736,http://www.nlm.nih.gov/research/umls/rxnorm|55672,http://www.nlm.nih.gov/research/umls/rxnorm|35617,http://www.nlm.nih.gov/research/umls/rxnorm|10109,http://www.nlm.nih.gov/research/umls/rxnorm|641,http://www.nlm.nih.gov/research/umls/rxnorm|6099,http://www.nlm.nih.gov/research/umls/rxnorm|78903,http://www.nlm.nih.gov/research/umls/rxnorm|3007,http://www.nlm.nih.gov/research/umls/rxnorm|4127,http://www.nlm.nih.gov/research/umls/rxnorm|7833,http://www.nlm.nih.gov/research/umls/rxnorm|190376,http://www.nlm.nih.gov/research/umls/rxnorm|2592,http://www.nlm.nih.gov/research/umls/rxnorm|1364504,http://www.nlm.nih.gov/research/umls/rxnorm|2198359,http://www.nlm.nih.gov/research/umls/rxnorm|106876,http://www.nlm.nih.gov/research/umls/rxnorm|214662,http://www.nlm.nih.gov/research/umls/rxnorm|814321",
+      "prompt_text": "Find patients on TB drugs.",
+      "run_metadata": {
+       "output_tokens": 1790,
+       "tool_calls_count": 59,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     },
+     "2-broad": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 465,
+      "actual_count": 465,
+      "elapsed_sec": 402.5,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|9384,http://www.nlm.nih.gov/research/umls/rxnorm|6038,http://www.nlm.nih.gov/research/umls/rxnorm|8987,http://www.nlm.nih.gov/research/umls/rxnorm|4110",
+      "additional_query_urls": [],
+      "raw_response": "Everything checks out. Here is a complete summary of what the investigation revealed before delivering the final query:\n\n---\n\n## Investigation Summary\n\n| Step | Finding |\n|---|---|\n| **FHIR Server** | FHIR R4 (Azure), no US Core IG \u2014 `MedicationRequest` & `MedicationStatement` both supported |\n| **Server code system** | RxNorm **ingredient-level** codes only (confirmed by live sample: `6038`=isoniazid, `9384`=rifampin) |\n| **VSAC value set** | *\"Tuberculosis Additional Context Medication Codes\"* (OID `2.16.840.1.113762.1.4.1146.3022`) \u2014 450 codes; all four RIPE drugs + second-line agents present |\n| **R** \u2014 Rifampin | RxNorm `9384` \u2192 **334 prescriptions** |\n| **I** \u2014 Isoniazid | RxNorm `6038` \u2192 **465 prescriptions** |\n| **P** \u2014 Pyrazinamide | RxNorm `8987` \u2192 0 (confirmed code via VSAC lookup; drug absent from current dataset but code is valid) |\n| **E** \u2014 Ethambutol | RxNorm `4110` \u2192 0 (confirmed code via SNOMED\u2192RxNorm crosswalk; absent from current dataset) |\n| **Combination products** | Checked `106876` (INH+RIF), `1161346/7` (INH+PZA+RIF), `1156818` (EMB+INH+RIF) \u2014 all 0; server does not carry product-level codes |\n| **Combined RIPE query** | **799 total** (union of rifampin + isoniazid prescriptions) |\n\n---\n\n`MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|9384,http://www.nlm.nih.gov/research/umls/rxnorm|6038,http://www.nlm.nih.gov/research/umls/rxnorm|8987,http://www.nlm.nih.gov/research/umls/rxnorm|4110`",
+      "prompt_text": "Find patients prescribed anti-tuberculosis medications \u2014 including rifampin and isoniazid, two of the four cornerstone drugs in the standard TB regimen (RIPE: rifampin, isoniazid, pyrazinamide, ethambutol).",
+      "run_metadata": {
+       "output_tokens": 839,
+       "tool_calls_count": 28,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     },
+     "2-expert": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 465,
+      "actual_count": 0,
+      "elapsed_sec": 82.6,
+      "queries_generated": 2,
+      "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm\\|9384,http://www.nlm.nih.gov/research/umls/rxnorm\\|6038",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|9384,http://www.nlm.nih.gov/research/umls/rxnorm|6038"
+      ],
+      "raw_response": "The query executed successfully! Here's a full breakdown of the results:\n\n---\n\n## \u2705 Query Results Summary\n\n| Field | Detail |\n|---|---|\n| **Query** | `MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm\\|9384,http://www.nlm.nih.gov/research/umls/rxnorm\\|6038` |\n| **Entries Returned** | **10 MedicationRequest records** |\n| **Resource Types** | `MedicationRequest` only |\n| **Total Count** | Not reported by server (paged result) |\n\n---\n\n## \ud83d\udc8a Matched Medications\n\nBoth RxNorm codes fired successfully and returned matching records:\n\n| RxNorm Code | Drug Name | Category |\n|---|---|---|\n| `6038` | **Isoniazid** | Community |\n| `9384` | **Rifampin** | Community |\n\n---\n\n## \ud83d\udd0d Key Observations\n\n1. **Both codes matched** \u2014 `isoniazid (6038)` and `rifampin (9384)` are well-represented in the dataset under the RxNorm system URI `http://www.nlm.nih.gov/research/umls/rxnorm`.\n2. **Category: Community** \u2014 All sampled records are categorized as `community` prescriptions (outpatient/community dispensed), consistent with TB prophylaxis/treatment regimens.\n3. **No total count returned** \u2014 The server did not report a `total` in the bundle, meaning you may need to paginate using `_count` and `_getpagesoffset` (or follow `Bundle.link[next]`) to retrieve all records.\n4. **Clinically coherent** \u2014 Rifampin + Isoniazid together are cornerstone agents in **tuberculosis (TB) treatment** (RIPE regimen) and **latent TB infection (LTBI)** prophylaxis, so co-occurrence in the same query is expected.\n\n---\n\n## \u2705 Final Validated Query\n\n```\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|9384,http://www.nlm.nih.gov/research/umls/rxnorm|6038\n```",
+      "prompt_text": "Search MedicationRequest with RxNorm codes for rifampin (9384) and isoniazid (6038). Query: MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|9384,http://www.nlm.nih.gov/research/umls/rxnorm|6038",
+      "run_metadata": {
+       "output_tokens": 551,
+       "tool_calls_count": 1,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     },
+     "3-naive": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 465,
+      "actual_count": 465,
+      "elapsed_sec": 225.3,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6038,http://www.nlm.nih.gov/research/umls/rxnorm|9384,http://www.nlm.nih.gov/research/umls/rxnorm|8987,http://www.nlm.nih.gov/research/umls/rxnorm|4110,http://www.nlm.nih.gov/research/umls/rxnorm|55672,http://www.nlm.nih.gov/research/umls/rxnorm|35617,http://www.nlm.nih.gov/research/umls/rxnorm|10109,http://www.nlm.nih.gov/research/umls/rxnorm|1364504",
+      "additional_query_urls": [],
+      "raw_response": "All confirmed. The combined query returns **799** MedicationRequests. The server dataset has isoniazid (465) and rifampin (334); the other TB-specific drugs (pyrazinamide, ethambutol, bedaquiline, etc.) have correct codes but zero records in this synthetic dataset \u2014 they are still included so the query is complete and portable.\n\n---\n\n**Methodology summary:**\n- **Playbook 5 \u2014 Drug-defined phenotype** (medication is the primary signal)\n- Server confirmed to use **RxNorm ingredient-level codes**\n- Core TB drugs identified from VSAC value set `2.16.840.1.113762.1.4.1146.3022` (TB Medication Codes)\n\n| Drug | RxNorm | Server Records |\n|---|---|---|\n| Isoniazid (INH) | 6038 | 465 |\n| Rifampin | 9384 | 334 |\n| Pyrazinamide (PZA) | 8987 | 0 |\n| Ethambutol (EMB) | 4110 | 0 |\n| Rifabutin | 55672 | 0 |\n| Rifapentine | 35617 | 0 |\n| Streptomycin | 10109 | 0 |\n| Bedaquiline (MDR-TB) | 1364504 | 0 |\n\n---\n\n**FINAL ANSWER:**\n\n```\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6038,http://www.nlm.nih.gov/research/umls/rxnorm|9384,http://www.nlm.nih.gov/research/umls/rxnorm|8987,http://www.nlm.nih.gov/research/umls/rxnorm|4110,http://www.nlm.nih.gov/research/umls/rxnorm|55672,http://www.nlm.nih.gov/research/umls/rxnorm|35617,http://www.nlm.nih.gov/research/umls/rxnorm|10109,http://www.nlm.nih.gov/research/umls/rxnorm|1364504\n```",
+      "prompt_text": "Find patients on TB drugs.",
+      "run_metadata": {
+       "output_tokens": 1075,
+       "tool_calls_count": 50,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     },
+     "3-broad": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 465,
+      "actual_count": 465,
+      "elapsed_sec": 161.7,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|9384,http://www.nlm.nih.gov/research/umls/rxnorm|6038,http://www.nlm.nih.gov/research/umls/rxnorm|8987,http://www.nlm.nih.gov/research/umls/rxnorm|4110",
+      "additional_query_urls": [],
+      "raw_response": "Confirmed: the server only resolves **ingredient-level** RxNorm codes; all combination/product-form codes return 0. The ingredient-level query yields **799 records** \u2014 a clinically plausible result.\n\n---\n\n### Summary of Evidence\n\n| Drug | RxNorm Ingredient Code | Server hits |\n|---|---|---|\n| Rifampin (R) | `9384` | \u2705 (confirmed in sample) |\n| Isoniazid (I) | `6038` | \u2705 (confirmed in sample) |\n| Pyrazinamide (P) | `8987` | \u2705 (VSAC lookup verified) |\n| Ethambutol (E) | `4110` | \u2705 (VSAC lookup verified) |\n\nAuthorities used: **VSAC** \u2014 TB-specific per-drug value sets (OIDs: 2.16.840.1.113762.1.4.1146.2366, 2363, 2364, 2362) \u2022 **FHIR server sample** confirmed ingredient-level RxNorm coding \u2022 product-specific codes = 0 hits (eliminated).\n\n---\n\n**FINAL ANSWER:**\n\n```\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|9384,http://www.nlm.nih.gov/research/umls/rxnorm|6038,http://www.nlm.nih.gov/research/umls/rxnorm|8987,http://www.nlm.nih.gov/research/umls/rxnorm|4110\n```",
+      "prompt_text": "Find patients prescribed anti-tuberculosis medications \u2014 including rifampin and isoniazid, two of the four cornerstone drugs in the standard TB regimen (RIPE: rifampin, isoniazid, pyrazinamide, ethambutol).",
+      "run_metadata": {
+       "output_tokens": 645,
+       "tool_calls_count": 32,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     },
+     "3-expert": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 465,
+      "actual_count": 0,
+      "elapsed_sec": 41.6,
+      "queries_generated": 2,
+      "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm\\|9384,http://www.nlm.nih.gov/research/umls/rxnorm\\|6038",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|9384,http://www.nlm.nih.gov/research/umls/rxnorm|6038"
+      ],
+      "raw_response": "The query executed successfully! Here's a full breakdown of the results:\n\n---\n\n## \u2705 Query Results Summary\n\n| Field | Details |\n|---|---|\n| **Query** | `MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm\\|9384,http://www.nlm.nih.gov/research/umls/rxnorm\\|6038` |\n| **Entries Returned** | **10 MedicationRequest resources** |\n| **Total Count** | Not reported by server (paged response) |\n| **Resource Types Found** | `MedicationRequest` \u2705 |\n\n---\n\n## \ud83d\udc8a Matching Drug Codes Confirmed\n\n| RxNorm Code | Drug Name | Hits in Sample |\n|---|---|---|\n| `6038` | **Isoniazid** | 4 of 5 sampled records |\n| `9384` | **Rifampin** | 1 of 5 sampled records |\n\nBoth RxNorm codes are **confirmed active** on this server and returning real data.\n\n---\n\n## \ud83d\udd0d Key Observations\n\n- **Code system URI** `http://www.nlm.nih.gov/research/umls/rxnorm` is fully supported on this server \u2705\n- **Category** on all records is `community`, indicating outpatient/community prescriptions\n- The **comma-separated multi-code** pattern works correctly as an OR union \u2014 a single query captures patients on *either* drug\n- These two drugs (rifampin + isoniazid) are the **core backbone of tuberculosis (TB) therapy**, so this query is well-suited for a TB treatment cohort\n\n---\n\n## \u2705 Final Validated Query\n\n```\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|9384,http://www.nlm.nih.gov/research/umls/rxnorm|6038\n```",
+      "prompt_text": "Search MedicationRequest with RxNorm codes for rifampin (9384) and isoniazid (6038). Query: MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|9384,http://www.nlm.nih.gov/research/umls/rxnorm|6038",
+      "run_metadata": {
+       "output_tokens": 476,
+       "tool_calls_count": 1,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     }
+    },
+    "copilot:gpt-5.4": {
+     "1-naive": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 465,
+      "actual_count": 465,
+      "elapsed_sec": 199.2,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|9384,http://www.nlm.nih.gov/research/umls/rxnorm|6038",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|9384,http://www.nlm.nih.gov/research/umls/rxnorm|6038",
+      "prompt_text": "Find patients on TB drugs."
+     },
+     "1-broad": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 465,
+      "actual_count": 465,
+      "elapsed_sec": 129.7,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|9384,http://www.nlm.nih.gov/research/umls/rxnorm|6038",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|9384,http://www.nlm.nih.gov/research/umls/rxnorm|6038",
+      "prompt_text": "Find patients prescribed anti-tuberculosis medications \u2014 including rifampin and isoniazid, two of the four cornerstone drugs in the standard TB regimen (RIPE: rifampin, isoniazid, pyrazinamide, ethambutol)."
+     },
+     "1-expert": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 465,
+      "actual_count": 465,
+      "elapsed_sec": 54.0,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|9384,http://www.nlm.nih.gov/research/umls/rxnorm|6038",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|9384,http://www.nlm.nih.gov/research/umls/rxnorm|6038",
+      "prompt_text": "Search MedicationRequest with RxNorm codes for rifampin (9384) and isoniazid (6038). Query: MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|9384,http://www.nlm.nih.gov/research/umls/rxnorm|6038"
+     },
+     "2-naive": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 465,
+      "actual_count": 465,
+      "elapsed_sec": 417.8,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6038,http://www.nlm.nih.gov/research/umls/rxnorm|9384&status=active",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6038,http://www.nlm.nih.gov/research/umls/rxnorm|9384&status=active",
+      "prompt_text": "Find patients on TB drugs.",
+      "run_metadata": {
+       "output_tokens": 566,
+       "tool_calls_count": 40,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     },
+     "2-broad": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 465,
+      "actual_count": 465,
+      "elapsed_sec": 581.1,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|9384,http://www.nlm.nih.gov/research/umls/rxnorm|6038,http://www.nlm.nih.gov/research/umls/rxnorm|8987,http://www.nlm.nih.gov/research/umls/rxnorm|4110,http://www.nlm.nih.gov/research/umls/rxnorm|106876,http://www.nlm.nih.gov/research/umls/rxnorm|214662,http://www.nlm.nih.gov/research/umls/rxnorm|814321,http://www.nlm.nih.gov/research/umls/rxnorm|821005",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|9384,http://www.nlm.nih.gov/research/umls/rxnorm|6038,http://www.nlm.nih.gov/research/umls/rxnorm|8987,http://www.nlm.nih.gov/research/umls/rxnorm|4110,http://www.nlm.nih.gov/research/umls/rxnorm|106876,http://www.nlm.nih.gov/research/umls/rxnorm|214662,http://www.nlm.nih.gov/research/umls/rxnorm|814321,http://www.nlm.nih.gov/research/umls/rxnorm|821005",
+      "prompt_text": "Find patients prescribed anti-tuberculosis medications \u2014 including rifampin and isoniazid, two of the four cornerstone drugs in the standard TB regimen (RIPE: rifampin, isoniazid, pyrazinamide, ethambutol).",
+      "run_metadata": {
+       "output_tokens": 1063,
+       "tool_calls_count": 56,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     },
+     "2-expert": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 465,
+      "actual_count": 465,
+      "elapsed_sec": 60.9,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|9384,http://www.nlm.nih.gov/research/umls/rxnorm|6038",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|9384,http://www.nlm.nih.gov/research/umls/rxnorm|6038",
+      "prompt_text": "Search MedicationRequest with RxNorm codes for rifampin (9384) and isoniazid (6038). Query: MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|9384,http://www.nlm.nih.gov/research/umls/rxnorm|6038",
+      "run_metadata": {
+       "output_tokens": 128,
+       "tool_calls_count": 0,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     },
+     "3-naive": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 465,
+      "actual_count": 465,
+      "elapsed_sec": 286.0,
+      "queries_generated": 1,
+      "primary_query_url": "Patient?_has:MedicationRequest:patient:code=http://www.nlm.nih.gov/research/umls/rxnorm|6038,http://www.nlm.nih.gov/research/umls/rxnorm|9384,http://www.nlm.nih.gov/research/umls/rxnorm|4110,http://www.nlm.nih.gov/research/umls/rxnorm|8987,http://www.nlm.nih.gov/research/umls/rxnorm|55672,http://www.nlm.nih.gov/research/umls/rxnorm|35617",
+      "additional_query_urls": [],
+      "raw_response": "Patient?_has:MedicationRequest:patient:code=http://www.nlm.nih.gov/research/umls/rxnorm|6038,http://www.nlm.nih.gov/research/umls/rxnorm|9384,http://www.nlm.nih.gov/research/umls/rxnorm|4110,http://www.nlm.nih.gov/research/umls/rxnorm|8987,http://www.nlm.nih.gov/research/umls/rxnorm|55672,http://www.nlm.nih.gov/research/umls/rxnorm|35617",
+      "prompt_text": "Find patients on TB drugs.",
+      "run_metadata": {
+       "output_tokens": 420,
+       "tool_calls_count": 48,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     },
+     "3-broad": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 465,
+      "actual_count": 465,
+      "elapsed_sec": 172.6,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6038,http://www.nlm.nih.gov/research/umls/rxnorm|9384,http://www.nlm.nih.gov/research/umls/rxnorm|8987,http://www.nlm.nih.gov/research/umls/rxnorm|4110",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6038,http://www.nlm.nih.gov/research/umls/rxnorm|9384,http://www.nlm.nih.gov/research/umls/rxnorm|8987,http://www.nlm.nih.gov/research/umls/rxnorm|4110",
+      "prompt_text": "Find patients prescribed anti-tuberculosis medications \u2014 including rifampin and isoniazid, two of the four cornerstone drugs in the standard TB regimen (RIPE: rifampin, isoniazid, pyrazinamide, ethambutol).",
+      "run_metadata": {
+       "output_tokens": 598,
+       "tool_calls_count": 29,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     },
+     "3-expert": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 465,
+      "actual_count": 465,
+      "elapsed_sec": 43.3,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|9384,http://www.nlm.nih.gov/research/umls/rxnorm|6038",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|9384,http://www.nlm.nih.gov/research/umls/rxnorm|6038",
+      "prompt_text": "Search MedicationRequest with RxNorm codes for rifampin (9384) and isoniazid (6038). Query: MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|9384,http://www.nlm.nih.gov/research/umls/rxnorm|6038",
+      "run_metadata": {
+       "output_tokens": 68,
+       "tool_calls_count": 3,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     }
+    },
+    "openai-compat:qwen-qwen3.5-9b": {
+     "1-naive": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 465,
+      "actual_count": 0,
+      "elapsed_sec": 28.8,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?code=http://snomed.info/sct|151740005&patient?_include=Patient&_revinclude=MedicationRequest:patient",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?code=http://snomed.info/sct|151740005&patient?_include=Patient&_revinclude=MedicationRequest:patient",
+      "prompt_text": "Find patients on TB drugs."
+     },
+     "1-broad": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 465,
+      "actual_count": 0,
+      "elapsed_sec": 28.5,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6918|6919&patient=Patient",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6918|6919&patient=Patient",
+      "prompt_text": "Find patients prescribed anti-tuberculosis medications \u2014 including rifampin and isoniazid, two of the four cornerstone drugs in the standard TB regimen (RIPE: rifampin, isoniazid, pyrazinamide, ethambutol)."
+     },
+     "1-expert": {
+      "precision": 1.0,
+      "recall": 0.7183,
+      "f1": 0.836,
+      "passed": true,
+      "expected_count": 465,
+      "actual_count": 334,
+      "elapsed_sec": 29.7,
+      "queries_generated": 2,
+      "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|9384",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6038"
+      ],
+      "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|9384\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6038",
+      "prompt_text": "Search MedicationRequest with RxNorm codes for rifampin (9384) and isoniazid (6038). Query: MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|9384,http://www.nlm.nih.gov/research/umls/rxnorm|6038"
+     },
+     "2-naive": {
+      "precision": 1.0,
+      "recall": 0.7183,
+      "f1": 0.836,
+      "passed": true,
+      "expected_count": 465,
+      "actual_count": 334,
+      "elapsed_sec": 224.5,
+      "queries_generated": 4,
+      "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|9384",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6038",
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|198181",
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|995599"
+      ],
+      "raw_response": "[FALLBACK: parser couldn't extract URL from final response; using fhir_search queries from tool trace]\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|9384\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6038\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|198181\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|995599\n\nOriginal last assistant message:\nPyrazinamide (198181) returns 0 results. Let me check ethambutol.\n\n",
+      "prompt_text": "Find patients on TB drugs.",
+      "run_metadata": {
+       "tool_calls_count": 20,
+       "stop_reason": "fallback_tool_trace",
+       "fallback_used": true
+      }
+     },
+     "2-broad": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 465,
+      "actual_count": 0,
+      "elapsed_sec": 458.1,
+      "queries_generated": 6,
+      "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|9384&_summary=count",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6038&_summary=count",
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|198181&_summary=count",
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|995599&_summary=count",
+       "MedicationRequest?_summary=count",
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|198181"
+      ],
+      "raw_response": "[FALLBACK: parser couldn't extract URL from final response; using fhir_search queries from tool trace]\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|9384&_summary=count\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6038&_summary=count\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|198181&_summary=count\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|995599&_summary=count\nMedicationRequest?_summary=count\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|198181\n\nOriginal last assistant message:\nThere are 799 MedicationRequest resources in the server. Let me search for resources with pyrazinamide or ethambutol codes to see if they exist.\n\nLet me try to find ingredient codes for pyrazinamide and ethambutol. In RxNorm, ingredient codes are typically the base codes. Let me try to find them by searching for the medications in UMLS and then looking for the corresponding RxNorm codes.\n\nActually, let me try a different approach. Let me search for MedicationRequest resources with code systems t",
+      "prompt_text": "Find patients prescribed anti-tuberculosis medications \u2014 including rifampin and isoniazid, two of the four cornerstone drugs in the standard TB regimen (RIPE: rifampin, isoniazid, pyrazinamide, ethambutol).",
+      "run_metadata": {
+       "tool_calls_count": 42,
+       "stop_reason": "fallback_tool_trace",
+       "fallback_used": true
+      }
+     },
+     "2-expert": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 465,
+      "actual_count": 465,
+      "elapsed_sec": 47.5,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|9384,http://www.nlm.nih.gov/research/umls/rxnorm|6038",
+      "additional_query_urls": [],
+      "raw_response": "The search returned results with both rifampin (9384) and isoniazid (6038) codes found in MedicationRequest resources. The query is working correctly.\n\nFINAL ANSWER:\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|9384,http://www.nlm.nih.gov/research/umls/rxnorm|6038",
+      "prompt_text": "Search MedicationRequest with RxNorm codes for rifampin (9384) and isoniazid (6038). Query: MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|9384,http://www.nlm.nih.gov/research/umls/rxnorm|6038",
+      "run_metadata": {
+       "tool_calls_count": 1,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     },
+     "3-naive": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 465,
+      "actual_count": 465,
+      "elapsed_sec": 226.1,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|9384,6038,1163600,1156824,1161346,1161347,1161348,1161349,1156818,1156820",
+      "additional_query_urls": [],
+      "raw_response": "The query returns results. This query searches for patients with MedicationRequests for any of the core TB drugs (rifampin, isoniazid, pyrazinamide, ethambutol) and common combination products.\n\nLet me provide the final FHIR query to find patients on TB drugs:\n\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|9384,6038,1163600,1156824,1161346,1161347,1161348,1161349,1156818,1156820",
+      "prompt_text": "Find patients on TB drugs.",
+      "run_metadata": {
+       "tool_calls_count": 22,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     },
+     "3-broad": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 465,
+      "actual_count": 465,
+      "elapsed_sec": 113.4,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|9384,6038",
+      "additional_query_urls": [],
+      "raw_response": "The query works and returns results with both rifampin (9384) and isoniazid (6038) codes. This query will find all MedicationRequest resources that have either rifampin or isoniazid, which corresponds to patients prescribed these anti-tuberculosis medications.\n\nThe final answer is the FHIR query URL:\n\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|9384,6038",
+      "prompt_text": "Find patients prescribed anti-tuberculosis medications \u2014 including rifampin and isoniazid, two of the four cornerstone drugs in the standard TB regimen (RIPE: rifampin, isoniazid, pyrazinamide, ethambutol).",
+      "run_metadata": {
+       "tool_calls_count": 12,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     },
+     "3-expert": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 465,
+      "actual_count": 465,
+      "elapsed_sec": 42.2,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|9384,http://www.nlm.nih.gov/research/umls/rxnorm|6038",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|9384,http://www.nlm.nih.gov/research/umls/rxnorm|6038",
+      "prompt_text": "Search MedicationRequest with RxNorm codes for rifampin (9384) and isoniazid (6038). Query: MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|9384,http://www.nlm.nih.gov/research/umls/rxnorm|6038",
+      "run_metadata": {
+       "tool_calls_count": 0,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     }
+    }
+   }
+  }
+ ]
+}

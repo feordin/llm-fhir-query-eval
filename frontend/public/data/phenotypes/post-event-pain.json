@@ -1,0 +1,797 @@
+{
+ "phenotype": "post-event-pain",
+ "canonical_tc": "phekb-post-event-pain-comprehensive",
+ "cases": [
+  {
+   "test_case": "phekb-post-event-pain-comprehensive",
+   "grids": {
+    "copilot:claude-opus-4.7": {
+     "1-naive": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 1326,
+      "actual_count": 0,
+      "elapsed_sec": 0.4,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|22253000&patient.birthdate=gt2008-06-11",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|22253000&patient.birthdate=gt2008-06-11",
+      "prompt_text": "Find pediatric pain patients."
+     },
+     "1-broad": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 1326,
+      "actual_count": 0,
+      "elapsed_sec": 0.4,
+      "queries_generated": 4,
+      "primary_query_url": "Procedure?code=http://snomed.info/sct|81155004&subject:Patient.birthdate=gt2008-06-11&_include=Procedure:subject",
+      "additional_query_urls": [
+       "Observation?code=http://loinc.org|38208-5&value-quantity=ge0,le10&patient.birthdate=gt2008-06-11",
+       "Observation?code=http://loinc.org|72514-3&value-quantity=ge0,le10&patient.birthdate=gt2008-06-11&_has:Procedure:patient:code=http://snomed.info/sct|81155004",
+       "Condition?code=http://snomed.info/sct|298382003&patient.birthdate=gt2008-06-11&_revinclude=Procedure:reason-reference&_revinclude=Observation:patient"
+      ],
+      "raw_response": "Procedure?code=http://snomed.info/sct|81155004&subject:Patient.birthdate=gt2008-06-11&_include=Procedure:subject\nObservation?code=http://loinc.org|38208-5&value-quantity=ge0,le10&patient.birthdate=gt2008-06-11\nObservation?code=http://loinc.org|72514-3&value-quantity=ge0,le10&patient.birthdate=gt2008-06-11&_has:Procedure:patient:code=http://snomed.info/sct|81155004\nCondition?code=http://snomed.info/sct|298382003&patient.birthdate=gt2008-06-11&_revinclude=Procedure:reason-reference&_revinclude=Observation:patient",
+      "prompt_text": "Find pediatric scoliosis surgery patients with documented post-operative pain severity scores (NRS 0-10) \u2014 used in pain pharmacogenetics studies."
+     },
+     "1-expert": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 1326,
+      "actual_count": 1326,
+      "elapsed_sec": 60.4,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|M41.9",
+      "additional_query_urls": [
+       "Observation?code=http://loinc.org|38208-5&value-quantity=ge4"
+      ],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|M41.9\nObservation?code=http://loinc.org|38208-5&value-quantity=ge4",
+      "prompt_text": "Run two queries. (1) Condition?code=http://hl7.org/fhir/sid/icd-10-cm|M41.9 \u2014 scoliosis. (2) Observation?code=http://loinc.org|38208-5&value-quantity=ge4 \u2014 pain score >=4. Union the patient IDs."
+     },
+     "2-naive": {
+      "precision": 1.0,
+      "recall": 0.1312,
+      "f1": 0.232,
+      "passed": false,
+      "expected_count": 1326,
+      "actual_count": 174,
+      "elapsed_sec": 63.6,
+      "queries_generated": 1,
+      "primary_query_url": "Observation?code:text=pain&patient.birthdate=gt2008-06-12",
+      "additional_query_urls": [],
+      "raw_response": "FINAL ANSWER:\n\nObservation?code:text=pain&patient.birthdate=gt2008-06-12",
+      "prompt_text": "Find pediatric pain patients.",
+      "run_metadata": {
+       "output_tokens": 42,
+       "tool_calls_count": 17,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     },
+     "2-broad": {
+      "precision": 1.0,
+      "recall": 0.1312,
+      "f1": 0.232,
+      "passed": false,
+      "expected_count": 1326,
+      "actual_count": 174,
+      "elapsed_sec": 59.6,
+      "queries_generated": 1,
+      "primary_query_url": "Patient?_has:Condition:patient:code=http://hl7.org/fhir/sid/icd-10-cm|M41.9,http://hl7.org/fhir/sid/icd-10-cm|M41.00,http://hl7.org/fhir/sid/icd-10-cm|M41.115,http://hl7.org/fhir/sid/icd-10-cm|M41.116,http://hl7.org/fhir/sid/icd-10-cm|M41.117,http://hl7.org/fhir/sid/icd-10-cm|M41.125,http://hl7.org/fhir/sid/icd-10-cm|M41.126,http://hl7.org/fhir/sid/icd-10-cm|M41.127,http://hl7.org/fhir/sid/icd-10-cm|M41.20,http://hl7.org/fhir/sid/icd-10-cm|M41.40&_has:Observation:patient:code=http://loinc.org|38208-5&birthdate=gt2007-06-12",
+      "additional_query_urls": [],
+      "raw_response": "Patient?_has:Condition:patient:code=http://hl7.org/fhir/sid/icd-10-cm|M41.9,http://hl7.org/fhir/sid/icd-10-cm|M41.00,http://hl7.org/fhir/sid/icd-10-cm|M41.115,http://hl7.org/fhir/sid/icd-10-cm|M41.116,http://hl7.org/fhir/sid/icd-10-cm|M41.117,http://hl7.org/fhir/sid/icd-10-cm|M41.125,http://hl7.org/fhir/sid/icd-10-cm|M41.126,http://hl7.org/fhir/sid/icd-10-cm|M41.127,http://hl7.org/fhir/sid/icd-10-cm|M41.20,http://hl7.org/fhir/sid/icd-10-cm|M41.40&_has:Observation:patient:code=http://loinc.org|38208-5&birthdate=gt2007-06-12",
+      "prompt_text": "Find pediatric scoliosis surgery patients with documented post-operative pain severity scores (NRS 0-10) \u2014 used in pain pharmacogenetics studies.",
+      "run_metadata": {
+       "output_tokens": 391,
+       "tool_calls_count": 15,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     },
+     "2-expert": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 1326,
+      "actual_count": 1326,
+      "elapsed_sec": 71.4,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|M41.9",
+      "additional_query_urls": [
+       "Observation?code=http://loinc.org|38208-5&value-quantity=ge4"
+      ],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|M41.9\nObservation?code=http://loinc.org|38208-5&value-quantity=ge4",
+      "prompt_text": "Run two queries. (1) Condition?code=http://hl7.org/fhir/sid/icd-10-cm|M41.9 \u2014 scoliosis. (2) Observation?code=http://loinc.org|38208-5&value-quantity=ge4 \u2014 pain score >=4. Union the patient IDs.",
+      "run_metadata": {
+       "output_tokens": 66,
+       "tool_calls_count": 2,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     },
+     "3-naive": {
+      "precision": 1.0,
+      "recall": 0.1312,
+      "f1": 0.232,
+      "passed": false,
+      "expected_count": 1326,
+      "actual_count": 174,
+      "elapsed_sec": 56.0,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|G89.0,http://hl7.org/fhir/sid/icd-10-cm|G89.21,http://hl7.org/fhir/sid/icd-10-cm|G89.28,http://hl7.org/fhir/sid/icd-10-cm|G89.29,http://hl7.org/fhir/sid/icd-10-cm|G89.4,http://hl7.org/fhir/sid/icd-10-cm|R52&patient.birthdate=gt2008-06-09",
+      "additional_query_urls": [
+       "Observation?code=http://loinc.org|38208-5&value-quantity=gt0&patient.birthdate=gt2008-06-09"
+      ],
+      "raw_response": "Pediatric = currently under 18 (birthdate after 2008-06-09).\n\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|G89.0,http://hl7.org/fhir/sid/icd-10-cm|G89.21,http://hl7.org/fhir/sid/icd-10-cm|G89.28,http://hl7.org/fhir/sid/icd-10-cm|G89.29,http://hl7.org/fhir/sid/icd-10-cm|G89.4,http://hl7.org/fhir/sid/icd-10-cm|R52&patient.birthdate=gt2008-06-09\nObservation?code=http://loinc.org|38208-5&value-quantity=gt0&patient.birthdate=gt2008-06-09",
+      "prompt_text": "Find pediatric pain patients.",
+      "run_metadata": {
+       "output_tokens": 389,
+       "tool_calls_count": 13,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     },
+     "3-broad": {
+      "precision": 1.0,
+      "recall": 0.1312,
+      "f1": 0.232,
+      "passed": false,
+      "expected_count": 1326,
+      "actual_count": 174,
+      "elapsed_sec": 55.0,
+      "queries_generated": 1,
+      "primary_query_url": "Patient?_has:Condition:patient:code=http://hl7.org/fhir/sid/icd-10-cm|M41.9&_has:Observation:patient:code=http://loinc.org|38208-5&birthdate=gt2008-06-09",
+      "additional_query_urls": [],
+      "raw_response": "Patient?_has:Condition:patient:code=http://hl7.org/fhir/sid/icd-10-cm|M41.9&_has:Observation:patient:code=http://loinc.org|38208-5&birthdate=gt2008-06-09",
+      "prompt_text": "Find pediatric scoliosis surgery patients with documented post-operative pain severity scores (NRS 0-10) \u2014 used in pain pharmacogenetics studies.",
+      "run_metadata": {
+       "output_tokens": 372,
+       "tool_calls_count": 15,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     },
+     "3-expert": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 1326,
+      "actual_count": 1326,
+      "elapsed_sec": 72.4,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|M41.9",
+      "additional_query_urls": [
+       "Observation?code=http://loinc.org|38208-5&value-quantity=ge4"
+      ],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|M41.9\nObservation?code=http://loinc.org|38208-5&value-quantity=ge4",
+      "prompt_text": "Run two queries. (1) Condition?code=http://hl7.org/fhir/sid/icd-10-cm|M41.9 \u2014 scoliosis. (2) Observation?code=http://loinc.org|38208-5&value-quantity=ge4 \u2014 pain score >=4. Union the patient IDs.",
+      "run_metadata": {
+       "output_tokens": 66,
+       "tool_calls_count": 2,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     }
+    },
+    "copilot:claude-opus-4.7+fhirskill": {
+     "1-naive": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 1326,
+      "actual_count": 0,
+      "elapsed_sec": 0.2,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|22253000&patient.birthdate=ge2008-06-11",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|22253000&patient.birthdate=ge2008-06-11",
+      "prompt_text": "Find pediatric pain patients."
+     },
+     "1-broad": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 1326,
+      "actual_count": 0,
+      "elapsed_sec": 0.4,
+      "queries_generated": 3,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|298382003&patient.birthdate=ge2008-06-11",
+      "additional_query_urls": [
+       "Procedure?code=http://snomed.info/sct|81155008&subject.birthdate=ge2008-06-11",
+       "Observation?code=http://loinc.org|72514-3&subject.birthdate=ge2008-06-11"
+      ],
+      "raw_response": "Condition?code=http://snomed.info/sct|298382003&patient.birthdate=ge2008-06-11\nProcedure?code=http://snomed.info/sct|81155008&subject.birthdate=ge2008-06-11\nObservation?code=http://loinc.org|72514-3&subject.birthdate=ge2008-06-11",
+      "prompt_text": "Find pediatric scoliosis surgery patients with documented post-operative pain severity scores (NRS 0-10) \u2014 used in pain pharmacogenetics studies."
+     },
+     "1-expert": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 1326,
+      "actual_count": 1326,
+      "elapsed_sec": 0.8,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|M41.9",
+      "additional_query_urls": [
+       "Observation?code=http://loinc.org|38208-5&value-quantity=ge4"
+      ],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|M41.9\nObservation?code=http://loinc.org|38208-5&value-quantity=ge4",
+      "prompt_text": "Run two queries. (1) Condition?code=http://hl7.org/fhir/sid/icd-10-cm|M41.9 \u2014 scoliosis. (2) Observation?code=http://loinc.org|38208-5&value-quantity=ge4 \u2014 pain score >=4. Union the patient IDs."
+     }
+    },
+    "copilot:claude-sonnet-4.6": {
+     "1-naive": {
+      "precision": 1.0,
+      "recall": 0.1312,
+      "f1": 0.232,
+      "passed": false,
+      "expected_count": 1326,
+      "actual_count": 174,
+      "elapsed_sec": 51.8,
+      "queries_generated": 5,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|22253000&patient.birthdate=ge2008-06-02",
+      "additional_query_urls": [
+       "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|R52&patient.birthdate=ge2008-06-02",
+       "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|G89.29&patient.birthdate=ge2008-06-02",
+       "Observation?code=http://loinc.org|72514-3&patient.birthdate=ge2008-06-02",
+       "Observation?code=http://loinc.org|38208-5&patient.birthdate=ge2008-06-02"
+      ],
+      "raw_response": "## FHIR Queries: Pediatric Pain Patients\n\n**Assumptions:**\n- **Pediatric** = under 18 years old (birthdate \u2265 2008-06-02 based on current date 2026-06-02)\n- **Pain** represented via SNOMED CT diagnosis, ICD-10-CM code, and pain severity observations\n\n---\n\n```\nCondition?code=http://snomed.info/sct|22253000&patient.birthdate=ge2008-06-02\n\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|R52&patient.birthdate=ge2008-06-02\n\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|G89.29&patient.birthdate=ge2008-06-02\n\nObservation?code=http://loinc.org|72514-3&patient.birthdate=ge2008-06-02\n\nObservation?code=http://loinc.org|38208-5&patient.birthdate=ge2008-06-02\n```\n\n---\n\n### Query Breakdown\n\n| Query | Resource | Code | Meaning |\n|-------|----------|------|---------|\n| 1 | Condition | SNOMED `22253000` | Pain (finding) |\n| 2 | Condition | ICD-10 `R52` | Pain, unspecified |\n| 3 | Condition | ICD-10 `G89.29` | Chronic pain, NEC |\n| 4 | Observation | LOINC `72514-3` | Pain severity (0\u201310 numeric rating) |\n| 5 | Observation | LOINC `38208-5` | Pain severity (visual analog scale) |\n\n> \ud83d\udca1 **Tip:** Add `&_include=Condition:patient` or `&_include=Observation:patient` to retrieve the associated `Patient` resources in the same bundle. You may also want to add `&clinical-status=active` to Condition queries to focus on active pain diagnoses.",
+      "prompt_text": "Find pediatric pain patients."
+     },
+     "1-broad": {
+      "precision": 1.0,
+      "recall": 0.144,
+      "f1": 0.2518,
+      "passed": false,
+      "expected_count": 1326,
+      "actual_count": 191,
+      "elapsed_sec": 80.0,
+      "queries_generated": 5,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|298382003,http://hl7.org/fhir/sid/icd-10-cm|M41.9,http://hl7.org/fhir/sid/icd-10-cm|M41.00,http://hl7.org/fhir/sid/icd-10-cm|M41.10,http://hl7.org/fhir/sid/icd-10-cm|M41.20,http://hl7.org/fhir/sid/icd-10-cm|M41.30&subject:Patient.birthdate=ge2008-06-02&clinical-status=active,resolved&_include=Condition:subject",
+      "additional_query_urls": [
+       "Procedure?code=http://snomed.info/sct|182961005,http://snomed.info/sct|414774002,http://snomed.info/sct|77289007,http://snomed.info/sct|43130009&subject:Patient.birthdate=ge2008-06-02&status=completed&_include=Procedure:subject&_include=Procedure:encounter",
+       "Observation?code=http://loinc.org|72514-3,http://loinc.org|80316-3,http://loinc.org|38208-5&subject:Patient.birthdate=ge2008-06-02&value-quantity=ge0&value-quantity=le10&status=final,amended&_include=Observation:subject&_include=Observation:encounter",
+       "Patient?birthdate=ge2008-06-02&_has:Condition:subject:code=http://snomed.info/sct|298382003,http://hl7.org/fhir/sid/icd-10-cm|M41.9,http://hl7.org/fhir/sid/icd-10-cm|M41.10,http://hl7.org/fhir/sid/icd-10-cm|M41.20&_has:Procedure:subject:code=http://snomed.info/sct|182961005,http://snomed.info/sct|414774002,http://snomed.info/sct|77289007&_has:Observation:subject:code=http://loinc.org|72514-3,http://loinc.org|80316-3",
+       "MedicationRequest?subject:Patient.birthdate=ge2008-06-02&code=http://www.nlm.nih.gov/research/umls/rxnorm|161,http://www.nlm.nih.gov/research/umls/rxnorm|7804,http://www.nlm.nih.gov/research/umls/rxnorm|10689,http://www.nlm.nih.gov/research/umls/rxnorm|41493&intent=order&_include=MedicationRequest:subject&_include=MedicationRequest:encounter"
+      ],
+      "raw_response": "## FHIR Queries: Pediatric Scoliosis Surgery + Post-Op NRS Pain Scores\n\n**Clinical Context:** Pediatric patients (age < 18 as of 2026-06-02, i.e., born \u2265 2008-06-02) with scoliosis diagnosis, corrective spinal surgery, and documented post-operative NRS 0\u201310 pain observations.\n\n---\n\n### 1. Scoliosis Diagnosis in Pediatric Patients\n```\nCondition?code=http://snomed.info/sct|298382003,http://hl7.org/fhir/sid/icd-10-cm|M41.9,http://hl7.org/fhir/sid/icd-10-cm|M41.00,http://hl7.org/fhir/sid/icd-10-cm|M41.10,http://hl7.org/fhir/sid/icd-10-cm|M41.20,http://hl7.org/fhir/sid/icd-10-cm|M41.30&subject:Patient.birthdate=ge2008-06-02&clinical-status=active,resolved&_include=Condition:subject\n```\n\n---\n\n### 2. Corrective Spinal Surgery (Scoliosis) in Pediatric Patients\n```\nProcedure?code=http://snomed.info/sct|182961005,http://snomed.info/sct|414774002,http://snomed.info/sct|77289007,http://snomed.info/sct|43130009&subject:Patient.birthdate=ge2008-06-02&status=completed&_include=Procedure:subject&_include=Procedure:encounter\n```\n\n---\n\n### 3. Post-Operative NRS 0\u201310 Pain Severity Scores in Pediatric Patients\n```\nObservation?code=http://loinc.org|72514-3,http://loinc.org|80316-3,http://loinc.org|38208-5&subject:Patient.birthdate=ge2008-06-02&value-quantity=ge0&value-quantity=le10&status=final,amended&_include=Observation:subject&_include=Observation:encounter\n```\n\n---\n\n### 4. Consolidated Patient Cohort (All Three Criteria via `_has`)\n```\nPatient?birthdate=ge2008-06-02&_has:Condition:subject:code=http://snomed.info/sct|298382003,http://hl7.org/fhir/sid/icd-10-cm|M41.9,http://hl7.org/fhir/sid/icd-10-cm|M41.10,http://hl7.org/fhir/sid/icd-10-cm|M41.20&_has:Procedure:subject:code=http://snomed.info/sct|182961005,http://snomed.info/sct|414774002,http://snomed.info/sct|77289007&_has:Observation:subject:code=http://loinc.org|72514-3,http://loinc.org|80316-3\n```\n\n---\n\n### 5. MedicationRequest (Analgesics Post-Op \u2014 for Pharmacogenetics Linkage)\n```\nMedicationRequest?subject:Patient.birthdate=ge2008-06-02&code=http://www.nlm.nih.gov/research/umls/rxnorm|161,http://www.nlm.nih.gov/research/umls/rxnorm|7804,http://www.nlm.nih.gov/research/umls/rxnorm|10689,http://www.nlm.nih.gov/research/umls/rxnorm|41493&intent=order&_include=MedicationRequest:subject&_include=MedicationRequest:encounter\n```\n> Covers: morphine (161), oxycodone (7804), hydromorphone (10689), fentanyl (41493)\n\n---\n\n### Key Code Annotations\n\n| Code | System | Meaning |\n|---|---|---|\n| `298382003` | SNOMED CT | Scoliosis deformity of spine |\n| `M41.00\u2013M41.30` | ICD-10-CM | Infantile/juvenile/other idiopathic scoliosis |\n| `182961005` | SNOMED CT | Corrective surgery for scoliosis |\n| `414774002` | SNOMED CT | Posterior spinal fusion |\n| `77289007` | SNOMED CT | Arthrodesis of spine |\n| `72514-3` | LOINC | **NRS 0\u201310 verbal numeric rating pain score** |\n| `80316-3` | LOINC | Pain severity \u2013 numeric rating scale |\n| `38208-5` | LOINC | Pain severity \u2013 visual analog scale |",
+      "prompt_text": "Find pediatric scoliosis surgery patients with documented post-operative pain severity scores (NRS 0-10) \u2014 used in pain pharmacogenetics studies."
+     },
+     "1-expert": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 1326,
+      "actual_count": 1326,
+      "elapsed_sec": 85.8,
+      "queries_generated": 6,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|M41.9",
+      "additional_query_urls": [
+       "Observation?code=http://loinc.org|38208-5&value-quantity=ge4",
+       "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|M41.9&_elements=subject",
+       "Observation?code=http://loinc.org|38208-5&value-quantity=ge4&_elements=subject",
+       "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|M41.9&clinical-status=active",
+       "Observation?code=http://loinc.org|38208-5&value-quantity=ge4&status=final"
+      ],
+      "raw_response": "Here are the two FHIR queries to execute and union on patient IDs:\n\n```\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|M41.9\nObservation?code=http://loinc.org|38208-5&value-quantity=ge4\n```\n\n---\n\n### Query Breakdown\n\n| # | Resource | Code | Description |\n|---|----------|------|-------------|\n| 1 | `Condition` | `ICD-10-CM \\| M41.9` | Scoliosis, unspecified |\n| 2 | `Observation` | `LOINC \\| 38208-5` | Pain severity score \u2265 4 |\n\n---\n\n### Post-Processing: Union of Patient IDs\n\nAfter retrieving results from both queries, extract patient references and union them:\n\n```\nQuery 1 patients: { Condition[*].subject.reference }\nQuery 2 patients: { Observation[*].subject.reference }\n\nUnion = Query1_patients \u222a Query2_patients  (deduplicated)\n```\n\n---\n\n### Optional Enhancements\n\n- **Add `_elements=subject`** to minimize payload:\n  ```\n  Condition?code=http://hl7.org/fhir/sid/icd-10-cm|M41.9&_elements=subject\n  Observation?code=http://loinc.org|38208-5&value-quantity=ge4&_elements=subject\n  ```\n- **Add `status` filters** for cleaner data:\n  ```\n  Condition?code=http://hl7.org/fhir/sid/icd-10-cm|M41.9&clinical-status=active\n  Observation?code=http://loinc.org|38208-5&value-quantity=ge4&status=final\n  ```\n- **Add `_count`** to page through large result sets if needed.",
+      "prompt_text": "Run two queries. (1) Condition?code=http://hl7.org/fhir/sid/icd-10-cm|M41.9 \u2014 scoliosis. (2) Observation?code=http://loinc.org|38208-5&value-quantity=ge4 \u2014 pain score >=4. Union the patient IDs."
+     },
+     "2-naive": {
+      "precision": 1.0,
+      "recall": 0.1312,
+      "f1": 0.232,
+      "passed": false,
+      "expected_count": 1326,
+      "actual_count": 174,
+      "elapsed_sec": 234.7,
+      "queries_generated": 2,
+      "primary_query_url": "Observation?code=http://loinc.org|38208-5&patient.birthdate=gt2008-06-02",
+      "additional_query_urls": [
+       "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|G89.0,http://hl7.org/fhir/sid/icd-10-cm|G89.11,http://hl7.org/fhir/sid/icd-10-cm|G89.18,http://hl7.org/fhir/sid/icd-10-cm|G89.21,http://hl7.org/fhir/sid/icd-10-cm|G89.28,http://hl7.org/fhir/sid/icd-10-cm|G89.29,http://hl7.org/fhir/sid/icd-10-cm|G89.3,http://hl7.org/fhir/sid/icd-10-cm|G89.4,http://hl7.org/fhir/sid/icd-10-cm|G90.511,http://hl7.org/fhir/sid/icd-10-cm|G90.512,http://hl7.org/fhir/sid/icd-10-cm|G90.513,http://hl7.org/fhir/sid/icd-10-cm|G90.521,http://hl7.org/fhir/sid/icd-10-cm|G90.522,http://hl7.org/fhir/sid/icd-10-cm|G90.523,http://hl7.org/fhir/sid/icd-10-cm|G90.529,http://hl7.org/fhir/sid/icd-10-cm|G90.59,http://hl7.org/fhir/sid/icd-10-cm|R52&patient.birthdate=gt2008-06-02"
+      ],
+      "raw_response": "Now I have a complete picture. Here's what was discovered:\n\n| Resource | Findings |\n|---|---|\n| **Condition** | 2,170 records \u2014 all M41.9 (Scoliosis); no pain-specific ICD-10 dx codes (G89.x, R52) present |\n| **Observation** | **174** records with LOINC `38208-5` (Pain severity - Reported); all are from patients born after 2008-06-02 \u2192 already a pediatric-only dataset |\n| **MedicationRequest** | 0 records \u2014 no analgesic data |\n\n**Key insights:**\n- This is a **pediatric scoliosis dataset** where pain is captured via validated pain severity surveys (LOINC 38208-5), not as discrete Condition dx codes\n- The pediatric filter `patient.birthdate=gt2008-06-02` (under 18 as of 2026-06-02) is confirmed functional by the server \u2014 using `gt2025-01-01` returned 0, `gt2008-06-02` returns 174 (all existing patients)\n- No MedicationRequest data exists, so analgesics can't be used as a secondary signal\n- The Condition approach with ICD-10 pain codes (G89.x, R52, G90.5x) is included as best practice for union, though currently yields 0 on this server\n\n---\n\n`Observation?code=http://loinc.org|38208-5&patient.birthdate=gt2008-06-02`\n`Condition?code=http://hl7.org/fhir/sid/icd-10-cm|G89.0,http://hl7.org/fhir/sid/icd-10-cm|G89.11,http://hl7.org/fhir/sid/icd-10-cm|G89.18,http://hl7.org/fhir/sid/icd-10-cm|G89.21,http://hl7.org/fhir/sid/icd-10-cm|G89.28,http://hl7.org/fhir/sid/icd-10-cm|G89.29,http://hl7.org/fhir/sid/icd-10-cm|G89.3,http://hl7.org/fhir/sid/icd-10-cm|G89.4,http://hl7.org/fhir/sid/icd-10-cm|G90.511,http://hl7.org/fhir/sid/icd-10-cm|G90.512,http://hl7.org/fhir/sid/icd-10-cm|G90.513,http://hl7.org/fhir/sid/icd-10-cm|G90.521,http://hl7.org/fhir/sid/icd-10-cm|G90.522,http://hl7.org/fhir/sid/icd-10-cm|G90.523,http://hl7.org/fhir/sid/icd-10-cm|G90.529,http://hl7.org/fhir/sid/icd-10-cm|G90.59,http://hl7.org/fhir/sid/icd-10-cm|R52&patient.birthdate=gt2008-06-02`",
+      "prompt_text": "Find pediatric pain patients.",
+      "run_metadata": {
+       "output_tokens": 2215,
+       "tool_calls_count": 26,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     },
+     "2-broad": {
+      "precision": 1.0,
+      "recall": 0.1486,
+      "f1": 0.2587,
+      "passed": false,
+      "expected_count": 1326,
+      "actual_count": 197,
+      "elapsed_sec": 343.1,
+      "queries_generated": 3,
+      "primary_query_url": "Patient?_has:Condition:patient:code=http://hl7.org/fhir/sid/icd-10-cm|M41.9,http://hl7.org/fhir/sid/icd-10-cm|M41.00,http://hl7.org/fhir/sid/icd-10-cm|M41.05,http://hl7.org/fhir/sid/icd-10-cm|M41.06,http://hl7.org/fhir/sid/icd-10-cm|M41.07,http://hl7.org/fhir/sid/icd-10-cm|M41.115,http://hl7.org/fhir/sid/icd-10-cm|M41.116,http://hl7.org/fhir/sid/icd-10-cm|M41.117,http://hl7.org/fhir/sid/icd-10-cm|M41.125,http://hl7.org/fhir/sid/icd-10-cm|M41.126,http://hl7.org/fhir/sid/icd-10-cm|M41.127,http://hl7.org/fhir/sid/icd-10-cm|M41.20,http://hl7.org/fhir/sid/icd-10-cm|M41.25,http://hl7.org/fhir/sid/icd-10-cm|M41.26,http://hl7.org/fhir/sid/icd-10-cm|M41.27,http://hl7.org/fhir/sid/icd-10-cm|M41.30,http://hl7.org/fhir/sid/icd-10-cm|M41.35,http://hl7.org/fhir/sid/icd-10-cm|M41.40,http://hl7.org/fhir/sid/icd-10-cm|M41.45,http://hl7.org/fhir/sid/icd-10-cm|M41.46,http://hl7.org/fhir/sid/icd-10-cm|M41.47,http://hl7.org/fhir/sid/icd-10-cm|M41.50,http://hl7.org/fhir/sid/icd-10-cm|M41.55,http://hl7.org/fhir/sid/icd-10-cm|M41.56,http://hl7.org/fhir/sid/icd-10-cm|M41.57,http://hl7.org/fhir/sid/icd-10-cm|M41.80,http://hl7.org/fhir/sid/icd-10-cm|M41.85,http://hl7.org/fhir/sid/icd-10-cm|M41.86,http://hl7.org/fhir/sid/icd-10-cm|M41.87&_has:Observation:patient:code=http://loinc.org|38208-5,http://loinc.org|72514-3&birthdate=gt2008-01-01",
+      "additional_query_urls": [
+       "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|M41.9,http://hl7.org/fhir/sid/icd-10-cm|M41.00,http://hl7.org/fhir/sid/icd-10-cm|M41.05,http://hl7.org/fhir/sid/icd-10-cm|M41.06,http://hl7.org/fhir/sid/icd-10-cm|M41.07,http://hl7.org/fhir/sid/icd-10-cm|M41.115,http://hl7.org/fhir/sid/icd-10-cm|M41.116,http://hl7.org/fhir/sid/icd-10-cm|M41.117,http://hl7.org/fhir/sid/icd-10-cm|M41.125,http://hl7.org/fhir/sid/icd-10-cm|M41.126,http://hl7.org/fhir/sid/icd-10-cm|M41.127,http://hl7.org/fhir/sid/icd-10-cm|M41.20,http://hl7.org/fhir/sid/icd-10-cm|M41.25,http://hl7.org/fhir/sid/icd-10-cm|M41.26,http://hl7.org/fhir/sid/icd-10-cm|M41.27,http://hl7.org/fhir/sid/icd-10-cm|M41.30,http://hl7.org/fhir/sid/icd-10-cm|M41.35,http://hl7.org/fhir/sid/icd-10-cm|M41.40,http://hl7.org/fhir/sid/icd-10-cm|M41.45,http://hl7.org/fhir/sid/icd-10-cm|M41.46,http://hl7.org/fhir/sid/icd-10-cm|M41.47,http://hl7.org/fhir/sid/icd-10-cm|M41.50,http://hl7.org/fhir/sid/icd-10-cm|M41.55,http://hl7.org/fhir/sid/icd-10-cm|M41.56,http://hl7.org/fhir/sid/icd-10-cm|M41.57,http://hl7.org/fhir/sid/icd-10-cm|M41.80,http://hl7.org/fhir/sid/icd-10-cm|M41.85,http://hl7.org/fhir/sid/icd-10-cm|M41.86,http://hl7.org/fhir/sid/icd-10-cm|M41.87&patient.birthdate=gt2008-01-01",
+       "Observation?code=http://loinc.org|38208-5,http://loinc.org|72514-3&patient.birthdate=gt2008-01-01"
+      ],
+      "raw_response": "All validated \u2014 174 pediatric scoliosis patients with documented pain scores. Here is a summary of all discovery findings before the final answer:\n\n---\n\n### \ud83d\udd2c Discovery Summary\n\n| Dimension | Findings |\n|-----------|----------|\n| **FHIR Server** | R4 (4.0.1), Azure FHIR Server \u2014 no IGs loaded |\n| **Condition coding** | ICD-10-CM only (confirmed M41.9 in 3/3 samples) |\n| **Procedure resources** | \u274c None (0 total) \u2014 surgery not queryable via Procedure |\n| **Pain Observation coding** | LOINC `38208-5` (Pain severity - Reported, category=survey) confirmed in all samples |\n| **NRS-specific code** | LOINC `72514-3` (Pain severity 0-10 verbal numeric NRS) \u2014 also included per VSAC value set |\n| **Scoliosis code family** | 29 ICD-10-CM M41.x codes (VSAC OID `2.16.840.1.113883.3.3157.1840`) |\n| **Surgery (SNOMED)** | `428547005` \"Spinal fusion for scoliosis\" identified (not queryable on this server \u2014 no Procedure data) |\n| **Pediatric filter** | `birthdate=gt2008-01-01` (currently <18 yrs) \u2014 server-validated |\n| **Cohort size** | **174 patients** meet all 3 criteria: scoliosis diagnosis \u2229 pain NRS score \u2229 pediatric |\n\n---\n\n### Cohort Logic\n- **Query 1** (Patient intersection via `_has`) \u2014 identifies cohort core: pediatric patients who have BOTH a scoliosis condition AND a pain NRS observation\n- **Query 2** (Condition) \u2014 retrieves all scoliosis diagnoses (full M41.x family, pediatric filter) for supplemental data pull\n- **Query 3** (Observation) \u2014 retrieves the pain NRS scores themselves (the study outcome) for pediatric patients\n\n---\n\nPatient?_has:Condition:patient:code=http://hl7.org/fhir/sid/icd-10-cm|M41.9,http://hl7.org/fhir/sid/icd-10-cm|M41.00,http://hl7.org/fhir/sid/icd-10-cm|M41.05,http://hl7.org/fhir/sid/icd-10-cm|M41.06,http://hl7.org/fhir/sid/icd-10-cm|M41.07,http://hl7.org/fhir/sid/icd-10-cm|M41.115,http://hl7.org/fhir/sid/icd-10-cm|M41.116,http://hl7.org/fhir/sid/icd-10-cm|M41.117,http://hl7.org/fhir/sid/icd-10-cm|M41.125,http://hl7.org/fhir/sid/icd-10-cm|M41.126,http://hl7.org/fhir/sid/icd-10-cm|M41.127,http://hl7.org/fhir/sid/icd-10-cm|M41.20,http://hl7.org/fhir/sid/icd-10-cm|M41.25,http://hl7.org/fhir/sid/icd-10-cm|M41.26,http://hl7.org/fhir/sid/icd-10-cm|M41.27,http://hl7.org/fhir/sid/icd-10-cm|M41.30,http://hl7.org/fhir/sid/icd-10-cm|M41.35,http://hl7.org/fhir/sid/icd-10-cm|M41.40,http://hl7.org/fhir/sid/icd-10-cm|M41.45,http://hl7.org/fhir/sid/icd-10-cm|M41.46,http://hl7.org/fhir/sid/icd-10-cm|M41.47,http://hl7.org/fhir/sid/icd-10-cm|M41.50,http://hl7.org/fhir/sid/icd-10-cm|M41.55,http://hl7.org/fhir/sid/icd-10-cm|M41.56,http://hl7.org/fhir/sid/icd-10-cm|M41.57,http://hl7.org/fhir/sid/icd-10-cm|M41.80,http://hl7.org/fhir/sid/icd-10-cm|M41.85,http://hl7.org/fhir/sid/icd-10-cm|M41.86,http://hl7.org/fhir/sid/icd-10-cm|M41.87&_has:Observation:patient:code=http://loinc.org|38208-5,http://loinc.org|72514-3&birthdate=gt2008-01-01\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|M41.9,http://hl7.org/fhir/sid/icd-10-cm|M41.00,http://hl7.org/fhir/sid/icd-10-cm|M41.05,http://hl7.org/fhir/sid/icd-10-cm|M41.06,http://hl7.org/fhir/sid/icd-10-cm|M41.07,http://hl7.org/fhir/sid/icd-10-cm|M41.115,http://hl7.org/fhir/sid/icd-10-cm|M41.116,http://hl7.org/fhir/sid/icd-10-cm|M41.117,http://hl7.org/fhir/sid/icd-10-cm|M41.125,http://hl7.org/fhir/sid/icd-10-cm|M41.126,http://hl7.org/fhir/sid/icd-10-cm|M41.127,http://hl7.org/fhir/sid/icd-10-cm|M41.20,http://hl7.org/fhir/sid/icd-10-cm|M41.25,http://hl7.org/fhir/sid/icd-10-cm|M41.26,http://hl7.org/fhir/sid/icd-10-cm|M41.27,http://hl7.org/fhir/sid/icd-10-cm|M41.30,http://hl7.org/fhir/sid/icd-10-cm|M41.35,http://hl7.org/fhir/sid/icd-10-cm|M41.40,http://hl7.org/fhir/sid/icd-10-cm|M41.45,http://hl7.org/fhir/sid/icd-10-cm|M41.46,http://hl7.org/fhir/sid/icd-10-cm|M41.47,http://hl7.org/fhir/sid/icd-10-cm|M41.50,http://hl7.org/fhir/sid/icd-10-cm|M41.55,http://hl7.org/fhir/sid/icd-10-cm|M41.56,http://hl7.org/fhir/sid/icd-10-cm|M41.57,http://hl7.org/fhir/sid/icd-10-cm|M41.80,http://hl7.org/fhir/sid/icd-10-cm|M41.85,http://hl7.org/fhir/sid/icd-10-cm|M41.86,http://hl7.org/fhir/sid/icd-10-cm|M41.87&patient.birthdate=gt2008-01-01\nObservation?code=http://loinc.org|38208-5,http://loinc.org|72514-3&patient.birthdate=gt2008-01-01",
+      "prompt_text": "Find pediatric scoliosis surgery patients with documented post-operative pain severity scores (NRS 0-10) \u2014 used in pain pharmacogenetics studies.",
+      "run_metadata": {
+       "output_tokens": 2839,
+       "tool_calls_count": 33,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     },
+     "2-expert": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 1326,
+      "actual_count": 1326,
+      "elapsed_sec": 100.9,
+      "queries_generated": 4,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm\\|M41.9",
+      "additional_query_urls": [
+       "Observation?code=http://loinc.org\\|38208-5&value-quantity=ge4",
+       "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|M41.9",
+       "Observation?code=http://loinc.org|38208-5&value-quantity=ge4"
+      ],
+      "raw_response": "Both queries executed cleanly and returned valid, matching resources. Here's a full summary:\n\n---\n\n## \u2705 Query Results\n\n### Query 1 \u2014 Scoliosis (Condition)\n| Field | Detail |\n|---|---|\n| **Query** | `Condition?code=http://hl7.org/fhir/sid/icd-10-cm\\|M41.9` |\n| **Resources returned** | 10 (server did not provide a total count) |\n| **Code confirmed** | `ICD-10-CM M41.9` \u2014 *Scoliosis, unspecified* \u2705 |\n| **Condition category** | `encounter-diagnosis` (all sampled records) |\n\n> \u26a0\ufe0f **Coverage note:** `M41.9` is the *unspecified* scoliosis code. The ICD-10-CM family includes more specific subtypes (e.g., `M41.0` Infantile, `M41.1` Juvenile, `M41.2` Other idiopathic, `M41.3` Thoracogenic, `M41.4` Neuromuscular, `M41.5` Other secondary, `M41.8` Other forms). If completeness matters, consider expanding to all `M41.*` codes.\n\n---\n\n### Query 2 \u2014 Pain Score \u2265 4 (Observation)\n| Field | Detail |\n|---|---|\n| **Query** | `Observation?code=http://loinc.org\\|38208-5&value-quantity=ge4` |\n| **Resources returned** | 10 (server did not provide a total count) |\n| **Code confirmed** | `LOINC 38208-5` \u2014 *Pain severity - Reported* \u2705 |\n| **Observation category** | `survey` (all sampled records) |\n\n> \u26a0\ufe0f **Coverage note:** `38208-5` is the patient-reported pain severity score. If you also want clinician-assessed pain or other pain scales, additional LOINC codes (e.g., `72514-3` *Numeric Pain Rating Scale*) may be relevant.\n\n---\n\n## \ud83d\udd17 Union Instructions\n\nTo union patient IDs client-side:\n1. Collect all `Condition.subject.reference` values from Query 1.\n2. Collect all `Observation.subject.reference` values from Query 2.\n3. Merge into a **deduplicated set** of patient IDs \u2014 patients appearing in **either or both** queries are included.\n\n---\n\n## Final Queries\n\n```\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|M41.9\nObservation?code=http://loinc.org|38208-5&value-quantity=ge4\n```",
+      "prompt_text": "Run two queries. (1) Condition?code=http://hl7.org/fhir/sid/icd-10-cm|M41.9 \u2014 scoliosis. (2) Observation?code=http://loinc.org|38208-5&value-quantity=ge4 \u2014 pain score >=4. Union the patient IDs.",
+      "run_metadata": {
+       "output_tokens": 673,
+       "tool_calls_count": 2,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     },
+     "3-naive": {
+      "precision": 0.9206,
+      "recall": 0.1312,
+      "f1": 0.2297,
+      "passed": false,
+      "expected_count": 1326,
+      "actual_count": 189,
+      "elapsed_sec": 231.1,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|G43.909,http://hl7.org/fhir/sid/icd-10-cm|G43.919,http://hl7.org/fhir/sid/icd-10-cm|G43.009,http://hl7.org/fhir/sid/icd-10-cm|G43.019,http://hl7.org/fhir/sid/icd-10-cm|G43.109,http://hl7.org/fhir/sid/icd-10-cm|G43.119,http://hl7.org/fhir/sid/icd-10-cm|G43.409,http://hl7.org/fhir/sid/icd-10-cm|G43.419,http://hl7.org/fhir/sid/icd-10-cm|G43.709,http://hl7.org/fhir/sid/icd-10-cm|G43.719,http://hl7.org/fhir/sid/icd-10-cm|G43.809,http://hl7.org/fhir/sid/icd-10-cm|G43.819,http://hl7.org/fhir/sid/icd-10-cm|G89.0,http://hl7.org/fhir/sid/icd-10-cm|G89.11,http://hl7.org/fhir/sid/icd-10-cm|G89.18,http://hl7.org/fhir/sid/icd-10-cm|G89.21,http://hl7.org/fhir/sid/icd-10-cm|G89.28,http://hl7.org/fhir/sid/icd-10-cm|G89.29,http://hl7.org/fhir/sid/icd-10-cm|G89.4,http://hl7.org/fhir/sid/icd-10-cm|G90.511,http://hl7.org/fhir/sid/icd-10-cm|G90.512,http://hl7.org/fhir/sid/icd-10-cm|G90.521,http://hl7.org/fhir/sid/icd-10-cm|G90.522,http://hl7.org/fhir/sid/icd-10-cm|G90.59,http://hl7.org/fhir/sid/icd-10-cm|R52&patient.birthdate=gt2008-06-09",
+      "additional_query_urls": [
+       "Observation?code=http://loinc.org|38208-5,http://loinc.org|72514-3,http://loinc.org|80316-3&patient.birthdate=gt2008-06-09"
+      ],
+      "raw_response": "Confirmed: **15** pediatric Condition records (pain diagnoses, led by G43.909 migraine) and **174** Observation records (pain severity assessments, LOINC 38208-5) \u2014 all validated as pediatric (born after 2008-06-09). The evaluator will union both patient sets.\n\n---\n\n**Playbook summary:**\n- **Playbook 3 (Age-restricted):** `patient.birthdate=gt2008-06-09` (under-18 as of 2026-06-09)\n- **Playbook 1 + 8 (Subtypes / Multi-system codes):** Full G43 migraine family + G89 pain NEC + G90.5 CRPS + R52 in ICD-10-CM for Condition; LOINC pain score (38208-5) for Observation\n- **Playbook 12 (Cohort = OR):** Two resource types unioned \u2014 diagnosis evidence OR assessment evidence\n\n---\n\n**FINAL ANSWER:**\n\n```\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|G43.909,http://hl7.org/fhir/sid/icd-10-cm|G43.919,http://hl7.org/fhir/sid/icd-10-cm|G43.009,http://hl7.org/fhir/sid/icd-10-cm|G43.019,http://hl7.org/fhir/sid/icd-10-cm|G43.109,http://hl7.org/fhir/sid/icd-10-cm|G43.119,http://hl7.org/fhir/sid/icd-10-cm|G43.409,http://hl7.org/fhir/sid/icd-10-cm|G43.419,http://hl7.org/fhir/sid/icd-10-cm|G43.709,http://hl7.org/fhir/sid/icd-10-cm|G43.719,http://hl7.org/fhir/sid/icd-10-cm|G43.809,http://hl7.org/fhir/sid/icd-10-cm|G43.819,http://hl7.org/fhir/sid/icd-10-cm|G89.0,http://hl7.org/fhir/sid/icd-10-cm|G89.11,http://hl7.org/fhir/sid/icd-10-cm|G89.18,http://hl7.org/fhir/sid/icd-10-cm|G89.21,http://hl7.org/fhir/sid/icd-10-cm|G89.28,http://hl7.org/fhir/sid/icd-10-cm|G89.29,http://hl7.org/fhir/sid/icd-10-cm|G89.4,http://hl7.org/fhir/sid/icd-10-cm|G90.511,http://hl7.org/fhir/sid/icd-10-cm|G90.512,http://hl7.org/fhir/sid/icd-10-cm|G90.521,http://hl7.org/fhir/sid/icd-10-cm|G90.522,http://hl7.org/fhir/sid/icd-10-cm|G90.59,http://hl7.org/fhir/sid/icd-10-cm|R52&patient.birthdate=gt2008-06-09\nObservation?code=http://loinc.org|38208-5,http://loinc.org|72514-3,http://loinc.org|80316-3&patient.birthdate=gt2008-06-09\n```",
+      "prompt_text": "Find pediatric pain patients.",
+      "run_metadata": {
+       "output_tokens": 1104,
+       "tool_calls_count": 50,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     },
+     "3-broad": {
+      "precision": 1.0,
+      "recall": 0.1312,
+      "f1": 0.232,
+      "passed": false,
+      "expected_count": 1326,
+      "actual_count": 174,
+      "elapsed_sec": 176.0,
+      "queries_generated": 1,
+      "primary_query_url": "Patient?_has:Condition:patient:code=http://hl7.org/fhir/sid/icd-10-cm|M41.00,http://hl7.org/fhir/sid/icd-10-cm|M41.05,http://hl7.org/fhir/sid/icd-10-cm|M41.06,http://hl7.org/fhir/sid/icd-10-cm|M41.07,http://hl7.org/fhir/sid/icd-10-cm|M41.115,http://hl7.org/fhir/sid/icd-10-cm|M41.116,http://hl7.org/fhir/sid/icd-10-cm|M41.117,http://hl7.org/fhir/sid/icd-10-cm|M41.125,http://hl7.org/fhir/sid/icd-10-cm|M41.126,http://hl7.org/fhir/sid/icd-10-cm|M41.127,http://hl7.org/fhir/sid/icd-10-cm|M41.20,http://hl7.org/fhir/sid/icd-10-cm|M41.25,http://hl7.org/fhir/sid/icd-10-cm|M41.26,http://hl7.org/fhir/sid/icd-10-cm|M41.27,http://hl7.org/fhir/sid/icd-10-cm|M41.30,http://hl7.org/fhir/sid/icd-10-cm|M41.35,http://hl7.org/fhir/sid/icd-10-cm|M41.40,http://hl7.org/fhir/sid/icd-10-cm|M41.45,http://hl7.org/fhir/sid/icd-10-cm|M41.46,http://hl7.org/fhir/sid/icd-10-cm|M41.47,http://hl7.org/fhir/sid/icd-10-cm|M41.50,http://hl7.org/fhir/sid/icd-10-cm|M41.55,http://hl7.org/fhir/sid/icd-10-cm|M41.56,http://hl7.org/fhir/sid/icd-10-cm|M41.57,http://hl7.org/fhir/sid/icd-10-cm|M41.80,http://hl7.org/fhir/sid/icd-10-cm|M41.85,http://hl7.org/fhir/sid/icd-10-cm|M41.86,http://hl7.org/fhir/sid/icd-10-cm|M41.87,http://hl7.org/fhir/sid/icd-10-cm|M41.9&_has:Observation:patient:code=http://loinc.org|38208-5&birthdate=gt2008-06-09",
+      "additional_query_urls": [],
+      "raw_response": "The `birthdate` filter is working correctly (1,326 \u2192 190 with age filter for M41.9 alone). The 174 cohort from the full AND query is uniformly pediatric. All criteria confirmed. Now I can assemble the final validated query.\n\n---\n\n## \ud83d\udd2c Methodology Summary\n\n| Playbook | Applied |\n|---|---|\n| **3 \u2014 Age-restricted** | `birthdate=gt2008-06-09` (under 18 as of 2026-06-09) |\n| **6 \u2014 Procedurally defined** | Procedure resource is empty on this server; surgical context captured via scoliosis Condition codes (M41.x, the diagnoses that drive surgical intervention) |\n| **7 \u2014 Threshold** | LOINC `38208-5` \"Pain severity \u2013 Reported\" (NRS 0\u201310), confirmed present with 174 records; LOINC `72514-3` (explicit NRS 0\u201310 label) returned 0 and is excluded |\n| **11 \u2014 Cross-resource AND** | `_has:Condition` AND `_has:Observation` \u2014 patient must have BOTH a scoliosis dx AND a pain score |\n| **12 \u2014 Validated case** | Research-grade: strict AND intersection, not a loose OR union |\n| **1 \u2014 Subtypes** | All M41.x subtypes included: infantile, juvenile, adolescent, neuromuscular, thoracogenic, other secondary, unspecified |\n\n**Validated counts:**\n- Scoliosis Conditions (all M41.x): **1,326**\n- Pain Severity Observations (`38208-5`): **174**\n- **Final cohort** (scoliosis \u2229 pain score \u2229 age < 18): **174**\n\n---\n\n## \u2705 FINAL ANSWER\n\n```\nPatient?_has:Condition:patient:code=http://hl7.org/fhir/sid/icd-10-cm|M41.00,http://hl7.org/fhir/sid/icd-10-cm|M41.05,http://hl7.org/fhir/sid/icd-10-cm|M41.06,http://hl7.org/fhir/sid/icd-10-cm|M41.07,http://hl7.org/fhir/sid/icd-10-cm|M41.115,http://hl7.org/fhir/sid/icd-10-cm|M41.116,http://hl7.org/fhir/sid/icd-10-cm|M41.117,http://hl7.org/fhir/sid/icd-10-cm|M41.125,http://hl7.org/fhir/sid/icd-10-cm|M41.126,http://hl7.org/fhir/sid/icd-10-cm|M41.127,http://hl7.org/fhir/sid/icd-10-cm|M41.20,http://hl7.org/fhir/sid/icd-10-cm|M41.25,http://hl7.org/fhir/sid/icd-10-cm|M41.26,http://hl7.org/fhir/sid/icd-10-cm|M41.27,http://hl7.org/fhir/sid/icd-10-cm|M41.30,http://hl7.org/fhir/sid/icd-10-cm|M41.35,http://hl7.org/fhir/sid/icd-10-cm|M41.40,http://hl7.org/fhir/sid/icd-10-cm|M41.45,http://hl7.org/fhir/sid/icd-10-cm|M41.46,http://hl7.org/fhir/sid/icd-10-cm|M41.47,http://hl7.org/fhir/sid/icd-10-cm|M41.50,http://hl7.org/fhir/sid/icd-10-cm|M41.55,http://hl7.org/fhir/sid/icd-10-cm|M41.56,http://hl7.org/fhir/sid/icd-10-cm|M41.57,http://hl7.org/fhir/sid/icd-10-cm|M41.80,http://hl7.org/fhir/sid/icd-10-cm|M41.85,http://hl7.org/fhir/sid/icd-10-cm|M41.86,http://hl7.org/fhir/sid/icd-10-cm|M41.87,http://hl7.org/fhir/sid/icd-10-cm|M41.9&_has:Observation:patient:code=http://loinc.org|38208-5&birthdate=gt2008-06-09\n```",
+      "prompt_text": "Find pediatric scoliosis surgery patients with documented post-operative pain severity scores (NRS 0-10) \u2014 used in pain pharmacogenetics studies.",
+      "run_metadata": {
+       "output_tokens": 1769,
+       "tool_calls_count": 26,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     },
+     "3-expert": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 1326,
+      "actual_count": 1326,
+      "elapsed_sec": 80.8,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|M41.9",
+      "additional_query_urls": [
+       "Observation?code=http://loinc.org|38208-5&value-quantity=ge4"
+      ],
+      "raw_response": "Both queries executed successfully. Here's a summary of what was found:\n\n| # | Query | Resource | Code | Display | Results |\n|---|-------|----------|------|---------|---------|\n| 1 | Scoliosis | `Condition` | ICD-10-CM `M41.9` | Scoliosis, unspecified | \u2705 10+ records |\n| 2 | Pain Score \u2265 4 | `Observation` | LOINC `38208-5` | Pain severity - Reported | \u2705 10+ records |\n\n**Key findings:**\n- \u2705 The server natively stores **ICD-10-CM `M41.9`** under `http://hl7.org/fhir/sid/icd-10-cm` \u2014 exact match.\n- \u2705 The server natively stores **LOINC `38208-5`** under `http://loinc.org` \u2014 exact match.\n- \u2705 Both `value-quantity=ge4` and the pain observation category (`survey`) are correctly indexed.\n- The evaluator should **union** the patient IDs from both result sets \u2014 a patient qualifies if they appear in **either** leg.\n\n---\n\n**FINAL ANSWER:**\n\n```\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|M41.9\nObservation?code=http://loinc.org|38208-5&value-quantity=ge4\n```",
+      "prompt_text": "Run two queries. (1) Condition?code=http://hl7.org/fhir/sid/icd-10-cm|M41.9 \u2014 scoliosis. (2) Observation?code=http://loinc.org|38208-5&value-quantity=ge4 \u2014 pain score >=4. Union the patient IDs.",
+      "run_metadata": {
+       "output_tokens": 583,
+       "tool_calls_count": 2,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     }
+    },
+    "copilot:gpt-5.4": {
+     "1-naive": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 1326,
+      "actual_count": 0,
+      "elapsed_sec": 44.8,
+      "queries_generated": 1,
+      "primary_query_url": "Patient?birthdate=gt2008-06-02&_has:Condition:patient:code:below=http://snomed.info/sct|22253000",
+      "additional_query_urls": [],
+      "raw_response": "Patient?birthdate=gt2008-06-02&_has:Condition:patient:code:below=http://snomed.info/sct|22253000",
+      "prompt_text": "Find pediatric pain patients."
+     },
+     "1-broad": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 1326,
+      "actual_count": 0,
+      "elapsed_sec": 182.2,
+      "queries_generated": 2,
+      "primary_query_url": "Encounter?patient.birthdate=gt2008-06-02&patient._has:Condition:patient:code=http://snomed.info/sct|298382003&_has:Procedure:encounter:status=completed&_has:Procedure:encounter:code=http://www.ama-assn.org/go/cpt|22800,http://www.ama-assn.org/go/cpt|22802,http://www.ama-assn.org/go/cpt|22804,http://www.ama-assn.org/go/cpt|22808,http://www.ama-assn.org/go/cpt|22810,http://www.ama-assn.org/go/cpt|22812&_has:Observation:encounter:code=http://loinc.org|72514-3&_include=Encounter:patient",
+      "additional_query_urls": [
+       "Observation?code=http://loinc.org|72514-3&subject:Patient.birthdate=gt2008-06-02&subject:Patient._has:Condition:patient:code=http://snomed.info/sct|298382003&encounter._has:Procedure:encounter:status=completed&encounter._has:Procedure:encounter:code=http://www.ama-assn.org/go/cpt|22800,http://www.ama-assn.org/go/cpt|22802,http://www.ama-assn.org/go/cpt|22804,http://www.ama-assn.org/go/cpt|22808,http://www.ama-assn.org/go/cpt|22810,http://www.ama-assn.org/go/cpt|22812"
+      ],
+      "raw_response": "Encounter?patient.birthdate=gt2008-06-02&patient._has:Condition:patient:code=http://snomed.info/sct|298382003&_has:Procedure:encounter:status=completed&_has:Procedure:encounter:code=http://www.ama-assn.org/go/cpt|22800,http://www.ama-assn.org/go/cpt|22802,http://www.ama-assn.org/go/cpt|22804,http://www.ama-assn.org/go/cpt|22808,http://www.ama-assn.org/go/cpt|22810,http://www.ama-assn.org/go/cpt|22812&_has:Observation:encounter:code=http://loinc.org|72514-3&_include=Encounter:patient\nObservation?code=http://loinc.org|72514-3&subject:Patient.birthdate=gt2008-06-02&subject:Patient._has:Condition:patient:code=http://snomed.info/sct|298382003&encounter._has:Procedure:encounter:status=completed&encounter._has:Procedure:encounter:code=http://www.ama-assn.org/go/cpt|22800,http://www.ama-assn.org/go/cpt|22802,http://www.ama-assn.org/go/cpt|22804,http://www.ama-assn.org/go/cpt|22808,http://www.ama-assn.org/go/cpt|22810,http://www.ama-assn.org/go/cpt|22812",
+      "prompt_text": "Find pediatric scoliosis surgery patients with documented post-operative pain severity scores (NRS 0-10) \u2014 used in pain pharmacogenetics studies."
+     },
+     "1-expert": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 1326,
+      "actual_count": 1326,
+      "elapsed_sec": 102.5,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|M41.9",
+      "additional_query_urls": [
+       "Observation?code=http://loinc.org|38208-5&value-quantity=ge4"
+      ],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|M41.9\nObservation?code=http://loinc.org|38208-5&value-quantity=ge4",
+      "prompt_text": "Run two queries. (1) Condition?code=http://hl7.org/fhir/sid/icd-10-cm|M41.9 \u2014 scoliosis. (2) Observation?code=http://loinc.org|38208-5&value-quantity=ge4 \u2014 pain score >=4. Union the patient IDs."
+     },
+     "2-naive": {
+      "precision": 1.0,
+      "recall": 0.1312,
+      "f1": 0.232,
+      "passed": false,
+      "expected_count": 1326,
+      "actual_count": 174,
+      "elapsed_sec": 315.2,
+      "queries_generated": 1,
+      "primary_query_url": "Observation?category=survey&code=http://loinc.org|38208-5,http://loinc.org|38214-3,http://loinc.org|38221-8,http://loinc.org|72514-3,http://loinc.org|77565-0&value-quantity=gt0&patient.birthdate=gt2008-06-02",
+      "additional_query_urls": [],
+      "raw_response": "Observation?category=survey&code=http://loinc.org|38208-5,http://loinc.org|38214-3,http://loinc.org|38221-8,http://loinc.org|72514-3,http://loinc.org|77565-0&value-quantity=gt0&patient.birthdate=gt2008-06-02",
+      "prompt_text": "Find pediatric pain patients.",
+      "run_metadata": {
+       "output_tokens": 1048,
+       "tool_calls_count": 43,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     },
+     "2-broad": {
+      "precision": 1.0,
+      "recall": 0.1312,
+      "f1": 0.232,
+      "passed": false,
+      "expected_count": 1326,
+      "actual_count": 174,
+      "elapsed_sec": 440.5,
+      "queries_generated": 1,
+      "primary_query_url": "Observation?code=http://loinc.org|38208-5,http://loinc.org|72514-3&category=http://terminology.hl7.org/CodeSystem/observation-category|survey&value-quantity=ge0&value-quantity=le10&subject:Patient.birthdate=gt2008-06-02&subject:Patient._has:Condition:patient:code:text=scoliosis",
+      "additional_query_urls": [],
+      "raw_response": "Observation?code=http://loinc.org|38208-5,http://loinc.org|72514-3&category=http://terminology.hl7.org/CodeSystem/observation-category|survey&value-quantity=ge0&value-quantity=le10&subject:Patient.birthdate=gt2008-06-02&subject:Patient._has:Condition:patient:code:text=scoliosis",
+      "prompt_text": "Find pediatric scoliosis surgery patients with documented post-operative pain severity scores (NRS 0-10) \u2014 used in pain pharmacogenetics studies.",
+      "run_metadata": {
+       "output_tokens": 1381,
+       "tool_calls_count": 56,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     },
+     "2-expert": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 1326,
+      "actual_count": 1326,
+      "elapsed_sec": 81.6,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|M41.9",
+      "additional_query_urls": [
+       "Observation?code=http://loinc.org|38208-5&value-quantity=ge4"
+      ],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|M41.9\nObservation?code=http://loinc.org|38208-5&value-quantity=ge4",
+      "prompt_text": "Run two queries. (1) Condition?code=http://hl7.org/fhir/sid/icd-10-cm|M41.9 \u2014 scoliosis. (2) Observation?code=http://loinc.org|38208-5&value-quantity=ge4 \u2014 pain score >=4. Union the patient IDs.",
+      "run_metadata": {
+       "output_tokens": 237,
+       "tool_calls_count": 0,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     },
+     "3-naive": {
+      "precision": 1.0,
+      "recall": 0.1312,
+      "f1": 0.232,
+      "passed": false,
+      "expected_count": 1326,
+      "actual_count": 174,
+      "elapsed_sec": 233.4,
+      "queries_generated": 1,
+      "primary_query_url": "Observation?code=http://loinc.org|38208-5&value-quantity=ge1&patient.birthdate=gt2008-06-09&patient.birthdate=lt2026-06-09",
+      "additional_query_urls": [],
+      "raw_response": "Observation?code=http://loinc.org|38208-5&value-quantity=ge1&patient.birthdate=gt2008-06-09&patient.birthdate=lt2026-06-09",
+      "prompt_text": "Find pediatric pain patients.",
+      "run_metadata": {
+       "output_tokens": 70,
+       "tool_calls_count": 44,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     },
+     "3-broad": {
+      "precision": 1.0,
+      "recall": 0.1312,
+      "f1": 0.232,
+      "passed": false,
+      "expected_count": 1326,
+      "actual_count": 174,
+      "elapsed_sec": 224.6,
+      "queries_generated": 1,
+      "primary_query_url": "Patient?_has:Condition:patient:code=http://hl7.org/fhir/sid/icd-10-cm|M41.9&_has:Observation:patient:code=http://loinc.org|38208-5,http://loinc.org|72514-3&birthdate=gt2008-06-09&birthdate=lt2026-06-09",
+      "additional_query_urls": [],
+      "raw_response": "Patient?_has:Condition:patient:code=http://hl7.org/fhir/sid/icd-10-cm|M41.9&_has:Observation:patient:code=http://loinc.org|38208-5,http://loinc.org|72514-3&birthdate=gt2008-06-09&birthdate=lt2026-06-09",
+      "prompt_text": "Find pediatric scoliosis surgery patients with documented post-operative pain severity scores (NRS 0-10) \u2014 used in pain pharmacogenetics studies.",
+      "run_metadata": {
+       "output_tokens": 601,
+       "tool_calls_count": 67,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     },
+     "3-expert": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 1326,
+      "actual_count": 1326,
+      "elapsed_sec": 87.3,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|M41.9",
+      "additional_query_urls": [
+       "Observation?code=http://loinc.org|38208-5&value-quantity=ge4"
+      ],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|M41.9\nObservation?code=http://loinc.org|38208-5&value-quantity=ge4",
+      "prompt_text": "Run two queries. (1) Condition?code=http://hl7.org/fhir/sid/icd-10-cm|M41.9 \u2014 scoliosis. (2) Observation?code=http://loinc.org|38208-5&value-quantity=ge4 \u2014 pain score >=4. Union the patient IDs.",
+      "run_metadata": {
+       "output_tokens": 409,
+       "tool_calls_count": 3,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     }
+    },
+    "openai-compat:qwen-qwen3.5-9b": {
+     "1-naive": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 1326,
+      "actual_count": 0,
+      "elapsed_sec": 6.1,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|29857009&subject-patient-type=pediatric",
+      "additional_query_urls": [
+       "Condition?code=http://snomed.info/sct|29857009&_include=Condition:subject&_revinclude=Patient:condition"
+      ],
+      "raw_response": "Condition?code=http://snomed.info/sct|29857009&subject-patient-type=pediatric\nCondition?code=http://snomed.info/sct|29857009&_include=Condition:subject&_revinclude=Patient:condition",
+      "prompt_text": "Find pediatric pain patients."
+     },
+     "1-broad": {
+      "precision": 0.7483,
+      "recall": 1.0,
+      "f1": 0.856,
+      "passed": true,
+      "expected_count": 1326,
+      "actual_count": 1772,
+      "elapsed_sec": 233.4,
+      "queries_generated": 1,
+      "primary_query_url": "Patient?_has=Observation&Observation?code=http://loinc.org|721916|&Observation?code=http://loinc.org|725016|&Observation?code=http://loinc.org|725017|&Observation?code=http://loinc.org|725018|&Observation?code=http://loinc.org|725019|&Observation?code=http://loinc.org|725020|&Observation?code=http://loinc.org|725021|&Observation?code=http://loinc.org|725022|&Observation?code=http://loinc.org|725023|&Observation?code=http://loinc.org|725024|&Observation?code=http://loinc.org|725025|&Observation?code=http://loinc.org|725026|&Observation?code=http://loinc.org|725027|&Observation?code=http://loinc.org|725028|&Observation?code=http://loinc.org|725029|&Observation?code=http://loinc.org|725030|&Observation?code=http://loinc.org|725031|&Observation?code=http://loinc.org|725032|&Observation?code=http://loinc.org|725033|&Observation?code=http://loinc.org|725034|&Observation?code=http://loinc.org|725035|&Observation?code=http://loinc.org|725036|&Observation?code=http://loinc.org|725037|&Observation?code=http://loinc.org|725038|&Observation?code=http://loinc.org|725039|&Observation?code=http://loinc.org|725040|&Observation?code=http://loinc.org|725041|&Observation?code=http://loinc.org|725042|&Observation?code=http://loinc.org|725043|&Observation?code=http://loinc.org|725044|&Observation?code=http://loinc.org|725045|&Observation?code=http://loinc.org|725046|&Observation?code=http://loinc.org|725047|&Observation?code=http://loinc.org|725048|&Observation?code=http://loinc.org|725049|&Observation?code=http://loinc.org|725050|&Observation?code=http://loinc.org|725051|&Observation?code=http://loinc.org|725052|&Observation?code=http://loinc.org|725053|&Observation?code=http://loinc.org|725054|&Observation?code=http://loinc.org|725055|&Observation?code=http://loinc.org|725056|&Observation?code=http://loinc.org|725057|&Observation?code=http://loinc.org|725058|&Observation?code=http://loinc.org|725059|&Observation?code=http://loinc.org|725060|&Observation?code=http://loinc.org|725061|&Observation?code=http://loinc.org|725062|&Observation?code=http://loinc.org|725063|&Observation?code=http://loinc.org|725064|&Observation?code=http://loinc.org|725065|&Observation?code=http://loinc.org|725066|&Observation?code=http://loinc.org|725067|&Observation?code=http://loinc.org|725068|&Observation?code=http://loinc.org|725069|&Observation?code=http://loinc.org|725070|&Observation?code=http://loinc.org|725071|&Observation?code=http://loinc.org|725072|&Observation?code=http://loinc.org|725073|&Observation?code=http://loinc.org|725074|&Observation?code=http://loinc.org|725075|&Observation?code=http://loinc.org|725076|&Observation?code=http://loinc.org|725077|&Observation?code=http://loinc.org|725078|&Observation?code=http://loinc.org|725079|&Observation?code=http://loinc.org|725080|&Observation?code=http://loinc.org|725081|&Observation?code=http://loinc.org|725082|&Observation?code=http://loinc.org|725083|&Observation?code=http://loinc.org|725084|&Observation?code=http://loinc.org|725085|&Observation?code=http://loinc.org|725086|&Observation?code=http://loinc.org|725087|&Observation?code=http://loinc.org|725088|&Observation?code=http://loinc.org|725089|&Observation?code=http://loinc.org|725090|&Observation?code=http://loinc.org|725091|&Observation?code=http://loinc.org|725092|&Observation?code=http://loinc.org|725093|&Observation?code=http://loinc.org|725094|&Observation?code=http://loinc.org|725095|&Observation?code=http://loinc.org|725096|&Observation?code=http://loinc.org|725097|&Observation?code=http://loinc.org|725098|&Observation?code=http://loinc.org|725099|&Observation?code=http://loinc.org|725100|&Observation?code=http://loinc.org|725101|&Observation?code=http://loinc.org|725102|&Observation?code=http://loinc.org|725103|&Observation?code=http://loinc.org|725104|&Observation?code=http://loinc.org|725105|&Observation?code=http://loinc.org|725106|&Observation?code=http://loinc.org|725107|&Observation?code=http://loinc.org|725108|&Observation?code=http://loinc.org|725109|&Observation?code=http://loinc.org|725110|&Observation?code=http://loinc.org|725111|&Observation?code=http://loinc.org|725112|&Observation?code=http://loinc.org|725113|&Observation?code=http://loinc.org|725114|&Observation?code=http://loinc.org|725115|&Observation?code=http://loinc.org|725116|&Observation?code=http://loinc.org|725117|&Observation?code=http://loinc.org|725118|&Observation?code=http://loinc.org|725119|&Observation?code=http://loinc.org|725120|&Observation?code=http://loinc.org|725121|&Observation?code=http://loinc.org|725122|&Observation?code=http://loinc.org|725123|&Observation?code=http://loinc.org|725124|&Observation?code=http://loinc.org|725125|&Observation?code=http://loinc.org|725126|&Observation?code=http://loinc.org|725127|&Observation?code=http://",
+      "additional_query_urls": [],
+      "raw_response": "Patient?_has=Observation&Observation?code=http://loinc.org|721916|&Observation?code=http://loinc.org|725016|&Observation?code=http://loinc.org|725017|&Observation?code=http://loinc.org|725018|&Observation?code=http://loinc.org|725019|&Observation?code=http://loinc.org|725020|&Observation?code=http://loinc.org|725021|&Observation?code=http://loinc.org|725022|&Observation?code=http://loinc.org|725023|&Observation?code=http://loinc.org|725024|&Observation?code=http://loinc.org|725025|&Observation?code=http://loinc.org|725026|&Observation?code=http://loinc.org|725027|&Observation?code=http://loinc.org|725028|&Observation?code=http://loinc.org|725029|&Observation?code=http://loinc.org|725030|&Observation?code=http://loinc.org|725031|&Observation?code=http://loinc.org|725032|&Observation?code=http://loinc.org|725033|&Observation?code=http://loinc.org|725034|&Observation?code=http://loinc.org|725035|&Observation?code=http://loinc.org|725036|&Observation?code=http://loinc.org|725037|&Observation?code=http://loinc.org|725038|&Observation?code=http://loinc.org|725039|&Observation?code=http://loinc.org|725040|&Observation?code=http://loinc.org|725041|&Observation?code=http://loinc.org|725042|&Observation?code=http://loinc.org|725043|&Observation?code=http://loinc.org|725044|&Observation?code=http://loinc.org|725045|&Observation?code=http://loinc.org|725046|&Observation?code=http://loinc.org|725047|&Observation?code=http://loinc.org|725048|&Observation?code=http://loinc.org|725049|&Observation?code=http://loinc.org|725050|&Observation?code=http://loinc.org|725051|&Observation?code=http://loinc.org|725052|&Observation?code=http://loinc.org|725053|&Observation?code=http://loinc.org|725054|&Observation?code=http://loinc.org|725055|&Observation?code=http://loinc.org|725056|&Observation?code=http://loinc.org|725057|&Observation?code=http://loinc.org|725058|&Observation?code=http://loinc.org|725059|&Observation?code=http://loinc.org|725060|&Observation?code=http://loinc.org|725061|&Observation?code=http://loinc.org|725062|&Observation?code=http://loinc.org|725063|&Observation?code=http://loinc.org|725064|&Observation?code=http://loinc.org|725065|&Observation?code=http://loinc.org|725066|&Observation?code=http://loinc.org|725067|&Observation?code=http://loinc.org|725068|&Observation?code=http://loinc.org|725069|&Observation?code=http://loinc.org|725070|&Observation?code=http://loinc.org|725071|&Observation?code=http://loinc.org|725072|&Observation?code=http://loinc.org|725073|&Observation?code=http://loinc.org|725074|&Observation?code=http://loinc.org|725075|&Observation?code=http://loinc.org|725076|&Observation?code=http://loinc.org|725077|&Observation?code=http://loinc.org|725078|&Observation?code=http://loinc.org|725079|&Observation?code=http://loinc.org|725080|&Observation?code=http://loinc.org|725081|&Observation?code=http://loinc.org|725082|&Observation?code=http://loinc.org|725083|&Observation?code=http://loinc.org|725084|&Observation?code=http://loinc.org|725085|&Observation?code=http://loinc.org|725086|&Observation?code=http://loinc.org|725087|&Observation?code=http://loinc.org|725088|&Observation?code=http://loinc.org|725089|&Observation?code=http://loinc.org|725090|&Observation?code=http://loinc.org|725091|&Observation?code=http://loinc.org|725092|&Observation?code=http://loinc.org|725093|&Observation?code=http://loinc.org|725094|&Observation?code=http://loinc.org|725095|&Observation?code=http://loinc.org|725096|&Observation?code=http://loinc.org|725097|&Observation?code=http://loinc.org|725098|&Observation?code=http://loinc.org|725099|&Observation?code=http://loinc.org|725100|&Observation?code=http://loinc.org|725101|&Observation?code=http://loinc.org|725102|&Observation?code=http://loinc.org|725103|&Observation?code=http://loinc.org|725104|&Observation?code=http://loinc.org|725105|&Observation?code=http://loinc.org|725106|&Observation?code=http://loinc.org|725107|&Observation?code=http://loinc.org|725108|&Observation?code=http://loinc.org|725109|&Observation?code=http://loinc.org|725110|&Observation?code=http://loinc.org|725111|&Observation?code=http://loinc.org|725112|&Observation?code=http://loinc.org|725113|&Observation?code=http://loinc.org|725114|&Observation?code=http://loinc.org|725115|&Observation?code=http://loinc.org|725116|&Observation?code=http://loinc.org|725117|&Observation?code=http://loinc.org|725118|&Observation?code=http://loinc.org|725119|&Observation?code=http://loinc.org|725120|&Observation?code=http://loinc.org|725121|&Observation?code=http://loinc.org|725122|&Observation?code=http://loinc.org|725123|&Observation?code=http://loinc.org|725124|&Observation?code=http://loinc.org|725125|&Observation?code=http://loinc.org|725126|&Observation?code=http://loinc.org|725127|&Observation?code=http://",
+      "prompt_text": "Find pediatric scoliosis surgery patients with documented post-operative pain severity scores (NRS 0-10) \u2014 used in pain pharmacogenetics studies."
+     },
+     "1-expert": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 1326,
+      "actual_count": 1326,
+      "elapsed_sec": 79.6,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|M41.9",
+      "additional_query_urls": [
+       "Observation?code=http://loinc.org|38208-5&value-quantity=ge4"
+      ],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|M41.9\nObservation?code=http://loinc.org|38208-5&value-quantity=ge4",
+      "prompt_text": "Run two queries. (1) Condition?code=http://hl7.org/fhir/sid/icd-10-cm|M41.9 \u2014 scoliosis. (2) Observation?code=http://loinc.org|38208-5&value-quantity=ge4 \u2014 pain score >=4. Union the patient IDs."
+     },
+     "2-naive": {
+      "precision": 0.8566,
+      "recall": 1.0,
+      "f1": 0.9228,
+      "passed": true,
+      "expected_count": 1326,
+      "actual_count": 1548,
+      "elapsed_sec": 206.9,
+      "queries_generated": 4,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|R52",
+      "additional_query_urls": [
+       "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|G89.29",
+       "Condition?code",
+       "Condition?_summary=count"
+      ],
+      "raw_response": "[FALLBACK: parser couldn't extract URL from final response; using fhir_search queries from tool trace]\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|R52\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|G89.29\nCondition?code\nCondition?_summary=count\n\nOriginal last assistant message:\nIt seems the server only has M41.9 (Scoliosis, unspecified) codes in the Condition resources. Let me check if there are any other codes by looking at more samples or searching differently:\n\n",
+      "prompt_text": "Find pediatric pain patients.",
+      "run_metadata": {
+       "tool_calls_count": 20,
+       "stop_reason": "fallback_tool_trace",
+       "fallback_used": true
+      }
+     },
+     "2-broad": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 1326,
+      "actual_count": 1326,
+      "elapsed_sec": 310.0,
+      "queries_generated": 8,
+      "primary_query_url": "Condition?_summary=count",
+      "additional_query_urls": [
+       "Observation?_summary=count",
+       "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|M41.9",
+       "Observation?code=http://loinc.org|38208-5",
+       "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|M41.9&_summary=count",
+       "Observation?code=http://loinc.org|38208-5&_summary=count",
+       "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|M41.9&_id=40e6aa32-6ee9-32cb-96bb-7ddbb23f355f",
+       "Patient?_summary=count"
+      ],
+      "raw_response": "[FALLBACK: parser couldn't extract URL from final response; using fhir_search queries from tool trace]\nCondition?_summary=count\nObservation?_summary=count\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|M41.9\nObservation?code=http://loinc.org|38208-5\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|M41.9&_summary=count\nObservation?code=http://loinc.org|38208-5&_summary=count\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|M41.9&_id=40e6aa32-6ee9-32cb-96bb-7ddbb23f355f\nPatient?_summary=count\n\nOriginal last assistant message:\nThe Patient samples don't show codes, which means they might not have searchable codes. Let me check if there's a way to search for patients by age or gender.\n\nLet me also check if there are any resources that link Conditions to Patients. In FHIR, Condition resources have a \"subject\" reference to Patient.\n\nLet me search for Conditions and see if I can get patient information.\n\nActually, I think the approach should be:\n1. Search for Conditions with scoliosis codes\n2. Search for Observations with ",
+      "prompt_text": "Find pediatric scoliosis surgery patients with documented post-operative pain severity scores (NRS 0-10) \u2014 used in pain pharmacogenetics studies.",
+      "run_metadata": {
+       "tool_calls_count": 20,
+       "stop_reason": "fallback_tool_trace",
+       "fallback_used": true
+      }
+     },
+     "2-expert": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 1326,
+      "actual_count": 1326,
+      "elapsed_sec": 254.2,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|M41.9",
+      "additional_query_urls": [
+       "Observation?code=http://loinc.org|38208-5&value-quantity=ge4"
+      ],
+      "raw_response": "The user asked me to run two queries and union the patient IDs. The queries have been executed successfully. The FHIR query URLs requested are:\n\n1. Condition?code=http://hl7.org/fhir/sid/icd-10-cm|M41.9\n2. Observation?code=http://loinc.org|38208-5&value-quantity=ge4\n\nThese are the exact queries the user specified. The union of patient IDs would be obtained by running both queries and combining the patient resources from each result set.\n\n",
+      "prompt_text": "Run two queries. (1) Condition?code=http://hl7.org/fhir/sid/icd-10-cm|M41.9 \u2014 scoliosis. (2) Observation?code=http://loinc.org|38208-5&value-quantity=ge4 \u2014 pain score >=4. Union the patient IDs.",
+      "run_metadata": {
+       "tool_calls_count": 40,
+       "stop_reason": "fallback_assistant",
+       "fallback_used": true
+      }
+     },
+     "3-naive": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 1326,
+      "actual_count": 0,
+      "elapsed_sec": 152.5,
+      "queries_generated": 4,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|2498284",
+      "additional_query_urls": [
+       "Condition?code=http://snomed.info/sct|44054006",
+       "Condition?_summary=count",
+       "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|R10.9"
+      ],
+      "raw_response": "[FALLBACK: parser couldn't extract URL from final response; using fhir_search queries from tool trace]\nCondition?code=http://snomed.info/sct|2498284\nCondition?code=http://snomed.info/sct|44054006\nCondition?_summary=count\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|R10.9\n\nOriginal last assistant message:\nThat's not pain - that's diabetes. Let me try to find the correct SNOMED code for pain. Let me search for \"pain\" in the UMLS and then crosswalk to SNOMED.\n\nActually, let me try a different approach. Let me search for conditions in the server with a common ICD-10 code for pain. The ICD-10 code R10.9 is \"Unspecified abdominal pain\". Let me try searching for that.\n\n",
+      "prompt_text": "Find pediatric pain patients.",
+      "run_metadata": {
+       "tool_calls_count": 20,
+       "stop_reason": "fallback_tool_trace",
+       "fallback_used": true
+      }
+     },
+     "3-broad": {
+      "precision": 0.7483,
+      "recall": 1.0,
+      "f1": 0.856,
+      "passed": true,
+      "expected_count": 1326,
+      "actual_count": 1772,
+      "elapsed_sec": 489.9,
+      "queries_generated": 14,
+      "primary_query_url": "Procedure?code=http://snomed.info/sct|73211009",
+      "additional_query_urls": [
+       "Procedure?_summary=count",
+       "Observation?_summary=count",
+       "Patient?_summary=count",
+       "Condition?_summary=count",
+       "Observation?code=http://loinc.org|38208-5",
+       "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|M41.9",
+       "Patient?_has:Condition:patient:code=http://hl7.org/fhir/sid/icd-10-cm|M41.9&_has:Observation:patient:code=http://loinc.org|38208-5",
+       "Patient?patient.birthdate",
+       "Patient?_has:Condition:patient:code=http://hl7.org/fhir/sid/icd-10-cm|M41.9",
+       "Patient?patient.birthdate=gt1900-01-01",
+       "Observation?_lastUpdated=desc",
+       "Patient?_has:Condition:patient:code=http://hl7.org/fhir/sid/icd-10-cm|M41.9&_has:Observation:patient:code=http://loinc.org|38208-5&patient.birthdate=gt2008-06-04",
+       "Observation?code=http://loinc.org|72514-3"
+      ],
+      "raw_response": "[FALLBACK: parser couldn't extract URL from final response; using fhir_search queries from tool trace]\nProcedure?code=http://snomed.info/sct|73211009\nProcedure?_summary=count\nObservation?_summary=count\nPatient?_summary=count\nCondition?_summary=count\nObservation?code=http://loinc.org|38208-5\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|M41.9\nPatient?_has:Condition:patient:code=http://hl7.org/fhir/sid/icd-10-cm|M41.9&_has:Observation:patient:code=http://loinc.org|38208-5\nPatient?patient.birthdate\nPatient?_has:Condition:patient:code=http://hl7.org/fhir/sid/icd-10-cm|M41.9\nPatient?patient.birthdate=gt1900-01-01\nObservation?_lastUpdated=desc\nPatient?_has:Condition:patient:code=http://hl7.org/fhir/sid/icd-10-cm|M41.9&_has:Observation:patient:code=http://loinc.org|38208-5&patient.birthdate=gt2008-06-04\nObservation?code=http://loinc.org|72514-3\n\nOriginal last assistant message:\nThe query works and returns 11 patients. However, I should note that the age filter I used (gt2008-06-04) is an assumption. Let me also consider if I should provide a more general query without the age filter, or if I should provide multiple queries.\n\nActually, looking at the request again, it specifically asks for \"pediatric\" patients, so the age filter is necessary. But since I don't have the exact date range, I'll provide the query with the age filter I used.\n\nWait, I should reconsider. The q",
+      "prompt_text": "Find pediatric scoliosis surgery patients with documented post-operative pain severity scores (NRS 0-10) \u2014 used in pain pharmacogenetics studies.",
+      "run_metadata": {
+       "tool_calls_count": 39,
+       "stop_reason": "fallback_tool_trace",
+       "fallback_used": true
+      }
+     },
+     "3-expert": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 1326,
+      "actual_count": 1326,
+      "elapsed_sec": 84.0,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|M41.9",
+      "additional_query_urls": [
+       "Observation?code=http://loinc.org|38208-5&value-quantity=ge4"
+      ],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|M41.9\nObservation?code=http://loinc.org|38208-5&value-quantity=ge4",
+      "prompt_text": "Run two queries. (1) Condition?code=http://hl7.org/fhir/sid/icd-10-cm|M41.9 \u2014 scoliosis. (2) Observation?code=http://loinc.org|38208-5&value-quantity=ge4 \u2014 pain score >=4. Union the patient IDs.",
+      "run_metadata": {
+       "tool_calls_count": 2,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     }
+    }
+   }
+  }
+ ]
+}
