@@ -186,12 +186,12 @@ placeholders are flagged **[PENDING BACKFILL]**.
 ## Section 4 — Analysis: why did it help?
 
 ### Slide 15 — Why T2 helped: tools collapse the prompt gap (centerpiece)
-- **On-slide:**
-  - In T1, prompt quality mattered a lot (expert ≫ naive).
-  - In T2, **a naive prompt + tools ≈ an expert prompt + tools** (frontier: naive+T2 ≈ 0.91–0.93 vs expert+T2 ≈ 0.98).
+- **On-slide:** *(all-test-case basis — same as Slides 10/14)*
+  - In T1, prompt quality mattered a lot: naive ≈ **0.48–0.53** vs expert ≈ **0.83–0.86** — a **~0.33** gap.
+  - In T2, **a naive prompt + tools ≈ an expert prompt + tools**: naive ≈ **0.82–0.85** vs expert ≈ **0.82–0.92** — the gap collapses to **~0.05** (and for Sonnet, naive actually edges out expert).
   - Interpretation: **tools recover what phrasing used to**. The model doesn't need you to know the codes — it can look them up.
-- **Visual:** the killer chart — prompt-level on X, F1 on Y, two lines (T1 vs T2). T1 line slopes up steeply (prompt matters); T2 line is high and flat (prompt barely matters).
-- **Speaker notes:** This is the most quotable finding: *tools democratize the query* — a clinician can ask in plain English and still get an expert-quality cohort.
+- **Visual:** the killer chart — prompt-level on X, F1 on Y, two lines (T1 vs T2). T1 line slopes up steeply (~0.33 rise; prompt matters); T2 line is high and **flat** (~0.05; prompt barely matters).
+- **Speaker notes:** This is the most quotable finding: *tools democratize the query* — a clinician can ask in plain English and still get an expert-quality cohort. **Basis note:** these are all-test-case means (consistent with Slides 10/14). If you'd rather use the **comprehensive ("all-patients") cohort** — the headline cell — the same convergence reads naive+T2 ≈ **0.91–0.93** vs expert+T2 ≈ **0.98** (from `2026-06-07-prompt-vs-tools-impact.md`); higher absolute numbers, identical story. Pick ONE basis for the whole deck and say which — don't mix (this slide previously used the comprehensive numbers while 10/14 use all-test-case).
 
 ### Slide 16 — Why T3 (methodology) helped — and for whom
 - **On-slide:**
