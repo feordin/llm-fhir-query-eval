@@ -62,7 +62,6 @@ placeholders are flagged **[PENDING BACKFILL]**.
   - **Diagnoses and procedures carry multiple codings** — Conditions as **SNOMED + ICD-10-CM + ICD-9-CM**, Procedures as **SNOMED + CPT** (injected by a post-Synthea crosswalk of the phenotype-defining codes). (Medications use **RxNorm** and labs use **LOINC** — single standards, not crosswalked.)
   - **This is a deliberate *generosity* to the model:** because each diagnosed patient carries the concept in every system, **whichever code system the model queries, it still finds the patient.** So the benchmark does *not* test "did you pick the right code system" — it tests "did you enumerate the right clinical *concepts*." (Caveat / future work: a real single-EHR uses one system per site; a sharper design would give each patient *one* randomly-chosen system and test whether the model covers them all — see Slide 21.)
   - Per-phenotype **isolation**: the server is wiped and loaded with one phenotype's data before its tests run — no cross-phenotype contamination.
-  - Per-phenotype **isolation**: the server is wiped and loaded with one phenotype's data before its tests run — no cross-phenotype contamination.
 - **Visual:** Synthea module → FHIR bundles → FHIR server pipeline diagram.
 - **Speaker notes:** We control the ground truth exactly because we generated it — that's why patient-set scoring is valid.
 
@@ -98,7 +97,7 @@ placeholders are flagged **[PENDING BACKFILL]**.
 - **On-slide:** T1 F1 by model (all-test-case, full 388-tc coverage):
   | Model | T1 |
   |---|---|
-  | Claude Opus 4.7 | **0.678** |
+  | Claude Opus 4.7 | **0.679** |
   | GPT-5.4 | 0.656 |
   | Claude Sonnet 4.6 | 0.623 |
   | Qwen3.5-9B | 0.257 |
@@ -214,11 +213,11 @@ placeholders are flagged **[PENDING BACKFILL]**.
 - **Speaker notes:** Treat this as an honest *failure-mode* example, **not** a headline number. The dramatic early read ("Opus T3 < T2 by 0.06") was an artifact of an unrepresentative 48-test-case subset plus n=1 agentic variance; on full coverage it's ~neutral. What's real and reproducible is the *mechanism* on hard cross-coded phenotypes (CHD / Crohn's / SLE): the playbook makes Opus under-enumerate subtype concepts. It's worth a slide because it tells you what to put in the playbook (enumerate the long tail), not because Opus is "worse." If the talk is tight, this is the first cut. Full write-up: `docs/results/2026-06-11-opus-t3-code-narrowing.md`.
 
 ### Slide 17 — What moves the needle (the lever summary)
-- **On-slide:** for a frontier model, ranked impact:
-  - **Tools: +0.10–0.20** (the dominant lever)
-  - Prompt quality: large at T1, **~0 once tools are on**
-  - Methodology: small for frontier, large for small models
-  - Off-the-shelf generic skill: ~0 for a model that already knows FHIR
+- **On-slide:** for a frontier model, ranked impact (**all-test-case** T1→T2):
+  - **Tools: +0.18–0.22** (the dominant lever) — GPT 0.66→0.88, Sonnet 0.62→0.85, Opus 0.68→0.86. *(On the already-high comprehensive cohort the lift is smaller, ~+0.10, because those cells start near 0.9.)*
+  - Prompt quality: large at T1 (~+0.33), **~0 once tools are on**
+  - Methodology: small for frontier (~+0.005), large for small models (Qwen +0.23)
+  - Off-the-shelf generic skill: ~0 (+0.014) for a model that already knows FHIR
 - **Visual:** tornado/lever chart ranking the interventions by F1 impact.
 - **Speaker notes:** The one-slide takeaway if they remember nothing else: **give the model tools.**
 
@@ -283,7 +282,7 @@ placeholders are flagged **[PENDING BACKFILL]**.
 ### Slide 22 — Takeaways
 - **On-slide:** five lines (the ones worth remembering):
   1. **Closed-book, even the best frontier LLM is mediocre** (~0.68 F1) and very prompt-sensitive (Opus naive 0.53 → expert 0.86). Clinical FHIR phenotyping is **not "solved" by scale alone.**
-  2. **Tools are the dominant lever** (+0.10–0.22) and they **erase the prompt gap** — plain English + tools ≈ an expert hand-writing codes. **Tooling > skill > prompt.**
+  2. **Tools are the dominant lever** (+0.18–0.22 all-test-case) and they **erase the prompt gap** — plain English + tools ≈ an expert hand-writing codes. **Tooling > skill > prompt.**
   3. **Recall is really about concept coverage** — did the query enumerate every clinical concept/subtype the cohort is coded with? Tools win because they let the model **discover** those concepts on the server instead of recalling them. (We make the benchmark *generous on code systems* — any system finds the patient — so concepts, not systems, are the axis.)
   4. **Methodology is a model-dependent lever** — huge for a weak model (Qwen T2→T3 **+0.23**), ~0 for the frontier (sonnet/gpt +0.02, Opus ~−0.02). On hard cross-coded phenotypes the playbook can make Opus **under-enumerate subtype concepts** (a real failure mode, though it averages out). **Match the strategy to the model; "more guidance" isn't universally better.**
   5. **We shipped the win as a reusable plugin** (lean playbook + age-guard + server-introspection + UMLS/VSAC) — point it at any FHIR server and a clinician's plain-English ask becomes a research-grade cohort.
@@ -300,25 +299,31 @@ placeholders are flagged **[PENDING BACKFILL]**.
 
 ---
 
-### Numbers to refresh before presenting
-- ✅ **Opus T1 backfilled to full 108** (decoupled generate/score harness, sharded
-  across 6 servers; 0 reload-starvation — the blocker is fixed). **Opus T1 plain
-  0.678, +fhirskill 0.693** (Slides 10 & 14 filled). Report:
-  `docs/results/2026-06-12-opus-t1-backfill-decoupled.md`. **Opus T2 still a 48-tc
-  subset** (intentionally not backfilled) — Slide 14 flags it `*`; backfill it too
-  (agentic, via single/low-shard isolated suite) if you want a fair leaderboard T2
-  row, which would turn the Slide 16B "T3 < T2" observation into a headline.
-- ✅ **Slide 15 (prompt-vs-tools) verified** against `2026-06-07-prompt-vs-tools-impact.md`:
-  naive·T2 0.907–0.925, broad·T2 0.95, expert·T2 0.982–0.998. Accurate.
-- ✅ **Slide 18 (Opus skill baseline) verified** against `2026-06-07-opus-skill-baseline.md`:
-  off-the-shelf 0.878 (≈0.88), ours-T2 0.989 (≈0.99), Crohn's 0.74, asthma 0.46. Accurate.
-- ⚠ **Slide 17 lever range** — the "tools +0.10–0.20" is defensible but mixes metrics:
-  the *final* Opus comprehensive run is **+0.104**; the all-test-case frontier T1→T2 is
-  **~+0.22**. State which you mean, or cite "+0.10 (comprehensive cohort) to +0.22 (all cases)."
-- **NEW — skill marginal lift now computable.** The skill-baseline doc's open caveat
-  ("measure the skill's *marginal* lift via Opus T1 *without* skill — not run yet") is
-  closed by this backfill: T1 plain vs T1 +fhirskill on full coverage. On the 8-pheno
-  subset it was ≈ +0.002 (skill ≈ 0 for a model that already knows FHIR); confirm at
-  full scale and add to Slide 17/18.
-- **NEW — Slide 16B** added (Opus T3 code-narrowing finding); full write-up at
-  `docs/results/2026-06-11-opus-t3-code-narrowing.md`.
+### Number bases & consistency (read before presenting)
+
+**Two metrics appear in this deck — keep them straight.** Most slides use the
+**all-test-case mean** (F1 averaged over all 388 test cases / all variants); a few
+use the **comprehensive cohort** (the per-phenotype "all-patients" cell only). They
+differ because the comprehensive cell is a broad union query that scores higher than
+the average over the harder dx/meds/labs/trick variants. **Source of truth for
+all-test-case numbers: `docs/results/2026-06-12-opus-full-leaderboard.md`.**
+
+- **All-test-case slides (the spine):** 1, 10, 14, 14B, 15, 16, 16B, 17, 22.
+- **Comprehensive-cohort callouts (labeled as such):** Slide 14's "comprehensive
+  headline" line (Sonnet 0.95 / GPT 0.96 / Opus 0.94) and Slide 18's "0.84 vs 0.95".
+- ⚠ **Two different "comprehensive" denominators.** The slide comprehensive numbers
+  (0.94–0.96) are over the **~80 phenotypes that have a `-comprehensive` case**
+  (`2026-06-10-t3-lean-refresh.md`). The **frontend** computes comprehensive over **all
+  108** with a fallback case, giving lower values (Opus T2 0.904, T3 0.895). If you
+  show the frontend alongside the deck, expect ~0.90 there vs ~0.94 on Slide 14 — say
+  which denominator, or pick one.
+
+**Verified full-108 numbers (all-test-case):** Opus 0.679/0.862/0.867,
+GPT 0.656/0.878/0.884, Sonnet 0.623/0.846/0.857, Qwen 0.257/0.476/0.710.
+Best tier×prompt: GPT T2·expert 0.919, Opus T2·expert 0.903, Sonnet T3·broad 0.871,
+Qwen T3·expert 0.809. Skill marginal lift: plain 0.679 → +fhirskill 0.693 (+0.014).
+
+**Frontend** is now checked in and clone-ready (`npm install && npm run dev`); it
+shows the 4-model leaderboard, the "Best achievable" panel, and the Opus+skill
+by-prompt comparison — all on the comprehensive-cohort basis for the leaderboard and
+all-test-case for the "Best achievable" panel (labeled).
