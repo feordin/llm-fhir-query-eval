@@ -1,0 +1,2204 @@
+{
+ "phenotype": "cervical-cancer",
+ "canonical_tc": "phekb-cervical-cancer-comprehensive",
+ "cases": [
+  {
+   "test_case": "phekb-cervical-cancer-comprehensive",
+   "grids": {
+    "copilot:claude-opus-4.7": {
+     "1-naive": {
+      "precision": 1.0,
+      "recall": 0.9598,
+      "f1": 0.9795,
+      "passed": true,
+      "expected_count": 473,
+      "actual_count": 454,
+      "elapsed_sec": 21.7,
+      "queries_generated": 1,
+      "primary_query_url": "Patient?gender=female&_has:Condition:patient:code=http://snomed.info/sct|363354003",
+      "additional_query_urls": [],
+      "raw_response": "Patient?gender=female&_has:Condition:patient:code=http://snomed.info/sct|363354003",
+      "prompt_text": "Find female patients with cervical cancer."
+     },
+     "1-broad": {
+      "precision": 1.0,
+      "recall": 0.9598,
+      "f1": 0.9795,
+      "passed": true,
+      "expected_count": 473,
+      "actual_count": 454,
+      "elapsed_sec": 1.0,
+      "queries_generated": 3,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|363354003&subject.gender=female",
+      "additional_query_urls": [
+       "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|C53.9&subject.gender=female",
+       "Procedure?code=http://snomed.info/sct|116140006&subject.gender=female"
+      ],
+      "raw_response": "Condition?code=http://snomed.info/sct|363354003&subject.gender=female\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|C53.9&subject.gender=female\nProcedure?code=http://snomed.info/sct|116140006&subject.gender=female",
+      "prompt_text": "Find all female cervical cancer patients \u2014 by diagnosis or by hysterectomy procedure. Run multiple queries and union the patient sets."
+     },
+     "1-expert": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 473,
+      "actual_count": 473,
+      "elapsed_sec": 1.6,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|363354003&patient.gender=female",
+      "additional_query_urls": [
+       "Procedure?code=http://snomed.info/sct|236886002&patient.gender=female"
+      ],
+      "raw_response": "Condition?code=http://snomed.info/sct|363354003&patient.gender=female\nProcedure?code=http://snomed.info/sct|236886002&patient.gender=female",
+      "prompt_text": "Run two queries restricted to female. (1) Condition?code=http://snomed.info/sct|363354003&patient.gender=female \u2014 cervical cancer dx. (2) Procedure?code=http://snomed.info/sct|236886002&patient.gender=female \u2014 hysterectomy. Union the patient IDs."
+     },
+     "2-naive": {
+      "precision": 1.0,
+      "recall": 0.9598,
+      "f1": 0.9795,
+      "passed": true,
+      "expected_count": 473,
+      "actual_count": 454,
+      "elapsed_sec": 35.1,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|363354003&subject:Patient.gender=female",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|363354003&subject:Patient.gender=female",
+      "prompt_text": "Find female patients with cervical cancer.",
+      "run_metadata": {
+       "output_tokens": 36,
+       "tool_calls_count": 3,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     },
+     "2-broad": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 473,
+      "actual_count": 473,
+      "elapsed_sec": 37.0,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|363354003&patient.gender=female",
+      "additional_query_urls": [
+       "Procedure?code=http://snomed.info/sct|236886002&subject.gender=female"
+      ],
+      "raw_response": "Condition?code=http://snomed.info/sct|363354003&patient.gender=female\nProcedure?code=http://snomed.info/sct|236886002&subject.gender=female",
+      "prompt_text": "Find all female cervical cancer patients \u2014 by diagnosis or by hysterectomy procedure. Run multiple queries and union the patient sets.",
+      "run_metadata": {
+       "output_tokens": 62,
+       "tool_calls_count": 4,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     },
+     "2-expert": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 473,
+      "actual_count": 473,
+      "elapsed_sec": 33.0,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|363354003&patient.gender=female",
+      "additional_query_urls": [
+       "Procedure?code=http://snomed.info/sct|236886002&patient.gender=female"
+      ],
+      "raw_response": "Condition?code=http://snomed.info/sct|363354003&patient.gender=female\nProcedure?code=http://snomed.info/sct|236886002&patient.gender=female",
+      "prompt_text": "Run two queries restricted to female. (1) Condition?code=http://snomed.info/sct|363354003&patient.gender=female \u2014 cervical cancer dx. (2) Procedure?code=http://snomed.info/sct|236886002&patient.gender=female \u2014 hysterectomy. Union the patient IDs.",
+      "run_metadata": {
+       "output_tokens": 62,
+       "tool_calls_count": 2,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     },
+     "3-naive": {
+      "precision": 1.0,
+      "recall": 0.9598,
+      "f1": 0.9795,
+      "passed": true,
+      "expected_count": 473,
+      "actual_count": 454,
+      "elapsed_sec": 36.7,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|363354003&patient.gender=female",
+      "additional_query_urls": [],
+      "raw_response": "454 is plausible.\n\nCondition?code=http://snomed.info/sct|363354003&patient.gender=female",
+      "prompt_text": "Find female patients with cervical cancer.",
+      "run_metadata": {
+       "output_tokens": 40,
+       "tool_calls_count": 2,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     },
+     "3-broad": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 473,
+      "actual_count": 473,
+      "elapsed_sec": 50.4,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|363354003&patient.gender=female",
+      "additional_query_urls": [
+       "Procedure?code=http://snomed.info/sct|236886002,http://snomed.info/sct|116143008,http://snomed.info/sct|116144002,http://snomed.info/sct|116142003&patient.gender=female"
+      ],
+      "raw_response": "Condition?code=http://snomed.info/sct|363354003&patient.gender=female\nProcedure?code=http://snomed.info/sct|236886002,http://snomed.info/sct|116143008,http://snomed.info/sct|116144002,http://snomed.info/sct|116142003&patient.gender=female",
+      "prompt_text": "Find all female cervical cancer patients \u2014 by diagnosis or by hysterectomy procedure. Run multiple queries and union the patient sets.",
+      "run_metadata": {
+       "output_tokens": 107,
+       "tool_calls_count": 7,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     },
+     "3-expert": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 473,
+      "actual_count": 473,
+      "elapsed_sec": 33.2,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|363354003&patient.gender=female",
+      "additional_query_urls": [
+       "Procedure?code=http://snomed.info/sct|236886002&patient.gender=female"
+      ],
+      "raw_response": "Condition?code=http://snomed.info/sct|363354003&patient.gender=female\nProcedure?code=http://snomed.info/sct|236886002&patient.gender=female",
+      "prompt_text": "Run two queries restricted to female. (1) Condition?code=http://snomed.info/sct|363354003&patient.gender=female \u2014 cervical cancer dx. (2) Procedure?code=http://snomed.info/sct|236886002&patient.gender=female \u2014 hysterectomy. Union the patient IDs.",
+      "run_metadata": {
+       "output_tokens": 62,
+       "tool_calls_count": 2,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     }
+    },
+    "copilot:claude-opus-4.7+fhirskill": {
+     "1-naive": {
+      "precision": 1.0,
+      "recall": 0.9598,
+      "f1": 0.9795,
+      "passed": true,
+      "expected_count": 473,
+      "actual_count": 454,
+      "elapsed_sec": 0.6,
+      "queries_generated": 1,
+      "primary_query_url": "Patient?gender=female&_has:Condition:patient:code=http://snomed.info/sct|363354003",
+      "additional_query_urls": [],
+      "raw_response": "Patient?gender=female&_has:Condition:patient:code=http://snomed.info/sct|363354003",
+      "prompt_text": "Find female patients with cervical cancer."
+     },
+     "1-broad": {
+      "precision": 1.0,
+      "recall": 0.9598,
+      "f1": 0.9795,
+      "passed": true,
+      "expected_count": 473,
+      "actual_count": 454,
+      "elapsed_sec": 0.4,
+      "queries_generated": 3,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|363354003&subject.gender=female",
+      "additional_query_urls": [
+       "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|C53.9&subject.gender=female",
+       "Procedure?code=http://snomed.info/sct|116140006&subject.gender=female"
+      ],
+      "raw_response": "Condition?code=http://snomed.info/sct|363354003&subject.gender=female\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|C53.9&subject.gender=female\nProcedure?code=http://snomed.info/sct|116140006&subject.gender=female",
+      "prompt_text": "Find all female cervical cancer patients \u2014 by diagnosis or by hysterectomy procedure. Run multiple queries and union the patient sets."
+     },
+     "1-expert": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 473,
+      "actual_count": 473,
+      "elapsed_sec": 0.8,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|363354003&patient.gender=female",
+      "additional_query_urls": [
+       "Procedure?code=http://snomed.info/sct|236886002&patient.gender=female"
+      ],
+      "raw_response": "Condition?code=http://snomed.info/sct|363354003&patient.gender=female\nProcedure?code=http://snomed.info/sct|236886002&patient.gender=female",
+      "prompt_text": "Run two queries restricted to female. (1) Condition?code=http://snomed.info/sct|363354003&patient.gender=female \u2014 cervical cancer dx. (2) Procedure?code=http://snomed.info/sct|236886002&patient.gender=female \u2014 hysterectomy. Union the patient IDs."
+     }
+    },
+    "copilot:claude-sonnet-4.6": {
+     "1-naive": {
+      "precision": 1.0,
+      "recall": 0.9598,
+      "f1": 0.9795,
+      "passed": true,
+      "expected_count": 473,
+      "actual_count": 454,
+      "elapsed_sec": 55.8,
+      "queries_generated": 4,
+      "primary_query_url": "Patient?gender=female&_has:Condition:patient:code=http://snomed.info/sct|363354003",
+      "additional_query_urls": [
+       "Patient?gender=female&_has:Condition:patient:code=http://hl7.org/fhir/sid/icd-10-cm|C53.9",
+       "Patient?gender=female&_has:Condition:patient:code=http://hl7.org/fhir/sid/icd-10-cm|C53.0",
+       "Patient?gender=female&_has:Condition:patient:code=http://hl7.org/fhir/sid/icd-10-cm|C53.1"
+      ],
+      "raw_response": "Here are the FHIR queries to find female patients with cervical cancer, using both SNOMED CT and ICD-10-CM codes:\n\n```\nPatient?gender=female&_has:Condition:patient:code=http://snomed.info/sct|363354003\nPatient?gender=female&_has:Condition:patient:code=http://hl7.org/fhir/sid/icd-10-cm|C53.9\nPatient?gender=female&_has:Condition:patient:code=http://hl7.org/fhir/sid/icd-10-cm|C53.0\nPatient?gender=female&_has:Condition:patient:code=http://hl7.org/fhir/sid/icd-10-cm|C53.1\n```\n\n### Explanation:\n| Query | Details |\n|---|---|\n| `gender=female` | Filters patients by female sex |\n| `http://snomed.info/sct\\|363354003` | SNOMED CT: *Malignant neoplasm of cervix uteri* |\n| `icd-10-cm\\|C53.9` | ICD-10-CM: *Malignant neoplasm of cervix uteri, unspecified* |\n| `icd-10-cm\\|C53.0` | ICD-10-CM: *Malignant neoplasm of endocervix* |\n| `icd-10-cm\\|C53.1` | ICD-10-CM: *Malignant neoplasm of exocervix* |\n| `_has:Condition:patient:code` | Reverse chaining \u2014 finds Patients who have a linked Condition with the specified code |\n\n> **Note:** You can append `&_include=Condition:subject` to also retrieve the associated Condition resources in the same response bundle.",
+      "prompt_text": "Find female patients with cervical cancer."
+     },
+     "1-broad": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 473,
+      "actual_count": 473,
+      "elapsed_sec": 115.1,
+      "queries_generated": 4,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|C53.0,http://hl7.org/fhir/sid/icd-10-cm|C53.1,http://hl7.org/fhir/sid/icd-10-cm|C53.8,http://hl7.org/fhir/sid/icd-10-cm|C53.9&subject:Patient.gender=female&_include=Condition:subject",
+      "additional_query_urls": [
+       "Condition?code=http://snomed.info/sct|363354003,http://snomed.info/sct|254889008,http://snomed.info/sct|254890004&subject:Patient.gender=female&_include=Condition:subject",
+       "Procedure?code=http://snomed.info/sct|116028008,http://snomed.info/sct|29529007,http://snomed.info/sct|35867002,http://snomed.info/sct|27950001&subject:Patient.gender=female&_include=Procedure:subject",
+       "Procedure?code=http://www.ama-assn.org/go/cpt|58150,http://www.ama-assn.org/go/cpt|58200,http://www.ama-assn.org/go/cpt|58210&subject:Patient.gender=female&_include=Procedure:subject"
+      ],
+      "raw_response": "## FHIR Queries: Female Cervical Cancer Patients (Diagnosis + Hysterectomy)\n\n---\n\n### \ud83d\udd35 Arm 1 \u2014 Cervical Cancer Diagnosis (ICD-10-CM C53.x)\n> Endocervix (C53.0), Exocervix (C53.1), Overlapping sites (C53.8), Unspecified (C53.9)\n\n```\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|C53.0,http://hl7.org/fhir/sid/icd-10-cm|C53.1,http://hl7.org/fhir/sid/icd-10-cm|C53.8,http://hl7.org/fhir/sid/icd-10-cm|C53.9&subject:Patient.gender=female&_include=Condition:subject\n```\n\n---\n\n### \ud83d\udd35 Arm 2 \u2014 Cervical Cancer Diagnosis (SNOMED CT)\n> Malignant tumor, squamous cell carcinoma, and adenocarcinoma of cervix uteri\n\n```\nCondition?code=http://snomed.info/sct|363354003,http://snomed.info/sct|254889008,http://snomed.info/sct|254890004&subject:Patient.gender=female&_include=Condition:subject\n```\n\n---\n\n### \ud83d\udfe3 Arm 3 \u2014 Hysterectomy Procedure (SNOMED CT)\n> Total hysterectomy, radical hysterectomy (Wertheim's), total abdominal hysterectomy, and hysterectomy with bilateral salpingo-oophorectomy\n\n```\nProcedure?code=http://snomed.info/sct|116028008,http://snomed.info/sct|29529007,http://snomed.info/sct|35867002,http://snomed.info/sct|27950001&subject:Patient.gender=female&_include=Procedure:subject\n```\n\n---\n\n### \ud83d\udfe3 Arm 4 \u2014 Hysterectomy Procedure (CPT)\n> Total abdominal, extended total abdominal (partial vaginectomy), and radical abdominal hysterectomy\n\n```\nProcedure?code=http://www.ama-assn.org/go/cpt|58150,http://www.ama-assn.org/go/cpt|58200,http://www.ama-assn.org/go/cpt|58210&subject:Patient.gender=female&_include=Procedure:subject\n```\n\n---\n\n### \ud83d\udccb Union Strategy & Notes\n\n| Arm | Resource | Coding System | Signal Type |\n|-----|----------|---------------|-------------|\n| 1 | Condition | ICD-10-CM C53.x | Explicit diagnosis |\n| 2 | Condition | SNOMED CT | Explicit diagnosis |\n| 3 | Procedure | SNOMED CT | Treatment proxy |\n| 4 | Procedure | CPT | Treatment proxy |\n\n**After executing all 4 queries:**\n1. Extract all **unique `Patient.id`** values from `_include`-ed Patient resources across all bundles\n2. **Union** the four sets (dedup by patient ID)\n3. The `subject:Patient.gender=female` chained parameter pre-filters to female patients at the server level\n4. Optionally add `&clinical-status=active` (Arm 1/2) or `&status=completed` (Arm 3/4) to narrow to confirmed/completed records",
+      "prompt_text": "Find all female cervical cancer patients \u2014 by diagnosis or by hysterectomy procedure. Run multiple queries and union the patient sets."
+     },
+     "1-expert": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 473,
+      "actual_count": 473,
+      "elapsed_sec": 63.9,
+      "queries_generated": 4,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|363354003&patient.gender=female",
+      "additional_query_urls": [
+       "Procedure?code=http://snomed.info/sct|236886002&patient.gender=female",
+       "Condition?code=http://snomed.info/sct|363354003&patient.gender=female&_elements=subject",
+       "Procedure?code=http://snomed.info/sct|236886002&patient.gender=female&_elements=subject"
+      ],
+      "raw_response": "Here are the two FHIR queries to run and then union the resulting patient IDs:\n\n```\nCondition?code=http://snomed.info/sct|363354003&patient.gender=female\nProcedure?code=http://snomed.info/sct|236886002&patient.gender=female\n```\n\n---\n\n### Query Breakdown\n\n| # | Resource | SNOMED Code | Clinical Meaning | Gender Filter |\n|---|----------|-------------|------------------|---------------|\n| 1 | `Condition` | `363354003` | Malignant neoplasm of cervix uteri (cervical cancer Dx) | `patient.gender=female` |\n| 2 | `Procedure` | `236886002` | Hysterectomy | `patient.gender=female` |\n\n---\n\n### Post-Processing: Union of Patient IDs\n\nAfter retrieving results from both queries:\n\n1. **Extract** `Condition.subject.reference` (patient IDs) from Query 1\n2. **Extract** `Procedure.subject.reference` (patient IDs) from Query 2\n3. **Union** both sets (deduplicate) \u2014 e.g.:\n   ```\n   patient_ids = set(condition_patients) | set(procedure_patients)\n   ```\n\n---\n\n### Notes & Caveats\n\n- **`patient.gender`** is a **chained parameter** \u2014 it filters via the linked `Patient` resource. Confirm your FHIR server supports chained search on `gender`.\n- To also **include Patient resources** in the response bundle, append `&_include=Condition:patient` or `&_include=Procedure:patient` respectively.\n- Consider adding **`&_elements=subject`** to limit payload size if only patient references are needed:\n  ```\n  Condition?code=http://snomed.info/sct|363354003&patient.gender=female&_elements=subject\n  Procedure?code=http://snomed.info/sct|236886002&patient.gender=female&_elements=subject\n  ```",
+      "prompt_text": "Run two queries restricted to female. (1) Condition?code=http://snomed.info/sct|363354003&patient.gender=female \u2014 cervical cancer dx. (2) Procedure?code=http://snomed.info/sct|236886002&patient.gender=female \u2014 hysterectomy. Union the patient IDs."
+     },
+     "2-naive": {
+      "precision": 1.0,
+      "recall": 0.9598,
+      "f1": 0.9795,
+      "passed": true,
+      "expected_count": 473,
+      "actual_count": 454,
+      "elapsed_sec": 229.1,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|363354003&patient.gender=female",
+      "additional_query_urls": [],
+      "raw_response": "The investigation is complete. Here's a summary of what was found:\n\n- \u2705 **Server**: FHIR R4 (Azure), **SNOMED CT only** \u2014 ICD-10-CM codes returned 0 results\n- \u2705 **Primary code confirmed**: `363354003` (Malignant neoplasm of cervix uteri) \u2014 all 3 sampled records use this exact code\n- \u2705 **Subtype codes** (squamous cell, adenocarcinoma, primary malignant neoplasm variants) return 0 separate results \u2014 all cases are rolled up under the parent SNOMED code\n- \u2705 **Final count**: **454 female patients** with cervical cancer\n- \u2705 **Gender filter**: `patient.gender=female` applied (clinically appropriate; cervical cancer is female-only)\n\n---\n\n```\nCondition?code=http://snomed.info/sct|363354003&patient.gender=female\n```",
+      "prompt_text": "Find female patients with cervical cancer.",
+      "run_metadata": {
+       "output_tokens": 440,
+       "tool_calls_count": 20,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     },
+     "2-broad": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 473,
+      "actual_count": 473,
+      "elapsed_sec": 425.5,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|363354003,http://snomed.info/sct|285432005,http://snomed.info/sct|254890008&patient.gender=female",
+      "additional_query_urls": [
+       "Procedure?code=http://snomed.info/sct|236886002,http://snomed.info/sct|116140006,http://snomed.info/sct|116141005,http://snomed.info/sct|116142003,http://snomed.info/sct|116143008,http://snomed.info/sct|116144002,http://snomed.info/sct|265056007,http://snomed.info/sct|236887006,http://snomed.info/sct|236888001,http://snomed.info/sct|307771009,http://snomed.info/sct|35955002,http://snomed.info/sct|361222003,http://www.ama-assn.org/go/cpt|58150,http://www.ama-assn.org/go/cpt|58260,http://www.ama-assn.org/go/cpt|58210,http://www.ama-assn.org/go/cpt|58541,http://www.ama-assn.org/go/cpt|58571&subject:Patient.gender=female"
+      ],
+      "raw_response": "Counts are stable and confirmed. Here's the complete picture of what I found:\n\n| Resource | Code(s) Used on Server | Female Count |\n|---|---|---|\n| **Condition** | SNOMED `363354003` (parent, subsumes all cervical ca subtypes) | **454** |\n| **Procedure** | SNOMED `236886002` + CPT `58150` (all hysterectomies map to same 78 records) | **78** |\n\n**Key findings:**\n- **Server is FHIR R4, Azure \u2014 SNOMED CT only** for Conditions; SNOMED + CPT for Procedures; no ICD-10-CM observed.\n- `363354003` (\"Malignant neoplasm of cervix uteri\") is the **parent concept** \u2014 it subsumes `285432005` (\"Carcinoma of cervix\") and all histologic subtypes. The server uses this single parent for all 454 records.\n- `285432005` and `254890008` (adenocarcinoma in situ of cervix) are included for robustness in case any records use subtype codes.\n- `236886002` is the **parent hysterectomy SNOMED code**; all 12 subtype SNOMED codes + additional CPT codes return the same 78 \u2014 server codes every procedure with the parent.\n- Multiple CPT codes (`58150`, `58260`, `58210`, `58541`, `58571`) and key SNOMED subtypes are included in the Procedure query for forward compatibility.\n- `patient.gender=female` on Condition; `subject:Patient.gender=female` on Procedure (server uses `subject` for that resource type).\n\n---\n\n**Final queries \u2014 union the two patient sets client-side:**\n\n```\nCondition?code=http://snomed.info/sct|363354003,http://snomed.info/sct|285432005,http://snomed.info/sct|254890008&patient.gender=female\nProcedure?code=http://snomed.info/sct|236886002,http://snomed.info/sct|116140006,http://snomed.info/sct|116141005,http://snomed.info/sct|116142003,http://snomed.info/sct|116143008,http://snomed.info/sct|116144002,http://snomed.info/sct|265056007,http://snomed.info/sct|236887006,http://snomed.info/sct|236888001,http://snomed.info/sct|307771009,http://snomed.info/sct|35955002,http://snomed.info/sct|361222003,http://www.ama-assn.org/go/cpt|58150,http://www.ama-assn.org/go/cpt|58260,http://www.ama-assn.org/go/cpt|58210,http://www.ama-assn.org/go/cpt|58541,http://www.ama-assn.org/go/cpt|58571&subject:Patient.gender=female\n```",
+      "prompt_text": "Find all female cervical cancer patients \u2014 by diagnosis or by hysterectomy procedure. Run multiple queries and union the patient sets.",
+      "run_metadata": {
+       "output_tokens": 1677,
+       "tool_calls_count": 38,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     },
+     "2-expert": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 473,
+      "actual_count": 473,
+      "elapsed_sec": 82.8,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|363354003&patient.gender=female",
+      "additional_query_urls": [
+       "Procedure?code=http://snomed.info/sct|236886002&patient.gender=female"
+      ],
+      "raw_response": "Both queries executed successfully and returned real matches. Here's a full breakdown:\n\n---\n\n## \u2705 Query 1 \u2014 Cervical Cancer Diagnosis (Condition)\n```\nCondition?code=http://snomed.info/sct|363354003&patient.gender=female\n```\n| | |\n|---|---|\n| **Hits returned** | 10 (server did not expose a total count) |\n| **Code confirmed** | `SNOMED 363354003` \u2014 *Malignant neoplasm of cervix uteri* \u2714 |\n| **Category** | `encounter-diagnosis` |\n| **Gender filter** | Applied \u2014 female only \u2714 |\n\n---\n\n## \u2705 Query 2 \u2014 Hysterectomy Procedure (Procedure)\n```\nProcedure?code=http://snomed.info/sct|236886002&patient.gender=female\n```\n| | |\n|---|---|\n| **Hits returned** | 10 (server did not expose a total count) |\n| **Codes confirmed** | `SNOMED 236886002` \u2014 *Hysterectomy* \u2714 + co-coded `CPT 58150` \u2014 *Total abdominal hysterectomy* |\n| **Gender filter** | Applied \u2014 female only \u2714 |\n\n---\n\n## \ud83d\udd17 Union Instructions\n\nCollect `resource.subject.reference` (or `resource.patient.reference`) from each result page of both queries, then **deduplicate** across the two sets:\n\n```\nPatient IDs from Query 1  \u222a  Patient IDs from Query 2  \u2192  deduplicated cohort\n```\n\n> **Noteworthy observations:**\n> - Every Procedure record carries **both** SNOMED `236886002` and CPT `58150` simultaneously. If you want to widen hysterectomy coverage to other variants (laparoscopic, radical, vaginal), consider expanding with additional CPT codes (e.g., `58260`, `58570`, `58210`) or a VSAC hysterectomy value set.\n> - Condition records are tagged as **`encounter-diagnosis`** (not `problem-list-item`). If your server also populates a problem list, add a second Condition pass with `category=problem-list-item` to avoid missing chronic-problem entries.\n\n---\n\n## Final Validated Queries\n\n```\nCondition?code=http://snomed.info/sct|363354003&patient.gender=female\nProcedure?code=http://snomed.info/sct|236886002&patient.gender=female\n```",
+      "prompt_text": "Run two queries restricted to female. (1) Condition?code=http://snomed.info/sct|363354003&patient.gender=female \u2014 cervical cancer dx. (2) Procedure?code=http://snomed.info/sct|236886002&patient.gender=female \u2014 hysterectomy. Union the patient IDs.",
+      "run_metadata": {
+       "output_tokens": 823,
+       "tool_calls_count": 2,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     },
+     "3-naive": {
+      "precision": 1.0,
+      "recall": 0.9598,
+      "f1": 0.9795,
+      "passed": true,
+      "expected_count": 473,
+      "actual_count": 454,
+      "elapsed_sec": 63.8,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|363354003,http://snomed.info/sct|285432005,http://snomed.info/sct|372098004,http://snomed.info/sct|372100004,http://snomed.info/sct|254890008,http://snomed.info/sct|406103009,http://snomed.info/sct|92564006,http://snomed.info/sct|92580001,http://snomed.info/sct|92588008,http://snomed.info/sct|439776006&patient.gender=female",
+      "additional_query_urls": [],
+      "raw_response": "454 results \u2014 a clinically plausible count. The query is validated.\n\n---\n\n**Methodology:**\n- **Playbook 4 (Sex-specific):** Chained `&patient.gender=female`\n- **Playbook 1 (Subtypes):** Included the umbrella SNOMED code **363354003** (Malignant neoplasm of cervix uteri) **plus** all cervical cancer subtypes from the VSAC value set (carcinoma of cervix, endocervix, exocervix, adenocarcinoma in situ, squamous cell carcinoma in situ, carcinoma in situ variants, and Pap-smear-detected malignancy)\n- Server confirmed to use **SNOMED CT**\n\n---\n\n**FINAL ANSWER:**\n\n```\nCondition?code=http://snomed.info/sct|363354003,http://snomed.info/sct|285432005,http://snomed.info/sct|372098004,http://snomed.info/sct|372100004,http://snomed.info/sct|254890008,http://snomed.info/sct|406103009,http://snomed.info/sct|92564006,http://snomed.info/sct|92580001,http://snomed.info/sct|92588008,http://snomed.info/sct|439776006&patient.gender=female\n```",
+      "prompt_text": "Find female patients with cervical cancer.",
+      "run_metadata": {
+       "output_tokens": 389,
+       "tool_calls_count": 7,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     },
+     "3-broad": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 473,
+      "actual_count": 473,
+      "elapsed_sec": 98.1,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|363354003,http://snomed.info/sct|285432005,http://snomed.info/sct|372098004,http://snomed.info/sct|372100004,http://snomed.info/sct|406103009,http://snomed.info/sct|254890008,http://snomed.info/sct|93752005&patient.gender=female",
+      "additional_query_urls": [
+       "Procedure?code=http://snomed.info/sct|236886002,http://snomed.info/sct|116140006,http://snomed.info/sct|116141005,http://snomed.info/sct|116142003,http://snomed.info/sct|116143008,http://snomed.info/sct|116144002,http://snomed.info/sct|265056007,http://snomed.info/sct|236887006,http://snomed.info/sct|236888001,http://snomed.info/sct|236891001,http://snomed.info/sct|307771009,http://snomed.info/sct|35955002,http://snomed.info/sct|75835007,http://snomed.info/sct|441820006,http://snomed.info/sct|414575003&patient.gender=female"
+      ],
+      "raw_response": "Both queries return meaningful counts \u2014 **454** cervical cancer diagnosis records and **78** hysterectomy procedure records for female patients. The queries are well-calibrated. Here is the final answer:\n\n---\n\n**Query 1 \u2014 Cervical Cancer Diagnosis (female patients)**\nCovers: malignant neoplasm of cervix uteri, carcinoma of cervix, endocervix/exocervix carcinoma, squamous cell carcinoma in situ of cervix, adenocarcinoma in situ of cervix, and primary malignant neoplasm of uterine cervix.\n\n**Query 2 \u2014 Hysterectomy Procedure (female patients)**\nCovers: all major hysterectomy variants (total, partial, radical, abdominal, vaginal, laparoscopic, robotic-assisted, bilateral salpingo-oophorectomy with hysterectomy) drawn from the Joint Commission and Optum VSAC value sets \u2014 filtered to actual uterus-removal procedures only.\n\nBoth queries chain `patient.gender=female` (Playbook 4). Patient sets are **OR-unioned** (Playbook 12).\n\n```\nCondition?code=http://snomed.info/sct|363354003,http://snomed.info/sct|285432005,http://snomed.info/sct|372098004,http://snomed.info/sct|372100004,http://snomed.info/sct|406103009,http://snomed.info/sct|254890008,http://snomed.info/sct|93752005&patient.gender=female\nProcedure?code=http://snomed.info/sct|236886002,http://snomed.info/sct|116140006,http://snomed.info/sct|116141005,http://snomed.info/sct|116142003,http://snomed.info/sct|116143008,http://snomed.info/sct|116144002,http://snomed.info/sct|265056007,http://snomed.info/sct|236887006,http://snomed.info/sct|236888001,http://snomed.info/sct|236891001,http://snomed.info/sct|307771009,http://snomed.info/sct|35955002,http://snomed.info/sct|75835007,http://snomed.info/sct|441820006,http://snomed.info/sct|414575003&patient.gender=female\n```",
+      "prompt_text": "Find all female cervical cancer patients \u2014 by diagnosis or by hysterectomy procedure. Run multiple queries and union the patient sets.",
+      "run_metadata": {
+       "output_tokens": 742,
+       "tool_calls_count": 14,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     },
+     "3-expert": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 473,
+      "actual_count": 473,
+      "elapsed_sec": 42.8,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|363354003&patient.gender=female",
+      "additional_query_urls": [
+       "Procedure?code=http://snomed.info/sct|236886002&patient.gender=female"
+      ],
+      "raw_response": "Both queries are live and return plausible counts \u2014 **454** cervical cancer diagnoses and **78** hysterectomy procedures, all scoped to female patients. No zero-result issues, no implausibly large returns. \u2705\n\n---\n\n### Results Summary\n\n| # | Resource | SNOMED Code | Description | Female-Restricted Count |\n|---|---|---|---|---|\n| 1 | `Condition` | `363354003` | Malignant tumour of cervix (cervical cancer dx) | **454** |\n| 2 | `Procedure` | `236886002` | Hysterectomy | **78** |\n\n**Union logic:** A patient qualifies for the cohort if they appear in **either** result set (i.e., has a cervical cancer diagnosis **OR** a hysterectomy record, both gender-gated to female).\n\n---\n\n### FINAL ANSWER\n\n```\nCondition?code=http://snomed.info/sct|363354003&patient.gender=female\nProcedure?code=http://snomed.info/sct|236886002&patient.gender=female\n```\n\n> **How to union:** Collect the `subject.reference` (patient IDs) from each result page, then take the **set union** \u2014 any patient ID appearing in either set is included in the final cohort. Patients appearing in both sets are counted once.",
+      "prompt_text": "Run two queries restricted to female. (1) Condition?code=http://snomed.info/sct|363354003&patient.gender=female \u2014 cervical cancer dx. (2) Procedure?code=http://snomed.info/sct|236886002&patient.gender=female \u2014 hysterectomy. Union the patient IDs.",
+      "run_metadata": {
+       "output_tokens": 472,
+       "tool_calls_count": 2,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     }
+    },
+    "copilot:gpt-5.4": {
+     "1-naive": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 473,
+      "actual_count": 0,
+      "elapsed_sec": 84.1,
+      "queries_generated": 1,
+      "primary_query_url": "Patient?gender=female&_has:Condition:patient:code=http://hl7.org/fhir/sid/icd-10-cm|C53,http://hl7.org/fhir/sid/icd-10-cm|C53.0,http://hl7.org/fhir/sid/icd-10-cm|C53.1,http://hl7.org/fhir/sid/icd-10-cm|C53.8,http://hl7.org/fhir/sid/icd-10-cm|C53.9",
+      "additional_query_urls": [],
+      "raw_response": "Patient?gender=female&_has:Condition:patient:code=http://hl7.org/fhir/sid/icd-10-cm|C53,http://hl7.org/fhir/sid/icd-10-cm|C53.0,http://hl7.org/fhir/sid/icd-10-cm|C53.1,http://hl7.org/fhir/sid/icd-10-cm|C53.8,http://hl7.org/fhir/sid/icd-10-cm|C53.9",
+      "prompt_text": "Find female patients with cervical cancer."
+     },
+     "1-broad": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 473,
+      "actual_count": 473,
+      "elapsed_sec": 79.2,
+      "queries_generated": 2,
+      "primary_query_url": "Patient?gender=female&_has:Condition:patient:code:below=http://snomed.info/sct|363354003",
+      "additional_query_urls": [
+       "Patient?gender=female&_has:Procedure:patient:code:below=http://snomed.info/sct|236886002"
+      ],
+      "raw_response": "Patient?gender=female&_has:Condition:patient:code:below=http://snomed.info/sct|363354003\nPatient?gender=female&_has:Procedure:patient:code:below=http://snomed.info/sct|236886002",
+      "prompt_text": "Find all female cervical cancer patients \u2014 by diagnosis or by hysterectomy procedure. Run multiple queries and union the patient sets."
+     },
+     "1-expert": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 473,
+      "actual_count": 473,
+      "elapsed_sec": 51.4,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|363354003&patient.gender=female",
+      "additional_query_urls": [
+       "Procedure?code=http://snomed.info/sct|236886002&patient.gender=female"
+      ],
+      "raw_response": "Condition?code=http://snomed.info/sct|363354003&patient.gender=female\nProcedure?code=http://snomed.info/sct|236886002&patient.gender=female",
+      "prompt_text": "Run two queries restricted to female. (1) Condition?code=http://snomed.info/sct|363354003&patient.gender=female \u2014 cervical cancer dx. (2) Procedure?code=http://snomed.info/sct|236886002&patient.gender=female \u2014 hysterectomy. Union the patient IDs."
+     },
+     "2-naive": {
+      "precision": 1.0,
+      "recall": 0.9598,
+      "f1": 0.9795,
+      "passed": true,
+      "expected_count": 473,
+      "actual_count": 454,
+      "elapsed_sec": 233.6,
+      "queries_generated": 3,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|109880006,http://snomed.info/sct|123842006,http://snomed.info/sct|1259387001,http://snomed.info/sct|1259433006,http://snomed.info/sct|1259493008,http://snomed.info/sct|1259514003,http://snomed.info/sct|1259516001,http://snomed.info/sct|184781000119102,http://snomed.info/sct|188176007,http://snomed.info/sct|188177003,http://snomed.info/sct|188180002,http://snomed.info/sct|188183000,http://snomed.info/sct|188184006,http://snomed.info/sct|208041000119100,http://snomed.info/sct|254886006,http://snomed.info/sct|254887002,http://snomed.info/sct|254888007,http://snomed.info/sct|285432005,http://snomed.info/sct|314970000,http://snomed.info/sct|363354003,http://snomed.info/sct|372024009,http://snomed.info/sct|372097009,http://snomed.info/sct|372098004,http://snomed.info/sct|372099007,http://snomed.info/sct|372100004,http://snomed.info/sct|423973006,http://snomed.info/sct|93779009,http://snomed.info/sct|93789008&patient.gender=female",
+      "additional_query_urls": [
+       "Condition?code=http://snomed.info/sct|1156807006,http://snomed.info/sct|1197263001,http://snomed.info/sct|1197268005,http://snomed.info/sct|1268536009,http://snomed.info/sct|1268537000,http://snomed.info/sct|1268631009,http://snomed.info/sct|1268638003,http://snomed.info/sct|1268639006,http://snomed.info/sct|1268959008,http://snomed.info/sct|369452007,http://snomed.info/sct|369473007,http://snomed.info/sct|369495006,http://snomed.info/sct|369518007,http://snomed.info/sct|369527008,http://snomed.info/sct|369580007,http://snomed.info/sct|369599003,http://snomed.info/sct|385478001,http://snomed.info/sct|448607004,http://snomed.info/sct|448774004,http://snomed.info/sct|449059000,http://snomed.info/sct|722683006,http://snomed.info/sct|733834006,http://snomed.info/sct|763063001,http://snomed.info/sct|763064007,http://snomed.info/sct|763408003,http://snomed.info/sct|763771009,http://snomed.info/sct|764847000,http://snomed.info/sct|764951002,http://snomed.info/sct|766248004,http://snomed.info/sct|766930002,http://snomed.info/sct|773283006,http://snomed.info/sct|773775004&patient.gender=female",
+       "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|C53,http://hl7.org/fhir/sid/icd-10-cm|C53.0,http://hl7.org/fhir/sid/icd-10-cm|C53.1,http://hl7.org/fhir/sid/icd-10-cm|C53.8,http://hl7.org/fhir/sid/icd-10-cm|C53.9,http://hl7.org/fhir/sid/icd-9-cm|180,http://hl7.org/fhir/sid/icd-9-cm|180.0,http://hl7.org/fhir/sid/icd-9-cm|180.1,http://hl7.org/fhir/sid/icd-9-cm|180.8,http://hl7.org/fhir/sid/icd-9-cm|180.9&patient.gender=female"
+      ],
+      "raw_response": "Condition?code=http://snomed.info/sct|109880006,http://snomed.info/sct|123842006,http://snomed.info/sct|1259387001,http://snomed.info/sct|1259433006,http://snomed.info/sct|1259493008,http://snomed.info/sct|1259514003,http://snomed.info/sct|1259516001,http://snomed.info/sct|184781000119102,http://snomed.info/sct|188176007,http://snomed.info/sct|188177003,http://snomed.info/sct|188180002,http://snomed.info/sct|188183000,http://snomed.info/sct|188184006,http://snomed.info/sct|208041000119100,http://snomed.info/sct|254886006,http://snomed.info/sct|254887002,http://snomed.info/sct|254888007,http://snomed.info/sct|285432005,http://snomed.info/sct|314970000,http://snomed.info/sct|363354003,http://snomed.info/sct|372024009,http://snomed.info/sct|372097009,http://snomed.info/sct|372098004,http://snomed.info/sct|372099007,http://snomed.info/sct|372100004,http://snomed.info/sct|423973006,http://snomed.info/sct|93779009,http://snomed.info/sct|93789008&patient.gender=female\nCondition?code=http://snomed.info/sct|1156807006,http://snomed.info/sct|1197263001,http://snomed.info/sct|1197268005,http://snomed.info/sct|1268536009,http://snomed.info/sct|1268537000,http://snomed.info/sct|1268631009,http://snomed.info/sct|1268638003,http://snomed.info/sct|1268639006,http://snomed.info/sct|1268959008,http://snomed.info/sct|369452007,http://snomed.info/sct|369473007,http://snomed.info/sct|369495006,http://snomed.info/sct|369518007,http://snomed.info/sct|369527008,http://snomed.info/sct|369580007,http://snomed.info/sct|369599003,http://snomed.info/sct|385478001,http://snomed.info/sct|448607004,http://snomed.info/sct|448774004,http://snomed.info/sct|449059000,http://snomed.info/sct|722683006,http://snomed.info/sct|733834006,http://snomed.info/sct|763063001,http://snomed.info/sct|763064007,http://snomed.info/sct|763408003,http://snomed.info/sct|763771009,http://snomed.info/sct|764847000,http://snomed.info/sct|764951002,http://snomed.info/sct|766248004,http://snomed.info/sct|766930002,http://snomed.info/sct|773283006,http://snomed.info/sct|773775004&patient.gender=female\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|C53,http://hl7.org/fhir/sid/icd-10-cm|C53.0,http://hl7.org/fhir/sid/icd-10-cm|C53.1,http://hl7.org/fhir/sid/icd-10-cm|C53.8,http://hl7.org/fhir/sid/icd-10-cm|C53.9,http://hl7.org/fhir/sid/icd-9-cm|180,http://hl7.org/fhir/sid/icd-9-cm|180.0,http://hl7.org/fhir/sid/icd-9-cm|180.1,http://hl7.org/fhir/sid/icd-9-cm|180.8,http://hl7.org/fhir/sid/icd-9-cm|180.9&patient.gender=female",
+      "prompt_text": "Find female patients with cervical cancer.",
+      "run_metadata": {
+       "output_tokens": 5330,
+       "tool_calls_count": 12,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     },
+     "2-broad": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 473,
+      "actual_count": 473,
+      "elapsed_sec": 374.6,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|363354003&patient.gender=female",
+      "additional_query_urls": [
+       "Procedure?code=http://snomed.info/sct|236886002,http://www.ama-assn.org/go/cpt|58150&subject.gender=female"
+      ],
+      "raw_response": "Condition?code=http://snomed.info/sct|363354003&patient.gender=female\nProcedure?code=http://snomed.info/sct|236886002,http://www.ama-assn.org/go/cpt|58150&subject.gender=female",
+      "prompt_text": "Find all female cervical cancer patients \u2014 by diagnosis or by hysterectomy procedure. Run multiple queries and union the patient sets.",
+      "run_metadata": {
+       "output_tokens": 2024,
+       "tool_calls_count": 41,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     },
+     "2-expert": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 473,
+      "actual_count": 473,
+      "elapsed_sec": 51.0,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|363354003&patient.gender=female",
+      "additional_query_urls": [
+       "Procedure?code=http://snomed.info/sct|236886002&patient.gender=female"
+      ],
+      "raw_response": "Condition?code=http://snomed.info/sct|363354003&patient.gender=female\nProcedure?code=http://snomed.info/sct|236886002&patient.gender=female",
+      "prompt_text": "Run two queries restricted to female. (1) Condition?code=http://snomed.info/sct|363354003&patient.gender=female \u2014 cervical cancer dx. (2) Procedure?code=http://snomed.info/sct|236886002&patient.gender=female \u2014 hysterectomy. Union the patient IDs.",
+      "run_metadata": {
+       "output_tokens": 308,
+       "tool_calls_count": 0,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     },
+     "3-naive": {
+      "precision": 1.0,
+      "recall": 0.9598,
+      "f1": 0.9795,
+      "passed": true,
+      "expected_count": 473,
+      "actual_count": 454,
+      "elapsed_sec": 98.2,
+      "queries_generated": 1,
+      "primary_query_url": "Patient?_has:Condition:patient:code=http://snomed.info/sct|363354003&gender=female",
+      "additional_query_urls": [],
+      "raw_response": "Patient?_has:Condition:patient:code=http://snomed.info/sct|363354003&gender=female",
+      "prompt_text": "Find female patients with cervical cancer.",
+      "run_metadata": {
+       "output_tokens": 1065,
+       "tool_calls_count": 14,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     },
+     "3-broad": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 473,
+      "actual_count": 473,
+      "elapsed_sec": 85.8,
+      "queries_generated": 2,
+      "primary_query_url": "Patient?_has:Condition:patient:code=http://snomed.info/sct|363354003&gender=female",
+      "additional_query_urls": [
+       "Patient?_has:Procedure:patient:code=http://snomed.info/sct|236886002,http://www.ama-assn.org/go/cpt|58150&gender=female"
+      ],
+      "raw_response": "Patient?_has:Condition:patient:code=http://snomed.info/sct|363354003&gender=female\nPatient?_has:Procedure:patient:code=http://snomed.info/sct|236886002,http://www.ama-assn.org/go/cpt|58150&gender=female",
+      "prompt_text": "Find all female cervical cancer patients \u2014 by diagnosis or by hysterectomy procedure. Run multiple queries and union the patient sets.",
+      "run_metadata": {
+       "output_tokens": 1564,
+       "tool_calls_count": 11,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     },
+     "3-expert": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 473,
+      "actual_count": 473,
+      "elapsed_sec": 56.5,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|363354003&patient.gender=female",
+      "additional_query_urls": [
+       "Procedure?code=http://snomed.info/sct|236886002&patient.gender=female"
+      ],
+      "raw_response": "Condition?code=http://snomed.info/sct|363354003&patient.gender=female\nProcedure?code=http://snomed.info/sct|236886002&patient.gender=female",
+      "prompt_text": "Run two queries restricted to female. (1) Condition?code=http://snomed.info/sct|363354003&patient.gender=female \u2014 cervical cancer dx. (2) Procedure?code=http://snomed.info/sct|236886002&patient.gender=female \u2014 hysterectomy. Union the patient IDs.",
+      "run_metadata": {
+       "output_tokens": 260,
+       "tool_calls_count": 9,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     }
+    },
+    "openai-compat:qwen-qwen3.5-9b": {
+     "1-naive": {
+      "precision": 0.5186,
+      "recall": 1.0,
+      "f1": 0.683,
+      "passed": false,
+      "expected_count": 473,
+      "actual_count": 912,
+      "elapsed_sec": 54.5,
+      "queries_generated": 1,
+      "primary_query_url": "Patient?gender=female&gender=female&Condition?code=http://hl7.org/fhir/sid/icd-10-cm|C53.9",
+      "additional_query_urls": [],
+      "raw_response": "Patient?gender=female&gender=female&Condition?code=http://hl7.org/fhir/sid/icd-10-cm|C53.9",
+      "prompt_text": "Find female patients with cervical cancer."
+     },
+     "1-broad": {
+      "precision": 0.5186,
+      "recall": 1.0,
+      "f1": 0.683,
+      "passed": false,
+      "expected_count": 473,
+      "actual_count": 912,
+      "elapsed_sec": 54.4,
+      "queries_generated": 2,
+      "primary_query_url": "Patient?gender=female&Condition?code=http://hl7.org/fhir/sid/icd-10-cm|C53",
+      "additional_query_urls": [
+       "Patient?gender=female&Procedure?code=http://snomed.info/sct|80146002"
+      ],
+      "raw_response": "Patient?gender=female&Condition?code=http://hl7.org/fhir/sid/icd-10-cm|C53\nPatient?gender=female&Procedure?code=http://snomed.info/sct|80146002",
+      "prompt_text": "Find all female cervical cancer patients \u2014 by diagnosis or by hysterectomy procedure. Run multiple queries and union the patient sets."
+     },
+     "1-expert": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 473,
+      "actual_count": 473,
+      "elapsed_sec": 29.9,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|363354003&patient.gender=female",
+      "additional_query_urls": [
+       "Procedure?code=http://snomed.info/sct|236886002&patient.gender=female"
+      ],
+      "raw_response": "Condition?code=http://snomed.info/sct|363354003&patient.gender=female\nProcedure?code=http://snomed.info/sct|236886002&patient.gender=female",
+      "prompt_text": "Run two queries restricted to female. (1) Condition?code=http://snomed.info/sct|363354003&patient.gender=female \u2014 cervical cancer dx. (2) Procedure?code=http://snomed.info/sct|236886002&patient.gender=female \u2014 hysterectomy. Union the patient IDs."
+     },
+     "2-naive": {
+      "precision": 0.5186,
+      "recall": 1.0,
+      "f1": 0.683,
+      "passed": false,
+      "expected_count": 473,
+      "actual_count": 912,
+      "elapsed_sec": 525.0,
+      "queries_generated": 1,
+      "primary_query_url": "Patient?gender=female&Condition:code=http://snomed.info/sct|363354003",
+      "additional_query_urls": [],
+      "raw_response": "Patient?gender=female&Condition:code=http://snomed.info/sct|363354003",
+      "prompt_text": "Find female patients with cervical cancer.",
+      "run_metadata": {
+       "tool_calls_count": 15,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     },
+     "2-broad": {
+      "precision": 0.8695,
+      "recall": 1.0,
+      "f1": 0.9302,
+      "passed": true,
+      "expected_count": 473,
+      "actual_count": 544,
+      "elapsed_sec": 445.2,
+      "queries_generated": 15,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|363354003&_summary=count",
+      "additional_query_urls": [
+       "Procedure?code=http://snomed.info/sct|236886002&_summary=count",
+       "Patient?_summary=count",
+       "Condition?code=http://snomed.info/sct|285432005",
+       "Condition?code=http://snomed.info/sct|372098004",
+       "Condition?code=http://snomed.info/sct|372100004",
+       "Procedure?code=http://snomed.info/sct|116140006",
+       "Procedure?code=http://snomed.info/sct|116141005",
+       "Procedure?code=http://snomed.info/sct|116142003",
+       "Patient?gender=female&_summary=count",
+       "Condition?code=http://snomed.info/sct|363354003",
+       "Procedure?code=http://snomed.info/sct|236886002",
+       "Condition?patient=363354003",
+       "Condition?_summary=count",
+       "Condition?id=93a8459a-1fbf-d394-290a-0a2192870c0d"
+      ],
+      "raw_response": "[FALLBACK: parser couldn't extract URL from final response; using fhir_search queries from tool trace]\nCondition?code=http://snomed.info/sct|363354003&_summary=count\nProcedure?code=http://snomed.info/sct|236886002&_summary=count\nPatient?_summary=count\nCondition?code=http://snomed.info/sct|285432005\nCondition?code=http://snomed.info/sct|372098004\nCondition?code=http://snomed.info/sct|372100004\nProcedure?code=http://snomed.info/sct|116140006\nProcedure?code=http://snomed.info/sct|116141005\nProcedure?code=http://snomed.info/sct|116142003\nPatient?gender=female&_summary=count\nCondition?code=http://snomed.info/sct|363354003\nProcedure?code=http://snomed.info/sct|236886002\nCondition?patient=363354003\nCondition?_summary=count\nCondition?id=93a8459a-1fbf-d394-290a-0a2192870c0d\n\nOriginal last assistant message:\nI see the Condition resources don't show the `subject` field in the sample. Let me try to get a full Condition resource by searching for one:\n\n",
+      "prompt_text": "Find all female cervical cancer patients \u2014 by diagnosis or by hysterectomy procedure. Run multiple queries and union the patient sets.",
+      "run_metadata": {
+       "tool_calls_count": 35,
+       "stop_reason": "fallback_tool_trace",
+       "fallback_used": true
+      }
+     },
+     "2-expert": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 473,
+      "actual_count": 473,
+      "elapsed_sec": 34.7,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|363354003&patient.gender=female",
+      "additional_query_urls": [
+       "Procedure?code=http://snomed.info/sct|236886002&patient.gender=female"
+      ],
+      "raw_response": "The queries have been executed and both returned results. The two FHIR query URLs to union the patient IDs are:\n\nCondition?code=http://snomed.info/sct|363354003&patient.gender=female\nProcedure?code=http://snomed.info/sct|236886002&patient.gender=female",
+      "prompt_text": "Run two queries restricted to female. (1) Condition?code=http://snomed.info/sct|363354003&patient.gender=female \u2014 cervical cancer dx. (2) Procedure?code=http://snomed.info/sct|236886002&patient.gender=female \u2014 hysterectomy. Union the patient IDs.",
+      "run_metadata": {
+       "tool_calls_count": 4,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     },
+     "3-naive": {
+      "precision": 1.0,
+      "recall": 0.9598,
+      "f1": 0.9795,
+      "passed": true,
+      "expected_count": 473,
+      "actual_count": 454,
+      "elapsed_sec": 124.0,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|363354003&patient.gender=female",
+      "additional_query_urls": [],
+      "raw_response": "The query works and returns results. The FHIR query to find female patients with cervical cancer is:\n\nCondition?code=http://snomed.info/sct|363354003&patient.gender=female",
+      "prompt_text": "Find female patients with cervical cancer.",
+      "run_metadata": {
+       "tool_calls_count": 9,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     },
+     "3-broad": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 473,
+      "actual_count": 0,
+      "elapsed_sec": 47.5,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|84017003&patient.gender=female",
+      "additional_query_urls": [
+       "Procedure?code=http://snomed.info/sct|804946001&patient.gender=female"
+      ],
+      "raw_response": "Condition?code=http://snomed.info/sct|84017003&patient.gender=female\nProcedure?code=http://snomed.info/sct|804946001&patient.gender=female",
+      "prompt_text": "Find all female cervical cancer patients \u2014 by diagnosis or by hysterectomy procedure. Run multiple queries and union the patient sets.",
+      "run_metadata": {
+       "tool_calls_count": 4,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     },
+     "3-expert": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 473,
+      "actual_count": 473,
+      "elapsed_sec": 37.9,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|363354003&patient.gender=female",
+      "additional_query_urls": [
+       "Procedure?code=http://snomed.info/sct|236886002&patient.gender=female"
+      ],
+      "raw_response": "Condition?code=http://snomed.info/sct|363354003&patient.gender=female\nProcedure?code=http://snomed.info/sct|236886002&patient.gender=female",
+      "prompt_text": "Run two queries restricted to female. (1) Condition?code=http://snomed.info/sct|363354003&patient.gender=female \u2014 cervical cancer dx. (2) Procedure?code=http://snomed.info/sct|236886002&patient.gender=female \u2014 hysterectomy. Union the patient IDs.",
+      "run_metadata": {
+       "tool_calls_count": 2,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     }
+    }
+   }
+  },
+  {
+   "test_case": "phekb-cervical-cancer-dx",
+   "grids": {
+    "copilot:claude-opus-4.7": {
+     "1-naive": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 454,
+      "actual_count": 454,
+      "elapsed_sec": 0.9,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|363354003&subject:Patient.gender=female",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|363354003&subject:Patient.gender=female",
+      "prompt_text": "Find women with cervical cancer."
+     },
+     "1-broad": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 454,
+      "actual_count": 454,
+      "elapsed_sec": 0.9,
+      "queries_generated": 1,
+      "primary_query_url": "Patient?gender=female&_has:Condition:patient:code=http://snomed.info/sct|363354003",
+      "additional_query_urls": [],
+      "raw_response": "Patient?gender=female&_has:Condition:patient:code=http://snomed.info/sct|363354003",
+      "prompt_text": "Find female patients diagnosed with cervical cancer (malignant neoplasm of cervix uteri)."
+     },
+     "1-expert": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 454,
+      "actual_count": 454,
+      "elapsed_sec": 0.6,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|363354003&patient.gender=female",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|363354003&patient.gender=female",
+      "prompt_text": "Search Condition resources with SNOMED 363354003 (Malignant neoplasm of cervix uteri), restricted to female patients via patient.gender=female. Query: Condition?code=http://snomed.info/sct|363354003&patient.gender=female"
+     },
+     "2-naive": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 454,
+      "actual_count": 454,
+      "elapsed_sec": 40.2,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|363354003&patient.gender=female",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|363354003&patient.gender=female",
+      "prompt_text": "Find women with cervical cancer.",
+      "run_metadata": {
+       "output_tokens": 32,
+       "tool_calls_count": 4,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     },
+     "2-broad": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 454,
+      "actual_count": 454,
+      "elapsed_sec": 35.2,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|363354003&subject:Patient.gender=female",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|363354003&subject:Patient.gender=female",
+      "prompt_text": "Find female patients diagnosed with cervical cancer (malignant neoplasm of cervix uteri).",
+      "run_metadata": {
+       "output_tokens": 36,
+       "tool_calls_count": 3,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     },
+     "2-expert": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 454,
+      "actual_count": 454,
+      "elapsed_sec": 34.7,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|363354003&patient.gender=female",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|363354003&patient.gender=female",
+      "prompt_text": "Search Condition resources with SNOMED 363354003 (Malignant neoplasm of cervix uteri), restricted to female patients via patient.gender=female. Query: Condition?code=http://snomed.info/sct|363354003&patient.gender=female",
+      "run_metadata": {
+       "output_tokens": 32,
+       "tool_calls_count": 1,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     },
+     "3-naive": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 454,
+      "actual_count": 454,
+      "elapsed_sec": 51.5,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|363354003,http://snomed.info/sct|254886006,http://snomed.info/sct|254887002,http://snomed.info/sct|254888007,http://snomed.info/sct|285432005,http://snomed.info/sct|372024009,http://snomed.info/sct|372097009,http://snomed.info/sct|372099007,http://snomed.info/sct|423973006,http://hl7.org/fhir/sid/icd-10-cm|C53,http://hl7.org/fhir/sid/icd-10-cm|C53.0,http://hl7.org/fhir/sid/icd-10-cm|C53.1,http://hl7.org/fhir/sid/icd-10-cm|C53.8,http://hl7.org/fhir/sid/icd-10-cm|C53.9&patient.gender=female",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|363354003,http://snomed.info/sct|254886006,http://snomed.info/sct|254887002,http://snomed.info/sct|254888007,http://snomed.info/sct|285432005,http://snomed.info/sct|372024009,http://snomed.info/sct|372097009,http://snomed.info/sct|372099007,http://snomed.info/sct|423973006,http://hl7.org/fhir/sid/icd-10-cm|C53,http://hl7.org/fhir/sid/icd-10-cm|C53.0,http://hl7.org/fhir/sid/icd-10-cm|C53.1,http://hl7.org/fhir/sid/icd-10-cm|C53.8,http://hl7.org/fhir/sid/icd-10-cm|C53.9&patient.gender=female",
+      "prompt_text": "Find women with cervical cancer.",
+      "run_metadata": {
+       "output_tokens": 290,
+       "tool_calls_count": 6,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     },
+     "3-broad": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 454,
+      "actual_count": 454,
+      "elapsed_sec": 32.0,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|363354003&patient.gender=female",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|363354003&patient.gender=female",
+      "prompt_text": "Find female patients diagnosed with cervical cancer (malignant neoplasm of cervix uteri).",
+      "run_metadata": {
+       "output_tokens": 32,
+       "tool_calls_count": 2,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     },
+     "3-expert": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 454,
+      "actual_count": 454,
+      "elapsed_sec": 31.5,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|363354003&patient.gender=female",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|363354003&patient.gender=female",
+      "prompt_text": "Search Condition resources with SNOMED 363354003 (Malignant neoplasm of cervix uteri), restricted to female patients via patient.gender=female. Query: Condition?code=http://snomed.info/sct|363354003&patient.gender=female",
+      "run_metadata": {
+       "output_tokens": 32,
+       "tool_calls_count": 1,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     }
+    },
+    "copilot:claude-opus-4.7+fhirskill": {
+     "1-naive": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 454,
+      "actual_count": 454,
+      "elapsed_sec": 0.6,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|363354003&subject:Patient.gender=female",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|363354003&subject:Patient.gender=female",
+      "prompt_text": "Find women with cervical cancer."
+     },
+     "1-broad": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 454,
+      "actual_count": 454,
+      "elapsed_sec": 0.6,
+      "queries_generated": 1,
+      "primary_query_url": "Patient?gender=female&_has:Condition:patient:code=http://snomed.info/sct|363354003",
+      "additional_query_urls": [],
+      "raw_response": "Patient?gender=female&_has:Condition:patient:code=http://snomed.info/sct|363354003",
+      "prompt_text": "Find female patients diagnosed with cervical cancer (malignant neoplasm of cervix uteri)."
+     },
+     "1-expert": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 454,
+      "actual_count": 454,
+      "elapsed_sec": 0.6,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|363354003&patient.gender=female",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|363354003&patient.gender=female",
+      "prompt_text": "Search Condition resources with SNOMED 363354003 (Malignant neoplasm of cervix uteri), restricted to female patients via patient.gender=female. Query: Condition?code=http://snomed.info/sct|363354003&patient.gender=female"
+     }
+    },
+    "copilot:claude-sonnet-4.6": {
+     "1-naive": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 454,
+      "actual_count": 454,
+      "elapsed_sec": 72.2,
+      "queries_generated": 5,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|363354003&subject:Patient.gender=female",
+      "additional_query_urls": [
+       "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|C53.9&subject:Patient.gender=female",
+       "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|C53.0&subject:Patient.gender=female",
+       "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|C53.1&subject:Patient.gender=female",
+       "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|C53.8&subject:Patient.gender=female"
+      ],
+      "raw_response": "Here are the FHIR queries to find women with cervical cancer using both SNOMED CT and ICD-10-CM codes, filtering by female gender via chained parameter:\n\n```\nCondition?code=http://snomed.info/sct|363354003&subject:Patient.gender=female\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|C53.9&subject:Patient.gender=female\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|C53.0&subject:Patient.gender=female\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|C53.1&subject:Patient.gender=female\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|C53.8&subject:Patient.gender=female\n```\n\n### Notes:\n| Query | Code | Description |\n|---|---|---|\n| SNOMED | `363354003` | Malignant tumor of cervix uteri |\n| ICD-10-CM | `C53.9` | Cervix uteri, unspecified |\n| ICD-10-CM | `C53.0` | Malignant neoplasm of endocervix |\n| ICD-10-CM | `C53.1` | Malignant neoplasm of exocervix |\n| ICD-10-CM | `C53.8` | Overlapping lesion of cervix uteri |\n\n- The `subject:Patient.gender=female` chained parameter ensures only female patients are returned.\n- Since cervical cancer is inherently female-specific, you may optionally omit the gender filter, but it's included for accuracy per the request.\n- You can add `&_include=Condition:subject` to retrieve associated Patient resources in the same bundle.",
+      "prompt_text": "Find women with cervical cancer."
+     },
+     "1-broad": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 454,
+      "actual_count": 454,
+      "elapsed_sec": 56.1,
+      "queries_generated": 5,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|363354003&subject:Patient.gender=female",
+      "additional_query_urls": [
+       "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|C53.9&subject:Patient.gender=female",
+       "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|C53.0&subject:Patient.gender=female",
+       "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|C53.1&subject:Patient.gender=female",
+       "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|C53.8&subject:Patient.gender=female"
+      ],
+      "raw_response": "## FHIR Queries: Female Patients with Cervical Cancer\n\n```\nCondition?code=http://snomed.info/sct|363354003&subject:Patient.gender=female\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|C53.9&subject:Patient.gender=female\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|C53.0&subject:Patient.gender=female\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|C53.1&subject:Patient.gender=female\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|C53.8&subject:Patient.gender=female\n```\n\n### Notes\n\n| Element | Details |\n|---|---|\n| **SNOMED CT** | `363354003` \u2014 Malignant neoplasm of cervix uteri |\n| **ICD-10-CM C53.0** | Malignant neoplasm of endocervix |\n| **ICD-10-CM C53.1** | Malignant neoplasm of exocervix |\n| **ICD-10-CM C53.8** | Malignant neoplasm of overlapping sites of cervix uteri |\n| **ICD-10-CM C53.9** | Malignant neoplasm of cervix uteri, unspecified |\n| **Gender filter** | `subject:Patient.gender=female` \u2014 chained parameter to ensure only female patients are returned |\n\n> **Tip:** To also retrieve the full Patient resource in one call, append `&_include=Condition:subject` to any query above. You can also combine multiple ICD-10 codes using a comma: `code=http://hl7.org/fhir/sid/icd-10-cm|C53.0,http://hl7.org/fhir/sid/icd-10-cm|C53.1,...` if your FHIR server supports multi-value code matching.",
+      "prompt_text": "Find female patients diagnosed with cervical cancer (malignant neoplasm of cervix uteri)."
+     },
+     "1-expert": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 454,
+      "actual_count": 454,
+      "elapsed_sec": 55.4,
+      "queries_generated": 3,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|363354003&patient.gender=female",
+      "additional_query_urls": [
+       "Condition?code=http://snomed.info/sct|363354003&patient.gender=female&clinical-status=active&verification-status=confirmed",
+       "Patient?gender=female"
+      ],
+      "raw_response": "```\nCondition?code=http://snomed.info/sct|363354003&patient.gender=female\n```\n\n### Explanation\n\n| Component | Details |\n|---|---|\n| **Resource** | `Condition` |\n| **Code System** | `http://snomed.info/sct` |\n| **SNOMED Code** | `363354003` \u2013 *Malignant neoplasm of cervix uteri* |\n| **Chained Parameter** | `patient.gender=female` \u2013 traverses the `Condition.subject` reference to the linked `Patient` resource and filters by `gender = female` |\n\n### Key Notes\n- **`patient.gender=female`** is a **chained search parameter** \u2014 FHIR follows the reference from `Condition.subject` \u2192 `Patient.gender`, ensuring only conditions linked to female patients are returned.\n- This is clinically appropriate as cervical cancer is exclusive to individuals with a cervix; the gender filter adds a data-quality constraint.\n- You may also consider adding **`clinical-status=active`** or **`verification-status=confirmed`** for more precise clinical filtering:\n  ```\n  Condition?code=http://snomed.info/sct|363354003&patient.gender=female&clinical-status=active&verification-status=confirmed\n  ```\n- If your server doesn't support chained parameters, a two-step approach is needed: first query `Patient?gender=female`, then query `Condition` using the returned patient IDs via `patient=Patient/[id]`.",
+      "prompt_text": "Search Condition resources with SNOMED 363354003 (Malignant neoplasm of cervix uteri), restricted to female patients via patient.gender=female. Query: Condition?code=http://snomed.info/sct|363354003&patient.gender=female"
+     },
+     "2-naive": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 454,
+      "actual_count": 454,
+      "elapsed_sec": 157.3,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|363354003,http://snomed.info/sct|285432005,http://snomed.info/sct|372098004,http://snomed.info/sct|372100004,http://hl7.org/fhir/sid/icd-10-cm|C53,http://hl7.org/fhir/sid/icd-10-cm|C53.0,http://hl7.org/fhir/sid/icd-10-cm|C53.1,http://hl7.org/fhir/sid/icd-10-cm|C53.8,http://hl7.org/fhir/sid/icd-10-cm|C53.9&patient.gender=female",
+      "additional_query_urls": [],
+      "raw_response": "All 3 sampled records confirm `SNOMED 363354003 \u2013 Malignant neoplasm of cervix uteri` with the `patient.gender=female` filter working correctly. The query returns **454 matching Condition records**.\n\n**Summary of what was found:**\n| Source | Codes included |\n|---|---|\n| **SNOMED CT** (server's primary system) | `363354003` Malignant neoplasm of cervix uteri \u00b7 `285432005` Carcinoma of cervix \u00b7 `372098004` Carcinoma of endocervix \u00b7 `372100004` Carcinoma of exocervix |\n| **ICD-10-CM** (MITRE VSAC value set) | `C53` \u00b7 `C53.0` \u00b7 `C53.1` \u00b7 `C53.8` \u00b7 `C53.9` |\n| **Patient filter** | `gender=female` |\n\n---\n\n```\nCondition?code=http://snomed.info/sct|363354003,http://snomed.info/sct|285432005,http://snomed.info/sct|372098004,http://snomed.info/sct|372100004,http://hl7.org/fhir/sid/icd-10-cm|C53,http://hl7.org/fhir/sid/icd-10-cm|C53.0,http://hl7.org/fhir/sid/icd-10-cm|C53.1,http://hl7.org/fhir/sid/icd-10-cm|C53.8,http://hl7.org/fhir/sid/icd-10-cm|C53.9&patient.gender=female\n```",
+      "prompt_text": "Find women with cervical cancer.",
+      "run_metadata": {
+       "output_tokens": 618,
+       "tool_calls_count": 12,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     },
+     "2-broad": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 454,
+      "actual_count": 454,
+      "elapsed_sec": 137.2,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|363354003&patient.gender=female",
+      "additional_query_urls": [],
+      "raw_response": "All findings are clear and decisive. Here's the summary:\n\n| Check | Result |\n|---|---|\n| **Server code system** | SNOMED CT only \u2014 all 5 sampled Conditions use `363354003` \"Malignant neoplasm of cervix uteri\" |\n| **ICD-10-CM (C53.x)** | 0 hits \u2014 server does **not** populate ICD-10-CM Condition codes |\n| **SNOMED 363354003 subsumes subtypes** | \u2705 Confirmed \u2014 subsumes `285432005` (Carcinoma of cervix) and `372098004` (Carcinoma of endocervix), making it the authoritative root code |\n| **Female-filtered count** | **454 Condition records** \u2014 a clinically plausible result |\n\n**Key reasoning:**\n- The server exclusively stores Conditions in SNOMED CT at the root code `363354003` (\"Malignant neoplasm of cervix uteri\"), which subsumes all subtype carcinomas (endocervix, exocervix, overlapping, etc.)\n- ICD-10-CM `C53.x` codes return zero results \u2014 not used on this server\n- Adding `patient.gender=female` is the appropriate biological filter for cervical cancer (anatomically female-specific)\n\n---\n\n```\nCondition?code=http://snomed.info/sct|363354003&patient.gender=female\n```",
+      "prompt_text": "Find female patients diagnosed with cervical cancer (malignant neoplasm of cervix uteri).",
+      "run_metadata": {
+       "output_tokens": 847,
+       "tool_calls_count": 11,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     },
+     "2-expert": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 454,
+      "actual_count": 454,
+      "elapsed_sec": 157.6,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|363354003&patient.gender=female",
+      "additional_query_urls": [
+       "Condition?code=http://snomed.info/sct|363354003,http://snomed.info/sct|285432005,http://snomed.info/sct|372098004,http://snomed.info/sct|372100004&patient.gender=female"
+      ],
+      "raw_response": "All checks complete. Here is the full validation report and final answer:\n\n---\n\n## \u2705 Validation Report\n\n### 1. SNOMED Code Confirmed\n- **363354003** \u2192 `\"Malignant neoplasm of cervix uteri (disorder)\"` (SNOMED CT March 2026 version) \u2714\ufe0f\n\n### 2. Server Coding Pattern\nSampling 3 Condition resources shows this server uses **SNOMED CT only** \u2014 no dual ICD-10-CM coding on Conditions. Every sampled record carried exactly:\n| System | Code | Display |\n|---|---|---|\n| `http://snomed.info/sct` | `363354003` | Malignant neoplasm of cervix uteri |\n| `http://terminology.hl7.org/CodeSystem/condition-category` | `encounter-diagnosis` | Encounter Diagnosis |\n\n\u2192 No need to add ICD-10-CM codes (C53.9, C53.0, etc.) for this server, though they map correctly via UMLS.\n\n### 3. Query Execution Results\n| Metric | Value |\n|---|---|\n| Entries returned | **10 Condition resources** |\n| All coded with target SNOMED | \u2705 10/10 |\n| Gender filter applied | \u2705 `patient.gender=female` |\n| False positives detected | None \u2014 all `363354003` = malignant cervix |\n\n### 4. Code Coverage Advisory (VSAC)\nThe active VSAC value sets for cervical cancer include both **in-situ** (CIN/carcinoma-in-situ) and **malignant** variants. If your use case requires broader coverage, consider these additional SNOMED codes:\n\n| SNOMED Code | Display | Type |\n|---|---|---|\n| `363354003` | Malignant neoplasm of cervix uteri *(your code)* | \u2705 Malignant |\n| `285432005` | Carcinoma of cervix | Malignant |\n| `372098004` | Carcinoma of endocervix | Malignant |\n| `372100004` | Carcinoma of exocervix | Malignant |\n| `92564006` | Carcinoma in situ of uterine cervix | In-situ |\n| `406103009` | Squamous cell carcinoma in situ of uterine cervix | In-situ |\n\nUMLS crosswalk: `363354003` \u2194 ICD-10-CM **C53** (parent) / **C53.9** (unspecified) \u2014 useful if this query were run against an ICD-10-CM\u2013coded server.\n\n---\n\n## \u2705 Final FHIR Query (Validated)\n\nYour original query is **correct and functional** as-is:\n\n```\nCondition?code=http://snomed.info/sct|363354003&patient.gender=female\n```\n\n**Optional expanded version** (if subtypes / broader malignant cervical neoplasm coverage is desired):\n\n```\nCondition?code=http://snomed.info/sct|363354003,http://snomed.info/sct|285432005,http://snomed.info/sct|372098004,http://snomed.info/sct|372100004&patient.gender=female\n```",
+      "prompt_text": "Search Condition resources with SNOMED 363354003 (Malignant neoplasm of cervix uteri), restricted to female patients via patient.gender=female. Query: Condition?code=http://snomed.info/sct|363354003&patient.gender=female",
+      "run_metadata": {
+       "output_tokens": 1311,
+       "tool_calls_count": 9,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     },
+     "3-naive": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 454,
+      "actual_count": 454,
+      "elapsed_sec": 61.7,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|363354003,http://snomed.info/sct|285432005,http://snomed.info/sct|372098004,http://snomed.info/sct|372100004,http://snomed.info/sct|406103009,http://snomed.info/sct|92564006,http://snomed.info/sct|92580001,http://snomed.info/sct|92588008,http://snomed.info/sct|254890008,http://snomed.info/sct|439776006&patient.gender=female",
+      "additional_query_urls": [],
+      "raw_response": "454 results \u2014 a clinically plausible count. The query is validated.\n\n---\n\n**FINAL ANSWER**\n\n```\nCondition?code=http://snomed.info/sct|363354003,http://snomed.info/sct|285432005,http://snomed.info/sct|372098004,http://snomed.info/sct|372100004,http://snomed.info/sct|406103009,http://snomed.info/sct|92564006,http://snomed.info/sct|92580001,http://snomed.info/sct|92588008,http://snomed.info/sct|254890008,http://snomed.info/sct|439776006&patient.gender=female\n```\n\n---\n\n**What was done & why:**\n\n| Decision | Rationale |\n|---|---|\n| **Playbook 4 (Sex-specific)** | Appended `&patient.gender=female` \u2014 cervical cancer is female-specific, but not guaranteed in the data without the filter |\n| **Playbook 1 (Subtypes)** | Used umbrella code `363354003` (Malignant neoplasm of cervix uteri) **plus** 9 subtypes covering carcinoma of endo/exocervix, CIS, squamous CIS, and Pap-smear-detected malignancy |\n| **Playbook 8 (Multi-system code list)** | Server confirmed SNOMED CT is the native system; all codes comma-unioned in a single query |\n| **454 matches** returned \u2014 clinically reasonable for a real-world patient dataset |",
+      "prompt_text": "Find women with cervical cancer.",
+      "run_metadata": {
+       "output_tokens": 436,
+       "tool_calls_count": 6,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     },
+     "3-broad": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 454,
+      "actual_count": 454,
+      "elapsed_sec": 56.9,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|363354003,http://hl7.org/fhir/sid/icd-10-cm|C53,http://hl7.org/fhir/sid/icd-10-cm|C53.0,http://hl7.org/fhir/sid/icd-10-cm|C53.1,http://hl7.org/fhir/sid/icd-10-cm|C53.8,http://hl7.org/fhir/sid/icd-10-cm|C53.9&patient.gender=female",
+      "additional_query_urls": [],
+      "raw_response": "454 results \u2014 a clinically sensible count. Here's the final answer:\n\n---\n\n**Methodology applied:**\n- **Playbook 4 (Sex-specific):** Chained `patient.gender=female`\n- **Playbook 8 (Multi-system code lists):** SNOMED CT `363354003` (confirmed live on server) + full ICD-10-CM C53 family (`C53`, `C53.0`, `C53.1`, `C53.8`, `C53.9`) from the VSAC Cervical Cancer value set, all in a single comma-separated `code=` parameter\n\n---\n\n**FINAL ANSWER:**\n\n```\nCondition?code=http://snomed.info/sct|363354003,http://hl7.org/fhir/sid/icd-10-cm|C53,http://hl7.org/fhir/sid/icd-10-cm|C53.0,http://hl7.org/fhir/sid/icd-10-cm|C53.1,http://hl7.org/fhir/sid/icd-10-cm|C53.8,http://hl7.org/fhir/sid/icd-10-cm|C53.9&patient.gender=female\n```\n\n**Key decisions:**\n| Code | System | Meaning |\n|---|---|---|\n| `363354003` | SNOMED CT | Malignant neoplasm of cervix uteri *(primary on server)* |\n| `C53` | ICD-10-CM | Malignant neoplasm of cervix uteri (umbrella) |\n| `C53.0` | ICD-10-CM | Endocervix |\n| `C53.1` | ICD-10-CM | Exocervix |\n| `C53.8` | ICD-10-CM | Overlapping sites |\n| `C53.9` | ICD-10-CM | Unspecified |\n| `patient.gender=female` | \u2014 | Sex filter (Playbook 4) |",
+      "prompt_text": "Find female patients diagnosed with cervical cancer (malignant neoplasm of cervix uteri).",
+      "run_metadata": {
+       "output_tokens": 506,
+       "tool_calls_count": 6,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     },
+     "3-expert": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 454,
+      "actual_count": 454,
+      "elapsed_sec": 72.1,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|363354003&patient.gender=female",
+      "additional_query_urls": [],
+      "raw_response": "All evidence checks out. Here is the full reasoning summary:\n\n---\n\n### \u2705 Evidence Summary\n\n| Check | Finding |\n|---|---|\n| **Playbook** | **Playbook 4 (Sex-specific)** \u2014 `patient.gender=female` chain |\n| **Server code system** | `http://snomed.info/sct` \u2014 confirmed in all 5 sampled Condition records |\n| **SNOMED code 363354003** | Confirmed: \"Malignant neoplasm of cervix uteri\" \u2014 present in every sample |\n| **`patient.gender` chain** | Supported \u2014 server returned 454 results (non-zero, plausible) |\n| **VSAC cross-check** | The active SNOMED cervical cancer value set focuses on in situ/carcinoma subtypes (`285432005`, `92564006`, etc.). Code `363354003` is the primary malignant umbrella code actually used in the server's data \u2014 appropriate for this query. |\n| **Result count** | **454 Conditions** matching female patients with cervical malignancy |\n\n### \u2705 Query Confirmed Valid\n\n```\nCondition?code=http://snomed.info/sct|363354003&patient.gender=female\n```\n\n---\n\n**FINAL ANSWER:**\n\n```\nCondition?code=http://snomed.info/sct|363354003&patient.gender=female\n```",
+      "prompt_text": "Search Condition resources with SNOMED 363354003 (Malignant neoplasm of cervix uteri), restricted to female patients via patient.gender=female. Query: Condition?code=http://snomed.info/sct|363354003&patient.gender=female",
+      "run_metadata": {
+       "output_tokens": 617,
+       "tool_calls_count": 6,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     }
+    },
+    "copilot:gpt-5.4": {
+     "1-naive": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 454,
+      "actual_count": 0,
+      "elapsed_sec": 72.4,
+      "queries_generated": 1,
+      "primary_query_url": "Patient?gender=female&_has:Condition:patient:code:below=http://hl7.org/fhir/sid/icd-10-cm|C53",
+      "additional_query_urls": [],
+      "raw_response": "Patient?gender=female&_has:Condition:patient:code:below=http://hl7.org/fhir/sid/icd-10-cm|C53",
+      "prompt_text": "Find women with cervical cancer."
+     },
+     "1-broad": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 454,
+      "actual_count": 454,
+      "elapsed_sec": 78.0,
+      "queries_generated": 1,
+      "primary_query_url": "Patient?gender=female&_has:Condition:subject:code:below=http://snomed.info/sct|363354003",
+      "additional_query_urls": [],
+      "raw_response": "Patient?gender=female&_has:Condition:subject:code:below=http://snomed.info/sct|363354003",
+      "prompt_text": "Find female patients diagnosed with cervical cancer (malignant neoplasm of cervix uteri)."
+     },
+     "1-expert": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 454,
+      "actual_count": 454,
+      "elapsed_sec": 47.0,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|363354003&patient.gender=female",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|363354003&patient.gender=female",
+      "prompt_text": "Search Condition resources with SNOMED 363354003 (Malignant neoplasm of cervix uteri), restricted to female patients via patient.gender=female. Query: Condition?code=http://snomed.info/sct|363354003&patient.gender=female"
+     },
+     "2-naive": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 454,
+      "actual_count": 454,
+      "elapsed_sec": 187.9,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|363354003&patient.gender=female",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|363354003&patient.gender=female",
+      "prompt_text": "Find women with cervical cancer.",
+      "run_metadata": {
+       "output_tokens": 1060,
+       "tool_calls_count": 19,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     },
+     "2-broad": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 454,
+      "actual_count": 454,
+      "elapsed_sec": 298.7,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|363354003,http://hl7.org/fhir/sid/icd-10-cm|C53,http://hl7.org/fhir/sid/icd-10-cm|C53.0,http://hl7.org/fhir/sid/icd-10-cm|C53.1,http://hl7.org/fhir/sid/icd-10-cm|C53.8,http://hl7.org/fhir/sid/icd-10-cm|C53.9,http://hl7.org/fhir/sid/icd-9-cm|180,http://hl7.org/fhir/sid/icd-9-cm|180.0,http://hl7.org/fhir/sid/icd-9-cm|180.1,http://hl7.org/fhir/sid/icd-9-cm|180.8,http://hl7.org/fhir/sid/icd-9-cm|180.9&patient.gender=female",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|363354003,http://hl7.org/fhir/sid/icd-10-cm|C53,http://hl7.org/fhir/sid/icd-10-cm|C53.0,http://hl7.org/fhir/sid/icd-10-cm|C53.1,http://hl7.org/fhir/sid/icd-10-cm|C53.8,http://hl7.org/fhir/sid/icd-10-cm|C53.9,http://hl7.org/fhir/sid/icd-9-cm|180,http://hl7.org/fhir/sid/icd-9-cm|180.0,http://hl7.org/fhir/sid/icd-9-cm|180.1,http://hl7.org/fhir/sid/icd-9-cm|180.8,http://hl7.org/fhir/sid/icd-9-cm|180.9&patient.gender=female",
+      "prompt_text": "Find female patients diagnosed with cervical cancer (malignant neoplasm of cervix uteri).",
+      "run_metadata": {
+       "output_tokens": 733,
+       "tool_calls_count": 28,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     },
+     "2-expert": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 454,
+      "actual_count": 454,
+      "elapsed_sec": 46.8,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|363354003&patient.gender=female",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|363354003&patient.gender=female",
+      "prompt_text": "Search Condition resources with SNOMED 363354003 (Malignant neoplasm of cervix uteri), restricted to female patients via patient.gender=female. Query: Condition?code=http://snomed.info/sct|363354003&patient.gender=female",
+      "run_metadata": {
+       "output_tokens": 91,
+       "tool_calls_count": 0,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     },
+     "3-naive": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 454,
+      "actual_count": 454,
+      "elapsed_sec": 61.1,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|363354003&patient.gender=female",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|363354003&patient.gender=female",
+      "prompt_text": "Find women with cervical cancer.",
+      "run_metadata": {
+       "output_tokens": 360,
+       "tool_calls_count": 6,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     },
+     "3-broad": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 454,
+      "actual_count": 454,
+      "elapsed_sec": 88.3,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|363354003&patient.gender=female",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|363354003&patient.gender=female",
+      "prompt_text": "Find female patients diagnosed with cervical cancer (malignant neoplasm of cervix uteri).",
+      "run_metadata": {
+       "output_tokens": 253,
+       "tool_calls_count": 13,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     },
+     "3-expert": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 454,
+      "actual_count": 454,
+      "elapsed_sec": 44.7,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|363354003&patient.gender=female",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|363354003&patient.gender=female",
+      "prompt_text": "Search Condition resources with SNOMED 363354003 (Malignant neoplasm of cervix uteri), restricted to female patients via patient.gender=female. Query: Condition?code=http://snomed.info/sct|363354003&patient.gender=female",
+      "run_metadata": {
+       "output_tokens": 138,
+       "tool_calls_count": 2,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     }
+    },
+    "openai-compat:qwen-qwen3.5-9b": {
+     "1-naive": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 454,
+      "actual_count": 0,
+      "elapsed_sec": 29.2,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|195967001&subject.gender=female&subject.birth-date<=1900-01-01",
+      "additional_query_urls": [
+       "Condition?code=http://snomed.info/sct|195967001&subject.gender=female&subject.birth-date>1900-01-01"
+      ],
+      "raw_response": "Condition?code=http://snomed.info/sct|195967001&subject.gender=female&subject.birth-date<=1900-01-01\nCondition?code=http://snomed.info/sct|195967001&subject.gender=female&subject.birth-date>1900-01-01",
+      "prompt_text": "Find women with cervical cancer."
+     },
+     "1-broad": {
+      "precision": 0.4978,
+      "recall": 1.0,
+      "f1": 0.6647,
+      "passed": false,
+      "expected_count": 454,
+      "actual_count": 912,
+      "elapsed_sec": 54.6,
+      "queries_generated": 1,
+      "primary_query_url": "Patient?gender=female&Condition?code=http://hl7.org/fhir/sid/icd-10-cm|C53",
+      "additional_query_urls": [],
+      "raw_response": "Patient?gender=female&Condition?code=http://hl7.org/fhir/sid/icd-10-cm|C53",
+      "prompt_text": "Find female patients diagnosed with cervical cancer (malignant neoplasm of cervix uteri)."
+     },
+     "1-expert": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 454,
+      "actual_count": 454,
+      "elapsed_sec": 27.5,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|363354003&patient.gender=female",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|363354003&patient.gender=female",
+      "prompt_text": "Search Condition resources with SNOMED 363354003 (Malignant neoplasm of cervix uteri), restricted to female patients via patient.gender=female. Query: Condition?code=http://snomed.info/sct|363354003&patient.gender=female"
+     },
+     "2-naive": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 454,
+      "actual_count": 0,
+      "elapsed_sec": 178.5,
+      "queries_generated": 5,
+      "primary_query_url": "Patient?_summary=count",
+      "additional_query_urls": [
+       "Condition?code=http://snomed.info/sct|363354003&_summary=count",
+       "Patient?condition=http://snomed.info/sct|363354003&_summary=count",
+       "Condition?code=http://snomed.info/sct|363354003",
+       "Patient?condition=363354003"
+      ],
+      "raw_response": "[FALLBACK: parser couldn't extract URL from final response; using fhir_search queries from tool trace]\nPatient?_summary=count\nCondition?code=http://snomed.info/sct|363354003&_summary=count\nPatient?condition=http://snomed.info/sct|363354003&_summary=count\nCondition?code=http://snomed.info/sct|363354003\nPatient?condition=363354003\n\nOriginal last assistant message:\nThe search is working. Now I need to find patients who have this condition. Let me check if the Patient resource has a condition element that can be searched.\n\n",
+      "prompt_text": "Find women with cervical cancer.",
+      "run_metadata": {
+       "tool_calls_count": 20,
+       "stop_reason": "fallback_tool_trace",
+       "fallback_used": true
+      }
+     },
+     "2-broad": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 454,
+      "actual_count": 0,
+      "elapsed_sec": 243.2,
+      "queries_generated": 2,
+      "primary_query_url": "Patient?gender=female&_summary=count",
+      "additional_query_urls": [
+       "Condition?code=http://snomed.info/sct|363354003&_summary=count"
+      ],
+      "raw_response": "[FALLBACK: parser couldn't extract URL from final response; using fhir_search queries from tool trace]\nPatient?gender=female&_summary=count\nCondition?code=http://snomed.info/sct|363354003&_summary=count\n\nOriginal last assistant message:\nGood, there are 912 female patients. Now let me search for patients with the condition code 363354003.\n\n",
+      "prompt_text": "Find female patients diagnosed with cervical cancer (malignant neoplasm of cervix uteri).",
+      "run_metadata": {
+       "tool_calls_count": 20,
+       "stop_reason": "fallback_tool_trace",
+       "fallback_used": true
+      }
+     },
+     "2-expert": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 454,
+      "actual_count": 454,
+      "elapsed_sec": 33.5,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|363354003&patient.gender=female",
+      "additional_query_urls": [],
+      "raw_response": "The query returned results with 10 entries. The search is working correctly - it found Condition resources with SNOMED code 363354003 (Malignant neoplasm of cervix uteri) and the patient.gender=female filter is being applied.\n\nThe query you provided is valid and returns results. Let me provide the final answer as the FHIR query URL:\n\nCondition?code=http://snomed.info/sct|363354003&patient.gender=female",
+      "prompt_text": "Search Condition resources with SNOMED 363354003 (Malignant neoplasm of cervix uteri), restricted to female patients via patient.gender=female. Query: Condition?code=http://snomed.info/sct|363354003&patient.gender=female",
+      "run_metadata": {
+       "tool_calls_count": 1,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     },
+     "3-naive": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 454,
+      "actual_count": 454,
+      "elapsed_sec": 55.5,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|363354003&patient.gender=female",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|363354003&patient.gender=female",
+      "prompt_text": "Find women with cervical cancer.",
+      "run_metadata": {
+       "tool_calls_count": 5,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     },
+     "3-broad": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 454,
+      "actual_count": 454,
+      "elapsed_sec": 132.1,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|363354003&patient.gender=female",
+      "additional_query_urls": [],
+      "raw_response": "The query is working correctly. Here is the final FHIR query:\n\nCondition?code=http://snomed.info/sct|363354003&patient.gender=female",
+      "prompt_text": "Find female patients diagnosed with cervical cancer (malignant neoplasm of cervix uteri).",
+      "run_metadata": {
+       "tool_calls_count": 7,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     },
+     "3-expert": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 454,
+      "actual_count": 454,
+      "elapsed_sec": 47.1,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|363354003&patient.gender=female",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|363354003&patient.gender=female",
+      "prompt_text": "Search Condition resources with SNOMED 363354003 (Malignant neoplasm of cervix uteri), restricted to female patients via patient.gender=female. Query: Condition?code=http://snomed.info/sct|363354003&patient.gender=female",
+      "run_metadata": {
+       "tool_calls_count": 1,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     }
+    }
+   }
+  },
+  {
+   "test_case": "phekb-cervical-cancer-procedures",
+   "grids": {
+    "copilot:claude-opus-4.7": {
+     "1-naive": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 78,
+      "actual_count": 78,
+      "elapsed_sec": 0.3,
+      "queries_generated": 1,
+      "primary_query_url": "Procedure?code=http://snomed.info/sct|236886002&subject.gender=female",
+      "additional_query_urls": [],
+      "raw_response": "Procedure?code=http://snomed.info/sct|236886002&subject.gender=female",
+      "prompt_text": "Find women with hysterectomy."
+     },
+     "1-broad": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 78,
+      "actual_count": 0,
+      "elapsed_sec": 0.4,
+      "queries_generated": 1,
+      "primary_query_url": "Procedure?code=http://snomed.info/sct|236886002,116140006,76601001,116142003,236887006,116143008&reason-code=http://snomed.info/sct|363354003,363418001,95315005,254837009,118616009,198437004,289132004&subject.gender=female",
+      "additional_query_urls": [],
+      "raw_response": "Procedure?code=http://snomed.info/sct|236886002,116140006,76601001,116142003,236887006,116143008&reason-code=http://snomed.info/sct|363354003,363418001,95315005,254837009,118616009,198437004,289132004&subject.gender=female",
+      "prompt_text": "Find female patients who have undergone hysterectomy \u2014 performed for cervical cancer, ovarian cancer, fibroids, prolapse, or abnormal bleeding."
+     },
+     "1-expert": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 78,
+      "actual_count": 78,
+      "elapsed_sec": 0.1,
+      "queries_generated": 1,
+      "primary_query_url": "Procedure?code=http://snomed.info/sct|236886002",
+      "additional_query_urls": [],
+      "raw_response": "Procedure?code=http://snomed.info/sct|236886002",
+      "prompt_text": "Search Procedure resources with SNOMED 236886002 (Hysterectomy). Query: Procedure?code=http://snomed.info/sct|236886002"
+     },
+     "2-naive": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 78,
+      "actual_count": 78,
+      "elapsed_sec": 21.1,
+      "queries_generated": 1,
+      "primary_query_url": "Procedure?code=http://snomed.info/sct|236886002&subject.gender=female",
+      "additional_query_urls": [],
+      "raw_response": "FINAL ANSWER:\n\nProcedure?code=http://snomed.info/sct|236886002&subject.gender=female",
+      "prompt_text": "Find women with hysterectomy.",
+      "run_metadata": {
+       "output_tokens": 103,
+       "tool_calls_count": 4,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     },
+     "2-broad": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 78,
+      "actual_count": 78,
+      "elapsed_sec": 41.8,
+      "queries_generated": 1,
+      "primary_query_url": "Procedure?code=http://snomed.info/sct|236886002",
+      "additional_query_urls": [],
+      "raw_response": "FINAL ANSWER:\n\nProcedure?code=http://snomed.info/sct|236886002",
+      "prompt_text": "Find female patients who have undergone hysterectomy \u2014 performed for cervical cancer, ovarian cancer, fibroids, prolapse, or abnormal bleeding.",
+      "run_metadata": {
+       "output_tokens": 182,
+       "tool_calls_count": 16,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     },
+     "2-expert": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 78,
+      "actual_count": 78,
+      "elapsed_sec": 16.2,
+      "queries_generated": 1,
+      "primary_query_url": "Procedure?code=http://snomed.info/sct|236886002",
+      "additional_query_urls": [],
+      "raw_response": "Procedure?code=http://snomed.info/sct|236886002",
+      "prompt_text": "Search Procedure resources with SNOMED 236886002 (Hysterectomy). Query: Procedure?code=http://snomed.info/sct|236886002",
+      "run_metadata": {
+       "output_tokens": 25,
+       "tool_calls_count": 1,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     },
+     "3-naive": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 78,
+      "actual_count": 78,
+      "elapsed_sec": 25.4,
+      "queries_generated": 1,
+      "primary_query_url": "Procedure?code=http://snomed.info/sct|236886002,http://snomed.info/sct|116140006,http://snomed.info/sct|116141005,http://snomed.info/sct|116143008,http://snomed.info/sct|265056007&subject.gender=female",
+      "additional_query_urls": [],
+      "raw_response": "Procedure?code=http://snomed.info/sct|236886002,http://snomed.info/sct|116140006,http://snomed.info/sct|116141005,http://snomed.info/sct|116143008,http://snomed.info/sct|265056007&subject.gender=female",
+      "prompt_text": "Find women with hysterectomy.",
+      "run_metadata": {
+       "output_tokens": 93,
+       "tool_calls_count": 4,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     },
+     "3-broad": {
+      "precision": 1.0,
+      "recall": 0.7564,
+      "f1": 0.8613,
+      "passed": true,
+      "expected_count": 78,
+      "actual_count": 59,
+      "elapsed_sec": 31.7,
+      "queries_generated": 1,
+      "primary_query_url": "Patient?gender=female&_has:Procedure:patient:code=http://snomed.info/sct|236886002&_has:Condition:patient:code=http://snomed.info/sct|363354003,http://snomed.info/sct|363443007,http://snomed.info/sct|95315005,http://snomed.info/sct|237089003,http://snomed.info/sct|64996003",
+      "additional_query_urls": [],
+      "raw_response": "Patient?gender=female&_has:Procedure:patient:code=http://snomed.info/sct|236886002&_has:Condition:patient:code=http://snomed.info/sct|363354003,http://snomed.info/sct|363443007,http://snomed.info/sct|95315005,http://snomed.info/sct|237089003,http://snomed.info/sct|64996003",
+      "prompt_text": "Find female patients who have undergone hysterectomy \u2014 performed for cervical cancer, ovarian cancer, fibroids, prolapse, or abnormal bleeding.",
+      "run_metadata": {
+       "output_tokens": 127,
+       "tool_calls_count": 5,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     },
+     "3-expert": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 78,
+      "actual_count": 78,
+      "elapsed_sec": 14.1,
+      "queries_generated": 1,
+      "primary_query_url": "Procedure?code=http://snomed.info/sct|236886002",
+      "additional_query_urls": [],
+      "raw_response": "Procedure?code=http://snomed.info/sct|236886002",
+      "prompt_text": "Search Procedure resources with SNOMED 236886002 (Hysterectomy). Query: Procedure?code=http://snomed.info/sct|236886002",
+      "run_metadata": {
+       "output_tokens": 25,
+       "tool_calls_count": 1,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     }
+    },
+    "copilot:claude-opus-4.7+fhirskill": {
+     "1-naive": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 78,
+      "actual_count": 78,
+      "elapsed_sec": 0.2,
+      "queries_generated": 1,
+      "primary_query_url": "Patient?gender=female&_has:Procedure:patient:code=http://snomed.info/sct|236886002",
+      "additional_query_urls": [],
+      "raw_response": "Patient?gender=female&_has:Procedure:patient:code=http://snomed.info/sct|236886002",
+      "prompt_text": "Find women with hysterectomy."
+     },
+     "1-broad": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 78,
+      "actual_count": 0,
+      "elapsed_sec": 0.3,
+      "queries_generated": 1,
+      "primary_query_url": "Procedure?code=http://snomed.info/sct|236886002,116140006,387643005,76601001&subject.gender=female&reason-code=http://snomed.info/sct|363354003,363443007,95315005,254837009,118600007,289682009,64996003",
+      "additional_query_urls": [],
+      "raw_response": "Procedure?code=http://snomed.info/sct|236886002,116140006,387643005,76601001&subject.gender=female&reason-code=http://snomed.info/sct|363354003,363443007,95315005,254837009,118600007,289682009,64996003",
+      "prompt_text": "Find female patients who have undergone hysterectomy \u2014 performed for cervical cancer, ovarian cancer, fibroids, prolapse, or abnormal bleeding."
+     },
+     "1-expert": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 78,
+      "actual_count": 78,
+      "elapsed_sec": 0.1,
+      "queries_generated": 1,
+      "primary_query_url": "Procedure?code=http://snomed.info/sct|236886002",
+      "additional_query_urls": [],
+      "raw_response": "Procedure?code=http://snomed.info/sct|236886002",
+      "prompt_text": "Search Procedure resources with SNOMED 236886002 (Hysterectomy). Query: Procedure?code=http://snomed.info/sct|236886002"
+     }
+    },
+    "copilot:claude-sonnet-4.6": {
+     "1-naive": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 78,
+      "actual_count": 78,
+      "elapsed_sec": 34.1,
+      "queries_generated": 2,
+      "primary_query_url": "Procedure?code=http://snomed.info/sct|236886002,http://snomed.info/sct|116140006,http://snomed.info/sct|28301000,http://snomed.info/sct|265060005,http://snomed.info/sct|447771005&patient.gender=female",
+      "additional_query_urls": [
+       "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|Z90.710,http://hl7.org/fhir/sid/icd-10-cm|Z90.711,http://hl7.org/fhir/sid/icd-10-cm|Z90.712&subject.gender=female"
+      ],
+      "raw_response": "Here are the FHIR queries to find women with hysterectomy, covering both **Procedure** (the surgery itself) and **Condition** (documented history/absence of uterus), filtered by female gender:\n\n**Procedure \u2014 SNOMED CT hysterectomy codes:**\n```\nProcedure?code=http://snomed.info/sct|236886002,http://snomed.info/sct|116140006,http://snomed.info/sct|28301000,http://snomed.info/sct|265060005,http://snomed.info/sct|447771005&patient.gender=female\n```\n\n**Condition \u2014 ICD-10-CM acquired absence of uterus (post-hysterectomy status):**\n```\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|Z90.710,http://hl7.org/fhir/sid/icd-10-cm|Z90.711,http://hl7.org/fhir/sid/icd-10-cm|Z90.712&subject.gender=female\n```\n\n---\n\n### Code Reference\n\n| Code | System | Meaning |\n|---|---|---|\n| `236886002` | SNOMED CT | Hysterectomy (general) |\n| `116140006` | SNOMED CT | Total hysterectomy |\n| `28301000` | SNOMED CT | Abdominal hysterectomy |\n| `265060005` | SNOMED CT | Vaginal hysterectomy |\n| `447771005` | SNOMED CT | Laparoscopic hysterectomy |\n| `Z90.710` | ICD-10-CM | Acquired absence of uterus, unspecified |\n| `Z90.711` | ICD-10-CM | Acquired absence of uterus with remaining cervical stump |\n| `Z90.712` | ICD-10-CM | Acquired absence of both uterus and cervix |\n\n> **Note:** `patient.gender=female` uses a chained parameter to filter by the linked Patient's gender. Add `&_include=Procedure:patient` or `&_include=Condition:subject` if you also want to retrieve the Patient resources in the response bundle.",
+      "prompt_text": "Find women with hysterectomy."
+     },
+     "1-broad": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 78,
+      "actual_count": 0,
+      "elapsed_sec": 95.5,
+      "queries_generated": 4,
+      "primary_query_url": "Procedure?code=http://snomed.info/sct|236886002,http://snomed.info/sct|116140006,http://snomed.info/sct|116142003,http://snomed.info/sct|265049003,http://snomed.info/sct|176697007,http://snomed.info/sct|361222003,http://snomed.info/sct|414575003,http://snomed.info/sct|767610009&reason-code=http://snomed.info/sct|363354003,http://snomed.info/sct|363443007,http://snomed.info/sct|95315005,http://snomed.info/sct|57773001,http://snomed.info/sct|64996003&subject:Patient.gender=female&_include=Procedure:subject",
+      "additional_query_urls": [
+       "Procedure?code=http://snomed.info/sct|236886002,http://snomed.info/sct|116140006,http://snomed.info/sct|116142003,http://snomed.info/sct|265049003,http://snomed.info/sct|176697007,http://snomed.info/sct|361222003,http://snomed.info/sct|414575003,http://snomed.info/sct|767610009&reason-code=http://hl7.org/fhir/sid/icd-10-cm|C53.0,http://hl7.org/fhir/sid/icd-10-cm|C53.1,http://hl7.org/fhir/sid/icd-10-cm|C53.8,http://hl7.org/fhir/sid/icd-10-cm|C53.9,http://hl7.org/fhir/sid/icd-10-cm|C56.1,http://hl7.org/fhir/sid/icd-10-cm|C56.2,http://hl7.org/fhir/sid/icd-10-cm|C56.9,http://hl7.org/fhir/sid/icd-10-cm|D25.0,http://hl7.org/fhir/sid/icd-10-cm|D25.1,http://hl7.org/fhir/sid/icd-10-cm|D25.2,http://hl7.org/fhir/sid/icd-10-cm|D25.9,http://hl7.org/fhir/sid/icd-10-cm|N81.2,http://hl7.org/fhir/sid/icd-10-cm|N81.3,http://hl7.org/fhir/sid/icd-10-cm|N81.4,http://hl7.org/fhir/sid/icd-10-cm|N93.0,http://hl7.org/fhir/sid/icd-10-cm|N93.8,http://hl7.org/fhir/sid/icd-10-cm|N93.9&subject:Patient.gender=female&_include=Procedure:subject",
+       "Procedure?code=http://snomed.info/sct|236886002,http://snomed.info/sct|116140006,http://snomed.info/sct|116142003,http://snomed.info/sct|265049003,http://snomed.info/sct|176697007,http://snomed.info/sct|361222003,http://snomed.info/sct|414575003,http://snomed.info/sct|767610009&reason-reference:Condition.code=http://snomed.info/sct|363354003,http://snomed.info/sct|363443007,http://snomed.info/sct|95315005,http://snomed.info/sct|57773001,http://snomed.info/sct|64996003&subject:Patient.gender=female&_include=Procedure:subject",
+       "Procedure?code=http://snomed.info/sct|236886002,http://snomed.info/sct|116140006,http://snomed.info/sct|116142003,http://snomed.info/sct|265049003,http://snomed.info/sct|176697007,http://snomed.info/sct|361222003,http://snomed.info/sct|414575003,http://snomed.info/sct|767610009&reason-reference:Condition.code=http://hl7.org/fhir/sid/icd-10-cm|C53.0,http://hl7.org/fhir/sid/icd-10-cm|C53.1,http://hl7.org/fhir/sid/icd-10-cm|C53.8,http://hl7.org/fhir/sid/icd-10-cm|C53.9,http://hl7.org/fhir/sid/icd-10-cm|C56.1,http://hl7.org/fhir/sid/icd-10-cm|C56.2,http://hl7.org/fhir/sid/icd-10-cm|C56.9,http://hl7.org/fhir/sid/icd-10-cm|D25.0,http://hl7.org/fhir/sid/icd-10-cm|D25.1,http://hl7.org/fhir/sid/icd-10-cm|D25.2,http://hl7.org/fhir/sid/icd-10-cm|D25.9,http://hl7.org/fhir/sid/icd-10-cm|N81.2,http://hl7.org/fhir/sid/icd-10-cm|N81.3,http://hl7.org/fhir/sid/icd-10-cm|N81.4,http://hl7.org/fhir/sid/icd-10-cm|N93.0,http://hl7.org/fhir/sid/icd-10-cm|N93.8,http://hl7.org/fhir/sid/icd-10-cm|N93.9&subject:Patient.gender=female&_include=Procedure:subject"
+      ],
+      "raw_response": "```\nProcedure?code=http://snomed.info/sct|236886002,http://snomed.info/sct|116140006,http://snomed.info/sct|116142003,http://snomed.info/sct|265049003,http://snomed.info/sct|176697007,http://snomed.info/sct|361222003,http://snomed.info/sct|414575003,http://snomed.info/sct|767610009&reason-code=http://snomed.info/sct|363354003,http://snomed.info/sct|363443007,http://snomed.info/sct|95315005,http://snomed.info/sct|57773001,http://snomed.info/sct|64996003&subject:Patient.gender=female&_include=Procedure:subject\n\nProcedure?code=http://snomed.info/sct|236886002,http://snomed.info/sct|116140006,http://snomed.info/sct|116142003,http://snomed.info/sct|265049003,http://snomed.info/sct|176697007,http://snomed.info/sct|361222003,http://snomed.info/sct|414575003,http://snomed.info/sct|767610009&reason-code=http://hl7.org/fhir/sid/icd-10-cm|C53.0,http://hl7.org/fhir/sid/icd-10-cm|C53.1,http://hl7.org/fhir/sid/icd-10-cm|C53.8,http://hl7.org/fhir/sid/icd-10-cm|C53.9,http://hl7.org/fhir/sid/icd-10-cm|C56.1,http://hl7.org/fhir/sid/icd-10-cm|C56.2,http://hl7.org/fhir/sid/icd-10-cm|C56.9,http://hl7.org/fhir/sid/icd-10-cm|D25.0,http://hl7.org/fhir/sid/icd-10-cm|D25.1,http://hl7.org/fhir/sid/icd-10-cm|D25.2,http://hl7.org/fhir/sid/icd-10-cm|D25.9,http://hl7.org/fhir/sid/icd-10-cm|N81.2,http://hl7.org/fhir/sid/icd-10-cm|N81.3,http://hl7.org/fhir/sid/icd-10-cm|N81.4,http://hl7.org/fhir/sid/icd-10-cm|N93.0,http://hl7.org/fhir/sid/icd-10-cm|N93.8,http://hl7.org/fhir/sid/icd-10-cm|N93.9&subject:Patient.gender=female&_include=Procedure:subject\n\nProcedure?code=http://snomed.info/sct|236886002,http://snomed.info/sct|116140006,http://snomed.info/sct|116142003,http://snomed.info/sct|265049003,http://snomed.info/sct|176697007,http://snomed.info/sct|361222003,http://snomed.info/sct|414575003,http://snomed.info/sct|767610009&reason-reference:Condition.code=http://snomed.info/sct|363354003,http://snomed.info/sct|363443007,http://snomed.info/sct|95315005,http://snomed.info/sct|57773001,http://snomed.info/sct|64996003&subject:Patient.gender=female&_include=Procedure:subject\n\nProcedure?code=http://snomed.info/sct|236886002,http://snomed.info/sct|116140006,http://snomed.info/sct|116142003,http://snomed.info/sct|265049003,http://snomed.info/sct|176697007,http://snomed.info/sct|361222003,http://snomed.info/sct|414575003,http://snomed.info/sct|767610009&reason-reference:Condition.code=http://hl7.org/fhir/sid/icd-10-cm|C53.0,http://hl7.org/fhir/sid/icd-10-cm|C53.1,http://hl7.org/fhir/sid/icd-10-cm|C53.8,http://hl7.org/fhir/sid/icd-10-cm|C53.9,http://hl7.org/fhir/sid/icd-10-cm|C56.1,http://hl7.org/fhir/sid/icd-10-cm|C56.2,http://hl7.org/fhir/sid/icd-10-cm|C56.9,http://hl7.org/fhir/sid/icd-10-cm|D25.0,http://hl7.org/fhir/sid/icd-10-cm|D25.1,http://hl7.org/fhir/sid/icd-10-cm|D25.2,http://hl7.org/fhir/sid/icd-10-cm|D25.9,http://hl7.org/fhir/sid/icd-10-cm|N81.2,http://hl7.org/fhir/sid/icd-10-cm|N81.3,http://hl7.org/fhir/sid/icd-10-cm|N81.4,http://hl7.org/fhir/sid/icd-10-cm|N93.0,http://hl7.org/fhir/sid/icd-10-cm|N93.8,http://hl7.org/fhir/sid/icd-10-cm|N93.9&subject:Patient.gender=female&_include=Procedure:subject\n```\n\n---\n\n### Query Breakdown\n\n| Dimension | Details |\n|---|---|\n| **Procedure Codes (SNOMED CT)** | `236886002` Hysterectomy \u00b7 `116140006` Total hysterectomy \u00b7 `116142003` Radical hysterectomy \u00b7 `265049003` Abdominal hysterectomy \u00b7 `176697007` Vaginal hysterectomy \u00b7 `361222003` Laparoscopic hysterectomy \u00b7 `414575003` Laparoscopic total hysterectomy \u00b7 `767610009` Total abdominal hysterectomy |\n| **Cervical Cancer** | SNOMED `363354003` \u00b7 ICD-10 `C53.0\u2013C53.9` |\n| **Ovarian Cancer** | SNOMED `363443007` \u00b7 ICD-10 `C56.1, C56.2, C56.9` |\n| **Uterine Fibroids** | SNOMED `95315005` \u00b7 ICD-10 `D25.0\u2013D25.9` |\n| **Uterine Prolapse** | SNOMED `57773001` \u00b7 ICD-10 `N81.2\u2013N81.4` |\n| **Abnormal Uterine Bleeding** | SNOMED `64996003` \u00b7 ICD-10 `N93.0, N93.8, N93.9` |\n| **Female Filter** | `subject:Patient.gender=female` (chained parameter) |\n| **Strategy** | Queries 1 & 2 use `reason-code` (inline CodeableConcept); Queries 3 & 4 use `reason-reference:Condition.code` (linked Condition resource) to cover both documentation patterns |",
+      "prompt_text": "Find female patients who have undergone hysterectomy \u2014 performed for cervical cancer, ovarian cancer, fibroids, prolapse, or abnormal bleeding."
+     },
+     "1-expert": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 78,
+      "actual_count": 78,
+      "elapsed_sec": 25.6,
+      "queries_generated": 4,
+      "primary_query_url": "Procedure?code=http://snomed.info/sct|236886002",
+      "additional_query_urls": [
+       "Procedure?code:in=http://snomed.info/sct|236886002",
+       "Procedure?code=http://snomed.info/sct|236886002&_include=Procedure:patient&_include=Procedure:encounter",
+       "Procedure?code=http://snomed.info/sct|236886002&status=completed"
+      ],
+      "raw_response": "## FHIR Query: Procedure \u2013 Hysterectomy (SNOMED 236886002)\n\n```\nProcedure?code=http://snomed.info/sct|236886002\n```\n\n---\n\n### Query Breakdown\n\n| Component | Value | Description |\n|-----------|-------|-------------|\n| **Resource** | `Procedure` | Clinical procedure records |\n| **Parameter** | `code` | Coded procedure identifier |\n| **System** | `http://snomed.info/sct` | SNOMED CT terminology system |\n| **Code** | `236886002` | Hysterectomy |\n\n---\n\n### Notes\n- **SNOMED 236886002** represents the broad concept of **Hysterectomy**, which may include subtypes (e.g., total, partial, laparoscopic) depending on how your system handles hierarchical code matching.\n- If subsumption/hierarchy searching is supported by the server, consider using:\n  ```\n  Procedure?code:in=http://snomed.info/sct|236886002\n  ```\n- To also retrieve related encounter or patient data, extend with `_include`:\n  ```\n  Procedure?code=http://snomed.info/sct|236886002&_include=Procedure:patient&_include=Procedure:encounter\n  ```\n- Filter by status if needed (e.g., only completed procedures):\n  ```\n  Procedure?code=http://snomed.info/sct|236886002&status=completed\n  ```",
+      "prompt_text": "Search Procedure resources with SNOMED 236886002 (Hysterectomy). Query: Procedure?code=http://snomed.info/sct|236886002"
+     },
+     "2-naive": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 78,
+      "actual_count": 78,
+      "elapsed_sec": 119.4,
+      "queries_generated": 1,
+      "primary_query_url": "Procedure?code=http://snomed.info/sct|236886002,http://www.ama-assn.org/go/cpt|58150,http://www.ama-assn.org/go/cpt|1014205,http://www.ama-assn.org/go/cpt|1014206,http://www.ama-assn.org/go/cpt|1014210,http://www.ama-assn.org/go/cpt|1014640&subject:Patient.gender=female",
+      "additional_query_urls": [],
+      "raw_response": "Both SNOMED `236886002` and CPT `58150` independently return **78 records** for female patients, confirmed to be co-coded (same records). The parent SNOMED code captures all variants, and the gender chain works correctly. I'll build the final query with both the broad SNOMED parent + all CPT hysterectomy codes from VSAC for full coverage.\n\n---\n\n**Summary of findings:**\n| Step | Result |\n|---|---|\n| Server | FHIR R4 (Azure), Procedure uses SNOMED CT + CPT |\n| VSAC value sets | Joint Commission (80 SNOMED codes), Optum (163 codes incl. CPT) |\n| Server coding pattern | Each record carries SNOMED `236886002` (parent) + CPT `58150` |\n| SNOMED subtypes alone | 0 results \u2014 server stores **parent code only** |\n| SNOMED `236886002` + female filter | \u2705 **78 records** |\n| CPT `58150` + female filter | \u2705 **78 records** (same records, co-coded) |\n| Gender chain | `subject:Patient.gender=female` works correctly |\n\n---\n\n`Procedure?code=http://snomed.info/sct|236886002,http://www.ama-assn.org/go/cpt|58150,http://www.ama-assn.org/go/cpt|1014205,http://www.ama-assn.org/go/cpt|1014206,http://www.ama-assn.org/go/cpt|1014210,http://www.ama-assn.org/go/cpt|1014640&subject:Patient.gender=female`",
+      "prompt_text": "Find women with hysterectomy.",
+      "run_metadata": {
+       "output_tokens": 1553,
+       "tool_calls_count": 10,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     },
+     "2-broad": {
+      "elapsed_sec": 621.1,
+      "error": "Timeout after 600s waiting for session.idle"
+     },
+     "2-expert": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 78,
+      "actual_count": 78,
+      "elapsed_sec": 37.2,
+      "queries_generated": 3,
+      "primary_query_url": "Procedure?code=http://snomed.info/sct|236886002",
+      "additional_query_urls": [
+       "Procedure?code=http://www.ama-assn.org/go/cpt|58150",
+       "Procedure?code=http://snomed.info/sct|236886002&_summary=count"
+      ],
+      "raw_response": "The query executed successfully! Here's a summary of the results:\n\n---\n\n## \ud83d\udd0d Search Results: `Procedure?code=http://snomed.info/sct|236886002`\n\n### Result Summary\n| Field | Value |\n|---|---|\n| **Resources Returned** | 10 entries |\n| **Resource Type** | `Procedure` |\n| **Total Count** | Not reported by server (pagination may apply) |\n\n---\n\n### \ud83e\uddec Observed Codings on Matched Resources\nEach returned `Procedure` resource carries **dual codings** \u2014 both SNOMED CT and CPT:\n\n| System | Code | Display |\n|---|---|---|\n| `http://snomed.info/sct` | `236886002` | **Hysterectomy** |\n| `http://www.ama-assn.org/go/cpt` | `58150` | **Total abdominal hysterectomy** |\n\nAll 10 sampled resources consistently carry **both codings simultaneously**, which is typical of real EHR data.\n\n---\n\n### \ud83d\udca1 Key Observations & Recommendations\n\n1. **Query is working correctly** \u2014 SNOMED `236886002` is a valid and recognized match on this server.\n\n2. **CPT code also present (`58150`)** \u2014 Since both codes co-exist on each resource, you could also query by CPT to cross-validate or to catch any procedures coded *only* in CPT:\n   ```\n   Procedure?code=http://www.ama-assn.org/go/cpt|58150\n   ```\n\n3. **Hysterectomy has subtypes** \u2014 SNOMED `236886002` is a **parent/umbrella code**. Subtypes (e.g., laparoscopic, vaginal, radical) may exist under different codes. Consider expanding coverage with a VSAC value set search if a broader cohort is needed.\n\n4. **No total count returned** \u2014 The server didn't return a `total` in the bundle. You may want to append `&_summary=count` to get the full count:\n   ```\n   Procedure?code=http://snomed.info/sct|236886002&_summary=count\n   ```\n\n---\n\n### \u2705 Final Validated Query\n\n```\nProcedure?code=http://snomed.info/sct|236886002\n```",
+      "prompt_text": "Search Procedure resources with SNOMED 236886002 (Hysterectomy). Query: Procedure?code=http://snomed.info/sct|236886002",
+      "run_metadata": {
+       "output_tokens": 555,
+       "tool_calls_count": 1,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     },
+     "3-naive": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 78,
+      "actual_count": 78,
+      "elapsed_sec": 64.6,
+      "queries_generated": 1,
+      "primary_query_url": "Procedure?code=http://snomed.info/sct|236886002&patient.gender=female",
+      "additional_query_urls": [],
+      "raw_response": "The umbrella SNOMED code `236886002` alone returns the same 78 \u2014 the server encodes all hysterectomies under this single parent code. The query is clean and verified.\n\n---\n\n**FINAL ANSWER:**\n\n```\nProcedure?code=http://snomed.info/sct|236886002&patient.gender=female\n```\n\n**How this was built:**\n| Decision | Rationale |\n|---|---|\n| **Playbook 6 \u2014 Procedurally defined** | Hysterectomy is identified by a `Procedure` resource, not a `Condition` |\n| **Playbook 4 \u2014 Sex-specific** | \"Women\" \u2192 `patient.gender=female` chained through to Patient |\n| **SNOMED `236886002`** | Server sampling confirmed this umbrella code is used for all hysterectomy records; VSAC Joint Commission & Optum value sets both include it; subtype codes added no additional patients (count stayed at **78**) |",
+      "prompt_text": "Find women with hysterectomy.",
+      "run_metadata": {
+       "output_tokens": 462,
+       "tool_calls_count": 8,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     },
+     "3-broad": {
+      "precision": 1.0,
+      "recall": 0.7564,
+      "f1": 0.8613,
+      "passed": true,
+      "expected_count": 78,
+      "actual_count": 59,
+      "elapsed_sec": 299.8,
+      "queries_generated": 1,
+      "primary_query_url": "Patient?gender=female&_has:Procedure:patient:code=http://snomed.info/sct|236886002&_has:Condition:patient:code=http://snomed.info/sct|363354003,http://snomed.info/sct|363443007,http://snomed.info/sct|93934004,http://snomed.info/sct|95315005,http://snomed.info/sct|24976005,http://snomed.info/sct|18973006,http://snomed.info/sct|73998008,http://snomed.info/sct|386692008,http://snomed.info/sct|64996003",
+      "additional_query_urls": [],
+      "raw_response": "The `_has` cross-resource AND approach works correctly \u2014 59 patients have both a hysterectomy **and** one of the indication conditions. The procedure-only query yields 78 (all female hysterectomies, but without indication filtering). The non-cancer indications (fibroids, prolapse, bleeding) are valid SNOMED codes but have no records in this particular dataset; the cancer indications are well-represented. The correct query is the strictly filtered `_has` version.\n\n---\n\n## Summary of findings\n\n| Evidence source | Code(s) | Count |\n|---|---|---|\n| Procedure \u2014 Hysterectomy (SNOMED umbrella) | `236886002` | 78 female |\n| Condition \u2014 Cervical cancer | `363354003` | \u2713 present |\n| Condition \u2014 Ovarian cancer | `363443007`, `93934004` | \u2713 present |\n| Condition \u2014 Uterine leiomyoma / fibroids | `95315005` | 0 on this server |\n| Condition \u2014 Uterine prolapse | `24976005`, `18973006`, `73998008` | 0 on this server |\n| Condition \u2014 Menorrhagia / abnormal bleeding | `386692008`, `64996003` | 0 on this server |\n| **Cross-resource AND (female + hysterectomy + any indication)** | \u2014 | **59 patients** |\n\nThe `_has` chain enforces: female gender **AND** hysterectomy procedure **AND** at least one of the five indication conditions.\n\n```\nPatient?gender=female&_has:Procedure:patient:code=http://snomed.info/sct|236886002&_has:Condition:patient:code=http://snomed.info/sct|363354003,http://snomed.info/sct|363443007,http://snomed.info/sct|93934004,http://snomed.info/sct|95315005,http://snomed.info/sct|24976005,http://snomed.info/sct|18973006,http://snomed.info/sct|73998008,http://snomed.info/sct|386692008,http://snomed.info/sct|64996003\n```",
+      "prompt_text": "Find female patients who have undergone hysterectomy \u2014 performed for cervical cancer, ovarian cancer, fibroids, prolapse, or abnormal bleeding.",
+      "run_metadata": {
+       "output_tokens": 2258,
+       "tool_calls_count": 65,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     },
+     "3-expert": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 78,
+      "actual_count": 78,
+      "elapsed_sec": 25.2,
+      "queries_generated": 1,
+      "primary_query_url": "Procedure?code=http://snomed.info/sct|236886002",
+      "additional_query_urls": [],
+      "raw_response": "All checks pass. Here's a summary of the findings before the final answer:\n\n| Check | Result |\n|---|---|\n| **Server code systems** | SNOMED CT \u2705 + CPT \u2705 both present on Procedure resources |\n| **Code 236886002 validity** | Confirmed: *\"Hysterectomy (procedure)\"* \u2014 SNOMED CT v20260301 |\n| **Sampled records** | All 3 samples carry `http://snomed.info/sct\\|236886002` \u2014 exact match |\n| **Result count** | **78 Procedure resources** found |\n\n---\n\n**FINAL ANSWER:**\n\n```\nProcedure?code=http://snomed.info/sct|236886002\n```",
+      "prompt_text": "Search Procedure resources with SNOMED 236886002 (Hysterectomy). Query: Procedure?code=http://snomed.info/sct|236886002",
+      "run_metadata": {
+       "output_tokens": 217,
+       "tool_calls_count": 3,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     }
+    },
+    "copilot:gpt-5.4": {
+     "1-naive": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 78,
+      "actual_count": 0,
+      "elapsed_sec": 28.3,
+      "queries_generated": 1,
+      "primary_query_url": "Patient?gender=female&_has:Procedure:subject:code:below=http://snomed.info/sct|236886005",
+      "additional_query_urls": [],
+      "raw_response": "Patient?gender=female&_has:Procedure:subject:code:below=http://snomed.info/sct|236886005",
+      "prompt_text": "Find women with hysterectomy."
+     },
+     "1-broad": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 78,
+      "actual_count": 0,
+      "elapsed_sec": 162.9,
+      "queries_generated": 2,
+      "primary_query_url": "Procedure?subject:Patient.gender=female&status=completed&code:below=http://snomed.info/sct|236886002&reason-code=http://hl7.org/fhir/sid/icd-10-cm|C53,http://hl7.org/fhir/sid/icd-10-cm|C56,http://hl7.org/fhir/sid/icd-10-cm|D25,http://hl7.org/fhir/sid/icd-10-cm|N81,http://hl7.org/fhir/sid/icd-10-cm|N93&_include=Procedure:subject",
+      "additional_query_urls": [
+       "Procedure?subject:Patient.gender=female&status=completed&code:below=http://snomed.info/sct|236886002&reason-reference:Condition.code=http://hl7.org/fhir/sid/icd-10-cm|C53,http://hl7.org/fhir/sid/icd-10-cm|C56,http://hl7.org/fhir/sid/icd-10-cm|D25,http://hl7.org/fhir/sid/icd-10-cm|N81,http://hl7.org/fhir/sid/icd-10-cm|N93&_include=Procedure:subject"
+      ],
+      "raw_response": "Procedure?subject:Patient.gender=female&status=completed&code:below=http://snomed.info/sct|236886002&reason-code=http://hl7.org/fhir/sid/icd-10-cm|C53,http://hl7.org/fhir/sid/icd-10-cm|C56,http://hl7.org/fhir/sid/icd-10-cm|D25,http://hl7.org/fhir/sid/icd-10-cm|N81,http://hl7.org/fhir/sid/icd-10-cm|N93&_include=Procedure:subject\nProcedure?subject:Patient.gender=female&status=completed&code:below=http://snomed.info/sct|236886002&reason-reference:Condition.code=http://hl7.org/fhir/sid/icd-10-cm|C53,http://hl7.org/fhir/sid/icd-10-cm|C56,http://hl7.org/fhir/sid/icd-10-cm|D25,http://hl7.org/fhir/sid/icd-10-cm|N81,http://hl7.org/fhir/sid/icd-10-cm|N93&_include=Procedure:subject",
+      "prompt_text": "Find female patients who have undergone hysterectomy \u2014 performed for cervical cancer, ovarian cancer, fibroids, prolapse, or abnormal bleeding."
+     },
+     "1-expert": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 78,
+      "actual_count": 78,
+      "elapsed_sec": 14.8,
+      "queries_generated": 1,
+      "primary_query_url": "Procedure?code=http://snomed.info/sct|236886002",
+      "additional_query_urls": [],
+      "raw_response": "Procedure?code=http://snomed.info/sct|236886002",
+      "prompt_text": "Search Procedure resources with SNOMED 236886002 (Hysterectomy). Query: Procedure?code=http://snomed.info/sct|236886002"
+     },
+     "2-naive": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 78,
+      "actual_count": 78,
+      "elapsed_sec": 236.3,
+      "queries_generated": 1,
+      "primary_query_url": "Procedure?code=http://snomed.info/sct|236886002,http://www.ama-assn.org/go/cpt|58150&patient.gender=female",
+      "additional_query_urls": [],
+      "raw_response": "Procedure?code=http://snomed.info/sct|236886002,http://www.ama-assn.org/go/cpt|58150&patient.gender=female",
+      "prompt_text": "Find women with hysterectomy.",
+      "run_metadata": {
+       "output_tokens": 1023,
+       "tool_calls_count": 40,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     },
+     "2-broad": {
+      "elapsed_sec": 611.5,
+      "error": "Timeout after 600s waiting for session.idle"
+     },
+     "2-expert": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 78,
+      "actual_count": 78,
+      "elapsed_sec": 32.8,
+      "queries_generated": 1,
+      "primary_query_url": "Procedure?code=http://snomed.info/sct|236886002",
+      "additional_query_urls": [],
+      "raw_response": "Procedure?code=http://snomed.info/sct|236886002",
+      "prompt_text": "Search Procedure resources with SNOMED 236886002 (Hysterectomy). Query: Procedure?code=http://snomed.info/sct|236886002",
+      "run_metadata": {
+       "output_tokens": 106,
+       "tool_calls_count": 0,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     },
+     "3-naive": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 78,
+      "actual_count": 78,
+      "elapsed_sec": 64.6,
+      "queries_generated": 1,
+      "primary_query_url": "Patient?_has:Procedure:patient:code=http://snomed.info/sct|236886002,http://www.ama-assn.org/go/cpt|58150&gender=female",
+      "additional_query_urls": [],
+      "raw_response": "Patient?_has:Procedure:patient:code=http://snomed.info/sct|236886002,http://www.ama-assn.org/go/cpt|58150&gender=female",
+      "prompt_text": "Find women with hysterectomy.",
+      "run_metadata": {
+       "output_tokens": 112,
+       "tool_calls_count": 16,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     },
+     "3-broad": {
+      "precision": 1.0,
+      "recall": 0.7564,
+      "f1": 0.8613,
+      "passed": true,
+      "expected_count": 78,
+      "actual_count": 59,
+      "elapsed_sec": 504.4,
+      "queries_generated": 5,
+      "primary_query_url": "Patient?gender=female&_has:Procedure:patient:code=http://snomed.info/sct|236886002,http://snomed.info/sct|116140006,http://snomed.info/sct|116141005,http://snomed.info/sct|116142003,http://snomed.info/sct|116143008,http://snomed.info/sct|116144002,http://snomed.info/sct|176795006,http://snomed.info/sct|236887006,http://snomed.info/sct|236888001,http://snomed.info/sct|236891001,http://snomed.info/sct|265056007,http://snomed.info/sct|307771009,http://snomed.info/sct|35955002,http://snomed.info/sct|387643005,http://snomed.info/sct|41059002,http://snomed.info/sct|431316002,http://www.ama-assn.org/go/cpt|58150&_has:Condition:patient:code=http://snomed.info/sct|363354003,http://snomed.info/sct|372024009,http://snomed.info/sct|285432005,http://snomed.info/sct|254886006,http://snomed.info/sct|254887002,http://snomed.info/sct|254888007,http://snomed.info/sct|372097009,http://snomed.info/sct|372099007,http://snomed.info/sct|188183000,http://snomed.info/sct|423973006",
+      "additional_query_urls": [
+       "Patient?gender=female&_has:Procedure:patient:code=http://snomed.info/sct|236886002,http://snomed.info/sct|116140006,http://snomed.info/sct|116141005,http://snomed.info/sct|116142003,http://snomed.info/sct|116143008,http://snomed.info/sct|116144002,http://snomed.info/sct|176795006,http://snomed.info/sct|236887006,http://snomed.info/sct|236888001,http://snomed.info/sct|236891001,http://snomed.info/sct|265056007,http://snomed.info/sct|307771009,http://snomed.info/sct|35955002,http://snomed.info/sct|387643005,http://snomed.info/sct|41059002,http://snomed.info/sct|431316002,http://www.ama-assn.org/go/cpt|58150&_has:Condition:patient:code=http://snomed.info/sct|363443007,http://snomed.info/sct|93934004,http://snomed.info/sct|254849005,http://snomed.info/sct|314191009,http://snomed.info/sct|1371416004,http://snomed.info/sct|369522002,http://snomed.info/sct|369529006,http://snomed.info/sct|15635721000119108,http://snomed.info/sct|254850005,http://snomed.info/sct|254851009,http://snomed.info/sct|254852002,http://snomed.info/sct|254856004,http://snomed.info/sct|254863004,http://snomed.info/sct|254869000,http://snomed.info/sct|254874008,http://snomed.info/sct|702368000,http://snomed.info/sct|763131005,http://snomed.info/sct|770601003,http://snomed.info/sct|722684000,http://snomed.info/sct|722685004,http://snomed.info/sct|461371000124103",
+       "Patient?gender=female&_has:Procedure:patient:code=http://snomed.info/sct|236886002,http://snomed.info/sct|116140006,http://snomed.info/sct|116141005,http://snomed.info/sct|116142003,http://snomed.info/sct|116143008,http://snomed.info/sct|116144002,http://snomed.info/sct|176795006,http://snomed.info/sct|236887006,http://snomed.info/sct|236888001,http://snomed.info/sct|236891001,http://snomed.info/sct|265056007,http://snomed.info/sct|307771009,http://snomed.info/sct|35955002,http://snomed.info/sct|387643005,http://snomed.info/sct|41059002,http://snomed.info/sct|431316002,http://www.ama-assn.org/go/cpt|58150&_has:Condition:patient:code=http://snomed.info/sct|154616000,http://snomed.info/sct|95315005,http://snomed.info/sct|44598004,http://snomed.info/sct|146801000119103,http://snomed.info/sct|189106003",
+       "Patient?gender=female&_has:Procedure:patient:code=http://snomed.info/sct|236886002,http://snomed.info/sct|116140006,http://snomed.info/sct|116141005,http://snomed.info/sct|116142003,http://snomed.info/sct|116143008,http://snomed.info/sct|116144002,http://snomed.info/sct|176795006,http://snomed.info/sct|236887006,http://snomed.info/sct|236888001,http://snomed.info/sct|236891001,http://snomed.info/sct|265056007,http://snomed.info/sct|307771009,http://snomed.info/sct|35955002,http://snomed.info/sct|387643005,http://snomed.info/sct|41059002,http://snomed.info/sct|431316002,http://www.ama-assn.org/go/cpt|58150&_has:Condition:patient:code=http://snomed.info/sct|11597004,http://snomed.info/sct|24976005,http://snomed.info/sct|18973006,http://snomed.info/sct|198268002,http://snomed.info/sct|48230001,http://snomed.info/sct|9283009,http://snomed.info/sct|63871009,http://snomed.info/sct|10873931000119107,http://snomed.info/sct|1263737000,http://snomed.info/sct|1263738005,http://snomed.info/sct|413938008,http://snomed.info/sct|413939000,http://snomed.info/sct|413940003,http://snomed.info/sct|724472005,http://snomed.info/sct|724473000,http://snomed.info/sct|724474006,http://snomed.info/sct|724476008,http://snomed.info/sct|724477004,http://snomed.info/sct|737177009,http://snomed.info/sct|73998008",
+       "Patient?gender=female&_has:Procedure:patient:code=http://snomed.info/sct|236886002,http://snomed.info/sct|116140006,http://snomed.info/sct|116141005,http://snomed.info/sct|116142003,http://snomed.info/sct|116143008,http://snomed.info/sct|116144002,http://snomed.info/sct|176795006,http://snomed.info/sct|236887006,http://snomed.info/sct|236888001,http://snomed.info/sct|236891001,http://snomed.info/sct|265056007,http://snomed.info/sct|307771009,http://snomed.info/sct|35955002,http://snomed.info/sct|387643005,http://snomed.info/sct|41059002,http://snomed.info/sct|431316002,http://www.ama-assn.org/go/cpt|58150&_has:Condition:patient:code=http://snomed.info/sct|312984006,http://snomed.info/sct|399131003,http://snomed.info/sct|44991000119100"
+      ],
+      "raw_response": "Patient?gender=female&_has:Procedure:patient:code=http://snomed.info/sct|236886002,http://snomed.info/sct|116140006,http://snomed.info/sct|116141005,http://snomed.info/sct|116142003,http://snomed.info/sct|116143008,http://snomed.info/sct|116144002,http://snomed.info/sct|176795006,http://snomed.info/sct|236887006,http://snomed.info/sct|236888001,http://snomed.info/sct|236891001,http://snomed.info/sct|265056007,http://snomed.info/sct|307771009,http://snomed.info/sct|35955002,http://snomed.info/sct|387643005,http://snomed.info/sct|41059002,http://snomed.info/sct|431316002,http://www.ama-assn.org/go/cpt|58150&_has:Condition:patient:code=http://snomed.info/sct|363354003,http://snomed.info/sct|372024009,http://snomed.info/sct|285432005,http://snomed.info/sct|254886006,http://snomed.info/sct|254887002,http://snomed.info/sct|254888007,http://snomed.info/sct|372097009,http://snomed.info/sct|372099007,http://snomed.info/sct|188183000,http://snomed.info/sct|423973006\nPatient?gender=female&_has:Procedure:patient:code=http://snomed.info/sct|236886002,http://snomed.info/sct|116140006,http://snomed.info/sct|116141005,http://snomed.info/sct|116142003,http://snomed.info/sct|116143008,http://snomed.info/sct|116144002,http://snomed.info/sct|176795006,http://snomed.info/sct|236887006,http://snomed.info/sct|236888001,http://snomed.info/sct|236891001,http://snomed.info/sct|265056007,http://snomed.info/sct|307771009,http://snomed.info/sct|35955002,http://snomed.info/sct|387643005,http://snomed.info/sct|41059002,http://snomed.info/sct|431316002,http://www.ama-assn.org/go/cpt|58150&_has:Condition:patient:code=http://snomed.info/sct|363443007,http://snomed.info/sct|93934004,http://snomed.info/sct|254849005,http://snomed.info/sct|314191009,http://snomed.info/sct|1371416004,http://snomed.info/sct|369522002,http://snomed.info/sct|369529006,http://snomed.info/sct|15635721000119108,http://snomed.info/sct|254850005,http://snomed.info/sct|254851009,http://snomed.info/sct|254852002,http://snomed.info/sct|254856004,http://snomed.info/sct|254863004,http://snomed.info/sct|254869000,http://snomed.info/sct|254874008,http://snomed.info/sct|702368000,http://snomed.info/sct|763131005,http://snomed.info/sct|770601003,http://snomed.info/sct|722684000,http://snomed.info/sct|722685004,http://snomed.info/sct|461371000124103\nPatient?gender=female&_has:Procedure:patient:code=http://snomed.info/sct|236886002,http://snomed.info/sct|116140006,http://snomed.info/sct|116141005,http://snomed.info/sct|116142003,http://snomed.info/sct|116143008,http://snomed.info/sct|116144002,http://snomed.info/sct|176795006,http://snomed.info/sct|236887006,http://snomed.info/sct|236888001,http://snomed.info/sct|236891001,http://snomed.info/sct|265056007,http://snomed.info/sct|307771009,http://snomed.info/sct|35955002,http://snomed.info/sct|387643005,http://snomed.info/sct|41059002,http://snomed.info/sct|431316002,http://www.ama-assn.org/go/cpt|58150&_has:Condition:patient:code=http://snomed.info/sct|154616000,http://snomed.info/sct|95315005,http://snomed.info/sct|44598004,http://snomed.info/sct|146801000119103,http://snomed.info/sct|189106003\nPatient?gender=female&_has:Procedure:patient:code=http://snomed.info/sct|236886002,http://snomed.info/sct|116140006,http://snomed.info/sct|116141005,http://snomed.info/sct|116142003,http://snomed.info/sct|116143008,http://snomed.info/sct|116144002,http://snomed.info/sct|176795006,http://snomed.info/sct|236887006,http://snomed.info/sct|236888001,http://snomed.info/sct|236891001,http://snomed.info/sct|265056007,http://snomed.info/sct|307771009,http://snomed.info/sct|35955002,http://snomed.info/sct|387643005,http://snomed.info/sct|41059002,http://snomed.info/sct|431316002,http://www.ama-assn.org/go/cpt|58150&_has:Condition:patient:code=http://snomed.info/sct|11597004,http://snomed.info/sct|24976005,http://snomed.info/sct|18973006,http://snomed.info/sct|198268002,http://snomed.info/sct|48230001,http://snomed.info/sct|9283009,http://snomed.info/sct|63871009,http://snomed.info/sct|10873931000119107,http://snomed.info/sct|1263737000,http://snomed.info/sct|1263738005,http://snomed.info/sct|413938008,http://snomed.info/sct|413939000,http://snomed.info/sct|413940003,http://snomed.info/sct|724472005,http://snomed.info/sct|724473000,http://snomed.info/sct|724474006,http://snomed.info/sct|724476008,http://snomed.info/sct|724477004,http://snomed.info/sct|737177009,http://snomed.info/sct|73998008\nPatient?gender=female&_has:Procedure:patient:code=http://snomed.info/sct|236886002,http://snomed.info/sct|116140006,http://snomed.info/sct|116141005,http://snomed.info/sct|116142003,http://snomed.info/sct|116143008,http://snomed.info/sct|116144002,http://snomed.info/sct|176795006,http://snomed.info/sct|236887006,http://snomed.info/sct|236888001,http://snomed.info/sct|236891001,http://snomed.info/sct|265056007,http://snomed.info/sct|307771009,http://snomed.info/sct|35955002,http://snomed.info/sct|387643005,http://snomed.info/sct|41059002,http://snomed.info/sct|431316002,http://www.ama-assn.org/go/cpt|58150&_has:Condition:patient:code=http://snomed.info/sct|312984006,http://snomed.info/sct|399131003,http://snomed.info/sct|44991000119100",
+      "prompt_text": "Find female patients who have undergone hysterectomy \u2014 performed for cervical cancer, ovarian cancer, fibroids, prolapse, or abnormal bleeding.",
+      "run_metadata": {
+       "output_tokens": 1937,
+       "tool_calls_count": 105,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     },
+     "3-expert": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 78,
+      "actual_count": 78,
+      "elapsed_sec": 23.6,
+      "queries_generated": 1,
+      "primary_query_url": "Procedure?code=http://snomed.info/sct|236886002",
+      "additional_query_urls": [],
+      "raw_response": "Procedure?code=http://snomed.info/sct|236886002",
+      "prompt_text": "Search Procedure resources with SNOMED 236886002 (Hysterectomy). Query: Procedure?code=http://snomed.info/sct|236886002",
+      "run_metadata": {
+       "output_tokens": 114,
+       "tool_calls_count": 2,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     }
+    },
+    "openai-compat:qwen-qwen3.5-9b": {
+     "1-naive": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 78,
+      "actual_count": 0,
+      "elapsed_sec": 7.7,
+      "queries_generated": 2,
+      "primary_query_url": "Procedure?code=http://snomed.info/sct|80146002&subject.gender=female&subject.birth-date<=1900-01-01",
+      "additional_query_urls": [
+       "Procedure?code=http://snomed.info/sct|80146002&subject.gender=female&subject.birth-date>1900-01-01"
+      ],
+      "raw_response": "Procedure?code=http://snomed.info/sct|80146002&subject.gender=female&subject.birth-date<=1900-01-01\nProcedure?code=http://snomed.info/sct|80146002&subject.gender=female&subject.birth-date>1900-01-01",
+      "prompt_text": "Find women with hysterectomy."
+     },
+     "1-broad": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 78,
+      "actual_count": 0,
+      "elapsed_sec": 8.9,
+      "queries_generated": 1,
+      "primary_query_url": "Patient?gender=female&_include:Patient:Condition?code=http://snomed.info/sct|84249001&code=http://snomed.info/sct|396072000&code=http://snomed.info/sct|156731004&code=http://snomed.info/sct|156732000&code=http://snomed.info/sct|156733000&code=http://snomed.info/sct|156734000&code=http://snomed.info/sct|156735000",
+      "additional_query_urls": [],
+      "raw_response": "Patient?gender=female&_include:Patient:Condition?code=http://snomed.info/sct|84249001&code=http://snomed.info/sct|396072000&code=http://snomed.info/sct|156731004&code=http://snomed.info/sct|156732000&code=http://snomed.info/sct|156733000&code=http://snomed.info/sct|156734000&code=http://snomed.info/sct|156735000",
+      "prompt_text": "Find female patients who have undergone hysterectomy \u2014 performed for cervical cancer, ovarian cancer, fibroids, prolapse, or abnormal bleeding."
+     },
+     "1-expert": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 78,
+      "actual_count": 78,
+      "elapsed_sec": 7.0,
+      "queries_generated": 1,
+      "primary_query_url": "Procedure?code=http://snomed.info/sct|236886002",
+      "additional_query_urls": [],
+      "raw_response": "Procedure?code=http://snomed.info/sct|236886002",
+      "prompt_text": "Search Procedure resources with SNOMED 236886002 (Hysterectomy). Query: Procedure?code=http://snomed.info/sct|236886002"
+     },
+     "2-naive": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 78,
+      "actual_count": 78,
+      "elapsed_sec": 226.2,
+      "queries_generated": 1,
+      "primary_query_url": "Procedure?code=http://snomed.info/sct|236886002,116140006,116141005,116142003,236887006,265056007",
+      "additional_query_urls": [],
+      "raw_response": "Procedure?code=http://snomed.info/sct|236886002,116140006,116141005,116142003,236887006,265056007",
+      "prompt_text": "Find women with hysterectomy.",
+      "run_metadata": {
+       "tool_calls_count": 17,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     },
+     "2-broad": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 78,
+      "actual_count": 0,
+      "elapsed_sec": 524.0,
+      "queries_generated": 9,
+      "primary_query_url": "Condition?_summary=count",
+      "additional_query_urls": [
+       "Condition?code=http://snomed.info/sct|15635721000119108",
+       "Condition?code=http://snomed.info/sct|44054006",
+       "Condition?code=http://snomed.info/sct|195967001",
+       "Procedure?code=http://snomed.info/sct|236886002",
+       "Condition?code=http://snomed.info/sct|363354003",
+       "Condition?code=http://snomed.info/sct|93934004",
+       "Condition?code=http://snomed.info/sct|286658005",
+       "Condition?code=http://snomed.info/sct|429567007"
+      ],
+      "raw_response": "[FALLBACK: parser couldn't extract URL from final response; using fhir_search queries from tool trace]\nCondition?_summary=count\nCondition?code=http://snomed.info/sct|15635721000119108\nCondition?code=http://snomed.info/sct|44054006\nCondition?code=http://snomed.info/sct|195967001\nProcedure?code=http://snomed.info/sct|236886002\nCondition?code=http://snomed.info/sct|363354003\nCondition?code=http://snomed.info/sct|93934004\nCondition?code=http://snomed.info/sct|286658005\nCondition?code=http://snomed.info/sct|429567007\n\nOriginal last assistant message:\nThese codes don't exist in the server. Let me try to find what condition codes are actually present by searching for conditions with different approaches. Let me look at the UMLS results again and try to find the actual SNOMED codes that might be in the server.\n\nFrom the UMLS search for ovarian cancer, I saw code C1140680 (MTH - Malignant neoplasm of ovary). Let me try to find the SNOMED code for this. Let me use the crosswalk function:\n\n",
+      "prompt_text": "Find female patients who have undergone hysterectomy \u2014 performed for cervical cancer, ovarian cancer, fibroids, prolapse, or abnormal bleeding.",
+      "run_metadata": {
+       "tool_calls_count": 44,
+       "stop_reason": "fallback_tool_trace",
+       "fallback_used": true
+      }
+     },
+     "2-expert": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 78,
+      "actual_count": 78,
+      "elapsed_sec": 38.9,
+      "queries_generated": 1,
+      "primary_query_url": "Procedure?code=http://snomed.info/sct|236886002",
+      "additional_query_urls": [],
+      "raw_response": "The search returned results showing Procedure resources with SNOMED code 236886002 (Hysterectomy). The query is working correctly and returning entries that include both SNOMED CT and CPT codes related to hysterectomy procedures.\n\nThe FHIR query URL is:\n```\nProcedure?code=http://snomed.info/sct|236886002\n```",
+      "prompt_text": "Search Procedure resources with SNOMED 236886002 (Hysterectomy). Query: Procedure?code=http://snomed.info/sct|236886002",
+      "run_metadata": {
+       "tool_calls_count": 1,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     },
+     "3-naive": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 78,
+      "actual_count": 78,
+      "elapsed_sec": 121.2,
+      "queries_generated": 1,
+      "primary_query_url": "Procedure?code=http://snomed.info/sct|236886002&patient.gender=female",
+      "additional_query_urls": [],
+      "raw_response": "The query returned results, confirming that the FHIR server has procedures with the SNOMED CT code for hysterectomy and that the `patient.gender` filter works.\n\nHere is the final FHIR query to find women with hysterectomy:\n\n```\nProcedure?code=http://snomed.info/sct|236886002&patient.gender=female\n```",
+      "prompt_text": "Find women with hysterectomy.",
+      "run_metadata": {
+       "tool_calls_count": 4,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     },
+     "3-broad": {
+      "precision": 1.0,
+      "recall": 0.7564,
+      "f1": 0.8613,
+      "passed": true,
+      "expected_count": 78,
+      "actual_count": 59,
+      "elapsed_sec": 635.8,
+      "queries_generated": 1,
+      "primary_query_url": "Patient?_has:Procedure:patient:code=http://snomed.info/sct|236886002&_has:Condition:patient:code=http://snomed.info/sct|363354003&patient.gender=female",
+      "additional_query_urls": [],
+      "raw_response": "The query returns 11 patients. Given the server's limitations (only having cervical cancer as a Condition), this is the best query I can construct.\n\nHowever, I realize I should also consider that the request might want patients who had hysterectomy for ANY of those indications, not necessarily both the procedure AND the condition. Let me reconsider the query.\n\nActually, looking at the request again: \"Find female patients who have undergone hysterectomy \u2014 performed for cervical cancer, ovarian cancer, fibroids, prolapse, or abnormal bleeding.\"\n\nThis is asking for patients who had hysterectomy performed for those indications. The hysterectomy is the procedure, and the indications are the conditions. Since the server only has cervical cancer as a Condition, I can only query for patients with:\n- Hysterectomy procedure (236886002)\n- Cervical cancer condition (363354003)\n- Female gender\n\nThe query I constructed is correct for the available data. Since the server doesn't have data for the other indications, I cannot include them in the query.\n\nLet me provide the final answer:\n\nPatient?_has:Procedure:patient:code=http://snomed.info/sct|236886002&_has:Condition:patient:code=http://snomed.info/sct|363354003&patient.gender=female",
+      "prompt_text": "Find female patients who have undergone hysterectomy \u2014 performed for cervical cancer, ovarian cancer, fibroids, prolapse, or abnormal bleeding.",
+      "run_metadata": {
+       "tool_calls_count": 51,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     },
+     "3-expert": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 78,
+      "actual_count": 78,
+      "elapsed_sec": 43.2,
+      "queries_generated": 1,
+      "primary_query_url": "Procedure?code=http://snomed.info/sct|236886002",
+      "additional_query_urls": [],
+      "raw_response": "Procedure?code=http://snomed.info/sct|236886002",
+      "prompt_text": "Search Procedure resources with SNOMED 236886002 (Hysterectomy). Query: Procedure?code=http://snomed.info/sct|236886002",
+      "run_metadata": {
+       "tool_calls_count": 1,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
+     }
+    }
+   }
+  }
+ ]
+}
