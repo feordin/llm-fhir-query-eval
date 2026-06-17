@@ -128,11 +128,12 @@ function BestAchievable({ rows }: { rows: LeaderboardRow[] }) {
   return (
     <div style={{ marginTop: 32 }}>
       <h2>Best achievable per model
-        <span className="badge badge-multi"> best tier × prompt · all 388 test cases</span></h2>
-      <p className="subtitle">Each model's <strong>ceiling</strong> — its single best tier+prompt
-        combination, averaged over all 108 phenotypes (Slide 14 was the prompt-<em>average</em>; this is
-        the best cell). Frontier models peak at <strong>tools + an expert prompt</strong> (~0.90); the small
-        open model needs the full stack (methodology + expert) to approach them.</p>
+        <span className="badge badge-multi"> best tier × prompt · comprehensive cohort</span></h2>
+      <p className="subtitle">Each model's <strong>ceiling</strong> on the comprehensive
+        ("all-patients") cohort — its single best tier+prompt combination. With the right config,
+        frontier models <strong>essentially solve it (~0.98–1.0)</strong>; even the small open model reaches
+        ~0.92 by stacking the full stack (methodology + expert prompt). (The other tables use the
+        all-test-case basis, which runs lower.)</p>
       <div className="table-container">
         <table className="score-table">
           <thead><tr>
