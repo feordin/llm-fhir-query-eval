@@ -58,12 +58,14 @@ def build(since: str, exclude: tuple, stamp: str) -> dict:
         tree[spec][tc][(tier, variant)] = cell
     specs = sorted(specs)
 
-    # ---- best tier x prompt per spec, over ALL test cases (the "ceiling") ------
-    # Distinct from the per-tier comprehensive-cohort means above: this is each
-    # model's single best (tier, variant) combination averaged across every test
-    # case (matches presentation Slide 14B).
+    # ---- best tier x prompt per spec, on the COMPREHENSIVE cohort (the ceiling)-
+    # Each model's single best (tier, variant) combination over the per-phenotype
+    # "all-patients" comprehensive cells (matches presentation Slide 14B, the one
+    # comprehensive-cohort exception to the all-test-case spine).
     all_tv = defaultdict(lambda: defaultdict(list))  # spec -> (tier,variant) -> f1s
     for (tc, spec, tier, variant), (ts, cell) in cell_map.items():
+        if not tc.endswith("-comprehensive"):
+            continue
         f1 = cell.get("f1")
         if f1 is not None:
             all_tv[spec][(tier, variant)].append(f1)

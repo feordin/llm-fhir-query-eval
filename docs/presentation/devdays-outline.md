@@ -161,24 +161,23 @@ placeholders are flagged **[PENDING BACKFILL]**.
   | Claude Sonnet 4.6 | 0.623 | 0.846 | 0.857 |
   | Claude Opus 4.7 | 0.679 | 0.862 | 0.867 |
   | Qwen3.5-9B | 0.257 | 0.476 | 0.710 |
-  - All four models are now **full-108 (388 test cases)** on every tier.
-  - And the **comprehensive-cohort** headline (T3): Sonnet **0.95**, GPT **0.96**, Opus **0.94**.
-- **Visual:** grouped bar chart, model × tier (T1/T2/T3), with the comprehensive numbers called out.
+  - All four models are now **full-108 (388 test cases)** on every tier. *(All numbers in this deck are this all-test-case mean — except Slide 14B, the comprehensive-cohort "best case.")*
+- **Visual:** grouped bar chart, model × tier (T1/T2/T3).
 - **Speaker notes:** The big jump is T1→T2 (every model gains ~0.20). Land that, then unpack *why* next. For Opus on full coverage, **T3 (0.867) ≈ T2 (0.862)** — the methodology is ~neutral for a strong model (the earlier "T3 < T2" was a 48-tc-subset artifact; see Slide 16B for the per-case concept-enumeration failure mode that's real but averages out).
 
-### Slide 14B — Best achievable per model (the ceiling)
-- **On-slide:** Slide 14 averages over the 3 prompts (the realistic "what you'd get"). This is each model's **best possible** score — the single best **tier × prompt** combination, averaged over all 108 phenotypes:
-  | Model | Best config | Best F1 |
+### Slide 14B — Best achievable per model (the ceiling) · ⚠ COMPREHENSIVE COHORT
+- **On-slide:** **The one slide on the comprehensive ("all-patients") cohort** — distinct from the all-test-case basis used everywhere else in this deck. Each model's **best possible** score: the single best **tier × prompt** combination, on the comprehensive cell (80 phenotypes that have one):
+  | Model | Best config | Best F1 *(comprehensive)* |
   |---|---|---|
-  | GPT-5.4 | **T2 + expert** | **0.919** |
-  | Claude Opus 4.7 | **T2 + expert** | **0.903** |
-  | Claude Sonnet 4.6 | T3 + broad | 0.871 |
-  | Qwen3.5-9B | **T3 + expert** | 0.809 |
-  - **Frontier models peak at T2 + expert** — tools plus a code-aware prompt — and **cap around ~0.90**. Tools do most of the work; the expert prompt adds the last bit.
-  - **The small open model needs the *full stack*** (T3 + expert: methodology *and* a code-aware prompt) just to reach **0.81** — what frontier models clear with tools alone.
-  - Even the best configuration tops out ~0.92: the residual is the genuinely hard cases (cross-indication trick paths, granular code families) — there's real headroom.
-- **Visual:** bar chart, best-F1 per model, each bar annotated with its winning config (e.g., "T2·expert"). Optionally overlay the Slide-14 tier-mean as a ghost bar to show the prompt-choice uplift (~+0.04).
-- **Speaker notes:** Frame the contrast with Slide 14 explicitly: that slide was the *prompt-averaged* tier score (honest expectation); this is the *ceiling* (cherry-pick the best prompt). Two takeaways — (1) for a frontier model the ceiling is "tools + a precise prompt," and even then it's ~0.90, not 1.0; (2) a weak model can *approach* frontier territory but only by stacking every lever (methodology + expert prompt). Note Sonnet's best is T3-broad, not T2-expert — its T2-expert actually dips (0.82), a known sonnet quirk where the expert prompt over-constrains its agentic run.
+  | GPT-5.4 | T2 + expert | **0.998** |
+  | Claude Opus 4.7 | T3 + expert | **0.985** |
+  | Claude Sonnet 4.6 | T2 + expert | **0.982** |
+  | Qwen3.5-9B | T3 + expert | **0.919** |
+  - On the cohort that matters most — *did you find the whole population?* — frontier models with the right config **essentially solve it (~0.98–1.00)**. The agentic union query finds nearly everyone.
+  - **Even the small open model reaches 0.92** — but only by stacking the full stack (T3 + expert: methodology *and* a code-aware prompt).
+  - All four peak with an **expert** prompt; frontier needs only tools (T2), the others lean on methodology (T3).
+- **Visual:** bar chart near the top of the scale (0.8–1.0), best-F1 per model, each bar annotated with its winning config (e.g., "T2·expert"). Put a clear "comprehensive cohort" tag on the slide.
+- **Speaker notes:** **Call this out explicitly as the comprehensive-cohort slide** — every other slide is the all-test-case average (which includes the harder dx/meds/labs/trick variants and so runs lower, ~0.86–0.92). This slide answers "what's the best each model can do at finding the *whole cohort*," and the answer for frontier is ~1.0 with tools + a precise prompt. The contrast with the all-test-case spine is the point: the comprehensive *union* is near-solved; the per-variant difficulty (Slide 14) is where the real headroom is.
 
 ---
 
@@ -236,7 +235,7 @@ placeholders are flagged **[PENDING BACKFILL]**.
 ### Slide 18 — Best off-the-shelf agent: Opus + the Anthropic FHIR skill
 - **On-slide:**
   - We ran **Opus with Anthropic's published FHIR-developer skill** (closed-book — the skill is prepended text, no tools) as a "strong generic" baseline, across **all 108 phenotypes × 3 prompts**.
-  - **Headline (comprehensive cohort, full 108): off-the-shelf Opus+skill 0.84 vs our agentic stack 0.95** (T2; T3 0.94). All-test-case: **0.69 vs 0.86**.
+  - **Headline (all 388 test cases): off-the-shelf Opus+skill 0.69 vs our agentic stack 0.86** (T2; T3 0.87). A strong generic skill, closed-book, lands at the model's plain-recall level; the agentic tools are what add ~0.17.
   - The gap is concentrated in the **hard cross-indication phenotypes** (e.g., Crohn's, asthma) — exactly the Path-C trick cases where you must discover/crosswalk codes.
   - **The skill's *marginal* lift is ~0:** Opus closed-book **plain 0.679 vs +skill 0.693 (+0.014)** over all 108. A generic skill barely helps a model that already knows FHIR — the win is the **tools**, not the prompt/skill text.
   - **By prompt (all-tc, T1) — where the tiny lift lands:**
@@ -246,9 +245,9 @@ placeholders are flagged **[PENDING BACKFILL]**.
     | broad | 0.644 | 0.666 | +0.022 |
     | expert | 0.859 | 0.862 | +0.003 |
 
-    The skill helps the **naive/broad** prompts (+0.02) but is **noise on expert** (+0.003) — it supplies FHIR guidance an expert prompt already encodes. (Comprehensive-cohort shows the same shape: naive 0.681→0.698, broad 0.772→0.791, expert 0.875→0.886.)
-- **Visual:** two bars — off-the-shelf Opus+skill (**0.84**) vs our agentic (**0.95**) on the comprehensive cohort — with a callout on the cross-indication phenotypes driving the gap.
-- **Speaker notes:** A generic skill gets you most of the way (0.84); the last mile to 0.95 is domain-specific tooling + the trick-path handling we built. Numbers are now **full-108** (the earlier "0.88 vs 0.99" was an 8-phenotype subset; full coverage gives 0.84 vs 0.95 — same story, honest denominator). Source: `docs/results/2026-06-12-opus-full-leaderboard.md` + the +fhirskill cells.
+    The skill helps the **naive/broad** prompts (+0.02) but is **noise on expert** (+0.003) — it supplies FHIR guidance an expert prompt already encodes.
+- **Visual:** two bars — off-the-shelf Opus+skill (**0.69**) vs our agentic (**0.86**), all-test-case — with a callout on the cross-indication phenotypes driving the gap.
+- **Speaker notes:** A generic skill gets you to plain closed-book level (~0.69); the lift to 0.86 is domain-specific tooling + the trick-path handling we built. All-test-case basis, consistent with the rest of the deck. (For reference, on the comprehensive cohort the same comparison is ~0.84 vs ~0.95 — the basis used on Slide 14B; don't mix the two on one chart.) Source: `docs/results/2026-06-12-opus-full-leaderboard.md` + the +fhirskill cells.
 
 ---
 
@@ -301,29 +300,24 @@ placeholders are flagged **[PENDING BACKFILL]**.
 
 ### Number bases & consistency (read before presenting)
 
-**Two metrics appear in this deck — keep them straight.** Most slides use the
-**all-test-case mean** (F1 averaged over all 388 test cases / all variants); a few
-use the **comprehensive cohort** (the per-phenotype "all-patients" cell only). They
-differ because the comprehensive cell is a broad union query that scores higher than
-the average over the harder dx/meds/labs/trick variants. **Source of truth for
-all-test-case numbers: `docs/results/2026-06-12-opus-full-leaderboard.md`.**
+**The deck has a single spine: the all-test-case mean** (F1 averaged over all 388
+test cases / all variants). **Source of truth: `docs/results/2026-06-12-opus-full-leaderboard.md`.**
+Every slide uses this **except Slide 14B**, the deliberate **comprehensive-cohort**
+"best case" exception (the per-phenotype "all-patients" cell only — scores higher
+because it's a broad union query, not an average over the harder variants). 14B is
+labeled as such on the slide; nothing else mixes the two bases.
 
-- **All-test-case slides (the spine):** 1, 10, 14, 14B, 15, 16, 16B, 17, 22.
-- **Comprehensive-cohort callouts (labeled as such):** Slide 14's "comprehensive
-  headline" line (Sonnet 0.95 / GPT 0.96 / Opus 0.94) and Slide 18's "0.84 vs 0.95".
-- ⚠ **Two different "comprehensive" denominators.** The slide comprehensive numbers
-  (0.94–0.96) are over the **~80 phenotypes that have a `-comprehensive` case**
-  (`2026-06-10-t3-lean-refresh.md`). The **frontend** computes comprehensive over **all
-  108** with a fallback case, giving lower values (Opus T2 0.904, T3 0.895). If you
-  show the frontend alongside the deck, expect ~0.90 there vs ~0.94 on Slide 14 — say
-  which denominator, or pick one.
-
-**Verified full-108 numbers (all-test-case):** Opus 0.679/0.862/0.867,
+**Verified full-108 all-test-case numbers:** Opus 0.679/0.862/0.867,
 GPT 0.656/0.878/0.884, Sonnet 0.623/0.846/0.857, Qwen 0.257/0.476/0.710.
-Best tier×prompt: GPT T2·expert 0.919, Opus T2·expert 0.903, Sonnet T3·broad 0.871,
-Qwen T3·expert 0.809. Skill marginal lift: plain 0.679 → +fhirskill 0.693 (+0.014).
+Frontier T1→T2 lift +0.18–0.22 (the dominant lever). Skill marginal lift: plain 0.679
+→ +fhirskill 0.693 (+0.014).
 
-**Frontend** is now checked in and clone-ready (`npm install && npm run dev`); it
-shows the 4-model leaderboard, the "Best achievable" panel, and the Opus+skill
-by-prompt comparison — all on the comprehensive-cohort basis for the leaderboard and
-all-test-case for the "Best achievable" panel (labeled).
+**Slide 14B (comprehensive cohort, 80 phenotypes with a `-comprehensive` case),
+best tier×prompt:** GPT T2·expert 0.998, Opus T3·expert 0.985, Sonnet T2·expert 0.982,
+Qwen T3·expert 0.919.
+
+**Frontend** is checked in and clone-ready (`npm install && npm run dev`). Note its
+main leaderboard uses the comprehensive **canonical-cell** basis over all 108 (Opus
+T2 0.904, T3 0.895) — a *different* comprehensive denominator than Slide 14B's 80-pheno
+cut — so the website's comprehensive numbers (~0.90) won't equal the deck's 14B
+(~0.94–1.0). The "Best achievable" panel matches 14B (comprehensive best tier×prompt).
