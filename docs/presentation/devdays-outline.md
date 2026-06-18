@@ -5,9 +5,9 @@
 **Format note for slide generation:** each slide below has a **Title**, **On-slide
 content** (what appears), **Visual** (chart/diagram to render), and **Speaker
 notes** (what to say, not on the slide). Numbers are from
-`docs/results/2026-06-10-full-108-three-model-sweep-v7.md` and the analysis docs
-in `docs/results/`. A few cells (Opus T1/T2 full coverage) are still finishing;
-placeholders are flagged **[PENDING BACKFILL]**.
+`docs/results/2026-06-12-opus-full-leaderboard.md` (the full-108 all-test-case
+source of truth) and the analysis docs in `docs/results/`. Basis: all-test-case
+throughout, except Slide 14B (comprehensive cohort, labeled).
 
 ---
 
