@@ -44,15 +44,15 @@
       "passed": true,
       "expected_count": 1841,
       "actual_count": 1841,
-      "elapsed_sec": 1.9,
+      "elapsed_sec": 93.0,
       "queries_generated": 3,
       "primary_query_url": "Condition?code=http://snomed.info/sct|64586002",
       "additional_query_urls": [
        "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1191,http://www.nlm.nih.gov/research/umls/rxnorm|32968,http://www.nlm.nih.gov/research/umls/rxnorm|83367",
-       "Procedure?code=http://snomed.info/sct|233259003"
+       "Procedure?code=http://snomed.info/sct|68311004"
       ],
-      "raw_response": "Condition?code=http://snomed.info/sct|64586002\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1191,http://www.nlm.nih.gov/research/umls/rxnorm|32968,http://www.nlm.nih.gov/research/umls/rxnorm|83367\nProcedure?code=http://snomed.info/sct|233259003",
-      "prompt_text": "Run three queries. (1) Condition?code=http://snomed.info/sct|64586002 \u2014 carotid stenosis dx. (2) MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1191,http://www.nlm.nih.gov/research/umls/rxnorm|32968,http://www.nlm.nih.gov/research/umls/rxnorm|83367 \u2014 antiplatelets + statin. (3) Procedure?code=http://snomed.info/sct|233259003 \u2014 carotid revascularization. Union the patient IDs."
+      "raw_response": "Condition?code=http://snomed.info/sct|64586002\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1191,http://www.nlm.nih.gov/research/umls/rxnorm|32968,http://www.nlm.nih.gov/research/umls/rxnorm|83367\nProcedure?code=http://snomed.info/sct|68311004",
+      "prompt_text": "I need to identify all carotid artery atherosclerosis patients by combining evidence across three FHIR resource types. First, query Condition resources for carotid stenosis diagnoses coded in SNOMED CT. Second, query MedicationRequest resources for the antiplatelet agents (aspirin, clopidogrel) and statins (atorvastatin) used for cardiovascular risk reduction in CAAD \u2014 recognizing that these same drug classes are heavily cross-indicated for coronary heart disease and peripheral arterial disease, so the medication path will over-recall. Third, query Procedure resources for carotid revascularization (carotid angioplasty) coded in SNOMED CT. Take the union of patient IDs across all three queries."
      },
      "2-naive": {
       "precision": 1.0,
@@ -104,18 +104,18 @@
       "passed": true,
       "expected_count": 1841,
       "actual_count": 1841,
-      "elapsed_sec": 95.6,
+      "elapsed_sec": 124.9,
       "queries_generated": 3,
       "primary_query_url": "Condition?code=http://snomed.info/sct|64586002",
       "additional_query_urls": [
-       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1191,http://www.nlm.nih.gov/research/umls/rxnorm|32968,http://www.nlm.nih.gov/research/umls/rxnorm|83367",
-       "Procedure?code=http://snomed.info/sct|233259003"
+       "Procedure?code=http://snomed.info/sct|233259003",
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1191,http://www.nlm.nih.gov/research/umls/rxnorm|32968,http://www.nlm.nih.gov/research/umls/rxnorm|83367"
       ],
-      "raw_response": "Condition?code=http://snomed.info/sct|64586002\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1191,http://www.nlm.nih.gov/research/umls/rxnorm|32968,http://www.nlm.nih.gov/research/umls/rxnorm|83367\nProcedure?code=http://snomed.info/sct|233259003",
-      "prompt_text": "Run three queries. (1) Condition?code=http://snomed.info/sct|64586002 \u2014 carotid stenosis dx. (2) MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1191,http://www.nlm.nih.gov/research/umls/rxnorm|32968,http://www.nlm.nih.gov/research/umls/rxnorm|83367 \u2014 antiplatelets + statin. (3) Procedure?code=http://snomed.info/sct|233259003 \u2014 carotid revascularization. Union the patient IDs.",
+      "raw_response": "Condition?code=http://snomed.info/sct|64586002\nProcedure?code=http://snomed.info/sct|233259003\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1191,http://www.nlm.nih.gov/research/umls/rxnorm|32968,http://www.nlm.nih.gov/research/umls/rxnorm|83367",
+      "prompt_text": "I need to identify all carotid artery atherosclerosis patients by combining evidence across three FHIR resource types. First, query Condition resources for carotid stenosis diagnoses coded in SNOMED CT. Second, query MedicationRequest resources for the antiplatelet agents (aspirin, clopidogrel) and statins (atorvastatin) used for cardiovascular risk reduction in CAAD \u2014 recognizing that these same drug classes are heavily cross-indicated for coronary heart disease and peripheral arterial disease, so the medication path will over-recall. Third, query Procedure resources for carotid revascularization (carotid angioplasty) coded in SNOMED CT. Take the union of patient IDs across all three queries.",
       "run_metadata": {
        "output_tokens": 140,
-       "tool_calls_count": 0,
+       "tool_calls_count": 18,
        "stop_reason": "complete",
        "fallback_used": false
       }
@@ -170,18 +170,18 @@
       "passed": true,
       "expected_count": 1841,
       "actual_count": 1841,
-      "elapsed_sec": 92.8,
+      "elapsed_sec": 128.8,
       "queries_generated": 3,
       "primary_query_url": "Condition?code=http://snomed.info/sct|64586002",
       "additional_query_urls": [
-       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1191,http://www.nlm.nih.gov/research/umls/rxnorm|32968,http://www.nlm.nih.gov/research/umls/rxnorm|83367",
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1191,32968,83367",
        "Procedure?code=http://snomed.info/sct|233259003"
       ],
-      "raw_response": "Condition?code=http://snomed.info/sct|64586002\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1191,http://www.nlm.nih.gov/research/umls/rxnorm|32968,http://www.nlm.nih.gov/research/umls/rxnorm|83367\nProcedure?code=http://snomed.info/sct|233259003",
-      "prompt_text": "Run three queries. (1) Condition?code=http://snomed.info/sct|64586002 \u2014 carotid stenosis dx. (2) MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1191,http://www.nlm.nih.gov/research/umls/rxnorm|32968,http://www.nlm.nih.gov/research/umls/rxnorm|83367 \u2014 antiplatelets + statin. (3) Procedure?code=http://snomed.info/sct|233259003 \u2014 carotid revascularization. Union the patient IDs.",
+      "raw_response": "Condition?code=http://snomed.info/sct|64586002\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1191,32968,83367\nProcedure?code=http://snomed.info/sct|233259003",
+      "prompt_text": "I need to identify all carotid artery atherosclerosis patients by combining evidence across three FHIR resource types. First, query Condition resources for carotid stenosis diagnoses coded in SNOMED CT. Second, query MedicationRequest resources for the antiplatelet agents (aspirin, clopidogrel) and statins (atorvastatin) used for cardiovascular risk reduction in CAAD \u2014 recognizing that these same drug classes are heavily cross-indicated for coronary heart disease and peripheral arterial disease, so the medication path will over-recall. Third, query Procedure resources for carotid revascularization (carotid angioplasty) coded in SNOMED CT. Take the union of patient IDs across all three queries.",
       "run_metadata": {
-       "output_tokens": 175,
-       "tool_calls_count": 0,
+       "output_tokens": 90,
+       "tool_calls_count": 20,
        "stop_reason": "complete",
        "fallback_used": false
       }
@@ -226,15 +226,15 @@
       "passed": true,
       "expected_count": 1841,
       "actual_count": 1841,
-      "elapsed_sec": 2.0,
+      "elapsed_sec": 92.3,
       "queries_generated": 3,
       "primary_query_url": "Condition?code=http://snomed.info/sct|64586002",
       "additional_query_urls": [
        "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1191,http://www.nlm.nih.gov/research/umls/rxnorm|32968,http://www.nlm.nih.gov/research/umls/rxnorm|83367",
-       "Procedure?code=http://snomed.info/sct|233259003"
+       "Procedure?code=http://snomed.info/sct|175343001"
       ],
-      "raw_response": "Condition?code=http://snomed.info/sct|64586002\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1191,http://www.nlm.nih.gov/research/umls/rxnorm|32968,http://www.nlm.nih.gov/research/umls/rxnorm|83367\nProcedure?code=http://snomed.info/sct|233259003",
-      "prompt_text": "Run three queries. (1) Condition?code=http://snomed.info/sct|64586002 \u2014 carotid stenosis dx. (2) MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1191,http://www.nlm.nih.gov/research/umls/rxnorm|32968,http://www.nlm.nih.gov/research/umls/rxnorm|83367 \u2014 antiplatelets + statin. (3) Procedure?code=http://snomed.info/sct|233259003 \u2014 carotid revascularization. Union the patient IDs."
+      "raw_response": "Condition?code=http://snomed.info/sct|64586002\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1191,http://www.nlm.nih.gov/research/umls/rxnorm|32968,http://www.nlm.nih.gov/research/umls/rxnorm|83367\nProcedure?code=http://snomed.info/sct|175343001",
+      "prompt_text": "I need to identify all carotid artery atherosclerosis patients by combining evidence across three FHIR resource types. First, query Condition resources for carotid stenosis diagnoses coded in SNOMED CT. Second, query MedicationRequest resources for the antiplatelet agents (aspirin, clopidogrel) and statins (atorvastatin) used for cardiovascular risk reduction in CAAD \u2014 recognizing that these same drug classes are heavily cross-indicated for coronary heart disease and peripheral arterial disease, so the medication path will over-recall. Third, query Procedure resources for carotid revascularization (carotid angioplasty) coded in SNOMED CT. Take the union of patient IDs across all three queries."
      }
     },
     "copilot:claude-sonnet-4.6": {
@@ -294,15 +294,15 @@
       "passed": true,
       "expected_count": 1841,
       "actual_count": 1841,
-      "elapsed_sec": 111.5,
+      "elapsed_sec": 142.9,
       "queries_generated": 3,
-      "primary_query_url": "Condition?code=http://snomed.info/sct|64586002&_include=Condition:subject",
+      "primary_query_url": "Condition?code=http://snomed.info/sct|64586002,http://snomed.info/sct|413746002",
       "additional_query_urls": [
-       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1191,http://www.nlm.nih.gov/research/umls/rxnorm|32968,http://www.nlm.nih.gov/research/umls/rxnorm|83367&_include=MedicationRequest:subject",
-       "Procedure?code=http://snomed.info/sct|233259003&_include=Procedure:subject"
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1191,http://www.nlm.nih.gov/research/umls/rxnorm|32968,http://www.nlm.nih.gov/research/umls/rxnorm|83367",
+       "Procedure?code=http://snomed.info/sct|418285008"
       ],
-      "raw_response": "```\nCondition?code=http://snomed.info/sct|64586002&_include=Condition:subject\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1191,http://www.nlm.nih.gov/research/umls/rxnorm|32968,http://www.nlm.nih.gov/research/umls/rxnorm|83367&_include=MedicationRequest:subject\nProcedure?code=http://snomed.info/sct|233259003&_include=Procedure:subject\n```\n\n---\n\n### Query Breakdown\n\n| # | Resource | Code System | Code(s) | Clinical Meaning |\n|---|----------|-------------|---------|-----------------|\n| 1 | `Condition` | SNOMED CT | `64586002` | Carotid artery stenosis diagnosis |\n| 2 | `MedicationRequest` | RxNorm | `1191` (Aspirin), `32968` (Clopidogrel), `83367` (Atorvastatin) | Antiplatelet + statin therapy |\n| 3 | `Procedure` | SNOMED CT | `233259003` | Carotid revascularization (CEA/CAS) |\n\n---\n\n### Union Patient ID Logic (Pseudocode)\n\n```\npatients_dx    = { r.subject.reference for r in Query1.entry }\npatients_meds  = { r.subject.reference for r in Query2.entry }\npatients_proc  = { r.subject.reference for r in Query3.entry }\n\nunion_patients = patients_dx | patients_meds | patients_proc\n```\n\n---\n\n### Notes\n- **`_include=<Resource>:subject`** pulls referenced `Patient` resources in each bundle, enabling direct ID extraction without secondary lookups.\n- The **union** ensures patients are captured if they appear in **any** of the three cohorts (diagnosis, medication, or procedure).\n- To find patients in **all three** (intersection \u2014 highest-confidence carotid disease cohort), use `\u2229` instead of `\u222a`.\n- Consider adding **`&status=active`** to `MedicationRequest` to filter only current prescriptions, and **`&clinical-status=active`** to `Condition` for current diagnoses.",
-      "prompt_text": "Run three queries. (1) Condition?code=http://snomed.info/sct|64586002 \u2014 carotid stenosis dx. (2) MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1191,http://www.nlm.nih.gov/research/umls/rxnorm|32968,http://www.nlm.nih.gov/research/umls/rxnorm|83367 \u2014 antiplatelets + statin. (3) Procedure?code=http://snomed.info/sct|233259003 \u2014 carotid revascularization. Union the patient IDs."
+      "raw_response": "## FHIR Query Plan: Carotid Artery Atherosclerosis Cohort (3-Path Union)\n\n---\n\n### Query 1 \u2014 Condition (Carotid Stenosis / Atherosclerosis Diagnoses)\n```\nCondition?code=http://snomed.info/sct|64586002,http://snomed.info/sct|413746002\n```\n\n---\n\n### Query 2 \u2014 MedicationRequest (Antiplatelets + Statin)\n```\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1191,http://www.nlm.nih.gov/research/umls/rxnorm|32968,http://www.nlm.nih.gov/research/umls/rxnorm|83367\n```\n\n---\n\n### Query 3 \u2014 Procedure (Carotid Revascularization)\n```\nProcedure?code=http://snomed.info/sct|418285008\n```\n\n---\n\n## Code Reference Table\n\n| Query | Resource | Code System | Code | Concept |\n|-------|----------|-------------|------|---------|\n| 1 | Condition | SNOMED CT | `64586002` | Stenosis of carotid artery |\n| 1 | Condition | SNOMED CT | `413746002` | Atherosclerotic carotid artery disease |\n| 2 | MedicationRequest | RxNorm | `1191` | Aspirin (antiplatelet) |\n| 2 | MedicationRequest | RxNorm | `32968` | Clopidogrel (antiplatelet) |\n| 2 | MedicationRequest | RxNorm | `83367` | Atorvastatin (statin) |\n| 3 | Procedure | SNOMED CT | `418285008` | Percutaneous transluminal angioplasty of carotid artery |\n\n---\n\n## Cohort Construction Logic\n\n```\nCAAD_Cohort =\n  patients(Query 1)   \u2190 HIGH PRECISION, lower recall\n  \u222a patients(Query 2) \u2190 HIGH RECALL, lower precision (\u26a0 see below)\n  \u222a patients(Query 3) \u2190 HIGH PRECISION (procedure-confirmed cases)\n```\n\n---\n\n## Critical Caveats\n\n### \u26a0\ufe0f Query 2 \u2014 Medication Over-Recall\nThese three drug classes are **heavily cross-indicated** and will surface patients with:\n- **Coronary artery disease / acute MI** (aspirin + statins are first-line)\n- **Peripheral artery disease** (clopidogrel + statins are standard of care)\n- **Atrial fibrillation / stroke prevention** (aspirin)\n- **Primary cardiovascular prevention** (statins broadly prescribed)\n\n> **Mitigation:** Intersect Query 2 results with an additional Condition filter for any cerebrovascular or carotid-related ICD-10-CM codes (`I65.2x` carotid artery occlusion/stenosis family), or treat Query 2 as a supporting signal only \u2014 not a standalone inclusion criterion.\n\n### \u26a0\ufe0f Query 1 \u2014 Condition Code Coverage\nCarotid disease may also be recorded under:\n- SNOMED `230717009` (Atherosclerosis of carotid artery \u2014 verify in your terminology server)\n- ICD-10-CM `I65.21` / `I65.22` / `I65.29` (occlusion/stenosis of carotid arteries)\n\nConsider running a parallel ICD-10-CM Condition query if your system uses dual-coding.\n\n### \u2705 Query 3 \u2014 Highest Specificity\nProcedure-confirmed carotid revascularization patients are the most unambiguous CAAD cases. Consider using this as a **seed set** for phenotype validation.",
+      "prompt_text": "I need to identify all carotid artery atherosclerosis patients by combining evidence across three FHIR resource types. First, query Condition resources for carotid stenosis diagnoses coded in SNOMED CT. Second, query MedicationRequest resources for the antiplatelet agents (aspirin, clopidogrel) and statins (atorvastatin) used for cardiovascular risk reduction in CAAD \u2014 recognizing that these same drug classes are heavily cross-indicated for coronary heart disease and peripheral arterial disease, so the medication path will over-recall. Third, query Procedure resources for carotid revascularization (carotid angioplasty) coded in SNOMED CT. Take the union of patient IDs across all three queries."
      },
      "2-naive": {
       "precision": 1.0,
@@ -335,18 +335,18 @@
       "passed": true,
       "expected_count": 1841,
       "actual_count": 1841,
-      "elapsed_sec": 151.5,
+      "elapsed_sec": 273.4,
       "queries_generated": 3,
-      "primary_query_url": "Condition?code=http://snomed.info/sct|64586002",
+      "primary_query_url": "Condition?code=http://snomed.info/sct|64586002,http://snomed.info/sct|233964008,http://snomed.info/sct|285191000119103,http://snomed.info/sct|285201000119100,http://snomed.info/sct|787044009,http://snomed.info/sct|9611000119107,http://snomed.info/sct|21000119103,http://snomed.info/sct|436021000124100,http://snomed.info/sct|434891000124102,http://snomed.info/sct|99451000119105,http://snomed.info/sct|1204156004,http://snomed.info/sct|1204158003,http://snomed.info/sct|450440061000119108,http://snomed.info/sct|93396008,http://snomed.info/sct|12720001000004100,http://snomed.info/sct|942401000124100",
       "additional_query_urls": [
        "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1191,http://www.nlm.nih.gov/research/umls/rxnorm|32968,http://www.nlm.nih.gov/research/umls/rxnorm|83367",
        "Procedure?code=http://snomed.info/sct|233259003"
       ],
-      "raw_response": "All three queries are validated and codings confirmed. Here is the full run summary:\n\n---\n\n## \u2705 Results Summary\n\n### Query 1 \u2014 Carotid Stenosis Diagnosis (`Condition`)\n| Metric | Value |\n|---|---|\n| **Total records** | **1,477** |\n| **SNOMED match** | `64586002` \u2192 *\"Stenosis of carotid artery\"* \u2705 |\n| **Co-coded ICD-10-CM** | `I65.29` \u2014 Occlusion and stenosis of unspecified carotid artery |\n| **Co-coded ICD-9-CM** | `433.1` \u2014 Occlusion and stenosis of carotid artery |\n\nThe SNOMED code is matched correctly; ICD-10/9 appear as companion codings on the same resource (server is multi-coded as expected).\n\n---\n\n### Query 2 \u2014 Antiplatelets + Statin (`MedicationRequest`)\n| Metric | Value |\n|---|---|\n| **Total records** | **1,672** |\n| **RxNorm 1191** | *\"aspirin\"* \u2705 |\n| **RxNorm 32968** | *\"clopidogrel\"* \u2705 |\n| **RxNorm 83367** | atorvastatin (not in this 3-record sample, but present in the total count) |\n| **Category** | `community` \u2014 outpatient prescriptions |\n\nAll three antiplatelet/statin codes are live on the server and resolving correctly.\n\n---\n\n### Query 3 \u2014 Carotid Revascularization (`Procedure`)\n| Metric | Value |\n|---|---|\n| **Total records** | **224** |\n| **SNOMED match** | `233259003` \u2192 *\"Angioplasty of external carotid artery\"* \u2705 |\n| **Co-coded CPT** | `37215` \u2014 Transcatheter placement of intravascular stent(s), cervical carotid artery |\n\nThe procedure code resolves correctly. The smaller count (224 vs. 1,477 dx) is clinically expected \u2014 revascularization is a minority intervention.\n\n---\n\n## \ud83d\udd17 Union Logic\n\nThese three queries return overlapping patient sets (e.g., a patient who had the procedure will also likely have the diagnosis). The union is done **client-side**:\n\n```\npatientUnion = distinct(\n  [r.subject.reference for r in Q1_Condition_results]   // 1,477 records\n  \u222a [r.subject.reference for r in Q2_MedRequest_results] // 1,672 records\n  \u222a [r.subject.reference for r in Q3_Procedure_results]  // 224 records\n)\n```\n\nTo pull only the subject references efficiently, append `&_elements=subject` to each query. To page through all results, chain `&_count=100&_getpagesoffset=N`.\n\n---\n\n## Final Validated Queries\n\n```\nCondition?code=http://snomed.info/sct|64586002\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1191,http://www.nlm.nih.gov/research/umls/rxnorm|32968,http://www.nlm.nih.gov/research/umls/rxnorm|83367\nProcedure?code=http://snomed.info/sct|233259003\n```",
-      "prompt_text": "Run three queries. (1) Condition?code=http://snomed.info/sct|64586002 \u2014 carotid stenosis dx. (2) MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1191,http://www.nlm.nih.gov/research/umls/rxnorm|32968,http://www.nlm.nih.gov/research/umls/rxnorm|83367 \u2014 antiplatelets + statin. (3) Procedure?code=http://snomed.info/sct|233259003 \u2014 carotid revascularization. Union the patient IDs.",
+      "raw_response": "The procedure samples consistently confirm the server uses only SNOMED `233259003` for carotid angioplasty (and all samples are identically coded). I now have full validation of all three queries. Here's a complete summary of what was discovered and verified:\n\n---\n\n### Evidence Synthesis\n\n| Resource | Code System | Codes | Server Count |\n|---|---|---|---|\n| **Condition** | SNOMED CT | 16 carotid stenosis codes from VSAC \"Carotid Stenosis\" value sets (638/639); anchor: `64586002` Stenosis of carotid artery; includes laterality (`285191000119103` L, `285201000119100` R, `787044009` bilateral), symptom status (`9611000119107` symptomatic, `21000119103` asymptomatic), anatomic specificity (`233964008` internal, `1204158003` extracranial, `450440061000119108` intracranial), and clinical context (`434891000124102` with infarction, `436021000124100` without, `99451000119105` cerebral infarction due to stenosis) | **1,477** |\n| **MedicationRequest** | RxNorm | `1191` aspirin (confirmed live on server); `32968` clopidogrel (confirmed live); `83367` atorvastatin (ingredient-level, from VSAC expansion) | **1,672** *(acknowledged over-recall: all three drug classes are heavily cross-indicated for CAD/PAD)* |\n| **Procedure** | SNOMED CT | `233259003` Angioplasty of external carotid artery (confirmed across all 10 sampled Procedure resources; server encodes carotid stenting CPT 37215 alongside this SNOMED code) | **224** |\n\n---\n\n**FINAL ANSWER:**\n\n```\nCondition?code=http://snomed.info/sct|64586002,http://snomed.info/sct|233964008,http://snomed.info/sct|285191000119103,http://snomed.info/sct|285201000119100,http://snomed.info/sct|787044009,http://snomed.info/sct|9611000119107,http://snomed.info/sct|21000119103,http://snomed.info/sct|436021000124100,http://snomed.info/sct|434891000124102,http://snomed.info/sct|99451000119105,http://snomed.info/sct|1204156004,http://snomed.info/sct|1204158003,http://snomed.info/sct|450440061000119108,http://snomed.info/sct|93396008,http://snomed.info/sct|12720001000004100,http://snomed.info/sct|942401000124100\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1191,http://www.nlm.nih.gov/research/umls/rxnorm|32968,http://www.nlm.nih.gov/research/umls/rxnorm|83367\nProcedure?code=http://snomed.info/sct|233259003\n```",
+      "prompt_text": "I need to identify all carotid artery atherosclerosis patients by combining evidence across three FHIR resource types. First, query Condition resources for carotid stenosis diagnoses coded in SNOMED CT. Second, query MedicationRequest resources for the antiplatelet agents (aspirin, clopidogrel) and statins (atorvastatin) used for cardiovascular risk reduction in CAAD \u2014 recognizing that these same drug classes are heavily cross-indicated for coronary heart disease and peripheral arterial disease, so the medication path will over-recall. Third, query Procedure resources for carotid revascularization (carotid angioplasty) coded in SNOMED CT. Take the union of patient IDs across all three queries.",
       "run_metadata": {
-       "output_tokens": 1513,
-       "tool_calls_count": 6,
+       "output_tokens": 1949,
+       "tool_calls_count": 51,
        "stop_reason": "complete",
        "fallback_used": false
       }
@@ -401,21 +401,18 @@
       "passed": true,
       "expected_count": 1841,
       "actual_count": 1841,
-      "elapsed_sec": 118.4,
-      "queries_generated": 6,
-      "primary_query_url": "Condition?code=http://snomed.info/sct\\|64586002",
+      "elapsed_sec": 205.0,
+      "queries_generated": 3,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|64586002,http://snomed.info/sct|300920004,http://snomed.info/sct|233964008,http://snomed.info/sct|285191000119103,http://snomed.info/sct|285201000119100,http://snomed.info/sct|787044009,http://snomed.info/sct|9611000119107,http://snomed.info/sct|21000119103,http://snomed.info/sct|436021000124100,http://snomed.info/sct|434891000124102",
       "additional_query_urls": [
-       "MedicationRequest?code=\u2026rxnorm\\|1191,\u2026\\|32968,\u2026\\|83367",
-       "Procedure?code=http://snomed.info/sct\\|233259003",
-       "Condition?code=http://snomed.info/sct|64586002&_elements=subject&_count=1000",
-       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1191,http://www.nlm.nih.gov/research/umls/rxnorm|32968,http://www.nlm.nih.gov/research/umls/rxnorm|83367&_elements=subject&_count=1000",
-       "Procedure?code=http://snomed.info/sct|233259003&_elements=subject&_count=1000"
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1191,http://www.nlm.nih.gov/research/umls/rxnorm|32968,http://www.nlm.nih.gov/research/umls/rxnorm|83367",
+       "Procedure?code=http://snomed.info/sct|233259003,http://snomed.info/sct|233260008"
       ],
-      "raw_response": "All three queries executed and validated. Here is a full summary of results and the union logic:\n\n---\n\n## Query Execution Results\n\n| # | Query | Resource | Total Hits | Notes |\n|---|-------|----------|-----------|-------|\n| 1 | `Condition?code=http://snomed.info/sct\\|64586002` | Condition | **1,477** | Carotid stenosis Dx confirmed |\n| 2 | `MedicationRequest?code=\u2026rxnorm\\|1191,\u2026\\|32968,\u2026\\|83367` | MedicationRequest | **1,672** | Aspirin \u2713, Clopidogrel \u2713, Atorvastatin \u2713 \u2014 all three RxNorm codes resolved |\n| 3 | `Procedure?code=http://snomed.info/sct\\|233259003` | Procedure | **224** | Carotid revascularization Dx confirmed |\n\n---\n\n## Union Logic (Patient ID Deduplication)\n\nBecause these span **three different resource types**, the patient union must be extracted via the `subject` reference on each resource and then de-duplicated:\n\n- **Step A** \u2013 Collect `Condition.subject` from Query 1 \u2192 Set A (carotid stenosis patients)\n- **Step B** \u2013 Collect `MedicationRequest.subject` from Query 2 \u2192 Set B (antiplatelet/statin patients)\n- **Step C** \u2013 Collect `Procedure.subject` from Query 3 \u2192 Set C (revascularization patients)\n- **Union** = A \u222a B \u222a C (deduplicated by Patient ID)\n\n> \u26a0\ufe0f The Condition and MedicationRequest sets exceed 1,000 records \u2014 paginate using `_count=1000` + the `next` Bundle link to retrieve all pages before unioning.\n\n---\n\n## Final FHIR Query URLs\n\n```\nCondition?code=http://snomed.info/sct|64586002&_elements=subject&_count=1000\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1191,http://www.nlm.nih.gov/research/umls/rxnorm|32968,http://www.nlm.nih.gov/research/umls/rxnorm|83367&_elements=subject&_count=1000\nProcedure?code=http://snomed.info/sct|233259003&_elements=subject&_count=1000\n```",
-      "prompt_text": "Run three queries. (1) Condition?code=http://snomed.info/sct|64586002 \u2014 carotid stenosis dx. (2) MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1191,http://www.nlm.nih.gov/research/umls/rxnorm|32968,http://www.nlm.nih.gov/research/umls/rxnorm|83367 \u2014 antiplatelets + statin. (3) Procedure?code=http://snomed.info/sct|233259003 \u2014 carotid revascularization. Union the patient IDs.",
+      "raw_response": "All evidence gathered. Counts are validated:\n- **Conditions** (carotid stenosis, all SNOMED subtypes): **1,477**\n- **MedicationRequests** (aspirin + clopidogrel + atorvastatin, intentionally over-recall): **1,672**\n- **Procedures** (carotid angioplasty, SNOMED): **224**\n\nHere is the complete reasoning before final output:\n\n---\n\n### Strategy Summary (Playbook 12 \u2014 Cohort = OR Union)\n\n**Query 1 \u2014 Condition (SNOMED CT):** Combines the parent code `64586002` (Stenosis of carotid artery, confirmed in every server sample) with the carotid atherosclerosis concept `300920004`, lateralised variants (left `285191000119103`, right `285201000119100`, bilateral `787044009`), symptomatic/asymptomatic (`9611000119107`, `21000119103`), internal carotid (`233964008`), and the with/without infarction modifiers (`434891000124102`, `436021000124100`) \u2014 all drawn from the validated VSAC SNOMED set.\n\n**Query 2 \u2014 MedicationRequest (RxNorm):** Uses ingredient-level codes only (`1191` aspirin, `32968` clopidogrel, `83367` atorvastatin), confirmed live on the server. As the user correctly flags, these are heavily cross-indicated for CAD/PAD and will over-recall \u2014 the medication path is meant as a supporting signal for union, not standalone case definition.\n\n**Query 3 \u2014 Procedure (SNOMED CT):** Uses `233259003` (Angioplasty of external carotid artery, confirmed in all 3 server procedure samples) and `233260008` (Percutaneous transluminal balloon angioplasty of extracranial carotid artery, VSAC-validated), covering both the named and the fluoroscopic-guidance variant of carotid angioplasty.\n\n---\n\n```\nCondition?code=http://snomed.info/sct|64586002,http://snomed.info/sct|300920004,http://snomed.info/sct|233964008,http://snomed.info/sct|285191000119103,http://snomed.info/sct|285201000119100,http://snomed.info/sct|787044009,http://snomed.info/sct|9611000119107,http://snomed.info/sct|21000119103,http://snomed.info/sct|436021000124100,http://snomed.info/sct|434891000124102\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1191,http://www.nlm.nih.gov/research/umls/rxnorm|32968,http://www.nlm.nih.gov/research/umls/rxnorm|83367\nProcedure?code=http://snomed.info/sct|233259003,http://snomed.info/sct|233260008\n```",
+      "prompt_text": "I need to identify all carotid artery atherosclerosis patients by combining evidence across three FHIR resource types. First, query Condition resources for carotid stenosis diagnoses coded in SNOMED CT. Second, query MedicationRequest resources for the antiplatelet agents (aspirin, clopidogrel) and statins (atorvastatin) used for cardiovascular risk reduction in CAAD \u2014 recognizing that these same drug classes are heavily cross-indicated for coronary heart disease and peripheral arterial disease, so the medication path will over-recall. Third, query Procedure resources for carotid revascularization (carotid angioplasty) coded in SNOMED CT. Take the union of patient IDs across all three queries.",
       "run_metadata": {
-       "output_tokens": 866,
-       "tool_calls_count": 6,
+       "output_tokens": 1577,
+       "tool_calls_count": 38,
        "stop_reason": "complete",
        "fallback_used": false
       }
@@ -460,15 +457,15 @@
       "passed": true,
       "expected_count": 1841,
       "actual_count": 1841,
-      "elapsed_sec": 129.2,
+      "elapsed_sec": 165.4,
       "queries_generated": 3,
-      "primary_query_url": "Condition?code=http://snomed.info/sct|64586002&_elements=subject",
+      "primary_query_url": "Condition?code:below=http://snomed.info/sct|64586002&_elements=subject",
       "additional_query_urls": [
        "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1191,http://www.nlm.nih.gov/research/umls/rxnorm|32968,http://www.nlm.nih.gov/research/umls/rxnorm|83367&_elements=subject",
-       "Procedure?code=http://snomed.info/sct|233259003&_elements=subject"
+       "Procedure?code:below=http://snomed.info/sct|418285008&_elements=subject"
       ],
-      "raw_response": "Condition?code=http://snomed.info/sct|64586002&_elements=subject\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1191,http://www.nlm.nih.gov/research/umls/rxnorm|32968,http://www.nlm.nih.gov/research/umls/rxnorm|83367&_elements=subject\nProcedure?code=http://snomed.info/sct|233259003&_elements=subject",
-      "prompt_text": "Run three queries. (1) Condition?code=http://snomed.info/sct|64586002 \u2014 carotid stenosis dx. (2) MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1191,http://www.nlm.nih.gov/research/umls/rxnorm|32968,http://www.nlm.nih.gov/research/umls/rxnorm|83367 \u2014 antiplatelets + statin. (3) Procedure?code=http://snomed.info/sct|233259003 \u2014 carotid revascularization. Union the patient IDs."
+      "raw_response": "Condition?code:below=http://snomed.info/sct|64586002&_elements=subject\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1191,http://www.nlm.nih.gov/research/umls/rxnorm|32968,http://www.nlm.nih.gov/research/umls/rxnorm|83367&_elements=subject\nProcedure?code:below=http://snomed.info/sct|418285008&_elements=subject",
+      "prompt_text": "I need to identify all carotid artery atherosclerosis patients by combining evidence across three FHIR resource types. First, query Condition resources for carotid stenosis diagnoses coded in SNOMED CT. Second, query MedicationRequest resources for the antiplatelet agents (aspirin, clopidogrel) and statins (atorvastatin) used for cardiovascular risk reduction in CAAD \u2014 recognizing that these same drug classes are heavily cross-indicated for coronary heart disease and peripheral arterial disease, so the medication path will over-recall. Third, query Procedure resources for carotid revascularization (carotid angioplasty) coded in SNOMED CT. Take the union of patient IDs across all three queries."
      },
      "2-naive": {
       "precision": 1.0,
@@ -503,7 +500,7 @@
       "passed": true,
       "expected_count": 1841,
       "actual_count": 1841,
-      "elapsed_sec": 149.4,
+      "elapsed_sec": 178.6,
       "queries_generated": 3,
       "primary_query_url": "Condition?code=http://snomed.info/sct|64586002",
       "additional_query_urls": [
@@ -511,10 +508,10 @@
        "Procedure?code=http://snomed.info/sct|233259003"
       ],
       "raw_response": "Condition?code=http://snomed.info/sct|64586002\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1191,http://www.nlm.nih.gov/research/umls/rxnorm|32968,http://www.nlm.nih.gov/research/umls/rxnorm|83367\nProcedure?code=http://snomed.info/sct|233259003",
-      "prompt_text": "Run three queries. (1) Condition?code=http://snomed.info/sct|64586002 \u2014 carotid stenosis dx. (2) MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1191,http://www.nlm.nih.gov/research/umls/rxnorm|32968,http://www.nlm.nih.gov/research/umls/rxnorm|83367 \u2014 antiplatelets + statin. (3) Procedure?code=http://snomed.info/sct|233259003 \u2014 carotid revascularization. Union the patient IDs.",
+      "prompt_text": "I need to identify all carotid artery atherosclerosis patients by combining evidence across three FHIR resource types. First, query Condition resources for carotid stenosis diagnoses coded in SNOMED CT. Second, query MedicationRequest resources for the antiplatelet agents (aspirin, clopidogrel) and statins (atorvastatin) used for cardiovascular risk reduction in CAAD \u2014 recognizing that these same drug classes are heavily cross-indicated for coronary heart disease and peripheral arterial disease, so the medication path will over-recall. Third, query Procedure resources for carotid revascularization (carotid angioplasty) coded in SNOMED CT. Take the union of patient IDs across all three queries.",
       "run_metadata": {
-       "output_tokens": 995,
-       "tool_calls_count": 7,
+       "output_tokens": 440,
+       "tool_calls_count": 45,
        "stop_reason": "complete",
        "fallback_used": false
       }
@@ -571,7 +568,7 @@
       "passed": true,
       "expected_count": 1841,
       "actual_count": 1841,
-      "elapsed_sec": 111.3,
+      "elapsed_sec": 156.6,
       "queries_generated": 3,
       "primary_query_url": "Condition?code=http://snomed.info/sct|64586002",
       "additional_query_urls": [
@@ -579,10 +576,10 @@
        "Procedure?code=http://snomed.info/sct|233259003"
       ],
       "raw_response": "Condition?code=http://snomed.info/sct|64586002\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1191,http://www.nlm.nih.gov/research/umls/rxnorm|32968,http://www.nlm.nih.gov/research/umls/rxnorm|83367\nProcedure?code=http://snomed.info/sct|233259003",
-      "prompt_text": "Run three queries. (1) Condition?code=http://snomed.info/sct|64586002 \u2014 carotid stenosis dx. (2) MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1191,http://www.nlm.nih.gov/research/umls/rxnorm|32968,http://www.nlm.nih.gov/research/umls/rxnorm|83367 \u2014 antiplatelets + statin. (3) Procedure?code=http://snomed.info/sct|233259003 \u2014 carotid revascularization. Union the patient IDs.",
+      "prompt_text": "I need to identify all carotid artery atherosclerosis patients by combining evidence across three FHIR resource types. First, query Condition resources for carotid stenosis diagnoses coded in SNOMED CT. Second, query MedicationRequest resources for the antiplatelet agents (aspirin, clopidogrel) and statins (atorvastatin) used for cardiovascular risk reduction in CAAD \u2014 recognizing that these same drug classes are heavily cross-indicated for coronary heart disease and peripheral arterial disease, so the medication path will over-recall. Third, query Procedure resources for carotid revascularization (carotid angioplasty) coded in SNOMED CT. Take the union of patient IDs across all three queries.",
       "run_metadata": {
-       "output_tokens": 163,
-       "tool_calls_count": 7,
+       "output_tokens": 254,
+       "tool_calls_count": 22,
        "stop_reason": "complete",
        "fallback_used": false
       }
@@ -814,12 +811,12 @@
       "passed": true,
       "expected_count": 1477,
       "actual_count": 1477,
-      "elapsed_sec": 1.6,
+      "elapsed_sec": 73.9,
       "queries_generated": 1,
       "primary_query_url": "Condition?code=http://snomed.info/sct|64586002",
       "additional_query_urls": [],
       "raw_response": "Condition?code=http://snomed.info/sct|64586002",
-      "prompt_text": "Search Condition resources with SNOMED 64586002 (Stenosis of carotid artery). Query: Condition?code=http://snomed.info/sct|64586002"
+      "prompt_text": "I need to identify patients with a documented diagnosis of carotid artery stenosis. Search Condition resources for the SNOMED CT concept representing stenosis of the carotid artery. This captures patients with a coded carotid disease entry on their problem list or encounter diagnoses, and should not be broadened to other cerebrovascular or aortic conditions."
      },
      "2-naive": {
       "precision": 1.0,
@@ -868,15 +865,15 @@
       "passed": true,
       "expected_count": 1477,
       "actual_count": 1477,
-      "elapsed_sec": 80.5,
+      "elapsed_sec": 96.4,
       "queries_generated": 1,
-      "primary_query_url": "Condition?code=http://snomed.info/sct|64586002",
+      "primary_query_url": "Condition?code=http://snomed.info/sct|64586002,http://snomed.info/sct|233964008,http://snomed.info/sct|285191000119103,http://snomed.info/sct|285201000119100,http://snomed.info/sct|787044009,http://snomed.info/sct|9611000119107,http://snomed.info/sct|21000119103,http://snomed.info/sct|436021000124100,http://snomed.info/sct|434891000124102,http://snomed.info/sct|99451000119105",
       "additional_query_urls": [],
-      "raw_response": "Condition?code=http://snomed.info/sct|64586002",
-      "prompt_text": "Search Condition resources with SNOMED 64586002 (Stenosis of carotid artery). Query: Condition?code=http://snomed.info/sct|64586002",
+      "raw_response": "Final answer:\n\nCondition?code=http://snomed.info/sct|64586002,http://snomed.info/sct|233964008,http://snomed.info/sct|285191000119103,http://snomed.info/sct|285201000119100,http://snomed.info/sct|787044009,http://snomed.info/sct|9611000119107,http://snomed.info/sct|21000119103,http://snomed.info/sct|436021000124100,http://snomed.info/sct|434891000124102,http://snomed.info/sct|99451000119105",
+      "prompt_text": "I need to identify patients with a documented diagnosis of carotid artery stenosis. Search Condition resources for the SNOMED CT concept representing stenosis of the carotid artery. This captures patients with a coded carotid disease entry on their problem list or encounter diagnoses, and should not be broadened to other cerebrovascular or aortic conditions.",
       "run_metadata": {
-       "output_tokens": 24,
-       "tool_calls_count": 1,
+       "output_tokens": 178,
+       "tool_calls_count": 8,
        "stop_reason": "complete",
        "fallback_used": false
       }
@@ -928,15 +925,15 @@
       "passed": true,
       "expected_count": 1477,
       "actual_count": 1477,
-      "elapsed_sec": 76.7,
+      "elapsed_sec": 83.8,
       "queries_generated": 1,
       "primary_query_url": "Condition?code=http://snomed.info/sct|64586002",
       "additional_query_urls": [],
-      "raw_response": "Condition?code=http://snomed.info/sct|64586002",
-      "prompt_text": "Search Condition resources with SNOMED 64586002 (Stenosis of carotid artery). Query: Condition?code=http://snomed.info/sct|64586002",
+      "raw_response": "FINAL ANSWER:\n\nCondition?code=http://snomed.info/sct|64586002",
+      "prompt_text": "I need to identify patients with a documented diagnosis of carotid artery stenosis. Search Condition resources for the SNOMED CT concept representing stenosis of the carotid artery. This captures patients with a coded carotid disease entry on their problem list or encounter diagnoses, and should not be broadened to other cerebrovascular or aortic conditions.",
       "run_metadata": {
-       "output_tokens": 24,
-       "tool_calls_count": 1,
+       "output_tokens": 35,
+       "tool_calls_count": 3,
        "stop_reason": "complete",
        "fallback_used": false
       }
@@ -978,12 +975,12 @@
       "passed": true,
       "expected_count": 1477,
       "actual_count": 1477,
-      "elapsed_sec": 1.6,
+      "elapsed_sec": 73.8,
       "queries_generated": 1,
       "primary_query_url": "Condition?code=http://snomed.info/sct|64586002",
       "additional_query_urls": [],
       "raw_response": "Condition?code=http://snomed.info/sct|64586002",
-      "prompt_text": "Search Condition resources with SNOMED 64586002 (Stenosis of carotid artery). Query: Condition?code=http://snomed.info/sct|64586002"
+      "prompt_text": "I need to identify patients with a documented diagnosis of carotid artery stenosis. Search Condition resources for the SNOMED CT concept representing stenosis of the carotid artery. This captures patients with a coded carotid disease entry on their problem list or encounter diagnoses, and should not be broadened to other cerebrovascular or aortic conditions."
      }
     },
     "copilot:claude-sonnet-4.6": {
@@ -1032,16 +1029,14 @@
       "passed": true,
       "expected_count": 1477,
       "actual_count": 1477,
-      "elapsed_sec": 96.2,
-      "queries_generated": 4,
+      "elapsed_sec": 80.7,
+      "queries_generated": 2,
       "primary_query_url": "Condition?code=http://snomed.info/sct|64586002",
       "additional_query_urls": [
-       "Condition?code=http://snomed.info/sct|64586002&_include=Condition:patient",
-       "Condition?code=http://snomed.info/sct|64586002&clinical-status=active",
-       "Procedure?code=http://snomed.info/sct|7311008&_include=Procedure:patient"
+       "Condition?code=http://snomed.info/sct|64586002&clinical-status=active&verification-status=confirmed&_include=Condition:subject"
       ],
-      "raw_response": "## FHIR Query: Condition \u2014 Stenosis of Carotid Artery\n\n```\nCondition?code=http://snomed.info/sct|64586002\n```\n\n---\n\n### \ud83d\udd0d Query Breakdown\n\n| Component | Value |\n|-----------|-------|\n| **Resource Type** | `Condition` |\n| **Search Parameter** | `code` |\n| **Code System** | `http://snomed.info/sct` (SNOMED CT) |\n| **Code** | `64586002` |\n| **Clinical Concept** | Stenosis of carotid artery |\n\n---\n\n### \ud83d\udccb Clinical Context\n\n- **SNOMED CT** `64586002` represents **Stenosis of carotid artery**, a narrowing of one or both carotid arteries\n- Clinically relevant for stroke risk assessment, vascular surgery referrals, and TIA workup\n- Commonly associated with atherosclerosis; may be found alongside diagnoses like cerebrovascular disease or peripheral arterial disease\n\n---\n\n### \ud83d\udd17 Suggested Extensions\n\nTo broaden or enrich the query:\n\n```\n# Include related patient demographics\nCondition?code=http://snomed.info/sct|64586002&_include=Condition:patient\n\n# Filter only active conditions\nCondition?code=http://snomed.info/sct|64586002&clinical-status=active\n\n# Include related procedures (e.g., carotid endarterectomy)\nProcedure?code=http://snomed.info/sct|7311008&_include=Procedure:patient\n```",
-      "prompt_text": "Search Condition resources with SNOMED 64586002 (Stenosis of carotid artery). Query: Condition?code=http://snomed.info/sct|64586002"
+      "raw_response": "```\nCondition?code=http://snomed.info/sct|64586002\n```\n\n**Explanation:**\n\n| Component | Detail |\n|---|---|\n| **Resource** | `Condition` \u2014 covers problem list items and encounter diagnoses |\n| **Code system** | `http://snomed.info/sct` \u2014 SNOMED CT |\n| **Concept** | `64586002` \u2014 *Stenosis of carotid artery* |\n| **Scope** | Precisely targeted to carotid stenosis; does **not** expand to related cerebrovascular (e.g., intracranial arterial stenosis) or aortic conditions |\n\n**Additional tuning you may want to apply:**\n\n- **Active diagnoses only** \u2014 append `&clinical-status=active` to exclude resolved/entered-in-error entries\n- **Verified diagnoses only** \u2014 append `&verification-status=confirmed` to exclude unconfirmed or differential entries\n- **Include patient demographics** \u2014 append `&_include=Condition:subject` to pull linked `Patient` resources in one request\n\nRefined example:\n```\nCondition?code=http://snomed.info/sct|64586002&clinical-status=active&verification-status=confirmed&_include=Condition:subject\n```",
+      "prompt_text": "I need to identify patients with a documented diagnosis of carotid artery stenosis. Search Condition resources for the SNOMED CT concept representing stenosis of the carotid artery. This captures patients with a coded carotid disease entry on their problem list or encounter diagnoses, and should not be broadened to other cerebrovascular or aortic conditions."
      },
      "2-naive": {
       "precision": 1.0,
@@ -1090,17 +1085,15 @@
       "passed": true,
       "expected_count": 1477,
       "actual_count": 1477,
-      "elapsed_sec": 108.5,
-      "queries_generated": 2,
+      "elapsed_sec": 114.4,
+      "queries_generated": 1,
       "primary_query_url": "Condition?code=http://snomed.info/sct|64586002",
-      "additional_query_urls": [
-       "Condition?code=http://snomed.info/sct|64586002,http://hl7.org/fhir/sid/icd-10-cm|I65.21,http://hl7.org/fhir/sid/icd-10-cm|I65.22,http://hl7.org/fhir/sid/icd-10-cm|I65.23,http://hl7.org/fhir/sid/icd-10-cm|I65.29"
-      ],
-      "raw_response": "Here's a full breakdown of the search results:\n\n---\n\n## \ud83d\udd0d FHIR Search Results: Carotid Artery Stenosis\n\n### Query Executed\n```\nCondition?code=http://snomed.info/sct|64586002\n```\n\n---\n\n### \ud83d\udcca Result Summary\n\n| Field | Value |\n|---|---|\n| **Resources Returned** | 10 Condition records |\n| **Resource Type** | `Condition` |\n| **Total (server-reported)** | Not disclosed (`null`) |\n\n---\n\n### \ud83c\udff7\ufe0f Codings Found on Matched Resources\n\nEach returned `Condition` resource carries **three simultaneous codings**, confirming this is a real EHR server with multi-coded data:\n\n| Code System | Code | Display |\n|---|---|---|\n| **SNOMED CT** | `64586002` | Stenosis of carotid artery |\n| **ICD-10-CM** | `I65.29` | Occlusion and stenosis of unspecified carotid artery |\n| **ICD-9-CM** | `433.1` | Occlusion and stenosis of carotid artery |\n\n---\n\n### \ud83d\udca1 Key Observations\n\n1. **Multi-coded records confirmed** \u2014 Every matched `Condition` carries SNOMED CT + ICD-10-CM + ICD-9-CM codings simultaneously, which is the standard pattern for US EHR data.\n\n2. **SNOMED query successfully matched** \u2014 The primary search on `http://snomed.info/sct|64586002` correctly retrieved records coded with *Stenosis of carotid artery*.\n\n3. **Broader coverage possible** \u2014 Since resources also carry ICD-10-CM `I65.29`, consider expanding the query to include additional ICD-10 subtypes (e.g., `I65.21`, `I65.22`, `I65.23`) to capture laterality-specific carotid stenosis not coded with SNOMED:\n\n```\nCondition?code=http://snomed.info/sct|64586002,http://hl7.org/fhir/sid/icd-10-cm|I65.21,http://hl7.org/fhir/sid/icd-10-cm|I65.22,http://hl7.org/fhir/sid/icd-10-cm|I65.23,http://hl7.org/fhir/sid/icd-10-cm|I65.29\n```",
-      "prompt_text": "Search Condition resources with SNOMED 64586002 (Stenosis of carotid artery). Query: Condition?code=http://snomed.info/sct|64586002",
+      "additional_query_urls": [],
+      "raw_response": "All the evidence is conclusive. Here is a summary of every verification step:\n\n| Step | Finding |\n|---|---|\n| **UMLS search** | Core concept is **CUI C0007282 \u2013 \"Carotid Stenosis\"**; root SNOMED code is `64586002` |\n| **SNOMED lookup** | `64586002` = **\"Stenosis of carotid artery (disorder)\"** \u2014 the canonical parent concept |\n| **Server sample (5 Conditions)** | Every single sample carried **exactly `64586002`** (+ matching ICD-10/ICD-9 codes); no sub-type codes observed |\n| **VSAC expansion** | Value set lists 15 child codes (left, right, bilateral, internal, symptomatic, asymptomatic, congenital, etc.) but **all are sub-concepts of 64586002** |\n| **Child-code count check** | Sub-type SNOMED codes returned **0 results** \u2014 server encodes everything under the single parent code |\n| **Root-code count check** | `64586002` returns **1,477 Condition records** \u2014 robust, plausible hit count |\n\nThe server consolidates all carotid stenosis diagnoses under the one root SNOMED concept; no sibling or child codes add additional patients. The Moyamoya syndrome code (`724097003`) and cerebral-infarction sequelae codes were deliberately excluded as they extend into unrelated cerebrovascular territory.\n\n---\n\n**FINAL ANSWER**\n\n```\nCondition?code=http://snomed.info/sct|64586002\n```",
+      "prompt_text": "I need to identify patients with a documented diagnosis of carotid artery stenosis. Search Condition resources for the SNOMED CT concept representing stenosis of the carotid artery. This captures patients with a coded carotid disease entry on their problem list or encounter diagnoses, and should not be broadened to other cerebrovascular or aortic conditions.",
       "run_metadata": {
-       "output_tokens": 604,
-       "tool_calls_count": 1,
+       "output_tokens": 480,
+       "tool_calls_count": 7,
        "stop_reason": "complete",
        "fallback_used": false
       }
@@ -1152,15 +1145,15 @@
       "passed": true,
       "expected_count": 1477,
       "actual_count": 1477,
-      "elapsed_sec": 86.8,
+      "elapsed_sec": 146.0,
       "queries_generated": 1,
-      "primary_query_url": "Condition?code=http://snomed.info/sct|64586002",
+      "primary_query_url": "Condition?code=http://snomed.info/sct|64586002,http://snomed.info/sct|285191000119103,http://snomed.info/sct|285201000119100,http://snomed.info/sct|787044009,http://snomed.info/sct|233964008,http://snomed.info/sct|9611000119107,http://snomed.info/sct|21000119103,http://snomed.info/sct|436021000124100,http://snomed.info/sct|434891000124102,http://snomed.info/sct|450440061000119108,http://snomed.info/sct|1204156004,http://snomed.info/sct|1204158003,http://snomed.info/sct|93396008,http://snomed.info/sct|12720001000004100,http://snomed.info/sct|942401000124100,http://snomed.info/sct|99451000119105",
       "additional_query_urls": [],
-      "raw_response": "Both calls confirm everything looks great. Here's a full summary of findings:\n\n---\n\n## \ud83d\udd0d Server Sampling Results\n\nAll 3 sampled `Condition` resources are **consistently coded** with the same concept across three coding systems:\n\n| System | Code | Display |\n|---|---|---|\n| `http://snomed.info/sct` | **64586002** | Stenosis of carotid artery |\n| `http://hl7.org/fhir/sid/icd-10-cm` | **I65.29** | Occlusion and stenosis of unspecified carotid artery |\n| `http://hl7.org/fhir/sid/icd-9-cm` | **433.1** | Occlusion and stenosis of carotid artery |\n\n---\n\n## \ud83d\udcca Search Results\n\n| Metric | Value |\n|---|---|\n| **Entries Returned** | 10 |\n| **Resource Type** | `Condition` |\n| **Code Match** | \u2705 SNOMED `64586002` confirmed in every result |\n\n---\n\n## \u2705 Query Validation\n\n- **SNOMED `64586002`** (`Stenosis of carotid artery`) is **fully supported** on this server and resolves correctly.\n- All records carry **parallel ICD-10-CM (`I65.29`)** and **ICD-9-CM (`433.1`)** codes \u2014 useful for broader multi-system queries.\n- The query is **precise and unambiguous** \u2014 no over- or under-counting concerns.\n\n---\n\n## \u2705 FINAL ANSWER\n\n```\nCondition?code=http://snomed.info/sct|64586002\n```",
-      "prompt_text": "Search Condition resources with SNOMED 64586002 (Stenosis of carotid artery). Query: Condition?code=http://snomed.info/sct|64586002",
+      "raw_response": "The count remains **1,477** with the full subtype expansion \u2014 confirming this server codes exclusively with the umbrella code `64586002`, so all subtypes roll up cleanly. The query is validated and complete.\n\n---\n\n## Summary of Methodology\n\n| Step | Finding |\n|---|---|\n| **Playbook 1 \u2014 Subtypes** | Used; collected 16 SNOMED subtypes from three HL7/VSAC \"Carotid Stenosis\" value sets (OIDs .637/.638/.639) |\n| **Server sampling** | All 5 sampled Condition records use SNOMED CT `64586002` as the primary code |\n| **Excluded code** | `724097003` (Moyamoya syndrome) \u2014 a rare unrelated syndrome erroneously included in the VSAC set; kept out per the \"no broadening\" constraint |\n| **Count validation** | Umbrella alone = 1,477; full subtype union = 1,477 (server uses umbrella code universally) |\n\n---\n\n**FINAL ANSWER:**\n\n```\nCondition?code=http://snomed.info/sct|64586002,http://snomed.info/sct|285191000119103,http://snomed.info/sct|285201000119100,http://snomed.info/sct|787044009,http://snomed.info/sct|233964008,http://snomed.info/sct|9611000119107,http://snomed.info/sct|21000119103,http://snomed.info/sct|436021000124100,http://snomed.info/sct|434891000124102,http://snomed.info/sct|450440061000119108,http://snomed.info/sct|1204156004,http://snomed.info/sct|1204158003,http://snomed.info/sct|93396008,http://snomed.info/sct|12720001000004100,http://snomed.info/sct|942401000124100,http://snomed.info/sct|99451000119105\n```\n\n**Codes included (all SNOMED CT, all carotid-specific):**\n| Code | Display |\n|---|---|\n| `64586002` | Stenosis of carotid artery *(umbrella)* |\n| `285191000119103` | Stenosis of left carotid artery |\n| `285201000119100` | Stenosis of right carotid artery |\n| `787044009` | Stenosis of bilateral carotid arteries |\n| `233964008` | Internal carotid artery stenosis |\n| `9611000119107` | Symptomatic carotid artery stenosis |\n| `21000119103` | Asymptomatic carotid artery stenosis |\n| `436021000124100` | Carotid artery stenosis without infarction |\n| `434891000124102` | Internal carotid artery stenosis with infarction |\n| `450440061000119108` | Stenosis of intracranial carotid artery |\n| `1204156004` | Asymptomatic stenosis of intracranial carotid artery |\n| `1204158003` | Asymptomatic stenosis of extracranial carotid artery |\n| `93396008` | Congenital stenosis of carotid artery |\n| `12720001000004100` | Stenosis of cavernous portion of right internal carotid artery |\n| `942401000124100` | Stenosis of cavernous portion of left internal carotid artery |\n| `99451000119105` | Cerebral infarction due to stenosis of carotid artery |",
+      "prompt_text": "I need to identify patients with a documented diagnosis of carotid artery stenosis. Search Condition resources for the SNOMED CT concept representing stenosis of the carotid artery. This captures patients with a coded carotid disease entry on their problem list or encounter diagnoses, and should not be broadened to other cerebrovascular or aortic conditions.",
       "run_metadata": {
-       "output_tokens": 506,
-       "tool_calls_count": 2,
+       "output_tokens": 1139,
+       "tool_calls_count": 11,
        "stop_reason": "complete",
        "fallback_used": false
       }
@@ -1202,12 +1195,12 @@
       "passed": true,
       "expected_count": 1477,
       "actual_count": 1477,
-      "elapsed_sec": 86.5,
+      "elapsed_sec": 109.3,
       "queries_generated": 1,
       "primary_query_url": "Condition?code=http://snomed.info/sct|64586002",
       "additional_query_urls": [],
       "raw_response": "Condition?code=http://snomed.info/sct|64586002",
-      "prompt_text": "Search Condition resources with SNOMED 64586002 (Stenosis of carotid artery). Query: Condition?code=http://snomed.info/sct|64586002"
+      "prompt_text": "I need to identify patients with a documented diagnosis of carotid artery stenosis. Search Condition resources for the SNOMED CT concept representing stenosis of the carotid artery. This captures patients with a coded carotid disease entry on their problem list or encounter diagnoses, and should not be broadened to other cerebrovascular or aortic conditions."
      },
      "2-naive": {
       "precision": 1.0,
@@ -1258,15 +1251,15 @@
       "passed": true,
       "expected_count": 1477,
       "actual_count": 1477,
-      "elapsed_sec": 85.3,
+      "elapsed_sec": 84.0,
       "queries_generated": 1,
       "primary_query_url": "Condition?code=http://snomed.info/sct|64586002",
       "additional_query_urls": [],
       "raw_response": "Condition?code=http://snomed.info/sct|64586002",
-      "prompt_text": "Search Condition resources with SNOMED 64586002 (Stenosis of carotid artery). Query: Condition?code=http://snomed.info/sct|64586002",
+      "prompt_text": "I need to identify patients with a documented diagnosis of carotid artery stenosis. Search Condition resources for the SNOMED CT concept representing stenosis of the carotid artery. This captures patients with a coded carotid disease entry on their problem list or encounter diagnoses, and should not be broadened to other cerebrovascular or aortic conditions.",
       "run_metadata": {
-       "output_tokens": 88,
-       "tool_calls_count": 0,
+       "output_tokens": 149,
+       "tool_calls_count": 3,
        "stop_reason": "complete",
        "fallback_used": false
       }
@@ -1318,15 +1311,15 @@
       "passed": true,
       "expected_count": 1477,
       "actual_count": 1477,
-      "elapsed_sec": 81.3,
+      "elapsed_sec": 88.0,
       "queries_generated": 1,
       "primary_query_url": "Condition?code=http://snomed.info/sct|64586002",
       "additional_query_urls": [],
       "raw_response": "Condition?code=http://snomed.info/sct|64586002",
-      "prompt_text": "Search Condition resources with SNOMED 64586002 (Stenosis of carotid artery). Query: Condition?code=http://snomed.info/sct|64586002",
+      "prompt_text": "I need to identify patients with a documented diagnosis of carotid artery stenosis. Search Condition resources for the SNOMED CT concept representing stenosis of the carotid artery. This captures patients with a coded carotid disease entry on their problem list or encounter diagnoses, and should not be broadened to other cerebrovascular or aortic conditions.",
       "run_metadata": {
-       "output_tokens": 81,
-       "tool_calls_count": 1,
+       "output_tokens": 269,
+       "tool_calls_count": 4,
        "stop_reason": "complete",
        "fallback_used": false
       }
@@ -1535,17 +1528,20 @@
      },
      "1-expert": {
       "precision": 1.0,
-      "recall": 1.0,
-      "f1": 1.0,
-      "passed": true,
+      "recall": 0.3822,
+      "f1": 0.553,
+      "passed": false,
       "expected_count": 1672,
-      "actual_count": 1672,
-      "elapsed_sec": 1.9,
-      "queries_generated": 1,
-      "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1191,http://www.nlm.nih.gov/research/umls/rxnorm|32968,http://www.nlm.nih.gov/research/umls/rxnorm|83367",
-      "additional_query_urls": [],
-      "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1191,http://www.nlm.nih.gov/research/umls/rxnorm|32968,http://www.nlm.nih.gov/research/umls/rxnorm|83367",
-      "prompt_text": "Search MedicationRequest with RxNorm codes for aspirin (1191), clopidogrel (32968), atorvastatin (83367). Note: these meds are heavily shared across CHD, PAD, and CAAD populations. Query: MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1191,http://www.nlm.nih.gov/research/umls/rxnorm|32968,http://www.nlm.nih.gov/research/umls/rxnorm|83367"
+      "actual_count": 639,
+      "elapsed_sec": 84.5,
+      "queries_generated": 3,
+      "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1191",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|32968",
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|83367"
+      ],
+      "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1191\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|32968\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|83367",
+      "prompt_text": "Identify patients treated pharmacologically for cardiovascular risk reduction consistent with carotid atherosclerosis via their medication orders. Search MedicationRequest resources for the antiplatelet agents \u2014 aspirin and clopidogrel \u2014 and the statin atorvastatin, all coded in RxNorm. Be aware that these medications are heavily cross-indicated across coronary heart disease, peripheral arterial disease, and carotid artery disease, so a medication-only cohort will substantially over-recall against the broader atherosclerotic vascular population."
      },
      "2-naive": {
       "precision": 1.0,
@@ -1596,15 +1592,15 @@
       "passed": true,
       "expected_count": 1672,
       "actual_count": 1672,
-      "elapsed_sec": 87.8,
+      "elapsed_sec": 94.3,
       "queries_generated": 1,
       "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1191,http://www.nlm.nih.gov/research/umls/rxnorm|32968,http://www.nlm.nih.gov/research/umls/rxnorm|83367",
       "additional_query_urls": [],
       "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1191,http://www.nlm.nih.gov/research/umls/rxnorm|32968,http://www.nlm.nih.gov/research/umls/rxnorm|83367",
-      "prompt_text": "Search MedicationRequest with RxNorm codes for aspirin (1191), clopidogrel (32968), atorvastatin (83367). Note: these meds are heavily shared across CHD, PAD, and CAAD populations. Query: MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1191,http://www.nlm.nih.gov/research/umls/rxnorm|32968,http://www.nlm.nih.gov/research/umls/rxnorm|83367",
+      "prompt_text": "Identify patients treated pharmacologically for cardiovascular risk reduction consistent with carotid atherosclerosis via their medication orders. Search MedicationRequest resources for the antiplatelet agents \u2014 aspirin and clopidogrel \u2014 and the statin atorvastatin, all coded in RxNorm. Be aware that these medications are heavily cross-indicated across coronary heart disease, peripheral arterial disease, and carotid artery disease, so a medication-only cohort will substantially over-recall against the broader atherosclerotic vascular population.",
       "run_metadata": {
        "output_tokens": 97,
-       "tool_calls_count": 1,
+       "tool_calls_count": 5,
        "stop_reason": "complete",
        "fallback_used": false
       }
@@ -1658,15 +1654,15 @@
       "passed": true,
       "expected_count": 1672,
       "actual_count": 1672,
-      "elapsed_sec": 87.3,
+      "elapsed_sec": 101.5,
       "queries_generated": 1,
       "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1191,http://www.nlm.nih.gov/research/umls/rxnorm|32968,http://www.nlm.nih.gov/research/umls/rxnorm|83367",
       "additional_query_urls": [],
       "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1191,http://www.nlm.nih.gov/research/umls/rxnorm|32968,http://www.nlm.nih.gov/research/umls/rxnorm|83367",
-      "prompt_text": "Search MedicationRequest with RxNorm codes for aspirin (1191), clopidogrel (32968), atorvastatin (83367). Note: these meds are heavily shared across CHD, PAD, and CAAD populations. Query: MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1191,http://www.nlm.nih.gov/research/umls/rxnorm|32968,http://www.nlm.nih.gov/research/umls/rxnorm|83367",
+      "prompt_text": "Identify patients treated pharmacologically for cardiovascular risk reduction consistent with carotid atherosclerosis via their medication orders. Search MedicationRequest resources for the antiplatelet agents \u2014 aspirin and clopidogrel \u2014 and the statin atorvastatin, all coded in RxNorm. Be aware that these medications are heavily cross-indicated across coronary heart disease, peripheral arterial disease, and carotid artery disease, so a medication-only cohort will substantially over-recall against the broader atherosclerotic vascular population.",
       "run_metadata": {
        "output_tokens": 97,
-       "tool_calls_count": 1,
+       "tool_calls_count": 7,
        "stop_reason": "complete",
        "fallback_used": false
       }
@@ -1705,17 +1701,20 @@
      },
      "1-expert": {
       "precision": 1.0,
-      "recall": 1.0,
-      "f1": 1.0,
-      "passed": true,
+      "recall": 0.3822,
+      "f1": 0.553,
+      "passed": false,
       "expected_count": 1672,
-      "actual_count": 1672,
-      "elapsed_sec": 1.8,
-      "queries_generated": 1,
-      "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1191,http://www.nlm.nih.gov/research/umls/rxnorm|32968,http://www.nlm.nih.gov/research/umls/rxnorm|83367",
-      "additional_query_urls": [],
-      "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1191,http://www.nlm.nih.gov/research/umls/rxnorm|32968,http://www.nlm.nih.gov/research/umls/rxnorm|83367",
-      "prompt_text": "Search MedicationRequest with RxNorm codes for aspirin (1191), clopidogrel (32968), atorvastatin (83367). Note: these meds are heavily shared across CHD, PAD, and CAAD populations. Query: MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1191,http://www.nlm.nih.gov/research/umls/rxnorm|32968,http://www.nlm.nih.gov/research/umls/rxnorm|83367"
+      "actual_count": 639,
+      "elapsed_sec": 84.8,
+      "queries_generated": 3,
+      "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1191",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|32968",
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|83367"
+      ],
+      "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1191\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|32968\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|83367",
+      "prompt_text": "Identify patients treated pharmacologically for cardiovascular risk reduction consistent with carotid atherosclerosis via their medication orders. Search MedicationRequest resources for the antiplatelet agents \u2014 aspirin and clopidogrel \u2014 and the statin atorvastatin, all coded in RxNorm. Be aware that these medications are heavily cross-indicated across coronary heart disease, peripheral arterial disease, and carotid artery disease, so a medication-only cohort will substantially over-recall against the broader atherosclerotic vascular population."
      }
     },
     "copilot:claude-sonnet-4.6": {
@@ -1757,17 +1756,23 @@
      },
      "1-expert": {
       "precision": 1.0,
-      "recall": 1.0,
-      "f1": 1.0,
-      "passed": true,
+      "recall": 0.3822,
+      "f1": 0.553,
+      "passed": false,
       "expected_count": 1672,
-      "actual_count": 1672,
-      "elapsed_sec": 111.6,
-      "queries_generated": 1,
-      "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1191,http://www.nlm.nih.gov/research/umls/rxnorm|32968,http://www.nlm.nih.gov/research/umls/rxnorm|83367",
-      "additional_query_urls": [],
-      "raw_response": "## FHIR Query\n\n```\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1191,http://www.nlm.nih.gov/research/umls/rxnorm|32968,http://www.nlm.nih.gov/research/umls/rxnorm|83367\n```\n\n---\n\n### Query Breakdown\n\n| Component | Details |\n|---|---|\n| **Resource** | `MedicationRequest` |\n| **Search Parameter** | `code` (token, comma-separated = **OR** logic) |\n| **Code System** | `http://www.nlm.nih.gov/research/umls/rxnorm` |\n\n### Medication Codes\n\n| Drug | RxNorm Code | Primary Use in Vascular Populations |\n|---|---|---|\n| **Aspirin** | `1191` | Antiplatelet \u2014 CHD, PAD, CAAD |\n| **Clopidogrel** | `32968` | Antiplatelet \u2014 CHD, PAD, CAAD (especially post-stent) |\n| **Atorvastatin** | `83367` | Statin \u2014 LDL reduction across all three populations |\n\n---\n\n### Key Notes\n- \u2705 **Comma-separated values** on the same `code` parameter apply **OR logic** \u2014 returns records matching *any* of the three codes\n- \u26a0\ufe0f **RxNorm ingredient-level codes** are used here (broad). Consider supplementing with **clinical drug codes** (e.g., dose-specific) if granularity is needed\n- \u26a0\ufe0f These codes represent **ingredient concepts** \u2014 branded/generic variants may use different RxNorm codes requiring `_include` or hierarchy expansion\n- \ud83d\udca1 Add `&status=active` to filter for currently active prescriptions only\n- \ud83d\udca1 Add `&_include=MedicationRequest:subject` to retrieve associated Patient resources in one request",
-      "prompt_text": "Search MedicationRequest with RxNorm codes for aspirin (1191), clopidogrel (32968), atorvastatin (83367). Note: these meds are heavily shared across CHD, PAD, and CAAD populations. Query: MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1191,http://www.nlm.nih.gov/research/umls/rxnorm|32968,http://www.nlm.nih.gov/research/umls/rxnorm|83367"
+      "actual_count": 639,
+      "elapsed_sec": 100.5,
+      "queries_generated": 6,
+      "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1191",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|32968",
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|83367",
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1191&status=active",
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|32968&status=active",
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|83367&status=active"
+      ],
+      "raw_response": "```\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1191\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|32968\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|83367\n```\n\n---\n\n### Query Breakdown\n\n| Query | Drug | RxNorm CUI | Class | Cardiovascular Role |\n|---|---|---|---|---|\n| `rxnorm\\|1191` | Aspirin | 1191 | Antiplatelet / NSAID | Platelet aggregation inhibition; stroke/TIA secondary prevention |\n| `rxnorm\\|32968` | Clopidogrel | 32968 | Antiplatelet (P2Y12 inhibitor) | Dual antiplatelet therapy; post-stenting / symptomatic carotid disease |\n| `rxnorm\\|83367` | Atorvastatin | 83367 | HMG-CoA reductase inhibitor (statin) | Plaque stabilization, LDL-C reduction, endothelial protection |\n\n---\n\n### Key Clinical & Query Caveats\n\n1. **Cross-indication over-recall** \u2014 All three drugs are first-line across the entire atherosclerotic spectrum (CAD, PAD, cerebrovascular disease). A medication-only cohort cannot be restricted to carotid disease without additional filtering.\n\n2. **Ingredient-level codes used** \u2014 RxNorm CUIs `1191`, `32968`, and `83367` are *ingredient* codes. EHR systems may record dose-specific clinical drug codes (e.g., aspirin 81 mg tab = `308460`). Consider using `_include` or a ValueSet with `$expand` to capture all strength/formulation descendants.\n\n3. **Recommended refinement strategies**:\n   - Chain with a carotid-specific `Condition` (e.g., ICD-10 `I65.2`, SNOMED `413102000`) via `subject` linkage\n   - Add `status=active` to limit to current therapy\n   - Add `intent=order` to exclude plans/proposals\n   - Use `_revinclude=MedicationRequest:subject` off a pre-filtered `Patient` list for cohort narrowing\n\n4. **Status filter suggestion**:\n```\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1191&status=active\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|32968&status=active\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|83367&status=active\n```",
+      "prompt_text": "Identify patients treated pharmacologically for cardiovascular risk reduction consistent with carotid atherosclerosis via their medication orders. Search MedicationRequest resources for the antiplatelet agents \u2014 aspirin and clopidogrel \u2014 and the statin atorvastatin, all coded in RxNorm. Be aware that these medications are heavily cross-indicated across coronary heart disease, peripheral arterial disease, and carotid artery disease, so a medication-only cohort will substantially over-recall against the broader atherosclerotic vascular population."
      },
      "2-naive": {
       "precision": 1.0,
@@ -1813,23 +1818,23 @@
      },
      "2-expert": {
       "precision": 1.0,
-      "recall": 1.0,
-      "f1": 1.0,
-      "passed": true,
+      "recall": 0.3822,
+      "f1": 0.553,
+      "passed": false,
       "expected_count": 1672,
-      "actual_count": 1672,
-      "elapsed_sec": 158.6,
+      "actual_count": 639,
+      "elapsed_sec": 192.0,
       "queries_generated": 3,
-      "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1191,http://www.nlm.nih.gov/research/umls/rxnorm|32968,http://www.nlm.nih.gov/research/umls/rxnorm|83367",
+      "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1191",
       "additional_query_urls": [
-       "Patient?_has:MedicationRequest:patient:code=http://www.nlm.nih.gov/research/umls/rxnorm|1191,http://www.nlm.nih.gov/research/umls/rxnorm|32968,http://www.nlm.nih.gov/research/umls/rxnorm|83367&_has:Condition:patient:code=http://hl7.org/fhir/sid/icd-10-cm|I25.10",
-       "Patient?_has:MedicationRequest:patient:code=http://www.nlm.nih.gov/research/umls/rxnorm|1191,http://www.nlm.nih.gov/research/umls/rxnorm|32968,http://www.nlm.nih.gov/research/umls/rxnorm|83367&_has:Condition:patient:code=http://hl7.org/fhir/sid/icd-10-cm|I73.9"
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|32968",
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|83367"
       ],
-      "raw_response": "The query executes cleanly. Here's a full breakdown of what the server told us:\n\n---\n\n## \u2705 Query Results\n\n```\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1191,http://www.nlm.nih.gov/research/umls/rxnorm|32968,http://www.nlm.nih.gov/research/umls/rxnorm|83367\n```\n\n| Drug | RxNorm Code | Hits in Sample | Status |\n|------|------------|---------------|--------|\n| Aspirin | 1191 | \u2705 Confirmed | Ingredient-level match |\n| Clopidogrel | 32968 | \u2705 Confirmed | Ingredient-level match |\n| Atorvastatin | 83367 | \u2705 Confirmed | Ingredient-level match |\n\n**Entries returned:** 10 (server did not return a bundle `total`, so true count is \u226510)\n**Category observed:** All sampled records carry `medicationrequest-category = community` \u2192 outpatient/community pharmacy prescriptions \u2014 consistent with long-term chronic cardiovascular maintenance therapy.\n\n---\n\n## \ud83d\udd2c Server Coding Observations\n\n| Finding | Detail |\n|---------|--------|\n| **Single coding system** | RxNorm is the **only** medication coding system present \u2014 no NDC, NDF-RT, or brand codes detected |\n| **Ingredient-level codes** | All three codes are **RxNorm ingredient-level** concepts (not clinical drug, SCD, or brand). The server codes meds at the ingredient tier. |\n| **No dual coding** | Unlike Conditions (which often carry SNOMED + ICD-10), MedicationRequests here are single-coded via RxNorm only \u2014 the query as written is sufficient and complete |\n\n---\n\n## \u26a0\ufe0f Critical Cross-Population Overlap Warning\n\nAs noted in the request, these medications are **non-specific** shared first-line therapies across three vascular disease populations:\n\n| Drug | CHD | PAD | CAAD |\n|------|-----|-----|------|\n| Aspirin (antiplatelet) | \u2705 First-line | \u2705 First-line | \u2705 First-line |\n| Clopidogrel (antiplatelet) | \u2705 Post-stent | \u2705 First-line | \u2705 Post-stent |\n| Atorvastatin (statin) | \u2705 LDL management | \u2705 LDL management | \u2705 LDL management |\n\n> **A patient returned by this query could have CHD, PAD, CAAD, all three, or none of them** (e.g., primary prevention patient). This query alone **cannot** differentiate disease populations.\n\n---\n\n## \ud83d\udca1 Recommendations to Sharpen Population Specificity\n\nTo use this query responsibly for population-specific analytics, **pair it with Condition resource queries** using `_has` reverse chaining or client-side joins:\n\n**CHD-specific medication patients:**\n```\nPatient?_has:MedicationRequest:patient:code=http://www.nlm.nih.gov/research/umls/rxnorm|1191,http://www.nlm.nih.gov/research/umls/rxnorm|32968,http://www.nlm.nih.gov/research/umls/rxnorm|83367&_has:Condition:patient:code=http://hl7.org/fhir/sid/icd-10-cm|I25.10\n```\n\n**PAD-specific medication patients:**\n```\nPatient?_has:MedicationRequest:patient:code=http://www.nlm.nih.gov/research/umls/rxnorm|1191,http://www.nlm.nih.gov/research/umls/rxnorm|32968,http://www.nlm.nih.gov/research/umls/rxnorm|83367&_has:Condition:patient:code=http://hl7.org/fhir/sid/icd-10-cm|I73.9\n```\n\nAdditionally, consider **expanding ingredient codes to clinical-drug level** (e.g., aspirin 81 mg, aspirin 325 mg) if the server's precision increases \u2014 though at this server, ingredient-level is clearly sufficient.\n\n---\n\n## \u2705 Final Validated Query\n\n```\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1191,http://www.nlm.nih.gov/research/umls/rxnorm|32968,http://www.nlm.nih.gov/research/umls/rxnorm|83367\n```",
-      "prompt_text": "Search MedicationRequest with RxNorm codes for aspirin (1191), clopidogrel (32968), atorvastatin (83367). Note: these meds are heavily shared across CHD, PAD, and CAAD populations. Query: MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1191,http://www.nlm.nih.gov/research/umls/rxnorm|32968,http://www.nlm.nih.gov/research/umls/rxnorm|83367",
+      "raw_response": "Product-level codes return **0 records** \u2014 this server exclusively stores medications at the **ingredient level**. This perfectly matches all five server samples and confirms no additional product codes are needed.\n\n---\n\n## Evidence Summary\n\n| Drug | Role | RxNorm Ingredient Code | Verified Count |\n|---|---|---|---|\n| Aspirin | Antiplatelet | `1191` | 639 MedicationRequests |\n| Clopidogrel | Antiplatelet | `32968` | 480 MedicationRequests |\n| Atorvastatin | Statin | `83367` | 553 MedicationRequests |\n\n**Key findings from investigation:**\n- \u2705 Server confirmed as FHIR R4 (Azure), using **RxNorm ingredient-level codes** exclusively \u2014 product/brand/dose-specific codes (e.g., Plavix 213169, aspirin 81mg 243670, atorvastatin 10mg 617312) all return 0\n- \u2705 All three ingredient codes confirmed current in RXNORM (June 2026 edition) via `vsac_lookup_code`\n- \u2705 Codes cross-referenced against active VSAC value sets: aspirin/clopidogrel covered by \"Aspirin and Other Antiplatelets\" (AHA, 194 codes); clopidogrel validated via \"Clopidogrels\" (14 codes, includes 32968); atorvastatin validated via Optum atorvastatin expansion (27 codes, includes 83367)\n- \u26a0\ufe0f **Over-recall caveat confirmed**: these medications are first-line for all atherosclerotic vascular disease (CAD, PAD, carotid). The medication-only cohort will substantially exceed true carotid atherosclerosis patients \u2014 downstream filtering against carotid-specific diagnoses/procedures is required for precision\n\n---\n\n**FINAL ANSWER:**\n\n```\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1191\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|32968\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|83367\n```",
+      "prompt_text": "Identify patients treated pharmacologically for cardiovascular risk reduction consistent with carotid atherosclerosis via their medication orders. Search MedicationRequest resources for the antiplatelet agents \u2014 aspirin and clopidogrel \u2014 and the statin atorvastatin, all coded in RxNorm. Be aware that these medications are heavily cross-indicated across coronary heart disease, peripheral arterial disease, and carotid artery disease, so a medication-only cohort will substantially over-recall against the broader atherosclerotic vascular population.",
       "run_metadata": {
-       "output_tokens": 1750,
-       "tool_calls_count": 2,
+       "output_tokens": 859,
+       "tool_calls_count": 25,
        "stop_reason": "complete",
        "fallback_used": false
       }
@@ -1885,15 +1890,15 @@
       "passed": true,
       "expected_count": 1672,
       "actual_count": 1672,
-      "elapsed_sec": 107.2,
+      "elapsed_sec": 128.3,
       "queries_generated": 1,
       "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1191,http://www.nlm.nih.gov/research/umls/rxnorm|32968,http://www.nlm.nih.gov/research/umls/rxnorm|83367",
       "additional_query_urls": [],
-      "raw_response": "All validations passed. Here is the complete evidence summary:\n\n---\n\n## \u2705 Validation Report\n\n### Code Verification (VSAC + Live Server Sampling)\n\n| Drug | RxNorm Code | VSAC Display | Server Coding System | Confirmed in Sample |\n|---|---|---|---|---|\n| Aspirin | `1191` | aspirin | `http://www.nlm.nih.gov/research/umls/rxnorm` | \u2705 Yes |\n| Clopidogrel | `32968` | clopidogrel | `http://www.nlm.nih.gov/research/umls/rxnorm` | \u2705 Yes |\n| Atorvastatin | `83367` | atorvastatin | `http://www.nlm.nih.gov/research/umls/rxnorm` | \u2705 Yes |\n\n> **Key finding from sampling:** All 5 sampled `MedicationRequest` resources use *exactly* the `http://www.nlm.nih.gov/research/umls/rxnorm` system URI \u2014 no alternate systems (e.g., NDC, NDF-RT) were observed. The provided codes are a perfect match.\n\n### Query Result\n| Query | Match Count |\n|---|---|\n| Aspirin \u222a Clopidogrel \u222a Atorvastatin (`MedicationRequest`) | **1,672** |\n\n> **Plausibility note:** 1,672 is a clinically reasonable count for a shared CHD/PAD/CAAD antiplatelet + statin population. No over-constraining filters are present (no date, status, or patient filters applied), so this represents the full available cohort across all three populations.\n\n---\n\n## FINAL ANSWER\n\n```\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1191,http://www.nlm.nih.gov/research/umls/rxnorm|32968,http://www.nlm.nih.gov/research/umls/rxnorm|83367\n```",
-      "prompt_text": "Search MedicationRequest with RxNorm codes for aspirin (1191), clopidogrel (32968), atorvastatin (83367). Note: these meds are heavily shared across CHD, PAD, and CAAD populations. Query: MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1191,http://www.nlm.nih.gov/research/umls/rxnorm|32968,http://www.nlm.nih.gov/research/umls/rxnorm|83367",
+      "raw_response": "All results verified. Here's the complete evidence summary before the final answer:\n\n---\n\n### Evidence Summary\n\n| Agent | RxNorm Code | Confirmed In Sample | MedicationRequest Count |\n|---|---|---|---|\n| Aspirin (antiplatelet) | `1191` | \u2705 live server | 639 |\n| Clopidogrel (antiplatelet) | `32968` | \u2705 live server | 480 |\n| Atorvastatin (statin) | `83367` | \u2705 live server | 553 |\n| **Combined OR** | all three | \u2014 | **1,672** |\n\n> \u26a0\ufe0f **Over-recall caveat confirmed**: 639 + 480 + 553 = 1,672 (no cross-drug record overlap), but at the *patient* level there will be substantial overlap, and all three agents are heavily cross-indicated for coronary artery disease, peripheral arterial disease, and stroke \u2014 not just carotid atherosclerosis. To narrow to a carotid-specific cohort, intersect this medication signal with a carotid-stenosis `Condition` (SNOMED `64.5.., ICD-10 I65.2x`) or a carotid-endarterectomy `Procedure` using `_has` chaining.\n\n---\n\n**FINAL ANSWER**\n\n```\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1191,http://www.nlm.nih.gov/research/umls/rxnorm|32968,http://www.nlm.nih.gov/research/umls/rxnorm|83367\n```",
+      "prompt_text": "Identify patients treated pharmacologically for cardiovascular risk reduction consistent with carotid atherosclerosis via their medication orders. Search MedicationRequest resources for the antiplatelet agents \u2014 aspirin and clopidogrel \u2014 and the statin atorvastatin, all coded in RxNorm. Be aware that these medications are heavily cross-indicated across coronary heart disease, peripheral arterial disease, and carotid artery disease, so a medication-only cohort will substantially over-recall against the broader atherosclerotic vascular population.",
       "run_metadata": {
-       "output_tokens": 657,
-       "tool_calls_count": 5,
+       "output_tokens": 838,
+       "tool_calls_count": 11,
        "stop_reason": "complete",
        "fallback_used": false
       }
@@ -1937,12 +1942,12 @@
       "passed": true,
       "expected_count": 1672,
       "actual_count": 1672,
-      "elapsed_sec": 104.3,
+      "elapsed_sec": 104.7,
       "queries_generated": 1,
-      "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1191,http://www.nlm.nih.gov/research/umls/rxnorm|32968,http://www.nlm.nih.gov/research/umls/rxnorm|83367",
+      "primary_query_url": "MedicationRequest?intent=order&code=http://www.nlm.nih.gov/research/umls/rxnorm|1191,http://www.nlm.nih.gov/research/umls/rxnorm|32968,http://www.nlm.nih.gov/research/umls/rxnorm|83367",
       "additional_query_urls": [],
-      "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1191,http://www.nlm.nih.gov/research/umls/rxnorm|32968,http://www.nlm.nih.gov/research/umls/rxnorm|83367",
-      "prompt_text": "Search MedicationRequest with RxNorm codes for aspirin (1191), clopidogrel (32968), atorvastatin (83367). Note: these meds are heavily shared across CHD, PAD, and CAAD populations. Query: MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1191,http://www.nlm.nih.gov/research/umls/rxnorm|32968,http://www.nlm.nih.gov/research/umls/rxnorm|83367"
+      "raw_response": "MedicationRequest?intent=order&code=http://www.nlm.nih.gov/research/umls/rxnorm|1191,http://www.nlm.nih.gov/research/umls/rxnorm|32968,http://www.nlm.nih.gov/research/umls/rxnorm|83367",
+      "prompt_text": "Identify patients treated pharmacologically for cardiovascular risk reduction consistent with carotid atherosclerosis via their medication orders. Search MedicationRequest resources for the antiplatelet agents \u2014 aspirin and clopidogrel \u2014 and the statin atorvastatin, all coded in RxNorm. Be aware that these medications are heavily cross-indicated across coronary heart disease, peripheral arterial disease, and carotid artery disease, so a medication-only cohort will substantially over-recall against the broader atherosclerotic vascular population."
      },
      "2-naive": {
       "elapsed_sec": 608.9,
@@ -1975,15 +1980,15 @@
       "passed": true,
       "expected_count": 1672,
       "actual_count": 1672,
-      "elapsed_sec": 113.2,
+      "elapsed_sec": 98.2,
       "queries_generated": 1,
       "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1191,http://www.nlm.nih.gov/research/umls/rxnorm|32968,http://www.nlm.nih.gov/research/umls/rxnorm|83367",
       "additional_query_urls": [],
       "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1191,http://www.nlm.nih.gov/research/umls/rxnorm|32968,http://www.nlm.nih.gov/research/umls/rxnorm|83367",
-      "prompt_text": "Search MedicationRequest with RxNorm codes for aspirin (1191), clopidogrel (32968), atorvastatin (83367). Note: these meds are heavily shared across CHD, PAD, and CAAD populations. Query: MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1191,http://www.nlm.nih.gov/research/umls/rxnorm|32968,http://www.nlm.nih.gov/research/umls/rxnorm|83367",
+      "prompt_text": "Identify patients treated pharmacologically for cardiovascular risk reduction consistent with carotid atherosclerosis via their medication orders. Search MedicationRequest resources for the antiplatelet agents \u2014 aspirin and clopidogrel \u2014 and the statin atorvastatin, all coded in RxNorm. Be aware that these medications are heavily cross-indicated across coronary heart disease, peripheral arterial disease, and carotid artery disease, so a medication-only cohort will substantially over-recall against the broader atherosclerotic vascular population.",
       "run_metadata": {
-       "output_tokens": 99,
-       "tool_calls_count": 0,
+       "output_tokens": 331,
+       "tool_calls_count": 8,
        "stop_reason": "complete",
        "fallback_used": false
       }
@@ -2035,15 +2040,15 @@
       "passed": true,
       "expected_count": 1672,
       "actual_count": 1672,
-      "elapsed_sec": 95.5,
+      "elapsed_sec": 99.3,
       "queries_generated": 1,
       "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1191,http://www.nlm.nih.gov/research/umls/rxnorm|32968,http://www.nlm.nih.gov/research/umls/rxnorm|83367",
       "additional_query_urls": [],
       "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1191,http://www.nlm.nih.gov/research/umls/rxnorm|32968,http://www.nlm.nih.gov/research/umls/rxnorm|83367",
-      "prompt_text": "Search MedicationRequest with RxNorm codes for aspirin (1191), clopidogrel (32968), atorvastatin (83367). Note: these meds are heavily shared across CHD, PAD, and CAAD populations. Query: MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1191,http://www.nlm.nih.gov/research/umls/rxnorm|32968,http://www.nlm.nih.gov/research/umls/rxnorm|83367",
+      "prompt_text": "Identify patients treated pharmacologically for cardiovascular risk reduction consistent with carotid atherosclerosis via their medication orders. Search MedicationRequest resources for the antiplatelet agents \u2014 aspirin and clopidogrel \u2014 and the statin atorvastatin, all coded in RxNorm. Be aware that these medications are heavily cross-indicated across coronary heart disease, peripheral arterial disease, and carotid artery disease, so a medication-only cohort will substantially over-recall against the broader atherosclerotic vascular population.",
       "run_metadata": {
-       "output_tokens": 92,
-       "tool_calls_count": 3,
+       "output_tokens": 122,
+       "tool_calls_count": 6,
        "stop_reason": "complete",
        "fallback_used": false
       }
@@ -2273,18 +2278,18 @@
       "prompt_text": "Find patients who have undergone carotid artery revascularization \u2014 angioplasty or stenting performed to treat carotid artery stenosis and reduce stroke risk."
      },
      "1-expert": {
-      "precision": 1.0,
-      "recall": 1.0,
-      "f1": 1.0,
-      "passed": true,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
       "expected_count": 224,
-      "actual_count": 224,
-      "elapsed_sec": 0.3,
+      "actual_count": 0,
+      "elapsed_sec": 18.7,
       "queries_generated": 1,
-      "primary_query_url": "Procedure?code=http://snomed.info/sct|233259003",
+      "primary_query_url": "Procedure?code=http://snomed.info/sct|175366007",
       "additional_query_urls": [],
-      "raw_response": "Procedure?code=http://snomed.info/sct|233259003",
-      "prompt_text": "Search Procedure resources with SNOMED 233259003 (Angioplasty of external carotid artery). Query: Procedure?code=http://snomed.info/sct|233259003"
+      "raw_response": "Procedure?code=http://snomed.info/sct|175366007",
+      "prompt_text": "I need to find patients who have undergone carotid revascularization as treatment for carotid atherosclerosis. Search Procedure resources for carotid angioplasty coded in SNOMED CT \u2014 this is a non-coronary vascular-surgical intervention distinct from coronary revascularization procedures. Target Procedure resources specifically, not Condition or MedicationRequest resources."
      },
      "2-naive": {
       "precision": 1.0,
@@ -2333,15 +2338,15 @@
       "passed": true,
       "expected_count": 224,
       "actual_count": 224,
-      "elapsed_sec": 20.9,
+      "elapsed_sec": 44.6,
       "queries_generated": 1,
       "primary_query_url": "Procedure?code=http://snomed.info/sct|233259003",
       "additional_query_urls": [],
       "raw_response": "Procedure?code=http://snomed.info/sct|233259003",
-      "prompt_text": "Search Procedure resources with SNOMED 233259003 (Angioplasty of external carotid artery). Query: Procedure?code=http://snomed.info/sct|233259003",
+      "prompt_text": "I need to find patients who have undergone carotid revascularization as treatment for carotid atherosclerosis. Search Procedure resources for carotid angioplasty coded in SNOMED CT \u2014 this is a non-coronary vascular-surgical intervention distinct from coronary revascularization procedures. Target Procedure resources specifically, not Condition or MedicationRequest resources.",
       "run_metadata": {
        "output_tokens": 25,
-       "tool_calls_count": 1,
+       "tool_calls_count": 8,
        "stop_reason": "complete",
        "fallback_used": false
       }
@@ -2393,15 +2398,15 @@
       "passed": true,
       "expected_count": 224,
       "actual_count": 224,
-      "elapsed_sec": 20.9,
+      "elapsed_sec": 40.4,
       "queries_generated": 1,
       "primary_query_url": "Procedure?code=http://snomed.info/sct|233259003",
       "additional_query_urls": [],
       "raw_response": "Procedure?code=http://snomed.info/sct|233259003",
-      "prompt_text": "Search Procedure resources with SNOMED 233259003 (Angioplasty of external carotid artery). Query: Procedure?code=http://snomed.info/sct|233259003",
+      "prompt_text": "I need to find patients who have undergone carotid revascularization as treatment for carotid atherosclerosis. Search Procedure resources for carotid angioplasty coded in SNOMED CT \u2014 this is a non-coronary vascular-surgical intervention distinct from coronary revascularization procedures. Target Procedure resources specifically, not Condition or MedicationRequest resources.",
       "run_metadata": {
        "output_tokens": 25,
-       "tool_calls_count": 1,
+       "tool_calls_count": 9,
        "stop_reason": "complete",
        "fallback_used": false
       }
@@ -2440,18 +2445,18 @@
       "prompt_text": "Find patients who have undergone carotid artery revascularization \u2014 angioplasty or stenting performed to treat carotid artery stenosis and reduce stroke risk."
      },
      "1-expert": {
-      "precision": 1.0,
-      "recall": 1.0,
-      "f1": 1.0,
-      "passed": true,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
       "expected_count": 224,
-      "actual_count": 224,
-      "elapsed_sec": 0.3,
+      "actual_count": 0,
+      "elapsed_sec": 17.7,
       "queries_generated": 1,
-      "primary_query_url": "Procedure?code=http://snomed.info/sct|233259003",
+      "primary_query_url": "Procedure?code=http://snomed.info/sct|175311006",
       "additional_query_urls": [],
-      "raw_response": "Procedure?code=http://snomed.info/sct|233259003",
-      "prompt_text": "Search Procedure resources with SNOMED 233259003 (Angioplasty of external carotid artery). Query: Procedure?code=http://snomed.info/sct|233259003"
+      "raw_response": "Procedure?code=http://snomed.info/sct|175311006",
+      "prompt_text": "I need to find patients who have undergone carotid revascularization as treatment for carotid atherosclerosis. Search Procedure resources for carotid angioplasty coded in SNOMED CT \u2014 this is a non-coronary vascular-surgical intervention distinct from coronary revascularization procedures. Target Procedure resources specifically, not Condition or MedicationRequest resources."
      }
     },
     "copilot:claude-sonnet-4.6": {
@@ -2493,23 +2498,20 @@
       "prompt_text": "Find patients who have undergone carotid artery revascularization \u2014 angioplasty or stenting performed to treat carotid artery stenosis and reduce stroke risk."
      },
      "1-expert": {
-      "precision": 1.0,
-      "recall": 1.0,
-      "f1": 1.0,
-      "passed": true,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
       "expected_count": 224,
-      "actual_count": 224,
-      "elapsed_sec": 44.6,
-      "queries_generated": 5,
-      "primary_query_url": "Procedure?code=http://snomed.info/sct|233259003",
+      "actual_count": 0,
+      "elapsed_sec": 34.4,
+      "queries_generated": 2,
+      "primary_query_url": "Procedure?code=http://snomed.info/sct|418285008",
       "additional_query_urls": [
-       "Procedure?code=http://snomed.info/sct|233259003&_include=Procedure:patient",
-       "Procedure?code=http://snomed.info/sct|233259003&status=completed",
-       "Procedure?code=http://snomed.info/sct|233259003&date=ge2025-01-01&date=le2026-06-02",
-       "Procedure?code=http://snomed.info/sct|233259003&_include=Procedure:encounter"
+       "Procedure?code=http://snomed.info/sct|418285008,http://snomed.info/sct|233258006,http://snomed.info/sct|429639007,http://snomed.info/sct|7736000"
       ],
-      "raw_response": "## FHIR Query: Procedure by SNOMED Code\n\n```\nProcedure?code=http://snomed.info/sct|233259003\n```\n\n### Query Breakdown\n\n| Component | Value | Description |\n|-----------|-------|-------------|\n| **Resource** | `Procedure` | Clinical procedure records |\n| **Parameter** | `code` | Procedure code search parameter |\n| **System** | `http://snomed.info/sct` | SNOMED CT code system |\n| **Code** | `233259003` | Angioplasty of external carotid artery |\n\n### Clinical Context\n- **Procedure**: Angioplasty of external carotid artery\n- **SNOMED CT Code**: `233259003`\n- **Use Case**: Retrieves all recorded procedures matching this specific vascular intervention on the external carotid artery\n\n### Optional Enhancements\n\n```\n# Include patient information\nProcedure?code=http://snomed.info/sct|233259003&_include=Procedure:patient\n\n# Filter by status (completed procedures only)\nProcedure?code=http://snomed.info/sct|233259003&status=completed\n\n# Filter by date range\nProcedure?code=http://snomed.info/sct|233259003&date=ge2025-01-01&date=le2026-06-02\n\n# Include encounter context\nProcedure?code=http://snomed.info/sct|233259003&_include=Procedure:encounter\n```\n\n> **Note:** The base query exactly matches the format specified. SNOMED CT `233259003` is a precise code for this arterial procedure, so no additional code alternatives are typically needed unless querying legacy or mapped coding systems.",
-      "prompt_text": "Search Procedure resources with SNOMED 233259003 (Angioplasty of external carotid artery). Query: Procedure?code=http://snomed.info/sct|233259003"
+      "raw_response": "```\nProcedure?code=http://snomed.info/sct|418285008\n```\n\n**Query Breakdown:**\n\n| Component | Value | Rationale |\n|---|---|---|\n| **Resource** | `Procedure` | Explicitly targets surgical/interventional procedure records only |\n| **Parameter** | `code` | Standard FHIR search parameter for procedure coding |\n| **System** | `http://snomed.info/sct` | SNOMED CT code system as requested |\n| **Code** | `418285008` | *Angioplasty of carotid artery (procedure)* \u2014 non-coronary vascular intervention |\n\n---\n\n**Clinical Context & Code Rationale:**\n- **418285008** \u2014 *Angioplasty of carotid artery* is the precise SNOMED CT concept for percutaneous carotid revascularization, distinct from coronary artery angioplasty\n- This targets the carotid arterial territory specifically, not coronary (e.g., **415070008** \u2014 *Percutaneous coronary intervention*) or other peripheral vessels\n\n**Related SNOMED codes to consider expanding with `_include` or composite queries:**\n\n| SNOMED Code | Description |\n|---|---|\n| `233258006` | Percutaneous transluminal angioplasty of carotid artery |\n| `429639007` | PTA with stent placement in carotid artery |\n| `7736000` | Carotid endarterectomy (open surgical alternative) |\n\nTo broaden to all carotid revascularization modalities, use comma-separated values:\n```\nProcedure?code=http://snomed.info/sct|418285008,http://snomed.info/sct|233258006,http://snomed.info/sct|429639007,http://snomed.info/sct|7736000\n```",
+      "prompt_text": "I need to find patients who have undergone carotid revascularization as treatment for carotid atherosclerosis. Search Procedure resources for carotid angioplasty coded in SNOMED CT \u2014 this is a non-coronary vascular-surgical intervention distinct from coronary revascularization procedures. Target Procedure resources specifically, not Condition or MedicationRequest resources."
      },
      "2-naive": {
       "precision": 1.0,
@@ -2552,24 +2554,21 @@
       }
      },
      "2-expert": {
-      "precision": 0.0,
-      "recall": 0.0,
-      "f1": 0.0,
-      "passed": false,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
       "expected_count": 224,
-      "actual_count": 0,
-      "elapsed_sec": 58.4,
-      "queries_generated": 3,
-      "primary_query_url": "Procedure?code=http://snomed.info/sct\\|233259003",
-      "additional_query_urls": [
-       "Procedure?code=http://snomed.info/sct|233259003",
-       "Procedure?code=http://snomed.info/sct|233259003,http://www.ama-assn.org/go/cpt|37215"
-      ],
-      "raw_response": "The search executed successfully! Here's a full breakdown of the results:\n\n---\n\n## \ud83d\udd0d Search Results Summary\n\n| Field | Details |\n|---|---|\n| **Query** | `Procedure?code=http://snomed.info/sct\\|233259003` |\n| **Resource Type** | `Procedure` |\n| **Entries Returned** | **10** |\n| **Total** | Not reported by server (`null`) |\n\n---\n\n## \ud83d\udccb Codings Found on Matched Resources\n\nEach returned `Procedure` resource carries **multi-system codings**, reflecting real EHR data richness:\n\n| System | Code | Display |\n|---|---|---|\n| `http://snomed.info/sct` | **233259003** | Angioplasty of external carotid artery \u2705 |\n| `http://www.ama-assn.org/go/cpt` | **37215** | Transcatheter placement of intravascular stent(s), cervical carotid artery |\n| `http://hl7.org/fhir/sid/icd-9-cm` | **433.1** | Occlusion and stenosis of carotid artery |\n\n---\n\n## \ud83d\udd11 Key Observations\n\n1. **SNOMED match confirmed** \u2014 All 10 resources carry the exact target code `233259003` (`Angioplasty of external carotid artery`), validating the query worked as intended.\n\n2. **Multi-coded records** \u2014 Each `Procedure` resource is simultaneously coded with **3 systems** (SNOMED CT + CPT + ICD-9-CM), which is typical of real-world EHR data.\n\n3. **CPT 37215 co-present** \u2014 This CPT code (*Transcatheter placement of intravascular stent(s), cervical carotid artery*) accompanies every match. If you need to broaden the cohort to catch procedure records coded **only** in CPT (without SNOMED), you could extend your query.\n\n4. **ICD-9-CM 433.1 co-present** \u2014 Represents the diagnosis context (*Occlusion and stenosis of carotid artery*), further confirming clinical consistency.\n\n---\n\n## \u2705 Final Validated Query\n\n```\nProcedure?code=http://snomed.info/sct|233259003\n```\n\n> \ud83d\udca1 **Tip:** To also capture records coded purely via CPT (no SNOMED), you can broaden to:\n> ```\n> Procedure?code=http://snomed.info/sct|233259003,http://www.ama-assn.org/go/cpt|37215\n> ```",
-      "prompt_text": "Search Procedure resources with SNOMED 233259003 (Angioplasty of external carotid artery). Query: Procedure?code=http://snomed.info/sct|233259003",
+      "actual_count": 224,
+      "elapsed_sec": 161.7,
+      "queries_generated": 1,
+      "primary_query_url": "Procedure?code=http://snomed.info/sct|233259003",
+      "additional_query_urls": [],
+      "raw_response": "I now have comprehensive evidence. Here's a summary of the investigation:\n\n| SNOMED Code | Display | Server Count |\n|---|---|---|\n| `233259003` | Angioplasty of external carotid artery (procedure) | **224** \u2705 |\n| `233260008` | Percutaneous transluminal balloon angioplasty of extracranial carotid artery w/ fluoroscopic guidance | 0 (not on server) |\n| `233261007` | Angioplasty of subclavian artery | 0 (different artery) |\n| `11101003` | Percutaneous transluminal **coronary** angioplasty | \u274c excluded (coronary, not carotid) |\n\n**Key findings:**\n- The FHIR server uses **SNOMED CT** as its primary code system for `Procedure` resources (confirmed from sampling all 5 resources)\n- SNOMED `233259003` \u2014 *\"Angioplasty of external carotid artery (procedure)\"* \u2014 is the authoritative, server-confirmed carotid angioplasty code with **224 matching Procedure records**\n- This is explicitly a non-coronary, vascular-surgical carotid intervention, distinct from PTCA codes\n- The broader extracranial balloon variant (`233260008`) returned 0 results, confirming `233259003` is the operative code on this server\n\n---\n\n```\nProcedure?code=http://snomed.info/sct|233259003\n```",
+      "prompt_text": "I need to find patients who have undergone carotid revascularization as treatment for carotid atherosclerosis. Search Procedure resources for carotid angioplasty coded in SNOMED CT \u2014 this is a non-coronary vascular-surgical intervention distinct from coronary revascularization procedures. Target Procedure resources specifically, not Condition or MedicationRequest resources.",
       "run_metadata": {
-       "output_tokens": 645,
-       "tool_calls_count": 1,
+       "output_tokens": 698,
+       "tool_calls_count": 54,
        "stop_reason": "complete",
        "fallback_used": false
       }
@@ -2621,15 +2620,15 @@
       "passed": true,
       "expected_count": 224,
       "actual_count": 224,
-      "elapsed_sec": 31.5,
+      "elapsed_sec": 165.3,
       "queries_generated": 1,
-      "primary_query_url": "Procedure?code=http://snomed.info/sct|233259003",
+      "primary_query_url": "Procedure?code=http://snomed.info/sct|233259003,http://snomed.info/sct|175380003,http://snomed.info/sct|233260008,http://snomed.info/sct|432039002,http://snomed.info/sct|431659001,http://snomed.info/sct|431535003,http://snomed.info/sct|405407008,http://snomed.info/sct|405411002,http://snomed.info/sct|405415006,http://snomed.info/sct|433734009,http://snomed.info/sct|433711000,http://snomed.info/sct|434433007,http://snomed.info/sct|713155002",
       "additional_query_urls": [],
-      "raw_response": "Everything checks out. Here's a full summary of findings:\n\n---\n\n### \u2705 Verification Summary\n\n| Check | Result |\n|---|---|\n| **SNOMED code validity** | \u2705 `233259003` = *\"Angioplasty of external carotid artery (procedure)\"* \u2014 confirmed in SNOMED CT (v20260301) |\n| **Server code system** | \u2705 All sampled `Procedure` resources use `http://snomed.info/sct` \u2014 correct system URI |\n| **Search result** | \u2705 **10 Procedure records** returned, all matching SNOMED `233259003` |\n| **Co-occurring codes** | Each record also carries CPT `37215` *(Transcatheter placement of intravascular stent, cervical carotid artery)* and ICD-9-CM `433.1` *(Occlusion and stenosis of carotid artery)* |\n\n---\n\n### FINAL ANSWER\n\n```\nProcedure?code=http://snomed.info/sct|233259003\n```",
-      "prompt_text": "Search Procedure resources with SNOMED 233259003 (Angioplasty of external carotid artery). Query: Procedure?code=http://snomed.info/sct|233259003",
+      "raw_response": "224 records confirmed \u2014 the full multi-code union returns the same validated count. Here is my reasoning summary before the final answer:\n\n---\n\n**Playbook applied: #6 \u2014 Procedurally defined**\n- Targeted `Procedure` resources exclusively as requested, using SNOMED CT system URIs.\n- Expanded the active VSAC **\"Carotid Intervention\"** value set (OID `2.16.840.1.113883.3.117.1.7.1.239`, AIR/American Institutes for Research, 2026) to enumerate all carotid angioplasty SNOMED codes.\n- Server sampling confirmed the server uses SNOMED CT code `233259003` (Angioplasty of external carotid artery) \u2014 validated count of **224 records**.\n- Included all clinically equivalent carotid angioplasty subtypes from the value set for a portable, complete query: PTA of internal/external/common carotid, balloon and cutting-balloon variants, angioplasty-with-stent, and combination endarterectomy+angioplasty procedures. **Pure endarterectomy-only codes were intentionally excluded** per the user's specification of \"angioplasty.\"\n\n---\n\n```\nProcedure?code=http://snomed.info/sct|233259003,http://snomed.info/sct|175380003,http://snomed.info/sct|233260008,http://snomed.info/sct|432039002,http://snomed.info/sct|431659001,http://snomed.info/sct|431535003,http://snomed.info/sct|405407008,http://snomed.info/sct|405411002,http://snomed.info/sct|405415006,http://snomed.info/sct|433734009,http://snomed.info/sct|433711000,http://snomed.info/sct|434433007,http://snomed.info/sct|713155002\n```\n\n**SNOMED CT codes included and their rationale:**\n\n| Code | Display | Rationale |\n|---|---|---|\n| `233259003` | Angioplasty of external carotid artery | \u2705 **Confirmed active on server** (224 records) |\n| `175380003` | Percutaneous transluminal angioplasty of carotid artery (general) | Umbrella PTA concept |\n| `233260008` | PTA balloon angioplasty of extracranial carotid artery | Fluoroscopic-guided balloon variant |\n| `432039002` | PTA of internal carotid artery | Internal branch-specific |\n| `431659001` | PTA of common carotid artery | Common branch-specific |\n| `431535003` | PTA of external carotid artery | External branch-specific (fluoroscopy) |\n| `405407008` | Endarterectomy **and** angioplasty of internal carotid artery | Hybrid open+balloon procedure |\n| `405411002` | Endarterectomy **and** angioplasty of external carotid artery | Hybrid open+balloon procedure |\n| `405415006` | PTA of internal carotid artery with vein graft | Vein-graft augmented variant |\n| `433734009` | PTA cutting balloon of internal carotid artery | Cutting balloon subtype |\n| `433711000` | PTA cutting balloon of external carotid artery | Cutting balloon subtype |\n| `434433007` | PTA cutting balloon of common carotid artery | Cutting balloon subtype |\n| `713155002` | PTA balloon angioplasty + stent in carotid artery | Angioplasty-with-stent combined |",
+      "prompt_text": "I need to find patients who have undergone carotid revascularization as treatment for carotid atherosclerosis. Search Procedure resources for carotid angioplasty coded in SNOMED CT \u2014 this is a non-coronary vascular-surgical intervention distinct from coronary revascularization procedures. Target Procedure resources specifically, not Condition or MedicationRequest resources.",
       "run_metadata": {
-       "output_tokens": 260,
-       "tool_calls_count": 3,
+       "output_tokens": 1001,
+       "tool_calls_count": 34,
        "stop_reason": "complete",
        "fallback_used": false
       }
@@ -2671,12 +2670,12 @@
       "passed": true,
       "expected_count": 224,
       "actual_count": 224,
-      "elapsed_sec": 30.8,
+      "elapsed_sec": 29.4,
       "queries_generated": 1,
       "primary_query_url": "Procedure?code=http://snomed.info/sct|233259003",
       "additional_query_urls": [],
       "raw_response": "Procedure?code=http://snomed.info/sct|233259003",
-      "prompt_text": "Search Procedure resources with SNOMED 233259003 (Angioplasty of external carotid artery). Query: Procedure?code=http://snomed.info/sct|233259003"
+      "prompt_text": "I need to find patients who have undergone carotid revascularization as treatment for carotid atherosclerosis. Search Procedure resources for carotid angioplasty coded in SNOMED CT \u2014 this is a non-coronary vascular-surgical intervention distinct from coronary revascularization procedures. Target Procedure resources specifically, not Condition or MedicationRequest resources."
      },
      "2-naive": {
       "precision": 1.0,
@@ -2731,15 +2730,15 @@
       "passed": true,
       "expected_count": 224,
       "actual_count": 224,
-      "elapsed_sec": 43.0,
+      "elapsed_sec": 76.8,
       "queries_generated": 1,
       "primary_query_url": "Procedure?code=http://snomed.info/sct|233259003",
       "additional_query_urls": [],
       "raw_response": "Procedure?code=http://snomed.info/sct|233259003",
-      "prompt_text": "Search Procedure resources with SNOMED 233259003 (Angioplasty of external carotid artery). Query: Procedure?code=http://snomed.info/sct|233259003",
+      "prompt_text": "I need to find patients who have undergone carotid revascularization as treatment for carotid atherosclerosis. Search Procedure resources for carotid angioplasty coded in SNOMED CT \u2014 this is a non-coronary vascular-surgical intervention distinct from coronary revascularization procedures. Target Procedure resources specifically, not Condition or MedicationRequest resources.",
       "run_metadata": {
-       "output_tokens": 110,
-       "tool_calls_count": 0,
+       "output_tokens": 499,
+       "tool_calls_count": 22,
        "stop_reason": "complete",
        "fallback_used": false
       }
@@ -2791,15 +2790,15 @@
       "passed": true,
       "expected_count": 224,
       "actual_count": 224,
-      "elapsed_sec": 30.1,
+      "elapsed_sec": 49.8,
       "queries_generated": 1,
       "primary_query_url": "Procedure?code=http://snomed.info/sct|233259003",
       "additional_query_urls": [],
       "raw_response": "Procedure?code=http://snomed.info/sct|233259003",
-      "prompt_text": "Search Procedure resources with SNOMED 233259003 (Angioplasty of external carotid artery). Query: Procedure?code=http://snomed.info/sct|233259003",
+      "prompt_text": "I need to find patients who have undergone carotid revascularization as treatment for carotid atherosclerosis. Search Procedure resources for carotid angioplasty coded in SNOMED CT \u2014 this is a non-coronary vascular-surgical intervention distinct from coronary revascularization procedures. Target Procedure resources specifically, not Condition or MedicationRequest resources.",
       "run_metadata": {
-       "output_tokens": 52,
-       "tool_calls_count": 3,
+       "output_tokens": 131,
+       "tool_calls_count": 6,
        "stop_reason": "complete",
        "fallback_used": false
       }

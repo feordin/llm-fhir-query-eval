@@ -45,13 +45,13 @@
       "passed": false,
       "expected_count": 0,
       "actual_count": 0,
-      "elapsed_sec": 0.1,
+      "elapsed_sec": 10.0,
       "queries_generated": 2,
       "primary_query_url": "Condition?code=http://snomed.info/sct|399068003",
       "additional_query_urls": [
-       "Procedure?code=http://snomed.info/sct|241158009&reason-code=http://snomed.info/sct|261023001"
+       "Procedure?code=http://snomed.info/sct|71651007&reason-code=http://snomed.info/sct|399068003"
       ],
-      "raw_response": "Condition?code=http://snomed.info/sct|399068003\nProcedure?code=http://snomed.info/sct|241158009&reason-code=http://snomed.info/sct|261023001",
+      "raw_response": "Condition?code=http://snomed.info/sct|399068003\nProcedure?code=http://snomed.info/sct|71651007&reason-code=http://snomed.info/sct|399068003",
       "prompt_text": "Find all patients with prostate cancer who have had a bone scan procedure performed for cancer staging purposes."
      },
      "2-naive": {
@@ -105,7 +105,7 @@
       "passed": false,
       "expected_count": 0,
       "actual_count": 108,
-      "elapsed_sec": 19.3,
+      "elapsed_sec": 19.1,
       "queries_generated": 2,
       "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|C61",
       "additional_query_urls": [
@@ -167,7 +167,7 @@
       "passed": false,
       "expected_count": 0,
       "actual_count": 32,
-      "elapsed_sec": 27.0,
+      "elapsed_sec": 24.4,
       "queries_generated": 1,
       "primary_query_url": "Patient?_has:Condition:patient:code=http://hl7.org/fhir/sid/icd-10-cm|C61&_has:Procedure:patient:code=http://snomed.info/sct|41747008",
       "additional_query_urls": [],
@@ -175,7 +175,7 @@
       "prompt_text": "Find all patients with prostate cancer who have had a bone scan procedure performed for cancer staging purposes.",
       "run_metadata": {
        "output_tokens": 73,
-       "tool_calls_count": 7,
+       "tool_calls_count": 8,
        "stop_reason": "complete",
        "fallback_used": false
       }
@@ -221,13 +221,13 @@
       "passed": false,
       "expected_count": 0,
       "actual_count": 0,
-      "elapsed_sec": 0.1,
+      "elapsed_sec": 9.0,
       "queries_generated": 2,
       "primary_query_url": "Condition?code=http://snomed.info/sct|399068003",
       "additional_query_urls": [
-       "Procedure?code=http://snomed.info/sct|71651007&reason-code=http://snomed.info/sct|399068003"
+       "Procedure?code=http://snomed.info/sct|241464003&reason-code=http://snomed.info/sct|399068003"
       ],
-      "raw_response": "Condition?code=http://snomed.info/sct|399068003\nProcedure?code=http://snomed.info/sct|71651007&reason-code=http://snomed.info/sct|399068003",
+      "raw_response": "Condition?code=http://snomed.info/sct|399068003\nProcedure?code=http://snomed.info/sct|241464003&reason-code=http://snomed.info/sct|399068003",
       "prompt_text": "Find all patients with prostate cancer who have had a bone scan procedure performed for cancer staging purposes."
      }
     },
@@ -277,16 +277,16 @@
       "f1": 0.0,
       "passed": false,
       "expected_count": 0,
-      "actual_count": 108,
-      "elapsed_sec": 82.5,
+      "actual_count": 0,
+      "elapsed_sec": 38.2,
       "queries_generated": 4,
-      "primary_query_url": "Condition?code=http://snomed.info/sct|399068003,http://hl7.org/fhir/sid/icd-10-cm|C61&clinical-status=active&_include=Condition:patient",
+      "primary_query_url": "Patient?_has:Condition:patient:code=http://snomed.info/sct|399068003&_has:Procedure:patient:code=http://snomed.info/sct|12291003&_has:Procedure:patient:reason-code=http://snomed.info/sct|258435002",
       "additional_query_urls": [
-       "Procedure?code=http://snomed.info/sct|44555003,http://snomed.info/sct|312250003&reason-code=http://snomed.info/sct|399068003,http://hl7.org/fhir/sid/icd-10-cm|C61&_include=Procedure:patient",
-       "Procedure?code=http://snomed.info/sct|44555003,http://snomed.info/sct|312250003&reason-code=http://snomed.info/sct|258219007,http://snomed.info/sct|405480005&_include=Procedure:patient&_include=Procedure:reason-reference",
-       "Patient?_has:Condition:patient:code=http://snomed.info/sct|399068003,http://hl7.org/fhir/sid/icd-10-cm|C61&_has:Procedure:patient:code=http://snomed.info/sct|44555003,http://snomed.info/sct|312250003"
+       "Condition?code=http://snomed.info/sct|399068003,http://snomed.info/sct|93974005,http://hl7.org/fhir/sid/icd-10-cm|C61&_include=Condition:patient&_revinclude=Procedure:patient",
+       "Procedure?code=http://snomed.info/sct|12291003,http://snomed.info/sct|43798009&reason-code=http://snomed.info/sct|258435002,http://snomed.info/sct|258435002&_include=Procedure:patient&_include=Procedure:subject",
+       "Patient?_has:"
       ],
-      "raw_response": "## FHIR Queries: Prostate Cancer Patients with Bone Scan (Staging)\n\nThe request requires cross-referencing a **cancer diagnosis** (Condition), a **bone scan procedure** (Procedure/ImagingStudy), and a **cancer staging reason**, so multiple queries are needed.\n\n---\n\n### 1. Prostate Cancer Conditions (with Patient inclusion)\n```\nCondition?code=http://snomed.info/sct|399068003,http://hl7.org/fhir/sid/icd-10-cm|C61&clinical-status=active&_include=Condition:patient\n```\n\n### 2. Bone Scan Procedures with Prostate Cancer as Reason\n```\nProcedure?code=http://snomed.info/sct|44555003,http://snomed.info/sct|312250003&reason-code=http://snomed.info/sct|399068003,http://hl7.org/fhir/sid/icd-10-cm|C61&_include=Procedure:patient\n```\n\n### 3. Bone Scan Procedures Performed for Cancer Staging\n```\nProcedure?code=http://snomed.info/sct|44555003,http://snomed.info/sct|312250003&reason-code=http://snomed.info/sct|258219007,http://snomed.info/sct|405480005&_include=Procedure:patient&_include=Procedure:reason-reference\n```\n\n### 4. Nuclear Medicine ImagingStudy (Bone Scan) linked to Prostate Cancer\n```\nImagingStudy?modality=http://dicom.nema.org/resources/ontology/DCM|NM&reason-code=http://snomed.info/sct|399068003,http://hl7.org/fhir/sid/icd-10-cm|C61&_include=ImagingStudy:patient\n```\n\n### 5. Combined Patient-Centric Query (Both Conditions Met)\n```\nPatient?_has:Condition:patient:code=http://snomed.info/sct|399068003,http://hl7.org/fhir/sid/icd-10-cm|C61&_has:Procedure:patient:code=http://snomed.info/sct|44555003,http://snomed.info/sct|312250003\n```\n\n---\n\n### Code Reference\n\n| Concept | System | Code |\n|---|---|---|\n| Malignant tumor of prostate | SNOMED CT | `399068003` |\n| Prostate cancer | ICD-10-CM | `C61` |\n| Bone scan (procedure) | SNOMED CT | `44555003` |\n| Bone scintigraphy | SNOMED CT | `312250003` |\n| Cancer staging (reason) | SNOMED CT | `258219007` / `405480005` |\n| Nuclear Medicine (modality) | DICOM | `NM` |\n\n> **Tip:** Query **#5** is most efficient for finding patients satisfying **both** criteria simultaneously. Queries **#2 & #3** differentiate between *prostate cancer* and *staging* as the procedure reason \u2014 run both if your system captures these separately.",
+      "raw_response": "## FHIR Queries: Prostate Cancer Patients with Staging Bone Scans\n\n```\nPatient?_has:Condition:patient:code=http://snomed.info/sct|399068003&_has:Procedure:patient:code=http://snomed.info/sct|12291003&_has:Procedure:patient:reason-code=http://snomed.info/sct|258435002\n\nCondition?code=http://snomed.info/sct|399068003,http://snomed.info/sct|93974005,http://hl7.org/fhir/sid/icd-10-cm|C61&_include=Condition:patient&_revinclude=Procedure:patient\n\nProcedure?code=http://snomed.info/sct|12291003,http://snomed.info/sct|43798009&reason-code=http://snomed.info/sct|258435002,http://snomed.info/sct|258435002&_include=Procedure:patient&_include=Procedure:subject\n```\n\n---\n\n### Query Breakdown\n\n| Query | Purpose | Key Codes |\n|---|---|---|\n| **Patient (`_has`)** | Combined filter \u2014 patients matching **both** criteria simultaneously | Chained `_has` for Condition + Procedure |\n| **Condition + `_revinclude`** | Find prostate cancer diagnoses and reverse-include related procedures | C61, SNOMED `399068003`, `93974005` |\n| **Procedure + `_include`** | Find staging bone scans and include the subject patient | SNOMED `12291003`, `43798009` |\n\n### Code References\n\n| Concept | System | Code |\n|---|---|---|\n| Malignant tumor of prostate | SNOMED CT | `399068003` |\n| Primary malignant neoplasm of prostate | SNOMED CT | `93974005` |\n| Malignant neoplasm of prostate | ICD-10-CM | `C61` |\n| Bone scan (procedure) | SNOMED CT | `12291003` |\n| Radionuclide bone scan | SNOMED CT | `43798009` |\n| Tumor staging (reason) | SNOMED CT | `258435002` |\n\n> **Note:** The first `Patient?_has:...` query is the most precise for finding patients satisfying **both** conditions concurrently. Supplement with the Condition/Procedure queries to retrieve full clinical context via `_include`/`_revinclude`.",
       "prompt_text": "Find all patients with prostate cancer who have had a bone scan procedure performed for cancer staging purposes."
      },
      "2-naive": {
@@ -337,18 +337,16 @@
       "f1": 0.0,
       "passed": false,
       "expected_count": 0,
-      "actual_count": 540,
-      "elapsed_sec": 238.4,
-      "queries_generated": 2,
-      "primary_query_url": "Patient?_has",
-      "additional_query_urls": [
-       "Patient?_has:Condition:patient:code=http://hl7.org/fhir/sid/icd-10-cm|C61,http://snomed.info/sct|399068003,http://snomed.info/sct|254900004,http://snomed.info/sct|399490008,http://snomed.info/sct|93974005,http://snomed.info/sct|427492003,http://snomed.info/sct|722103009&_has:Procedure:patient:code=http://snomed.info/sct|41747008,http://www.ama-assn.org/go/cpt|78300"
-      ],
-      "raw_response": "Count holds at **32 patients** regardless of coding system \u2014 confirming the server exclusively uses ICD-10-CM for Conditions and SNOMED+CPT for Procedures. The combined intersection query is validated and stable.\n\n---\n\n### What was found at each step:\n\n| Layer | Code | Display | Source |\n|---|---|---|---|\n| **Prostate Cancer** | ICD-10-CM `C61` | Malignant neoplasm of prostate | \u2705 Server-confirmed (all 3 Condition samples) |\n| | SNOMED `399068003` | Malignant neoplasm of prostate | VSAC value set (+ 6 other SNOMED variants added) |\n| | SNOMED `254900004` | Carcinoma of prostate | VSAC |\n| | SNOMED `399490008` | Adenocarcinoma of prostate | VSAC |\n| | SNOMED `93974005` | Primary malignant neoplasm of prostate | VSAC |\n| | SNOMED `427492003` | Hormone refractory prostate cancer | VSAC |\n| | SNOMED `722103009` | Hormone sensitive prostate cancer | VSAC |\n| **Bone Scan** | SNOMED `41747008` | Radioisotope scan of bone | \u2705 Server-confirmed (all 3 Procedure samples) |\n| | CPT `78300` | Bone scan procedure | \u2705 Server-confirmed |\n\nCPT codes 78305, 78306, and 78315 returned 0 results on this server. VSAC's `Bone Scan` value sets (AIR/CancerLinQ) use LOINC for imaging orders and CPT for PETs \u2014 not present on this server. The query uses `Patient?_has` to enforce the **AND** intersection at the patient level.\n\n---\n\n`Patient?_has:Condition:patient:code=http://hl7.org/fhir/sid/icd-10-cm|C61,http://snomed.info/sct|399068003,http://snomed.info/sct|254900004,http://snomed.info/sct|399490008,http://snomed.info/sct|93974005,http://snomed.info/sct|427492003,http://snomed.info/sct|722103009&_has:Procedure:patient:code=http://snomed.info/sct|41747008,http://www.ama-assn.org/go/cpt|78300`",
+      "actual_count": 32,
+      "elapsed_sec": 152.7,
+      "queries_generated": 1,
+      "primary_query_url": "Patient?_has:Condition:patient:code=http://hl7.org/fhir/sid/icd-10-cm|C61&_has:Procedure:patient:code=http://snomed.info/sct|41747008,http://www.ama-assn.org/go/cpt|78300,http://www.ama-assn.org/go/cpt|78305,http://www.ama-assn.org/go/cpt|78306,http://www.ama-assn.org/go/cpt|78315",
+      "additional_query_urls": [],
+      "raw_response": "All evidence is confirmed. Here's a summary of the full investigation:\n\n---\n\n### \ud83d\udd0d Evidence Summary\n\n| Criterion | Code System | Code(s) | Display | Count |\n|---|---|---|---|---|\n| **Prostate Cancer** | ICD-10-CM | `C61` | Malignant neoplasm of prostate | 108 conditions |\n| **Bone Scan** | SNOMED CT | `41747008` | Radioisotope scan of bone | 32 procedures |\n| **Bone Scan** | CPT | `78300` | Bone scan, limited area | (same 32) |\n| **Bone Scan** | CPT | `78305` | Bone imaging, multiple areas | (no additional) |\n| **Bone Scan** | CPT | `78306` | Bone imaging, whole body | (no additional) |\n| **Bone Scan** | CPT | `78315` | Bone imaging, 3-phase study | (no additional) |\n\n**Key decisions:**\n- Used **`_has` reverse-chaining** on Patient to enforce AND logic (prostate cancer **AND** bone scan \u2014 not OR)\n- `reason-code` search for staging returned 0 \u2014 the server does not populate procedure reason codes; clinical co-occurrence of prostate cancer + bone scan is the evidence-based proxy for staging intent\n- Final cohort: **32 patients** with both criteria satisfied\n\n---\n\n**FINAL ANSWER:**\n\n```\nPatient?_has:Condition:patient:code=http://hl7.org/fhir/sid/icd-10-cm|C61&_has:Procedure:patient:code=http://snomed.info/sct|41747008,http://www.ama-assn.org/go/cpt|78300,http://www.ama-assn.org/go/cpt|78305,http://www.ama-assn.org/go/cpt|78306,http://www.ama-assn.org/go/cpt|78315\n```",
       "prompt_text": "Find all patients with prostate cancer who have had a bone scan procedure performed for cancer staging purposes.",
       "run_metadata": {
-       "output_tokens": 1178,
-       "tool_calls_count": 19,
+       "output_tokens": 801,
+       "tool_calls_count": 28,
        "stop_reason": "complete",
        "fallback_used": false
       }
@@ -402,15 +400,15 @@
       "passed": false,
       "expected_count": 0,
       "actual_count": 32,
-      "elapsed_sec": 127.3,
+      "elapsed_sec": 83.6,
       "queries_generated": 1,
-      "primary_query_url": "Patient?_has:Condition:patient:code=http://hl7.org/fhir/sid/icd-10-cm|C61&_has:Procedure:patient:code=http://snomed.info/sct|41747008,http://www.ama-assn.org/go/cpt|78300,http://www.ama-assn.org/go/cpt|78305,http://www.ama-assn.org/go/cpt|78306,http://www.ama-assn.org/go/cpt|78315",
+      "primary_query_url": "Patient?_has:Condition:patient:code=http://hl7.org/fhir/sid/icd-10-cm|C61&_has:Procedure:patient:code=http://snomed.info/sct|41747008,http://www.ama-assn.org/go/cpt|78300",
       "additional_query_urls": [],
-      "raw_response": "The `_has` filtering is working correctly:\n- 108 patients with prostate cancer (ICD-10-CM C61)\n- 32 patients with bone scan procedures\n- **32 patients with BOTH** (all bone-scan patients in this dataset have prostate cancer \u2014 clinically coherent)\n\nAll validations pass. Here is a summary of the methodology before the final answer:\n\n| Element | Code(s) | System |\n|---|---|---|\n| Prostate cancer | `C61` | ICD-10-CM (confirmed from server sample) |\n| Bone scan (radioisotope) | `41747008` | SNOMED CT (confirmed from server sample) |\n| Bone scan CPT \u2013 limited area | `78300` | CPT (confirmed from server sample) |\n| Bone scan CPT \u2013 multiple areas | `78305` | CPT |\n| Bone scan CPT \u2013 whole body | `78306` | CPT |\n| Bone scan CPT \u2013 3-phase | `78315` | CPT |\n\n**Playbooks applied:** Playbook 6 (Procedurally defined) + Playbook 11 (Cross-resource AND via `_has`).\n\n---\n\n**FINAL ANSWER:**\n\n```\nPatient?_has:Condition:patient:code=http://hl7.org/fhir/sid/icd-10-cm|C61&_has:Procedure:patient:code=http://snomed.info/sct|41747008,http://www.ama-assn.org/go/cpt|78300,http://www.ama-assn.org/go/cpt|78305,http://www.ama-assn.org/go/cpt|78306,http://www.ama-assn.org/go/cpt|78315\n```",
+      "raw_response": "The `_has` cross-resource AND query works perfectly and returns **32 patients** \u2014 exactly matching the bone scan count (meaning all bone scan patients in this dataset have prostate cancer). The additional CPT codes (78305, 78306, 78315, 78320) returned 0, confirming only `78300` and SNOMED `41747008` are present on this server.\n\n### Summary of Evidence\n\n| Step | Finding |\n|---|---|\n| **Condition code system** | Server uses `ICD-10-CM` \u2192 **C61** (Malignant neoplasm of prostate) \u2014 108 records |\n| **Procedure code systems** | Server uses **SNOMED `41747008`** (Radioisotope scan of bone) + **CPT `78300`** (Bone scan procedure) \u2014 32 records |\n| **Other CPT bone scan codes** (78305, 78306, 78315, 78320) | 0 results \u2014 not used on this server |\n| **Cross-resource AND (`_has`)** | Supported and returns **32 patients** |\n\n**Playbooks applied:** 6 (Procedurally Defined) + 11 (Cross-resource AND) + 1 (Subtypes/code unions)\n\n---\n\n```\nPatient?_has:Condition:patient:code=http://hl7.org/fhir/sid/icd-10-cm|C61&_has:Procedure:patient:code=http://snomed.info/sct|41747008,http://www.ama-assn.org/go/cpt|78300\n```",
       "prompt_text": "Find all patients with prostate cancer who have had a bone scan procedure performed for cancer staging purposes.",
       "run_metadata": {
-       "output_tokens": 876,
-       "tool_calls_count": 22,
+       "output_tokens": 734,
+       "tool_calls_count": 17,
        "stop_reason": "complete",
        "fallback_used": false
       }
@@ -454,11 +452,11 @@
       "passed": false,
       "expected_count": 0,
       "actual_count": 0,
-      "elapsed_sec": 182.5,
+      "elapsed_sec": 59.7,
       "queries_generated": 1,
-      "primary_query_url": "Procedure?status=completed&code=http://snomed.info/sct|169069000,http://www.ama-assn.org/go/cpt|78300,http://www.ama-assn.org/go/cpt|78305,http://www.ama-assn.org/go/cpt|78306,http://www.ama-assn.org/go/cpt|78315&reason-code:text=cancer%20staging&patient._has:Condition:patient:code=http://snomed.info/sct|399068003,http://hl7.org/fhir/sid/icd-10-cm|C61&_include=Procedure:patient",
+      "primary_query_url": "Procedure?code=http://snomed.info/sct|241619001,http://www.ama-assn.org/go/cpt|78300,http://www.ama-assn.org/go/cpt|78305,http://www.ama-assn.org/go/cpt|78306,http://www.ama-assn.org/go/cpt|78315&reason-reference:Condition.code=http://snomed.info/sct|399068003,http://hl7.org/fhir/sid/icd-10-cm|C61&reason-code:text=cancer%20staging&_include=Procedure:patient",
       "additional_query_urls": [],
-      "raw_response": "Procedure?status=completed&code=http://snomed.info/sct|169069000,http://www.ama-assn.org/go/cpt|78300,http://www.ama-assn.org/go/cpt|78305,http://www.ama-assn.org/go/cpt|78306,http://www.ama-assn.org/go/cpt|78315&reason-code:text=cancer%20staging&patient._has:Condition:patient:code=http://snomed.info/sct|399068003,http://hl7.org/fhir/sid/icd-10-cm|C61&_include=Procedure:patient",
+      "raw_response": "Procedure?code=http://snomed.info/sct|241619001,http://www.ama-assn.org/go/cpt|78300,http://www.ama-assn.org/go/cpt|78305,http://www.ama-assn.org/go/cpt|78306,http://www.ama-assn.org/go/cpt|78315&reason-reference:Condition.code=http://snomed.info/sct|399068003,http://hl7.org/fhir/sid/icd-10-cm|C61&reason-code:text=cancer%20staging&_include=Procedure:patient",
       "prompt_text": "Find all patients with prostate cancer who have had a bone scan procedure performed for cancer staging purposes."
      },
      "2-naive": {
@@ -508,15 +506,15 @@
       "passed": false,
       "expected_count": 0,
       "actual_count": 32,
-      "elapsed_sec": 450.4,
+      "elapsed_sec": 154.3,
       "queries_generated": 1,
       "primary_query_url": "Patient?_has:Condition:patient:code=http://hl7.org/fhir/sid/icd-10-cm|C61,http://hl7.org/fhir/sid/icd-9-cm|185,http://snomed.info/sct|93974005,http://snomed.info/sct|399068003,http://snomed.info/sct|363448003&_has:Procedure:patient:code=http://snomed.info/sct|41747008,http://www.ama-assn.org/go/cpt|78300,http://www.ama-assn.org/go/cpt|3269F",
       "additional_query_urls": [],
       "raw_response": "Patient?_has:Condition:patient:code=http://hl7.org/fhir/sid/icd-10-cm|C61,http://hl7.org/fhir/sid/icd-9-cm|185,http://snomed.info/sct|93974005,http://snomed.info/sct|399068003,http://snomed.info/sct|363448003&_has:Procedure:patient:code=http://snomed.info/sct|41747008,http://www.ama-assn.org/go/cpt|78300,http://www.ama-assn.org/go/cpt|3269F",
       "prompt_text": "Find all patients with prostate cancer who have had a bone scan procedure performed for cancer staging purposes.",
       "run_metadata": {
-       "output_tokens": 973,
-       "tool_calls_count": 49,
+       "output_tokens": 495,
+       "tool_calls_count": 47,
        "stop_reason": "complete",
        "fallback_used": false
       }
@@ -568,15 +566,15 @@
       "passed": false,
       "expected_count": 0,
       "actual_count": 32,
-      "elapsed_sec": 123.0,
+      "elapsed_sec": 64.1,
       "queries_generated": 1,
-      "primary_query_url": "Patient?_has:Condition:patient:code=http://hl7.org/fhir/sid/icd-10-cm|C61,http://hl7.org/fhir/sid/icd-9-cm|185,http://snomed.info/sct|399068003,http://snomed.info/sct|93974005,http://snomed.info/sct|363448003&_has:Procedure:patient:code=http://snomed.info/sct|41747008,http://www.ama-assn.org/go/cpt|78300",
+      "primary_query_url": "Patient?_has:Condition:patient:code=http://hl7.org/fhir/sid/icd-10-cm|C61&_has:Procedure:patient:code=http://snomed.info/sct|41747008,http://www.ama-assn.org/go/cpt|78300",
       "additional_query_urls": [],
-      "raw_response": "Patient?_has:Condition:patient:code=http://hl7.org/fhir/sid/icd-10-cm|C61,http://hl7.org/fhir/sid/icd-9-cm|185,http://snomed.info/sct|399068003,http://snomed.info/sct|93974005,http://snomed.info/sct|363448003&_has:Procedure:patient:code=http://snomed.info/sct|41747008,http://www.ama-assn.org/go/cpt|78300",
+      "raw_response": "Patient?_has:Condition:patient:code=http://hl7.org/fhir/sid/icd-10-cm|C61&_has:Procedure:patient:code=http://snomed.info/sct|41747008,http://www.ama-assn.org/go/cpt|78300",
       "prompt_text": "Find all patients with prostate cancer who have had a bone scan procedure performed for cancer staging purposes.",
       "run_metadata": {
-       "output_tokens": 440,
-       "tool_calls_count": 25,
+       "output_tokens": 544,
+       "tool_calls_count": 22,
        "stop_reason": "complete",
        "fallback_used": false
       }
@@ -795,14 +793,14 @@
       "passed": false,
       "expected_count": 0,
       "actual_count": 0,
-      "elapsed_sec": 0.1,
+      "elapsed_sec": 12.2,
       "queries_generated": 3,
-      "primary_query_url": "Condition?code=http://snomed.info/sct|399068003&patient.gender=male&patient.birthdate=le1991-06-11",
+      "primary_query_url": "Condition?code=http://snomed.info/sct|399068003&patient.gender=male&patient.birthdate=le1991-06-17",
       "additional_query_urls": [
-       "Procedure?code=http://snomed.info/sct|71651007,http://snomed.info/sct|22568007&subject.gender=male&subject.birthdate=le1991-06-11",
-       "DiagnosticReport?code=http://loinc.org|39820-6,http://loinc.org|39817-2&subject.gender=male&subject.birthdate=le1991-06-11"
+       "Procedure?code=http://snomed.info/sct|17390006,http://snomed.info/sct|241158003&subject:Patient.gender=male&subject:Patient.birthdate=le1991-06-17&subject:Patient._has:Condition:patient:code=http://snomed.info/sct|399068003",
+       "DiagnosticReport?code=http://loinc.org|39819-3,http://loinc.org|39820-1&subject:Patient.gender=male&subject:Patient.birthdate=le1991-06-17&subject:Patient._has:Condition:patient:code=http://snomed.info/sct|399068003"
       ],
-      "raw_response": "Condition?code=http://snomed.info/sct|399068003&patient.gender=male&patient.birthdate=le1991-06-11\nProcedure?code=http://snomed.info/sct|71651007,http://snomed.info/sct|22568007&subject.gender=male&subject.birthdate=le1991-06-11\nImagingStudy?modality=http://dicom.nema.org/resources/ontology/DCM|NM&subject.gender=male&subject.birthdate=le1991-06-11&subject:Patient._has:Condition:patient:code=http://snomed.info/sct|399068003\nDiagnosticReport?code=http://loinc.org|39820-6,http://loinc.org|39817-2&subject.gender=male&subject.birthdate=le1991-06-11",
+      "raw_response": "Condition?code=http://snomed.info/sct|399068003&patient.gender=male&patient.birthdate=le1991-06-17\nProcedure?code=http://snomed.info/sct|17390006,http://snomed.info/sct|241158003&subject:Patient.gender=male&subject:Patient.birthdate=le1991-06-17&subject:Patient._has:Condition:patient:code=http://snomed.info/sct|399068003\nDiagnosticReport?code=http://loinc.org|39819-3,http://loinc.org|39820-1&subject:Patient.gender=male&subject:Patient.birthdate=le1991-06-17&subject:Patient._has:Condition:patient:code=http://snomed.info/sct|399068003\nImagingStudy?modality=http://dicom.nema.org/resources/ontology/DCM|NM&subject:Patient.gender=male&subject:Patient.birthdate=le1991-06-17&subject:Patient._has:Condition:patient:code=http://snomed.info/sct|399068003",
       "prompt_text": "Find all diagnostic imaging procedures for bone scans performed on male patients aged 35 or older with prostate cancer diagnosis, specifically looking for nuclear medicine bone scans or whole body bone scans."
      },
      "2-naive": {
@@ -854,14 +852,14 @@
       "passed": false,
       "expected_count": 0,
       "actual_count": 32,
-      "elapsed_sec": 40.5,
+      "elapsed_sec": 40.1,
       "queries_generated": 1,
-      "primary_query_url": "Procedure?code=http://snomed.info/sct|41747008&subject:Patient.gender=male&subject:Patient.birthdate=lt1991-06-12&subject:Patient._has:Condition:patient:code=http://hl7.org/fhir/sid/icd-10-cm|C61",
+      "primary_query_url": "Procedure?code=http://snomed.info/sct|41747008,http://www.ama-assn.org/go/cpt|78300&subject:Patient.gender=male&subject:Patient.birthdate=lt1991-06-17&subject:Patient._has:Condition:patient:code=http://hl7.org/fhir/sid/icd-10-cm|C61",
       "additional_query_urls": [],
-      "raw_response": "All 32 male age 35+ bone-scan patients also have prostate cancer.\n\nFINAL ANSWER:\n\nProcedure?code=http://snomed.info/sct|41747008&subject:Patient.gender=male&subject:Patient.birthdate=lt1991-06-12&subject:Patient._has:Condition:patient:code=http://hl7.org/fhir/sid/icd-10-cm|C61",
+      "raw_response": "FINAL ANSWER:\n\nProcedure?code=http://snomed.info/sct|41747008,http://www.ama-assn.org/go/cpt|78300&subject:Patient.gender=male&subject:Patient.birthdate=lt1991-06-17&subject:Patient._has:Condition:patient:code=http://hl7.org/fhir/sid/icd-10-cm|C61",
       "prompt_text": "Find all diagnostic imaging procedures for bone scans performed on male patients aged 35 or older with prostate cancer diagnosis, specifically looking for nuclear medicine bone scans or whole body bone scans.",
       "run_metadata": {
-       "output_tokens": 140,
+       "output_tokens": 134,
        "tool_calls_count": 11,
        "stop_reason": "complete",
        "fallback_used": false
@@ -914,15 +912,15 @@
       "passed": false,
       "expected_count": 0,
       "actual_count": 32,
-      "elapsed_sec": 34.7,
+      "elapsed_sec": 26.8,
       "queries_generated": 1,
-      "primary_query_url": "Procedure?code=http://snomed.info/sct|41747008&subject:Patient.gender=male&subject:Patient.birthdate=le1991-06-09&subject:Patient._has:Condition:patient:code=http://hl7.org/fhir/sid/icd-10-cm|C61",
+      "primary_query_url": "Procedure?code=http://snomed.info/sct|41747008,http://www.ama-assn.org/go/cpt|78300&subject:Patient.gender=male&subject:Patient.birthdate=le1991-06-17&subject:Patient._has:Condition:patient:code=http://snomed.info/sct|399068003,http://snomed.info/sct|254900004,http://hl7.org/fhir/sid/icd-10-cm|C61",
       "additional_query_urls": [],
-      "raw_response": "Procedure?code=http://snomed.info/sct|41747008&subject:Patient.gender=male&subject:Patient.birthdate=le1991-06-09&subject:Patient._has:Condition:patient:code=http://hl7.org/fhir/sid/icd-10-cm|C61",
+      "raw_response": "Procedure?code=http://snomed.info/sct|41747008,http://www.ama-assn.org/go/cpt|78300&subject:Patient.gender=male&subject:Patient.birthdate=le1991-06-17&subject:Patient._has:Condition:patient:code=http://snomed.info/sct|399068003,http://snomed.info/sct|254900004,http://hl7.org/fhir/sid/icd-10-cm|C61",
       "prompt_text": "Find all diagnostic imaging procedures for bone scans performed on male patients aged 35 or older with prostate cancer diagnosis, specifically looking for nuclear medicine bone scans or whole body bone scans.",
       "run_metadata": {
-       "output_tokens": 101,
-       "tool_calls_count": 12,
+       "output_tokens": 152,
+       "tool_calls_count": 5,
        "stop_reason": "complete",
        "fallback_used": false
       }
@@ -969,13 +967,13 @@
       "passed": false,
       "expected_count": 0,
       "actual_count": 0,
-      "elapsed_sec": 0.3,
+      "elapsed_sec": 11.4,
       "queries_generated": 2,
-      "primary_query_url": "Procedure?code=http://snomed.info/sct|36801000,http://snomed.info/sct|26226009,http://loinc.org|39816-5&subject:Patient.gender=male&subject:Patient.birthdate=le1991-06-11&subject:Patient._has:Condition:patient:code=http://snomed.info/sct|399068003",
+      "primary_query_url": "Patient?gender=male&birthdate=le1991-06-18&_has:Condition:patient:code=http://snomed.info/sct|399068003&_has:Procedure:patient:code=http://snomed.info/sct|241158009,http://snomed.info/sct|46669007",
       "additional_query_urls": [
-       "Condition?code=http://snomed.info/sct|399068003&subject:Patient.gender=male&subject:Patient.birthdate=le1991-06-11"
+       "Procedure?code=http://snomed.info/sct|241158009,http://snomed.info/sct|46669007&subject._has:Condition:patient:code=http://snomed.info/sct|399068003&subject.gender=male&subject.birthdate=le1991-06-18"
       ],
-      "raw_response": "ImagingStudy?modality=http://dicom.nema.org/resources/ontology/DCM|NM&subject:Patient.gender=male&subject:Patient.birthdate=le1991-06-11&subject:Patient._has:Condition:patient:code=http://snomed.info/sct|399068003\nProcedure?code=http://snomed.info/sct|36801000,http://snomed.info/sct|26226009,http://loinc.org|39816-5&subject:Patient.gender=male&subject:Patient.birthdate=le1991-06-11&subject:Patient._has:Condition:patient:code=http://snomed.info/sct|399068003\nCondition?code=http://snomed.info/sct|399068003&subject:Patient.gender=male&subject:Patient.birthdate=le1991-06-11",
+      "raw_response": "Patient?gender=male&birthdate=le1991-06-18&_has:Condition:patient:code=http://snomed.info/sct|399068003&_has:Procedure:patient:code=http://snomed.info/sct|241158009,http://snomed.info/sct|46669007\nProcedure?code=http://snomed.info/sct|241158009,http://snomed.info/sct|46669007&subject._has:Condition:patient:code=http://snomed.info/sct|399068003&subject.gender=male&subject.birthdate=le1991-06-18",
       "prompt_text": "Find all diagnostic imaging procedures for bone scans performed on male patients aged 35 or older with prostate cancer diagnosis, specifically looking for nuclear medicine bone scans or whole body bone scans."
      }
     },
@@ -1024,14 +1022,14 @@
       "passed": false,
       "expected_count": 0,
       "actual_count": 108,
-      "elapsed_sec": 119.8,
+      "elapsed_sec": 81.5,
       "queries_generated": 3,
-      "primary_query_url": "Condition?code=http://snomed.info/sct|399068003,http://snomed.info/sct|254900004,http://hl7.org/fhir/sid/icd-10-cm|C61&subject:Patient.gender=male&subject:Patient.birthdate=le1991-06-01",
+      "primary_query_url": "Condition?code=http://snomed.info/sct|399068003,http://hl7.org/fhir/sid/icd-10-cm|C61&subject:Patient.gender=male&subject:Patient.birthdate=le1991-06-17&_include=Condition:subject",
       "additional_query_urls": [
-       "Procedure?code=http://snomed.info/sct|39748002,http://snomed.info/sct|168697004,http://snomed.info/sct|44875001,http://www.ama-assn.org/go/cpt|78300,http://www.ama-assn.org/go/cpt|78305,http://www.ama-assn.org/go/cpt|78306,http://www.ama-assn.org/go/cpt|78315&subject:Patient.gender=male&subject:Patient.birthdate=le1991-06-01&reason-code=http://snomed.info/sct|399068003,http://snomed.info/sct|254900004,http://hl7.org/fhir/sid/icd-10-cm|C61",
-       "DiagnosticReport?code=http://loinc.org|24603-4,http://loinc.org|24604-2,http://loinc.org|24605-9&subject:Patient.gender=male&subject:Patient.birthdate=le1991-06-01"
+       "Procedure?code=http://snomed.info/sct|84107005,http://snomed.info/sct|312251004&subject:Patient.gender=male&subject:Patient.birthdate=le1991-06-17&_include=Procedure:subject",
+       "DiagnosticReport?code=http://loinc.org|24588-4,http://loinc.org|24590-0,http://loinc.org|39028-4,http://loinc.org|44136-5&subject:Patient.gender=male&subject:Patient.birthdate=le1991-06-17&_include=DiagnosticReport:subject&_include=DiagnosticReport:result"
       ],
-      "raw_response": "## FHIR Queries: Nuclear Medicine Bone Scans for Prostate Cancer Patients\n\n**Age Cutoff:** Males aged \u226535 as of 2026-06-01 \u2192 `birthdate=le1991-06-01`\n\n---\n\n### Query 1 \u2014 Establish Prostate Cancer Patient Population (Male, Age \u226535)\n```\nCondition?code=http://snomed.info/sct|399068003,http://snomed.info/sct|254900004,http://hl7.org/fhir/sid/icd-10-cm|C61&subject:Patient.gender=male&subject:Patient.birthdate=le1991-06-01\n```\n\n---\n\n### Query 2 \u2014 Bone Scan Procedures (with Prostate Cancer as Reason)\n```\nProcedure?code=http://snomed.info/sct|39748002,http://snomed.info/sct|168697004,http://snomed.info/sct|44875001,http://www.ama-assn.org/go/cpt|78300,http://www.ama-assn.org/go/cpt|78305,http://www.ama-assn.org/go/cpt|78306,http://www.ama-assn.org/go/cpt|78315&subject:Patient.gender=male&subject:Patient.birthdate=le1991-06-01&reason-code=http://snomed.info/sct|399068003,http://snomed.info/sct|254900004,http://hl7.org/fhir/sid/icd-10-cm|C61\n```\n\n---\n\n### Query 3 \u2014 Nuclear Medicine ImagingStudies (DICOM Modality: NM, Bone Body Site)\n```\nImagingStudy?modality=http://dicom.nema.org/resources/ontology/DCM|NM&body-site=http://snomed.info/sct|272673000&subject:Patient.gender=male&subject:Patient.birthdate=le1991-06-01&reason=http://snomed.info/sct|399068003,http://snomed.info/sct|254900004,http://hl7.org/fhir/sid/icd-10-cm|C61\n```\n\n---\n\n### Query 4 \u2014 Bone Scan DiagnosticReports (LOINC \u2014 NM Bone Scan & Whole Body)\n```\nDiagnosticReport?code=http://loinc.org|24603-4,http://loinc.org|24604-2,http://loinc.org|24605-9&subject:Patient.gender=male&subject:Patient.birthdate=le1991-06-01\n```\n\n---\n\n## Code Reference Summary\n\n| Concept | System | Code(s) |\n|---|---|---|\n| Prostate cancer | SNOMED CT | `399068003`, `254900004` |\n| Prostate cancer | ICD-10-CM | `C61` |\n| Bone scan (general) | SNOMED CT | `39748002` |\n| Radionuclide bone scan | SNOMED CT | `168697004` |\n| NM imaging of bone | SNOMED CT | `44875001` |\n| Bone scan CPT | CPT | `78300`, `78305`, `78306`, `78315` |\n| Bone scan NM report | LOINC | `24603-4`, `24604-2`, `24605-9` |\n| Nuclear Medicine modality | DICOM | `NM` |\n| Bone body site | SNOMED CT | `272673000` |",
+      "raw_response": "## FHIR Queries: Bone Scans in Male Prostate Cancer Patients (Age \u2265 35)\n\n**Age cutoff calculation:** Born on or before `1991-06-17` (35 years before 2026-06-17)\n\n---\n\n### Query 1 \u2014 Identify Prostate Cancer Conditions in Eligible Males\n```\nCondition?code=http://snomed.info/sct|399068003,http://hl7.org/fhir/sid/icd-10-cm|C61&subject:Patient.gender=male&subject:Patient.birthdate=le1991-06-17&_include=Condition:subject\n```\n\n---\n\n### Query 2 \u2014 Bone Scan Procedures (SNOMED) for Eligible Males\n```\nProcedure?code=http://snomed.info/sct|84107005,http://snomed.info/sct|312251004&subject:Patient.gender=male&subject:Patient.birthdate=le1991-06-17&_include=Procedure:subject\n```\n\n---\n\n### Query 3 \u2014 Bone Scan DiagnosticReports (LOINC) for Eligible Males\n```\nDiagnosticReport?code=http://loinc.org|24588-4,http://loinc.org|24590-0,http://loinc.org|39028-4,http://loinc.org|44136-5&subject:Patient.gender=male&subject:Patient.birthdate=le1991-06-17&_include=DiagnosticReport:subject&_include=DiagnosticReport:result\n```\n\n---\n\n### Query 4 \u2014 Nuclear Medicine ImagingStudies for Eligible Males\n```\nImagingStudy?modality=http://dicom.nema.org/resources/ontology/DCM|NM&subject:Patient.gender=male&subject:Patient.birthdate=le1991-06-17&_include=ImagingStudy:subject&_include=ImagingStudy:performer\n```\n\n---\n\n### Code Reference Summary\n\n| Concept | System | Code(s) |\n|---|---|---|\n| Bone Scan (general) | SNOMED CT | `84107005` |\n| Bone Scintigraphy | SNOMED CT | `312251004` |\n| Bone Scan (LOINC) | LOINC | `24588-4` |\n| Bone Scan Whole Body | LOINC | `24590-0` |\n| NM Bone Scan | LOINC | `39028-4` |\n| NM Bone 3-Phase Scan | LOINC | `44136-5` |\n| Nuclear Medicine Modality | DICOM | `NM` |\n| Prostate Cancer | SNOMED CT | `399068003` |\n| Prostate Cancer | ICD-10-CM | `C61` |\n\n> **Note:** Cross-reference Query 1 patient IDs against Queries 2\u20134 to isolate bone scan imaging only for patients confirmed to have a prostate cancer diagnosis.",
       "prompt_text": "Find all diagnostic imaging procedures for bone scans performed on male patients aged 35 or older with prostate cancer diagnosis, specifically looking for nuclear medicine bone scans or whole body bone scans."
      },
      "2-naive": {
@@ -1086,16 +1084,16 @@
       "passed": false,
       "expected_count": 0,
       "actual_count": 32,
-      "elapsed_sec": 349.7,
+      "elapsed_sec": 215.5,
       "queries_generated": 2,
-      "primary_query_url": "Procedure?code=http://snomed.info/sct|41747008,http://www.ama-assn.org/go/cpt|78300,http://www.ama-assn.org/go/cpt|78305,http://www.ama-assn.org/go/cpt|78306,http://www.ama-assn.org/go/cpt|78315,http://www.ama-assn.org/go/cpt|78320&patient.gender=male&patient.birthdate=le1991-06-01",
+      "primary_query_url": "Procedure?code=http://snomed.info/sct|41747008,http://www.ama-assn.org/go/cpt|78300&patient.gender=male&patient.birthdate=le1991-06-17",
       "additional_query_urls": [
-       "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|C61&patient.gender=male&patient.birthdate=le1991-06-01"
+       "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|C61&patient.gender=male&patient.birthdate=le1991-06-17"
       ],
-      "raw_response": "All 3 sampled Procedure resources confirm dual coding: **SNOMED `41747008` (Radioisotope scan of bone)** + **CPT `78300` (Bone scan procedure)**. The cohort is fully validated.\n\n---\n\n## Query Design Summary\n\n| Dimension | Finding |\n|---|---|\n| **FHIR Server** | R4 (4.0.1), Azure FHIR Server \u2014 no US Core IG loaded |\n| **Condition coding** | ICD-10-CM only (`C61` = Malignant neoplasm of prostate) |\n| **Procedure coding** | SNOMED CT + CPT (both present per sample) |\n| **Bone scan SNOMED** | `41747008` \u2014 Radioisotope scan of bone (procedure) |\n| **Bone scan CPT** | `78300` (limited), `78305` (multiple areas), `78306` (whole body \u2713), `78315` (3-phase), `78320` (SPECT/tomographic) |\n| **Patient filters** | `gender=male`, `birthdate=le1991-06-01` (age \u2265 35 as of 2026-06-01) |\n| **Validated count** | 32 bone scan procedures; 108 prostate cancer Conditions; **32 patients in combined cohort** |\n\n**Two queries needed** \u2014 emit both and **intersect on `patient` reference** client-side to get the final set of bone scan Procedures for prostate cancer patients:\n\n---\n\n```\nProcedure?code=http://snomed.info/sct|41747008,http://www.ama-assn.org/go/cpt|78300,http://www.ama-assn.org/go/cpt|78305,http://www.ama-assn.org/go/cpt|78306,http://www.ama-assn.org/go/cpt|78315,http://www.ama-assn.org/go/cpt|78320&patient.gender=male&patient.birthdate=le1991-06-01\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|C61&patient.gender=male&patient.birthdate=le1991-06-01\n```\n\n**Code coverage rationale:**\n- `41747008` \u2014 SNOMED: Radioisotope scan of bone (confirmed on server; umbrella term covering all nuclear medicine bone scans)\n- `78300` \u2014 CPT: Bone imaging, limited area (confirmed on server)\n- `78305` \u2014 CPT: Bone imaging, multiple areas\n- `78306` \u2014 CPT: Bone imaging, **whole body** \u2190 specifically requested\n- `78315` \u2014 CPT: Bone imaging, 3-phase study (common for prostate cancer staging)\n- `78320` \u2014 CPT: Bone imaging, tomographic SPECT (nuclear medicine variant)\n- `C61` \u2014 ICD-10-CM: Malignant neoplasm of prostate (confirmed as the sole prostate cancer code on this server)",
+      "raw_response": "All evidence is now confirmed. Let me compile the findings:\n\n---\n\n### \ud83d\udd0d Evidence Summary\n\n| Layer | Finding |\n|---|---|\n| **Bone Scan \u2013 SNOMED** | `41747008` \u2014 *Radioisotope scan of bone* \u2705 confirmed on server |\n| **Bone Scan \u2013 CPT** | `78300` \u2014 *Bone and/or joint imaging; limited area* \u2705 confirmed on server |\n| **Bone Scan \u2013 CPT (whole body)** | `78306` (whole body), `78305` (multiple areas), `78315` (3-phase) \u2192 **0 results** on this server, only `78300` used |\n| **Prostate Cancer \u2013 ICD-10-CM** | `C61` \u2014 *Malignant neoplasm of prostate* \u2705 confirmed on server (108 conditions) |\n| **Patient Demographics** | `patient.gender=male` and `patient.birthdate=le1991-06-17` (\u226535 years as of 2026-06-17) \u2014 chaining confirmed working (0 female bone scans validate filtering) |\n| **`reason-code` linking** | Not used on this server (0 results) \u2014 prostate cancer is stored as separate Condition |\n| **Total bone scans for male \u226535** | **32 Procedures** |\n| **Total prostate cancer for male \u226535** | **108 Conditions** |\n\n**Two queries required** \u2014 the Condition query constrains the patient cohort (prostate cancer), and the Procedure query returns the bone scan events for those patients. The evaluator intersects by patient ID.\n\n---\n\n**FINAL ANSWER:**\n\n```\nProcedure?code=http://snomed.info/sct|41747008,http://www.ama-assn.org/go/cpt|78300&patient.gender=male&patient.birthdate=le1991-06-17\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|C61&patient.gender=male&patient.birthdate=le1991-06-17\n```",
       "prompt_text": "Find all diagnostic imaging procedures for bone scans performed on male patients aged 35 or older with prostate cancer diagnosis, specifically looking for nuclear medicine bone scans or whole body bone scans.",
       "run_metadata": {
-       "output_tokens": 1148,
+       "output_tokens": 934,
        "tool_calls_count": 32,
        "stop_reason": "complete",
        "fallback_used": false
@@ -1150,17 +1148,15 @@
       "passed": false,
       "expected_count": 0,
       "actual_count": 32,
-      "elapsed_sec": 151.3,
-      "queries_generated": 2,
-      "primary_query_url": "Procedure?code=http://snomed.info/sct|41747008,http://www.ama-assn.org/go/cpt|78300,http://www.ama-assn.org/go/cpt|78305,http://www.ama-assn.org/go/cpt|78306,http://www.ama-assn.org/go/cpt|78315&patient.gender=male&patient.birthdate=le1991-06-09",
-      "additional_query_urls": [
-       "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|C61&patient.gender=male&patient.birthdate=le1991-06-09"
-      ],
-      "raw_response": "Both queries yield valid results (32 bone scan procedures, 108 prostate cancer conditions). The cross-resource AND harness will intersect these patient sets to return only male patients aged \u226535 who have **both** a bone scan AND a prostate cancer diagnosis.\n\n---\n\n## Summary of Methodology\n\n**Playbooks applied:** 4 (Sex) + 3 (Age) + 6 (Procedurally defined) + 11 (Cross-resource AND)\n\n| Signal | Evidence Found |\n|---|---|\n| **Bone scan codes (server uses)** | SNOMED `41747008` (Radioisotope scan of bone) + CPT `78300` (limited), `78305` (multiple areas), `78306` (whole body), `78315` (3 phase) |\n| **Prostate cancer codes (server uses)** | ICD-10-CM `C61` (Malignant neoplasm of prostate) |\n| **Sex filter** | `patient.gender=male` \u2014 confirmed: female filter returns 0 \u2705 |\n| **Age \u2265 35 filter** | `patient.birthdate=le1991-06-09` (today 2026-06-09 minus 35 years) \u2014 confirmed: future DOB returns 0 \u2705 |\n| **Cross-resource AND** | Two queries; harness intersects patient sets from Procedure AND Condition |\n\n**FINAL ANSWER:**\n\n```\nProcedure?code=http://snomed.info/sct|41747008,http://www.ama-assn.org/go/cpt|78300,http://www.ama-assn.org/go/cpt|78305,http://www.ama-assn.org/go/cpt|78306,http://www.ama-assn.org/go/cpt|78315&patient.gender=male&patient.birthdate=le1991-06-09\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|C61&patient.gender=male&patient.birthdate=le1991-06-09\n```",
+      "elapsed_sec": 197.0,
+      "queries_generated": 1,
+      "primary_query_url": "Procedure?code=http://snomed.info/sct|41747008,http://www.ama-assn.org/go/cpt|78300,http://www.ama-assn.org/go/cpt|78305,http://www.ama-assn.org/go/cpt|78306,http://www.ama-assn.org/go/cpt|78320&patient.gender=male&patient.birthdate=le1991-06-17",
+      "additional_query_urls": [],
+      "raw_response": "This confirms the filters are working precisely:\n- **108** male patients aged \u226535 with prostate cancer (`C61`)\n- **32** male patients aged \u226535 with bone scan procedures\n- **32** with BOTH (cross-reference AND) \u2192 All bone scan patients in this dataset have prostate cancer\n\nSince `_has` is not supported on `Procedure` but is supported on `Patient`, I'll construct both a Procedure query (for the procedure resources themselves) and a Patient query (for the validated AND cross-reference). Here is a full summary of the evidence and the final query:\n\n---\n\n### \ud83d\udd0d Evidence Summary\n\n| Layer | Code System | Codes Used | Rationale |\n|---|---|---|---|\n| **Bone Scan** | SNOMED CT | `41747008` \u2014 Radioisotope scan of bone | Found live on server in all Procedure samples |\n| **Bone Scan (limited)** | CPT | `78300` \u2014 Bone/joint imaging; limited area | Found live on server |\n| **Bone Scan (multi-area)** | CPT | `78305` \u2014 Bone/joint imaging; multiple areas | Standard nuclear medicine bone code |\n| **Whole Body Bone Scan** | CPT | `78306` \u2014 Bone/joint imaging; whole body | Directly named in request |\n| **SPECT Bone Scan** | CPT | `78320` \u2014 Bone/joint imaging; tomographic (SPECT) | Nuclear medicine variant |\n| **Prostate Cancer** | ICD-10-CM | `C61` \u2014 Malignant neoplasm of prostate | Found live on server in all Condition samples |\n| **Sex filter** | Patient | `gender=male` | Prostate cancer is male-specific |\n| **Age filter** | Patient | `birthdate=le1991-06-17` | Age \u226535 as of 2026-06-17 |\n\n### \u2705 Validation Counts\n- Bone scan procedures (male, age \u226535): **32**\n- Prostate cancer patients (male, age \u226535): **108**\n- Cross-resource AND (Patient with BOTH): **32** \u2190 all bone scan patients confirmed to have C61 diagnosis\n\n---\n\n**FINAL ANSWER:**\n\n```\nProcedure?code=http://snomed.info/sct|41747008,http://www.ama-assn.org/go/cpt|78300,http://www.ama-assn.org/go/cpt|78305,http://www.ama-assn.org/go/cpt|78306,http://www.ama-assn.org/go/cpt|78320&patient.gender=male&patient.birthdate=le1991-06-17\n```",
       "prompt_text": "Find all diagnostic imaging procedures for bone scans performed on male patients aged 35 or older with prostate cancer diagnosis, specifically looking for nuclear medicine bone scans or whole body bone scans.",
       "run_metadata": {
-       "output_tokens": 1212,
-       "tool_calls_count": 29,
+       "output_tokens": 2817,
+       "tool_calls_count": 27,
        "stop_reason": "complete",
        "fallback_used": false
       }
@@ -1202,11 +1198,11 @@
       "passed": false,
       "expected_count": 0,
       "actual_count": 0,
-      "elapsed_sec": 86.6,
+      "elapsed_sec": 42.5,
       "queries_generated": 1,
-      "primary_query_url": "Procedure?status=completed&code=http://www.ama-assn.org/go/cpt|78305,http://www.ama-assn.org/go/cpt|78306&patient.gender=male&patient.birthdate=le1991-06-01&patient._has:Condition:patient:code=http://hl7.org/fhir/sid/icd-10-cm|C61",
+      "primary_query_url": "Procedure?status=completed&code=http://www.ama-assn.org/go/cpt|78300,http://www.ama-assn.org/go/cpt|78305,http://www.ama-assn.org/go/cpt|78306&patient.gender=male&patient.birthdate=le1991-06-17&patient._has:Condition:patient:code=http://snomed.info/sct|399068003,http://hl7.org/fhir/sid/icd-10-cm|C61",
       "additional_query_urls": [],
-      "raw_response": "Procedure?status=completed&code=http://www.ama-assn.org/go/cpt|78305,http://www.ama-assn.org/go/cpt|78306&patient.gender=male&patient.birthdate=le1991-06-01&patient._has:Condition:patient:code=http://hl7.org/fhir/sid/icd-10-cm|C61",
+      "raw_response": "Procedure?status=completed&code=http://www.ama-assn.org/go/cpt|78300,http://www.ama-assn.org/go/cpt|78305,http://www.ama-assn.org/go/cpt|78306&patient.gender=male&patient.birthdate=le1991-06-17&patient._has:Condition:patient:code=http://snomed.info/sct|399068003,http://hl7.org/fhir/sid/icd-10-cm|C61",
       "prompt_text": "Find all diagnostic imaging procedures for bone scans performed on male patients aged 35 or older with prostate cancer diagnosis, specifically looking for nuclear medicine bone scans or whole body bone scans."
      },
      "2-naive": {
@@ -1256,15 +1252,15 @@
       "passed": false,
       "expected_count": 0,
       "actual_count": 32,
-      "elapsed_sec": 290.4,
+      "elapsed_sec": 123.7,
       "queries_generated": 1,
-      "primary_query_url": "Procedure?code=http://snomed.info/sct|41747008,http://www.ama-assn.org/go/cpt|78300,http://www.ama-assn.org/go/cpt|78305,http://www.ama-assn.org/go/cpt|78306&status=completed&patient:Patient.gender=male&patient:Patient.birthdate=le1991-06-01&patient:Patient._has:Condition:patient:code=http://hl7.org/fhir/sid/icd-10-cm|C61,http://snomed.info/sct|399068003,http://hl7.org/fhir/sid/icd-9-cm|185",
+      "primary_query_url": "Procedure?code=http://snomed.info/sct|41747008,http://www.ama-assn.org/go/cpt|78300&subject:Patient.gender=male&subject:Patient.birthdate=le1991-06-17&subject:Patient._has:Condition:subject:code=http://hl7.org/fhir/sid/icd-10-cm|C61",
       "additional_query_urls": [],
-      "raw_response": "Procedure?code=http://snomed.info/sct|41747008,http://www.ama-assn.org/go/cpt|78300,http://www.ama-assn.org/go/cpt|78305,http://www.ama-assn.org/go/cpt|78306&status=completed&patient:Patient.gender=male&patient:Patient.birthdate=le1991-06-01&patient:Patient._has:Condition:patient:code=http://hl7.org/fhir/sid/icd-10-cm|C61,http://snomed.info/sct|399068003,http://hl7.org/fhir/sid/icd-9-cm|185",
+      "raw_response": "Procedure?code=http://snomed.info/sct|41747008,http://www.ama-assn.org/go/cpt|78300&subject:Patient.gender=male&subject:Patient.birthdate=le1991-06-17&subject:Patient._has:Condition:subject:code=http://hl7.org/fhir/sid/icd-10-cm|C61",
       "prompt_text": "Find all diagnostic imaging procedures for bone scans performed on male patients aged 35 or older with prostate cancer diagnosis, specifically looking for nuclear medicine bone scans or whole body bone scans.",
       "run_metadata": {
-       "output_tokens": 994,
-       "tool_calls_count": 41,
+       "output_tokens": 1508,
+       "tool_calls_count": 37,
        "stop_reason": "complete",
        "fallback_used": false
       }
@@ -1316,15 +1312,15 @@
       "passed": false,
       "expected_count": 0,
       "actual_count": 32,
-      "elapsed_sec": 152.3,
+      "elapsed_sec": 99.5,
       "queries_generated": 1,
-      "primary_query_url": "Procedure?code=http://snomed.info/sct|41747008,http://www.ama-assn.org/go/cpt|78300&patient.gender=male&patient.birthdate=le1991-06-09&patient:Patient._has:Condition:patient:code=http://hl7.org/fhir/sid/icd-10-cm|C61",
+      "primary_query_url": "Patient?_has:Condition:patient:code=http://hl7.org/fhir/sid/icd-10-cm|C61&_has:Procedure:patient:code=http://snomed.info/sct|41747008,http://www.ama-assn.org/go/cpt|78300&gender=male&birthdate=le1991-06-17&_revinclude=Procedure:patient",
       "additional_query_urls": [],
-      "raw_response": "Procedure?code=http://snomed.info/sct|41747008,http://www.ama-assn.org/go/cpt|78300&patient.gender=male&patient.birthdate=le1991-06-09&patient:Patient._has:Condition:patient:code=http://hl7.org/fhir/sid/icd-10-cm|C61",
+      "raw_response": "Patient?_has:Condition:patient:code=http://hl7.org/fhir/sid/icd-10-cm|C61&_has:Procedure:patient:code=http://snomed.info/sct|41747008,http://www.ama-assn.org/go/cpt|78300&gender=male&birthdate=le1991-06-17&_revinclude=Procedure:patient",
       "prompt_text": "Find all diagnostic imaging procedures for bone scans performed on male patients aged 35 or older with prostate cancer diagnosis, specifically looking for nuclear medicine bone scans or whole body bone scans.",
       "run_metadata": {
-       "output_tokens": 116,
-       "tool_calls_count": 27,
+       "output_tokens": 340,
+       "tool_calls_count": 25,
        "stop_reason": "complete",
        "fallback_used": false
       }
@@ -1596,18 +1592,18 @@
       "prompt_text": "Find male prostate cancer patients who received a radioisotope scan of bone \u2014 used per clinical guidelines to assess metastatic spread in newly diagnosed prostate cancer."
      },
      "1-expert": {
-      "precision": 1.0,
-      "recall": 1.0,
-      "f1": 1.0,
-      "passed": true,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
       "expected_count": 32,
-      "actual_count": 32,
-      "elapsed_sec": 0.2,
+      "actual_count": 0,
+      "elapsed_sec": 9.0,
       "queries_generated": 1,
-      "primary_query_url": "Procedure?code=http://snomed.info/sct|41747008&subject:Patient.gender=male",
+      "primary_query_url": "Procedure?code=http://snomed.info/sct|45499002&subject.gender=male",
       "additional_query_urls": [],
-      "raw_response": "Procedure?code=http://snomed.info/sct|41747008&subject:Patient.gender=male",
-      "prompt_text": "Search Procedure for SNOMED 41747008 (Radioisotope scan of bone). Restrict to male patients. Query: Procedure?code=http://snomed.info/sct|41747008&patient.gender=male"
+      "raw_response": "Procedure?code=http://snomed.info/sct|45499002&subject.gender=male",
+      "prompt_text": "I need to find male patients who underwent a radionuclide bone scan, as part of a quality-metric cohort for bone scan utilization in male prostate cancer patients per the PheKB algorithm. Search Procedure resources for the SNOMED CT concept for radioisotope scan of bone, and restrict results to male patients using a patient gender filter. This procedure query captures the bone scan utilization event itself; the PheKB phenotype pairs this with a prostate cancer diagnosis to evaluate clinical guideline adherence."
      },
      "2-naive": {
       "precision": 1.0,
@@ -1658,15 +1654,15 @@
       "passed": true,
       "expected_count": 32,
       "actual_count": 32,
-      "elapsed_sec": 13.6,
+      "elapsed_sec": 32.4,
       "queries_generated": 1,
       "primary_query_url": "Procedure?code=http://snomed.info/sct|41747008&subject:Patient.gender=male",
       "additional_query_urls": [],
       "raw_response": "Procedure?code=http://snomed.info/sct|41747008&subject:Patient.gender=male",
-      "prompt_text": "Search Procedure for SNOMED 41747008 (Radioisotope scan of bone). Restrict to male patients. Query: Procedure?code=http://snomed.info/sct|41747008&patient.gender=male",
+      "prompt_text": "I need to find male patients who underwent a radionuclide bone scan, as part of a quality-metric cohort for bone scan utilization in male prostate cancer patients per the PheKB algorithm. Search Procedure resources for the SNOMED CT concept for radioisotope scan of bone, and restrict results to male patients using a patient gender filter. This procedure query captures the bone scan utilization event itself; the PheKB phenotype pairs this with a prostate cancer diagnosis to evaluate clinical guideline adherence.",
       "run_metadata": {
        "output_tokens": 37,
-       "tool_calls_count": 2,
+       "tool_calls_count": 7,
        "stop_reason": "complete",
        "fallback_used": false
       }
@@ -1718,15 +1714,15 @@
       "passed": true,
       "expected_count": 32,
       "actual_count": 32,
-      "elapsed_sec": 14.1,
+      "elapsed_sec": 23.7,
       "queries_generated": 1,
       "primary_query_url": "Procedure?code=http://snomed.info/sct|41747008&patient.gender=male",
       "additional_query_urls": [],
       "raw_response": "Procedure?code=http://snomed.info/sct|41747008&patient.gender=male",
-      "prompt_text": "Search Procedure for SNOMED 41747008 (Radioisotope scan of bone). Restrict to male patients. Query: Procedure?code=http://snomed.info/sct|41747008&patient.gender=male",
+      "prompt_text": "I need to find male patients who underwent a radionuclide bone scan, as part of a quality-metric cohort for bone scan utilization in male prostate cancer patients per the PheKB algorithm. Search Procedure resources for the SNOMED CT concept for radioisotope scan of bone, and restrict results to male patients using a patient gender filter. This procedure query captures the bone scan utilization event itself; the PheKB phenotype pairs this with a prostate cancer diagnosis to evaluate clinical guideline adherence.",
       "run_metadata": {
        "output_tokens": 33,
-       "tool_calls_count": 1,
+       "tool_calls_count": 5,
        "stop_reason": "complete",
        "fallback_used": false
       }
@@ -1766,18 +1762,18 @@
       "prompt_text": "Find male prostate cancer patients who received a radioisotope scan of bone \u2014 used per clinical guidelines to assess metastatic spread in newly diagnosed prostate cancer."
      },
      "1-expert": {
-      "precision": 1.0,
-      "recall": 1.0,
-      "f1": 1.0,
-      "passed": true,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
       "expected_count": 32,
-      "actual_count": 32,
-      "elapsed_sec": 0.2,
+      "actual_count": 0,
+      "elapsed_sec": 9.5,
       "queries_generated": 1,
-      "primary_query_url": "Procedure?code=http://snomed.info/sct|41747008&subject:Patient.gender=male",
+      "primary_query_url": "Procedure?code=http://snomed.info/sct|45036003&subject.gender=male",
       "additional_query_urls": [],
-      "raw_response": "Procedure?code=http://snomed.info/sct|41747008&subject:Patient.gender=male",
-      "prompt_text": "Search Procedure for SNOMED 41747008 (Radioisotope scan of bone). Restrict to male patients. Query: Procedure?code=http://snomed.info/sct|41747008&patient.gender=male"
+      "raw_response": "Procedure?code=http://snomed.info/sct|45036003&subject.gender=male",
+      "prompt_text": "I need to find male patients who underwent a radionuclide bone scan, as part of a quality-metric cohort for bone scan utilization in male prostate cancer patients per the PheKB algorithm. Search Procedure resources for the SNOMED CT concept for radioisotope scan of bone, and restrict results to male patients using a patient gender filter. This procedure query captures the bone scan utilization event itself; the PheKB phenotype pairs this with a prostate cancer diagnosis to evaluate clinical guideline adherence."
      }
     },
     "copilot:claude-sonnet-4.6": {
@@ -1817,21 +1813,21 @@
       "prompt_text": "Find male prostate cancer patients who received a radioisotope scan of bone \u2014 used per clinical guidelines to assess metastatic spread in newly diagnosed prostate cancer."
      },
      "1-expert": {
-      "precision": 1.0,
-      "recall": 1.0,
-      "f1": 1.0,
-      "passed": true,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
       "expected_count": 32,
-      "actual_count": 32,
-      "elapsed_sec": 25.2,
+      "actual_count": 0,
+      "elapsed_sec": 21.8,
       "queries_generated": 3,
-      "primary_query_url": "Procedure?code=http://snomed.info/sct|41747008&patient.gender=male",
+      "primary_query_url": "Procedure?code=http://snomed.info/sct|71651007&patient.gender=male",
       "additional_query_urls": [
-       "Patient?gender=male",
-       "Procedure?code=http://snomed.info/sct|41747008&patient=<id1>,<id2>"
+       "Condition?code=http://snomed.info/sct|399068003&patient.gender=male",
+       "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|C61&patient.gender=male"
       ],
-      "raw_response": "```\nProcedure?code=http://snomed.info/sct|41747008&patient.gender=male\n```\n\n### Breakdown\n\n| Component | Details |\n|---|---|\n| **Resource** | `Procedure` |\n| **Code System** | `http://snomed.info/sct` |\n| **SNOMED Code** | `41747008` \u2014 *Radioisotope scan of bone* |\n| **Chained Parameter** | `patient.gender=male` \u2014 filters to **male** patients via a chained search on the referenced `Patient` resource |\n\n### Notes\n- `patient.gender=male` is a **chained parameter** that traverses the `Procedure.subject` reference to the `Patient` resource and filters on `Patient.gender`.\n- This requires the server to support **chained search** on the `patient` reference parameter.\n- If the server does not support chained search, an alternative two-step approach would be needed:\n  1. `Patient?gender=male` \u2192 collect patient IDs\n  2. `Procedure?code=http://snomed.info/sct|41747008&patient=<id1>,<id2>,...`",
-      "prompt_text": "Search Procedure for SNOMED 41747008 (Radioisotope scan of bone). Restrict to male patients. Query: Procedure?code=http://snomed.info/sct|41747008&patient.gender=male"
+      "raw_response": "## FHIR Query: Radionuclide Bone Scan in Male Patients\n\n```\nProcedure?code=http://snomed.info/sct|71651007&patient.gender=male\n```\n\n---\n\n### Query Breakdown\n\n| Component | Value | Rationale |\n|---|---|---|\n| **Resource** | `Procedure` | Captures the clinical event (bone scan utilization) |\n| **`code`** | `http://snomed.info/sct\\|71651007` | SNOMED CT: *Radioisotope scan of bone* \u2014 standard concept for radionuclide/nuclear medicine bone scan |\n| **`patient.gender`** | `male` | Chained parameter filtering to male patients only |\n\n---\n\n### Clinical & PheKB Context\n\n- **PheKB Pairing:** This procedure query captures the **bone scan utilization event**; combine with a prostate cancer `Condition` query (e.g., SNOMED `399068003` or ICD-10-CM `C61`) to implement the full PheKB phenotype\n- **Guideline Adherence Metric:** Bone scans in low-risk prostate cancer patients may indicate a quality gap; this cohort enables guideline-concordance analysis\n- **Chained Parameter Note:** `patient.gender=male` traverses the `Procedure.subject` \u2192 `Patient.gender` reference chain; ensure your FHIR server supports chained search on this path\n\n---\n\n### Suggested Companion Queries (Full PheKB Phenotype)\n\n```\nCondition?code=http://snomed.info/sct|399068003&patient.gender=male\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|C61&patient.gender=male\n```\n\n> Intersect `Patient` IDs from both the `Procedure` and `Condition` result sets to identify the final PheKB-concordant male prostate cancer patients who received a bone scan.",
+      "prompt_text": "I need to find male patients who underwent a radionuclide bone scan, as part of a quality-metric cohort for bone scan utilization in male prostate cancer patients per the PheKB algorithm. Search Procedure resources for the SNOMED CT concept for radioisotope scan of bone, and restrict results to male patients using a patient gender filter. This procedure query captures the bone scan utilization event itself; the PheKB phenotype pairs this with a prostate cancer diagnosis to evaluate clinical guideline adherence."
      },
      "2-naive": {
       "precision": 1.0,
@@ -1874,24 +1870,21 @@
       }
      },
      "2-expert": {
-      "precision": 0.0,
-      "recall": 0.0,
-      "f1": 0.0,
-      "passed": false,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
       "expected_count": 32,
-      "actual_count": 0,
-      "elapsed_sec": 39.4,
-      "queries_generated": 3,
-      "primary_query_url": "Procedure?code=http://snomed.info/sct\\|41747008&patient.gender=male",
-      "additional_query_urls": [
-       "Procedure?code=http://snomed.info/sct|41747008,http://www.ama-assn.org/go/cpt|78300&patient.gender=male",
-       "Procedure?code=http://snomed.info/sct|41747008&patient.gender=male"
-      ],
-      "raw_response": "The query executed successfully. Here's a summary of the results:\n\n---\n\n### \u2705 Query Results\n\n| Field | Detail |\n|---|---|\n| **Query** | `Procedure?code=http://snomed.info/sct\\|41747008&patient.gender=male` |\n| **Entries Returned** | **10 Procedure records** |\n| **Total** | Not returned by server (paging may apply) |\n\n---\n\n### \ud83d\udd2c Code Observations\n\nEvery returned record carries **dual codings** \u2014 a real-world pattern worth noting:\n\n| System | Code | Display |\n|---|---|---|\n| `http://snomed.info/sct` | **41747008** | Radioisotope scan of bone |\n| `http://www.ama-assn.org/go/cpt` | **78300** | Bone scan procedure |\n\nAll 10 sampled resources confirmed **SNOMED `41747008`** as intended, alongside the CPT equivalent **78300**. The `patient.gender=male` chained filter applied correctly.\n\n---\n\n### \ud83d\udca1 Tip \u2014 Broaden Coverage with CPT\nSince this server co-codes procedures with CPT, you could also union in the CPT code to ensure no records are missed if any procedure is coded *only* in CPT:\n\n```\nProcedure?code=http://snomed.info/sct|41747008,http://www.ama-assn.org/go/cpt|78300&patient.gender=male\n```\n\n---\n\n**Final validated query:**\n\n```\nProcedure?code=http://snomed.info/sct|41747008&patient.gender=male\n```",
-      "prompt_text": "Search Procedure for SNOMED 41747008 (Radioisotope scan of bone). Restrict to male patients. Query: Procedure?code=http://snomed.info/sct|41747008&patient.gender=male",
+      "actual_count": 32,
+      "elapsed_sec": 51.1,
+      "queries_generated": 1,
+      "primary_query_url": "Procedure?code=http://snomed.info/sct|41747008&patient.gender=male",
+      "additional_query_urls": [],
+      "raw_response": "All evidence is confirmed. Here's a summary of findings:\n\n| Check | Result |\n|---|---|\n| **SNOMED CT Code** | `41747008` \u2014 *\"Radioisotope scan of bone (procedure)\"* \u2705 |\n| **UMLS CUI** | C0203668 \u2014 confirmed exact match |\n| **VSAC Lookup** | Authoritative display confirmed via SNOMEDCT v20260301 |\n| **Server code system** | All 5 sampled Procedure resources carry `http://snomed.info/sct\\|41747008` (+ CPT 78300 as secondary) |\n| **Gender filter** | `patient.gender=male` chained across the Procedure\u2192Patient reference |\n| **Count (male + bone scan)** | **32 Procedure records** \u2014 clinically plausible for a quality-metric cohort |\n\n> **Note on VSAC value set:** The active *Bone Scan* value set (OID `2.16.840.1.113883.3.526.3.320`) enumerates 35 codes in LOINC/CPT/HCPCS \u2014 it does **not** include SNOMED codes. Since the server encodes all bone scan Procedures with SNOMED `41747008` as the primary code, and the user's PheKB algorithm specifically targets the SNOMED CT concept, the SNOMED query is both correct and sufficient for this server.\n\n---\n\n**FINAL ANSWER**\n\n```\nProcedure?code=http://snomed.info/sct|41747008&patient.gender=male\n```",
+      "prompt_text": "I need to find male patients who underwent a radionuclide bone scan, as part of a quality-metric cohort for bone scan utilization in male prostate cancer patients per the PheKB algorithm. Search Procedure resources for the SNOMED CT concept for radioisotope scan of bone, and restrict results to male patients using a patient gender filter. This procedure query captures the bone scan utilization event itself; the PheKB phenotype pairs this with a prostate cancer diagnosis to evaluate clinical guideline adherence.",
       "run_metadata": {
-       "output_tokens": 397,
-       "tool_calls_count": 1,
+       "output_tokens": 923,
+       "tool_calls_count": 7,
        "stop_reason": "complete",
        "fallback_used": false
       }
@@ -1945,14 +1938,14 @@
       "passed": true,
       "expected_count": 32,
       "actual_count": 32,
-      "elapsed_sec": 29.9,
+      "elapsed_sec": 32.1,
       "queries_generated": 1,
       "primary_query_url": "Procedure?code=http://snomed.info/sct|41747008&patient.gender=male",
       "additional_query_urls": [],
-      "raw_response": "All evidence is verified. Here's a summary of the findings:\n\n---\n\n### \u2705 Verification Summary\n\n| Check | Result |\n|---|---|\n| **SNOMED 41747008** | \u2705 Confirmed \u2192 *\"Radioisotope scan of bone (procedure)\"* |\n| **Server code system** | \u2705 Procedure resources use `http://snomed.info/sct` \u2014 all 3 samples had code `41747008` |\n| **CPT dual-coding** | \u2139\ufe0f Server also stores CPT `78300` (\"Bone scan procedure\"), but SNOMED is sufficient |\n| **`patient.gender` chained param** | \u2705 Supported (FHIR 4.0.1 server) |\n| **Result count** | \u2705 **32 male patients** with this procedure \u2014 a plausible, non-zero cohort |\n\n---\n\n### FINAL ANSWER\n\n```\nProcedure?code=http://snomed.info/sct|41747008&patient.gender=male\n```",
-      "prompt_text": "Search Procedure for SNOMED 41747008 (Radioisotope scan of bone). Restrict to male patients. Query: Procedure?code=http://snomed.info/sct|41747008&patient.gender=male",
+      "raw_response": "All evidence is confirmed:\n\n| Check | Result |\n|---|---|\n| **SNOMED code** | `41747008` \u2192 \"Radioisotope scan of bone (procedure)\" \u2705 |\n| **Server code system** | All 5 sampled Procedures use `http://snomed.info/sct` \u2705 |\n| **Gender filter** | `patient.gender=male` supported via chained search \u2705 |\n| **Count (male, bone scan)** | **32 Procedures** \u2014 clinically plausible for a PheKB bone-scan utilization cohort \u2705 |\n\n---\n\n**FINAL ANSWER:**\n\n```\nProcedure?code=http://snomed.info/sct|41747008&patient.gender=male\n```",
+      "prompt_text": "I need to find male patients who underwent a radionuclide bone scan, as part of a quality-metric cohort for bone scan utilization in male prostate cancer patients per the PheKB algorithm. Search Procedure resources for the SNOMED CT concept for radioisotope scan of bone, and restrict results to male patients using a patient gender filter. This procedure query captures the bone scan utilization event itself; the PheKB phenotype pairs this with a prostate cancer diagnosis to evaluate clinical guideline adherence.",
       "run_metadata": {
-       "output_tokens": 253,
+       "output_tokens": 357,
        "tool_calls_count": 4,
        "stop_reason": "complete",
        "fallback_used": false
@@ -1995,12 +1988,12 @@
       "passed": true,
       "expected_count": 32,
       "actual_count": 32,
-      "elapsed_sec": 22.9,
+      "elapsed_sec": 49.6,
       "queries_generated": 1,
       "primary_query_url": "Procedure?code=http://snomed.info/sct|41747008&patient.gender=male",
       "additional_query_urls": [],
       "raw_response": "Procedure?code=http://snomed.info/sct|41747008&patient.gender=male",
-      "prompt_text": "Search Procedure for SNOMED 41747008 (Radioisotope scan of bone). Restrict to male patients. Query: Procedure?code=http://snomed.info/sct|41747008&patient.gender=male"
+      "prompt_text": "I need to find male patients who underwent a radionuclide bone scan, as part of a quality-metric cohort for bone scan utilization in male prostate cancer patients per the PheKB algorithm. Search Procedure resources for the SNOMED CT concept for radioisotope scan of bone, and restrict results to male patients using a patient gender filter. This procedure query captures the bone scan utilization event itself; the PheKB phenotype pairs this with a prostate cancer diagnosis to evaluate clinical guideline adherence."
      },
      "2-naive": {
       "precision": 1.0,
@@ -2049,15 +2042,15 @@
       "passed": true,
       "expected_count": 32,
       "actual_count": 32,
-      "elapsed_sec": 29.8,
+      "elapsed_sec": 40.4,
       "queries_generated": 1,
       "primary_query_url": "Procedure?code=http://snomed.info/sct|41747008&patient.gender=male",
       "additional_query_urls": [],
       "raw_response": "Procedure?code=http://snomed.info/sct|41747008&patient.gender=male",
-      "prompt_text": "Search Procedure for SNOMED 41747008 (Radioisotope scan of bone). Restrict to male patients. Query: Procedure?code=http://snomed.info/sct|41747008&patient.gender=male",
+      "prompt_text": "I need to find male patients who underwent a radionuclide bone scan, as part of a quality-metric cohort for bone scan utilization in male prostate cancer patients per the PheKB algorithm. Search Procedure resources for the SNOMED CT concept for radioisotope scan of bone, and restrict results to male patients using a patient gender filter. This procedure query captures the bone scan utilization event itself; the PheKB phenotype pairs this with a prostate cancer diagnosis to evaluate clinical guideline adherence.",
       "run_metadata": {
-       "output_tokens": 229,
-       "tool_calls_count": 0,
+       "output_tokens": 122,
+       "tool_calls_count": 11,
        "stop_reason": "complete",
        "fallback_used": false
       }
@@ -2109,15 +2102,15 @@
       "passed": true,
       "expected_count": 32,
       "actual_count": 32,
-      "elapsed_sec": 26.4,
+      "elapsed_sec": 30.7,
       "queries_generated": 1,
       "primary_query_url": "Procedure?code=http://snomed.info/sct|41747008&patient.gender=male",
       "additional_query_urls": [],
       "raw_response": "Procedure?code=http://snomed.info/sct|41747008&patient.gender=male",
-      "prompt_text": "Search Procedure for SNOMED 41747008 (Radioisotope scan of bone). Restrict to male patients. Query: Procedure?code=http://snomed.info/sct|41747008&patient.gender=male",
+      "prompt_text": "I need to find male patients who underwent a radionuclide bone scan, as part of a quality-metric cohort for bone scan utilization in male prostate cancer patients per the PheKB algorithm. Search Procedure resources for the SNOMED CT concept for radioisotope scan of bone, and restrict results to male patients using a patient gender filter. This procedure query captures the bone scan utilization event itself; the PheKB phenotype pairs this with a prostate cancer diagnosis to evaluate clinical guideline adherence.",
       "run_metadata": {
-       "output_tokens": 119,
-       "tool_calls_count": 3,
+       "output_tokens": 345,
+       "tool_calls_count": 7,
        "stop_reason": "complete",
        "fallback_used": false
       }

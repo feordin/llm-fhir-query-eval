@@ -41,19 +41,19 @@
      },
      "1-expert": {
       "precision": 1.0,
-      "recall": 1.0,
-      "f1": 1.0,
+      "recall": 0.9462,
+      "f1": 0.9724,
       "passed": true,
       "expected_count": 3011,
-      "actual_count": 3011,
-      "elapsed_sec": 9.9,
+      "actual_count": 2849,
+      "elapsed_sec": 136.3,
       "queries_generated": 2,
       "primary_query_url": "Condition?code=http://snomed.info/sct|13746004",
       "additional_query_urls": [
-       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6448,http://www.nlm.nih.gov/research/umls/rxnorm|40254,http://www.nlm.nih.gov/research/umls/rxnorm|28439"
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6448,http://www.nlm.nih.gov/research/umls/rxnorm|11118,http://www.nlm.nih.gov/research/umls/rxnorm|28439"
       ],
-      "raw_response": "Condition?code=http://snomed.info/sct|13746004\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6448,http://www.nlm.nih.gov/research/umls/rxnorm|40254,http://www.nlm.nih.gov/research/umls/rxnorm|28439",
-      "prompt_text": "Run two queries. (1) Condition?code=http://snomed.info/sct|13746004 \u2014 bipolar dx. (2) MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6448,http://www.nlm.nih.gov/research/umls/rxnorm|40254,http://www.nlm.nih.gov/research/umls/rxnorm|28439 \u2014 mood stabilizers. Union the patient IDs."
+      "raw_response": "Condition?code=http://snomed.info/sct|13746004\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6448,http://www.nlm.nih.gov/research/umls/rxnorm|11118,http://www.nlm.nih.gov/research/umls/rxnorm|28439",
+      "prompt_text": "I need to identify all patients with bipolar disorder using a union across Condition and MedicationRequest resources. First, search Condition resources for a bipolar disorder diagnosis coded in SNOMED CT. Then search MedicationRequest resources for the core mood stabilizers used in bipolar management \u2014 lithium, valproate, and lamotrigine \u2014 all coded in RxNorm. Union the patient sets; the medication path captures patients treated for bipolar disorder who may lack a formally coded diagnosis, but note that valproate and lamotrigine are cross-indicated with epilepsy and migraine, so the medication-only subset will include some non-bipolar patients."
      },
      "2-naive": {
       "precision": 1.0,
@@ -104,17 +104,17 @@
       "passed": true,
       "expected_count": 3011,
       "actual_count": 3011,
-      "elapsed_sec": 148.1,
+      "elapsed_sec": 168.9,
       "queries_generated": 2,
       "primary_query_url": "Condition?code=http://snomed.info/sct|13746004",
       "additional_query_urls": [
        "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6448,http://www.nlm.nih.gov/research/umls/rxnorm|40254,http://www.nlm.nih.gov/research/umls/rxnorm|28439"
       ],
-      "raw_response": "Condition?code=http://snomed.info/sct|13746004\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6448,http://www.nlm.nih.gov/research/umls/rxnorm|40254,http://www.nlm.nih.gov/research/umls/rxnorm|28439",
-      "prompt_text": "Run two queries. (1) Condition?code=http://snomed.info/sct|13746004 \u2014 bipolar dx. (2) MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6448,http://www.nlm.nih.gov/research/umls/rxnorm|40254,http://www.nlm.nih.gov/research/umls/rxnorm|28439 \u2014 mood stabilizers. Union the patient IDs.",
+      "raw_response": "Both queries return substantial counts. Lamotrigine RxNorm ingredient code is 28439.\n\nCondition?code=http://snomed.info/sct|13746004\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6448,http://www.nlm.nih.gov/research/umls/rxnorm|40254,http://www.nlm.nih.gov/research/umls/rxnorm|28439",
+      "prompt_text": "I need to identify all patients with bipolar disorder using a union across Condition and MedicationRequest resources. First, search Condition resources for a bipolar disorder diagnosis coded in SNOMED CT. Then search MedicationRequest resources for the core mood stabilizers used in bipolar management \u2014 lithium, valproate, and lamotrigine \u2014 all coded in RxNorm. Union the patient sets; the medication path captures patients treated for bipolar disorder who may lack a formally coded diagnosis, but note that valproate and lamotrigine are cross-indicated with epilepsy and migraine, so the medication-only subset will include some non-bipolar patients.",
       "run_metadata": {
-       "output_tokens": 118,
-       "tool_calls_count": 2,
+       "output_tokens": 152,
+       "tool_calls_count": 12,
        "stop_reason": "complete",
        "fallback_used": false
       }
@@ -168,17 +168,17 @@
       "passed": true,
       "expected_count": 3011,
       "actual_count": 3011,
-      "elapsed_sec": 148.2,
+      "elapsed_sec": 172.6,
       "queries_generated": 2,
       "primary_query_url": "Condition?code=http://snomed.info/sct|13746004",
       "additional_query_urls": [
        "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6448,http://www.nlm.nih.gov/research/umls/rxnorm|40254,http://www.nlm.nih.gov/research/umls/rxnorm|28439"
       ],
       "raw_response": "Condition?code=http://snomed.info/sct|13746004\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6448,http://www.nlm.nih.gov/research/umls/rxnorm|40254,http://www.nlm.nih.gov/research/umls/rxnorm|28439",
-      "prompt_text": "Run two queries. (1) Condition?code=http://snomed.info/sct|13746004 \u2014 bipolar dx. (2) MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6448,http://www.nlm.nih.gov/research/umls/rxnorm|40254,http://www.nlm.nih.gov/research/umls/rxnorm|28439 \u2014 mood stabilizers. Union the patient IDs.",
+      "prompt_text": "I need to identify all patients with bipolar disorder using a union across Condition and MedicationRequest resources. First, search Condition resources for a bipolar disorder diagnosis coded in SNOMED CT. Then search MedicationRequest resources for the core mood stabilizers used in bipolar management \u2014 lithium, valproate, and lamotrigine \u2014 all coded in RxNorm. Union the patient sets; the medication path captures patients treated for bipolar disorder who may lack a formally coded diagnosis, but note that valproate and lamotrigine are cross-indicated with epilepsy and migraine, so the medication-only subset will include some non-bipolar patients.",
       "run_metadata": {
-       "output_tokens": 118,
-       "tool_calls_count": 2,
+       "output_tokens": 157,
+       "tool_calls_count": 15,
        "stop_reason": "complete",
        "fallback_used": false
       }
@@ -221,19 +221,19 @@
      },
      "1-expert": {
       "precision": 1.0,
-      "recall": 1.0,
-      "f1": 1.0,
+      "recall": 0.8867,
+      "f1": 0.94,
       "passed": true,
       "expected_count": 3011,
-      "actual_count": 3011,
-      "elapsed_sec": 2.6,
+      "actual_count": 2670,
+      "elapsed_sec": 129.2,
       "queries_generated": 2,
       "primary_query_url": "Condition?code=http://snomed.info/sct|13746004",
       "additional_query_urls": [
-       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6448,http://www.nlm.nih.gov/research/umls/rxnorm|40254,http://www.nlm.nih.gov/research/umls/rxnorm|28439"
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|10582,http://www.nlm.nih.gov/research/umls/rxnorm|11118,http://www.nlm.nih.gov/research/umls/rxnorm|28439"
       ],
-      "raw_response": "Condition?code=http://snomed.info/sct|13746004\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6448,http://www.nlm.nih.gov/research/umls/rxnorm|40254,http://www.nlm.nih.gov/research/umls/rxnorm|28439",
-      "prompt_text": "Run two queries. (1) Condition?code=http://snomed.info/sct|13746004 \u2014 bipolar dx. (2) MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6448,http://www.nlm.nih.gov/research/umls/rxnorm|40254,http://www.nlm.nih.gov/research/umls/rxnorm|28439 \u2014 mood stabilizers. Union the patient IDs."
+      "raw_response": "Condition?code=http://snomed.info/sct|13746004\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|10582,http://www.nlm.nih.gov/research/umls/rxnorm|11118,http://www.nlm.nih.gov/research/umls/rxnorm|28439",
+      "prompt_text": "I need to identify all patients with bipolar disorder using a union across Condition and MedicationRequest resources. First, search Condition resources for a bipolar disorder diagnosis coded in SNOMED CT. Then search MedicationRequest resources for the core mood stabilizers used in bipolar management \u2014 lithium, valproate, and lamotrigine \u2014 all coded in RxNorm. Union the patient sets; the medication path captures patients treated for bipolar disorder who may lack a formally coded diagnosis, but note that valproate and lamotrigine are cross-indicated with epilepsy and migraine, so the medication-only subset will include some non-bipolar patients."
      }
     },
     "copilot:claude-sonnet-4.6": {
@@ -277,19 +277,22 @@
      },
      "1-expert": {
       "precision": 1.0,
-      "recall": 1.0,
-      "f1": 1.0,
+      "recall": 0.9462,
+      "f1": 0.9724,
       "passed": true,
       "expected_count": 3011,
-      "actual_count": 3011,
-      "elapsed_sec": 173.0,
-      "queries_generated": 2,
-      "primary_query_url": "Condition?code=http://snomed.info/sct|13746004&_elements=subject",
+      "actual_count": 2849,
+      "elapsed_sec": 184.8,
+      "queries_generated": 5,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|13746004&_include=Condition:patient",
       "additional_query_urls": [
-       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6448,http://www.nlm.nih.gov/research/umls/rxnorm|40254,http://www.nlm.nih.gov/research/umls/rxnorm|28439&_elements=subject"
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6448&_include=MedicationRequest:patient",
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|11289,http://www.nlm.nih.gov/research/umls/rxnorm|19834&_include=MedicationRequest:patient",
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|28439&_include=MedicationRequest:patient",
+       "Patient?_has:Condition:patient:code=http://snomed.info/sct|13746004"
       ],
-      "raw_response": "## FHIR Queries\n\n```\nCondition?code=http://snomed.info/sct|13746004&_elements=subject\n```\n\n```\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6448,http://www.nlm.nih.gov/research/umls/rxnorm|40254,http://www.nlm.nih.gov/research/umls/rxnorm|28439&_elements=subject\n```\n\n---\n\n## Query Details\n\n| # | Resource | Code | Concept |\n|---|----------|------|---------|\n| 1 | `Condition` | SNOMED `13746004` | Bipolar disorder diagnosis |\n| 2 | `MedicationRequest` | RxNorm `6448` | Lithium |\n| 2 | `MedicationRequest` | RxNorm `40254` | Valproate (Valproic acid) |\n| 2 | `MedicationRequest` | RxNorm `28439` | Carbamazepine |\n\n> `_elements=subject` is included to minimize payload \u2014 only the patient reference is needed for the union step.\n\n---\n\n## Union Logic (Client-Side)\n\nSince FHIR has no native set-union operator across resource types, perform the union programmatically:\n\n```python\nbipolar_patients  = { r[\"subject\"][\"reference\"] for r in condition_results }\nmedstab_patients  = { r[\"subject\"][\"reference\"] for r in medrx_results }\n\nunion_patient_ids = bipolar_patients | medstab_patients\n```\n\n**Result interpretation:**\n- **Union** \u2192 patients with a bipolar *diagnosis* **OR** a mood stabilizer *prescription* (broader cohort, captures undocumented dx or off-label use)\n- **Intersection** \u2192 patients with *both* (higher-confidence bipolar cohort)\n\nSpecify which set operation you need if you'd like the intersection or difference query instead.",
-      "prompt_text": "Run two queries. (1) Condition?code=http://snomed.info/sct|13746004 \u2014 bipolar dx. (2) MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6448,http://www.nlm.nih.gov/research/umls/rxnorm|40254,http://www.nlm.nih.gov/research/umls/rxnorm|28439 \u2014 mood stabilizers. Union the patient IDs."
+      "raw_response": "## FHIR Queries \u2014 Bipolar Disorder Patient Identification (Union Strategy)\n\n### Query 1 \u2014 Condition: Bipolar Disorder Diagnosis (SNOMED CT)\n```\nCondition?code=http://snomed.info/sct|13746004&_include=Condition:patient\n```\n\n---\n\n### Query 2 \u2014 MedicationRequest: Lithium (RxNorm Ingredient)\n```\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6448&_include=MedicationRequest:patient\n```\n\n---\n\n### Query 3 \u2014 MedicationRequest: Valproate \u2014 Valproic Acid + Divalproex (RxNorm Ingredients, comma-OR)\n```\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|11289,http://www.nlm.nih.gov/research/umls/rxnorm|19834&_include=MedicationRequest:patient\n```\n\n---\n\n### Query 4 \u2014 MedicationRequest: Lamotrigine (RxNorm Ingredient)\n```\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|28439&_include=MedicationRequest:patient\n```\n\n---\n\n## Code Reference Table\n\n| Query | Resource | Code System | Code | Concept |\n|---|---|---|---|---|\n| 1 | Condition | SNOMED CT | `13746004` | Bipolar disorder |\n| 2 | MedicationRequest | RxNorm | `6448` | Lithium (ingredient) |\n| 3 | MedicationRequest | RxNorm | `11289` | Valproic acid (ingredient) |\n| 3 | MedicationRequest | RxNorm | `19834` | Divalproex (ingredient / Depakote prodrug form) |\n| 4 | MedicationRequest | RxNorm | `28439` | Lamotrigine (ingredient) |\n\n---\n\n## Union & Caveats\n\n| Patient Subset | Source | Confidence |\n|---|---|---|\n| **Definite bipolar** | Query 1 (Condition only) | High \u2014 formal coded diagnosis |\n| **High-specificity bipolar** | Query 1 \u2229 Queries 2\u20134 | Very high \u2014 diagnosis + matched treatment |\n| **Probable bipolar** | Query 2 (lithium-only) | High \u2014 lithium is almost exclusively bipolar/mood-disorder use |\n| **Lower-specificity bipolar** | Queries 3\u20134 (med-only, no Condition match) | Lower \u2014 valproate/lamotrigine cross-indicated for **epilepsy** and **migraine**; recommend post-filter intersection with Query 1 or additional clinical data review |\n\n> **Tip:** Use ingredient-level RxNorm codes (as above) rather than product or clinical drug codes to maximize recall across branded and generic formulations without enumerating every NDC or SCD. If your FHIR server supports `_has`, you could also invert these into patient-centric queries (e.g., `Patient?_has:Condition:patient:code=http://snomed.info/sct|13746004`).",
+      "prompt_text": "I need to identify all patients with bipolar disorder using a union across Condition and MedicationRequest resources. First, search Condition resources for a bipolar disorder diagnosis coded in SNOMED CT. Then search MedicationRequest resources for the core mood stabilizers used in bipolar management \u2014 lithium, valproate, and lamotrigine \u2014 all coded in RxNorm. Union the patient sets; the medication path captures patients treated for bipolar disorder who may lack a formally coded diagnosis, but note that valproate and lamotrigine are cross-indicated with epilepsy and migraine, so the medication-only subset will include some non-bipolar patients."
      },
      "2-naive": {
       "precision": 0.9288,
@@ -340,17 +343,17 @@
       "passed": true,
       "expected_count": 3011,
       "actual_count": 3011,
-      "elapsed_sec": 173.8,
+      "elapsed_sec": 219.5,
       "queries_generated": 2,
       "primary_query_url": "Condition?code=http://snomed.info/sct|13746004",
       "additional_query_urls": [
        "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6448,http://www.nlm.nih.gov/research/umls/rxnorm|40254,http://www.nlm.nih.gov/research/umls/rxnorm|28439"
       ],
-      "raw_response": "Both queries executed successfully and hit live data. Here's the full breakdown:\n\n---\n\n## \u2705 Query 1 \u2014 Bipolar Diagnosis (Condition)\n\n```\nCondition?code=http://snomed.info/sct|13746004\n```\n\n| Field | Result |\n|---|---|\n| **Resources returned** | 10 (no server-side total provided) |\n| **Code confirmed** | `SNOMED 13746004` \u2192 *\"Bipolar disorder\"* \u2714\ufe0f |\n| **Category** | `encounter-diagnosis` (all sampled records) |\n\nAll 10 sampled records cleanly matched the SNOMED code \u2014 no surprises.\n\n---\n\n## \u2705 Query 2 \u2014 Mood Stabilizers (MedicationRequest)\n\n```\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6448,http://www.nlm.nih.gov/research/umls/rxnorm|40254,http://www.nlm.nih.gov/research/umls/rxnorm|28439\n```\n\n| RxNorm Code | Drug | Confirmed in Sample? |\n|---|---|---|\n| `6448` | **Lithium** | \u2714\ufe0f |\n| `40254` | **Valproate** | \u2714\ufe0f |\n| `28439` | **Lamotrigine** | \u2714\ufe0f |\n\nAll three ingredient-level RxNorm codes resolved and returned records. Category was `community` (outpatient prescriptions) across the sample.\n\n> \u26a0\ufe0f **Note:** RxNorm `28439` is **lamotrigine**, not carbamazepine (carbamazepine would be `2002`). If your intent was carbamazepine, add it to the medication query.\n\n---\n\n## \ud83d\udd17 Union Logic\n\nTo union the patient sets client-side:\n\n```python\n# Pseudocode\nbipolar_patients   = {r[\"subject\"][\"reference\"] for r in condition_bundle[\"entry\"]}\nstabilizer_patients = {r[\"subject\"][\"reference\"] for r in medrequest_bundle[\"entry\"]}\n\ncohort = bipolar_patients | stabilizer_patients  # set union\n```\n\nThis gives you **all patients who EITHER have a bipolar diagnosis OR are prescribed a mood stabilizer** \u2014 correctly capturing both documented-dx-only patients and treated-but-undocumented patients.\n\n---\n\n## Final Queries\n\n```\nCondition?code=http://snomed.info/sct|13746004\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6448,http://www.nlm.nih.gov/research/umls/rxnorm|40254,http://www.nlm.nih.gov/research/umls/rxnorm|28439\n```",
-      "prompt_text": "Run two queries. (1) Condition?code=http://snomed.info/sct|13746004 \u2014 bipolar dx. (2) MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6448,http://www.nlm.nih.gov/research/umls/rxnorm|40254,http://www.nlm.nih.gov/research/umls/rxnorm|28439 \u2014 mood stabilizers. Union the patient IDs.",
+      "raw_response": "All counts are validated and plausible:\n- **Condition `13746004`**: 2,542 records (root code alone = same as expanded set \u2192 server uses the root SNOMED concept universally)\n- **Lithium `6448`**: 922 MedicationRequests\n- **Valproate `40254`**: 803 MedicationRequests\n- **Lamotrigine `28439`**: 587 MedicationRequests\n\nThe root SNOMED code `13746004` captures all 2,542 bipolar Conditions without needing subtype codes (the expanded set returns an identical 2,542). All three RxNorm ingredient-level codes are confirmed live on the server. Here is the full evidence trail before the final answer:\n\n---\n\n### \ud83d\udd2c Evidence Summary\n\n| Arm | Resource | System | Code(s) | Server Count |\n|-----|----------|--------|---------|--------------|\n| **Diagnosis** | `Condition` | SNOMED CT (`http://snomed.info/sct`) | `13746004` \u2014 *Bipolar disorder (disorder)* | **2,542** |\n| **Lithium** | `MedicationRequest` | RxNorm (`http://www.nlm.nih.gov/research/umls/rxnorm`) | `6448` \u2014 *lithium* (ingredient) | **922** |\n| **Valproate** | `MedicationRequest` | RxNorm | `40254` \u2014 *valproate* (ingredient) | **803** |\n| **Lamotrigine** | `MedicationRequest` | RxNorm | `28439` \u2014 *lamotrigine* (ingredient) | **587** |\n\n**Design notes:**\n- **SNOMED root code is sufficient:** The server stores all bipolar subtypes (Bipolar I, Bipolar II, mixed, manic, depressed, cyclothymia, etc.) under the single root concept `13746004`. Expanding to 100+ descendant codes yields no additional records.\n- **RxNorm ingredient codes** (`6448`, `40254`, `28439`) are used at the ingredient level (not clinical drug / branded product), matching exactly what the server's MedicationRequest resources contain.\n- **Cross-indication caveat (as noted):** Valproate (`40254`) is used for epilepsy and migraine prophylaxis; lamotrigine (`28439`) for epilepsy. The medication arm intentionally over-captures to avoid missing diagnosed-but-uncoded bipolar patients \u2014 a downstream clinical step should intersect with the diagnosis arm or apply additional phenotyping for high-specificity use cases.\n\n---\n\n**FINAL ANSWER:**\n\n```\nCondition?code=http://snomed.info/sct|13746004\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6448,http://www.nlm.nih.gov/research/umls/rxnorm|40254,http://www.nlm.nih.gov/research/umls/rxnorm|28439\n```",
+      "prompt_text": "I need to identify all patients with bipolar disorder using a union across Condition and MedicationRequest resources. First, search Condition resources for a bipolar disorder diagnosis coded in SNOMED CT. Then search MedicationRequest resources for the core mood stabilizers used in bipolar management \u2014 lithium, valproate, and lamotrigine \u2014 all coded in RxNorm. Union the patient sets; the medication path captures patients treated for bipolar disorder who may lack a formally coded diagnosis, but note that valproate and lamotrigine are cross-indicated with epilepsy and migraine, so the medication-only subset will include some non-bipolar patients.",
       "run_metadata": {
-       "output_tokens": 925,
-       "tool_calls_count": 2,
+       "output_tokens": 1200,
+       "tool_calls_count": 20,
        "stop_reason": "complete",
        "fallback_used": false
       }
@@ -398,23 +401,23 @@
       }
      },
      "3-expert": {
-      "precision": 1.0,
+      "precision": 0.9392,
       "recall": 1.0,
-      "f1": 1.0,
+      "f1": 0.9686,
       "passed": true,
       "expected_count": 3011,
-      "actual_count": 3011,
-      "elapsed_sec": 162.3,
+      "actual_count": 3206,
+      "elapsed_sec": 274.9,
       "queries_generated": 2,
-      "primary_query_url": "Condition?code=http://snomed.info/sct|13746004",
+      "primary_query_url": "Condition?code=http://snomed.info/sct|13746004,http://snomed.info/sct|371596008,http://snomed.info/sct|83225003,http://snomed.info/sct|76105009,http://snomed.info/sct|68569003,http://snomed.info/sct|49468007,http://snomed.info/sct|16506000,http://snomed.info/sct|231444002,http://snomed.info/sct|371600003,http://snomed.info/sct|371599001,http://snomed.info/sct|371604007,http://snomed.info/sct|79584002,http://snomed.info/sct|13313007,http://snomed.info/sct|85248005,http://snomed.info/sct|5703000,http://snomed.info/sct|41836007,http://snomed.info/sct|191618007,http://snomed.info/sct|191627008,http://snomed.info/sct|191636007,http://snomed.info/sct|192362008,http://snomed.info/sct|133091000119105,http://snomed.info/sct|16238741000119105",
       "additional_query_urls": [
        "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6448,http://www.nlm.nih.gov/research/umls/rxnorm|40254,http://www.nlm.nih.gov/research/umls/rxnorm|28439"
       ],
-      "raw_response": "Both queries resolved cleanly against the server. Here's a summary of what was confirmed:\n\n---\n\n### Query 1 \u2014 Bipolar Disorder Diagnosis (`Condition`)\n| Field | Detail |\n|---|---|\n| **Resource** | `Condition` |\n| **Code** | `http://snomed.info/sct\\|13746004` |\n| **Display** | Bipolar disorder |\n| **Entries returned** | 10 (server did not expose total count) |\n| **Code system on server** | \u2705 SNOMED CT \u2014 exact match |\n\n---\n\n### Query 2 \u2014 Mood Stabilizers (`MedicationRequest`)\n| RxNorm Code | Drug | Found in Sample? |\n|---|---|---|\n| `6448` | Lithium | \u2705 Yes |\n| `40254` | Valproate | \u2705 Yes |\n| `28439` | Lamotrigine | \u2705 (in code list; seen in wider result set) |\n| **Entries returned** | 10 (server did not expose total count) |\n| **Code system on server** | \u2705 RxNorm \u2014 exact match |\n\n---\n\n### Union Logic\nThe two queries target **different resource types** and are unioned by **patient ID**:\n- Any patient appearing in **either** the `Condition` result (bipolar dx) **or** the `MedicationRequest` result (mood stabilizer prescription) is included in the cohort.\n- This broad OR approach captures patients diagnosed but not yet on meds, and patients prescribed mood stabilizers without a formal coded dx (common in real EHR data).\n\n---\n\n**FINAL ANSWER:**\n\n```\nCondition?code=http://snomed.info/sct|13746004\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6448,http://www.nlm.nih.gov/research/umls/rxnorm|40254,http://www.nlm.nih.gov/research/umls/rxnorm|28439\n```",
-      "prompt_text": "Run two queries. (1) Condition?code=http://snomed.info/sct|13746004 \u2014 bipolar dx. (2) MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6448,http://www.nlm.nih.gov/research/umls/rxnorm|40254,http://www.nlm.nih.gov/research/umls/rxnorm|28439 \u2014 mood stabilizers. Union the patient IDs.",
+      "raw_response": "All codes verified. Here's the complete picture:\n- **`:below` subsumption is NOT supported** \u2192 must enumerate SNOMED codes\n- **Umbrella `13746004`** \u2192 2,542 Condition records (dominant code on this server)\n- **5 key subtypes** (Bipolar I/II, cyclothymia, manic/depressed subtypes) \u2192 195 additional records not under the umbrella alone\n- **Lithium `6448`** \u2192 922 | **Valproate `40254`** \u2192 803 | **Lamotrigine `28439`** \u2192 587\n- **Combined medications** in one multi-code query \u2192 2,312 records\n\nI'll now build the final validated queries \u2014 umbrella + full subtype sweep for Condition, tri-drug combo for MedicationRequest.\n\n---\n\n## Decision Summary\n\n| Dimension | Finding |\n|---|---|\n| **Playbooks** | **12 (OR cohort union)** + **8 (multi-code list)** + **1 (subtypes)** |\n| **Condition system** | SNOMED CT (confirmed by server sample \u2014 all 3 sampled resources had `http://snomed.info/sct`) |\n| **MedRequest system** | RxNorm (confirmed by server sample \u2014 lithium `6448`, valproate `40254`) |\n| **`:below` subsumption** | \u274c Not supported (HTTP 403) \u2014 enumerate subtypes explicitly |\n| **Umbrella SNOMED** | `13746004` (Bipolar disorder) \u2014 primary code in data, 2,542 records |\n| **Subtypes** | 22 additional SNOMED codes from VSAC \"BH Condition involving bipolar disorder SNOMED\" + active \"Bipolar Disorder\" value sets (Bipolar I/II, cyclothymia, organic, rapid-cycling, affective disorder variants, severity specifiers, remission states) |\n| **RxNorm drugs** | Lithium `6448` (922 records) \u00b7 Valproate `40254` (803 records) \u00b7 Lamotrigine `28439` (587 records) \u00b7 Combined 2,312 |\n| **Cross-indication caveat** | As noted: valproate (`40254`) and lamotrigine (`28439`) are also used for epilepsy/migraine \u2014 medication-only rows will have non-bipolar noise |\n\n---\n\n**FINAL ANSWER**\n\n```\nCondition?code=http://snomed.info/sct|13746004,http://snomed.info/sct|371596008,http://snomed.info/sct|83225003,http://snomed.info/sct|76105009,http://snomed.info/sct|68569003,http://snomed.info/sct|49468007,http://snomed.info/sct|16506000,http://snomed.info/sct|231444002,http://snomed.info/sct|371600003,http://snomed.info/sct|371599001,http://snomed.info/sct|371604007,http://snomed.info/sct|79584002,http://snomed.info/sct|13313007,http://snomed.info/sct|85248005,http://snomed.info/sct|5703000,http://snomed.info/sct|41836007,http://snomed.info/sct|191618007,http://snomed.info/sct|191627008,http://snomed.info/sct|191636007,http://snomed.info/sct|192362008,http://snomed.info/sct|133091000119105,http://snomed.info/sct|16238741000119105\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6448,http://www.nlm.nih.gov/research/umls/rxnorm|40254,http://www.nlm.nih.gov/research/umls/rxnorm|28439\n```\n\n**How to interpret the union:**\n- **Line 1 (Condition)** \u2014 patients with a formally coded bipolar diagnosis in SNOMED CT, spanning: Bipolar I (`371596008`), Bipolar II (`83225003`), cyclothymia (`76105009`), manic/depressed/mixed subtypes, severity specifiers (mild/moderate/severe), organic bipolar (`231444002`), rapid-cycling (`133091000119105`), drug-induced (`16238741000119105`), remission/partial-remission states, and bipolar affective disorder variants \u2014 plus the umbrella `13746004` that dominates this server's data.\n- **Line 2 (MedicationRequest)** \u2014 patients dispensed any of the three core mood stabilizers: lithium (`6448`), valproate/divalproex (`40254`), or lamotrigine (`28439`). \u26a0\ufe0f Per your note, valproate and lamotrigine overlap with epilepsy and migraine indications; downstream analysis should optionally intersect this set with the Condition set or filter by co-diagnosis to reduce non-bipolar patients.",
+      "prompt_text": "I need to identify all patients with bipolar disorder using a union across Condition and MedicationRequest resources. First, search Condition resources for a bipolar disorder diagnosis coded in SNOMED CT. Then search MedicationRequest resources for the core mood stabilizers used in bipolar management \u2014 lithium, valproate, and lamotrigine \u2014 all coded in RxNorm. Union the patient sets; the medication path captures patients treated for bipolar disorder who may lack a formally coded diagnosis, but note that valproate and lamotrigine are cross-indicated with epilepsy and migraine, so the medication-only subset will include some non-bipolar patients.",
       "run_metadata": {
-       "output_tokens": 642,
-       "tool_calls_count": 2,
+       "output_tokens": 3652,
+       "tool_calls_count": 21,
        "stop_reason": "complete",
        "fallback_used": false
       }
@@ -457,19 +460,19 @@
      },
      "1-expert": {
       "precision": 1.0,
-      "recall": 1.0,
-      "f1": 1.0,
+      "recall": 0.9462,
+      "f1": 0.9724,
       "passed": true,
       "expected_count": 3011,
-      "actual_count": 3011,
-      "elapsed_sec": 169.3,
+      "actual_count": 2849,
+      "elapsed_sec": 168.6,
       "queries_generated": 2,
-      "primary_query_url": "Condition?code=http://snomed.info/sct|13746004&_elements=subject",
+      "primary_query_url": "Condition?code:below=http://snomed.info/sct|13746004",
       "additional_query_urls": [
-       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6448,http://www.nlm.nih.gov/research/umls/rxnorm|40254,http://www.nlm.nih.gov/research/umls/rxnorm|28439&_elements=subject"
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6448,http://www.nlm.nih.gov/research/umls/rxnorm|11118,http://www.nlm.nih.gov/research/umls/rxnorm|28439"
       ],
-      "raw_response": "Condition?code=http://snomed.info/sct|13746004&_elements=subject\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6448,http://www.nlm.nih.gov/research/umls/rxnorm|40254,http://www.nlm.nih.gov/research/umls/rxnorm|28439&_elements=subject",
-      "prompt_text": "Run two queries. (1) Condition?code=http://snomed.info/sct|13746004 \u2014 bipolar dx. (2) MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6448,http://www.nlm.nih.gov/research/umls/rxnorm|40254,http://www.nlm.nih.gov/research/umls/rxnorm|28439 \u2014 mood stabilizers. Union the patient IDs."
+      "raw_response": "Condition?code:below=http://snomed.info/sct|13746004\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6448,http://www.nlm.nih.gov/research/umls/rxnorm|11118,http://www.nlm.nih.gov/research/umls/rxnorm|28439",
+      "prompt_text": "I need to identify all patients with bipolar disorder using a union across Condition and MedicationRequest resources. First, search Condition resources for a bipolar disorder diagnosis coded in SNOMED CT. Then search MedicationRequest resources for the core mood stabilizers used in bipolar management \u2014 lithium, valproate, and lamotrigine \u2014 all coded in RxNorm. Union the patient sets; the medication path captures patients treated for bipolar disorder who may lack a formally coded diagnosis, but note that valproate and lamotrigine are cross-indicated with epilepsy and migraine, so the medication-only subset will include some non-bipolar patients."
      },
      "2-naive": {
       "precision": 1.0,
@@ -520,17 +523,17 @@
       "passed": true,
       "expected_count": 3011,
       "actual_count": 3011,
-      "elapsed_sec": 178.2,
+      "elapsed_sec": 182.7,
       "queries_generated": 2,
       "primary_query_url": "Condition?code=http://snomed.info/sct|13746004",
       "additional_query_urls": [
-       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6448,http://www.nlm.nih.gov/research/umls/rxnorm|40254,http://www.nlm.nih.gov/research/umls/rxnorm|28439"
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6448,40254,28439"
       ],
-      "raw_response": "Condition?code=http://snomed.info/sct|13746004\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6448,http://www.nlm.nih.gov/research/umls/rxnorm|40254,http://www.nlm.nih.gov/research/umls/rxnorm|28439",
-      "prompt_text": "Run two queries. (1) Condition?code=http://snomed.info/sct|13746004 \u2014 bipolar dx. (2) MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6448,http://www.nlm.nih.gov/research/umls/rxnorm|40254,http://www.nlm.nih.gov/research/umls/rxnorm|28439 \u2014 mood stabilizers. Union the patient IDs.",
+      "raw_response": "Condition?code=http://snomed.info/sct|13746004\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6448,40254,28439",
+      "prompt_text": "I need to identify all patients with bipolar disorder using a union across Condition and MedicationRequest resources. First, search Condition resources for a bipolar disorder diagnosis coded in SNOMED CT. Then search MedicationRequest resources for the core mood stabilizers used in bipolar management \u2014 lithium, valproate, and lamotrigine \u2014 all coded in RxNorm. Union the patient sets; the medication path captures patients treated for bipolar disorder who may lack a formally coded diagnosis, but note that valproate and lamotrigine are cross-indicated with epilepsy and migraine, so the medication-only subset will include some non-bipolar patients.",
       "run_metadata": {
-       "output_tokens": 269,
-       "tool_calls_count": 5,
+       "output_tokens": 367,
+       "tool_calls_count": 16,
        "stop_reason": "complete",
        "fallback_used": false
       }
@@ -584,17 +587,17 @@
       "passed": true,
       "expected_count": 3011,
       "actual_count": 3011,
-      "elapsed_sec": 160.3,
+      "elapsed_sec": 211.2,
       "queries_generated": 2,
       "primary_query_url": "Condition?code=http://snomed.info/sct|13746004",
       "additional_query_urls": [
        "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6448,http://www.nlm.nih.gov/research/umls/rxnorm|40254,http://www.nlm.nih.gov/research/umls/rxnorm|28439"
       ],
       "raw_response": "Condition?code=http://snomed.info/sct|13746004\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6448,http://www.nlm.nih.gov/research/umls/rxnorm|40254,http://www.nlm.nih.gov/research/umls/rxnorm|28439",
-      "prompt_text": "Run two queries. (1) Condition?code=http://snomed.info/sct|13746004 \u2014 bipolar dx. (2) MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6448,http://www.nlm.nih.gov/research/umls/rxnorm|40254,http://www.nlm.nih.gov/research/umls/rxnorm|28439 \u2014 mood stabilizers. Union the patient IDs.",
+      "prompt_text": "I need to identify all patients with bipolar disorder using a union across Condition and MedicationRequest resources. First, search Condition resources for a bipolar disorder diagnosis coded in SNOMED CT. Then search MedicationRequest resources for the core mood stabilizers used in bipolar management \u2014 lithium, valproate, and lamotrigine \u2014 all coded in RxNorm. Union the patient sets; the medication path captures patients treated for bipolar disorder who may lack a formally coded diagnosis, but note that valproate and lamotrigine are cross-indicated with epilepsy and migraine, so the medication-only subset will include some non-bipolar patients.",
       "run_metadata": {
-       "output_tokens": 126,
-       "tool_calls_count": 5,
+       "output_tokens": 501,
+       "tool_calls_count": 25,
        "stop_reason": "complete",
        "fallback_used": false
       }
@@ -819,12 +822,12 @@
       "passed": true,
       "expected_count": 2542,
       "actual_count": 2542,
-      "elapsed_sec": 2.7,
+      "elapsed_sec": 121.4,
       "queries_generated": 1,
       "primary_query_url": "Condition?code=http://snomed.info/sct|13746004",
       "additional_query_urls": [],
       "raw_response": "Condition?code=http://snomed.info/sct|13746004",
-      "prompt_text": "Search Condition resources with SNOMED 13746004 (Bipolar disorder). Query: Condition?code=http://snomed.info/sct|13746004"
+      "prompt_text": "I need to find patients with a documented bipolar disorder diagnosis. Search Condition resources for bipolar disorder coded in SNOMED CT \u2014 this tests whether the model can identify the canonical SNOMED concept for this mood disorder without relying on ICD codes."
      },
      "2-naive": {
       "precision": 1.0,
@@ -873,12 +876,12 @@
       "passed": true,
       "expected_count": 2542,
       "actual_count": 2542,
-      "elapsed_sec": 126.8,
+      "elapsed_sec": 124.6,
       "queries_generated": 1,
       "primary_query_url": "Condition?code=http://snomed.info/sct|13746004",
       "additional_query_urls": [],
       "raw_response": "Condition?code=http://snomed.info/sct|13746004",
-      "prompt_text": "Search Condition resources with SNOMED 13746004 (Bipolar disorder). Query: Condition?code=http://snomed.info/sct|13746004",
+      "prompt_text": "I need to find patients with a documented bipolar disorder diagnosis. Search Condition resources for bipolar disorder coded in SNOMED CT \u2014 this tests whether the model can identify the canonical SNOMED concept for this mood disorder without relying on ICD codes.",
       "run_metadata": {
        "output_tokens": 24,
        "tool_calls_count": 1,
@@ -933,12 +936,12 @@
       "passed": true,
       "expected_count": 2542,
       "actual_count": 2542,
-      "elapsed_sec": 126.8,
+      "elapsed_sec": 125.3,
       "queries_generated": 1,
       "primary_query_url": "Condition?code=http://snomed.info/sct|13746004",
       "additional_query_urls": [],
       "raw_response": "Condition?code=http://snomed.info/sct|13746004",
-      "prompt_text": "Search Condition resources with SNOMED 13746004 (Bipolar disorder). Query: Condition?code=http://snomed.info/sct|13746004",
+      "prompt_text": "I need to find patients with a documented bipolar disorder diagnosis. Search Condition resources for bipolar disorder coded in SNOMED CT \u2014 this tests whether the model can identify the canonical SNOMED concept for this mood disorder without relying on ICD codes.",
       "run_metadata": {
        "output_tokens": 24,
        "tool_calls_count": 1,
@@ -983,12 +986,12 @@
       "passed": true,
       "expected_count": 2542,
       "actual_count": 2542,
-      "elapsed_sec": 2.7,
+      "elapsed_sec": 122.5,
       "queries_generated": 1,
       "primary_query_url": "Condition?code=http://snomed.info/sct|13746004",
       "additional_query_urls": [],
       "raw_response": "Condition?code=http://snomed.info/sct|13746004",
-      "prompt_text": "Search Condition resources with SNOMED 13746004 (Bipolar disorder). Query: Condition?code=http://snomed.info/sct|13746004"
+      "prompt_text": "I need to find patients with a documented bipolar disorder diagnosis. Search Condition resources for bipolar disorder coded in SNOMED CT \u2014 this tests whether the model can identify the canonical SNOMED concept for this mood disorder without relying on ICD codes."
      }
     },
     "copilot:claude-sonnet-4.6": {
@@ -1035,12 +1038,15 @@
       "passed": true,
       "expected_count": 2542,
       "actual_count": 2542,
-      "elapsed_sec": 134.0,
-      "queries_generated": 1,
+      "elapsed_sec": 132.1,
+      "queries_generated": 3,
       "primary_query_url": "Condition?code=http://snomed.info/sct|13746004",
-      "additional_query_urls": [],
-      "raw_response": "## FHIR Query: Bipolar Disorder Conditions\n\n```\nCondition?code=http://snomed.info/sct|13746004\n```\n\n### Query Breakdown\n\n| Component | Value | Description |\n|-----------|-------|-------------|\n| **Resource** | `Condition` | Clinical condition/diagnosis resource |\n| **Parameter** | `code` | Coded identification of the condition |\n| **System** | `http://snomed.info/sct` | SNOMED CT terminology system |\n| **Code** | `13746004` | Bipolar disorder (SNOMED CT) |\n\n### Notes\n- This query retrieves all `Condition` resources coded with **SNOMED CT 13746004 \u2013 Bipolar Disorder**\n- The pipe `|` separates the **code system URL** from the **code value**, ensuring an exact system-qualified match\n- To broaden results, consider adding **`?code:text=bipolar`** for text-based matching or using related SNOMED codes for subtypes (e.g., Bipolar I, Bipolar II)\n- Common enhancements:\n  - Filter by patient: `&patient=Patient/123`\n  - Filter by clinical status: `&clinical-status=active`\n  - Include patient details: `&_include=Condition:patient`",
-      "prompt_text": "Search Condition resources with SNOMED 13746004 (Bipolar disorder). Query: Condition?code=http://snomed.info/sct|13746004"
+      "additional_query_urls": [
+       "Condition?code=http://snomed.info/sct|13746004&_include=Condition:subject",
+       "Condition?code:below=http://snomed.info/sct|13746004"
+      ],
+      "raw_response": "```\nCondition?code=http://snomed.info/sct|13746004\n```\n\n---\n\n### \ud83e\udde0 SNOMED CT Concept Used\n\n| Code | Display | System |\n|------|---------|--------|\n| **13746004** | Bipolar disorder (disorder) | `http://snomed.info/sct` |\n\n---\n\n### Why This Code?\n\n- **13746004** is the **canonical, top-level SNOMED CT concept** for *Bipolar disorder (disorder)* \u2014 the authoritative parent concept in the SNOMED hierarchy under *Mood disorder*.\n- It serves as the root for all bipolar subtypes (Bipolar I, Bipolar II, mixed episodes, cyclothymia-related variants, etc.).\n\n---\n\n### \ud83d\udca1 Recommended Enhancement \u2014 Use `_include` to Surface Patient Records\n\n```\nCondition?code=http://snomed.info/sct|13746004&_include=Condition:subject\n```\n\n---\n\n### Capture Subtypes via Subsumption (FHIR Terminology Server)\n\nIf your server supports **subsumption-based searching** (`:below` modifier), this single query captures all child concepts automatically:\n\n```\nCondition?code:below=http://snomed.info/sct|13746004\n```\n\n> \u26a0\ufe0f The `:below` modifier requires the server to have a SNOMED CT terminology service enabled. Not all FHIR servers support it, but it is part of the FHIR spec (`SearchParameter` with `type = token` + modifier `:below`).",
+      "prompt_text": "I need to find patients with a documented bipolar disorder diagnosis. Search Condition resources for bipolar disorder coded in SNOMED CT \u2014 this tests whether the model can identify the canonical SNOMED concept for this mood disorder without relying on ICD codes."
      },
      "2-naive": {
       "precision": 1.0,
@@ -1089,17 +1095,15 @@
       "passed": true,
       "expected_count": 2542,
       "actual_count": 2542,
-      "elapsed_sec": 138.7,
-      "queries_generated": 2,
+      "elapsed_sec": 139.6,
+      "queries_generated": 1,
       "primary_query_url": "Condition?code=http://snomed.info/sct|13746004",
-      "additional_query_urls": [
-       "Condition?code=http://snomed.info/sct|13746004,http://hl7.org/fhir/sid/icd-10-cm|F31.9,http://hl7.org/fhir/sid/icd-10-cm|F31.0"
-      ],
-      "raw_response": "The search executed successfully! Here's a full breakdown of the results:\n\n---\n\n## \ud83d\udd0d Search Results: `Condition?code=http://snomed.info/sct|13746004`\n\n### \ud83d\udcca Result Summary\n| Field | Value |\n|---|---|\n| **Resources Returned** | **10 Condition records** |\n| **Resource Types** | `Condition` |\n| **Server Total** | Not paginated (total not exposed by server) |\n\n---\n\n### \u2705 Code Validation\nEvery returned resource confirmed the **exact SNOMED CT code** requested:\n\n| System | Code | Display |\n|---|---|---|\n| `http://snomed.info/sct` | **13746004** | **Bipolar disorder** |\n\n\u2714\ufe0f All 10 sampled records matched \u2014 no false positives detected.\n\n---\n\n### \ud83c\udff7\ufe0f Condition Category Observed\nAll records are categorized as:\n- **`encounter-diagnosis`** (`http://terminology.hl7.org/CodeSystem/condition-category`)\n\nThis means these Bipolar disorder diagnoses were captured at the point of a clinical encounter (as opposed to `problem-list-item`, which would indicate a standing/chronic problem list entry).\n\n---\n\n### \u26a0\ufe0f Clinical Completeness Note\nSNOMED `13746004` is the **parent concept** for Bipolar disorder, but real-world EHR data often uses more specific subtypes or ICD-10-CM codes alongside SNOMED. For a **comprehensive cohort**, consider broadening the query to include subtypes:\n\n| Code System | Codes |\n|---|---|\n| **ICD-10-CM** | `F31.0`\u2013`F31.9` (Bipolar disorder subtypes) |\n| **SNOMED subtypes** | e.g., `191590005` (Bipolar I), `191618007` (Bipolar II) |\n\nA broader query would look like:\n```\nCondition?code=http://snomed.info/sct|13746004,http://hl7.org/fhir/sid/icd-10-cm|F31.9,http://hl7.org/fhir/sid/icd-10-cm|F31.0\n```\n\n---\n\n### \u2705 Final Confirmed Query\n```\nCondition?code=http://snomed.info/sct|13746004\n```",
-      "prompt_text": "Search Condition resources with SNOMED 13746004 (Bipolar disorder). Query: Condition?code=http://snomed.info/sct|13746004",
+      "additional_query_urls": [],
+      "raw_response": "All evidence is confirmed. Here's a summary of findings:\n\n---\n\n### \ud83d\udd0d Investigation Summary\n\n| Step | Finding |\n|------|---------|\n| **UMLS search** | Canonical concept: **Bipolar Disorder** \u2014 CUI `C0005586` (MTH root), with multiple SNOMED subtypes (Bipolar I, II, mild, moderate, severe, etc.) |\n| **Canonical SNOMED code** | **`13746004`** \u2014 *\"Bipolar disorder (disorder)\"* \u2014 the top-level parent concept in SNOMED CT's hierarchy |\n| **Server code system** | All 5 sampled Condition resources used `http://snomed.info/sct` with code `13746004` \u2014 exact match |\n| **VSAC lookup** | Confirmed: `13746004` = *\"Bipolar disorder (disorder)\"* (SNOMED version 20260301) |\n| **Result count** | **2,542** matching Condition resources \u2014 clinically plausible magnitude |\n\n---\n\n### \u2705 FINAL ANSWER\n\n```\nCondition?code=http://snomed.info/sct|13746004\n```\n\n> **Code rationale:** `13746004` is the canonical SNOMED CT concept *\"Bipolar disorder (disorder)\"* \u2014 the root of the bipolar disorder hierarchy, encompassing all subtypes (Bipolar I, II, mixed, cyclothymia, etc.) when FHIR servers support hierarchical (`is-a`) expansion. The server was confirmed to use this exact code as its primary encoding for bipolar disorder diagnoses.",
+      "prompt_text": "I need to find patients with a documented bipolar disorder diagnosis. Search Condition resources for bipolar disorder coded in SNOMED CT \u2014 this tests whether the model can identify the canonical SNOMED concept for this mood disorder without relying on ICD codes.",
       "run_metadata": {
-       "output_tokens": 571,
-       "tool_calls_count": 1,
+       "output_tokens": 501,
+       "tool_calls_count": 4,
        "stop_reason": "complete",
        "fallback_used": false
       }
@@ -1151,15 +1155,15 @@
       "passed": true,
       "expected_count": 2542,
       "actual_count": 2542,
-      "elapsed_sec": 135.0,
+      "elapsed_sec": 183.8,
       "queries_generated": 1,
       "primary_query_url": "Condition?code=http://snomed.info/sct|13746004",
       "additional_query_urls": [],
-      "raw_response": "Both the resource sample and the search query confirm strong, consistent results. Here's a full summary:\n\n---\n\n## \u2705 Results: Bipolar Disorder \u2014 SNOMED `13746004`\n\n### \ud83d\udd0d Server Coding Confirmation (from `fhir_resource_sample`)\n| Field | Value |\n|---|---|\n| **Code System** | `http://snomed.info/sct` \u2705 |\n| **Code** | `13746004` |\n| **Display** | *Bipolar disorder* |\n| **Category** | `encounter-diagnosis` |\n\nAll 3 sampled Condition resources use **exactly** `http://snomed.info/sct|13746004` \u2014 no alternate systems (e.g., ICD-10-CM) were observed for this concept on this server.\n\n---\n\n### \ud83d\udcca Search Results (`Condition?code=http://snomed.info/sct|13746004`)\n| Metric | Value |\n|---|---|\n| **Entries Returned** | **10** matching Condition resources |\n| **Resource Types** | `Condition` |\n| **Code Match** | 100% \u2014 all entries coded with `http://snomed.info/sct\\|13746004` |\n| **Category** | All flagged as `encounter-diagnosis` |\n\n---\n\n### \ud83e\ude7a Clinical Notes\n- **SNOMED 13746004** is the correct top-level code for *Bipolar disorder (disorder)*.\n- The server consistently uses **SNOMED CT** for this condition \u2014 no ICD-10 or ICD-9 crosswalk needed to capture these records.\n- If you need subtypes (e.g., Bipolar I, Bipolar II, mixed episodes), additional SNOMED child codes would be required via subsumption or explicit code expansion.\n\n---\n\n**FINAL ANSWER:**\n\n```\nCondition?code=http://snomed.info/sct|13746004\n```",
-      "prompt_text": "Search Condition resources with SNOMED 13746004 (Bipolar disorder). Query: Condition?code=http://snomed.info/sct|13746004",
+      "raw_response": "All evidence converges perfectly. Here's the complete picture:\n\n---\n\n### \ud83d\udd0d Evidence Summary\n\n| Finding | Detail |\n|---|---|\n| **Server code system** | SNOMED CT exclusively \u2014 all 5 sampled Conditions used `http://snomed.info/sct` |\n| **Canonical SNOMED code** | **`13746004`** \u2014 *\"Bipolar disorder (disorder)\"* \u2014 the umbrella/parent concept |\n| **Confirmed via VSAC** | VSAC \"BH Condition involving bipolar disorder SNOMED\" value set (104 codes) includes `13746004` as the root |\n| **Subsumption check** | `13746004` **subsumes** `371596008` (Bipolar I) \u2014 it is a true SNOMED ancestor |\n| **Subtype codes on server** | `371596008` (Bipolar I) \u2192 **0 records**; `83225003` (Bipolar II) \u2192 **0 records** \u2014 server uses only the umbrella code |\n| **Count with umbrella code** | **2,542 Condition resources** matched |\n\n**Why only `13746004`?** This server encodes all bipolar diagnoses under the single canonical umbrella concept rather than granular subtypes. Including subtype codes would add nothing and would not narrow the result set.\n\n---\n\n```\nCondition?code=http://snomed.info/sct|13746004\n```",
+      "prompt_text": "I need to find patients with a documented bipolar disorder diagnosis. Search Condition resources for bipolar disorder coded in SNOMED CT \u2014 this tests whether the model can identify the canonical SNOMED concept for this mood disorder without relying on ICD codes.",
       "run_metadata": {
-       "output_tokens": 463,
-       "tool_calls_count": 2,
+       "output_tokens": 495,
+       "tool_calls_count": 15,
        "stop_reason": "complete",
        "fallback_used": false
       }
@@ -1201,12 +1205,12 @@
       "passed": true,
       "expected_count": 2542,
       "actual_count": 2542,
-      "elapsed_sec": 128.2,
+      "elapsed_sec": 121.5,
       "queries_generated": 1,
       "primary_query_url": "Condition?code=http://snomed.info/sct|13746004",
       "additional_query_urls": [],
       "raw_response": "Condition?code=http://snomed.info/sct|13746004",
-      "prompt_text": "Search Condition resources with SNOMED 13746004 (Bipolar disorder). Query: Condition?code=http://snomed.info/sct|13746004"
+      "prompt_text": "I need to find patients with a documented bipolar disorder diagnosis. Search Condition resources for bipolar disorder coded in SNOMED CT \u2014 this tests whether the model can identify the canonical SNOMED concept for this mood disorder without relying on ICD codes."
      },
      "2-naive": {
       "precision": 1.0,
@@ -1260,15 +1264,15 @@
       "passed": true,
       "expected_count": 2542,
       "actual_count": 2542,
-      "elapsed_sec": 125.9,
+      "elapsed_sec": 131.4,
       "queries_generated": 1,
       "primary_query_url": "Condition?code=http://snomed.info/sct|13746004",
       "additional_query_urls": [],
       "raw_response": "Condition?code=http://snomed.info/sct|13746004",
-      "prompt_text": "Search Condition resources with SNOMED 13746004 (Bipolar disorder). Query: Condition?code=http://snomed.info/sct|13746004",
+      "prompt_text": "I need to find patients with a documented bipolar disorder diagnosis. Search Condition resources for bipolar disorder coded in SNOMED CT \u2014 this tests whether the model can identify the canonical SNOMED concept for this mood disorder without relying on ICD codes.",
       "run_metadata": {
-       "output_tokens": 129,
-       "tool_calls_count": 0,
+       "output_tokens": 48,
+       "tool_calls_count": 3,
        "stop_reason": "complete",
        "fallback_used": false
       }
@@ -1320,15 +1324,15 @@
       "passed": true,
       "expected_count": 2542,
       "actual_count": 2542,
-      "elapsed_sec": 138.5,
+      "elapsed_sec": 152.2,
       "queries_generated": 1,
       "primary_query_url": "Condition?code=http://snomed.info/sct|13746004",
       "additional_query_urls": [],
       "raw_response": "Condition?code=http://snomed.info/sct|13746004",
-      "prompt_text": "Search Condition resources with SNOMED 13746004 (Bipolar disorder). Query: Condition?code=http://snomed.info/sct|13746004",
+      "prompt_text": "I need to find patients with a documented bipolar disorder diagnosis. Search Condition resources for bipolar disorder coded in SNOMED CT \u2014 this tests whether the model can identify the canonical SNOMED concept for this mood disorder without relying on ICD codes.",
       "run_metadata": {
-       "output_tokens": 85,
-       "tool_calls_count": 3,
+       "output_tokens": 126,
+       "tool_calls_count": 8,
        "stop_reason": "complete",
        "fallback_used": false
       }
@@ -1559,17 +1563,17 @@
      },
      "1-expert": {
       "precision": 1.0,
-      "recall": 1.0,
-      "f1": 1.0,
-      "passed": true,
+      "recall": 0.6527,
+      "f1": 0.7898,
+      "passed": false,
       "expected_count": 2312,
-      "actual_count": 2312,
-      "elapsed_sec": 2.5,
+      "actual_count": 1509,
+      "elapsed_sec": 110.2,
       "queries_generated": 1,
-      "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6448,http://www.nlm.nih.gov/research/umls/rxnorm|40254,http://www.nlm.nih.gov/research/umls/rxnorm|28439",
+      "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6448,http://www.nlm.nih.gov/research/umls/rxnorm|11118,http://www.nlm.nih.gov/research/umls/rxnorm|28439",
       "additional_query_urls": [],
-      "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6448,http://www.nlm.nih.gov/research/umls/rxnorm|40254,http://www.nlm.nih.gov/research/umls/rxnorm|28439",
-      "prompt_text": "Search MedicationRequest with RxNorm codes for lithium (6448), valproate (40254), lamotrigine (28439). Note: valproate and lamotrigine cross-indicated with epilepsy/migraine. Query: MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6448,http://www.nlm.nih.gov/research/umls/rxnorm|40254,http://www.nlm.nih.gov/research/umls/rxnorm|28439"
+      "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6448,http://www.nlm.nih.gov/research/umls/rxnorm|11118,http://www.nlm.nih.gov/research/umls/rxnorm|28439",
+      "prompt_text": "Identify patients treated pharmacologically for bipolar disorder via their medication orders. Search MedicationRequest resources for the primary mood stabilizers used in bipolar management: lithium, valproate, and lamotrigine, all coded in RxNorm. Lithium is highly specific to bipolar disorder, but valproate and lamotrigine are cross-indicated with epilepsy and migraine prophylaxis, so a medication-only cohort will include patients treated for those conditions as well."
      },
      "2-naive": {
       "precision": 1.0,
@@ -1618,15 +1622,15 @@
       "passed": true,
       "expected_count": 2312,
       "actual_count": 2312,
-      "elapsed_sec": 116.9,
+      "elapsed_sec": 131.7,
       "queries_generated": 1,
       "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6448,http://www.nlm.nih.gov/research/umls/rxnorm|40254,http://www.nlm.nih.gov/research/umls/rxnorm|28439",
       "additional_query_urls": [],
       "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6448,http://www.nlm.nih.gov/research/umls/rxnorm|40254,http://www.nlm.nih.gov/research/umls/rxnorm|28439",
-      "prompt_text": "Search MedicationRequest with RxNorm codes for lithium (6448), valproate (40254), lamotrigine (28439). Note: valproate and lamotrigine cross-indicated with epilepsy/migraine. Query: MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6448,http://www.nlm.nih.gov/research/umls/rxnorm|40254,http://www.nlm.nih.gov/research/umls/rxnorm|28439",
+      "prompt_text": "Identify patients treated pharmacologically for bipolar disorder via their medication orders. Search MedicationRequest resources for the primary mood stabilizers used in bipolar management: lithium, valproate, and lamotrigine, all coded in RxNorm. Lithium is highly specific to bipolar disorder, but valproate and lamotrigine are cross-indicated with epilepsy and migraine prophylaxis, so a medication-only cohort will include patients treated for those conditions as well.",
       "run_metadata": {
        "output_tokens": 97,
-       "tool_calls_count": 1,
+       "tool_calls_count": 8,
        "stop_reason": "complete",
        "fallback_used": false
       }
@@ -1678,15 +1682,15 @@
       "passed": true,
       "expected_count": 2312,
       "actual_count": 2312,
-      "elapsed_sec": 118.1,
+      "elapsed_sec": 127.4,
       "queries_generated": 1,
       "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6448,http://www.nlm.nih.gov/research/umls/rxnorm|40254,http://www.nlm.nih.gov/research/umls/rxnorm|28439",
       "additional_query_urls": [],
       "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6448,http://www.nlm.nih.gov/research/umls/rxnorm|40254,http://www.nlm.nih.gov/research/umls/rxnorm|28439",
-      "prompt_text": "Search MedicationRequest with RxNorm codes for lithium (6448), valproate (40254), lamotrigine (28439). Note: valproate and lamotrigine cross-indicated with epilepsy/migraine. Query: MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6448,http://www.nlm.nih.gov/research/umls/rxnorm|40254,http://www.nlm.nih.gov/research/umls/rxnorm|28439",
+      "prompt_text": "Identify patients treated pharmacologically for bipolar disorder via their medication orders. Search MedicationRequest resources for the primary mood stabilizers used in bipolar management: lithium, valproate, and lamotrigine, all coded in RxNorm. Lithium is highly specific to bipolar disorder, but valproate and lamotrigine are cross-indicated with epilepsy and migraine prophylaxis, so a medication-only cohort will include patients treated for those conditions as well.",
       "run_metadata": {
        "output_tokens": 97,
-       "tool_calls_count": 1,
+       "tool_calls_count": 6,
        "stop_reason": "complete",
        "fallback_used": false
       }
@@ -1723,17 +1727,20 @@
      },
      "1-expert": {
       "precision": 1.0,
-      "recall": 1.0,
-      "f1": 1.0,
-      "passed": true,
+      "recall": 0.3988,
+      "f1": 0.5702,
+      "passed": false,
       "expected_count": 2312,
-      "actual_count": 2312,
-      "elapsed_sec": 2.5,
-      "queries_generated": 1,
-      "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6448,http://www.nlm.nih.gov/research/umls/rxnorm|40254,http://www.nlm.nih.gov/research/umls/rxnorm|28439",
-      "additional_query_urls": [],
-      "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6448,http://www.nlm.nih.gov/research/umls/rxnorm|40254,http://www.nlm.nih.gov/research/umls/rxnorm|28439",
-      "prompt_text": "Search MedicationRequest with RxNorm codes for lithium (6448), valproate (40254), lamotrigine (28439). Note: valproate and lamotrigine cross-indicated with epilepsy/migraine. Query: MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6448,http://www.nlm.nih.gov/research/umls/rxnorm|40254,http://www.nlm.nih.gov/research/umls/rxnorm|28439"
+      "actual_count": 922,
+      "elapsed_sec": 113.1,
+      "queries_generated": 3,
+      "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6448",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|11118",
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|28439"
+      ],
+      "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6448\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|11118\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|28439",
+      "prompt_text": "Identify patients treated pharmacologically for bipolar disorder via their medication orders. Search MedicationRequest resources for the primary mood stabilizers used in bipolar management: lithium, valproate, and lamotrigine, all coded in RxNorm. Lithium is highly specific to bipolar disorder, but valproate and lamotrigine are cross-indicated with epilepsy and migraine prophylaxis, so a medication-only cohort will include patients treated for those conditions as well."
      }
     },
     "copilot:claude-sonnet-4.6": {
@@ -1746,8 +1753,23 @@
       "error": "JSON-RPC Error -32603: Request session.create failed with message: Model \"claude-sonnet-4.6\" is not available."
      },
      "1-expert": {
-      "elapsed_sec": 6.6,
-      "error": "JSON-RPC Error -32603: Request session.create failed with message: Model \"claude-sonnet-4.6\" is not available."
+      "precision": 1.0,
+      "recall": 0.3988,
+      "f1": 0.5702,
+      "passed": false,
+      "expected_count": 2312,
+      "actual_count": 922,
+      "elapsed_sec": 149.1,
+      "queries_generated": 5,
+      "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6448,http://www.nlm.nih.gov/research/umls/rxnorm|6449",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|11118,http://www.nlm.nih.gov/research/umls/rxnorm|73137",
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|28439",
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|11118,http://www.nlm.nih.gov/research/umls/rxnorm|73137&_has:Condition:patient:code=http://snomed.info/sct|13746004",
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|28439&_has:Condition:patient:code=http://snomed.info/sct|13746004"
+      ],
+      "raw_response": "## FHIR Queries: Bipolar Disorder Pharmacological Treatment Cohort\n\n```\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6448,http://www.nlm.nih.gov/research/umls/rxnorm|6449\n\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|11118,http://www.nlm.nih.gov/research/umls/rxnorm|73137\n\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|28439\n```\n\n---\n\n### Query Breakdown\n\n| Query | Medication | RxNorm Codes | Bipolar Specificity |\n|-------|-----------|-------------|-------------------|\n| **1** | **Lithium** \u2014 carbonate (`6448`) + citrate (`6449`) | Ingredient-level IN codes | \u2b1b\u2b1b\u2b1b\u2b1b Very High \u2014 virtually exclusive to bipolar & schizoaffective disorder |\n| **2** | **Valproate** \u2014 valproic acid (`11118`) + divalproex sodium (`73137`) | Ingredient + salt/ester variants | \u2b1b\u2b1b\u2b1b Moderate \u2014 cross-indicated with epilepsy, migraine prophylaxis |\n| **3** | **Lamotrigine** (`28439`) | Ingredient-level IN code | \u2b1b\u2b1b Moderate \u2014 heavily used for focal epilepsy; bipolar maintenance signal requires context |\n\n---\n\n### Clinical Notes on Cross-Indication Confounding\n\n| Medication | Co-Indications to Filter | Recommended Refinement |\n|---|---|---|\n| **Lithium** | Cluster headache (rare) | Minimal \u2014 strong bipolar signal alone |\n| **Valproate** | Epilepsy, migraine prophylaxis | Cross-reference `Condition` for epilepsy (`http://snomed.info/sct\\|84757009`) or migraine (`http://snomed.info/sct\\|37796009`) to exclude |\n| **Lamotrigine** | Focal/generalized epilepsy | Cross-reference epilepsy diagnoses; dose is also a signal (bipolar maintenance doses are typically lower) |\n\n---\n\n### Suggested Cohort Enrichment Strategy\n\nTo improve bipolar specificity for valproate and lamotrigine, chain against supporting diagnoses:\n\n```\n# Valproate orders WITH a bipolar diagnosis\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|11118,http://www.nlm.nih.gov/research/umls/rxnorm|73137&_has:Condition:patient:code=http://snomed.info/sct|13746004\n\n# Lamotrigine orders WITH a bipolar diagnosis\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|28439&_has:Condition:patient:code=http://snomed.info/sct|13746004\n```\n\n> **Note:** RxNorm ingredient-level codes (`IN`) are used to capture all formulations and strengths (e.g., extended-release, capsules, oral solutions) without enumerating every product code. `13746004` is the SNOMED CT code for **Bipolar disorder**.",
+      "prompt_text": "Identify patients treated pharmacologically for bipolar disorder via their medication orders. Search MedicationRequest resources for the primary mood stabilizers used in bipolar management: lithium, valproate, and lamotrigine, all coded in RxNorm. Lithium is highly specific to bipolar disorder, but valproate and lamotrigine are cross-indicated with epilepsy and migraine prophylaxis, so a medication-only cohort will include patients treated for those conditions as well."
      },
      "2-naive": {
       "elapsed_sec": 6.9,
@@ -1758,8 +1780,24 @@
       "error": "JSON-RPC Error -32603: Request session.create failed with message: Model \"claude-sonnet-4.6\" is not available."
      },
      "2-expert": {
-      "elapsed_sec": 6.7,
-      "error": "JSON-RPC Error -32603: Request session.create failed with message: Model \"claude-sonnet-4.6\" is not available."
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 2312,
+      "actual_count": 2312,
+      "elapsed_sec": 154.7,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6448,http://www.nlm.nih.gov/research/umls/rxnorm|40254,http://www.nlm.nih.gov/research/umls/rxnorm|28439",
+      "additional_query_urls": [],
+      "raw_response": "All evidence is collected and verified. Here is a complete summary before the final answer:\n\n---\n\n## Evidence Summary\n\n| Drug | RxNorm Code | Display (VSAC Confirmed) | MedicationRequest Count |\n|---|---|---|---|\n| **Lithium** | `6448` | *lithium* | 922 |\n| **Valproate** | `40254` | *valproate* | 803 |\n| **Lamotrigine** | `28439` | *lamotrigine* | 587 |\n| **Combined (union)** | all three | \u2014 | **2,312** |\n\n### Key Clinical Notes (per user's brief)\n- \ud83d\udd35 **Lithium (`6448`)** \u2014 highly bipolar-specific. Almost exclusively used for bipolar disorder and, rarely, bipolar depression augmentation.\n- \ud83d\udfe1 **Valproate (`40254`)** \u2014 cross-indicated with epilepsy (seizure control) and migraine prophylaxis; the pharmacological cohort will include those patients.\n- \ud83d\udfe1 **Lamotrigine (`28439`)** \u2014 cross-indicated with epilepsy and, increasingly, as adjunctive therapy for major depressive disorder; similar cross-indication caution applies.\n\nThe single comma-separated query unions all three ingredient-level RxNorm codes (922 + 803 + 587 = 2,312 \u2014 no patient overlap across drugs):\n\n---\n\n**FINAL ANSWER:**\n\n```\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6448,http://www.nlm.nih.gov/research/umls/rxnorm|40254,http://www.nlm.nih.gov/research/umls/rxnorm|28439\n```",
+      "prompt_text": "Identify patients treated pharmacologically for bipolar disorder via their medication orders. Search MedicationRequest resources for the primary mood stabilizers used in bipolar management: lithium, valproate, and lamotrigine, all coded in RxNorm. Lithium is highly specific to bipolar disorder, but valproate and lamotrigine are cross-indicated with epilepsy and migraine prophylaxis, so a medication-only cohort will include patients treated for those conditions as well.",
+      "run_metadata": {
+       "output_tokens": 603,
+       "tool_calls_count": 14,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
      },
      "3-naive": {
       "precision": 1.0,
@@ -1808,18 +1846,15 @@
       "passed": true,
       "expected_count": 2312,
       "actual_count": 2312,
-      "elapsed_sec": 204.4,
-      "queries_generated": 3,
+      "elapsed_sec": 160.3,
+      "queries_generated": 1,
       "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6448,http://www.nlm.nih.gov/research/umls/rxnorm|40254,http://www.nlm.nih.gov/research/umls/rxnorm|28439",
-      "additional_query_urls": [
-       "Condition?code=http://snomed.info/sct|84757009",
-       "Condition?code=http://snomed.info/sct|37796009"
-      ],
-      "raw_response": "All evidence gathered. Let me compile the complete picture.\n\n---\n\n## \ud83d\udd0d Evidence Summary\n\n### Server Verification\n| Finding | Detail |\n|---|---|\n| **MedicationRequest code system** | \u2705 `http://www.nlm.nih.gov/research/umls/rxnorm` confirmed in live samples |\n| **Condition code system** | \u2705 SNOMED CT (`http://snomed.info/sct`) \u2014 all sampled Conditions use SNOMED (e.g. `13746004` = Bipolar disorder) |\n| **ICD-10-CM in Conditions** | \u274c Not seen in this server's Condition resources |\n\n---\n\n### Drug Counts (Playbook 8 \u2014 Multi-code union)\n\n| Drug | RxNorm Code | MedicationRequest Count |\n|---|---|---|\n| **Lithium** | `6448` | **922** |\n| **Valproate** | `40254` | **803** |\n| **Lamotrigine** | `28439` | **587** |\n| **All three combined** | union | **2,312** \u2705 |\n\n---\n\n### Cross-Indication Analysis (Playbook 10 \u2014 Negation)\n\nThe note flags that valproate and lamotrigine are also prescribed for epilepsy and migraine (not just bipolar disorder). To isolate **bipolar-only** prescriptions, a subtract-set approach is needed for those two drugs.\n\n| Condition | SNOMED Code | Condition Count on Server |\n|---|---|---|\n| Epilepsy | `84757009` | **0** (not present in this dataset) |\n| Migraine | `37796009` | **0** (not present in this dataset) |\n\n> \ud83d\udfe1 **Key finding**: This server's Condition records appear to be scoped exclusively to mood/bipolar disorder (every sampled Condition = `13746004 Bipolar disorder`). No epilepsy or migraine diagnoses exist on this server, so the cross-indication subtract-sets would remove 0 patients. The negation is logically correct to include for methodological rigor, but has no practical impact on this dataset.\n\n---\n\n### VSAC Value Set Backing (for negation codes)\n- **Epilepsy**: 58 ICD-10-CM codes (G40.xxx family) \u2014 [OID `2.16.840.1.113762.1.4.1248.171`]\n- **Migraine**: 143 codes across SNOMED + ICD-10-CM (G43.xxx family) \u2014 [OID `2.16.840.1.113762.1.4.1078.561`]\n\n---\n\n## \u2705 Final FHIR Queries\n\n**Query 1 \u2014 Primary keep-set (all three mood-stabilizer drugs combined):**\n```\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6448,http://www.nlm.nih.gov/research/umls/rxnorm|40254,http://www.nlm.nih.gov/research/umls/rxnorm|28439\n```\n\n**Query 2 \u2014 Negation subtract-set A: Epilepsy diagnoses (Playbook 10; valproate/lamotrigine cross-indication):**\n```\nCondition?code=http://snomed.info/sct|84757009\n```\n\n**Query 3 \u2014 Negation subtract-set B: Migraine diagnoses (Playbook 10; valproate/lamotrigine cross-indication):**\n```\nCondition?code=http://snomed.info/sct|37796009\n```\n\n> **How to apply**: Take patients from Query 1 \u2192 subtract any patient_ids appearing in Query 2 or Query 3. Lithium prescriptions (RxNorm `6448`) are **not** subject to cross-indication filtering since lithium has no epilepsy/migraine indication. If finer control is needed, Query 1 can be split: lithium alone (no subtraction) vs. valproate+lamotrigine (apply subtractions).",
-      "prompt_text": "Search MedicationRequest with RxNorm codes for lithium (6448), valproate (40254), lamotrigine (28439). Note: valproate and lamotrigine cross-indicated with epilepsy/migraine. Query: MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6448,http://www.nlm.nih.gov/research/umls/rxnorm|40254,http://www.nlm.nih.gov/research/umls/rxnorm|28439",
+      "additional_query_urls": [],
+      "raw_response": "All counts are consistent and verified:\n\n| Drug | RxNorm Code | Records |\n|---|---|---|\n| **Lithium** | `6448` | 922 |\n| **Valproate** | `40254` | 803 |\n| **Lamotrigine** | `28439` | 587 |\n| **Union total** | all three | **2,312** |\n\nThe union total (2,312) equals exactly 922 + 803 + 587 \u2014 confirming **zero patient overlap** between the three medication cohorts and no double-counting. The single comma-separated `code=` query is working correctly as a multi-drug OR union.\n\n> \u26a0\ufe0f **Known limitations as stated in the request:**\n> - **Lithium** (`6448`) is highly specific to bipolar disorder \u2014 very low false-positive rate.\n> - **Valproate** (`40254`) is cross-indicated for epilepsy and migraine prophylaxis \u2014 the 803 records include non-bipolar patients.\n> - **Lamotrigine** (`28439`) is cross-indicated for epilepsy \u2014 the 587 records similarly include epilepsy patients. To purify the cohort, a Playbook 11 (_has cross-resource AND) enrichment step could intersect these medication orders with a bipolar disorder `Condition` code.\n\n---\n\n**FINAL ANSWER:**\n\n```\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6448,http://www.nlm.nih.gov/research/umls/rxnorm|40254,http://www.nlm.nih.gov/research/umls/rxnorm|28439\n```",
+      "prompt_text": "Identify patients treated pharmacologically for bipolar disorder via their medication orders. Search MedicationRequest resources for the primary mood stabilizers used in bipolar management: lithium, valproate, and lamotrigine, all coded in RxNorm. Lithium is highly specific to bipolar disorder, but valproate and lamotrigine are cross-indicated with epilepsy and migraine prophylaxis, so a medication-only cohort will include patients treated for those conditions as well.",
       "run_metadata": {
-       "output_tokens": 1590,
-       "tool_calls_count": 21,
+       "output_tokens": 628,
+       "tool_calls_count": 13,
        "stop_reason": "complete",
        "fallback_used": false
       }
@@ -1835,8 +1870,18 @@
       "error": "JSON-RPC Error -32603: Request session.create failed with message: Model \"gpt-5.4\" is not available."
      },
      "1-expert": {
-      "elapsed_sec": 6.0,
-      "error": "JSON-RPC Error -32603: Request session.create failed with message: Model \"gpt-5.4\" is not available."
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 2312,
+      "actual_count": 2312,
+      "elapsed_sec": 152.1,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?intent=order&code:below=http://www.nlm.nih.gov/research/umls/rxnorm|6448,http://www.nlm.nih.gov/research/umls/rxnorm|40254,http://www.nlm.nih.gov/research/umls/rxnorm|28439",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?intent=order&code:below=http://www.nlm.nih.gov/research/umls/rxnorm|6448,http://www.nlm.nih.gov/research/umls/rxnorm|40254,http://www.nlm.nih.gov/research/umls/rxnorm|28439",
+      "prompt_text": "Identify patients treated pharmacologically for bipolar disorder via their medication orders. Search MedicationRequest resources for the primary mood stabilizers used in bipolar management: lithium, valproate, and lamotrigine, all coded in RxNorm. Lithium is highly specific to bipolar disorder, but valproate and lamotrigine are cross-indicated with epilepsy and migraine prophylaxis, so a medication-only cohort will include patients treated for those conditions as well."
      },
      "2-naive": {
       "elapsed_sec": 6.8,
@@ -1847,8 +1892,24 @@
       "error": "JSON-RPC Error -32603: Request session.create failed with message: Model \"gpt-5.4\" is not available."
      },
      "2-expert": {
-      "elapsed_sec": 5.8,
-      "error": "JSON-RPC Error -32603: Request session.create failed with message: Model \"gpt-5.4\" is not available."
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 2312,
+      "actual_count": 2312,
+      "elapsed_sec": 170.4,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6448,http://www.nlm.nih.gov/research/umls/rxnorm|40254,http://www.nlm.nih.gov/research/umls/rxnorm|28439",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6448,http://www.nlm.nih.gov/research/umls/rxnorm|40254,http://www.nlm.nih.gov/research/umls/rxnorm|28439",
+      "prompt_text": "Identify patients treated pharmacologically for bipolar disorder via their medication orders. Search MedicationRequest resources for the primary mood stabilizers used in bipolar management: lithium, valproate, and lamotrigine, all coded in RxNorm. Lithium is highly specific to bipolar disorder, but valproate and lamotrigine are cross-indicated with epilepsy and migraine prophylaxis, so a medication-only cohort will include patients treated for those conditions as well.",
+      "run_metadata": {
+       "output_tokens": 471,
+       "tool_calls_count": 24,
+       "stop_reason": "complete",
+       "fallback_used": false
+      }
      },
      "3-naive": {
       "precision": 1.0,
@@ -1897,15 +1958,15 @@
       "passed": true,
       "expected_count": 2312,
       "actual_count": 2312,
-      "elapsed_sec": 128.8,
+      "elapsed_sec": 155.5,
       "queries_generated": 1,
       "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6448,http://www.nlm.nih.gov/research/umls/rxnorm|40254,http://www.nlm.nih.gov/research/umls/rxnorm|28439",
       "additional_query_urls": [],
       "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6448,http://www.nlm.nih.gov/research/umls/rxnorm|40254,http://www.nlm.nih.gov/research/umls/rxnorm|28439",
-      "prompt_text": "Search MedicationRequest with RxNorm codes for lithium (6448), valproate (40254), lamotrigine (28439). Note: valproate and lamotrigine cross-indicated with epilepsy/migraine. Query: MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6448,http://www.nlm.nih.gov/research/umls/rxnorm|40254,http://www.nlm.nih.gov/research/umls/rxnorm|28439",
+      "prompt_text": "Identify patients treated pharmacologically for bipolar disorder via their medication orders. Search MedicationRequest resources for the primary mood stabilizers used in bipolar management: lithium, valproate, and lamotrigine, all coded in RxNorm. Lithium is highly specific to bipolar disorder, but valproate and lamotrigine are cross-indicated with epilepsy and migraine prophylaxis, so a medication-only cohort will include patients treated for those conditions as well.",
       "run_metadata": {
-       "output_tokens": 86,
-       "tool_calls_count": 3,
+       "output_tokens": 311,
+       "tool_calls_count": 18,
        "stop_reason": "complete",
        "fallback_used": false
       }
