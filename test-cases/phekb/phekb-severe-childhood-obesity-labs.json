@@ -3,17 +3,17 @@
   "source": "phekb",
   "source_id": "severe-childhood-obesity",
   "name": "Severe Childhood Obesity - Elevated BMI Query",
-  "description": "Tests ability to find pediatric obesity patients via elevated BMI Observations. While adult obesity uses BMI\u226530, pediatric obesity should use age/sex-specific BMI percentiles (\u226595th = obese, \u226599th = severe). For testing purposes, this case uses BMI\u226530 as the severe threshold (corresponds to roughly 99th percentile in adolescents).",
-  "prompt": "Find patients with elevated BMI lab/measurement results greater than or equal to 30 kg/m\u00b2.",
+  "description": "Tests ability to find pediatric obesity patients via elevated BMI Observations. While adult obesity uses BMI≥30, pediatric obesity should use age/sex-specific BMI percentiles (≥95th = obese, ≥99th = severe). For testing purposes, this case uses BMI≥30 as the severe threshold (corresponds to roughly 99th percentile in adolescents).",
+  "prompt": "Find patients with elevated BMI lab/measurement results greater than or equal to 30 kg/m².",
   "prompts": {
     "naive": "Find patients with high BMI.",
-    "broad": "Find patients with body mass index (BMI) measurements at or above 30 kg/m\u00b2 \u2014 the threshold for class I obesity in adults, corresponding roughly to the 99th percentile in adolescents (severe pediatric obesity).",
-    "expert": "I need Observation resources with elevated BMI. Use LOINC code 39156-5 (Body mass index [Ratio]). Filter by value-quantity at or above 30 kg/m\u00b2. Query: Observation?code=http://loinc.org|39156-5&value-quantity=ge30||kg/m2"
+    "broad": "Find patients with body mass index (BMI) measurements at or above 30 kg/m² — the threshold for class I obesity in adults, corresponding roughly to the 99th percentile in adolescents (severe pediatric obesity).",
+    "expert": "I need to identify pediatric patients with severe obesity based on a measured BMI at or above the threshold for clinical significance. Search Observation resources for BMI measurements using the LOINC code for body mass index ratio, and filter to values at or above thirty kilograms per square meter — in adolescents this threshold approximates the ninety-ninth percentile, which is the standard cut-point for severe childhood obesity. Restrict to patients within the pediatric age range (roughly school age through late adolescence) using a birthdate filter on the patient, since BMI of thirty or above is standard for adults but corresponds to severe obesity only in the context of pediatric growth charts. Note that the adult obesity threshold is being applied here as a proxy for severe pediatric obesity; a truly rigorous implementation would use age- and sex-specific BMI percentile tables, which FHIR servers do not natively support."
   },
   "metadata": {
     "implementation_guide": "US Core 5.0.0",
     "algorithm_path": "labs-path",
-    "algorithm_path_description": "Patients with elevated BMI Observations. Note: adult obesity threshold (\u226530); pediatric should use age-percentile cutoffs.",
+    "algorithm_path_description": "Patients with elevated BMI Observations. Note: adult obesity threshold (≥30); pediatric should use age-percentile cutoffs.",
     "code_systems": [
       "LOINC"
     ],

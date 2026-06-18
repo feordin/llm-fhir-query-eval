@@ -3,12 +3,12 @@
   "source": "phekb",
   "source_id": "steroid-induced-avn",
   "name": "Steroid-Induced AVN - Comprehensive Provider Query (Multi-Resource)",
-  "description": "Provider-level query identifying drug-induced AVN patients via Condition + MedicationRequest. Path C (prednisone without AVN dx) reflects the many patients on chronic steroids who have not developed AVN \u2014 modeling complication-tracking workflow.",
-  "prompt": "I need to identify all patients with drug-induced osteonecrosis OR on chronic corticosteroid therapy that puts them at risk. Some have a coded AVN diagnosis. Others are on prednisone for inflammatory or autoimmune conditions and may be at risk. Run multiple FHIR queries \u2014 diagnosis and prednisone \u2014 and union the patient sets.",
+  "description": "Provider-level query identifying drug-induced AVN patients via Condition + MedicationRequest. Path C (prednisone without AVN dx) reflects the many patients on chronic steroids who have not developed AVN — modeling complication-tracking workflow.",
+  "prompt": "I need to identify all patients with drug-induced osteonecrosis OR on chronic corticosteroid therapy that puts them at risk. Some have a coded AVN diagnosis. Others are on prednisone for inflammatory or autoimmune conditions and may be at risk. Run multiple FHIR queries — diagnosis and prednisone — and union the patient sets.",
   "prompts": {
     "naive": "Find all AVN patients.",
-    "broad": "Find all drug-induced AVN patients or those at risk \u2014 by diagnosis or by prednisone prescriptions. Run multiple queries and union the patient sets.",
-    "expert": "Run two queries. (1) Condition?code=http://snomed.info/sct|203483005 \u2014 drug-induced AVN dx. (2) MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|8640 \u2014 prednisone. Union the patient IDs."
+    "broad": "Find all drug-induced AVN patients or those at risk — by diagnosis or by prednisone prescriptions. Run multiple queries and union the patient sets.",
+    "expert": "I need to identify patients with steroid-induced avascular necrosis (osteonecrosis) using a multi-resource union that covers both confirmed cases and the at-risk population on chronic steroids. Run two searches and union the results: first, search Condition resources for the SNOMED CT concept for osteonecrosis caused by a drug; second, search MedicationRequest resources for prednisone using its RxNorm code. The prednisone path (Path C) reflects the much larger population of patients on chronic corticosteroids who have not developed AVN — prednisone is prescribed across hundreds of conditions including rheumatoid arthritis, asthma, inflammatory bowel disease, and organ transplantation, so the medication cohort will vastly over-capture relative to true AVN cases."
   },
   "metadata": {
     "implementation_guide": "US Core 5.0.0",

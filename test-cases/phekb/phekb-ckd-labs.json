@@ -3,12 +3,12 @@
   "source": "phekb",
   "source_id": "ckd",
   "name": "Chronic Kidney Disease - Reduced eGFR Lab Query",
-  "description": "Tests ability to find chronic kidney disease patients via reduced eGFR. The Columbia CKD V4.2 algorithm uses eGFR (CKD-EPI formula) as the primary staging variable: <60 mL/min/1.73 m\u00b2 indicates CKD Stage 3 or worse. This test case uses a less-than threshold (lt60) and exercises the most quantitative phenotype in our suite, where staging is entirely lab-driven.",
-  "prompt": "Find laboratory observations for estimated glomerular filtration rate (eGFR) where the value is below 60 mL/min/1.73 m\u00b2, indicating chronic kidney disease stage 3 or worse.",
+  "description": "Tests ability to find chronic kidney disease patients via reduced eGFR. The Columbia CKD V4.2 algorithm uses eGFR (CKD-EPI formula) as the primary staging variable: <60 mL/min/1.73 m² indicates CKD Stage 3 or worse. This test case uses a less-than threshold (lt60) and exercises the most quantitative phenotype in our suite, where staging is entirely lab-driven.",
+  "prompt": "Find laboratory observations for estimated glomerular filtration rate (eGFR) where the value is below 60 mL/min/1.73 m², indicating chronic kidney disease stage 3 or worse.",
   "prompts": {
     "naive": "Find patients with low eGFR.",
-    "broad": "Find Observation resources for estimated glomerular filtration rate (eGFR) measurements where the value is less than 60 mL/min/1.73 m\u00b2. An eGFR below 60 sustained for at least 3 months meets KDIGO criteria for chronic kidney disease stage 3 or higher.",
-    "expert": "I need Observation resources for reduced eGFR. Use LOINC 62238-1 (Glomerular filtration rate by Creatinine-based formula CKD-EPI) \u2014 this is the algorithm-specified equation. Apply a value-quantity filter with the lt prefix at threshold 60. The query should look like: Observation?code=http://loinc.org|62238-1&value-quantity=lt60. Note that LOINC 33914-3 (eGFR by MDRD) and 48642-3/48643-1 (race-based variants) may also appear in some data; the CKD-EPI code is preferred per current KDIGO 2012 guidelines."
+    "broad": "Find Observation resources for estimated glomerular filtration rate (eGFR) measurements where the value is less than 60 mL/min/1.73 m². An eGFR below 60 sustained for at least 3 months meets KDIGO criteria for chronic kidney disease stage 3 or higher.",
+    "expert": "I need to find chronic kidney disease patients via reduced kidney function, using Observation resources. The relevant LOINC code is for glomerular filtration rate estimated using the CKD-EPI creatinine-based formula — this is the equation specified in the Columbia CKD algorithm. Apply a value-quantity filter requiring a result below sixty milliliters per minute per one-point-seven-three square meters; this threshold marks the boundary between CKD stage two and stage three, the point at which kidney function is considered definitively impaired regardless of albuminuria status. Alternative eGFR LOINC codes based on the older MDRD equation may also appear in some datasets but are not the preferred code per current guidelines."
   },
   "metadata": {
     "implementation_guide": "US Core 5.0.0",

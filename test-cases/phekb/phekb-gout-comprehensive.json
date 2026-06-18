@@ -4,11 +4,11 @@
   "source_id": "gout",
   "name": "Gout - Comprehensive Provider Query (Multi-Resource)",
   "description": "Provider-level query identifying gout patients via Condition + MedicationRequest + Observation (urate). Path D captures asymptomatic hyperuricemia.",
-  "prompt": "I need to identify my complete gout patient population. Some patients have a coded gout diagnosis. Others have only allopurinol or colchicine prescriptions, and some have only a documented elevated urate without a formal gout diagnosis. Run multiple FHIR queries \u2014 diagnosis, medications, and urate labs \u2014 and union the patient sets.",
+  "prompt": "I need to identify my complete gout patient population. Some patients have a coded gout diagnosis. Others have only allopurinol or colchicine prescriptions, and some have only a documented elevated urate without a formal gout diagnosis. Run multiple FHIR queries — diagnosis, medications, and urate labs — and union the patient sets.",
   "prompts": {
     "naive": "Find all gout patients.",
-    "broad": "Find all gout patients \u2014 by diagnosis, allopurinol/colchicine medications, or elevated urate (>7 mg/dL). Run multiple queries and union the patient sets.",
-    "expert": "Run three queries. (1) Condition?code=http://snomed.info/sct|90560007 \u2014 gout dx. (2) MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|519,http://www.nlm.nih.gov/research/umls/rxnorm|2683 \u2014 allopurinol+colchicine. (3) Observation?code=http://loinc.org|3084-1&value-quantity=gt7||mg/dL \u2014 elevated urate. Union the patient IDs."
+    "broad": "Find all gout patients — by diagnosis, allopurinol/colchicine medications, or elevated urate (>7 mg/dL). Run multiple queries and union the patient sets.",
+    "expert": "I need to identify all gout patients using a three-resource union strategy. First, query Condition resources for a gout diagnosis coded in SNOMED CT. Second, query MedicationRequest resources for the urate-lowering agent allopurinol and the anti-inflammatory colchicine, both coded in RxNorm — colchicine is cross-indicated for familial Mediterranean fever and pericarditis, so the medication cohort will include some non-gout patients. Third, query Observation resources for elevated serum urate (the hyperuricemia threshold associated with gout) using the appropriate LOINC code for urate in serum or plasma; this captures Path D patients with asymptomatic hyperuricemia who lack a formal gout diagnosis. Union the distinct patient IDs across all three result sets."
   },
   "metadata": {
     "implementation_guide": "US Core 5.0.0",

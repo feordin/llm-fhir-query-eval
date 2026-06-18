@@ -4,11 +4,11 @@
   "source_id": "schizophrenia",
   "name": "Schizophrenia - Comprehensive Provider Query (Multi-Resource)",
   "description": "Provider-level query identifying schizophrenia patients via Condition + MedicationRequest. Path C captures patients on antipsychotics without coded schizophrenia dx (typically bipolar mania, MDD adjunct, dementia agitation).",
-  "prompt": "I need to identify my complete schizophrenia patient population for a behavioral health quality initiative. Some patients have a coded schizophrenia diagnosis. Others are on antipsychotics without ever getting a formal schizophrenia diagnosis \u2014 typically these are bipolar mania, depression with psychotic features, or dementia-related behavioral symptoms. Run multiple FHIR queries \u2014 diagnosis and antipsychotic medications \u2014 and union the patient sets.",
+  "prompt": "I need to identify my complete schizophrenia patient population for a behavioral health quality initiative. Some patients have a coded schizophrenia diagnosis. Others are on antipsychotics without ever getting a formal schizophrenia diagnosis — typically these are bipolar mania, depression with psychotic features, or dementia-related behavioral symptoms. Run multiple FHIR queries — diagnosis and antipsychotic medications — and union the patient sets.",
   "prompts": {
     "naive": "Find all schizophrenia patients.",
-    "broad": "Find all schizophrenia patients \u2014 by diagnosis or by antipsychotic medications. Run multiple queries and union the patient sets.",
-    "expert": "Run two queries. (1) Condition?code=http://snomed.info/sct|58214004 \u2014 schizophrenia dx. (2) MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|5093,http://www.nlm.nih.gov/research/umls/rxnorm|35636,http://www.nlm.nih.gov/research/umls/rxnorm|61381,http://www.nlm.nih.gov/research/umls/rxnorm|51272 \u2014 antipsychotics. Union the patient IDs."
+    "broad": "Find all schizophrenia patients — by diagnosis or by antipsychotic medications. Run multiple queries and union the patient sets.",
+    "expert": "I need to identify all schizophrenia patients using both diagnostic coding and antipsychotic prescribing evidence, taking the union across two queries. First, search Condition resources for a schizophrenia diagnosis coded in SNOMED CT. Second, search MedicationRequest resources for antipsychotic agents — both the typical agent haloperidol and the atypical agents risperidone, olanzapine, and quetiapine, all coded in RxNorm — to capture Path C patients on antipsychotics without a schizophrenia diagnosis (typically bipolar mania, MDD with adjunct treatment, or dementia-related agitation). Return the union of patient IDs across both queries."
   },
   "metadata": {
     "implementation_guide": "US Core 5.0.0",

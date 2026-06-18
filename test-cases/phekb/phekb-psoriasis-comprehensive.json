@@ -3,12 +3,12 @@
   "source": "phekb",
   "source_id": "psoriasis",
   "name": "Psoriasis - Comprehensive Provider Query (Multi-Resource)",
-  "description": "Provider-level query identifying psoriasis patients via Condition + MedicationRequest. Path C (med only) reflects methotrexate use without psoriasis dx \u2014 most commonly RA cross-indication in real datasets.",
-  "prompt": "I need to identify my complete psoriasis patient population for a dermatology biologics program. Some patients have a coded psoriasis diagnosis. Others are on systemic methotrexate for inflammatory disease without a formal psoriasis diagnosis. Run multiple FHIR queries \u2014 diagnosis and methotrexate \u2014 and union the patient sets.",
+  "description": "Provider-level query identifying psoriasis patients via Condition + MedicationRequest. Path C (med only) reflects methotrexate use without psoriasis dx — most commonly RA cross-indication in real datasets.",
+  "prompt": "I need to identify my complete psoriasis patient population for a dermatology biologics program. Some patients have a coded psoriasis diagnosis. Others are on systemic methotrexate for inflammatory disease without a formal psoriasis diagnosis. Run multiple FHIR queries — diagnosis and methotrexate — and union the patient sets.",
   "prompts": {
     "naive": "Find all psoriasis patients.",
-    "broad": "Find all psoriasis patients \u2014 by diagnosis or by methotrexate prescriptions for systemic therapy. Run multiple queries and union the patient sets.",
-    "expert": "Run two queries. (1) Condition?code=http://snomed.info/sct|9014002 \u2014 psoriasis dx. (2) MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|105585 \u2014 methotrexate. Union the patient IDs."
+    "broad": "Find all psoriasis patients — by diagnosis or by methotrexate prescriptions for systemic therapy. Run multiple queries and union the patient sets.",
+    "expert": "I need to identify psoriasis patients by combining evidence across two FHIR resource types. First, query Condition resources for psoriasis diagnoses coded in SNOMED CT. Second, query MedicationRequest resources for methotrexate coded in RxNorm — recognizing that methotrexate is heavily cross-indicated for rheumatoid arthritis, malignancy, and ectopic pregnancy, so the medication path will over-recall beyond the psoriasis population. Take the union of patient IDs from both queries."
   },
   "metadata": {
     "implementation_guide": "US Core 5.0.0",

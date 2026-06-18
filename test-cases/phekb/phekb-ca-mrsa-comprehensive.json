@@ -4,11 +4,11 @@
   "source_id": "ca-mrsa",
   "name": "Community-Acquired MRSA - Comprehensive Provider Query (Multi-Resource)",
   "description": "Provider-level query identifying CA-MRSA patients via Condition + MedicationRequest. Path C (anti-MRSA antibiotic without dx) reflects empirical treatment of suspected MRSA SSTI without confirmed culture.",
-  "prompt": "I need to identify all patients treated for community-acquired MRSA for an antibiotic stewardship review. Some have a coded CA-MRSA diagnosis. Others are on clindamycin or linezolid for suspected MRSA skin/soft tissue infection without a confirmed culture-based diagnosis. Run multiple FHIR queries \u2014 diagnosis and anti-MRSA antibiotics \u2014 and union the patient sets.",
+  "prompt": "I need to identify all patients treated for community-acquired MRSA for an antibiotic stewardship review. Some have a coded CA-MRSA diagnosis. Others are on clindamycin or linezolid for suspected MRSA skin/soft tissue infection without a confirmed culture-based diagnosis. Run multiple FHIR queries — diagnosis and anti-MRSA antibiotics — and union the patient sets.",
   "prompts": {
     "naive": "Find all CA-MRSA patients.",
-    "broad": "Find all CA-MRSA patients \u2014 by diagnosis or by anti-MRSA antibiotic prescriptions (clindamycin, linezolid). Run multiple queries and union the patient sets.",
-    "expert": "Run two queries. (1) Condition?code=http://snomed.info/sct|423561003 \u2014 CA-MRSA dx. (2) MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|2582,http://www.nlm.nih.gov/research/umls/rxnorm|190376 \u2014 clindamycin/linezolid. Union the patient IDs."
+    "broad": "Find all CA-MRSA patients — by diagnosis or by anti-MRSA antibiotic prescriptions (clindamycin, linezolid). Run multiple queries and union the patient sets.",
+    "expert": "To capture the full community-acquired MRSA cohort, I need to union results from two queries. First, search Condition resources for a community-acquired methicillin-resistant Staphylococcus aureus infection diagnosis coded in SNOMED CT. Second, search MedicationRequest resources for the anti-MRSA antibiotics used in community settings — clindamycin and linezolid, both coded in RxNorm. Be aware that the medication path has significant cross-indication: clindamycin is prescribed for dental and anaerobic infections, and linezolid for vancomycin-resistant enterococcal infections, so the medication-only stratum will include patients treated empirically or for other resistant organisms."
   },
   "metadata": {
     "implementation_guide": "US Core 5.0.0",

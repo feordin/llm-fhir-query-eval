@@ -3,12 +3,12 @@
   "source": "phekb",
   "source_id": "alcohol-use-disorder",
   "name": "Alcohol Use Disorder - Comprehensive Provider Query (Multi-Resource)",
-  "description": "Provider-level query identifying AUD patients via Condition + MedicationRequest. Path C (med only) reflects naltrexone use without formal AUD dx \u2014 common because naltrexone is also indicated for opioid use disorder.",
-  "prompt": "I need to identify my complete alcohol use disorder patient population for a behavioral health quality program. Some patients have a coded alcoholism or alcohol dependence diagnosis. Others are on naltrexone for substance use treatment without a formal AUD diagnosis. Run multiple FHIR queries \u2014 diagnosis and naltrexone \u2014 and union the patient sets.",
+  "description": "Provider-level query identifying AUD patients via Condition + MedicationRequest. Path C (med only) reflects naltrexone use without formal AUD dx — common because naltrexone is also indicated for opioid use disorder.",
+  "prompt": "I need to identify my complete alcohol use disorder patient population for a behavioral health quality program. Some patients have a coded alcoholism or alcohol dependence diagnosis. Others are on naltrexone for substance use treatment without a formal AUD diagnosis. Run multiple FHIR queries — diagnosis and naltrexone — and union the patient sets.",
   "prompts": {
     "naive": "Find all AUD patients.",
-    "broad": "Find all alcohol use disorder patients \u2014 by diagnosis (alcoholism or alcohol dependence) or by naltrexone prescriptions. Run multiple queries and union the patient sets.",
-    "expert": "Run two queries. (1) Condition?code=http://snomed.info/sct|7200002,http://snomed.info/sct|66590003 \u2014 AUD dx. (2) MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|7243 \u2014 naltrexone. Union the patient IDs."
+    "broad": "Find all alcohol use disorder patients — by diagnosis (alcoholism or alcohol dependence) or by naltrexone prescriptions. Run multiple queries and union the patient sets.",
+    "expert": "I need to identify patients with alcohol use disorder via a multi-resource union covering both documented diagnoses and pharmacologic treatment. Run two searches and union the results: first, search Condition resources for AUD diagnoses coded in SNOMED CT, covering both alcoholism and alcohol dependence as distinct concepts; second, search MedicationRequest resources for naltrexone in RxNorm. The medication path (Path C) captures patients on naltrexone who lack a formal AUD diagnosis — note that naltrexone is also indicated for opioid use disorder, so the medication-only cohort will include some non-AUD patients."
   },
   "metadata": {
     "implementation_guide": "US Core 5.0.0",

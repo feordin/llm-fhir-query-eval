@@ -4,11 +4,11 @@
   "source_id": "chronic-rhinosinusitis",
   "name": "Chronic Rhinosinusitis - Comprehensive Provider Query (Multi-Resource)",
   "description": "Provider-level query identifying CRS patients via Condition + MedicationRequest. Path C (mometasone without dx) reflects use for other respiratory/dermatologic indications.",
-  "prompt": "I need to identify my complete chronic rhinosinusitis patient population for an ENT registry. Some patients have a coded chronic sinusitis diagnosis. Others are on intranasal corticosteroids for chronic nasal symptoms without a formal CRS diagnosis. Run multiple FHIR queries \u2014 diagnosis and mometasone \u2014 and union the patient sets.",
+  "prompt": "I need to identify my complete chronic rhinosinusitis patient population for an ENT registry. Some patients have a coded chronic sinusitis diagnosis. Others are on intranasal corticosteroids for chronic nasal symptoms without a formal CRS diagnosis. Run multiple FHIR queries — diagnosis and mometasone — and union the patient sets.",
   "prompts": {
     "naive": "Find all chronic sinusitis patients.",
-    "broad": "Find all chronic rhinosinusitis patients \u2014 by diagnosis or by intranasal corticosteroid (mometasone) prescriptions. Run multiple queries and union the patient sets.",
-    "expert": "Run two queries. (1) Condition?code=http://snomed.info/sct|40055000 \u2014 chronic sinusitis dx. (2) MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|108118 \u2014 mometasone. Union the patient IDs."
+    "broad": "Find all chronic rhinosinusitis patients — by diagnosis or by intranasal corticosteroid (mometasone) prescriptions. Run multiple queries and union the patient sets.",
+    "expert": "I need a comprehensive chronic rhinosinusitis cohort by combining two evidence sources. First, search Condition resources for a chronic sinusitis diagnosis coded in SNOMED CT. Second, search MedicationRequest resources for mometasone, an intranasal corticosteroid used in CRS management, coded in RxNorm. Be aware that mometasone is heavily cross-indicated — it is also prescribed for allergic rhinitis, asthma, and atopic dermatitis — so the medication-only arm will include patients treated for those other conditions. Union the patient sets from both queries."
   },
   "metadata": {
     "implementation_guide": "US Core 5.0.0",

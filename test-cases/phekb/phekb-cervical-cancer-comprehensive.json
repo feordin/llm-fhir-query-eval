@@ -4,11 +4,11 @@
   "source_id": "cervical-cancer",
   "name": "Cervical Cancer - Comprehensive Provider Query (Multi-Resource, Female)",
   "description": "Provider-level query identifying cervical cancer patients via Condition + Procedure (hysterectomy). Restricted to female. Path P captures hysterectomy for benign indications (fibroids, prolapse).",
-  "prompt": "I need to identify my complete cervical cancer patient population for a gynecology quality initiative. Restrict to female patients. Some have a coded cervical cancer diagnosis. Others have undergone hysterectomy without a formal cervical cancer diagnosis (typically for fibroids, prolapse, or abnormal bleeding). Run multiple FHIR queries \u2014 diagnosis and hysterectomy procedure \u2014 and union the patient sets.",
+  "prompt": "I need to identify my complete cervical cancer patient population for a gynecology quality initiative. Restrict to female patients. Some have a coded cervical cancer diagnosis. Others have undergone hysterectomy without a formal cervical cancer diagnosis (typically for fibroids, prolapse, or abnormal bleeding). Run multiple FHIR queries — diagnosis and hysterectomy procedure — and union the patient sets.",
   "prompts": {
     "naive": "Find female patients with cervical cancer.",
-    "broad": "Find all female cervical cancer patients \u2014 by diagnosis or by hysterectomy procedure. Run multiple queries and union the patient sets.",
-    "expert": "Run two queries restricted to female. (1) Condition?code=http://snomed.info/sct|363354003&patient.gender=female \u2014 cervical cancer dx. (2) Procedure?code=http://snomed.info/sct|236886002&patient.gender=female \u2014 hysterectomy. Union the patient IDs."
+    "broad": "Find all female cervical cancer patients — by diagnosis or by hysterectomy procedure. Run multiple queries and union the patient sets.",
+    "expert": "I need a comprehensive cervical cancer cohort by combining diagnosis and procedure evidence, restricted to female patients throughout. First, search Condition resources for the malignant neoplasm of cervix uteri diagnosis in SNOMED CT, filtered to female patients. Second, search Procedure resources for hysterectomy in SNOMED CT, also filtered to female patients. Union the two patient sets — but note that hysterectomy carries high cross-indication from benign gynecologic indications such as uterine fibroids, prolapse, and abnormal bleeding, so the procedure-only subset will include patients without cervical cancer."
   },
   "metadata": {
     "implementation_guide": "US Core 5.0.0",

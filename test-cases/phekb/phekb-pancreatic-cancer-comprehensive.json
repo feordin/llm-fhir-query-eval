@@ -4,11 +4,11 @@
   "source_id": "pancreatic-cancer",
   "name": "Pancreatic Cancer - Comprehensive Provider Query (Multi-Resource)",
   "description": "Provider-level query identifying pancreatic cancer patients via Condition + Observation (CA 19-9). Path D captures elevated CA 19-9 without formal dx.",
-  "prompt": "I need to identify my complete pancreatic cancer patient population. Some patients have a coded pancreatic cancer diagnosis. Others have only an elevated CA 19-9 tumor marker without a formal diagnosis yet \u2014 these warrant urgent imaging follow-up. Run multiple FHIR queries \u2014 diagnosis variants and CA 19-9 \u2014 and union the patient sets.",
+  "prompt": "I need to identify my complete pancreatic cancer patient population. Some patients have a coded pancreatic cancer diagnosis. Others have only an elevated CA 19-9 tumor marker without a formal diagnosis yet — these warrant urgent imaging follow-up. Run multiple FHIR queries — diagnosis variants and CA 19-9 — and union the patient sets.",
   "prompts": {
     "naive": "Find all my pancreatic cancer patients.",
-    "broad": "Find all pancreatic cancer patients \u2014 by diagnosis (malignant or carcinoma variants) or by elevated CA 19-9 (>100 U/mL). Run multiple queries and union the patient sets.",
-    "expert": "Run two queries. (1) Condition?code=http://snomed.info/sct|363418001,http://snomed.info/sct|372142002 \u2014 pancreatic cancer dx variants. (2) Observation?code=http://loinc.org|24108-3&value-quantity=gt100||U/mL \u2014 elevated CA 19-9. Union the patient IDs."
+    "broad": "Find all pancreatic cancer patients — by diagnosis (malignant or carcinoma variants) or by elevated CA 19-9 (>100 U/mL). Run multiple queries and union the patient sets.",
+    "expert": "I need a comprehensive pancreatic cancer cohort drawing from two evidence sources. First, search Condition resources for a pancreatic cancer diagnosis; the SNOMED CT coding covers two variants — malignant neoplasm of pancreas and carcinoma of pancreas — and both should be included. Second, search Observation resources for markedly elevated CA 19-9 tumor marker levels using the appropriate LOINC code, filtering to values above the threshold that is highly suggestive of malignancy (substantially above the normal upper limit of roughly thirty-seven units per milliliter); this captures patients with a significant tumor-marker elevation who may lack a formal coded diagnosis. Union the patient sets from both queries."
   },
   "metadata": {
     "implementation_guide": "US Core 5.0.0",

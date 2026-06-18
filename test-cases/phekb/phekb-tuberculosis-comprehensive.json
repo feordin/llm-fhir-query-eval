@@ -4,11 +4,11 @@
   "source_id": "tuberculosis",
   "name": "Tuberculosis - Comprehensive Provider Query (Multi-Resource)",
   "description": "Provider-level query identifying all TB patients via Condition (TB dx) + MedicationRequest (rifampin/isoniazid). Path C captures patients on combination therapy without coded TB dx (often contact prophylaxis or empirical treatment).",
-  "prompt": "I need to identify my complete tuberculosis patient population for a public health initiative. Some patients have a coded TB diagnosis. Others were started on rifampin and isoniazid for empirical or contact-prophylaxis treatment without ever getting a formal TB diagnosis. Run multiple FHIR queries \u2014 diagnosis and anti-TB medications \u2014 and union the patient sets.",
+  "prompt": "I need to identify my complete tuberculosis patient population for a public health initiative. Some patients have a coded TB diagnosis. Others were started on rifampin and isoniazid for empirical or contact-prophylaxis treatment without ever getting a formal TB diagnosis. Run multiple FHIR queries — diagnosis and anti-TB medications — and union the patient sets.",
   "prompts": {
     "naive": "Find all my TB patients.",
-    "broad": "Find all TB patients \u2014 by diagnosis or by anti-TB medications (rifampin, isoniazid). Run multiple queries and union the patient sets.",
-    "expert": "Run two queries. (1) Condition?code=http://snomed.info/sct|154283005,http://snomed.info/sct|56717001 \u2014 TB dx. (2) MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|9384,http://www.nlm.nih.gov/research/umls/rxnorm|6038 \u2014 anti-TB drugs. Union the patient IDs."
+    "broad": "Find all TB patients — by diagnosis or by anti-TB medications (rifampin, isoniazid). Run multiple queries and union the patient sets.",
+    "expert": "I need to identify all tuberculosis patients using a two-resource union strategy. First, query Condition resources for TB diagnoses in SNOMED CT — include both the pulmonary-specific tuberculosis concept and the broader tuberculosis concept, as either may appear depending on documentation specificity. Second, query MedicationRequest resources for rifampin and isoniazid (two of the four standard RIPE regimen drugs) coded in RxNorm; some patients receive anti-TB combination therapy without a coded diagnosis (for example, contact prophylaxis or empirical treatment before microbiologic confirmation), so the medication path captures that clinical reality. Union the distinct patient IDs from both queries."
   },
   "metadata": {
     "implementation_guide": "US Core 5.0.0",

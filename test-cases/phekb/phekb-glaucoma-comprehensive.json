@@ -4,11 +4,11 @@
   "source_id": "glaucoma",
   "name": "Glaucoma - Comprehensive Provider Query (Multi-Resource)",
   "description": "Provider-level query identifying glaucoma patients via Condition + MedicationRequest.",
-  "prompt": "I need to identify my complete glaucoma patient population for an ophthalmology quality initiative. Some patients have a coded glaucoma diagnosis. Others are on timolol eye drops empirically without a formal glaucoma diagnosis. Run multiple FHIR queries \u2014 diagnosis variants and timolol \u2014 and union the patient sets.",
+  "prompt": "I need to identify my complete glaucoma patient population for an ophthalmology quality initiative. Some patients have a coded glaucoma diagnosis. Others are on timolol eye drops empirically without a formal glaucoma diagnosis. Run multiple FHIR queries — diagnosis variants and timolol — and union the patient sets.",
   "prompts": {
     "naive": "Find all glaucoma patients.",
-    "broad": "Find all glaucoma patients \u2014 by diagnosis (open-angle, angle-closure, broader) or by timolol prescription. Run multiple queries and union the patient sets.",
-    "expert": "Run two queries. (1) Condition?code=http://snomed.info/sct|84494001,http://snomed.info/sct|23986001,http://snomed.info/sct|392288006 \u2014 glaucoma dx variants. (2) MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|10600 \u2014 timolol. Union the patient IDs."
+    "broad": "Find all glaucoma patients — by diagnosis (open-angle, angle-closure, broader) or by timolol prescription. Run multiple queries and union the patient sets.",
+    "expert": "I need to identify all glaucoma patients using a two-resource union strategy. First, query Condition resources for glaucoma diagnoses across the clinically relevant SNOMED CT variants: open-angle glaucoma, primary angle-closure glaucoma, and the broader glaucoma concept — these subtypes are pathophysiologically distinct but all represent the target phenotype. Second, query MedicationRequest resources for timolol (coded in RxNorm), a topical beta-blocker eye drop that is the primary pharmacologic treatment for glaucoma; timolol is also used systemically for hypertension and migraine prophylaxis, so the medication cohort will include some non-glaucoma patients. Union the distinct patient IDs from both queries."
   },
   "metadata": {
     "implementation_guide": "US Core 5.0.0",

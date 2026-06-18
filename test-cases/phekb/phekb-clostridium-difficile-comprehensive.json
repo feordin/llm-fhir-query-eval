@@ -4,11 +4,11 @@
   "source_id": "clostridium-difficile",
   "name": "Clostridium difficile - Comprehensive Provider Query (Multi-Resource)",
   "description": "Provider-level query identifying C. diff patients via Condition + MedicationRequest. Path C (vanc without C. diff dx) reflects vancomycin use for other gram-positive infections.",
-  "prompt": "I need to identify all patients with current or recent Clostridium difficile colitis for an antibiotic stewardship review. Some have a coded C. diff diagnosis. Others are on vancomycin for suspected colitis without a confirmed diagnosis. Run multiple FHIR queries \u2014 diagnosis and vancomycin \u2014 and union the patient sets.",
+  "prompt": "I need to identify all patients with current or recent Clostridium difficile colitis for an antibiotic stewardship review. Some have a coded C. diff diagnosis. Others are on vancomycin for suspected colitis without a confirmed diagnosis. Run multiple FHIR queries — diagnosis and vancomycin — and union the patient sets.",
   "prompts": {
     "naive": "Find all C. diff patients.",
-    "broad": "Find all C. difficile patients \u2014 by diagnosis or by vancomycin prescriptions. Run multiple queries and union the patient sets.",
-    "expert": "Run two queries. (1) Condition?code=http://snomed.info/sct|186431008 \u2014 C. diff dx. (2) MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1807513 \u2014 vancomycin. Union the patient IDs."
+    "broad": "Find all C. difficile patients — by diagnosis or by vancomycin prescriptions. Run multiple queries and union the patient sets.",
+    "expert": "I need to identify Clostridioides difficile infection patients using a union of two resource types. First, search Condition resources for a documented C. difficile infection diagnosis coded in SNOMED CT. Second, search MedicationRequest resources for vancomycin prescriptions (coded in RxNorm), which is a primary treatment for C. diff colitis. Union the patient sets from both queries — the medication path will over-include because vancomycin is heavily cross-indicated for other serious gram-positive infections including MRSA bacteremia and endocarditis, so patients on vancomycin without a C. diff diagnosis represent that cross-indication population."
   },
   "metadata": {
     "implementation_guide": "US Core 5.0.0",

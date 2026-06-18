@@ -3,17 +3,17 @@
   "source": "phekb",
   "source_id": "type-1-diabetes",
   "name": "Type 1 Diabetes - Elevated HbA1c Lab Query",
-  "description": "Tests ability to find type 1 diabetes patients via elevated HbA1c. The diagnostic threshold for diabetes (T1 or T2) is HbA1c \u2265 6.5%. T1D typically presents with much higher HbA1c at diagnosis (often >10%) due to absolute insulin deficiency. This test case uses \u2265 6.5% to capture both well-controlled and poorly-controlled T1D patients. Same LOINC and threshold as T2D \u2014 distinction from T2D is in the diagnosis codes, not labs.",
+  "description": "Tests ability to find type 1 diabetes patients via elevated HbA1c. The diagnostic threshold for diabetes (T1 or T2) is HbA1c ≥ 6.5%. T1D typically presents with much higher HbA1c at diagnosis (often >10%) due to absolute insulin deficiency. This test case uses ≥ 6.5% to capture both well-controlled and poorly-controlled T1D patients. Same LOINC and threshold as T2D — distinction from T2D is in the diagnosis codes, not labs.",
   "prompt": "Find laboratory observations for hemoglobin A1c results at or above 6.5 percent, indicating diabetes mellitus.",
   "prompts": {
     "naive": "Find patients with elevated HbA1c.",
-    "broad": "Find Observation resources for hemoglobin A1c results where the value is greater than or equal to 6.5 percent. HbA1c \u2265 6.5% meets ADA diagnostic criteria for diabetes mellitus (Type 1 or Type 2).",
-    "expert": "I need Observation resources for elevated HbA1c. Use LOINC 4548-4 (Hemoglobin A1c/Hemoglobin.total in Blood). Apply a value-quantity filter with the ge prefix at threshold 6.5, unit percent. The query should look like: Observation?code=http://loinc.org|4548-4&value-quantity=ge6.5. Note this is the ADA diabetes diagnostic threshold \u2014 same as T2D. Distinction between T1D and T2D requires diagnosis codes, not labs alone."
+    "broad": "Find Observation resources for hemoglobin A1c results where the value is greater than or equal to 6.5 percent. HbA1c ≥ 6.5% meets ADA diagnostic criteria for diabetes mellitus (Type 1 or Type 2).",
+    "expert": "I need to find patients with an elevated hemoglobin A1c consistent with the diabetes diagnostic threshold by searching Observation resources. Use the LOINC code for hemoglobin A1c as a fraction of total hemoglobin in blood, and apply a value filter for results at or above the ADA diagnostic cut-off — approximately six and a half percent. Note that this threshold is the same for both type 1 and type 2 diabetes; the elevated A1c path will capture patients from both phenotypes and distinguishing T1D from T2D requires combining lab results with diagnosis codes rather than lab values alone."
   },
   "metadata": {
     "implementation_guide": "US Core 5.0.0",
     "algorithm_path": "lab-path",
-    "algorithm_path_description": "Patients with elevated HbA1c (Paths A and D). Will catch both T1D and T2D patients \u2014 distinguishing requires diagnosis codes.",
+    "algorithm_path_description": "Patients with elevated HbA1c (Paths A and D). Will catch both T1D and T2D patients — distinguishing requires diagnosis codes.",
     "code_systems": [
       "LOINC"
     ],

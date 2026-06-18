@@ -4,11 +4,11 @@
   "source_id": "iron-deficiency-anemia",
   "name": "IDA - Comprehensive Provider Query (Multi-Resource)",
   "description": "Provider-level query identifying iron deficiency anemia patients via Condition + MedicationRequest + Observation (Hgb). Path D captures low-Hgb patients without formal anemia dx.",
-  "prompt": "I need to identify my complete iron deficiency anemia patient population for a hematology quality initiative. Some patients have a coded IDA or anemia diagnosis. Others are on ferrous sulfate empirically, and some have only documented low hemoglobin without a formal diagnosis. Run multiple FHIR queries \u2014 diagnosis, iron supplements, and Hgb labs \u2014 and union the patient sets.",
+  "prompt": "I need to identify my complete iron deficiency anemia patient population for a hematology quality initiative. Some patients have a coded IDA or anemia diagnosis. Others are on ferrous sulfate empirically, and some have only documented low hemoglobin without a formal diagnosis. Run multiple FHIR queries — diagnosis, iron supplements, and Hgb labs — and union the patient sets.",
   "prompts": {
     "naive": "Find all anemia patients.",
-    "broad": "Find all anemia patients \u2014 by diagnosis (IDA or broader anemia), iron supplementation, or low hemoglobin (<12 g/dL). Run multiple queries and union the patient sets.",
-    "expert": "Run three queries. (1) Condition?code=http://snomed.info/sct|87522002,http://snomed.info/sct|271737000 \u2014 IDA + anemia dx. (2) MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|310325 \u2014 ferrous sulfate. (3) Observation?code=http://loinc.org|718-7&value-quantity=lt12||g/dL \u2014 low Hgb. Union the patient IDs."
+    "broad": "Find all anemia patients — by diagnosis (IDA or broader anemia), iron supplementation, or low hemoglobin (<12 g/dL). Run multiple queries and union the patient sets.",
+    "expert": "I need a comprehensive cohort of iron deficiency anemia patients by combining evidence from three resource types. First, search Condition resources for both the specific iron deficiency anemia diagnosis and the broader anemia diagnosis in SNOMED CT. Second, search MedicationRequest resources for ferrous sulfate, the canonical oral iron supplement prescribed for IDA, coded in RxNorm. Third, search Observation resources for hemoglobin measurements in blood (coded in LOINC) where the result falls below the conventional anemia threshold — roughly below 12 g/dL — to capture patients with laboratory-confirmed low hemoglobin who may not yet carry a formal diagnosis (Path D). Union the patient sets from all three queries for the complete cohort."
   },
   "metadata": {
     "implementation_guide": "US Core 5.0.0",

@@ -3,12 +3,12 @@
   "source": "phekb",
   "source_id": "heart-failure",
   "name": "Heart Failure - Reduced Ejection Fraction (HFrEF) Echo Query",
-  "description": "Tests ability to find heart failure patients via reduced ejection fraction on echocardiogram. The PheKB HF algorithm uses an EF cutoff of 50% to distinguish HFrEF (EF<50%) from HFpEF (EF>=50%). This test case targets HFrEF specifically \u2014 patients with measured EF < 50%. This exercises the value-quantity filter pattern with a less-than threshold (lt50) rather than the more common greater-than threshold seen in lab-based phenotypes like hypothyroidism (TSH>5) or T2DM (HbA1c>=6.5).",
+  "description": "Tests ability to find heart failure patients via reduced ejection fraction on echocardiogram. The PheKB HF algorithm uses an EF cutoff of 50% to distinguish HFrEF (EF<50%) from HFpEF (EF>=50%). This test case targets HFrEF specifically — patients with measured EF < 50%. This exercises the value-quantity filter pattern with a less-than threshold (lt50) rather than the more common greater-than threshold seen in lab-based phenotypes like hypothyroidism (TSH>5) or T2DM (HbA1c>=6.5).",
   "prompt": "Find echocardiogram observations for left ventricular ejection fraction where the value is below 50 percent, indicating heart failure with reduced ejection fraction (HFrEF).",
   "prompts": {
     "naive": "Find patients with low ejection fraction on echo.",
     "broad": "Find Observation resources for left ventricular ejection fraction measurements where the value is less than 50 percent. EF below 50 percent defines heart failure with reduced ejection fraction (HFrEF, also called systolic heart failure).",
-    "expert": "I need Observation resources for left ventricular ejection fraction with EF < 50%. Use LOINC 8806-2 (Left ventricular Ejection fraction by 2D echo). Apply a value-quantity filter with the lt prefix at threshold 50, unit percent. The query should look like: Observation?code=http://loinc.org|8806-2&value-quantity=lt50. Note that percent encoding may be required on some servers (lt50||%25) but plain lt50 works for HAPI."
+    "expert": "I need to identify patients with reduced left ventricular ejection fraction on echocardiogram, which corresponds to the HFrEF (heart failure with reduced ejection fraction) subtype per the PheKB heart failure algorithm. Search Observation resources for left ventricular ejection fraction measurements using the appropriate LOINC code for EF by two-dimensional echocardiography, and filter to values strictly below fifty percent — the threshold the PheKB algorithm uses to classify reduced ejection fraction. This is a less-than threshold filter, in contrast to the greater-than filters used in most lab-based phenotypes."
   },
   "metadata": {
     "implementation_guide": "US Core 5.0.0",
