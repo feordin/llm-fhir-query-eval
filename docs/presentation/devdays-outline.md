@@ -184,12 +184,22 @@ throughout, except Slide 14B (comprehensive cohort, labeled).
 ## Section 4 — Analysis: why did it help?
 
 ### Slide 15 — Why T2 helped: tools collapse the prompt gap (centerpiece)
-- **On-slide:** *(all-test-case basis — same as Slides 10/14)*
+- **On-slide:** *(all-test-case basis — same as Slides 10/14; do NOT use comprehensive-cohort numbers here)*
   - In T1, prompt quality mattered a lot: naive ≈ **0.48–0.53** vs expert ≈ **0.83–0.86** — a **~0.33** gap.
-  - In T2, **a naive prompt + tools ≈ an expert prompt + tools**: naive ≈ **0.82–0.85** vs expert ≈ **0.82–0.92** — the gap collapses to **~0.05** (and for Sonnet, naive actually edges out expert).
+  - In T2, **a naive prompt + tools ≈ an expert prompt + tools**: naive ≈ **0.82–0.85** vs expert ≈ **0.82–0.92** — the gap collapses to **~0.05** (for Sonnet, naive actually *edges out* expert).
   - Interpretation: **tools recover what phrasing used to**. The model doesn't need you to know the codes — it can look them up.
-- **Visual:** the killer chart — prompt-level on X, F1 on Y, two lines (T1 vs T2). T1 line slopes up steeply (~0.33 rise; prompt matters); T2 line is high and **flat** (~0.05; prompt barely matters).
-- **Speaker notes:** This is the most quotable finding: *tools democratize the query* — a clinician can ask in plain English and still get an expert-quality cohort. **Basis note:** these are all-test-case means (consistent with Slides 10/14). If you'd rather use the **comprehensive ("all-patients") cohort** — the headline cell — the same convergence reads naive+T2 ≈ **0.91–0.93** vs expert+T2 ≈ **0.98** (from `2026-06-07-prompt-vs-tools-impact.md`); higher absolute numbers, identical story. Pick ONE basis for the whole deck and say which — don't mix (this slide previously used the comprehensive numbers while 10/14 use all-test-case).
+- **Exact chart data (all-test-case mean F1, by prompt):**
+
+  | Model | T1 naive | T1 broad | T1 expert | → | T2 naive | T2 broad | T2 expert | gap T1→T2 |
+  |---|---|---|---|---|---|---|---|---|
+  | GPT-5.4 | 0.481 | 0.634 | 0.854 | | 0.842 | 0.873 | 0.919 | 0.37 → 0.08 |
+  | **Opus 4.7** *(exemplar)* | **0.533** | **0.644** | **0.859** | | **0.816** | **0.868** | **0.903** | **0.33 → 0.09** |
+  | Sonnet 4.6 | 0.492 | 0.554 | 0.825 | | 0.846 | 0.870 | 0.820 | 0.33 → −0.03 |
+  | Qwen3.5-9B *(exception)* | 0.072 | 0.150 | 0.551 | | 0.283 | 0.363 | 0.778 | 0.48 → 0.50 |
+
+  - **The collapse is a *frontier-model* result.** For GPT/Opus/Sonnet the T2 line goes flat (gap ~0.33 → ~0.05). **Qwen does NOT converge** — its T2 line stays steep (0.28 → 0.78, gap ~0.50): a weak model needs *both* tools and a good prompt (and methodology — see Slide 16).
+- **Visual:** the killer chart — prompt-level (naive/broad/expert) on X, F1 on Y, two lines for **Opus** (the exemplar): T1 `0.53 / 0.64 / 0.86` slopes up steeply (~0.33 rise; prompt matters), T2 `0.82 / 0.87 / 0.90` is high and **flat** (~0.09; prompt barely matters). Cap the Y-axis at 1.0 and **do not plot 0.99** — the ~0.98 figure is the comprehensive cohort (Slide 14B), a different basis; mixing it onto this chart overstates the jump.
+- **Speaker notes:** This is the most quotable finding: *tools democratize the query* — a clinician can ask in plain English and still get an expert-quality cohort. The win is at the **naive floor** (Opus 0.53 → 0.82), not the expert ceiling (0.86 → 0.90, which barely moves because expert closed-book is already good). **Basis warning:** keep BOTH lines on the all-test-case basis (consistent with Slides 10/14 and the frontend). If you ever want the comprehensive ("all-patients") cohort instead, you must move *both* lines onto it — Opus then reads T1 `0.70 / 0.82 / 0.92` and T2 `0.91 / 0.95 / 0.98` (the expert *prompt* line also rises to 0.92, so the expert-vs-tools gap is still only ~0.06, not 0.13). **Never put an all-test-case 0.86 prompt line against a comprehensive 0.98 tools line on the same chart** — that's the one cross-basis comparison the deck forbids.
 
 ### Slide 16 — Why T3 (methodology) helped — and for whom
 - **On-slide:**
