@@ -77,7 +77,9 @@ def build(since: str, exclude: tuple, stamp: str) -> dict:
         (t, v), f1 = max(means.items(), key=lambda kv: kv[1])
         return {"tier": t, "variant": v, "f1": f1}
 
-    # ---- leaderboard.json: all-up over canonical cells, per model x tier -------
+    # ---- leaderboard.json: all-up over ALL test cases, per model x tier --------
+    # All-test-case mean (matches the presentation's spine; `best` below stays on
+    # the comprehensive cohort, matching Slide 14B).
     lb_rows = []
     for spec in specs:
         per_tier = {}
@@ -85,7 +87,7 @@ def build(since: str, exclude: tuple, stamp: str) -> dict:
             f1s = []
             by_prompt = {v: [] for v in VARIANTS}
             cov = [0, 0]
-            for tc in canon_tcs:
+            for tc in tree[spec]:
                 for v in VARIANTS:
                     c = tree[spec].get(tc, {}).get((t, v))
                     if c is None:
@@ -102,19 +104,27 @@ def build(since: str, exclude: tuple, stamp: str) -> dict:
 
     leaderboard = {"models": specs, "tiers": TIERS, "rows": lb_rows, "stamp": stamp}
 
-    # ---- phenotypes.json: matrix of comprehensive-cell F1 per tier -------------
+    # ---- phenotypes.json: matrix of all-test-case F1 per tier (mean over the -----
+    # phenotype's test cases, matching the leaderboard's all-test-case basis) -----
+    ph_tcs = defaultdict(set)  # phenotype -> its test cases (across specs)
+    for spec in specs:
+        for tc in tree[spec]:
+            ph = _tc_to_phenotype(tc, PHENOTYPES)
+            if ph:
+                ph_tcs[ph].add(tc)
     ph_rows = []
     for p in PHENOTYPES:
-        tc = canon[p]
+        tcs = ph_tcs.get(p, set())
         scores = {}
         for spec in specs:
-            cells = tree[spec].get(tc, {})
-            scores[spec] = {
-                str(t): _mean([cells[(t, v)]["f1"] for v in VARIANTS
-                               if (t, v) in cells and cells[(t, v)].get("f1") is not None])
-                for t in TIERS
-            }
-        ph_rows.append({"phenotype": p, "canonical_tc": tc, "scores": scores})
+            scores[spec] = {}
+            for t in TIERS:
+                vals = [tree[spec][tc][(t, v)]["f1"]
+                        for tc in tcs if tc in tree[spec]
+                        for v in VARIANTS
+                        if (t, v) in tree[spec][tc] and tree[spec][tc][(t, v)].get("f1") is not None]
+                scores[spec][str(t)] = _mean(vals)
+        ph_rows.append({"phenotype": p, "canonical_tc": canon[p], "scores": scores})
     phenotypes = {"phenotypes": ph_rows, "models": specs}
 
     # ---- per-phenotype detail files -------------------------------------------
