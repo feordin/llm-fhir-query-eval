@@ -33,8 +33,8 @@ export default function PhenotypeMatrix() {
       <div className="dashboard-header">
         <h1>Phenotype Matrix</h1>
         <p className="subtitle">
-          Comprehensive-cohort F1 per phenotype × model, averaged over the three prompts.
-          Click a phenotype for the full prompt × tier grids and cell detail.
+          All-test-case mean F1 per phenotype × model, averaged over every test-case variant
+          and the three prompts. Click a phenotype for the full prompt × tier grids and cell detail.
         </p>
       </div>
 

@@ -43,8 +43,8 @@ function ImpactHero({ data }: { data: LB }) {
   return (
     <div className="impact-hero">
       <h2>What moves the needle?</h2>
-      <p className="subtitle">F1 lift from the same Opus baseline ({fmt(base)}) across all 108
-        phenotypes (comprehensive cohort) — isolating each lever. <strong>Only tools matter for a frontier model.</strong></p>
+      <p className="subtitle">F1 lift from the same Opus baseline ({fmt(base)}) across all 388
+        test cases — isolating each lever. <strong>Only tools matter for a frontier model.</strong></p>
       {levers.map(l => (
         <div key={l.label} className="lever">
           <div className="lever-label">{l.label}</div>
@@ -173,7 +173,7 @@ function SkillBaseline({ data }: { data: LB }) {
   return (
     <div style={{ marginTop: 32 }}>
       <h2>Off-the-shelf skill vs our agentic stack
-        <span className="badge badge-multi"> Opus · comprehensive cohort · full 108</span></h2>
+        <span className="badge badge-multi"> Opus · all 388 test cases</span></h2>
       <p className="subtitle"><code>+fhirskill</code> = closed-book Opus + Anthropic's published
         FHIR-developer skill (prepended text, no tools). The skill barely helps a model that already
         knows FHIR — and helps least on the expert prompt; the win is the agentic <strong>tools</strong>.</p>
@@ -216,8 +216,9 @@ export default function Leaderboard() {
     <div className="dashboard">
       <div className="dashboard-header">
         <h1>FHIR Cohort-Finding: Model Comparison</h1>
-        <p className="subtitle">All-up F1 on each phenotype's <strong>all-patients</strong> cohort —
-          <em>does the model find the whole cohort?</em></p>
+        <p className="subtitle"><strong>All-test-case</strong> mean F1 — averaged over all 388 test
+          cases (every dx/meds/labs/comprehensive/trick variant). Matches the deck's headline table.
+          <em>(The "Best achievable" panel below is the one comprehensive-cohort view.)</em></p>
       </div>
 
       <ImpactHero data={data} />
