@@ -97,11 +97,11 @@ throughout, except Slide 14B (comprehensive cohort, labeled).
 - **On-slide:** T1 F1 by model (all-test-case, full 388-tc coverage):
   | Model | T1 |
   |---|---|
-  | Claude Opus 4.7 | **0.679** |
-  | GPT-5.4 | 0.656 |
-  | Claude Sonnet 4.6 | 0.623 |
+  | Claude Opus 4.7 | **0.632** |
+  | GPT-5.4 | 0.624 |
+  | Claude Sonnet 4.6 | 0.563 |
   | Qwen3.5-9B | 0.257 |
-  - Within T1, **expert ≫ broad > naive** — code-aware phrasing helps a lot when the model has no tools. Opus is the sharpest example: **naive 0.53 → broad 0.64 → expert 0.86** (a +0.33 swing from phrasing alone).
+  - Within T1, **expert ≫ broad > naive** — code-aware phrasing helps a lot when the model has no tools. Opus is the sharpest example: **naive 0.53 → broad 0.64 → expert 0.72** (a +0.19 swing from phrasing alone).
 - **Visual:** grouped bar chart, model × prompt-level, T1 only. Opus's naive→expert slope is the steepest — use it to make the "closed-book is prompt-sensitive" point.
 - **Speaker notes:** Closed-book, even frontier models are mediocre (~0.62–0.68) and very prompt-sensitive; the small open model is poor (0.26). Opus tops the frontier T1 trio — strongest built-in FHIR/code recall — but still needs an expert prompt to do well without tools. Now the interesting part — what fixes it? (Opus T1 is now full-108 coverage from the decoupled backfill; earlier partial-subset reads of ~0.70 were on an easier 91-tc slice.)
 
@@ -157,21 +157,21 @@ throughout, except Slide 14B (comprehensive cohort, labeled).
 - **On-slide:** the money table (all-test-case F1):
   | Model | T1 | T2 | T3 |
   |---|---|---|---|
-  | GPT-5.4 | 0.656 | 0.878 | 0.884 |
-  | Claude Sonnet 4.6 | 0.623 | 0.846 | 0.857 |
-  | Claude Opus 4.7 | 0.679 | 0.862 | 0.867 |
+  | GPT-5.4 | 0.624 | 0.871 | 0.879 |
+  | Claude Sonnet 4.6 | 0.563 | 0.859 | 0.862 |
+  | Claude Opus 4.7 | 0.632 | 0.859 | 0.860 |
   | Qwen3.5-9B | 0.257 | 0.476 | 0.710 |
   - All four models are now **full-108 (388 test cases)** on every tier. *(All numbers in this deck are this all-test-case mean — except Slide 14B, the comprehensive-cohort "best case.")*
 - **Visual:** grouped bar chart, model × tier (T1/T2/T3).
-- **Speaker notes:** The big jump is T1→T2 (every model gains ~0.20). Land that, then unpack *why* next. For Opus on full coverage, **T3 (0.867) ≈ T2 (0.862)** — the methodology is ~neutral for a strong model (the earlier "T3 < T2" was a 48-tc-subset artifact; see Slide 16B for the per-case concept-enumeration failure mode that's real but averages out).
+- **Speaker notes:** The big jump is T1→T2 (every model gains ~0.23–0.30). Land that, then unpack *why* next. For Opus on full coverage, **T3 (0.860) ≈ T2 (0.859)** — the methodology is ~neutral for a strong model (the earlier "T3 < T2" was a 48-tc-subset artifact; see Slide 16B for the per-case concept-enumeration failure mode that's real but averages out).
 
 ### Slide 14B — Best achievable per model (the ceiling) · ⚠ COMPREHENSIVE COHORT
 - **On-slide:** **The one slide on the comprehensive ("all-patients") cohort** — distinct from the all-test-case basis used everywhere else in this deck. Each model's **best possible** score: the single best **tier × prompt** combination, on the comprehensive cell (80 phenotypes that have one):
   | Model | Best config | Best F1 *(comprehensive)* |
   |---|---|---|
-  | GPT-5.4 | T2 + expert | **0.998** |
-  | Claude Opus 4.7 | T3 + expert | **0.985** |
-  | Claude Sonnet 4.6 | T2 + expert | **0.982** |
+  | GPT-5.4 | T2 + expert | **0.990** |
+  | Claude Opus 4.7 | T3 + expert | **0.967** |
+  | Claude Sonnet 4.6 | T2 + expert | **0.986** |
   | Qwen3.5-9B | T3 + expert | **0.919** |
   - On the cohort that matters most — *did you find the whole population?* — frontier models with the right config **essentially solve it (~0.98–1.00)**. The agentic union query finds nearly everyone.
   - **Even the small open model reaches 0.92** — but only by stacking the full stack (T3 + expert: methodology *and* a code-aware prompt).
@@ -185,21 +185,21 @@ throughout, except Slide 14B (comprehensive cohort, labeled).
 
 ### Slide 15 — Why T2 helped: tools collapse the prompt gap (centerpiece)
 - **On-slide:** *(all-test-case basis — same as Slides 10/14; do NOT use comprehensive-cohort numbers here)*
-  - In T1, prompt quality mattered a lot: naive ≈ **0.48–0.53** vs expert ≈ **0.83–0.86** — a **~0.33** gap.
-  - In T2, **a naive prompt + tools ≈ an expert prompt + tools**: naive ≈ **0.82–0.85** vs expert ≈ **0.82–0.92** — the gap collapses to **~0.05** (for Sonnet, naive actually *edges out* expert).
+  - In T1, prompt quality mattered a lot: naive ≈ **0.48–0.53** vs expert ≈ **0.64–0.76** — a **~0.15–0.28** gap.
+  - In T2, **a naive prompt + tools ≈ an expert prompt + tools**: naive ≈ **0.82–0.85** vs expert ≈ **0.86–0.90** — the gap collapses to **~0.05** (for Sonnet, naive actually *edges out* expert).
   - Interpretation: **tools recover what phrasing used to**. The model doesn't need you to know the codes — it can look them up.
 - **Exact chart data (all-test-case mean F1, by prompt):**
 
   | Model | T1 naive | T1 broad | T1 expert | → | T2 naive | T2 broad | T2 expert | gap T1→T2 |
   |---|---|---|---|---|---|---|---|---|
-  | GPT-5.4 | 0.481 | 0.634 | 0.854 | | 0.842 | 0.873 | 0.919 | 0.37 → 0.08 |
-  | **Opus 4.7** *(exemplar)* | **0.533** | **0.644** | **0.859** | | **0.816** | **0.868** | **0.903** | **0.33 → 0.09** |
-  | Sonnet 4.6 | 0.492 | 0.554 | 0.825 | | 0.846 | 0.870 | 0.820 | 0.33 → −0.03 |
+  | GPT-5.4 | 0.481 | 0.634 | 0.758 | | 0.842 | 0.873 | 0.897 | 0.28 → 0.06 |
+  | **Opus 4.7** *(exemplar)* | **0.533** | **0.644** | **0.718** | | **0.816** | **0.868** | **0.894** | **0.19 → 0.08** |
+  | Sonnet 4.6 | 0.492 | 0.554 | 0.643 | | 0.846 | 0.870 | 0.861 | 0.15 → 0.02 |
   | Qwen3.5-9B *(exception)* | 0.072 | 0.150 | 0.551 | | 0.283 | 0.363 | 0.778 | 0.48 → 0.50 |
 
-  - **The collapse is a *frontier-model* result.** For GPT/Opus/Sonnet the T2 line goes flat (gap ~0.33 → ~0.05). **Qwen does NOT converge** — its T2 line stays steep (0.28 → 0.78, gap ~0.50): a weak model needs *both* tools and a good prompt (and methodology — see Slide 16).
-- **Visual:** the killer chart — prompt-level (naive/broad/expert) on X, F1 on Y, two lines for **Opus** (the exemplar): T1 `0.53 / 0.64 / 0.86` slopes up steeply (~0.33 rise; prompt matters), T2 `0.82 / 0.87 / 0.90` is high and **flat** (~0.09; prompt barely matters). Cap the Y-axis at 1.0 and **do not plot 0.99** — the ~0.98 figure is the comprehensive cohort (Slide 14B), a different basis; mixing it onto this chart overstates the jump.
-- **Speaker notes:** This is the most quotable finding: *tools democratize the query* — a clinician can ask in plain English and still get an expert-quality cohort. The win is at the **naive floor** (Opus 0.53 → 0.82), not the expert ceiling (0.86 → 0.90, which barely moves because expert closed-book is already good). **Basis warning:** keep BOTH lines on the all-test-case basis (consistent with Slides 10/14 and the frontend). If you ever want the comprehensive ("all-patients") cohort instead, you must move *both* lines onto it — Opus then reads T1 `0.70 / 0.82 / 0.92` and T2 `0.91 / 0.95 / 0.98` (the expert *prompt* line also rises to 0.92, so the expert-vs-tools gap is still only ~0.06, not 0.13). **Never put an all-test-case 0.86 prompt line against a comprehensive 0.98 tools line on the same chart** — that's the one cross-basis comparison the deck forbids.
+  - **The collapse is a *frontier-model* result.** For GPT/Opus/Sonnet the T2 line goes flat (gap ~0.15–0.28 → ~0.05). **Qwen does NOT converge** — its T2 line stays steep (0.28 → 0.78, gap ~0.50): a weak model needs *both* tools and a good prompt (and methodology — see Slide 16).
+- **Visual:** the killer chart — prompt-level (naive/broad/expert) on X, F1 on Y, two lines for **Opus** (the exemplar): T1 `0.53 / 0.64 / 0.72` slopes up (~0.19 rise; prompt matters), T2 `0.82 / 0.87 / 0.89` is high and **flat** (~0.08; prompt barely matters). Cap the Y-axis at 1.0 and **do not plot 0.99** — the ~0.96 figure is the comprehensive cohort (Slide 14B), a different basis; mixing it onto this chart overstates the jump.
+- **Speaker notes:** This is the most quotable finding: *tools democratize the query* — a clinician can ask in plain English and still get an expert-quality cohort. The win is at the **naive floor** (Opus 0.53 → 0.82); the expert prompt also gains with tools (0.72 → 0.89) — and note its closed-book number is only 0.72 now that the expert prompt can't lean on a leaked query (the rewrite removed the embedded FHIR queries). **Basis warning:** keep BOTH lines on the all-test-case basis (consistent with Slides 10/14 and the frontend). If you ever want the comprehensive ("all-patients") cohort instead, you must move *both* lines onto it — Opus then reads T1 `0.70 / 0.82 / 0.87` and T2 `0.91 / 0.95 / 0.96` (the expert *prompt* line also rises to 0.87, so the expert-vs-tools gap is still only ~0.10). **Never put an all-test-case 0.72 prompt line against a comprehensive 0.96 tools line on the same chart** — that's the one cross-basis comparison the deck forbids.
 
 ### Slide 16 — Why T3 (methodology) helped — and for whom
 - **On-slide:**
@@ -223,7 +223,7 @@ throughout, except Slide 14B (comprehensive cohort, labeled).
 
 ### Slide 17 — What moves the needle (the lever summary)
 - **On-slide:** for a frontier model, ranked impact (**all-test-case** T1→T2):
-  - **Tools: +0.18–0.22** (the dominant lever) — GPT 0.66→0.88, Sonnet 0.62→0.85, Opus 0.68→0.86. *(On the already-high comprehensive cohort the lift is smaller, ~+0.10, because those cells start near 0.9.)*
+  - **Tools: +0.23–0.30** (the dominant lever) — GPT 0.62→0.87, Sonnet 0.56→0.86, Opus 0.63→0.86. *(On the already-high comprehensive cohort the lift is smaller, ~+0.10, because those cells start near 0.9.)*
   - Prompt quality: large at T1 (~+0.33), **~0 once tools are on**
   - Methodology: small for frontier (~+0.005), large for small models (Qwen +0.23)
   - Off-the-shelf generic skill: ~0 (+0.014) for a model that already knows FHIR
@@ -245,18 +245,18 @@ throughout, except Slide 14B (comprehensive cohort, labeled).
 ### Slide 18 — Best off-the-shelf agent: Opus + the Anthropic FHIR skill
 - **On-slide:**
   - We ran **Opus with Anthropic's published FHIR-developer skill** (closed-book — the skill is prepended text, no tools) as a "strong generic" baseline, across **all 108 phenotypes × 3 prompts**.
-  - **Headline (all 388 test cases): off-the-shelf Opus+skill 0.69 vs our agentic stack 0.86** (T2; T3 0.87). A strong generic skill, closed-book, lands at the model's plain-recall level; the agentic tools are what add ~0.17.
+  - **Headline (all 388 test cases): off-the-shelf Opus+skill 0.65 vs our agentic stack 0.86** (T2; T3 0.86). A strong generic skill, closed-book, lands at the model's plain-recall level; the agentic tools are what add ~0.21.
   - The gap is concentrated in the **hard cross-indication phenotypes** (e.g., Crohn's, asthma) — exactly the Path-C trick cases where you must discover/crosswalk codes.
-  - **The skill's *marginal* lift is ~0:** Opus closed-book **plain 0.679 vs +skill 0.693 (+0.014)** over all 108. A generic skill barely helps a model that already knows FHIR — the win is the **tools**, not the prompt/skill text.
+  - **The skill's *marginal* lift is ~0:** Opus closed-book **plain 0.632 vs +skill 0.650 (+0.018)** over all 108. A generic skill barely helps a model that already knows FHIR — the win is the **tools**, not the prompt/skill text.
   - **By prompt (all-tc, T1) — where the tiny lift lands:**
     | prompt | plain | + skill | Δ |
     |---|---|---|---|
     | naive | 0.533 | 0.552 | +0.019 |
     | broad | 0.644 | 0.666 | +0.022 |
-    | expert | 0.859 | 0.862 | +0.003 |
+    | expert | 0.718 | 0.732 | +0.014 |
 
-    The skill helps the **naive/broad** prompts (+0.02) but is **noise on expert** (+0.003) — it supplies FHIR guidance an expert prompt already encodes.
-- **Visual:** two bars — off-the-shelf Opus+skill (**0.69**) vs our agentic (**0.86**), all-test-case — with a callout on the cross-indication phenotypes driving the gap.
+    The skill helps the **naive/broad** prompts (+0.02) but is **near-noise on expert** (+0.014) — it supplies FHIR guidance an expert prompt already encodes.
+- **Visual:** two bars — off-the-shelf Opus+skill (**0.65**) vs our agentic (**0.86**), all-test-case — with a callout on the cross-indication phenotypes driving the gap.
 - **Speaker notes:** A generic skill gets you to plain closed-book level (~0.69); the lift to 0.86 is domain-specific tooling + the trick-path handling we built. All-test-case basis, consistent with the rest of the deck. (For reference, on the comprehensive cohort the same comparison is ~0.84 vs ~0.95 — the basis used on Slide 14B; don't mix the two on one chart.) Source: `docs/results/2026-06-12-opus-full-leaderboard.md` + the +fhirskill cells.
 
 ---
@@ -290,8 +290,8 @@ throughout, except Slide 14B (comprehensive cohort, labeled).
 
 ### Slide 22 — Takeaways
 - **On-slide:** five lines (the ones worth remembering):
-  1. **Closed-book, even the best frontier LLM is mediocre** (~0.68 F1) and very prompt-sensitive (Opus naive 0.53 → expert 0.86). Clinical FHIR phenotyping is **not "solved" by scale alone.**
-  2. **Tools are the dominant lever** (+0.18–0.22 all-test-case) and they **erase the prompt gap** — plain English + tools ≈ an expert hand-writing codes. **Tooling > skill > prompt.**
+  1. **Closed-book, even the best frontier LLM is mediocre** (~0.63 F1) and very prompt-sensitive (Opus naive 0.53 → expert 0.72). Clinical FHIR phenotyping is **not "solved" by scale alone.**
+  2. **Tools are the dominant lever** (+0.23–0.30 all-test-case) and they **erase the prompt gap** — plain English + tools ≈ an expert hand-writing codes. **Tooling > skill > prompt.**
   3. **Recall is really about concept coverage** — did the query enumerate every clinical concept/subtype the cohort is coded with? Tools win because they let the model **discover** those concepts on the server instead of recalling them. (We make the benchmark *generous on code systems* — any system finds the patient — so concepts, not systems, are the axis.)
   4. **Methodology is a model-dependent lever** — huge for a weak model (Qwen T2→T3 **+0.23**), ~0 for the frontier (sonnet/gpt +0.02, Opus ~−0.02). On hard cross-coded phenotypes the playbook can make Opus **under-enumerate subtype concepts** (a real failure mode, though it averages out). **Match the strategy to the model; "more guidance" isn't universally better.**
   5. **We shipped the win as a reusable plugin** (lean playbook + age-guard + server-introspection + UMLS/VSAC) — point it at any FHIR server and a clinician's plain-English ask becomes a research-grade cohort.
@@ -317,13 +317,14 @@ Every slide uses this **except Slide 14B**, the deliberate **comprehensive-cohor
 because it's a broad union query, not an average over the harder variants). 14B is
 labeled as such on the slide; nothing else mixes the two bases.
 
-**Verified full-108 all-test-case numbers:** Opus 0.679/0.862/0.867,
-GPT 0.656/0.878/0.884, Sonnet 0.623/0.846/0.857, Qwen 0.257/0.476/0.710.
-Frontier T1→T2 lift +0.18–0.22 (the dominant lever). Skill marginal lift: plain 0.679
-→ +fhirskill 0.693 (+0.014).
+**Verified full-108 all-test-case numbers** *(after the 2026-06-18 expert-prompt
+de-leak rerun; T2D solo-rerun pending):* Opus 0.632/0.859/0.860,
+GPT 0.624/0.871/0.879, Sonnet 0.563/0.859/0.862, Qwen 0.257/0.476/0.710 (not rerun).
+Frontier T1→T2 lift +0.23–0.30 (the dominant lever). Skill marginal lift: plain 0.632
+→ +fhirskill 0.650 (+0.018).
 
 **Slide 14B (comprehensive cohort, 80 phenotypes with a `-comprehensive` case),
-best tier×prompt:** GPT T2·expert 0.998, Opus T3·expert 0.985, Sonnet T2·expert 0.982,
+best tier×prompt:** GPT T2·expert 0.990, Opus T3·expert 0.967, Sonnet T2·expert 0.986,
 Qwen T3·expert 0.919.
 
 **Frontend** is checked in and clone-ready (`npm install && npm run dev`). Note its

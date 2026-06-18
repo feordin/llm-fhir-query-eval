@@ -13,12 +13,12 @@ of tooling.
 
 | Model | T1 closed-book | T2 agentic + tools | T3 + methodology |
 |---|---|---|---|
-| GPT-5.4 | 0.656 | 0.878 | 0.884 |
-| Claude Opus 4.7 | 0.679 | 0.862 | 0.867 |
-| Claude Sonnet 4.6 | 0.623 | 0.846 | 0.857 |
+| GPT-5.4 | 0.624 | 0.871 | 0.879 |
+| Claude Opus 4.7 | 0.632 | 0.859 | 0.860 |
+| Claude Sonnet 4.6 | 0.563 | 0.859 | 0.862 |
 | Qwen3.5-9B | 0.257 | 0.476 | 0.710 |
 
-**Tools are the dominant lever (+0.18–0.22)** and they *erase the prompt-skill gap*:
+**Tools are the dominant lever (+0.23–0.30)** and they *erase the prompt-skill gap*:
 closed-book, prompt quality matters enormously; with tools, a plain-English prompt ≈
 an expert one. Off-the-shelf prompt "skills" add ~0 for a model that already knows
 FHIR. See `docs/presentation/devdays-outline.md` and `docs/results/` for the full story.
