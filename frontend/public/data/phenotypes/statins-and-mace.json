@@ -46,15 +46,15 @@
       "passed": true,
       "expected_count": 409,
       "actual_count": 409,
-      "elapsed_sec": 0.6,
+      "elapsed_sec": 27.7,
       "queries_generated": 3,
-      "primary_query_url": "Condition?code=http://snomed.info/sct|22298006,http://hl7.org/fhir/sid/icd-10-cm|I21.0,http://hl7.org/fhir/sid/icd-10-cm|I21.9",
+      "primary_query_url": "Condition?code=http://snomed.info/sct|57054005,http://snomed.info/sct|401303003,http://hl7.org/fhir/sid/icd-10-cm|I21.09,http://hl7.org/fhir/sid/icd-10-cm|I21.9",
       "additional_query_urls": [
-       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|83367",
-       "Observation?code=http://loinc.org|10839-9&value-quantity=ge0.10"
+       "Observation?code=http://loinc.org|10839-9&value-quantity=ge0.04|http://unitsofmeasure.org|ng/mL",
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|83367"
       ],
-      "raw_response": "Condition?code=http://snomed.info/sct|22298006,http://hl7.org/fhir/sid/icd-10-cm|I21.0,http://hl7.org/fhir/sid/icd-10-cm|I21.9\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|83367\nObservation?code=http://loinc.org|10839-9&value-quantity=ge0.10",
-      "prompt_text": "Run three queries. (1) Condition?code=http://snomed.info/sct|22298006,http://hl7.org/fhir/sid/icd-10-cm|I21.0,http://hl7.org/fhir/sid/icd-10-cm|I21.9 \u2014 AMI dx. (2) MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|83367 \u2014 atorvastatin. (3) Observation?code=http://loinc.org|10839-9&value-quantity=ge0.10 \u2014 troponin. Union the patient IDs."
+      "raw_response": "Condition?code=http://snomed.info/sct|57054005,http://snomed.info/sct|401303003,http://hl7.org/fhir/sid/icd-10-cm|I21.09,http://hl7.org/fhir/sid/icd-10-cm|I21.9\nObservation?code=http://loinc.org|10839-9&value-quantity=ge0.04|http://unitsofmeasure.org|ng/mL\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|83367",
+      "prompt_text": "I need to identify patients in the statins-and-MACE phenotype per the PheKB BioVU algorithm, which requires combining evidence from three FHIR resource types. First, query Condition resources for acute myocardial infarction diagnoses across both SNOMED CT and ICD-10-CM (covering STEMI of the anterior wall and unspecified AMI variants). Second, query Observation resources for cardiac troponin I values at or above the PheKB-defined threshold for AMI confirmation, using the appropriate LOINC code for troponin I in serum or plasma. Third, query MedicationRequest resources for atorvastatin (RxNorm), representing prior statin therapy \u2014 note that the full algorithm requires the statin prescription to precede the AMI by at least 180 days, a temporal constraint that cannot be enforced in a single FHIR query and would need post-processing. Take the union of patient IDs across all three queries."
      },
      "2-naive": {
       "precision": 1.0,
@@ -108,18 +108,18 @@
       "passed": true,
       "expected_count": 409,
       "actual_count": 409,
-      "elapsed_sec": 32.1,
+      "elapsed_sec": 45.6,
       "queries_generated": 3,
-      "primary_query_url": "Condition?code=http://snomed.info/sct|22298006,http://hl7.org/fhir/sid/icd-10-cm|I21.0,http://hl7.org/fhir/sid/icd-10-cm|I21.9",
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|I21.0,http://hl7.org/fhir/sid/icd-10-cm|I21.9",
       "additional_query_urls": [
-       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|83367",
-       "Observation?code=http://loinc.org|10839-9&value-quantity=ge0.10"
+       "Observation?code=http://loinc.org|10839-9&value-quantity=ge0.5",
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|83367"
       ],
-      "raw_response": "Condition?code=http://snomed.info/sct|22298006,http://hl7.org/fhir/sid/icd-10-cm|I21.0,http://hl7.org/fhir/sid/icd-10-cm|I21.9\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|83367\nObservation?code=http://loinc.org|10839-9&value-quantity=ge0.10",
-      "prompt_text": "Run three queries. (1) Condition?code=http://snomed.info/sct|22298006,http://hl7.org/fhir/sid/icd-10-cm|I21.0,http://hl7.org/fhir/sid/icd-10-cm|I21.9 \u2014 AMI dx. (2) MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|83367 \u2014 atorvastatin. (3) Observation?code=http://loinc.org|10839-9&value-quantity=ge0.10 \u2014 troponin. Union the patient IDs.",
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|I21.0,http://hl7.org/fhir/sid/icd-10-cm|I21.9\nObservation?code=http://loinc.org|10839-9&value-quantity=ge0.5\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|83367",
+      "prompt_text": "I need to identify patients in the statins-and-MACE phenotype per the PheKB BioVU algorithm, which requires combining evidence from three FHIR resource types. First, query Condition resources for acute myocardial infarction diagnoses across both SNOMED CT and ICD-10-CM (covering STEMI of the anterior wall and unspecified AMI variants). Second, query Observation resources for cardiac troponin I values at or above the PheKB-defined threshold for AMI confirmation, using the appropriate LOINC code for troponin I in serum or plasma. Third, query MedicationRequest resources for atorvastatin (RxNorm), representing prior statin therapy \u2014 note that the full algorithm requires the statin prescription to precede the AMI by at least 180 days, a temporal constraint that cannot be enforced in a single FHIR query and would need post-processing. Take the union of patient IDs across all three queries.",
       "run_metadata": {
-       "output_tokens": 149,
-       "tool_calls_count": 3,
+       "output_tokens": 134,
+       "tool_calls_count": 8,
        "stop_reason": "complete",
        "fallback_used": false
       }
@@ -174,17 +174,17 @@
       "passed": true,
       "expected_count": 409,
       "actual_count": 409,
-      "elapsed_sec": 31.4,
+      "elapsed_sec": 34.6,
       "queries_generated": 3,
-      "primary_query_url": "Condition?code=http://snomed.info/sct|22298006,http://hl7.org/fhir/sid/icd-10-cm|I21.0,http://hl7.org/fhir/sid/icd-10-cm|I21.9",
+      "primary_query_url": "Condition?code=http://snomed.info/sct|57054005,http://hl7.org/fhir/sid/icd-10-cm|I21.09,http://hl7.org/fhir/sid/icd-10-cm|I21.9",
       "additional_query_urls": [
-       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|83367",
-       "Observation?code=http://loinc.org|10839-9&value-quantity=ge0.10"
+       "Observation?code=http://loinc.org|10839-9&value-quantity=ge0.04|http://unitsofmeasure.org|ng/mL",
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|83367"
       ],
-      "raw_response": "Condition?code=http://snomed.info/sct|22298006,http://hl7.org/fhir/sid/icd-10-cm|I21.0,http://hl7.org/fhir/sid/icd-10-cm|I21.9\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|83367\nObservation?code=http://loinc.org|10839-9&value-quantity=ge0.10",
-      "prompt_text": "Run three queries. (1) Condition?code=http://snomed.info/sct|22298006,http://hl7.org/fhir/sid/icd-10-cm|I21.0,http://hl7.org/fhir/sid/icd-10-cm|I21.9 \u2014 AMI dx. (2) MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|83367 \u2014 atorvastatin. (3) Observation?code=http://loinc.org|10839-9&value-quantity=ge0.10 \u2014 troponin. Union the patient IDs.",
+      "raw_response": "Condition?code=http://snomed.info/sct|57054005,http://hl7.org/fhir/sid/icd-10-cm|I21.09,http://hl7.org/fhir/sid/icd-10-cm|I21.9\nObservation?code=http://loinc.org|10839-9&value-quantity=ge0.04|http://unitsofmeasure.org|ng/mL\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|83367",
+      "prompt_text": "I need to identify patients in the statins-and-MACE phenotype per the PheKB BioVU algorithm, which requires combining evidence from three FHIR resource types. First, query Condition resources for acute myocardial infarction diagnoses across both SNOMED CT and ICD-10-CM (covering STEMI of the anterior wall and unspecified AMI variants). Second, query Observation resources for cardiac troponin I values at or above the PheKB-defined threshold for AMI confirmation, using the appropriate LOINC code for troponin I in serum or plasma. Third, query MedicationRequest resources for atorvastatin (RxNorm), representing prior statin therapy \u2014 note that the full algorithm requires the statin prescription to precede the AMI by at least 180 days, a temporal constraint that cannot be enforced in a single FHIR query and would need post-processing. Take the union of patient IDs across all three queries.",
       "run_metadata": {
-       "output_tokens": 149,
+       "output_tokens": 168,
        "tool_calls_count": 3,
        "stop_reason": "complete",
        "fallback_used": false
@@ -232,15 +232,15 @@
       "passed": true,
       "expected_count": 409,
       "actual_count": 409,
-      "elapsed_sec": 0.5,
+      "elapsed_sec": 27.3,
       "queries_generated": 3,
-      "primary_query_url": "Condition?code=http://snomed.info/sct|22298006,http://hl7.org/fhir/sid/icd-10-cm|I21.0,http://hl7.org/fhir/sid/icd-10-cm|I21.9",
+      "primary_query_url": "Condition?code=http://snomed.info/sct|57054005,http://hl7.org/fhir/sid/icd-10-cm|I21.09,http://hl7.org/fhir/sid/icd-10-cm|I21.9",
       "additional_query_urls": [
-       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|83367",
-       "Observation?code=http://loinc.org|10839-9&value-quantity=ge0.10"
+       "Observation?code=http://loinc.org|10839-9&value-quantity=ge0.10|http://unitsofmeasure.org|ug/L",
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|83367"
       ],
-      "raw_response": "Condition?code=http://snomed.info/sct|22298006,http://hl7.org/fhir/sid/icd-10-cm|I21.0,http://hl7.org/fhir/sid/icd-10-cm|I21.9\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|83367\nObservation?code=http://loinc.org|10839-9&value-quantity=ge0.10",
-      "prompt_text": "Run three queries. (1) Condition?code=http://snomed.info/sct|22298006,http://hl7.org/fhir/sid/icd-10-cm|I21.0,http://hl7.org/fhir/sid/icd-10-cm|I21.9 \u2014 AMI dx. (2) MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|83367 \u2014 atorvastatin. (3) Observation?code=http://loinc.org|10839-9&value-quantity=ge0.10 \u2014 troponin. Union the patient IDs."
+      "raw_response": "Condition?code=http://snomed.info/sct|57054005,http://hl7.org/fhir/sid/icd-10-cm|I21.09,http://hl7.org/fhir/sid/icd-10-cm|I21.9\nObservation?code=http://loinc.org|10839-9&value-quantity=ge0.10|http://unitsofmeasure.org|ug/L\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|83367",
+      "prompt_text": "I need to identify patients in the statins-and-MACE phenotype per the PheKB BioVU algorithm, which requires combining evidence from three FHIR resource types. First, query Condition resources for acute myocardial infarction diagnoses across both SNOMED CT and ICD-10-CM (covering STEMI of the anterior wall and unspecified AMI variants). Second, query Observation resources for cardiac troponin I values at or above the PheKB-defined threshold for AMI confirmation, using the appropriate LOINC code for troponin I in serum or plasma. Third, query MedicationRequest resources for atorvastatin (RxNorm), representing prior statin therapy \u2014 note that the full algorithm requires the statin prescription to precede the AMI by at least 180 days, a temporal constraint that cannot be enforced in a single FHIR query and would need post-processing. Take the union of patient IDs across all three queries."
      }
     },
     "copilot:claude-sonnet-4.6": {
@@ -288,15 +288,16 @@
       "passed": true,
       "expected_count": 409,
       "actual_count": 409,
-      "elapsed_sec": 39.6,
-      "queries_generated": 3,
-      "primary_query_url": "Condition?code=http://snomed.info/sct|22298006,http://hl7.org/fhir/sid/icd-10-cm|I21.0,http://hl7.org/fhir/sid/icd-10-cm|I21.9&_include=Condition:subject",
+      "elapsed_sec": 121.7,
+      "queries_generated": 4,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|401303003,http://snomed.info/sct|57054005",
       "additional_query_urls": [
-       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|83367&_include=MedicationRequest:subject",
-       "Observation?code=http://loinc.org|10839-9&value-quantity=ge0.10||ng/mL&_include=Observation:subject"
+       "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|I21.01,http://hl7.org/fhir/sid/icd-10-cm|I21.09,http://hl7.org/fhir/sid/icd-10-cm|I21.3,http://hl7.org/fhir/sid/icd-10-cm|I21.9",
+       "Observation?code=http://loinc.org|10839-9&value-quantity=ge0.04|http://unitsofmeasure.org|ng/mL&status=final,amended,corrected",
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|83367&status=active,completed"
       ],
-      "raw_response": "Here are the three FHIR queries to execute and union on patient IDs:\n\n```\nCondition?code=http://snomed.info/sct|22298006,http://hl7.org/fhir/sid/icd-10-cm|I21.0,http://hl7.org/fhir/sid/icd-10-cm|I21.9&_include=Condition:subject\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|83367&_include=MedicationRequest:subject\nObservation?code=http://loinc.org|10839-9&value-quantity=ge0.10||ng/mL&_include=Observation:subject\n```\n\n---\n\n### Query Breakdown\n\n| # | Resource | Clinical Intent | Key Parameter |\n|---|----------|----------------|---------------|\n| 1 | `Condition` | AMI diagnosis (SNOMED + ICD-10) | SNOMED `22298006` (MI), ICD-10 `I21.0` (anterior STEMI), `I21.9` (unspecified MI) |\n| 2 | `MedicationRequest` | Atorvastatin prescribed | RxNorm `83367` |\n| 3 | `Observation` | Troponin I \u2265 0.10 ng/mL (elevated) | LOINC `10839-9`, value-quantity filter |\n\n---\n\n### Post-Query Union Logic\n\nAfter retrieving results, extract and union `Patient` IDs as follows:\n\n```python\n# Pseudocode\ncondition_patients  = {r['subject']['reference'] for r in condition_results}\nmedication_patients = {r['subject']['reference'] for r in medication_results}\nobservation_patients = {r['subject']['reference'] for r in observation_results}\n\n# UNION of all three sets\nall_patients = condition_patients | medication_patients | observation_patients\n```\n\n---\n\n### Notes\n- **`_include=*:subject`** pulls referenced `Patient` resources in the same Bundle, avoiding extra lookups.\n- For **troponin units**, `10839-9` (Troponin I, cardiac) is unit-agnostic in the query \u2014 validate units (`ng/mL` vs `\u03bcg/L`) server-side if needed.\n- To find patients meeting **all three criteria** (intersection), use `&` (set intersection) instead of `|` (union).",
-      "prompt_text": "Run three queries. (1) Condition?code=http://snomed.info/sct|22298006,http://hl7.org/fhir/sid/icd-10-cm|I21.0,http://hl7.org/fhir/sid/icd-10-cm|I21.9 \u2014 AMI dx. (2) MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|83367 \u2014 atorvastatin. (3) Observation?code=http://loinc.org|10839-9&value-quantity=ge0.10 \u2014 troponin. Union the patient IDs."
+      "raw_response": "## FHIR Queries \u2014 Statins-and-MACE PheKB BioVU Phenotype\n\n```\nCondition?code=http://snomed.info/sct|401303003,http://snomed.info/sct|57054005\n\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|I21.01,http://hl7.org/fhir/sid/icd-10-cm|I21.09,http://hl7.org/fhir/sid/icd-10-cm|I21.3,http://hl7.org/fhir/sid/icd-10-cm|I21.9\n\nObservation?code=http://loinc.org|10839-9&value-quantity=ge0.04|http://unitsofmeasure.org|ng/mL&status=final,amended,corrected\n\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|83367&status=active,completed\n```\n\n---\n\n### Query Breakdown\n\n#### Queries 1\u20132 \u00b7 Condition \u2014 AMI Diagnoses\n\n| Query | System | Code | Meaning |\n|---|---|---|---|\n| 1 | SNOMED CT | `401303003` | Acute STEMI of anterior wall |\n| 1 | SNOMED CT | `57054005` | Acute myocardial infarction (unspecified) |\n| 2 | ICD-10-CM | `I21.01` | STEMI involving LAD coronary artery |\n| 2 | ICD-10-CM | `I21.09` | STEMI of other anterior wall site |\n| 2 | ICD-10-CM | `I21.3` | STEMI of unspecified site |\n| 2 | ICD-10-CM | `I21.9` | Acute MI, unspecified |\n\n> Two queries are used because combining very long comma-separated code lists across systems can exceed server URL length limits. Union the `Condition.subject` references from both.\n\n---\n\n#### Query 3 \u00b7 Observation \u2014 Cardiac Troponin I Threshold\n\n| Parameter | Value | Rationale |\n|---|---|---|\n| LOINC | `10839-9` | Troponin I.cardiac \\[Mass/vol\\] in Serum or Plasma |\n| `value-quantity` | `ge0.04` ng/mL | 99th-percentile URL per universal MI definition; PheKB AMI-confirmation threshold |\n| `status` | `final,amended,corrected` | Excludes preliminary / entered-in-error results |\n\n> \u26a0\ufe0f If your institution uses **high-sensitivity troponin I** (LOINC `89579-7`), add a second Observation query with that code and the assay-specific 99th-percentile URL (typically ~0.006 ng/mL for hsTnI).\n\n---\n\n#### Query 4 \u00b7 MedicationRequest \u2014 Atorvastatin (Prior Statin Therapy)\n\n| Parameter | Value | Rationale |\n|---|---|---|\n| RxNorm RXCUI | `83367` | Atorvastatin ingredient-level concept; matches all dose/formulation products |\n| `status` | `active,completed` | Excludes cancelled / entered-in-error orders |\n\n> \u23f1\ufe0f **Temporal constraint (post-processing required):** The PheKB BioVU algorithm requires the statin prescription (`MedicationRequest.authoredOn` or `.dispenseRequest.validityPeriod.start`) to precede the AMI event date by **\u2265 180 days**. This cannot be enforced in a single FHIR query; implement it as a date-difference filter after joining patient IDs across all four result sets.\n\n---\n\n### Patient-ID Union Logic (Post-Processing)\n\n```\neligible_patients =\n  subjects(ConditionQuery_SNOMED)\n  \u222a subjects(ConditionQuery_ICD10)\n  \u222a subjects(ObservationQuery_TroponinI)\n  \u2229 subjects(MedicationRequest_Atorvastatin [authoredOn \u2264 AMI_date \u2212 180d])\n```",
+      "prompt_text": "I need to identify patients in the statins-and-MACE phenotype per the PheKB BioVU algorithm, which requires combining evidence from three FHIR resource types. First, query Condition resources for acute myocardial infarction diagnoses across both SNOMED CT and ICD-10-CM (covering STEMI of the anterior wall and unspecified AMI variants). Second, query Observation resources for cardiac troponin I values at or above the PheKB-defined threshold for AMI confirmation, using the appropriate LOINC code for troponin I in serum or plasma. Third, query MedicationRequest resources for atorvastatin (RxNorm), representing prior statin therapy \u2014 note that the full algorithm requires the statin prescription to precede the AMI by at least 180 days, a temporal constraint that cannot be enforced in a single FHIR query and would need post-processing. Take the union of patient IDs across all three queries."
      },
      "2-naive": {
       "precision": 1.0,
@@ -348,18 +349,18 @@
       "passed": true,
       "expected_count": 409,
       "actual_count": 409,
-      "elapsed_sec": 64.5,
+      "elapsed_sec": 227.8,
       "queries_generated": 3,
-      "primary_query_url": "Condition?code=http://snomed.info/sct|22298006,http://hl7.org/fhir/sid/icd-10-cm|I21.0,http://hl7.org/fhir/sid/icd-10-cm|I21.9",
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|I21.0,http://hl7.org/fhir/sid/icd-10-cm|I21.01,http://hl7.org/fhir/sid/icd-10-cm|I21.02,http://hl7.org/fhir/sid/icd-10-cm|I21.09,http://hl7.org/fhir/sid/icd-10-cm|I21.9,http://hl7.org/fhir/sid/icd-10-cm|I21.3,http://snomed.info/sct|703164000,http://snomed.info/sct|54329005,http://snomed.info/sct|57054005,http://snomed.info/sct|401303003",
       "additional_query_urls": [
-       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|83367",
-       "Observation?code=http://loinc.org|10839-9&value-quantity=ge0.10"
+       "Observation?code=http://loinc.org|10839-9&value-quantity=ge0.04|http://unitsofmeasure.org|ng/mL",
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|83367"
       ],
-      "raw_response": "All three queries executed cleanly and codings verified. Here's the full run summary:\n\n---\n\n## \u2705 Query Results & Coding Verification\n\n### Query 1 \u2014 AMI Diagnosis (`Condition`)\n| Metric | Value |\n|---|---|\n| **Total matching records** | **313** |\n| Code systems present | ICD-10-CM only (this server does not dual-code SNOMED for AMI) |\n| Verified codings | `I21.0` ST-elevation (STEMI) anterior wall \u00b7 `I21.9` AMI unspecified |\n| \u26a0\ufe0f Note | SNOMED `22298006` matched zero records \u2014 ICD-10-CM is the sole coding in use here |\n\n### Query 2 \u2014 Atorvastatin (`MedicationRequest`)\n| Metric | Value |\n|---|---|\n| **Total matching records** | **409** |\n| Code system | RxNorm `83367` \u2014 \"atorvastatin\" |\n| Verified codings | \u2714 All 5 sampled records confirmed RxNorm `83367` |\n\n### Query 3 \u2014 Troponin \u2265 0.10 (`Observation`)\n| Metric | Value |\n|---|---|\n| **Total matching records** | **61** |\n| Code system | LOINC `10839-9` \u2014 \"Troponin I.cardiac [Mass/volume] in Serum or Plasma\" |\n| Verified codings | \u2714 All 5 sampled records confirmed LOINC `10839-9` |\n\n---\n\n## \ud83d\udd17 Union Summary\n\n| Leg | Resource | Raw Record Count |\n|---|---|---|\n| 1 | Condition (AMI dx) | 313 |\n| 2 | MedicationRequest (atorvastatin) | 409 |\n| 3 | Observation (troponin \u2265 0.10) | 61 |\n| **Union (distinct patients)** | \u2014 | **\u2264 783** (dedup client-side on `subject.reference`) |\n\n> The true patient count after de-duplication will be **\u2264 783** \u2014 many patients likely appear in multiple legs (e.g., an AMI patient who was also prescribed atorvastatin and had a troponin drawn). Run `SELECT COUNT(DISTINCT subject) FROM union_table` after collecting all `subject.reference` values.\n\n---\n\n## \u26a0\ufe0f Recommendations for a Tighter AMI Cohort\n\n1. **Broaden AMI codes** \u2014 The query only covers `I21.0` and `I21.9`. Real AMI coding uses `I21.0\u2013I21.4` (STEMI variants), `I21.9`, `I21.A1`, `I21.A9`, `I22.x` (subsequent MI). Consider a VSAC value set expansion for full coverage.\n2. **Atorvastatin ingredient vs. clinical drugs** \u2014 RxNorm `83367` is the *ingredient* concept; it correctly matches all dose-form products in this server. Confirmed \u2714.\n3. **Troponin threshold units** \u2014 `value-quantity=ge0.10` is unit-agnostic. If the server mixes ng/mL and \u00b5g/L, results may be inflated. Adding `||ng/mL` or `||ug/L` would constrain to a single unit.\n\n---\n\n**Final validated queries (ready for production):**\n\n```\nCondition?code=http://snomed.info/sct|22298006,http://hl7.org/fhir/sid/icd-10-cm|I21.0,http://hl7.org/fhir/sid/icd-10-cm|I21.9\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|83367\nObservation?code=http://loinc.org|10839-9&value-quantity=ge0.10\n```",
-      "prompt_text": "Run three queries. (1) Condition?code=http://snomed.info/sct|22298006,http://hl7.org/fhir/sid/icd-10-cm|I21.0,http://hl7.org/fhir/sid/icd-10-cm|I21.9 \u2014 AMI dx. (2) MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|83367 \u2014 atorvastatin. (3) Observation?code=http://loinc.org|10839-9&value-quantity=ge0.10 \u2014 troponin. Union the patient IDs.",
+      "raw_response": "All evidence is confirmed. Here's my complete picture before writing final answers:\n\n| Arm | Code System | Codes | Server Count |\n|-----|-------------|-------|-------------|\n| **AMI Conditions** | ICD-10-CM | `I21.0` (anterior STEMI parent), `I21.01`, `I21.02`, `I21.09` (anterior sub-codes), `I21.9` (unspecified), `I21.3` (STEMI unspecified site) | 255 total |\n| **AMI Conditions** | SNOMED CT | `703164000` (STEMI anterior wall \u2713 VSAC), `54329005` (AMI anterior wall), `57054005` (AMI generic), `401303003` (STEMI generic) | 0 on this server (ICD-10-CM-only), codes included per algorithm spec |\n| **Troponin I** | LOINC | `10839-9` (Troponin I.cardiac [Mass/vol] Ser/Plas) \u2014 only code on server; threshold \u2265 0.04 ng/mL (PheKB 99th-pct URL); UCUM system URI required | 61 |\n| **Atorvastatin Rx** | RxNorm | `83367` (atorvastatin) | 409 |\n\n> \u26a0\ufe0f **Temporal constraint note:** The PheKB BioVU algorithm requires statin prescription \u2265 180 days **before** the AMI index date. This cannot be enforced in a single FHIR query; post-processing must join `MedicationRequest.authoredOn` against `Condition.recordedDate` / `Observation.effectiveDateTime` per patient.\n\n---\n\n**FINAL ANSWER**\n\n```\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|I21.0,http://hl7.org/fhir/sid/icd-10-cm|I21.01,http://hl7.org/fhir/sid/icd-10-cm|I21.02,http://hl7.org/fhir/sid/icd-10-cm|I21.09,http://hl7.org/fhir/sid/icd-10-cm|I21.9,http://hl7.org/fhir/sid/icd-10-cm|I21.3,http://snomed.info/sct|703164000,http://snomed.info/sct|54329005,http://snomed.info/sct|57054005,http://snomed.info/sct|401303003\nObservation?code=http://loinc.org|10839-9&value-quantity=ge0.04|http://unitsofmeasure.org|ng/mL\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|83367\n```\n\n---\n\n### How Each Query Was Derived\n\n#### 1. `Condition` \u2014 AMI Diagnoses (255 ICD-10-CM records on server)\n\n| Code | System | Display | Phenotype Role |\n|------|--------|---------|----------------|\n| `I21.0` | ICD-10-CM | STEMI of anterior wall *(parent; confirmed on server)* | Anterior-wall STEMI |\n| `I21.01` | ICD-10-CM | STEMI \u2014 left main coronary artery | Anterior-wall STEMI |\n| `I21.02` | ICD-10-CM | STEMI \u2014 left anterior descending | Anterior-wall STEMI |\n| `I21.09` | ICD-10-CM | STEMI \u2014 other anterior wall artery | Anterior-wall STEMI |\n| `I21.9` | ICD-10-CM | Acute MI, unspecified *(confirmed on server)* | Unspecified AMI variant |\n| `I21.3` | ICD-10-CM | STEMI of unspecified site | Unspecified AMI variant |\n| `703164000` | SNOMED CT | Acute STEMI of anterior wall *(VSAC validated)* | Anterior-wall STEMI |\n| `54329005` | SNOMED CT | Acute MI of anterior wall | Anterior-wall STEMI |\n| `57054005` | SNOMED CT | Acute myocardial infarction *(generic)* | Unspecified AMI variant |\n| `401303003` | SNOMED CT | Acute STEMI *(generic)* | Unspecified AMI variant |\n\n*SNOMED codes return 0 on this server (ICD-10-CM only), but are included per the multi-vocabulary algorithm specification.*\n\n#### 2. `Observation` \u2014 Troponin I \u2265 0.04 ng/mL (61 records on server)\n- **LOINC `10839-9`** \u2014 *Troponin I.cardiac [Mass/volume] in Serum or Plasma* \u2014 the only troponin I code present on this server (confirmed by sampling 5 resources).\n- **Threshold `ge0.04`** \u2014 0.04 ng/mL is the 99th-percentile upper reference limit used by the PheKB BioVU MACE algorithm for conventional troponin I assays (Beckman/Siemens platforms).\n- **Units `http://unitsofmeasure.org|ng/mL`** \u2014 the full UCUM system URI is required; plain `ng/mL` without the system returned 0 (server rejects unit-only matching).\n\n#### 3. `MedicationRequest` \u2014 Atorvastatin (409 records on server)\n- **RxNorm `83367`** \u2014 ingredient-level code for *atorvastatin*, confirmed on server samples and VSAC lookup (version 06012026).\n- Ingredient-level coding captures all dose forms and strengths (e.g., 10 mg, 20 mg, 40 mg, 80 mg tablets) without needing to enumerate every clinical drug RxNorm concept.\n- **Post-processing required:** filter to prescriptions with `authoredOn` \u2264 (AMI index date \u2212 180 days) per the PheKB 180-day statin pre-exposure window.",
+      "prompt_text": "I need to identify patients in the statins-and-MACE phenotype per the PheKB BioVU algorithm, which requires combining evidence from three FHIR resource types. First, query Condition resources for acute myocardial infarction diagnoses across both SNOMED CT and ICD-10-CM (covering STEMI of the anterior wall and unspecified AMI variants). Second, query Observation resources for cardiac troponin I values at or above the PheKB-defined threshold for AMI confirmation, using the appropriate LOINC code for troponin I in serum or plasma. Third, query MedicationRequest resources for atorvastatin (RxNorm), representing prior statin therapy \u2014 note that the full algorithm requires the statin prescription to precede the AMI by at least 180 days, a temporal constraint that cannot be enforced in a single FHIR query and would need post-processing. Take the union of patient IDs across all three queries.",
       "run_metadata": {
-       "output_tokens": 1089,
-       "tool_calls_count": 6,
+       "output_tokens": 3299,
+       "tool_calls_count": 31,
        "stop_reason": "complete",
        "fallback_used": false
       }
@@ -414,18 +415,18 @@
       "passed": true,
       "expected_count": 409,
       "actual_count": 409,
-      "elapsed_sec": 43.5,
+      "elapsed_sec": 185.0,
       "queries_generated": 3,
-      "primary_query_url": "Condition?code=http://snomed.info/sct|22298006,http://hl7.org/fhir/sid/icd-10-cm|I21.0,http://hl7.org/fhir/sid/icd-10-cm|I21.9",
+      "primary_query_url": "Condition?code=http://snomed.info/sct|54329005,http://snomed.info/sct|57054005,http://hl7.org/fhir/sid/icd-10-cm|I21.0,http://hl7.org/fhir/sid/icd-10-cm|I21.9",
       "additional_query_urls": [
-       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|83367",
-       "Observation?code=http://loinc.org|10839-9&value-quantity=ge0.10"
+       "Observation?code=http://loinc.org|10839-9&value-quantity=ge0.04|http://unitsofmeasure.org|ng/mL",
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|83367"
       ],
-      "raw_response": "All three queries executed successfully and returned live data. Here's a full summary before the final answer:\n\n---\n\n## Results Summary\n\n| # | Query | Resource Type | Hits Returned | Code System(s) Observed |\n|---|-------|--------------|--------------|------------------------|\n| 1 | **AMI Diagnosis** | `Condition` | 10 | \u2705 `ICD-10-CM I21.9` (AMI, unspecified) \u00b7 `ICD-10-CM I21.0` (STEMI anterior wall) \u2014 both active on server. No SNOMED hits in sample (server appears ICD-10-CM primary for this concept). |\n| 2 | **Atorvastatin Rx** | `MedicationRequest` | 10 | \u2705 `RxNorm 83367` confirmed across all 10 sampled records \u2014 ingredient-level match working correctly. |\n| 3 | **Troponin \u2265 0.10** | `Observation` | 10 | \u2705 `LOINC 10839-9` (Troponin I.cardiac [Mass/vol] Serum/Plasma) confirmed; `value-quantity=ge0.10` filter applied and returning results. |\n\n---\n\n## Union Logic\n\nThe harness should union **patient references** across all three result sets. A patient satisfies the cohort if they appear in **any one or more** of:\n- A qualifying AMI Condition record, **OR**\n- An atorvastatin MedicationRequest, **OR**\n- A troponin Observation \u2265 0.10\n\n> \u26a0\ufe0f **One note on the SNOMED code (22298006 \u2014 Myocardial infarction):** The sampled Condition records show only ICD-10-CM codes, suggesting the server encodes AMI diagnoses in ICD-10-CM. The SNOMED arm won't hurt (zero extra hits vs. zero harm), but don't rely on it as the primary signal here.\n\n---\n\n## FINAL ANSWER\n\n```\nCondition?code=http://snomed.info/sct|22298006,http://hl7.org/fhir/sid/icd-10-cm|I21.0,http://hl7.org/fhir/sid/icd-10-cm|I21.9\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|83367\nObservation?code=http://loinc.org|10839-9&value-quantity=ge0.10\n```",
-      "prompt_text": "Run three queries. (1) Condition?code=http://snomed.info/sct|22298006,http://hl7.org/fhir/sid/icd-10-cm|I21.0,http://hl7.org/fhir/sid/icd-10-cm|I21.9 \u2014 AMI dx. (2) MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|83367 \u2014 atorvastatin. (3) Observation?code=http://loinc.org|10839-9&value-quantity=ge0.10 \u2014 troponin. Union the patient IDs.",
+      "raw_response": "All three legs are fully validated. Here's a complete summary of findings before issuing the final answer:\n\n---\n\n## Evidence Summary\n\n| Leg | Resource | Codes Confirmed | Server Count | Notes |\n|-----|----------|----------------|-------------|-------|\n| **AMI Diagnosis** | `Condition` | ICD-10-CM `I21.0` (STEMI anterior wall, 101 records) + `I21.9` (unspecified AMI, 154 records); SNOMED `54329005` (AMI anterior wall disorder) + `57054005` (AMI disorder) included as requested \u2014 SNOMED adds 0 net patients since this server encodes Conditions in ICD-10-CM only | **255 total** | Subcodes I21.01/02/09 = 0 on server; parent I21.0 is used |\n| **Troponin I \u2265 0.04 ng/mL** | `Observation` | LOINC `10839-9` (Troponin I.cardiac [Mass/volume] in Serum or Plasma) confirmed via server sample; `value-quantity=ge0.04` vs `lt0.04` = 61 vs 0, confirming all stored values exceed threshold | **61 total** | 0.04 ng/mL = 99th-percentile URL per PheKB/ACC guideline; `value-quantity` filter confirmed functional |\n| **Atorvastatin Rx** | `MedicationRequest` | RxNorm `83367` confirmed via server sample | **409 total** | 180-day pre-AMI temporal constraint requires post-processing |\n\n**Playbooks applied:** 8 (multi-system code list: SNOMED + ICD-10-CM), 7 (threshold-based lab: troponin I \u2265 0.04), 12 (cohort = OR union across 3 resource types)\n\n---\n\n**FINAL ANSWER**\n\n```\nCondition?code=http://snomed.info/sct|54329005,http://snomed.info/sct|57054005,http://hl7.org/fhir/sid/icd-10-cm|I21.0,http://hl7.org/fhir/sid/icd-10-cm|I21.9\nObservation?code=http://loinc.org|10839-9&value-quantity=ge0.04|http://unitsofmeasure.org|ng/mL\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|83367\n```",
+      "prompt_text": "I need to identify patients in the statins-and-MACE phenotype per the PheKB BioVU algorithm, which requires combining evidence from three FHIR resource types. First, query Condition resources for acute myocardial infarction diagnoses across both SNOMED CT and ICD-10-CM (covering STEMI of the anterior wall and unspecified AMI variants). Second, query Observation resources for cardiac troponin I values at or above the PheKB-defined threshold for AMI confirmation, using the appropriate LOINC code for troponin I in serum or plasma. Third, query MedicationRequest resources for atorvastatin (RxNorm), representing prior statin therapy \u2014 note that the full algorithm requires the statin prescription to precede the AMI by at least 180 days, a temporal constraint that cannot be enforced in a single FHIR query and would need post-processing. Take the union of patient IDs across all three queries.",
       "run_metadata": {
-       "output_tokens": 820,
-       "tool_calls_count": 3,
+       "output_tokens": 1794,
+       "tool_calls_count": 27,
        "stop_reason": "complete",
        "fallback_used": false
       }
@@ -470,15 +471,15 @@
       "passed": true,
       "expected_count": 409,
       "actual_count": 409,
-      "elapsed_sec": 50.8,
+      "elapsed_sec": 82.8,
       "queries_generated": 3,
-      "primary_query_url": "Patient?_has:Condition:patient:code=http://snomed.info/sct|22298006,http://hl7.org/fhir/sid/icd-10-cm|I21.0,http://hl7.org/fhir/sid/icd-10-cm|I21.9",
+      "primary_query_url": "Condition?code=http://snomed.info/sct|57054005,http://hl7.org/fhir/sid/icd-10-cm|I21.0,http://hl7.org/fhir/sid/icd-10-cm|I21.3,http://hl7.org/fhir/sid/icd-10-cm|I21.9",
       "additional_query_urls": [
-       "Patient?_has:MedicationRequest:patient:code=http://www.nlm.nih.gov/research/umls/rxnorm|83367",
-       "Patient?_has:Observation:patient:code=http://loinc.org|10839-9&value-quantity=ge0.10"
+       "Observation?code=http://loinc.org|10839-9&value-quantity=ge0.5|http://unitsofmeasure.org|ng/mL",
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|83367"
       ],
-      "raw_response": "Patient?_has:Condition:patient:code=http://snomed.info/sct|22298006,http://hl7.org/fhir/sid/icd-10-cm|I21.0,http://hl7.org/fhir/sid/icd-10-cm|I21.9\nPatient?_has:MedicationRequest:patient:code=http://www.nlm.nih.gov/research/umls/rxnorm|83367\nPatient?_has:Observation:patient:code=http://loinc.org|10839-9&value-quantity=ge0.10",
-      "prompt_text": "Run three queries. (1) Condition?code=http://snomed.info/sct|22298006,http://hl7.org/fhir/sid/icd-10-cm|I21.0,http://hl7.org/fhir/sid/icd-10-cm|I21.9 \u2014 AMI dx. (2) MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|83367 \u2014 atorvastatin. (3) Observation?code=http://loinc.org|10839-9&value-quantity=ge0.10 \u2014 troponin. Union the patient IDs."
+      "raw_response": "Condition?code=http://snomed.info/sct|57054005,http://hl7.org/fhir/sid/icd-10-cm|I21.0,http://hl7.org/fhir/sid/icd-10-cm|I21.3,http://hl7.org/fhir/sid/icd-10-cm|I21.9\nObservation?code=http://loinc.org|10839-9&value-quantity=ge0.5|http://unitsofmeasure.org|ng/mL\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|83367",
+      "prompt_text": "I need to identify patients in the statins-and-MACE phenotype per the PheKB BioVU algorithm, which requires combining evidence from three FHIR resource types. First, query Condition resources for acute myocardial infarction diagnoses across both SNOMED CT and ICD-10-CM (covering STEMI of the anterior wall and unspecified AMI variants). Second, query Observation resources for cardiac troponin I values at or above the PheKB-defined threshold for AMI confirmation, using the appropriate LOINC code for troponin I in serum or plasma. Third, query MedicationRequest resources for atorvastatin (RxNorm), representing prior statin therapy \u2014 note that the full algorithm requires the statin prescription to precede the AMI by at least 180 days, a temporal constraint that cannot be enforced in a single FHIR query and would need post-processing. Take the union of patient IDs across all three queries."
      },
      "2-naive": {
       "precision": 1.0,
@@ -530,18 +531,18 @@
       "passed": true,
       "expected_count": 409,
       "actual_count": 409,
-      "elapsed_sec": 36.7,
+      "elapsed_sec": 101.1,
       "queries_generated": 3,
       "primary_query_url": "Condition?code=http://snomed.info/sct|22298006,http://hl7.org/fhir/sid/icd-10-cm|I21.0,http://hl7.org/fhir/sid/icd-10-cm|I21.9",
       "additional_query_urls": [
-       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|83367",
-       "Observation?code=http://loinc.org|10839-9&value-quantity=ge0.10"
+       "Observation?code=http://loinc.org|10839-9&value-quantity=ge0.10",
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|83367"
       ],
-      "raw_response": "Condition?code=http://snomed.info/sct|22298006,http://hl7.org/fhir/sid/icd-10-cm|I21.0,http://hl7.org/fhir/sid/icd-10-cm|I21.9\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|83367\nObservation?code=http://loinc.org|10839-9&value-quantity=ge0.10",
-      "prompt_text": "Run three queries. (1) Condition?code=http://snomed.info/sct|22298006,http://hl7.org/fhir/sid/icd-10-cm|I21.0,http://hl7.org/fhir/sid/icd-10-cm|I21.9 \u2014 AMI dx. (2) MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|83367 \u2014 atorvastatin. (3) Observation?code=http://loinc.org|10839-9&value-quantity=ge0.10 \u2014 troponin. Union the patient IDs.",
+      "raw_response": "Condition?code=http://snomed.info/sct|22298006,http://hl7.org/fhir/sid/icd-10-cm|I21.0,http://hl7.org/fhir/sid/icd-10-cm|I21.9\nObservation?code=http://loinc.org|10839-9&value-quantity=ge0.10\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|83367",
+      "prompt_text": "I need to identify patients in the statins-and-MACE phenotype per the PheKB BioVU algorithm, which requires combining evidence from three FHIR resource types. First, query Condition resources for acute myocardial infarction diagnoses across both SNOMED CT and ICD-10-CM (covering STEMI of the anterior wall and unspecified AMI variants). Second, query Observation resources for cardiac troponin I values at or above the PheKB-defined threshold for AMI confirmation, using the appropriate LOINC code for troponin I in serum or plasma. Third, query MedicationRequest resources for atorvastatin (RxNorm), representing prior statin therapy \u2014 note that the full algorithm requires the statin prescription to precede the AMI by at least 180 days, a temporal constraint that cannot be enforced in a single FHIR query and would need post-processing. Take the union of patient IDs across all three queries.",
       "run_metadata": {
-       "output_tokens": 430,
-       "tool_calls_count": 0,
+       "output_tokens": 917,
+       "tool_calls_count": 25,
        "stop_reason": "complete",
        "fallback_used": false
       }
@@ -596,18 +597,18 @@
       "passed": true,
       "expected_count": 409,
       "actual_count": 409,
-      "elapsed_sec": 83.0,
+      "elapsed_sec": 84.2,
       "queries_generated": 3,
       "primary_query_url": "Condition?code=http://snomed.info/sct|22298006,http://hl7.org/fhir/sid/icd-10-cm|I21.0,http://hl7.org/fhir/sid/icd-10-cm|I21.9",
       "additional_query_urls": [
-       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|83367",
-       "Observation?code=http://loinc.org|10839-9&value-quantity=ge0.10"
+       "Observation?code=http://loinc.org|10839-9&value-quantity=ge0.10||ng/mL",
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|83367"
       ],
-      "raw_response": "Condition?code=http://snomed.info/sct|22298006,http://hl7.org/fhir/sid/icd-10-cm|I21.0,http://hl7.org/fhir/sid/icd-10-cm|I21.9\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|83367\nObservation?code=http://loinc.org|10839-9&value-quantity=ge0.10",
-      "prompt_text": "Run three queries. (1) Condition?code=http://snomed.info/sct|22298006,http://hl7.org/fhir/sid/icd-10-cm|I21.0,http://hl7.org/fhir/sid/icd-10-cm|I21.9 \u2014 AMI dx. (2) MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|83367 \u2014 atorvastatin. (3) Observation?code=http://loinc.org|10839-9&value-quantity=ge0.10 \u2014 troponin. Union the patient IDs.",
+      "raw_response": "Condition?code=http://snomed.info/sct|22298006,http://hl7.org/fhir/sid/icd-10-cm|I21.0,http://hl7.org/fhir/sid/icd-10-cm|I21.9\nObservation?code=http://loinc.org|10839-9&value-quantity=ge0.10||ng/mL\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|83367",
+      "prompt_text": "I need to identify patients in the statins-and-MACE phenotype per the PheKB BioVU algorithm, which requires combining evidence from three FHIR resource types. First, query Condition resources for acute myocardial infarction diagnoses across both SNOMED CT and ICD-10-CM (covering STEMI of the anterior wall and unspecified AMI variants). Second, query Observation resources for cardiac troponin I values at or above the PheKB-defined threshold for AMI confirmation, using the appropriate LOINC code for troponin I in serum or plasma. Third, query MedicationRequest resources for atorvastatin (RxNorm), representing prior statin therapy \u2014 note that the full algorithm requires the statin prescription to precede the AMI by at least 180 days, a temporal constraint that cannot be enforced in a single FHIR query and would need post-processing. Take the union of patient IDs across all three queries.",
       "run_metadata": {
-       "output_tokens": 453,
-       "tool_calls_count": 14,
+       "output_tokens": 627,
+       "tool_calls_count": 13,
        "stop_reason": "complete",
        "fallback_used": false
       }
@@ -859,17 +860,20 @@
      },
      "1-expert": {
       "precision": 1.0,
-      "recall": 1.0,
-      "f1": 1.0,
-      "passed": true,
+      "recall": 0.1853,
+      "f1": 0.3127,
+      "passed": false,
       "expected_count": 313,
-      "actual_count": 313,
-      "elapsed_sec": 0.4,
-      "queries_generated": 1,
-      "primary_query_url": "Condition?code=http://snomed.info/sct|22298006,http://hl7.org/fhir/sid/icd-10-cm|I21.0,http://hl7.org/fhir/sid/icd-10-cm|I21.9",
-      "additional_query_urls": [],
-      "raw_response": "Condition?code=http://snomed.info/sct|22298006,http://hl7.org/fhir/sid/icd-10-cm|I21.0,http://hl7.org/fhir/sid/icd-10-cm|I21.9",
-      "prompt_text": "Search Condition for SNOMED 22298006 (Myocardial infarction), ICD-10 I21.0 (STEMI anterior), I21.9 (AMI unspecified). Query: Condition?code=http://snomed.info/sct|22298006,http://hl7.org/fhir/sid/icd-10-cm|I21.0,http://hl7.org/fhir/sid/icd-10-cm|I21.9"
+      "actual_count": 58,
+      "elapsed_sec": 28.2,
+      "queries_generated": 3,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|22298006",
+      "additional_query_urls": [
+       "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|I21.09,http://hl7.org/fhir/sid/icd-10-cm|I21.3,http://hl7.org/fhir/sid/icd-10-cm|I21.9",
+       "Condition?code=http://hl7.org/fhir/sid/icd-9-cm|410.00,http://hl7.org/fhir/sid/icd-9-cm|410.01,http://hl7.org/fhir/sid/icd-9-cm|410.02,http://hl7.org/fhir/sid/icd-9-cm|410.10,http://hl7.org/fhir/sid/icd-9-cm|410.11,http://hl7.org/fhir/sid/icd-9-cm|410.12,http://hl7.org/fhir/sid/icd-9-cm|410.20,http://hl7.org/fhir/sid/icd-9-cm|410.21,http://hl7.org/fhir/sid/icd-9-cm|410.22,http://hl7.org/fhir/sid/icd-9-cm|410.30,http://hl7.org/fhir/sid/icd-9-cm|410.31,http://hl7.org/fhir/sid/icd-9-cm|410.32,http://hl7.org/fhir/sid/icd-9-cm|410.40,http://hl7.org/fhir/sid/icd-9-cm|410.41,http://hl7.org/fhir/sid/icd-9-cm|410.42,http://hl7.org/fhir/sid/icd-9-cm|410.50,http://hl7.org/fhir/sid/icd-9-cm|410.51,http://hl7.org/fhir/sid/icd-9-cm|410.52,http://hl7.org/fhir/sid/icd-9-cm|410.60,http://hl7.org/fhir/sid/icd-9-cm|410.61,http://hl7.org/fhir/sid/icd-9-cm|410.62,http://hl7.org/fhir/sid/icd-9-cm|410.70,http://hl7.org/fhir/sid/icd-9-cm|410.71,http://hl7.org/fhir/sid/icd-9-cm|410.72,http://hl7.org/fhir/sid/icd-9-cm|410.80,http://hl7.org/fhir/sid/icd-9-cm|410.81,http://hl7.org/fhir/sid/icd-9-cm|410.82,http://hl7.org/fhir/sid/icd-9-cm|410.90,http://hl7.org/fhir/sid/icd-9-cm|410.91,http://hl7.org/fhir/sid/icd-9-cm|410.92,http://hl7.org/fhir/sid/icd-9-cm|411.0,http://hl7.org/fhir/sid/icd-9-cm|411.1,http://hl7.org/fhir/sid/icd-9-cm|411.81,http://hl7.org/fhir/sid/icd-9-cm|411.89"
+      ],
+      "raw_response": "Condition?code=http://snomed.info/sct|22298006\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|I21.09,http://hl7.org/fhir/sid/icd-10-cm|I21.3,http://hl7.org/fhir/sid/icd-10-cm|I21.9\nCondition?code=http://hl7.org/fhir/sid/icd-9-cm|410.00,http://hl7.org/fhir/sid/icd-9-cm|410.01,http://hl7.org/fhir/sid/icd-9-cm|410.02,http://hl7.org/fhir/sid/icd-9-cm|410.10,http://hl7.org/fhir/sid/icd-9-cm|410.11,http://hl7.org/fhir/sid/icd-9-cm|410.12,http://hl7.org/fhir/sid/icd-9-cm|410.20,http://hl7.org/fhir/sid/icd-9-cm|410.21,http://hl7.org/fhir/sid/icd-9-cm|410.22,http://hl7.org/fhir/sid/icd-9-cm|410.30,http://hl7.org/fhir/sid/icd-9-cm|410.31,http://hl7.org/fhir/sid/icd-9-cm|410.32,http://hl7.org/fhir/sid/icd-9-cm|410.40,http://hl7.org/fhir/sid/icd-9-cm|410.41,http://hl7.org/fhir/sid/icd-9-cm|410.42,http://hl7.org/fhir/sid/icd-9-cm|410.50,http://hl7.org/fhir/sid/icd-9-cm|410.51,http://hl7.org/fhir/sid/icd-9-cm|410.52,http://hl7.org/fhir/sid/icd-9-cm|410.60,http://hl7.org/fhir/sid/icd-9-cm|410.61,http://hl7.org/fhir/sid/icd-9-cm|410.62,http://hl7.org/fhir/sid/icd-9-cm|410.70,http://hl7.org/fhir/sid/icd-9-cm|410.71,http://hl7.org/fhir/sid/icd-9-cm|410.72,http://hl7.org/fhir/sid/icd-9-cm|410.80,http://hl7.org/fhir/sid/icd-9-cm|410.81,http://hl7.org/fhir/sid/icd-9-cm|410.82,http://hl7.org/fhir/sid/icd-9-cm|410.90,http://hl7.org/fhir/sid/icd-9-cm|410.91,http://hl7.org/fhir/sid/icd-9-cm|410.92,http://hl7.org/fhir/sid/icd-9-cm|411.0,http://hl7.org/fhir/sid/icd-9-cm|411.1,http://hl7.org/fhir/sid/icd-9-cm|411.81,http://hl7.org/fhir/sid/icd-9-cm|411.89",
+      "prompt_text": "I need to find patients with a documented acute myocardial infarction diagnosis per the PheKB BioVU algorithm. Search Condition resources using both SNOMED CT (the general myocardial infarction concept) and ICD-10-CM codes covering ST-elevation MI of the anterior wall and unspecified AMI; legacy data may also carry ICD-9-CM codes in the 410\u2013411 range. A robust search should cover all relevant codes across these terminology systems rather than relying on a single code."
      },
      "2-naive": {
       "precision": 1.0,
@@ -918,15 +922,15 @@
       "passed": true,
       "expected_count": 313,
       "actual_count": 313,
-      "elapsed_sec": 27.6,
+      "elapsed_sec": 32.0,
       "queries_generated": 1,
-      "primary_query_url": "Condition?code=http://snomed.info/sct|22298006,http://hl7.org/fhir/sid/icd-10-cm|I21.0,http://hl7.org/fhir/sid/icd-10-cm|I21.9",
+      "primary_query_url": "Condition?code=http://snomed.info/sct|22298006,http://hl7.org/fhir/sid/icd-10-cm|I21.0,http://hl7.org/fhir/sid/icd-10-cm|I21.9,http://hl7.org/fhir/sid/icd-9-cm|410.00,http://hl7.org/fhir/sid/icd-9-cm|410.90,http://hl7.org/fhir/sid/icd-9-cm|411.0,http://hl7.org/fhir/sid/icd-9-cm|411.1",
       "additional_query_urls": [],
-      "raw_response": "Condition?code=http://snomed.info/sct|22298006,http://hl7.org/fhir/sid/icd-10-cm|I21.0,http://hl7.org/fhir/sid/icd-10-cm|I21.9",
-      "prompt_text": "Search Condition for SNOMED 22298006 (Myocardial infarction), ICD-10 I21.0 (STEMI anterior), I21.9 (AMI unspecified). Query: Condition?code=http://snomed.info/sct|22298006,http://hl7.org/fhir/sid/icd-10-cm|I21.0,http://hl7.org/fhir/sid/icd-10-cm|I21.9",
+      "raw_response": "Condition?code=http://snomed.info/sct|22298006,http://hl7.org/fhir/sid/icd-10-cm|I21.0,http://hl7.org/fhir/sid/icd-10-cm|I21.9,http://hl7.org/fhir/sid/icd-9-cm|410.00,http://hl7.org/fhir/sid/icd-9-cm|410.90,http://hl7.org/fhir/sid/icd-9-cm|411.0,http://hl7.org/fhir/sid/icd-9-cm|411.1",
+      "prompt_text": "I need to find patients with a documented acute myocardial infarction diagnosis per the PheKB BioVU algorithm. Search Condition resources using both SNOMED CT (the general myocardial infarction concept) and ICD-10-CM codes covering ST-elevation MI of the anterior wall and unspecified AMI; legacy data may also carry ICD-9-CM codes in the 410\u2013411 range. A robust search should cover all relevant codes across these terminology systems rather than relying on a single code.",
       "run_metadata": {
-       "output_tokens": 80,
-       "tool_calls_count": 1,
+       "output_tokens": 188,
+       "tool_calls_count": 3,
        "stop_reason": "complete",
        "fallback_used": false
       }
@@ -978,15 +982,15 @@
       "passed": true,
       "expected_count": 313,
       "actual_count": 313,
-      "elapsed_sec": 26.7,
+      "elapsed_sec": 29.6,
       "queries_generated": 1,
-      "primary_query_url": "Condition?code=http://snomed.info/sct|22298006,http://hl7.org/fhir/sid/icd-10-cm|I21.0,http://hl7.org/fhir/sid/icd-10-cm|I21.9",
+      "primary_query_url": "Condition?code=http://snomed.info/sct|22298006,http://hl7.org/fhir/sid/icd-10-cm|I21.0,http://hl7.org/fhir/sid/icd-10-cm|I21.9,http://hl7.org/fhir/sid/icd-9-cm|410,http://hl7.org/fhir/sid/icd-9-cm|410.0,http://hl7.org/fhir/sid/icd-9-cm|410.9,http://hl7.org/fhir/sid/icd-9-cm|411",
       "additional_query_urls": [],
-      "raw_response": "Condition?code=http://snomed.info/sct|22298006,http://hl7.org/fhir/sid/icd-10-cm|I21.0,http://hl7.org/fhir/sid/icd-10-cm|I21.9",
-      "prompt_text": "Search Condition for SNOMED 22298006 (Myocardial infarction), ICD-10 I21.0 (STEMI anterior), I21.9 (AMI unspecified). Query: Condition?code=http://snomed.info/sct|22298006,http://hl7.org/fhir/sid/icd-10-cm|I21.0,http://hl7.org/fhir/sid/icd-10-cm|I21.9",
+      "raw_response": "Condition?code=http://snomed.info/sct|22298006,http://hl7.org/fhir/sid/icd-10-cm|I21.0,http://hl7.org/fhir/sid/icd-10-cm|I21.9,http://hl7.org/fhir/sid/icd-9-cm|410,http://hl7.org/fhir/sid/icd-9-cm|410.0,http://hl7.org/fhir/sid/icd-9-cm|410.9,http://hl7.org/fhir/sid/icd-9-cm|411",
+      "prompt_text": "I need to find patients with a documented acute myocardial infarction diagnosis per the PheKB BioVU algorithm. Search Condition resources using both SNOMED CT (the general myocardial infarction concept) and ICD-10-CM codes covering ST-elevation MI of the anterior wall and unspecified AMI; legacy data may also carry ICD-9-CM codes in the 410\u2013411 range. A robust search should cover all relevant codes across these terminology systems rather than relying on a single code.",
       "run_metadata": {
-       "output_tokens": 80,
-       "tool_calls_count": 1,
+       "output_tokens": 184,
+       "tool_calls_count": 2,
        "stop_reason": "complete",
        "fallback_used": false
       }
@@ -1023,17 +1027,20 @@
      },
      "1-expert": {
       "precision": 1.0,
-      "recall": 1.0,
-      "f1": 1.0,
-      "passed": true,
+      "recall": 0.1853,
+      "f1": 0.3127,
+      "passed": false,
       "expected_count": 313,
-      "actual_count": 313,
-      "elapsed_sec": 0.3,
-      "queries_generated": 1,
-      "primary_query_url": "Condition?code=http://snomed.info/sct|22298006,http://hl7.org/fhir/sid/icd-10-cm|I21.0,http://hl7.org/fhir/sid/icd-10-cm|I21.9",
-      "additional_query_urls": [],
-      "raw_response": "Condition?code=http://snomed.info/sct|22298006,http://hl7.org/fhir/sid/icd-10-cm|I21.0,http://hl7.org/fhir/sid/icd-10-cm|I21.9",
-      "prompt_text": "Search Condition for SNOMED 22298006 (Myocardial infarction), ICD-10 I21.0 (STEMI anterior), I21.9 (AMI unspecified). Query: Condition?code=http://snomed.info/sct|22298006,http://hl7.org/fhir/sid/icd-10-cm|I21.0,http://hl7.org/fhir/sid/icd-10-cm|I21.9"
+      "actual_count": 58,
+      "elapsed_sec": 27.9,
+      "queries_generated": 3,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|22298006",
+      "additional_query_urls": [
+       "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|I21.09,http://hl7.org/fhir/sid/icd-10-cm|I21.9",
+       "Condition?code=http://hl7.org/fhir/sid/icd-9-cm|410,http://hl7.org/fhir/sid/icd-9-cm|410.0,http://hl7.org/fhir/sid/icd-9-cm|410.00,http://hl7.org/fhir/sid/icd-9-cm|410.01,http://hl7.org/fhir/sid/icd-9-cm|410.1,http://hl7.org/fhir/sid/icd-9-cm|410.10,http://hl7.org/fhir/sid/icd-9-cm|410.11,http://hl7.org/fhir/sid/icd-9-cm|410.2,http://hl7.org/fhir/sid/icd-9-cm|410.20,http://hl7.org/fhir/sid/icd-9-cm|410.21,http://hl7.org/fhir/sid/icd-9-cm|410.3,http://hl7.org/fhir/sid/icd-9-cm|410.30,http://hl7.org/fhir/sid/icd-9-cm|410.31,http://hl7.org/fhir/sid/icd-9-cm|410.4,http://hl7.org/fhir/sid/icd-9-cm|410.40,http://hl7.org/fhir/sid/icd-9-cm|410.41,http://hl7.org/fhir/sid/icd-9-cm|410.5,http://hl7.org/fhir/sid/icd-9-cm|410.50,http://hl7.org/fhir/sid/icd-9-cm|410.51,http://hl7.org/fhir/sid/icd-9-cm|410.6,http://hl7.org/fhir/sid/icd-9-cm|410.60,http://hl7.org/fhir/sid/icd-9-cm|410.61,http://hl7.org/fhir/sid/icd-9-cm|410.7,http://hl7.org/fhir/sid/icd-9-cm|410.70,http://hl7.org/fhir/sid/icd-9-cm|410.71,http://hl7.org/fhir/sid/icd-9-cm|410.8,http://hl7.org/fhir/sid/icd-9-cm|410.80,http://hl7.org/fhir/sid/icd-9-cm|410.81,http://hl7.org/fhir/sid/icd-9-cm|410.9,http://hl7.org/fhir/sid/icd-9-cm|410.90,http://hl7.org/fhir/sid/icd-9-cm|410.91,http://hl7.org/fhir/sid/icd-9-cm|411,http://hl7.org/fhir/sid/icd-9-cm|411.0,http://hl7.org/fhir/sid/icd-9-cm|411.1,http://hl7.org/fhir/sid/icd-9-cm|411.8,http://hl7.org/fhir/sid/icd-9-cm|411.81,http://hl7.org/fhir/sid/icd-9-cm|411.89"
+      ],
+      "raw_response": "Condition?code=http://snomed.info/sct|22298006\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|I21.09,http://hl7.org/fhir/sid/icd-10-cm|I21.9\nCondition?code=http://hl7.org/fhir/sid/icd-9-cm|410,http://hl7.org/fhir/sid/icd-9-cm|410.0,http://hl7.org/fhir/sid/icd-9-cm|410.00,http://hl7.org/fhir/sid/icd-9-cm|410.01,http://hl7.org/fhir/sid/icd-9-cm|410.1,http://hl7.org/fhir/sid/icd-9-cm|410.10,http://hl7.org/fhir/sid/icd-9-cm|410.11,http://hl7.org/fhir/sid/icd-9-cm|410.2,http://hl7.org/fhir/sid/icd-9-cm|410.20,http://hl7.org/fhir/sid/icd-9-cm|410.21,http://hl7.org/fhir/sid/icd-9-cm|410.3,http://hl7.org/fhir/sid/icd-9-cm|410.30,http://hl7.org/fhir/sid/icd-9-cm|410.31,http://hl7.org/fhir/sid/icd-9-cm|410.4,http://hl7.org/fhir/sid/icd-9-cm|410.40,http://hl7.org/fhir/sid/icd-9-cm|410.41,http://hl7.org/fhir/sid/icd-9-cm|410.5,http://hl7.org/fhir/sid/icd-9-cm|410.50,http://hl7.org/fhir/sid/icd-9-cm|410.51,http://hl7.org/fhir/sid/icd-9-cm|410.6,http://hl7.org/fhir/sid/icd-9-cm|410.60,http://hl7.org/fhir/sid/icd-9-cm|410.61,http://hl7.org/fhir/sid/icd-9-cm|410.7,http://hl7.org/fhir/sid/icd-9-cm|410.70,http://hl7.org/fhir/sid/icd-9-cm|410.71,http://hl7.org/fhir/sid/icd-9-cm|410.8,http://hl7.org/fhir/sid/icd-9-cm|410.80,http://hl7.org/fhir/sid/icd-9-cm|410.81,http://hl7.org/fhir/sid/icd-9-cm|410.9,http://hl7.org/fhir/sid/icd-9-cm|410.90,http://hl7.org/fhir/sid/icd-9-cm|410.91,http://hl7.org/fhir/sid/icd-9-cm|411,http://hl7.org/fhir/sid/icd-9-cm|411.0,http://hl7.org/fhir/sid/icd-9-cm|411.1,http://hl7.org/fhir/sid/icd-9-cm|411.8,http://hl7.org/fhir/sid/icd-9-cm|411.81,http://hl7.org/fhir/sid/icd-9-cm|411.89",
+      "prompt_text": "I need to find patients with a documented acute myocardial infarction diagnosis per the PheKB BioVU algorithm. Search Condition resources using both SNOMED CT (the general myocardial infarction concept) and ICD-10-CM codes covering ST-elevation MI of the anterior wall and unspecified AMI; legacy data may also carry ICD-9-CM codes in the 410\u2013411 range. A robust search should cover all relevant codes across these terminology systems rather than relying on a single code."
      }
     },
     "copilot:claude-sonnet-4.6": {
@@ -1079,19 +1086,22 @@
      },
      "1-expert": {
       "precision": 1.0,
-      "recall": 1.0,
-      "f1": 1.0,
-      "passed": true,
+      "recall": 0.1853,
+      "f1": 0.3127,
+      "passed": false,
       "expected_count": 313,
-      "actual_count": 313,
-      "elapsed_sec": 31.9,
-      "queries_generated": 2,
-      "primary_query_url": "Condition?code=http://snomed.info/sct|22298006,http://hl7.org/fhir/sid/icd-10-cm|I21.0,http://hl7.org/fhir/sid/icd-10-cm|I21.9",
+      "actual_count": 58,
+      "elapsed_sec": 113.7,
+      "queries_generated": 5,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|22298006,http://snomed.info/sct|57054005,http://snomed.info/sct|401303003,http://snomed.info/sct|54329005",
       "additional_query_urls": [
-       "Condition?code=http://snomed.info/sct|22298006,http://hl7.org/fhir/sid/icd-10-cm|I21.0,http://hl7.org/fhir/sid/icd-10-cm|I21.1,http://hl7.org/fhir/sid/icd-10-cm|I21.2,http://hl7.org/fhir/sid/icd-10-cm|I21.3,http://hl7.org/fhir/sid/icd-10-cm|I21.9"
+       "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|I21.01,http://hl7.org/fhir/sid/icd-10-cm|I21.02,http://hl7.org/fhir/sid/icd-10-cm|I21.09,http://hl7.org/fhir/sid/icd-10-cm|I21.11,http://hl7.org/fhir/sid/icd-10-cm|I21.19,http://hl7.org/fhir/sid/icd-10-cm|I21.21,http://hl7.org/fhir/sid/icd-10-cm|I21.29,http://hl7.org/fhir/sid/icd-10-cm|I21.3,http://hl7.org/fhir/sid/icd-10-cm|I21.4,http://hl7.org/fhir/sid/icd-10-cm|I21.9,http://hl7.org/fhir/sid/icd-10-cm|I21.A1,http://hl7.org/fhir/sid/icd-10-cm|I21.A9",
+       "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|I22.0,http://hl7.org/fhir/sid/icd-10-cm|I22.1,http://hl7.org/fhir/sid/icd-10-cm|I22.2,http://hl7.org/fhir/sid/icd-10-cm|I22.8,http://hl7.org/fhir/sid/icd-10-cm|I22.9",
+       "Condition?code=http://hl7.org/fhir/sid/icd-9-cm|410.00,http://hl7.org/fhir/sid/icd-9-cm|410.01,http://hl7.org/fhir/sid/icd-9-cm|410.02,http://hl7.org/fhir/sid/icd-9-cm|410.10,http://hl7.org/fhir/sid/icd-9-cm|410.11,http://hl7.org/fhir/sid/icd-9-cm|410.12,http://hl7.org/fhir/sid/icd-9-cm|410.20,http://hl7.org/fhir/sid/icd-9-cm|410.21,http://hl7.org/fhir/sid/icd-9-cm|410.22,http://hl7.org/fhir/sid/icd-9-cm|410.30,http://hl7.org/fhir/sid/icd-9-cm|410.31,http://hl7.org/fhir/sid/icd-9-cm|410.32,http://hl7.org/fhir/sid/icd-9-cm|410.40,http://hl7.org/fhir/sid/icd-9-cm|410.41,http://hl7.org/fhir/sid/icd-9-cm|410.42,http://hl7.org/fhir/sid/icd-9-cm|410.50,http://hl7.org/fhir/sid/icd-9-cm|410.51,http://hl7.org/fhir/sid/icd-9-cm|410.52,http://hl7.org/fhir/sid/icd-9-cm|410.60,http://hl7.org/fhir/sid/icd-9-cm|410.61,http://hl7.org/fhir/sid/icd-9-cm|410.62,http://hl7.org/fhir/sid/icd-9-cm|410.70,http://hl7.org/fhir/sid/icd-9-cm|410.71,http://hl7.org/fhir/sid/icd-9-cm|410.72,http://hl7.org/fhir/sid/icd-9-cm|410.80,http://hl7.org/fhir/sid/icd-9-cm|410.81,http://hl7.org/fhir/sid/icd-9-cm|410.82,http://hl7.org/fhir/sid/icd-9-cm|410.90,http://hl7.org/fhir/sid/icd-9-cm|410.91,http://hl7.org/fhir/sid/icd-9-cm|410.92",
+       "Condition?code=http://hl7.org/fhir/sid/icd-9-cm|411.0,http://hl7.org/fhir/sid/icd-9-cm|411.1,http://hl7.org/fhir/sid/icd-9-cm|411.81,http://hl7.org/fhir/sid/icd-9-cm|411.89"
       ],
-      "raw_response": "## FHIR Query\n\n```\nCondition?code=http://snomed.info/sct|22298006,http://hl7.org/fhir/sid/icd-10-cm|I21.0,http://hl7.org/fhir/sid/icd-10-cm|I21.9\n```\n\n---\n\n### Query Breakdown\n\n| Parameter | System | Code | Display |\n|-----------|--------|------|---------|\n| `code` | `http://snomed.info/sct` | `22298006` | Myocardial infarction |\n| `code` | `http://hl7.org/fhir/sid/icd-10-cm` | `I21.0` | STEMI involving left anterior descending coronary artery |\n| `code` | `http://hl7.org/fhir/sid/icd-10-cm` | `I21.9` | Acute myocardial infarction, unspecified |\n\n---\n\n### Notes\n\n- **Comma-separated values** act as a logical **OR** \u2014 returns Conditions matching **any** of the three codes.\n- **Mixed code systems** are supported in a single `code` parameter using `system|code` tokens.\n- To also capture related ICD-10 STEMI variants, consider expanding with additional codes:\n\n```\nCondition?code=http://snomed.info/sct|22298006,http://hl7.org/fhir/sid/icd-10-cm|I21.0,http://hl7.org/fhir/sid/icd-10-cm|I21.1,http://hl7.org/fhir/sid/icd-10-cm|I21.2,http://hl7.org/fhir/sid/icd-10-cm|I21.3,http://hl7.org/fhir/sid/icd-10-cm|I21.9\n```\n\n- To include patient demographics, append `&_include=Condition:patient`.",
-      "prompt_text": "Search Condition for SNOMED 22298006 (Myocardial infarction), ICD-10 I21.0 (STEMI anterior), I21.9 (AMI unspecified). Query: Condition?code=http://snomed.info/sct|22298006,http://hl7.org/fhir/sid/icd-10-cm|I21.0,http://hl7.org/fhir/sid/icd-10-cm|I21.9"
+      "raw_response": "## FHIR Queries: AMI Diagnosis \u2014 PheKB BioVU Algorithm\n\n---\n\n### Query 1 \u2014 SNOMED CT (General & Acute MI Concepts)\n\n```\nCondition?code=http://snomed.info/sct|22298006,http://snomed.info/sct|57054005,http://snomed.info/sct|401303003,http://snomed.info/sct|54329005\n```\n\n---\n\n### Query 2 \u2014 ICD-10-CM: I21.x (Acute MI, All Subtypes)\n\n```\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|I21.01,http://hl7.org/fhir/sid/icd-10-cm|I21.02,http://hl7.org/fhir/sid/icd-10-cm|I21.09,http://hl7.org/fhir/sid/icd-10-cm|I21.11,http://hl7.org/fhir/sid/icd-10-cm|I21.19,http://hl7.org/fhir/sid/icd-10-cm|I21.21,http://hl7.org/fhir/sid/icd-10-cm|I21.29,http://hl7.org/fhir/sid/icd-10-cm|I21.3,http://hl7.org/fhir/sid/icd-10-cm|I21.4,http://hl7.org/fhir/sid/icd-10-cm|I21.9,http://hl7.org/fhir/sid/icd-10-cm|I21.A1,http://hl7.org/fhir/sid/icd-10-cm|I21.A9\n```\n\n---\n\n### Query 3 \u2014 ICD-10-CM: I22.x (Subsequent MI Episodes)\n\n```\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|I22.0,http://hl7.org/fhir/sid/icd-10-cm|I22.1,http://hl7.org/fhir/sid/icd-10-cm|I22.2,http://hl7.org/fhir/sid/icd-10-cm|I22.8,http://hl7.org/fhir/sid/icd-10-cm|I22.9\n```\n\n---\n\n### Query 4 \u2014 ICD-9-CM: 410.x (Acute MI, All Sites & Episodes)\n\n```\nCondition?code=http://hl7.org/fhir/sid/icd-9-cm|410.00,http://hl7.org/fhir/sid/icd-9-cm|410.01,http://hl7.org/fhir/sid/icd-9-cm|410.02,http://hl7.org/fhir/sid/icd-9-cm|410.10,http://hl7.org/fhir/sid/icd-9-cm|410.11,http://hl7.org/fhir/sid/icd-9-cm|410.12,http://hl7.org/fhir/sid/icd-9-cm|410.20,http://hl7.org/fhir/sid/icd-9-cm|410.21,http://hl7.org/fhir/sid/icd-9-cm|410.22,http://hl7.org/fhir/sid/icd-9-cm|410.30,http://hl7.org/fhir/sid/icd-9-cm|410.31,http://hl7.org/fhir/sid/icd-9-cm|410.32,http://hl7.org/fhir/sid/icd-9-cm|410.40,http://hl7.org/fhir/sid/icd-9-cm|410.41,http://hl7.org/fhir/sid/icd-9-cm|410.42,http://hl7.org/fhir/sid/icd-9-cm|410.50,http://hl7.org/fhir/sid/icd-9-cm|410.51,http://hl7.org/fhir/sid/icd-9-cm|410.52,http://hl7.org/fhir/sid/icd-9-cm|410.60,http://hl7.org/fhir/sid/icd-9-cm|410.61,http://hl7.org/fhir/sid/icd-9-cm|410.62,http://hl7.org/fhir/sid/icd-9-cm|410.70,http://hl7.org/fhir/sid/icd-9-cm|410.71,http://hl7.org/fhir/sid/icd-9-cm|410.72,http://hl7.org/fhir/sid/icd-9-cm|410.80,http://hl7.org/fhir/sid/icd-9-cm|410.81,http://hl7.org/fhir/sid/icd-9-cm|410.82,http://hl7.org/fhir/sid/icd-9-cm|410.90,http://hl7.org/fhir/sid/icd-9-cm|410.91,http://hl7.org/fhir/sid/icd-9-cm|410.92\n```\n\n---\n\n### Query 5 \u2014 ICD-9-CM: 411.x (Acute Ischemic Heart Disease Spectrum)\n\n```\nCondition?code=http://hl7.org/fhir/sid/icd-9-cm|411.0,http://hl7.org/fhir/sid/icd-9-cm|411.1,http://hl7.org/fhir/sid/icd-9-cm|411.81,http://hl7.org/fhir/sid/icd-9-cm|411.89\n```\n\n---\n\n## Code Coverage Reference\n\n| Query | System | Codes Covered | Clinical Scope |\n|-------|--------|--------------|----------------|\n| 1 | SNOMED CT | 22298006, 57054005, 401303003, 54329005 | General MI, Acute MI, STEMI, Anterior wall MI |\n| 2 | ICD-10-CM | I21.01\u2013I21.A9 | All acute MI subtypes incl. STEMI anterior (I21.0x), unspecified (I21.9), NSTEMI (I21.4), Type 2 (I21.A1) |\n| 3 | ICD-10-CM | I22.0\u2013I22.9 | Subsequent MI episodes (all walls) |\n| 4 | ICD-9-CM | 410.00\u2013410.92 | All sites \u00d7 all episode-of-care subcategories (.x0/.x1/.x2) |\n| 5 | ICD-9-CM | 411.0\u2013411.89 | Post-MI syndrome, unstable angina, acute ischemic NEC |\n\n> **Note:** Append `&_include=Condition:subject` to any query to co-retrieve linked Patient resources in a single bundle. For the PheKB BioVU strict case definition, consider further filtering with `&verification-status=confirmed` and requiring \u22652 qualifying codes per patient across visits.",
+      "prompt_text": "I need to find patients with a documented acute myocardial infarction diagnosis per the PheKB BioVU algorithm. Search Condition resources using both SNOMED CT (the general myocardial infarction concept) and ICD-10-CM codes covering ST-elevation MI of the anterior wall and unspecified AMI; legacy data may also carry ICD-9-CM codes in the 410\u2013411 range. A robust search should cover all relevant codes across these terminology systems rather than relying on a single code."
      },
      "2-naive": {
       "precision": 1.0,
@@ -1135,22 +1145,23 @@
      },
      "2-expert": {
       "precision": 1.0,
-      "recall": 1.0,
-      "f1": 1.0,
-      "passed": true,
+      "recall": 0.1853,
+      "f1": 0.3127,
+      "passed": false,
       "expected_count": 313,
-      "actual_count": 313,
-      "elapsed_sec": 51.6,
-      "queries_generated": 2,
-      "primary_query_url": "Condition?code=http://snomed.info/sct|22298006,http://hl7.org/fhir/sid/icd-10-cm|I21.0,http://hl7.org/fhir/sid/icd-10-cm|I21.9",
+      "actual_count": 58,
+      "elapsed_sec": 205.2,
+      "queries_generated": 3,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|22298006,http://snomed.info/sct|57054005,http://snomed.info/sct|401303003,http://snomed.info/sct|401314000,http://snomed.info/sct|703164000,http://snomed.info/sct|54329005,http://snomed.info/sct|62695002,http://snomed.info/sct|70211005,http://snomed.info/sct|73795002,http://snomed.info/sct|65547006,http://snomed.info/sct|76593002,http://snomed.info/sct|15990001,http://snomed.info/sct|233838001,http://snomed.info/sct|52035003,http://snomed.info/sct|15962541000119106,http://snomed.info/sct|285981000119103,http://snomed.info/sct|15713081000119108,http://snomed.info/sct|15713121000119105,http://snomed.info/sct|17531000119105,http://snomed.info/sct|23311000119105,http://snomed.info/sct|233825009,http://snomed.info/sct|233826005,http://snomed.info/sct|233827001,http://snomed.info/sct|233828006,http://snomed.info/sct|233829003,http://snomed.info/sct|233830008,http://snomed.info/sct|233831007,http://snomed.info/sct|233832000,http://snomed.info/sct|233833005,http://snomed.info/sct|233834004,http://snomed.info/sct|233835003,http://snomed.info/sct|233836002,http://snomed.info/sct|233837006,http://snomed.info/sct|304914007,http://snomed.info/sct|307140009,http://snomed.info/sct|70422006,http://snomed.info/sct|58612006,http://snomed.info/sct|59063002,http://snomed.info/sct|64627002,http://snomed.info/sct|70998009,http://snomed.info/sct|79009004,http://snomed.info/sct|194802003,http://snomed.info/sct|194809007,http://snomed.info/sct|10273003,http://snomed.info/sct|30277009",
       "additional_query_urls": [
-       "Condition?code=http://snomed.info/sct|22298006,http://hl7.org/fhir/sid/icd-10-cm|I21.0,http://hl7.org/fhir/sid/icd-10-cm|I21.1,http://hl7.org/fhir/sid/icd-10-cm|I21.2,http://hl7.org/fhir/sid/icd-10-cm|I21.3,http://hl7.org/fhir/sid/icd-10-cm|I21.4,http://hl7.org/fhir/sid/icd-10-cm|I21.9,http://hl7.org/fhir/sid/icd-10-cm|I21.A1,http://hl7.org/fhir/sid/icd-10-cm|I21.A9,http://hl7.org/fhir/sid/icd-10-cm|I22.0,http://hl7.org/fhir/sid/icd-10-cm|I22.1,http://hl7.org/fhir/sid/icd-10-cm|I22.2,http://hl7.org/fhir/sid/icd-10-cm|I22.8,http://hl7.org/fhir/sid/icd-10-cm|I22.9"
+       "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|I21.0,http://hl7.org/fhir/sid/icd-10-cm|I21.01,http://hl7.org/fhir/sid/icd-10-cm|I21.02,http://hl7.org/fhir/sid/icd-10-cm|I21.09,http://hl7.org/fhir/sid/icd-10-cm|I21.11,http://hl7.org/fhir/sid/icd-10-cm|I21.19,http://hl7.org/fhir/sid/icd-10-cm|I21.21,http://hl7.org/fhir/sid/icd-10-cm|I21.29,http://hl7.org/fhir/sid/icd-10-cm|I21.3,http://hl7.org/fhir/sid/icd-10-cm|I21.4,http://hl7.org/fhir/sid/icd-10-cm|I21.9,http://hl7.org/fhir/sid/icd-10-cm|I21.A1,http://hl7.org/fhir/sid/icd-10-cm|I21.A9,http://hl7.org/fhir/sid/icd-10-cm|I21.B,http://hl7.org/fhir/sid/icd-10-cm|I22.0,http://hl7.org/fhir/sid/icd-10-cm|I22.1,http://hl7.org/fhir/sid/icd-10-cm|I22.2,http://hl7.org/fhir/sid/icd-10-cm|I22.8,http://hl7.org/fhir/sid/icd-10-cm|I22.9",
+       "Condition?code=http://hl7.org/fhir/sid/icd-9-cm|410.00,http://hl7.org/fhir/sid/icd-9-cm|410.01,http://hl7.org/fhir/sid/icd-9-cm|410.02,http://hl7.org/fhir/sid/icd-9-cm|410.10,http://hl7.org/fhir/sid/icd-9-cm|410.11,http://hl7.org/fhir/sid/icd-9-cm|410.12,http://hl7.org/fhir/sid/icd-9-cm|410.20,http://hl7.org/fhir/sid/icd-9-cm|410.21,http://hl7.org/fhir/sid/icd-9-cm|410.22,http://hl7.org/fhir/sid/icd-9-cm|410.30,http://hl7.org/fhir/sid/icd-9-cm|410.31,http://hl7.org/fhir/sid/icd-9-cm|410.32,http://hl7.org/fhir/sid/icd-9-cm|410.40,http://hl7.org/fhir/sid/icd-9-cm|410.41,http://hl7.org/fhir/sid/icd-9-cm|410.42,http://hl7.org/fhir/sid/icd-9-cm|410.50,http://hl7.org/fhir/sid/icd-9-cm|410.51,http://hl7.org/fhir/sid/icd-9-cm|410.52,http://hl7.org/fhir/sid/icd-9-cm|410.60,http://hl7.org/fhir/sid/icd-9-cm|410.61,http://hl7.org/fhir/sid/icd-9-cm|410.62,http://hl7.org/fhir/sid/icd-9-cm|410.70,http://hl7.org/fhir/sid/icd-9-cm|410.71,http://hl7.org/fhir/sid/icd-9-cm|410.72,http://hl7.org/fhir/sid/icd-9-cm|410.80,http://hl7.org/fhir/sid/icd-9-cm|410.81,http://hl7.org/fhir/sid/icd-9-cm|410.82,http://hl7.org/fhir/sid/icd-9-cm|410.90,http://hl7.org/fhir/sid/icd-9-cm|410.91,http://hl7.org/fhir/sid/icd-9-cm|410.92,http://hl7.org/fhir/sid/icd-9-cm|411.0,http://hl7.org/fhir/sid/icd-9-cm|411.1,http://hl7.org/fhir/sid/icd-9-cm|411.81,http://hl7.org/fhir/sid/icd-9-cm|411.89"
       ],
-      "raw_response": "The query executed successfully. Here's a detailed breakdown of the results:\n\n---\n\n## \u2705 Query Results\n\n**Query executed:**\n```\nCondition?code=http://snomed.info/sct|22298006,http://hl7.org/fhir/sid/icd-10-cm|I21.0,http://hl7.org/fhir/sid/icd-10-cm|I21.9\n```\n\n| Metric | Value |\n|---|---|\n| **Entries Returned** | 10 |\n| **Total Count** | Not reported (server did not return a `total`) |\n| **Resource Types** | `Condition` only \u2713 |\n\n---\n\n## \ud83d\udd2c Code Distribution in Sample (10 records)\n\n| Code System | Code | Display | Hits in Sample |\n|---|---|---|---|\n| `icd-10-cm` | **I21.9** | Acute myocardial infarction, unspecified | 3 |\n| `icd-10-cm` | **I21.0** | ST elevation (STEMI) myocardial infarction of anterior wall | 2 |\n| `snomed` | 22298006 | Myocardial infarction | **0 visible** |\n| `condition-category` | encounter-diagnosis | Encounter Diagnosis | All 10 |\n\n---\n\n## \ud83d\udd0d Key Observations\n\n1. **ICD-10-CM is the dominant coding system** on this server \u2014 all 10 sampled records carry ICD-10-CM codes, with zero visible SNOMED hits. The SNOMED clause (`22298006`) is likely not matching any additional records beyond what ICD-10 already captures.\n\n2. **All records are `encounter-diagnosis`**, not `problem-list-item`. This means MIs are being recorded at the encounter level (acute/episodic), which is clinically appropriate for AMI.\n\n3. **Coverage gap \u2014 only 2 of the 10+ ICD-10-CM MI subtypes are included.** The full AMI family (I21.*) includes many more clinically relevant codes you may want to add for a complete cohort:\n\n| ICD-10 Code | Description |\n|---|---|\n| I21.0 | STEMI anterior wall \u2705 (included) |\n| **I21.1** | STEMI inferior wall |\n| **I21.2** | STEMI other sites |\n| **I21.3** | STEMI unspecified site |\n| **I21.4** | NSTEMI |\n| I21.9 | AMI unspecified \u2705 (included) |\n| **I21.A1** | AMI Type 2 |\n| **I21.A9** | AMI other type |\n| **I22.\\*** | Subsequent MI |\n\n---\n\n## \ud83d\udca1 Recommended Broader Query\n\nTo capture the **full MI cohort** across all subtypes:\n\n```\nCondition?code=http://snomed.info/sct|22298006,http://hl7.org/fhir/sid/icd-10-cm|I21.0,http://hl7.org/fhir/sid/icd-10-cm|I21.1,http://hl7.org/fhir/sid/icd-10-cm|I21.2,http://hl7.org/fhir/sid/icd-10-cm|I21.3,http://hl7.org/fhir/sid/icd-10-cm|I21.4,http://hl7.org/fhir/sid/icd-10-cm|I21.9,http://hl7.org/fhir/sid/icd-10-cm|I21.A1,http://hl7.org/fhir/sid/icd-10-cm|I21.A9,http://hl7.org/fhir/sid/icd-10-cm|I22.0,http://hl7.org/fhir/sid/icd-10-cm|I22.1,http://hl7.org/fhir/sid/icd-10-cm|I22.2,http://hl7.org/fhir/sid/icd-10-cm|I22.8,http://hl7.org/fhir/sid/icd-10-cm|I22.9\n```\n\nWould you like me to run the expanded query, validate against a VSAC value set for MI, or add any patient-level filters (age, sex, date range)?",
-      "prompt_text": "Search Condition for SNOMED 22298006 (Myocardial infarction), ICD-10 I21.0 (STEMI anterior), I21.9 (AMI unspecified). Query: Condition?code=http://snomed.info/sct|22298006,http://hl7.org/fhir/sid/icd-10-cm|I21.0,http://hl7.org/fhir/sid/icd-10-cm|I21.9",
+      "raw_response": "I now have a complete picture of this server's coding:\n- **ICD-10-CM** is the primary system: `I21.0` (101 hits) and `I21.9` (154 hits) confirmed active; subcategory codes (I21.01/02/09, I22.x) return 0 on this server but are in the VSAC set and must stay for portability\n- **SNOMED CT `22298006`** (general MI) returns 58; acute-specific codes return 0 but are included for completeness\n- **ICD-9-CM** returns 0 everywhere (no legacy data on this server) but must be included per the PheKB BioVU algorithm for portability\n\nAll codes cross-checked against the **Joint Commission 2024 active VSAC set** (`2.16.840.1.113883.3.666.5.623`) and the **NCQA VSAC set** (`2.16.840.1.113883.3.464.1003.104.12.1001`) and validated with UMLS crosswalk. Three queries are emitted (one per terminology system); the evaluator unions the patient sets.\n\n---\n\n**FINAL ANSWER:**\n\n```\nCondition?code=http://snomed.info/sct|22298006,http://snomed.info/sct|57054005,http://snomed.info/sct|401303003,http://snomed.info/sct|401314000,http://snomed.info/sct|703164000,http://snomed.info/sct|54329005,http://snomed.info/sct|62695002,http://snomed.info/sct|70211005,http://snomed.info/sct|73795002,http://snomed.info/sct|65547006,http://snomed.info/sct|76593002,http://snomed.info/sct|15990001,http://snomed.info/sct|233838001,http://snomed.info/sct|52035003,http://snomed.info/sct|15962541000119106,http://snomed.info/sct|285981000119103,http://snomed.info/sct|15713081000119108,http://snomed.info/sct|15713121000119105,http://snomed.info/sct|17531000119105,http://snomed.info/sct|23311000119105,http://snomed.info/sct|233825009,http://snomed.info/sct|233826005,http://snomed.info/sct|233827001,http://snomed.info/sct|233828006,http://snomed.info/sct|233829003,http://snomed.info/sct|233830008,http://snomed.info/sct|233831007,http://snomed.info/sct|233832000,http://snomed.info/sct|233833005,http://snomed.info/sct|233834004,http://snomed.info/sct|233835003,http://snomed.info/sct|233836002,http://snomed.info/sct|233837006,http://snomed.info/sct|304914007,http://snomed.info/sct|307140009,http://snomed.info/sct|70422006,http://snomed.info/sct|58612006,http://snomed.info/sct|59063002,http://snomed.info/sct|64627002,http://snomed.info/sct|70998009,http://snomed.info/sct|79009004,http://snomed.info/sct|194802003,http://snomed.info/sct|194809007,http://snomed.info/sct|10273003,http://snomed.info/sct|30277009\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|I21.0,http://hl7.org/fhir/sid/icd-10-cm|I21.01,http://hl7.org/fhir/sid/icd-10-cm|I21.02,http://hl7.org/fhir/sid/icd-10-cm|I21.09,http://hl7.org/fhir/sid/icd-10-cm|I21.11,http://hl7.org/fhir/sid/icd-10-cm|I21.19,http://hl7.org/fhir/sid/icd-10-cm|I21.21,http://hl7.org/fhir/sid/icd-10-cm|I21.29,http://hl7.org/fhir/sid/icd-10-cm|I21.3,http://hl7.org/fhir/sid/icd-10-cm|I21.4,http://hl7.org/fhir/sid/icd-10-cm|I21.9,http://hl7.org/fhir/sid/icd-10-cm|I21.A1,http://hl7.org/fhir/sid/icd-10-cm|I21.A9,http://hl7.org/fhir/sid/icd-10-cm|I21.B,http://hl7.org/fhir/sid/icd-10-cm|I22.0,http://hl7.org/fhir/sid/icd-10-cm|I22.1,http://hl7.org/fhir/sid/icd-10-cm|I22.2,http://hl7.org/fhir/sid/icd-10-cm|I22.8,http://hl7.org/fhir/sid/icd-10-cm|I22.9\nCondition?code=http://hl7.org/fhir/sid/icd-9-cm|410.00,http://hl7.org/fhir/sid/icd-9-cm|410.01,http://hl7.org/fhir/sid/icd-9-cm|410.02,http://hl7.org/fhir/sid/icd-9-cm|410.10,http://hl7.org/fhir/sid/icd-9-cm|410.11,http://hl7.org/fhir/sid/icd-9-cm|410.12,http://hl7.org/fhir/sid/icd-9-cm|410.20,http://hl7.org/fhir/sid/icd-9-cm|410.21,http://hl7.org/fhir/sid/icd-9-cm|410.22,http://hl7.org/fhir/sid/icd-9-cm|410.30,http://hl7.org/fhir/sid/icd-9-cm|410.31,http://hl7.org/fhir/sid/icd-9-cm|410.32,http://hl7.org/fhir/sid/icd-9-cm|410.40,http://hl7.org/fhir/sid/icd-9-cm|410.41,http://hl7.org/fhir/sid/icd-9-cm|410.42,http://hl7.org/fhir/sid/icd-9-cm|410.50,http://hl7.org/fhir/sid/icd-9-cm|410.51,http://hl7.org/fhir/sid/icd-9-cm|410.52,http://hl7.org/fhir/sid/icd-9-cm|410.60,http://hl7.org/fhir/sid/icd-9-cm|410.61,http://hl7.org/fhir/sid/icd-9-cm|410.62,http://hl7.org/fhir/sid/icd-9-cm|410.70,http://hl7.org/fhir/sid/icd-9-cm|410.71,http://hl7.org/fhir/sid/icd-9-cm|410.72,http://hl7.org/fhir/sid/icd-9-cm|410.80,http://hl7.org/fhir/sid/icd-9-cm|410.81,http://hl7.org/fhir/sid/icd-9-cm|410.82,http://hl7.org/fhir/sid/icd-9-cm|410.90,http://hl7.org/fhir/sid/icd-9-cm|410.91,http://hl7.org/fhir/sid/icd-9-cm|410.92,http://hl7.org/fhir/sid/icd-9-cm|411.0,http://hl7.org/fhir/sid/icd-9-cm|411.1,http://hl7.org/fhir/sid/icd-9-cm|411.81,http://hl7.org/fhir/sid/icd-9-cm|411.89\n```\n\n---\n\nHere's a full accounting of the evidence and decisions behind these three queries:\n\n### What each query covers\n\n| Query | System | Code range | Live hits on this server | Rationale |\n|---|---|---|---|---|\n| 1 | **SNOMED CT** | 45 codes anchored on `22298006` (Myocardial infarction) + all VSAC NCQA acute subtypes | **58** (on `22298006`) | General MI concept confirmed active; acute subtypes (57054005, 401303003, 401314000, site-specific) included for completeness & portability |\n| 2 | **ICD-10-CM** | `I21.0`\u2013`I21.B` (STEMI anterior, inferior, other; NSTEMI; unspecified; type 2; microvascular) + `I22.x` (subsequent MI) | **101** (I21.0) + **154** (I21.9) | Full Joint Commission 2024 VSAC set; I21.0 (anterior wall STEMI) and I21.9 (unspecified AMI) are the two live codes confirmed by sample |\n| 3 | **ICD-9-CM** | `410.x0/x1/x2` all 10 anatomical sites (all episode-of-care suffixes) + `411.0/1/81/89` | **0** (server has no legacy ICD-9) | Required by PheKB BioVU algorithm for legacy EHR data; will activate if data migrated or queried on a legacy system |",
+      "prompt_text": "I need to find patients with a documented acute myocardial infarction diagnosis per the PheKB BioVU algorithm. Search Condition resources using both SNOMED CT (the general myocardial infarction concept) and ICD-10-CM codes covering ST-elevation MI of the anterior wall and unspecified AMI; legacy data may also carry ICD-9-CM codes in the 410\u2013411 range. A robust search should cover all relevant codes across these terminology systems rather than relying on a single code.",
       "run_metadata": {
-       "output_tokens": 1462,
-       "tool_calls_count": 1,
+       "output_tokens": 8847,
+       "tool_calls_count": 23,
        "stop_reason": "complete",
        "fallback_used": false
       }
@@ -1197,20 +1208,20 @@
      },
      "3-expert": {
       "precision": 1.0,
-      "recall": 1.0,
-      "f1": 1.0,
+      "recall": 0.8147,
+      "f1": 0.8979,
       "passed": true,
       "expected_count": 313,
-      "actual_count": 313,
-      "elapsed_sec": 38.3,
+      "actual_count": 255,
+      "elapsed_sec": 156.5,
       "queries_generated": 1,
-      "primary_query_url": "Condition?code=http://snomed.info/sct|22298006,http://hl7.org/fhir/sid/icd-10-cm|I21.0,http://hl7.org/fhir/sid/icd-10-cm|I21.9",
+      "primary_query_url": "Condition?code=http://snomed.info/sct|57054005,http://snomed.info/sct|401303003,http://snomed.info/sct|401314000,http://snomed.info/sct|703164000,http://snomed.info/sct|703213009,http://snomed.info/sct|54329005,http://snomed.info/sct|73795002,http://snomed.info/sct|70422006,http://snomed.info/sct|70211005,http://snomed.info/sct|62695002,http://snomed.info/sct|65547006,http://snomed.info/sct|76593002,http://snomed.info/sct|233835003,http://snomed.info/sct|233838001,http://snomed.info/sct|285981000119103,http://snomed.info/sct|194856005,http://snomed.info/sct|703211006,http://snomed.info/sct|703360004,http://hl7.org/fhir/sid/icd-10-cm|I21.0,http://hl7.org/fhir/sid/icd-10-cm|I21.01,http://hl7.org/fhir/sid/icd-10-cm|I21.02,http://hl7.org/fhir/sid/icd-10-cm|I21.09,http://hl7.org/fhir/sid/icd-10-cm|I21.11,http://hl7.org/fhir/sid/icd-10-cm|I21.19,http://hl7.org/fhir/sid/icd-10-cm|I21.21,http://hl7.org/fhir/sid/icd-10-cm|I21.29,http://hl7.org/fhir/sid/icd-10-cm|I21.3,http://hl7.org/fhir/sid/icd-10-cm|I21.4,http://hl7.org/fhir/sid/icd-10-cm|I21.9,http://hl7.org/fhir/sid/icd-10-cm|I21.A1,http://hl7.org/fhir/sid/icd-10-cm|I21.A9,http://hl7.org/fhir/sid/icd-10-cm|I21.B,http://hl7.org/fhir/sid/icd-10-cm|I22.0,http://hl7.org/fhir/sid/icd-10-cm|I22.1,http://hl7.org/fhir/sid/icd-10-cm|I22.2,http://hl7.org/fhir/sid/icd-10-cm|I22.8,http://hl7.org/fhir/sid/icd-10-cm|I22.9,http://hl7.org/fhir/sid/icd-9-cm|410.00,http://hl7.org/fhir/sid/icd-9-cm|410.01,http://hl7.org/fhir/sid/icd-9-cm|410.10,http://hl7.org/fhir/sid/icd-9-cm|410.11,http://hl7.org/fhir/sid/icd-9-cm|410.20,http://hl7.org/fhir/sid/icd-9-cm|410.21,http://hl7.org/fhir/sid/icd-9-cm|410.30,http://hl7.org/fhir/sid/icd-9-cm|410.31,http://hl7.org/fhir/sid/icd-9-cm|410.40,http://hl7.org/fhir/sid/icd-9-cm|410.41,http://hl7.org/fhir/sid/icd-9-cm|410.50,http://hl7.org/fhir/sid/icd-9-cm|410.51,http://hl7.org/fhir/sid/icd-9-cm|410.60,http://hl7.org/fhir/sid/icd-9-cm|410.61,http://hl7.org/fhir/sid/icd-9-cm|410.70,http://hl7.org/fhir/sid/icd-9-cm|410.71,http://hl7.org/fhir/sid/icd-9-cm|410.80,http://hl7.org/fhir/sid/icd-9-cm|410.81,http://hl7.org/fhir/sid/icd-9-cm|410.90,http://hl7.org/fhir/sid/icd-9-cm|410.91",
       "additional_query_urls": [],
-      "raw_response": "## Findings\n\n### \ud83d\udd2c Server Sampling (5 Condition records)\n| System Observed | Code | Display |\n|---|---|---|\n| `http://hl7.org/fhir/sid/icd-10-cm` | **I21.9** | Acute myocardial infarction, unspecified |\n| `http://hl7.org/fhir/sid/icd-10-cm` | **I21.0** | ST elevation (STEMI) myocardial infarction of anterior wall |\n\n> \u2705 **ICD-10-CM is the dominant coding system on this server.** No SNOMED codes appeared in the sample for AMI conditions \u2014 the SNOMED arm is safe to retain for coverage but won't drive additional hits here.\n\n### \ud83d\udcca Query Result\n| Query | Count |\n|---|---|\n| SNOMED `22298006` + ICD-10 `I21.0` + ICD-10 `I21.9` | **313 Conditions** |\n\n### \u2705 Validation Notes\n- Both **I21.0** (STEMI anterior wall) and **I21.9** (AMI unspecified) are confirmed present on the server\n- The multi-code comma-union approach (Playbook 8) works correctly \u2014 all three codes are resolved in a single query\n- Count of **313** is clinically plausible for a real-world AMI cohort\n- SNOMED arm retained for semantic completeness; contributes no extra records on this server but adds no harm\n\n---\n\n**FINAL ANSWER:**\n\n```\nCondition?code=http://snomed.info/sct|22298006,http://hl7.org/fhir/sid/icd-10-cm|I21.0,http://hl7.org/fhir/sid/icd-10-cm|I21.9\n```",
-      "prompt_text": "Search Condition for SNOMED 22298006 (Myocardial infarction), ICD-10 I21.0 (STEMI anterior), I21.9 (AMI unspecified). Query: Condition?code=http://snomed.info/sct|22298006,http://hl7.org/fhir/sid/icd-10-cm|I21.0,http://hl7.org/fhir/sid/icd-10-cm|I21.9",
+      "raw_response": "The full consolidated ICD-10-CM query returns **255 results** (stable count). SNOMED and ICD-9-CM return 0 on this server \u2014 meaning it doesn't carry those coding systems \u2014 but the PheKB BioVU algorithm is designed to be portable, so all three systems belong in the final query for completeness. Here is my complete reasoning before the final answer:\n\n---\n\n### Evidence Summary\n\n| System | Finding |\n|---|---|\n| **Server coding system** | ICD-10-CM only (`I21.0`, `I21.9` seen directly in samples) |\n| **SNOMED CT** | 0 hits on this server; umbrella concept `57054005` + 18 VSAC subtypes included for portability |\n| **ICD-10-CM** | 19 codes from dual VSAC expansion (Joint Commission 2024 + active 2016) \u2014 I21.0x anterior-wall STEMI, I21.4 NSTEMI, I21.9 unspecified, I21.A1/A9/B novel types, I22.x subsequent MI |\n| **ICD-9-CM** | 0 hits on this server; all 20 codes from 410.00\u2013410.91 (initial + unspecified episode suffixes) included for legacy data portability |\n| **ICD-9-CM 411.x** | Excluded \u2014 411 covers unstable angina & post-MI syndrome, not confirmed AMI per VSAC and PheKB |\n| **Validated count** | 255 Condition resources matched by the ICD-10-CM arm |\n\n---\n\n**FINAL ANSWER**\n\n```\nCondition?code=http://snomed.info/sct|57054005,http://snomed.info/sct|401303003,http://snomed.info/sct|401314000,http://snomed.info/sct|703164000,http://snomed.info/sct|703213009,http://snomed.info/sct|54329005,http://snomed.info/sct|73795002,http://snomed.info/sct|70422006,http://snomed.info/sct|70211005,http://snomed.info/sct|62695002,http://snomed.info/sct|65547006,http://snomed.info/sct|76593002,http://snomed.info/sct|233835003,http://snomed.info/sct|233838001,http://snomed.info/sct|285981000119103,http://snomed.info/sct|194856005,http://snomed.info/sct|703211006,http://snomed.info/sct|703360004,http://hl7.org/fhir/sid/icd-10-cm|I21.0,http://hl7.org/fhir/sid/icd-10-cm|I21.01,http://hl7.org/fhir/sid/icd-10-cm|I21.02,http://hl7.org/fhir/sid/icd-10-cm|I21.09,http://hl7.org/fhir/sid/icd-10-cm|I21.11,http://hl7.org/fhir/sid/icd-10-cm|I21.19,http://hl7.org/fhir/sid/icd-10-cm|I21.21,http://hl7.org/fhir/sid/icd-10-cm|I21.29,http://hl7.org/fhir/sid/icd-10-cm|I21.3,http://hl7.org/fhir/sid/icd-10-cm|I21.4,http://hl7.org/fhir/sid/icd-10-cm|I21.9,http://hl7.org/fhir/sid/icd-10-cm|I21.A1,http://hl7.org/fhir/sid/icd-10-cm|I21.A9,http://hl7.org/fhir/sid/icd-10-cm|I21.B,http://hl7.org/fhir/sid/icd-10-cm|I22.0,http://hl7.org/fhir/sid/icd-10-cm|I22.1,http://hl7.org/fhir/sid/icd-10-cm|I22.2,http://hl7.org/fhir/sid/icd-10-cm|I22.8,http://hl7.org/fhir/sid/icd-10-cm|I22.9,http://hl7.org/fhir/sid/icd-9-cm|410.00,http://hl7.org/fhir/sid/icd-9-cm|410.01,http://hl7.org/fhir/sid/icd-9-cm|410.10,http://hl7.org/fhir/sid/icd-9-cm|410.11,http://hl7.org/fhir/sid/icd-9-cm|410.20,http://hl7.org/fhir/sid/icd-9-cm|410.21,http://hl7.org/fhir/sid/icd-9-cm|410.30,http://hl7.org/fhir/sid/icd-9-cm|410.31,http://hl7.org/fhir/sid/icd-9-cm|410.40,http://hl7.org/fhir/sid/icd-9-cm|410.41,http://hl7.org/fhir/sid/icd-9-cm|410.50,http://hl7.org/fhir/sid/icd-9-cm|410.51,http://hl7.org/fhir/sid/icd-9-cm|410.60,http://hl7.org/fhir/sid/icd-9-cm|410.61,http://hl7.org/fhir/sid/icd-9-cm|410.70,http://hl7.org/fhir/sid/icd-9-cm|410.71,http://hl7.org/fhir/sid/icd-9-cm|410.80,http://hl7.org/fhir/sid/icd-9-cm|410.81,http://hl7.org/fhir/sid/icd-9-cm|410.90,http://hl7.org/fhir/sid/icd-9-cm|410.91\n```\n\n---\n\n### Code Breakdown\n\n| Arm | Codes | Rationale |\n|---|---|---|\n| **SNOMED CT** (18 codes) | `57054005` (umbrella AMI) + `401303003` (STEMI) + `401314000` (NSTEMI) + `703164000` / `54329005` (anterior wall) + `73795002` (inferior) + `70211005` (anterolateral) + `62695002` (anteroseptal) + `70422006` (subendocardial) + `65547006`, `76593002`, `233835003`, `233838001`, `285981000119103`, `194856005`, `703211006`, `703360004`, `703213009` | Umbrella concept + major anatomic/electrical subtypes per VSAC JC value set; 0 hits on this server but portable |\n| **ICD-10-CM** (19 codes) | `I21.0` (category, server-confirmed) + `I21.01/02/09` (anterior STEMI) + `I21.11/19` (inferior STEMI) + `I21.21/29` (other STEMI) + `I21.3` (unspecified STEMI) + `I21.4` (NSTEMI) + `I21.9` (unspecified AMI) + `I21.A1/A9/B` (type 2, other, microvascular) + `I22.0/1/2/8/9` (subsequent MI) | Full JC 2024 value set expansion; **255 validated hits** on this server |\n| **ICD-9-CM** (20 codes) | `410.00\u2013410.91` (all anterior/inferior/lateral/posterior/subendocardial/unspecified sites \u00d7 initial + unspecified episode suffixes) | Legacy BioVU data per PheKB algorithm; 0 hits on this server but retained for portability |",
+      "prompt_text": "I need to find patients with a documented acute myocardial infarction diagnosis per the PheKB BioVU algorithm. Search Condition resources using both SNOMED CT (the general myocardial infarction concept) and ICD-10-CM codes covering ST-elevation MI of the anterior wall and unspecified AMI; legacy data may also carry ICD-9-CM codes in the 410\u2013411 range. A robust search should cover all relevant codes across these terminology systems rather than relying on a single code.",
       "run_metadata": {
-       "output_tokens": 663,
-       "tool_calls_count": 2,
+       "output_tokens": 5042,
+       "tool_calls_count": 10,
        "stop_reason": "complete",
        "fallback_used": false
       }
@@ -1252,12 +1263,14 @@
       "passed": true,
       "expected_count": 313,
       "actual_count": 313,
-      "elapsed_sec": 27.8,
-      "queries_generated": 1,
-      "primary_query_url": "Condition?code=http://snomed.info/sct|22298006,http://hl7.org/fhir/sid/icd-10-cm|I21.0,http://hl7.org/fhir/sid/icd-10-cm|I21.9",
-      "additional_query_urls": [],
-      "raw_response": "Condition?code=http://snomed.info/sct|22298006,http://hl7.org/fhir/sid/icd-10-cm|I21.0,http://hl7.org/fhir/sid/icd-10-cm|I21.9",
-      "prompt_text": "Search Condition for SNOMED 22298006 (Myocardial infarction), ICD-10 I21.0 (STEMI anterior), I21.9 (AMI unspecified). Query: Condition?code=http://snomed.info/sct|22298006,http://hl7.org/fhir/sid/icd-10-cm|I21.0,http://hl7.org/fhir/sid/icd-10-cm|I21.9"
+      "elapsed_sec": 64.2,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|22298006,http://hl7.org/fhir/sid/icd-10-cm|I21.0,http://hl7.org/fhir/sid/icd-10-cm|I21.01,http://hl7.org/fhir/sid/icd-10-cm|I21.02,http://hl7.org/fhir/sid/icd-10-cm|I21.09,http://hl7.org/fhir/sid/icd-10-cm|I21.3,http://hl7.org/fhir/sid/icd-10-cm|I21.9",
+      "additional_query_urls": [
+       "Condition?code:below=http://hl7.org/fhir/sid/icd-9-cm|410,http://hl7.org/fhir/sid/icd-9-cm|411"
+      ],
+      "raw_response": "Condition?code=http://snomed.info/sct|22298006,http://hl7.org/fhir/sid/icd-10-cm|I21.0,http://hl7.org/fhir/sid/icd-10-cm|I21.01,http://hl7.org/fhir/sid/icd-10-cm|I21.02,http://hl7.org/fhir/sid/icd-10-cm|I21.09,http://hl7.org/fhir/sid/icd-10-cm|I21.3,http://hl7.org/fhir/sid/icd-10-cm|I21.9\nCondition?code:below=http://hl7.org/fhir/sid/icd-9-cm|410,http://hl7.org/fhir/sid/icd-9-cm|411",
+      "prompt_text": "I need to find patients with a documented acute myocardial infarction diagnosis per the PheKB BioVU algorithm. Search Condition resources using both SNOMED CT (the general myocardial infarction concept) and ICD-10-CM codes covering ST-elevation MI of the anterior wall and unspecified AMI; legacy data may also carry ICD-9-CM codes in the 410\u2013411 range. A robust search should cover all relevant codes across these terminology systems rather than relying on a single code."
      },
      "2-naive": {
       "precision": 1.0,
@@ -1301,20 +1314,33 @@
      },
      "2-expert": {
       "precision": 1.0,
-      "recall": 1.0,
-      "f1": 1.0,
-      "passed": true,
+      "recall": 0.1853,
+      "f1": 0.3127,
+      "passed": false,
       "expected_count": 313,
-      "actual_count": 313,
-      "elapsed_sec": 37.5,
-      "queries_generated": 1,
-      "primary_query_url": "Condition?code=http://snomed.info/sct|22298006,http://hl7.org/fhir/sid/icd-10-cm|I21.0,http://hl7.org/fhir/sid/icd-10-cm|I21.9",
-      "additional_query_urls": [],
-      "raw_response": "Condition?code=http://snomed.info/sct|22298006,http://hl7.org/fhir/sid/icd-10-cm|I21.0,http://hl7.org/fhir/sid/icd-10-cm|I21.9",
-      "prompt_text": "Search Condition for SNOMED 22298006 (Myocardial infarction), ICD-10 I21.0 (STEMI anterior), I21.9 (AMI unspecified). Query: Condition?code=http://snomed.info/sct|22298006,http://hl7.org/fhir/sid/icd-10-cm|I21.0,http://hl7.org/fhir/sid/icd-10-cm|I21.9",
+      "actual_count": 58,
+      "elapsed_sec": 200.6,
+      "queries_generated": 13,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|22298006",
+      "additional_query_urls": [
+       "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|I21.0,http://hl7.org/fhir/sid/icd-10-cm|I21.01,http://hl7.org/fhir/sid/icd-10-cm|I21.02,http://hl7.org/fhir/sid/icd-10-cm|I21.09,http://hl7.org/fhir/sid/icd-10-cm|I21.9",
+       "Condition?code=http://hl7.org/fhir/sid/icd-9-cm|410,http://hl7.org/fhir/sid/icd-9-cm|410.0,http://hl7.org/fhir/sid/icd-9-cm|410.00,http://hl7.org/fhir/sid/icd-9-cm|410.01,http://hl7.org/fhir/sid/icd-9-cm|410.02",
+       "Condition?code=http://hl7.org/fhir/sid/icd-9-cm|410.1,http://hl7.org/fhir/sid/icd-9-cm|410.10,http://hl7.org/fhir/sid/icd-9-cm|410.11,http://hl7.org/fhir/sid/icd-9-cm|410.12",
+       "Condition?code=http://hl7.org/fhir/sid/icd-9-cm|410.2,http://hl7.org/fhir/sid/icd-9-cm|410.20,http://hl7.org/fhir/sid/icd-9-cm|410.21,http://hl7.org/fhir/sid/icd-9-cm|410.22",
+       "Condition?code=http://hl7.org/fhir/sid/icd-9-cm|410.3,http://hl7.org/fhir/sid/icd-9-cm|410.30,http://hl7.org/fhir/sid/icd-9-cm|410.31,http://hl7.org/fhir/sid/icd-9-cm|410.32",
+       "Condition?code=http://hl7.org/fhir/sid/icd-9-cm|410.4,http://hl7.org/fhir/sid/icd-9-cm|410.40,http://hl7.org/fhir/sid/icd-9-cm|410.41,http://hl7.org/fhir/sid/icd-9-cm|410.42",
+       "Condition?code=http://hl7.org/fhir/sid/icd-9-cm|410.5,http://hl7.org/fhir/sid/icd-9-cm|410.50,http://hl7.org/fhir/sid/icd-9-cm|410.51,http://hl7.org/fhir/sid/icd-9-cm|410.52",
+       "Condition?code=http://hl7.org/fhir/sid/icd-9-cm|410.6,http://hl7.org/fhir/sid/icd-9-cm|410.60,http://hl7.org/fhir/sid/icd-9-cm|410.61,http://hl7.org/fhir/sid/icd-9-cm|410.62",
+       "Condition?code=http://hl7.org/fhir/sid/icd-9-cm|410.7,http://hl7.org/fhir/sid/icd-9-cm|410.70,http://hl7.org/fhir/sid/icd-9-cm|410.71,http://hl7.org/fhir/sid/icd-9-cm|410.72",
+       "Condition?code=http://hl7.org/fhir/sid/icd-9-cm|410.8,http://hl7.org/fhir/sid/icd-9-cm|410.80,http://hl7.org/fhir/sid/icd-9-cm|410.81,http://hl7.org/fhir/sid/icd-9-cm|410.82",
+       "Condition?code=http://hl7.org/fhir/sid/icd-9-cm|410.9,http://hl7.org/fhir/sid/icd-9-cm|410.90,http://hl7.org/fhir/sid/icd-9-cm|410.91,http://hl7.org/fhir/sid/icd-9-cm|410.92",
+       "Condition?code=http://hl7.org/fhir/sid/icd-9-cm|411,http://hl7.org/fhir/sid/icd-9-cm|411.0,http://hl7.org/fhir/sid/icd-9-cm|411.1,http://hl7.org/fhir/sid/icd-9-cm|411.8,http://hl7.org/fhir/sid/icd-9-cm|411.81,http://hl7.org/fhir/sid/icd-9-cm|411.89"
+      ],
+      "raw_response": "Condition?code=http://snomed.info/sct|22298006\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|I21.0,http://hl7.org/fhir/sid/icd-10-cm|I21.01,http://hl7.org/fhir/sid/icd-10-cm|I21.02,http://hl7.org/fhir/sid/icd-10-cm|I21.09,http://hl7.org/fhir/sid/icd-10-cm|I21.9\nCondition?code=http://hl7.org/fhir/sid/icd-9-cm|410,http://hl7.org/fhir/sid/icd-9-cm|410.0,http://hl7.org/fhir/sid/icd-9-cm|410.00,http://hl7.org/fhir/sid/icd-9-cm|410.01,http://hl7.org/fhir/sid/icd-9-cm|410.02\nCondition?code=http://hl7.org/fhir/sid/icd-9-cm|410.1,http://hl7.org/fhir/sid/icd-9-cm|410.10,http://hl7.org/fhir/sid/icd-9-cm|410.11,http://hl7.org/fhir/sid/icd-9-cm|410.12\nCondition?code=http://hl7.org/fhir/sid/icd-9-cm|410.2,http://hl7.org/fhir/sid/icd-9-cm|410.20,http://hl7.org/fhir/sid/icd-9-cm|410.21,http://hl7.org/fhir/sid/icd-9-cm|410.22\nCondition?code=http://hl7.org/fhir/sid/icd-9-cm|410.3,http://hl7.org/fhir/sid/icd-9-cm|410.30,http://hl7.org/fhir/sid/icd-9-cm|410.31,http://hl7.org/fhir/sid/icd-9-cm|410.32\nCondition?code=http://hl7.org/fhir/sid/icd-9-cm|410.4,http://hl7.org/fhir/sid/icd-9-cm|410.40,http://hl7.org/fhir/sid/icd-9-cm|410.41,http://hl7.org/fhir/sid/icd-9-cm|410.42\nCondition?code=http://hl7.org/fhir/sid/icd-9-cm|410.5,http://hl7.org/fhir/sid/icd-9-cm|410.50,http://hl7.org/fhir/sid/icd-9-cm|410.51,http://hl7.org/fhir/sid/icd-9-cm|410.52\nCondition?code=http://hl7.org/fhir/sid/icd-9-cm|410.6,http://hl7.org/fhir/sid/icd-9-cm|410.60,http://hl7.org/fhir/sid/icd-9-cm|410.61,http://hl7.org/fhir/sid/icd-9-cm|410.62\nCondition?code=http://hl7.org/fhir/sid/icd-9-cm|410.7,http://hl7.org/fhir/sid/icd-9-cm|410.70,http://hl7.org/fhir/sid/icd-9-cm|410.71,http://hl7.org/fhir/sid/icd-9-cm|410.72\nCondition?code=http://hl7.org/fhir/sid/icd-9-cm|410.8,http://hl7.org/fhir/sid/icd-9-cm|410.80,http://hl7.org/fhir/sid/icd-9-cm|410.81,http://hl7.org/fhir/sid/icd-9-cm|410.82\nCondition?code=http://hl7.org/fhir/sid/icd-9-cm|410.9,http://hl7.org/fhir/sid/icd-9-cm|410.90,http://hl7.org/fhir/sid/icd-9-cm|410.91,http://hl7.org/fhir/sid/icd-9-cm|410.92\nCondition?code=http://hl7.org/fhir/sid/icd-9-cm|411,http://hl7.org/fhir/sid/icd-9-cm|411.0,http://hl7.org/fhir/sid/icd-9-cm|411.1,http://hl7.org/fhir/sid/icd-9-cm|411.8,http://hl7.org/fhir/sid/icd-9-cm|411.81,http://hl7.org/fhir/sid/icd-9-cm|411.89",
+      "prompt_text": "I need to find patients with a documented acute myocardial infarction diagnosis per the PheKB BioVU algorithm. Search Condition resources using both SNOMED CT (the general myocardial infarction concept) and ICD-10-CM codes covering ST-elevation MI of the anterior wall and unspecified AMI; legacy data may also carry ICD-9-CM codes in the 410\u2013411 range. A robust search should cover all relevant codes across these terminology systems rather than relying on a single code.",
       "run_metadata": {
-       "output_tokens": 211,
-       "tool_calls_count": 0,
+       "output_tokens": 3902,
+       "tool_calls_count": 50,
        "stop_reason": "complete",
        "fallback_used": false
       }
@@ -1361,20 +1387,20 @@
      },
      "3-expert": {
       "precision": 1.0,
-      "recall": 1.0,
-      "f1": 1.0,
+      "recall": 0.8147,
+      "f1": 0.8979,
       "passed": true,
       "expected_count": 313,
-      "actual_count": 313,
-      "elapsed_sec": 42.1,
+      "actual_count": 255,
+      "elapsed_sec": 202.9,
       "queries_generated": 1,
-      "primary_query_url": "Condition?code=http://snomed.info/sct|22298006,http://hl7.org/fhir/sid/icd-10-cm|I21.0,http://hl7.org/fhir/sid/icd-10-cm|I21.9",
+      "primary_query_url": "Condition?code=http://snomed.info/sct|57054005,http://snomed.info/sct|54329005,http://snomed.info/sct|703164000,http://hl7.org/fhir/sid/icd-10-cm|I21,http://hl7.org/fhir/sid/icd-10-cm|I21.0,http://hl7.org/fhir/sid/icd-10-cm|I21.01,http://hl7.org/fhir/sid/icd-10-cm|I21.02,http://hl7.org/fhir/sid/icd-10-cm|I21.09,http://hl7.org/fhir/sid/icd-10-cm|I21.9,http://hl7.org/fhir/sid/icd-9-cm|410,http://hl7.org/fhir/sid/icd-9-cm|410.0,http://hl7.org/fhir/sid/icd-9-cm|410.00,http://hl7.org/fhir/sid/icd-9-cm|410.01,http://hl7.org/fhir/sid/icd-9-cm|410.02,http://hl7.org/fhir/sid/icd-9-cm|410.1,http://hl7.org/fhir/sid/icd-9-cm|410.10,http://hl7.org/fhir/sid/icd-9-cm|410.11,http://hl7.org/fhir/sid/icd-9-cm|410.12,http://hl7.org/fhir/sid/icd-9-cm|410.2,http://hl7.org/fhir/sid/icd-9-cm|410.20,http://hl7.org/fhir/sid/icd-9-cm|410.21,http://hl7.org/fhir/sid/icd-9-cm|410.22,http://hl7.org/fhir/sid/icd-9-cm|410.3,http://hl7.org/fhir/sid/icd-9-cm|410.30,http://hl7.org/fhir/sid/icd-9-cm|410.31,http://hl7.org/fhir/sid/icd-9-cm|410.32,http://hl7.org/fhir/sid/icd-9-cm|410.4,http://hl7.org/fhir/sid/icd-9-cm|410.40,http://hl7.org/fhir/sid/icd-9-cm|410.41,http://hl7.org/fhir/sid/icd-9-cm|410.42,http://hl7.org/fhir/sid/icd-9-cm|410.5,http://hl7.org/fhir/sid/icd-9-cm|410.50,http://hl7.org/fhir/sid/icd-9-cm|410.51,http://hl7.org/fhir/sid/icd-9-cm|410.52,http://hl7.org/fhir/sid/icd-9-cm|410.6,http://hl7.org/fhir/sid/icd-9-cm|410.60,http://hl7.org/fhir/sid/icd-9-cm|410.61,http://hl7.org/fhir/sid/icd-9-cm|410.62,http://hl7.org/fhir/sid/icd-9-cm|410.7,http://hl7.org/fhir/sid/icd-9-cm|410.70,http://hl7.org/fhir/sid/icd-9-cm|410.71,http://hl7.org/fhir/sid/icd-9-cm|410.72,http://hl7.org/fhir/sid/icd-9-cm|410.8,http://hl7.org/fhir/sid/icd-9-cm|410.80,http://hl7.org/fhir/sid/icd-9-cm|410.81,http://hl7.org/fhir/sid/icd-9-cm|410.82,http://hl7.org/fhir/sid/icd-9-cm|410.9,http://hl7.org/fhir/sid/icd-9-cm|410.90,http://hl7.org/fhir/sid/icd-9-cm|410.91,http://hl7.org/fhir/sid/icd-9-cm|410.92,http://hl7.org/fhir/sid/icd-9-cm|411,http://hl7.org/fhir/sid/icd-9-cm|411.0,http://hl7.org/fhir/sid/icd-9-cm|411.1,http://hl7.org/fhir/sid/icd-9-cm|411.8,http://hl7.org/fhir/sid/icd-9-cm|411.81,http://hl7.org/fhir/sid/icd-9-cm|411.89",
       "additional_query_urls": [],
-      "raw_response": "Condition?code=http://snomed.info/sct|22298006,http://hl7.org/fhir/sid/icd-10-cm|I21.0,http://hl7.org/fhir/sid/icd-10-cm|I21.9",
-      "prompt_text": "Search Condition for SNOMED 22298006 (Myocardial infarction), ICD-10 I21.0 (STEMI anterior), I21.9 (AMI unspecified). Query: Condition?code=http://snomed.info/sct|22298006,http://hl7.org/fhir/sid/icd-10-cm|I21.0,http://hl7.org/fhir/sid/icd-10-cm|I21.9",
+      "raw_response": "Condition?code=http://snomed.info/sct|57054005,http://snomed.info/sct|54329005,http://snomed.info/sct|703164000,http://hl7.org/fhir/sid/icd-10-cm|I21,http://hl7.org/fhir/sid/icd-10-cm|I21.0,http://hl7.org/fhir/sid/icd-10-cm|I21.01,http://hl7.org/fhir/sid/icd-10-cm|I21.02,http://hl7.org/fhir/sid/icd-10-cm|I21.09,http://hl7.org/fhir/sid/icd-10-cm|I21.9,http://hl7.org/fhir/sid/icd-9-cm|410,http://hl7.org/fhir/sid/icd-9-cm|410.0,http://hl7.org/fhir/sid/icd-9-cm|410.00,http://hl7.org/fhir/sid/icd-9-cm|410.01,http://hl7.org/fhir/sid/icd-9-cm|410.02,http://hl7.org/fhir/sid/icd-9-cm|410.1,http://hl7.org/fhir/sid/icd-9-cm|410.10,http://hl7.org/fhir/sid/icd-9-cm|410.11,http://hl7.org/fhir/sid/icd-9-cm|410.12,http://hl7.org/fhir/sid/icd-9-cm|410.2,http://hl7.org/fhir/sid/icd-9-cm|410.20,http://hl7.org/fhir/sid/icd-9-cm|410.21,http://hl7.org/fhir/sid/icd-9-cm|410.22,http://hl7.org/fhir/sid/icd-9-cm|410.3,http://hl7.org/fhir/sid/icd-9-cm|410.30,http://hl7.org/fhir/sid/icd-9-cm|410.31,http://hl7.org/fhir/sid/icd-9-cm|410.32,http://hl7.org/fhir/sid/icd-9-cm|410.4,http://hl7.org/fhir/sid/icd-9-cm|410.40,http://hl7.org/fhir/sid/icd-9-cm|410.41,http://hl7.org/fhir/sid/icd-9-cm|410.42,http://hl7.org/fhir/sid/icd-9-cm|410.5,http://hl7.org/fhir/sid/icd-9-cm|410.50,http://hl7.org/fhir/sid/icd-9-cm|410.51,http://hl7.org/fhir/sid/icd-9-cm|410.52,http://hl7.org/fhir/sid/icd-9-cm|410.6,http://hl7.org/fhir/sid/icd-9-cm|410.60,http://hl7.org/fhir/sid/icd-9-cm|410.61,http://hl7.org/fhir/sid/icd-9-cm|410.62,http://hl7.org/fhir/sid/icd-9-cm|410.7,http://hl7.org/fhir/sid/icd-9-cm|410.70,http://hl7.org/fhir/sid/icd-9-cm|410.71,http://hl7.org/fhir/sid/icd-9-cm|410.72,http://hl7.org/fhir/sid/icd-9-cm|410.8,http://hl7.org/fhir/sid/icd-9-cm|410.80,http://hl7.org/fhir/sid/icd-9-cm|410.81,http://hl7.org/fhir/sid/icd-9-cm|410.82,http://hl7.org/fhir/sid/icd-9-cm|410.9,http://hl7.org/fhir/sid/icd-9-cm|410.90,http://hl7.org/fhir/sid/icd-9-cm|410.91,http://hl7.org/fhir/sid/icd-9-cm|410.92,http://hl7.org/fhir/sid/icd-9-cm|411,http://hl7.org/fhir/sid/icd-9-cm|411.0,http://hl7.org/fhir/sid/icd-9-cm|411.1,http://hl7.org/fhir/sid/icd-9-cm|411.8,http://hl7.org/fhir/sid/icd-9-cm|411.81,http://hl7.org/fhir/sid/icd-9-cm|411.89",
+      "prompt_text": "I need to find patients with a documented acute myocardial infarction diagnosis per the PheKB BioVU algorithm. Search Condition resources using both SNOMED CT (the general myocardial infarction concept) and ICD-10-CM codes covering ST-elevation MI of the anterior wall and unspecified AMI; legacy data may also carry ICD-9-CM codes in the 410\u2013411 range. A robust search should cover all relevant codes across these terminology systems rather than relying on a single code.",
       "run_metadata": {
-       "output_tokens": 149,
-       "tool_calls_count": 3,
+       "output_tokens": 2194,
+       "tool_calls_count": 54,
        "stop_reason": "complete",
        "fallback_used": false
       }
@@ -1591,12 +1617,12 @@
       "passed": true,
       "expected_count": 61,
       "actual_count": 61,
-      "elapsed_sec": 0.1,
+      "elapsed_sec": 11.5,
       "queries_generated": 1,
       "primary_query_url": "Observation?code=http://loinc.org|10839-9&value-quantity=ge0.10|http://unitsofmeasure.org|ng/mL",
       "additional_query_urls": [],
       "raw_response": "Observation?code=http://loinc.org|10839-9&value-quantity=ge0.10|http://unitsofmeasure.org|ng/mL",
-      "prompt_text": "Search Observation for LOINC 10839-9 (Troponin I.cardiac) with value-quantity ge0.10 ng/mL. Query: Observation?code=http://loinc.org|10839-9&value-quantity=ge0.10"
+      "prompt_text": "I need to find patients with elevated cardiac troponin I consistent with acute myocardial infarction, using the threshold defined by the PheKB BioVU algorithm. Query Observation resources for cardiac troponin I in serum or plasma using the appropriate LOINC code, and filter for values at or above the AMI confirmation threshold \u2014 specifically a troponin I level of at least 0.10 ng/mL. This is the primary biomarker confirming AMI in the BioVU phenotype algorithm."
      },
      "2-naive": {
       "precision": 1.0,
@@ -1645,12 +1671,12 @@
       "passed": true,
       "expected_count": 61,
       "actual_count": 61,
-      "elapsed_sec": 14.9,
+      "elapsed_sec": 15.0,
       "queries_generated": 1,
       "primary_query_url": "Observation?code=http://loinc.org|10839-9&value-quantity=ge0.10",
       "additional_query_urls": [],
       "raw_response": "Observation?code=http://loinc.org|10839-9&value-quantity=ge0.10",
-      "prompt_text": "Search Observation for LOINC 10839-9 (Troponin I.cardiac) with value-quantity ge0.10 ng/mL. Query: Observation?code=http://loinc.org|10839-9&value-quantity=ge0.10",
+      "prompt_text": "I need to find patients with elevated cardiac troponin I consistent with acute myocardial infarction, using the threshold defined by the PheKB BioVU algorithm. Query Observation resources for cardiac troponin I in serum or plasma using the appropriate LOINC code, and filter for values at or above the AMI confirmation threshold \u2014 specifically a troponin I level of at least 0.10 ng/mL. This is the primary biomarker confirming AMI in the BioVU phenotype algorithm.",
       "run_metadata": {
        "output_tokens": 34,
        "tool_calls_count": 1,
@@ -1705,12 +1731,12 @@
       "passed": true,
       "expected_count": 61,
       "actual_count": 61,
-      "elapsed_sec": 12.9,
+      "elapsed_sec": 14.2,
       "queries_generated": 1,
       "primary_query_url": "Observation?code=http://loinc.org|10839-9&value-quantity=ge0.10|http://unitsofmeasure.org|ng/mL",
       "additional_query_urls": [],
       "raw_response": "Observation?code=http://loinc.org|10839-9&value-quantity=ge0.10|http://unitsofmeasure.org|ng/mL",
-      "prompt_text": "Search Observation for LOINC 10839-9 (Troponin I.cardiac) with value-quantity ge0.10 ng/mL. Query: Observation?code=http://loinc.org|10839-9&value-quantity=ge0.10",
+      "prompt_text": "I need to find patients with elevated cardiac troponin I consistent with acute myocardial infarction, using the threshold defined by the PheKB BioVU algorithm. Query Observation resources for cardiac troponin I in serum or plasma using the appropriate LOINC code, and filter for values at or above the AMI confirmation threshold \u2014 specifically a troponin I level of at least 0.10 ng/mL. This is the primary biomarker confirming AMI in the BioVU phenotype algorithm.",
       "run_metadata": {
        "output_tokens": 53,
        "tool_calls_count": 1,
@@ -1755,12 +1781,12 @@
       "passed": true,
       "expected_count": 61,
       "actual_count": 61,
-      "elapsed_sec": 0.1,
+      "elapsed_sec": 11.0,
       "queries_generated": 1,
       "primary_query_url": "Observation?code=http://loinc.org|10839-9&value-quantity=ge0.10|http://unitsofmeasure.org|ng/mL",
       "additional_query_urls": [],
       "raw_response": "Observation?code=http://loinc.org|10839-9&value-quantity=ge0.10|http://unitsofmeasure.org|ng/mL",
-      "prompt_text": "Search Observation for LOINC 10839-9 (Troponin I.cardiac) with value-quantity ge0.10 ng/mL. Query: Observation?code=http://loinc.org|10839-9&value-quantity=ge0.10"
+      "prompt_text": "I need to find patients with elevated cardiac troponin I consistent with acute myocardial infarction, using the threshold defined by the PheKB BioVU algorithm. Query Observation resources for cardiac troponin I in serum or plasma using the appropriate LOINC code, and filter for values at or above the AMI confirmation threshold \u2014 specifically a troponin I level of at least 0.10 ng/mL. This is the primary biomarker confirming AMI in the BioVU phenotype algorithm."
      }
     },
     "copilot:claude-sonnet-4.6": {
@@ -1802,12 +1828,14 @@
       "passed": true,
       "expected_count": 61,
       "actual_count": 61,
-      "elapsed_sec": 20.5,
-      "queries_generated": 1,
-      "primary_query_url": "Observation?code=http://loinc.org|10839-9&value-quantity=ge0.10|http://unitsofmeasure.org|ng/mL",
-      "additional_query_urls": [],
-      "raw_response": "## FHIR Query: Troponin I Cardiac \u2265 0.10 ng/mL\n\n```\nObservation?code=http://loinc.org|10839-9&value-quantity=ge0.10|http://unitsofmeasure.org|ng/mL\n```\n\n---\n\n### Query Breakdown\n\n| Component | Value | Purpose |\n|-----------|-------|---------|\n| `ResourceType` | `Observation` | Clinical measurement/result |\n| `code` | `http://loinc.org\\|10839-9` | Troponin I.cardiac (LOINC) |\n| `value-quantity` | `ge0.10` | Greater than or equal to 0.10 |\n| Unit system | `http://unitsofmeasure.org` | UCUM standard units |\n| Unit code | `ng/mL` | Nanograms per milliliter |\n\n---\n\n### Key Notes\n\n- \u26a0\ufe0f **Unit specificity matters** \u2014 including `|http://unitsofmeasure.org|ng/mL` prevents false matches where values are stored in different units (e.g., \u00b5g/L)\n- \ud83d\udd2c **Clinical context**: A cTnI \u2265 0.10 ng/mL typically indicates **myocardial injury** (threshold varies by assay/lab)\n- \ud83d\udca1 **Optional additions** to narrow results:\n  - Add `&status=final` \u2014 only finalized results\n  - Add `&date=ge2026-01-01` \u2014 recent results only\n  - Add `&patient={id}` \u2014 specific patient",
-      "prompt_text": "Search Observation for LOINC 10839-9 (Troponin I.cardiac) with value-quantity ge0.10 ng/mL. Query: Observation?code=http://loinc.org|10839-9&value-quantity=ge0.10"
+      "elapsed_sec": 31.1,
+      "queries_generated": 2,
+      "primary_query_url": "Observation?code=http://loinc.org|10839-9&value-quantity=ge0.10|http://unitsofmeasure.org|ng/mL&status=final",
+      "additional_query_urls": [
+       "Observation?code=http://loinc.org|42757-5&value-quantity=ge0.10|http://unitsofmeasure.org|ng/mL&status=final"
+      ],
+      "raw_response": "## FHIR Query: Elevated Cardiac Troponin I \u2265 0.10 ng/mL (BioVU AMI Threshold)\n\n```\nObservation?code=http://loinc.org|10839-9&value-quantity=ge0.10|http://unitsofmeasure.org|ng/mL&status=final\n```\n\n---\n\n### Query Breakdown\n\n| Component | Value | Rationale |\n|---|---|---|\n| **Resource** | `Observation` | Lab result measurement |\n| **LOINC Code** | `10839-9` | *Troponin I.cardiac [Mass/volume] in Serum or Plasma* \u2014 the standard code used in the BioVU phenotyping algorithm |\n| **value-quantity** | `ge0.10` | \u2265 0.10 ng/mL \u2014 PheKB BioVU AMI confirmation threshold |\n| **Unit system** | `http://unitsofmeasure.org` | UCUM units system |\n| **Unit code** | `ng/mL` | Nanograms per milliliter (UCUM) |\n| **status** | `final` | Only confirmed/finalized results |\n\n---\n\n### Clinical Context Notes\n\n- **LOINC `10839-9`** is the canonical code for conventional (standard-sensitivity) cardiac troponin I in serum or plasma, aligned with the BioVU algorithm specification.\n- If your system also captures **high-sensitivity troponin I**, consider adding a second query:\n\n```\nObservation?code=http://loinc.org|42757-5&value-quantity=ge0.10|http://unitsofmeasure.org|ng/mL&status=final\n```\n\n*(LOINC `42757-5` = Troponin I.cardiac [Mass/volume] in Serum or Plasma by High sensitivity method)*\n\n- To retrieve associated patients in a single request, append `&_include=Observation:subject` to either query.",
+      "prompt_text": "I need to find patients with elevated cardiac troponin I consistent with acute myocardial infarction, using the threshold defined by the PheKB BioVU algorithm. Query Observation resources for cardiac troponin I in serum or plasma using the appropriate LOINC code, and filter for values at or above the AMI confirmation threshold \u2014 specifically a troponin I level of at least 0.10 ng/mL. This is the primary biomarker confirming AMI in the BioVU phenotype algorithm."
      },
      "2-naive": {
       "precision": 1.0,
@@ -1850,23 +1878,23 @@
       }
      },
      "2-expert": {
-      "precision": 1.0,
-      "recall": 1.0,
-      "f1": 1.0,
-      "passed": true,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
       "expected_count": 61,
-      "actual_count": 61,
-      "elapsed_sec": 43.6,
+      "actual_count": 0,
+      "elapsed_sec": 76.4,
       "queries_generated": 2,
-      "primary_query_url": "Observation?code=http://loinc.org|10839-9&value-quantity=ge0.10",
+      "primary_query_url": "Observation?code=http://loinc.org\\|10839-9",
       "additional_query_urls": [
-       "Observation?code=http://loinc.org|10839-9&value-quantity=ge0.10||ng/mL"
+       "Observation?code=http://loinc.org|10839-9&value-quantity=ge0.10|http://unitsofmeasure.org|ng/mL"
       ],
-      "raw_response": "Here's what the investigation revealed:\n\n---\n\n### \u2705 Query Results Summary\n\n| Attribute | Detail |\n|---|---|\n| **FHIR Server** | FHIR R4 (4.0.1) \u2014 Azure FHIR Server v4.0.770 |\n| **Resources Returned** | 10 matching Observations |\n| **Code System on Server** | `http://loinc.org` \u2705 \u2014 LOINC is the sole coding system used for this lab |\n| **LOINC Code Confirmed** | `10839-9` \u2192 *\"Troponin I.cardiac [Mass/volume] in Serum or Plasma\"* |\n| **Category** | `laboratory` (from `http://terminology.hl7.org/CodeSystem/observation-category`) |\n| **value-quantity Filter** | `ge0.10` applied successfully \u2014 all 10 results passed the threshold |\n\n---\n\n### \ud83d\udd0d Validation Notes\n\n- **All 3 sampled resources** consistently use `http://loinc.org|10839-9` \u2014 no secondary coding systems (no SNOMED, no local codes). This server is clean and LOINC-only for this lab.\n- **Category is `laboratory`** on all records. You could optionally add `&category=laboratory` to be even more precise, but it's not necessary here.\n- The `value-quantity=ge0.10` filter is working. For maximum precision, you can pin the **UCUM unit** (`ng/mL`) to avoid matching records stored in different units (e.g., \u00b5g/L):\n\n---\n\n### \u2705 Final Confirmed Query\n\n**Basic (as submitted \u2014 works correctly):**\n```\nObservation?code=http://loinc.org|10839-9&value-quantity=ge0.10\n```\n\n**Recommended (with explicit UCUM unit for safety):**\n```\nObservation?code=http://loinc.org|10839-9&value-quantity=ge0.10||ng/mL\n```\n\n---\n\n`Observation?code=http://loinc.org|10839-9&value-quantity=ge0.10||ng/mL`",
-      "prompt_text": "Search Observation for LOINC 10839-9 (Troponin I.cardiac) with value-quantity ge0.10 ng/mL. Query: Observation?code=http://loinc.org|10839-9&value-quantity=ge0.10",
+      "raw_response": "All evidence is confirmed. Here's a summary of every finding:\n\n---\n\n### \ud83d\udd2c Evidence Trail\n\n| Step | Finding |\n|------|---------|\n| **LOINC lookup** | `10839-9` = *Troponin I.cardiac [Mass/volume] in Serum or Plasma* \u2014 the standard mass-concentration (MCnc) panel code |\n| **Server sampling** | All 5 sampled Observation resources use **LOINC `10839-9`** \u2014 the server is consistent |\n| **VSAC value set** | \"Cardiac troponin LOINC\" (OID `2.16.840.1.113762.1.4.1078.1136`) confirms `10839-9` as a member; 6 total troponin-I LOINC codes exist, but `10839-9` is the only one present on this server |\n| **Total observations** | `Observation?code=http://loinc.org\\|10839-9` \u2192 **61 total** |\n| **`value-quantity` filter proof** | `ge999 ng/mL` \u2192 **0** (filter IS actively applied, not silently ignored) |\n| **`ge0.10` filter** | Returns **61** (all troponin-I records \u2265 0.10 ng/mL) |\n| **`lt0.10` filter** | Returns **0** (no sub-threshold records) \u2014 consistent with AMI synthetic cohort |\n| **Unit** | `http://unitsofmeasure.org\\|ng/mL` (UCUM) confirmed accepted by this Azure FHIR server |\n\n### \u2705 Clinical Logic (PheKB BioVU AMI Algorithm)\n- **LOINC `10839-9`**: canonical code for conventional (non-high-sensitivity) cardiac troponin I in serum/plasma\n- **Threshold \u2265 0.10 ng/mL**: the BioVU AMI phenotype uses this cutoff as the primary biomarker confirmation criterion for type 1 AMI\n- **`value-quantity=ge0.10`**: FHIR R4 quantity comparator prefix for \"greater than or equal to\"\n\n---\n\n**FINAL ANSWER:**\n\n```\nObservation?code=http://loinc.org|10839-9&value-quantity=ge0.10|http://unitsofmeasure.org|ng/mL\n```",
+      "prompt_text": "I need to find patients with elevated cardiac troponin I consistent with acute myocardial infarction, using the threshold defined by the PheKB BioVU algorithm. Query Observation resources for cardiac troponin I in serum or plasma using the appropriate LOINC code, and filter for values at or above the AMI confirmation threshold \u2014 specifically a troponin I level of at least 0.10 ng/mL. This is the primary biomarker confirming AMI in the BioVU phenotype algorithm.",
       "run_metadata": {
-       "output_tokens": 1107,
-       "tool_calls_count": 3,
+       "output_tokens": 1223,
+       "tool_calls_count": 11,
        "stop_reason": "complete",
        "fallback_used": false
       }
@@ -1918,15 +1946,15 @@
       "passed": true,
       "expected_count": 61,
       "actual_count": 61,
-      "elapsed_sec": 47.2,
+      "elapsed_sec": 91.8,
       "queries_generated": 1,
-      "primary_query_url": "Observation?code=http://loinc.org|10839-9&value-quantity=ge0.10|http://unitsofmeasure.org|ng/mL",
+      "primary_query_url": "Observation?code=http://loinc.org|10839-9&value-quantity=ge0.10||ng/mL",
       "additional_query_urls": [],
-      "raw_response": "All evidence checks out. Here is a summary of findings:\n\n---\n\n### \ud83d\udd2c Troponin I Threshold Query \u2014 Validated Results\n\n| Check | Result |\n|---|---|\n| **LOINC 10839-9 confirmed** | \u2705 *Troponin I.cardiac [Mass/volume] in Serum or Plasma* (LOINC v2.82) |\n| **Server code system** | \u2705 Uses `http://loinc.org` \u2014 exact match |\n| **Threshold query `ge0.10 ng/mL`** | \u2705 **61 observations** returned |\n| **Total Troponin I pool** | 61 (all records on this server have values \u2265 0.10 ng/mL \u2014 consistent with a synthetic dataset seeded with clinically notable / abnormal values) |\n| **`value-quantity` support** | \u2705 Standard FHIR R4 parameter; server is FHIR 4.0.1 (Azure) |\n\n> **Note on equal counts (61/61):** The unfiltered and threshold-filtered counts are identical, strongly indicating this synthetic dataset was deliberately populated with elevated troponin values only (\u2265 0.10 ng/mL), which is the commonly cited clinical decision threshold for myocardial injury.\n\n---\n\n**FINAL ANSWER:**\n\n```\nObservation?code=http://loinc.org|10839-9&value-quantity=ge0.10|http://unitsofmeasure.org|ng/mL\n```",
-      "prompt_text": "Search Observation for LOINC 10839-9 (Troponin I.cardiac) with value-quantity ge0.10 ng/mL. Query: Observation?code=http://loinc.org|10839-9&value-quantity=ge0.10",
+      "raw_response": "The `value-quantity` filter is confirmed working \u2014 `ge100` returns 0 and `ge0.001` returns 61, meaning **all 61 troponin I observations on this server carry values \u2265 0.10 ng/mL**, validating the BioVU threshold query is accurate and well-calibrated.\n\n---\n\n### Evidence Summary\n\n| Finding | Detail |\n|---|---|\n| **Playbooks applied** | **7 \u2014 Threshold** (`value-quantity=ge0.10`) + **8 \u2014 Multi-system code list** (LOINC) |\n| **LOINC code confirmed on server** | `10839-9` \u2014 *Troponin I.cardiac [Mass/volume] in Serum or Plasma* |\n| **Other LOINC troponin I variants** (from Optum VSAC active set) | `89579-7` (high sensitivity), `49563-0` (\u22640.01 ng/mL detection limit), `106906-1` \u2014 **all returned 0 on this server; not present** |\n| **Value-quantity filter validated** | `ge100 ng/mL` \u2192 0; `ge0.001 ng/mL` \u2192 61; **`ge0.10 ng/mL` \u2192 61** \u2705 |\n| **Unit syntax that works on this server** | `||ng/mL` (bare unit, no UCUM system URI needed) |\n| **BioVU PheKB AMI threshold** | \u2265 0.10 ng/mL (traditional cTnI assay cutoff; not high-sensitivity) |\n| **Matching observations** | **61** elevated cardiac troponin I results \u2265 0.10 ng/mL |\n\n---\n\n**FINAL ANSWER:**\n\n```\nObservation?code=http://loinc.org|10839-9&value-quantity=ge0.10||ng/mL\n```",
+      "prompt_text": "I need to find patients with elevated cardiac troponin I consistent with acute myocardial infarction, using the threshold defined by the PheKB BioVU algorithm. Query Observation resources for cardiac troponin I in serum or plasma using the appropriate LOINC code, and filter for values at or above the AMI confirmation threshold \u2014 specifically a troponin I level of at least 0.10 ng/mL. This is the primary biomarker confirming AMI in the BioVU phenotype algorithm.",
       "run_metadata": {
-       "output_tokens": 739,
-       "tool_calls_count": 5,
+       "output_tokens": 857,
+       "tool_calls_count": 14,
        "stop_reason": "complete",
        "fallback_used": false
       }
@@ -1968,12 +1996,12 @@
       "passed": true,
       "expected_count": 61,
       "actual_count": 61,
-      "elapsed_sec": 18.2,
+      "elapsed_sec": 17.1,
       "queries_generated": 1,
-      "primary_query_url": "Observation?code=http://loinc.org|10839-9&value-quantity=ge0.10|http://unitsofmeasure.org|ng/mL",
+      "primary_query_url": "Observation?code=http://loinc.org|10839-9&value-quantity=ge0.10|http://unitsofmeasure.org|ng/mL&_include=Observation:subject",
       "additional_query_urls": [],
-      "raw_response": "Observation?code=http://loinc.org|10839-9&value-quantity=ge0.10|http://unitsofmeasure.org|ng/mL",
-      "prompt_text": "Search Observation for LOINC 10839-9 (Troponin I.cardiac) with value-quantity ge0.10 ng/mL. Query: Observation?code=http://loinc.org|10839-9&value-quantity=ge0.10"
+      "raw_response": "Observation?code=http://loinc.org|10839-9&value-quantity=ge0.10|http://unitsofmeasure.org|ng/mL&_include=Observation:subject",
+      "prompt_text": "I need to find patients with elevated cardiac troponin I consistent with acute myocardial infarction, using the threshold defined by the PheKB BioVU algorithm. Query Observation resources for cardiac troponin I in serum or plasma using the appropriate LOINC code, and filter for values at or above the AMI confirmation threshold \u2014 specifically a troponin I level of at least 0.10 ng/mL. This is the primary biomarker confirming AMI in the BioVU phenotype algorithm."
      },
      "2-naive": {
       "precision": 1.0,
@@ -2022,15 +2050,15 @@
       "passed": true,
       "expected_count": 61,
       "actual_count": 61,
-      "elapsed_sec": 23.1,
+      "elapsed_sec": 53.7,
       "queries_generated": 1,
       "primary_query_url": "Observation?code=http://loinc.org|10839-9&value-quantity=ge0.10|http://unitsofmeasure.org|ng/mL",
       "additional_query_urls": [],
       "raw_response": "Observation?code=http://loinc.org|10839-9&value-quantity=ge0.10|http://unitsofmeasure.org|ng/mL",
-      "prompt_text": "Search Observation for LOINC 10839-9 (Troponin I.cardiac) with value-quantity ge0.10 ng/mL. Query: Observation?code=http://loinc.org|10839-9&value-quantity=ge0.10",
+      "prompt_text": "I need to find patients with elevated cardiac troponin I consistent with acute myocardial infarction, using the threshold defined by the PheKB BioVU algorithm. Query Observation resources for cardiac troponin I in serum or plasma using the appropriate LOINC code, and filter for values at or above the AMI confirmation threshold \u2014 specifically a troponin I level of at least 0.10 ng/mL. This is the primary biomarker confirming AMI in the BioVU phenotype algorithm.",
       "run_metadata": {
-       "output_tokens": 555,
-       "tool_calls_count": 0,
+       "output_tokens": 513,
+       "tool_calls_count": 14,
        "stop_reason": "complete",
        "fallback_used": false
       }
@@ -2082,15 +2110,15 @@
       "passed": true,
       "expected_count": 61,
       "actual_count": 61,
-      "elapsed_sec": 72.6,
+      "elapsed_sec": 46.8,
       "queries_generated": 1,
-      "primary_query_url": "Observation?code=http://loinc.org|10839-9&value-quantity=ge0.10||ng/mL",
+      "primary_query_url": "Observation?code=http://loinc.org|10839-9&value-quantity=ge0.10||ng%2FmL",
       "additional_query_urls": [],
-      "raw_response": "Observation?code=http://loinc.org|10839-9&value-quantity=ge0.10||ng/mL",
-      "prompt_text": "Search Observation for LOINC 10839-9 (Troponin I.cardiac) with value-quantity ge0.10 ng/mL. Query: Observation?code=http://loinc.org|10839-9&value-quantity=ge0.10",
+      "raw_response": "Observation?code=http://loinc.org|10839-9&value-quantity=ge0.10||ng%2FmL",
+      "prompt_text": "I need to find patients with elevated cardiac troponin I consistent with acute myocardial infarction, using the threshold defined by the PheKB BioVU algorithm. Query Observation resources for cardiac troponin I in serum or plasma using the appropriate LOINC code, and filter for values at or above the AMI confirmation threshold \u2014 specifically a troponin I level of at least 0.10 ng/mL. This is the primary biomarker confirming AMI in the BioVU phenotype algorithm.",
       "run_metadata": {
-       "output_tokens": 398,
-       "tool_calls_count": 16,
+       "output_tokens": 329,
+       "tool_calls_count": 10,
        "stop_reason": "complete",
        "fallback_used": false
       }
@@ -2319,12 +2347,12 @@
       "passed": true,
       "expected_count": 409,
       "actual_count": 409,
-      "elapsed_sec": 0.6,
+      "elapsed_sec": 26.8,
       "queries_generated": 1,
       "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|83367",
       "additional_query_urls": [],
       "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|83367",
-      "prompt_text": "Search MedicationRequest for RxNorm 83367 (atorvastatin). Query: MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|83367"
+      "prompt_text": "I need to identify patients who have been prescribed atorvastatin, representing the statin-treated at-risk pool for the statins-and-MACE phenotype. Search MedicationRequest resources for atorvastatin coded in RxNorm. Per the PheKB BioVU algorithm, this medication cohort is specifically the prior-statin exposure group \u2014 patients with atorvastatin prescribed at least 180 days before an AMI event qualify as statin-exposed cases, though enforcing that temporal ordering requires post-processing beyond a single FHIR query."
      },
      "2-naive": {
       "precision": 1.0,
@@ -2373,15 +2401,15 @@
       "passed": true,
       "expected_count": 409,
       "actual_count": 409,
-      "elapsed_sec": 29.8,
+      "elapsed_sec": 39.0,
       "queries_generated": 1,
-      "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|83367",
+      "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|83367,http://www.nlm.nih.gov/research/umls/rxnorm|83366,http://www.nlm.nih.gov/research/umls/rxnorm|153165,http://www.nlm.nih.gov/research/umls/rxnorm|259255,http://www.nlm.nih.gov/research/umls/rxnorm|617310,http://www.nlm.nih.gov/research/umls/rxnorm|617311,http://www.nlm.nih.gov/research/umls/rxnorm|617312,http://www.nlm.nih.gov/research/umls/rxnorm|370621",
       "additional_query_urls": [],
-      "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|83367",
-      "prompt_text": "Search MedicationRequest for RxNorm 83367 (atorvastatin). Query: MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|83367",
+      "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|83367,http://www.nlm.nih.gov/research/umls/rxnorm|83366,http://www.nlm.nih.gov/research/umls/rxnorm|153165,http://www.nlm.nih.gov/research/umls/rxnorm|259255,http://www.nlm.nih.gov/research/umls/rxnorm|617310,http://www.nlm.nih.gov/research/umls/rxnorm|617311,http://www.nlm.nih.gov/research/umls/rxnorm|617312,http://www.nlm.nih.gov/research/umls/rxnorm|370621",
+      "prompt_text": "I need to identify patients who have been prescribed atorvastatin, representing the statin-treated at-risk pool for the statins-and-MACE phenotype. Search MedicationRequest resources for atorvastatin coded in RxNorm. Per the PheKB BioVU algorithm, this medication cohort is specifically the prior-statin exposure group \u2014 patients with atorvastatin prescribed at least 180 days before an AMI event qualify as statin-exposed cases, though enforcing that temporal ordering requires post-processing beyond a single FHIR query.",
       "run_metadata": {
-       "output_tokens": 41,
-       "tool_calls_count": 1,
+       "output_tokens": 237,
+       "tool_calls_count": 5,
        "stop_reason": "complete",
        "fallback_used": false
       }
@@ -2433,12 +2461,12 @@
       "passed": true,
       "expected_count": 409,
       "actual_count": 409,
-      "elapsed_sec": 30.3,
+      "elapsed_sec": 30.8,
       "queries_generated": 1,
       "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|83367",
       "additional_query_urls": [],
       "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|83367",
-      "prompt_text": "Search MedicationRequest for RxNorm 83367 (atorvastatin). Query: MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|83367",
+      "prompt_text": "I need to identify patients who have been prescribed atorvastatin, representing the statin-treated at-risk pool for the statins-and-MACE phenotype. Search MedicationRequest resources for atorvastatin coded in RxNorm. Per the PheKB BioVU algorithm, this medication cohort is specifically the prior-statin exposure group \u2014 patients with atorvastatin prescribed at least 180 days before an AMI event qualify as statin-exposed cases, though enforcing that temporal ordering requires post-processing beyond a single FHIR query.",
       "run_metadata": {
        "output_tokens": 41,
        "tool_calls_count": 1,
@@ -2483,12 +2511,12 @@
       "passed": true,
       "expected_count": 409,
       "actual_count": 409,
-      "elapsed_sec": 0.5,
+      "elapsed_sec": 27.3,
       "queries_generated": 1,
       "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|83367",
       "additional_query_urls": [],
       "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|83367",
-      "prompt_text": "Search MedicationRequest for RxNorm 83367 (atorvastatin). Query: MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|83367"
+      "prompt_text": "I need to identify patients who have been prescribed atorvastatin, representing the statin-treated at-risk pool for the statins-and-MACE phenotype. Search MedicationRequest resources for atorvastatin coded in RxNorm. Per the PheKB BioVU algorithm, this medication cohort is specifically the prior-statin exposure group \u2014 patients with atorvastatin prescribed at least 180 days before an AMI event qualify as statin-exposed cases, though enforcing that temporal ordering requires post-processing beyond a single FHIR query."
      }
     },
     "copilot:claude-sonnet-4.6": {
@@ -2532,15 +2560,17 @@
       "passed": true,
       "expected_count": 409,
       "actual_count": 409,
-      "elapsed_sec": 36.4,
-      "queries_generated": 3,
-      "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|83367",
+      "elapsed_sec": 61.7,
+      "queries_generated": 5,
+      "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|83367&_include=MedicationRequest:subject",
       "additional_query_urls": [
-       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|83367&_include=MedicationRequest:medication",
-       "MedicationRequest?medication="
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|617310,http://www.nlm.nih.gov/research/umls/rxnorm|617311,http://www.nlm.nih.gov/research/umls/rxnorm|617312,http://www.nlm.nih.gov/research/umls/rxnorm|617318&_include=MedicationRequest:subject",
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|83367&status=active,completed&_include=MedicationRequest:subject",
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|83367&_include=MedicationRequest:subject&_include=MedicationRequest:medication",
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|83367&status=active,completed&_include=MedicationRequest:subject&subject:Patient._has:Condition:patient:code=http://hl7.org/fhir/sid/icd-10-cm|I21"
       ],
-      "raw_response": "```\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|83367\n```\n\n**Explanation:**\n\n| Component | Value |\n|---|---|\n| **Resource** | `MedicationRequest` |\n| **Search Parameter** | `code` |\n| **Code System** | `http://www.nlm.nih.gov/research/umls/rxnorm` |\n| **RxNorm Code** | `83367` |\n| **Drug** | Atorvastatin (generic ingredient-level concept) |\n\n**Notes:**\n- RxNorm `83367` represents the **ingredient-level** concept for atorvastatin. Depending on the server's terminology support, you may also want to search for specific branded/dose form codes (e.g., Lipitor).\n- To broaden the search across related atorvastatin formulations, consider adding `_include` for referenced Medication resources:\n  ```\n  MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|83367&_include=MedicationRequest:medication\n  ```\n- If medications are stored as a referenced `Medication` resource rather than a coded concept inline, a two-step query via `Medication?code=...` \u2192 `MedicationRequest?medication=...` may be needed.",
-      "prompt_text": "Search MedicationRequest for RxNorm 83367 (atorvastatin). Query: MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|83367"
+      "raw_response": "```\n# \u2500\u2500 1. Ingredient-level catch-all (RxNorm CUI for atorvastatin ingredient) \u2500\u2500\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|83367&_include=MedicationRequest:subject\n\n# \u2500\u2500 2. Clinical-drug-form codes by dose strength (10 / 20 / 40 / 80 mg oral tablet) \u2500\u2500\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|617310,http://www.nlm.nih.gov/research/umls/rxnorm|617311,http://www.nlm.nih.gov/research/umls/rxnorm|617312,http://www.nlm.nih.gov/research/umls/rxnorm|617318&_include=MedicationRequest:subject\n\n# \u2500\u2500 3. Active / completed orders only (eliminates draft / entered-in-error noise) \u2500\u2500\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|83367&status=active,completed&_include=MedicationRequest:subject\n\n# \u2500\u2500 4. Retrieve referenced Medication resources when medication is by reference \u2500\u2500\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|83367&_include=MedicationRequest:subject&_include=MedicationRequest:medication\n\n# \u2500\u2500 5. Pull patients who have BOTH an atorvastatin Rx AND a prior AMI (ICD-10 I21.x) \u2500\u2500\n#    for downstream temporal-filter post-processing\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|83367&status=active,completed&_include=MedicationRequest:subject&subject:Patient._has:Condition:patient:code=http://hl7.org/fhir/sid/icd-10-cm|I21\n```\n\n---\n\n### Key design notes\n\n| Layer | Detail |\n|---|---|\n| **Ingredient CUI `83367`** | Broadest catch; covers all branded/generic products derived from the atorvastatin ingredient in RxNorm hierarchies. Recommended first-pass. |\n| **Clinical-drug-form codes** | `617310` (10 mg), `617311` (20 mg), `617312` (40 mg), `617318` (80 mg) \u2014 the four standard tablet strengths used in BioVU pull lists. |\n| **Lipitor (branded)** | Brand-coded entries (e.g., `617310` may alias to branded packs in some EHRs); add `2167565`, `2167566`, `2167567`, `2167568` if your system stores brand-level codes separately. |\n| **`status=active,completed`** | Filters out `draft`, `cancelled`, and `entered-in-error` records that inflate the cohort. |\n| **`_include=MedicationRequest:subject`** | Returns the linked `Patient` resource in one round-trip for cohort extraction. |\n| **180-day temporal rule** | Query 5 co-locates AMI conditions with the Rx pull; you must post-process `MedicationRequest.authoredOn` vs. `Condition.onsetDateTime` to enforce the \u2265 180-day prior-exposure window required by the PheKB algorithm. |",
+      "prompt_text": "I need to identify patients who have been prescribed atorvastatin, representing the statin-treated at-risk pool for the statins-and-MACE phenotype. Search MedicationRequest resources for atorvastatin coded in RxNorm. Per the PheKB BioVU algorithm, this medication cohort is specifically the prior-statin exposure group \u2014 patients with atorvastatin prescribed at least 180 days before an AMI event qualify as statin-exposed cases, though enforcing that temporal ordering requires post-processing beyond a single FHIR query."
      },
      "2-naive": {
       "precision": 1.0,
@@ -2589,15 +2619,15 @@
       "passed": true,
       "expected_count": 409,
       "actual_count": 409,
-      "elapsed_sec": 39.6,
+      "elapsed_sec": 91.5,
       "queries_generated": 1,
-      "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|83367",
+      "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|83367,http://www.nlm.nih.gov/research/umls/rxnorm|83366,http://www.nlm.nih.gov/research/umls/rxnorm|153165,http://www.nlm.nih.gov/research/umls/rxnorm|259255,http://www.nlm.nih.gov/research/umls/rxnorm|262095,http://www.nlm.nih.gov/research/umls/rxnorm|329299,http://www.nlm.nih.gov/research/umls/rxnorm|367665,http://www.nlm.nih.gov/research/umls/rxnorm|370621,http://www.nlm.nih.gov/research/umls/rxnorm|574676,http://www.nlm.nih.gov/research/umls/rxnorm|597966,http://www.nlm.nih.gov/research/umls/rxnorm|597970,http://www.nlm.nih.gov/research/umls/rxnorm|597983,http://www.nlm.nih.gov/research/umls/rxnorm|617310,http://www.nlm.nih.gov/research/umls/rxnorm|617311,http://www.nlm.nih.gov/research/umls/rxnorm|617312,http://www.nlm.nih.gov/research/umls/rxnorm|617313,http://www.nlm.nih.gov/research/umls/rxnorm|617314,http://www.nlm.nih.gov/research/umls/rxnorm|617317,http://www.nlm.nih.gov/research/umls/rxnorm|617318,http://www.nlm.nih.gov/research/umls/rxnorm|617319,http://www.nlm.nih.gov/research/umls/rxnorm|617320,http://www.nlm.nih.gov/research/umls/rxnorm|1158284,http://www.nlm.nih.gov/research/umls/rxnorm|1158285,http://www.nlm.nih.gov/research/umls/rxnorm|1177400,http://www.nlm.nih.gov/research/umls/rxnorm|1177401,http://www.nlm.nih.gov/research/umls/rxnorm|1297766,http://www.nlm.nih.gov/research/umls/rxnorm|1483793",
       "additional_query_urls": [],
-      "raw_response": "Here's a summary of the results:\n\n---\n\n### \u2705 Search Results: `MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|83367`\n\n| Field | Detail |\n|---|---|\n| **Resources Returned** | 10 entries |\n| **Total Count** | Not reported by server (paged response) |\n| **Resource Type** | `MedicationRequest` \u2705 |\n\n---\n\n### \ud83d\udd0d Observed Codings on Returned Resources\n\n| System | Code | Display |\n|---|---|---|\n| `http://www.nlm.nih.gov/research/umls/rxnorm` | `83367` | **atorvastatin** \u2705 |\n| `http://terminology.hl7.org/CodeSystem/medicationrequest-category` | `community` | Community |\n\n---\n\n### \ud83d\udcdd Key Observations\n\n1. **Code match confirmed** \u2014 All 10 sampled records carry RxNorm `83367` (atorvastatin) exactly as queried. The search is working correctly.\n2. **Category = \"community\"** \u2014 All returned prescriptions are categorized as **community** (outpatient/retail) prescriptions, meaning these are prescriptions written for patients to fill outside a facility.\n3. **No total count** \u2014 The server did not return a `total` in the bundle. To get an exact count, you could try adding `&_summary=count` to the query.\n4. **Ingredient-level code** \u2014 RxNorm `83367` is an **ingredient-level** code for atorvastatin. If you want to capture specific branded/dose-strength formulations (e.g., Lipitor 10 mg tablets \u2192 RxNorm `617314`), you would need to expand to clinical drug codes. However, ingredient-level codes typically work well for broad cohort identification.\n\n---\n\n### Final Query\n\n```\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|83367\n```",
-      "prompt_text": "Search MedicationRequest for RxNorm 83367 (atorvastatin). Query: MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|83367",
+      "raw_response": "Both queries return **409 MedicationRequests** \u2014 confirming the server encodes all atorvastatin prescriptions with the ingredient-level code `83367`, and the expanded value set adds no additional records. The code set is consistent and verified.\n\n---\n\n## Evidence Summary\n\n| Step | Finding |\n|---|---|\n| **UMLS search** | CUI `C0286651` (atorvastatin); base RxNorm ingredient = `83367` |\n| **FHIR server sample** | All 5 sampled `MedicationRequest` records use `system: http://www.nlm.nih.gov/research/umls/rxnorm`, `code: 83367` (\"atorvastatin\") |\n| **VSAC OID `2.16.840.1.113762.1.4.1078.271-20230322`** | 27-code authoritative atorvastatin RxNorm set: ingredient (`83367`), salt form (`83366`), branded Lipitor (`153165`), dose-specific clinical drugs (10/20/40/80 mg), branded Lipitor dose forms, oral product/pill semantic types, and salt variants |\n| **`_summary=count` \u2014 ingredient code only** | **409 records** |\n| **`_summary=count` \u2014 all 27 codes** | **409 records** (exact match \u2192 server is exclusively using `83367`) |\n\n### Code Hierarchy Covered\n\n| Category | RxNorm Codes |\n|---|---|\n| **Ingredient** | `83367` (atorvastatin), `83366` (atorvastatin calcium), `1297766` (atorvastatin calcium trihydrate), `1483793` (atorvastatin calcium propylene glycol solvate) |\n| **Brand name** | `153165` (Lipitor) |\n| **Dose strength only** | `597970` (10 mg), `597966` (20 mg), `597983` (40 mg), `329299` (80 mg) |\n| **Clinical drug (generic)** | `617312` (10 mg tab), `617310` (20 mg tab), `617311` (40 mg tab), `259255` (80 mg tab), `370621` (oral tablet) |\n| **Clinical drug (branded)** | `617314`, `617318`, `617320`, `262095`, `367665` (Lipitor dose forms) |\n| **Branded dose strength** | `617313`, `617317`, `617319`, `574676` |\n| **Semantic product types** | `1158284` (oral product), `1158285` (pill), `1177400` (Lipitor oral product), `1177401` (Lipitor pill) |\n\n> \u26a0\ufe0f **PheKB BioVU temporal gate:** The \u2265180-day pre-AMI exposure window cannot be enforced in FHIR search alone. After retrieving this cohort, post-process by joining against AMI `Condition` records (ICD-10-CM I21.x / ICD-9-CM 410.x) and filtering `MedicationRequest.authoredOn \u2264 AMI_date \u2212 180 days`.\n\n---\n\n**FINAL ANSWER:**\n\n```\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|83367,http://www.nlm.nih.gov/research/umls/rxnorm|83366,http://www.nlm.nih.gov/research/umls/rxnorm|153165,http://www.nlm.nih.gov/research/umls/rxnorm|259255,http://www.nlm.nih.gov/research/umls/rxnorm|262095,http://www.nlm.nih.gov/research/umls/rxnorm|329299,http://www.nlm.nih.gov/research/umls/rxnorm|367665,http://www.nlm.nih.gov/research/umls/rxnorm|370621,http://www.nlm.nih.gov/research/umls/rxnorm|574676,http://www.nlm.nih.gov/research/umls/rxnorm|597966,http://www.nlm.nih.gov/research/umls/rxnorm|597970,http://www.nlm.nih.gov/research/umls/rxnorm|597983,http://www.nlm.nih.gov/research/umls/rxnorm|617310,http://www.nlm.nih.gov/research/umls/rxnorm|617311,http://www.nlm.nih.gov/research/umls/rxnorm|617312,http://www.nlm.nih.gov/research/umls/rxnorm|617313,http://www.nlm.nih.gov/research/umls/rxnorm|617314,http://www.nlm.nih.gov/research/umls/rxnorm|617317,http://www.nlm.nih.gov/research/umls/rxnorm|617318,http://www.nlm.nih.gov/research/umls/rxnorm|617319,http://www.nlm.nih.gov/research/umls/rxnorm|617320,http://www.nlm.nih.gov/research/umls/rxnorm|1158284,http://www.nlm.nih.gov/research/umls/rxnorm|1158285,http://www.nlm.nih.gov/research/umls/rxnorm|1177400,http://www.nlm.nih.gov/research/umls/rxnorm|1177401,http://www.nlm.nih.gov/research/umls/rxnorm|1297766,http://www.nlm.nih.gov/research/umls/rxnorm|1483793\n```",
+      "prompt_text": "I need to identify patients who have been prescribed atorvastatin, representing the statin-treated at-risk pool for the statins-and-MACE phenotype. Search MedicationRequest resources for atorvastatin coded in RxNorm. Per the PheKB BioVU algorithm, this medication cohort is specifically the prior-statin exposure group \u2014 patients with atorvastatin prescribed at least 180 days before an AMI event qualify as statin-exposed cases, though enforcing that temporal ordering requires post-processing beyond a single FHIR query.",
       "run_metadata": {
-       "output_tokens": 494,
-       "tool_calls_count": 1,
+       "output_tokens": 1786,
+       "tool_calls_count": 8,
        "stop_reason": "complete",
        "fallback_used": false
       }
@@ -2643,23 +2673,21 @@
       }
      },
      "3-expert": {
-      "precision": 0.0,
-      "recall": 0.0,
-      "f1": 0.0,
-      "passed": false,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
       "expected_count": 409,
-      "actual_count": 0,
-      "elapsed_sec": 36.3,
-      "queries_generated": 2,
-      "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm\\|83367",
-      "additional_query_urls": [
-       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|83367"
-      ],
-      "raw_response": "The query executed successfully! Here's a summary of the results:\n\n---\n\n### \u2705 Query Results: `MedicationRequest` for Atorvastatin (RxNorm `83367`)\n\n| Field | Detail |\n|---|---|\n| **Query** | `MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm\\|83367` |\n| **Entries Returned** | **10** records |\n| **Resource Type** | `MedicationRequest` |\n| **Code Verified** | `83367` \u2014 *atorvastatin* (RxNorm) \u2705 |\n| **Category** | `community` (Community prescriptions) |\n\n---\n\n### \ud83d\udd0d Key Observations\n\n- **Code system confirmed**: The server stores medication codes using **`http://www.nlm.nih.gov/research/umls/rxnorm`**, which matches your query exactly \u2014 no crosswalk needed.\n- **All 10 sampled records** consistently use RxNorm `83367` with the display name **\"atorvastatin\"**, confirming high coding fidelity.\n- **Category `community`** indicates these are outpatient/community-dispensed prescriptions.\n- The server did **not return a `total`** count, so the true population size may be larger than 10 \u2014 a `_summary=count` query could confirm the full count if needed.\n\n---\n\n### Final FHIR Query\n\n```\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|83367\n```",
-      "prompt_text": "Search MedicationRequest for RxNorm 83367 (atorvastatin). Query: MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|83367",
+      "actual_count": 409,
+      "elapsed_sec": 93.1,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|83367,http://www.nlm.nih.gov/research/umls/rxnorm|83366,http://www.nlm.nih.gov/research/umls/rxnorm|153165,http://www.nlm.nih.gov/research/umls/rxnorm|259255,http://www.nlm.nih.gov/research/umls/rxnorm|262095,http://www.nlm.nih.gov/research/umls/rxnorm|329299,http://www.nlm.nih.gov/research/umls/rxnorm|367665,http://www.nlm.nih.gov/research/umls/rxnorm|370621,http://www.nlm.nih.gov/research/umls/rxnorm|574676,http://www.nlm.nih.gov/research/umls/rxnorm|597966,http://www.nlm.nih.gov/research/umls/rxnorm|597970,http://www.nlm.nih.gov/research/umls/rxnorm|597983,http://www.nlm.nih.gov/research/umls/rxnorm|617310,http://www.nlm.nih.gov/research/umls/rxnorm|617311,http://www.nlm.nih.gov/research/umls/rxnorm|617312,http://www.nlm.nih.gov/research/umls/rxnorm|617313,http://www.nlm.nih.gov/research/umls/rxnorm|617314,http://www.nlm.nih.gov/research/umls/rxnorm|617317,http://www.nlm.nih.gov/research/umls/rxnorm|617318,http://www.nlm.nih.gov/research/umls/rxnorm|617319,http://www.nlm.nih.gov/research/umls/rxnorm|617320,http://www.nlm.nih.gov/research/umls/rxnorm|1158284,http://www.nlm.nih.gov/research/umls/rxnorm|1158285,http://www.nlm.nih.gov/research/umls/rxnorm|1177400,http://www.nlm.nih.gov/research/umls/rxnorm|1177401,http://www.nlm.nih.gov/research/umls/rxnorm|1297766,http://www.nlm.nih.gov/research/umls/rxnorm|1483793",
+      "additional_query_urls": [],
+      "raw_response": "409 MedicationRequest records \u2014 a plausible atorvastatin-prescribed cohort. The count is non-trivially large (confirms broad code coverage) and not implausibly huge (not the entire medication table). All evidence checks out.\n\n---\n\n## Evidence Summary\n\n| Step | Finding |\n|---|---|\n| **UMLS search** | Atorvastatin CUI `C0286651`; RxNorm ingredient code `83367` confirmed |\n| **Server sample** | Server stores MedicationRequest codes in **RxNorm** (`http://www.nlm.nih.gov/research/umls/rxnorm`); live records already carry `83367` |\n| **VSAC value sets** | Two curated sets (Optum + NACHC) expanded to **27 unique RxNorm codes**: ingredient (`83367`), calcium salt (`83366`), all four strengths (10/20/40/80 mg), branded Lipitor forms, dose-form groupers, and two additional salt forms (`1297766`, `1483793`) |\n| **Count validation** | Full 27-code query \u2192 **409 MedicationRequests** \u2705 |\n\n**Code roster (27 RxNorm codes):**\n- **Ingredient/salt:** `83367` atorvastatin \u00b7 `83366` atorvastatin calcium \u00b7 `1297766` atorvastatin calcium trihydrate \u00b7 `1483793` atorvastatin calcium propylene glycol solvate\n- **Strength abstractions:** `597970` 10 mg \u00b7 `597966` 20 mg \u00b7 `597983` 40 mg \u00b7 `329299` 80 mg\n- **Clinical drug tablets (generic):** `617312` 10 mg tab \u00b7 `617310` 20 mg tab \u00b7 `617311` 40 mg tab \u00b7 `259255` 80 mg tab \u00b7 `370621` Oral Tablet\n- **Branded Lipitor tablets:** `617314` 10 mg [Lipitor] tab \u00b7 `617318` 20 mg [Lipitor] tab \u00b7 `617320` 40 mg [Lipitor] tab \u00b7 `262095` 80 mg [Lipitor] tab \u00b7 `367665` Oral Tablet [Lipitor]\n- **Branded strength abstractions:** `617313` 10 mg [Lipitor] \u00b7 `617317` 20 mg [Lipitor] \u00b7 `617319` 40 mg [Lipitor] \u00b7 `574676` 80 mg [Lipitor]\n- **Brand name:** `153165` Lipitor\n- **Dose-form groupers:** `1158284` Oral Product \u00b7 `1158285` Pill \u00b7 `1177400` Lipitor Oral Product \u00b7 `1177401` Lipitor Pill\n\n> **Post-processing note (PheKB BioVU):** The 180-day prior-exposure window (prescription date \u2264 AMI date \u2212 180 days) cannot be enforced in a single FHIR query. Retrieve this cohort plus the AMI Condition cohort separately, then filter in application logic for patients where `MedicationRequest.authoredOn \u2264 AMI onset \u2212 180 days`.\n\n---\n\n```\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|83367,http://www.nlm.nih.gov/research/umls/rxnorm|83366,http://www.nlm.nih.gov/research/umls/rxnorm|153165,http://www.nlm.nih.gov/research/umls/rxnorm|259255,http://www.nlm.nih.gov/research/umls/rxnorm|262095,http://www.nlm.nih.gov/research/umls/rxnorm|329299,http://www.nlm.nih.gov/research/umls/rxnorm|367665,http://www.nlm.nih.gov/research/umls/rxnorm|370621,http://www.nlm.nih.gov/research/umls/rxnorm|574676,http://www.nlm.nih.gov/research/umls/rxnorm|597966,http://www.nlm.nih.gov/research/umls/rxnorm|597970,http://www.nlm.nih.gov/research/umls/rxnorm|597983,http://www.nlm.nih.gov/research/umls/rxnorm|617310,http://www.nlm.nih.gov/research/umls/rxnorm|617311,http://www.nlm.nih.gov/research/umls/rxnorm|617312,http://www.nlm.nih.gov/research/umls/rxnorm|617313,http://www.nlm.nih.gov/research/umls/rxnorm|617314,http://www.nlm.nih.gov/research/umls/rxnorm|617317,http://www.nlm.nih.gov/research/umls/rxnorm|617318,http://www.nlm.nih.gov/research/umls/rxnorm|617319,http://www.nlm.nih.gov/research/umls/rxnorm|617320,http://www.nlm.nih.gov/research/umls/rxnorm|1158284,http://www.nlm.nih.gov/research/umls/rxnorm|1158285,http://www.nlm.nih.gov/research/umls/rxnorm|1177400,http://www.nlm.nih.gov/research/umls/rxnorm|1177401,http://www.nlm.nih.gov/research/umls/rxnorm|1297766,http://www.nlm.nih.gov/research/umls/rxnorm|1483793\n```",
+      "prompt_text": "I need to identify patients who have been prescribed atorvastatin, representing the statin-treated at-risk pool for the statins-and-MACE phenotype. Search MedicationRequest resources for atorvastatin coded in RxNorm. Per the PheKB BioVU algorithm, this medication cohort is specifically the prior-statin exposure group \u2014 patients with atorvastatin prescribed at least 180 days before an AMI event qualify as statin-exposed cases, though enforcing that temporal ordering requires post-processing beyond a single FHIR query.",
       "run_metadata": {
-       "output_tokens": 387,
-       "tool_calls_count": 1,
+       "output_tokens": 1559,
+       "tool_calls_count": 7,
        "stop_reason": "complete",
        "fallback_used": false
       }
@@ -2701,12 +2729,12 @@
       "passed": true,
       "expected_count": 409,
       "actual_count": 409,
-      "elapsed_sec": 30.4,
+      "elapsed_sec": 31.0,
       "queries_generated": 1,
       "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|83367",
       "additional_query_urls": [],
       "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|83367",
-      "prompt_text": "Search MedicationRequest for RxNorm 83367 (atorvastatin). Query: MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|83367"
+      "prompt_text": "I need to identify patients who have been prescribed atorvastatin, representing the statin-treated at-risk pool for the statins-and-MACE phenotype. Search MedicationRequest resources for atorvastatin coded in RxNorm. Per the PheKB BioVU algorithm, this medication cohort is specifically the prior-statin exposure group \u2014 patients with atorvastatin prescribed at least 180 days before an AMI event qualify as statin-exposed cases, though enforcing that temporal ordering requires post-processing beyond a single FHIR query."
      },
      "2-naive": {
       "precision": 1.0,
@@ -2755,15 +2783,15 @@
       "passed": true,
       "expected_count": 409,
       "actual_count": 409,
-      "elapsed_sec": 31.1,
+      "elapsed_sec": 45.0,
       "queries_generated": 1,
       "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|83367",
       "additional_query_urls": [],
       "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|83367",
-      "prompt_text": "Search MedicationRequest for RxNorm 83367 (atorvastatin). Query: MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|83367",
+      "prompt_text": "I need to identify patients who have been prescribed atorvastatin, representing the statin-treated at-risk pool for the statins-and-MACE phenotype. Search MedicationRequest resources for atorvastatin coded in RxNorm. Per the PheKB BioVU algorithm, this medication cohort is specifically the prior-statin exposure group \u2014 patients with atorvastatin prescribed at least 180 days before an AMI event qualify as statin-exposed cases, though enforcing that temporal ordering requires post-processing beyond a single FHIR query.",
       "run_metadata": {
-       "output_tokens": 165,
-       "tool_calls_count": 0,
+       "output_tokens": 114,
+       "tool_calls_count": 3,
        "stop_reason": "complete",
        "fallback_used": false
       }
@@ -2809,21 +2837,23 @@
       }
      },
      "3-expert": {
-      "precision": 1.0,
-      "recall": 1.0,
-      "f1": 1.0,
-      "passed": true,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
       "expected_count": 409,
-      "actual_count": 409,
-      "elapsed_sec": 43.3,
-      "queries_generated": 1,
-      "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|83367",
-      "additional_query_urls": [],
-      "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|83367",
-      "prompt_text": "Search MedicationRequest for RxNorm 83367 (atorvastatin). Query: MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|83367",
+      "actual_count": 0,
+      "elapsed_sec": 41.1,
+      "queries_generated": 2,
+      "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|83367&_summary=count",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|83367"
+      ],
+      "raw_response": "This request matches Playbook(s) 5. Verified MedicationRequest uses RxNorm code 83367 for atorvastatin on this server, and `MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|83367&_summary=count` returns matches.MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|83367",
+      "prompt_text": "I need to identify patients who have been prescribed atorvastatin, representing the statin-treated at-risk pool for the statins-and-MACE phenotype. Search MedicationRequest resources for atorvastatin coded in RxNorm. Per the PheKB BioVU algorithm, this medication cohort is specifically the prior-statin exposure group \u2014 patients with atorvastatin prescribed at least 180 days before an AMI event qualify as statin-exposed cases, though enforcing that temporal ordering requires post-processing beyond a single FHIR query.",
       "run_metadata": {
-       "output_tokens": 126,
-       "tool_calls_count": 3,
+       "output_tokens": 415,
+       "tool_calls_count": 4,
        "stop_reason": "complete",
        "fallback_used": false
       }

@@ -40,20 +40,20 @@
      },
      "1-expert": {
       "precision": 1.0,
-      "recall": 1.0,
-      "f1": 1.0,
+      "recall": 0.8678,
+      "f1": 0.9292,
       "passed": true,
       "expected_count": 121,
-      "actual_count": 121,
-      "elapsed_sec": 0.4,
+      "actual_count": 105,
+      "elapsed_sec": 14.5,
       "queries_generated": 3,
-      "primary_query_url": "Condition?code=http://snomed.info/sct|266569009&patient.birthdate=le1986-06-11&patient.gender=male",
+      "primary_query_url": "Condition?code=http://snomed.info/sct|266569009&subject:Patient.gender=male&subject:Patient.birthdate=le1986-06-17",
       "additional_query_urls": [
-       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|77492,http://www.nlm.nih.gov/research/umls/rxnorm|25025,http://www.nlm.nih.gov/research/umls/rxnorm|37798&patient.birthdate=le1986-06-11&patient.gender=male",
-       "Procedure?code=http://snomed.info/sct|90199006&patient.birthdate=le1986-06-11&patient.gender=male"
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|316049,http://www.nlm.nih.gov/research/umls/rxnorm|37798,http://www.nlm.nih.gov/research/umls/rxnorm|5470&subject:Patient.gender=male&subject:Patient.birthdate=le1986-06-17",
+       "Procedure?code=http://snomed.info/sct|90199006&subject:Patient.gender=male&subject:Patient.birthdate=le1986-06-17"
       ],
-      "raw_response": "Condition?code=http://snomed.info/sct|266569009&patient.birthdate=le1986-06-11&patient.gender=male\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|77492,http://www.nlm.nih.gov/research/umls/rxnorm|25025,http://www.nlm.nih.gov/research/umls/rxnorm|37798&patient.birthdate=le1986-06-11&patient.gender=male\nProcedure?code=http://snomed.info/sct|90199006&patient.birthdate=le1986-06-11&patient.gender=male",
-      "prompt_text": "Run three queries restricted to male patients age 40+. (1) Condition?code=http://snomed.info/sct|266569009&patient.birthdate=le1986-04-28&patient.gender=male \u2014 BPH dx. (2) MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|77492,http://www.nlm.nih.gov/research/umls/rxnorm|25025,http://www.nlm.nih.gov/research/umls/rxnorm|37798&patient.birthdate=le1986-04-28&patient.gender=male \u2014 BPH meds. (3) Procedure?code=http://snomed.info/sct|90199006&patient.birthdate=le1986-04-28&patient.gender=male \u2014 TURP. Union the patient IDs."
+      "raw_response": "Condition?code=http://snomed.info/sct|266569009&subject:Patient.gender=male&subject:Patient.birthdate=le1986-06-17\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|316049,http://www.nlm.nih.gov/research/umls/rxnorm|37798,http://www.nlm.nih.gov/research/umls/rxnorm|5470&subject:Patient.gender=male&subject:Patient.birthdate=le1986-06-17\nProcedure?code=http://snomed.info/sct|90199006&subject:Patient.gender=male&subject:Patient.birthdate=le1986-06-17",
+      "prompt_text": "I need to identify all BPH patients using a multi-resource union restricted to males aged 40 and older. Run three queries, each filtered to male patients with a birth date consistent with age 40 or above: (1) Condition resources for a benign prostatic hyperplasia diagnosis coded in SNOMED CT; (2) MedicationRequest resources for the alpha-blockers and 5-alpha-reductase inhibitors used to manage BPH \u2014 tamsulosin, terazosin, and finasteride, all coded in RxNorm (some patients receive empirical alpha-blocker therapy without a coded BPH diagnosis, making this a true cross-indication path); (3) Procedure resources for transurethral resection of the prostate (TURP) coded in SNOMED CT. Apply sex and birth-date chained search parameters to all three queries, then union the distinct patient IDs."
      },
      "2-naive": {
       "precision": 1.0,
@@ -100,23 +100,23 @@
      },
      "2-expert": {
       "precision": 1.0,
-      "recall": 1.0,
-      "f1": 1.0,
+      "recall": 0.9256,
+      "f1": 0.9614,
       "passed": true,
       "expected_count": 121,
-      "actual_count": 121,
-      "elapsed_sec": 21.1,
+      "actual_count": 112,
+      "elapsed_sec": 31.0,
       "queries_generated": 3,
-      "primary_query_url": "Condition?code=http://snomed.info/sct|266569009&patient.birthdate=le1986-04-28&patient.gender=male",
+      "primary_query_url": "Condition?code=http://snomed.info/sct|266569009&patient.gender=male&patient.birthdate=le1986-06-17",
       "additional_query_urls": [
-       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|77492,http://www.nlm.nih.gov/research/umls/rxnorm|25025,http://www.nlm.nih.gov/research/umls/rxnorm|37798&patient.birthdate=le1986-04-28&patient.gender=male",
-       "Procedure?code=http://snomed.info/sct|90199006&patient.birthdate=le1986-04-28&patient.gender=male"
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|77492,http://www.nlm.nih.gov/research/umls/rxnorm|37798,http://www.nlm.nih.gov/research/umls/rxnorm|5072&patient.gender=male&patient.birthdate=le1986-06-17",
+       "Procedure?code=http://snomed.info/sct|90199006&patient.gender=male&patient.birthdate=le1986-06-17"
       ],
-      "raw_response": "Condition?code=http://snomed.info/sct|266569009&patient.birthdate=le1986-04-28&patient.gender=male\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|77492,http://www.nlm.nih.gov/research/umls/rxnorm|25025,http://www.nlm.nih.gov/research/umls/rxnorm|37798&patient.birthdate=le1986-04-28&patient.gender=male\nProcedure?code=http://snomed.info/sct|90199006&patient.birthdate=le1986-04-28&patient.gender=male",
-      "prompt_text": "Run three queries restricted to male patients age 40+. (1) Condition?code=http://snomed.info/sct|266569009&patient.birthdate=le1986-04-28&patient.gender=male \u2014 BPH dx. (2) MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|77492,http://www.nlm.nih.gov/research/umls/rxnorm|25025,http://www.nlm.nih.gov/research/umls/rxnorm|37798&patient.birthdate=le1986-04-28&patient.gender=male \u2014 BPH meds. (3) Procedure?code=http://snomed.info/sct|90199006&patient.birthdate=le1986-04-28&patient.gender=male \u2014 TURP. Union the patient IDs.",
+      "raw_response": "Condition?code=http://snomed.info/sct|266569009&patient.gender=male&patient.birthdate=le1986-06-17\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|77492,http://www.nlm.nih.gov/research/umls/rxnorm|37798,http://www.nlm.nih.gov/research/umls/rxnorm|5072&patient.gender=male&patient.birthdate=le1986-06-17\nProcedure?code=http://snomed.info/sct|90199006&patient.gender=male&patient.birthdate=le1986-06-17",
+      "prompt_text": "I need to identify all BPH patients using a multi-resource union restricted to males aged 40 and older. Run three queries, each filtered to male patients with a birth date consistent with age 40 or above: (1) Condition resources for a benign prostatic hyperplasia diagnosis coded in SNOMED CT; (2) MedicationRequest resources for the alpha-blockers and 5-alpha-reductase inhibitors used to manage BPH \u2014 tamsulosin, terazosin, and finasteride, all coded in RxNorm (some patients receive empirical alpha-blocker therapy without a coded BPH diagnosis, making this a true cross-indication path); (3) Procedure resources for transurethral resection of the prostate (TURP) coded in SNOMED CT. Apply sex and birth-date chained search parameters to all three queries, then union the distinct patient IDs.",
       "run_metadata": {
        "output_tokens": 212,
-       "tool_calls_count": 3,
+       "tool_calls_count": 6,
        "stop_reason": "complete",
        "fallback_used": false
       }
@@ -166,20 +166,20 @@
      },
      "3-expert": {
       "precision": 1.0,
-      "recall": 1.0,
-      "f1": 1.0,
+      "recall": 0.8678,
+      "f1": 0.9292,
       "passed": true,
       "expected_count": 121,
-      "actual_count": 121,
-      "elapsed_sec": 20.8,
+      "actual_count": 105,
+      "elapsed_sec": 24.5,
       "queries_generated": 3,
-      "primary_query_url": "Condition?code=http://snomed.info/sct|266569009&patient.birthdate=le1986-04-28&patient.gender=male",
+      "primary_query_url": "Condition?code=http://snomed.info/sct|266569009&patient.gender=male&patient.birthdate=le1986-06-17",
       "additional_query_urls": [
-       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|77492,http://www.nlm.nih.gov/research/umls/rxnorm|25025,http://www.nlm.nih.gov/research/umls/rxnorm|37798&patient.birthdate=le1986-04-28&patient.gender=male",
-       "Procedure?code=http://snomed.info/sct|90199006&patient.birthdate=le1986-04-28&patient.gender=male"
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|38400,http://www.nlm.nih.gov/research/umls/rxnorm|37798,http://www.nlm.nih.gov/research/umls/rxnorm|4419&patient.gender=male&patient.birthdate=le1986-06-17",
+       "Procedure?code=http://snomed.info/sct|90199006&patient.gender=male&patient.birthdate=le1986-06-17"
       ],
-      "raw_response": "Condition?code=http://snomed.info/sct|266569009&patient.birthdate=le1986-04-28&patient.gender=male\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|77492,http://www.nlm.nih.gov/research/umls/rxnorm|25025,http://www.nlm.nih.gov/research/umls/rxnorm|37798&patient.birthdate=le1986-04-28&patient.gender=male\nProcedure?code=http://snomed.info/sct|90199006&patient.birthdate=le1986-04-28&patient.gender=male",
-      "prompt_text": "Run three queries restricted to male patients age 40+. (1) Condition?code=http://snomed.info/sct|266569009&patient.birthdate=le1986-04-28&patient.gender=male \u2014 BPH dx. (2) MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|77492,http://www.nlm.nih.gov/research/umls/rxnorm|25025,http://www.nlm.nih.gov/research/umls/rxnorm|37798&patient.birthdate=le1986-04-28&patient.gender=male \u2014 BPH meds. (3) Procedure?code=http://snomed.info/sct|90199006&patient.birthdate=le1986-04-28&patient.gender=male \u2014 TURP. Union the patient IDs.",
+      "raw_response": "Condition?code=http://snomed.info/sct|266569009&patient.gender=male&patient.birthdate=le1986-06-17\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|38400,http://www.nlm.nih.gov/research/umls/rxnorm|37798,http://www.nlm.nih.gov/research/umls/rxnorm|4419&patient.gender=male&patient.birthdate=le1986-06-17\nProcedure?code=http://snomed.info/sct|90199006&patient.gender=male&patient.birthdate=le1986-06-17",
+      "prompt_text": "I need to identify all BPH patients using a multi-resource union restricted to males aged 40 and older. Run three queries, each filtered to male patients with a birth date consistent with age 40 or above: (1) Condition resources for a benign prostatic hyperplasia diagnosis coded in SNOMED CT; (2) MedicationRequest resources for the alpha-blockers and 5-alpha-reductase inhibitors used to manage BPH \u2014 tamsulosin, terazosin, and finasteride, all coded in RxNorm (some patients receive empirical alpha-blocker therapy without a coded BPH diagnosis, making this a true cross-indication path); (3) Procedure resources for transurethral resection of the prostate (TURP) coded in SNOMED CT. Apply sex and birth-date chained search parameters to all three queries, then union the distinct patient IDs.",
       "run_metadata": {
        "output_tokens": 212,
        "tool_calls_count": 3,
@@ -222,20 +222,20 @@
      },
      "1-expert": {
       "precision": 1.0,
-      "recall": 1.0,
-      "f1": 1.0,
+      "recall": 0.8678,
+      "f1": 0.9292,
       "passed": true,
       "expected_count": 121,
-      "actual_count": 121,
-      "elapsed_sec": 0.2,
+      "actual_count": 105,
+      "elapsed_sec": 13.9,
       "queries_generated": 3,
-      "primary_query_url": "Condition?code=http://snomed.info/sct|266569009&patient.birthdate=le1986-06-11&patient.gender=male",
+      "primary_query_url": "Condition?code=http://snomed.info/sct|266569009&subject:Patient.gender=male&subject:Patient.birthdate=le1986-06-18",
       "additional_query_urls": [
-       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|77492,http://www.nlm.nih.gov/research/umls/rxnorm|25025,http://www.nlm.nih.gov/research/umls/rxnorm|37798&patient.birthdate=le1986-06-11&patient.gender=male",
-       "Procedure?code=http://snomed.info/sct|90199006&patient.birthdate=le1986-06-11&patient.gender=male"
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|73494,http://www.nlm.nih.gov/research/umls/rxnorm|37798,http://www.nlm.nih.gov/research/umls/rxnorm|5470&subject:Patient.gender=male&subject:Patient.birthdate=le1986-06-18",
+       "Procedure?code=http://snomed.info/sct|90199006&subject:Patient.gender=male&subject:Patient.birthdate=le1986-06-18"
       ],
-      "raw_response": "Condition?code=http://snomed.info/sct|266569009&patient.birthdate=le1986-06-11&patient.gender=male\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|77492,http://www.nlm.nih.gov/research/umls/rxnorm|25025,http://www.nlm.nih.gov/research/umls/rxnorm|37798&patient.birthdate=le1986-06-11&patient.gender=male\nProcedure?code=http://snomed.info/sct|90199006&patient.birthdate=le1986-06-11&patient.gender=male",
-      "prompt_text": "Run three queries restricted to male patients age 40+. (1) Condition?code=http://snomed.info/sct|266569009&patient.birthdate=le1986-04-28&patient.gender=male \u2014 BPH dx. (2) MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|77492,http://www.nlm.nih.gov/research/umls/rxnorm|25025,http://www.nlm.nih.gov/research/umls/rxnorm|37798&patient.birthdate=le1986-04-28&patient.gender=male \u2014 BPH meds. (3) Procedure?code=http://snomed.info/sct|90199006&patient.birthdate=le1986-04-28&patient.gender=male \u2014 TURP. Union the patient IDs."
+      "raw_response": "Condition?code=http://snomed.info/sct|266569009&subject:Patient.gender=male&subject:Patient.birthdate=le1986-06-18\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|73494,http://www.nlm.nih.gov/research/umls/rxnorm|37798,http://www.nlm.nih.gov/research/umls/rxnorm|5470&subject:Patient.gender=male&subject:Patient.birthdate=le1986-06-18\nProcedure?code=http://snomed.info/sct|90199006&subject:Patient.gender=male&subject:Patient.birthdate=le1986-06-18",
+      "prompt_text": "I need to identify all BPH patients using a multi-resource union restricted to males aged 40 and older. Run three queries, each filtered to male patients with a birth date consistent with age 40 or above: (1) Condition resources for a benign prostatic hyperplasia diagnosis coded in SNOMED CT; (2) MedicationRequest resources for the alpha-blockers and 5-alpha-reductase inhibitors used to manage BPH \u2014 tamsulosin, terazosin, and finasteride, all coded in RxNorm (some patients receive empirical alpha-blocker therapy without a coded BPH diagnosis, making this a true cross-indication path); (3) Procedure resources for transurethral resection of the prostate (TURP) coded in SNOMED CT. Apply sex and birth-date chained search parameters to all three queries, then union the distinct patient IDs."
      }
     },
     "copilot:claude-sonnet-4.6": {
@@ -278,20 +278,20 @@
      },
      "1-expert": {
       "precision": 1.0,
-      "recall": 1.0,
-      "f1": 1.0,
+      "recall": 0.8843,
+      "f1": 0.9386,
       "passed": true,
       "expected_count": 121,
-      "actual_count": 121,
-      "elapsed_sec": 46.0,
+      "actual_count": 107,
+      "elapsed_sec": 51.0,
       "queries_generated": 3,
-      "primary_query_url": "Condition?code=http://snomed.info/sct|266569009&patient.birthdate=le1986-04-28&patient.gender=male",
+      "primary_query_url": "Condition?code=http://snomed.info/sct|266569009&subject:Patient.gender=male&subject:Patient.birthdate=le1986-06-17",
       "additional_query_urls": [
-       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|77492,http://www.nlm.nih.gov/research/umls/rxnorm|25025,http://www.nlm.nih.gov/research/umls/rxnorm|37798&patient.birthdate=le1986-04-28&patient.gender=male",
-       "Procedure?code=http://snomed.info/sct|90199006&patient.birthdate=le1986-04-28&patient.gender=male"
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|77492,http://www.nlm.nih.gov/research/umls/rxnorm|10600,http://www.nlm.nih.gov/research/umls/rxnorm|50692&subject:Patient.gender=male&subject:Patient.birthdate=le1986-06-17",
+       "Procedure?code=http://snomed.info/sct|176106009&subject:Patient.gender=male&subject:Patient.birthdate=le1986-06-17"
       ],
-      "raw_response": "```\nCondition?code=http://snomed.info/sct|266569009&patient.birthdate=le1986-04-28&patient.gender=male\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|77492,http://www.nlm.nih.gov/research/umls/rxnorm|25025,http://www.nlm.nih.gov/research/umls/rxnorm|37798&patient.birthdate=le1986-04-28&patient.gender=male\nProcedure?code=http://snomed.info/sct|90199006&patient.birthdate=le1986-04-28&patient.gender=male\n```\n\n---\n\n### Query Breakdown\n\n| # | Resource | Clinical Target | Filter Logic |\n|---|----------|----------------|--------------|\n| 1 | `Condition` | **BPH diagnosis** \u2014 SNOMED `266569009` *(Benign prostatic hypertrophy)* | Male, born \u2264 1986-04-28 (age 40+) |\n| 2 | `MedicationRequest` | **BPH pharmacotherapy** \u2014 RxNorm `77492` (tamsulosin) \u00b7 `25025` (finasteride) \u00b7 `37798` (terazosin) | Male, born \u2264 1986-04-28 (age 40+) |\n| 3 | `Procedure` | **TURP** \u2014 SNOMED `90199006` *(Transurethral resection of prostate)* | Male, born \u2264 1986-04-28 (age 40+) |\n\n---\n\n### Post-Query Union Logic\n\nAfter retrieving results, extract `patient` reference IDs from each bundle and union them client-side:\n\n```\npatientSet = UNION(\n  Condition.bundle     \u2192 entry[].resource.subject.reference,\n  MedicationRequest.bundle \u2192 entry[].resource.subject.reference,\n  Procedure.bundle     \u2192 entry[].resource.subject.reference\n)\n```\n\n> **Notes:**\n> - The comma-separated RxNorm codes in Query 2 are treated as **OR** by the FHIR spec (any match qualifies).\n> - `patient.birthdate` and `patient.gender` are **chained parameters** \u2014 the server must support chaining on `subject`/`patient` \u2192 `Patient`. If not supported, retrieve unconstrained and filter post-fetch, or use `_has` reverse-chaining from the `Patient` resource.\n> - Consider adding `&status=active` to the `MedicationRequest` query if only current prescriptions are relevant.",
-      "prompt_text": "Run three queries restricted to male patients age 40+. (1) Condition?code=http://snomed.info/sct|266569009&patient.birthdate=le1986-04-28&patient.gender=male \u2014 BPH dx. (2) MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|77492,http://www.nlm.nih.gov/research/umls/rxnorm|25025,http://www.nlm.nih.gov/research/umls/rxnorm|37798&patient.birthdate=le1986-04-28&patient.gender=male \u2014 BPH meds. (3) Procedure?code=http://snomed.info/sct|90199006&patient.birthdate=le1986-04-28&patient.gender=male \u2014 TURP. Union the patient IDs."
+      "raw_response": "## FHIR Queries: BPH Patient Identification \u2014 Multi-Resource Union\n\n**Birth-date cutoff** (age \u2265 40 as of 2026-06-17): `le1986-06-17`\n**Sex filter**: `subject:Patient.gender=male` (chained on all three)\n\n---\n\n### Query 1 \u2014 Condition: BPH Diagnosis (SNOMED CT)\n```\nCondition?code=http://snomed.info/sct|266569009&subject:Patient.gender=male&subject:Patient.birthdate=le1986-06-17\n```\n\n---\n\n### Query 2 \u2014 MedicationRequest: Alpha-blockers & 5-ARIs (RxNorm)\n*(Tamsulosin `77492` \u00b7 Terazosin `10600` \u00b7 Finasteride `50692` \u2014 comma = OR)*\n```\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|77492,http://www.nlm.nih.gov/research/umls/rxnorm|10600,http://www.nlm.nih.gov/research/umls/rxnorm|50692&subject:Patient.gender=male&subject:Patient.birthdate=le1986-06-17\n```\n\n---\n\n### Query 3 \u2014 Procedure: TURP (SNOMED CT)\n```\nProcedure?code=http://snomed.info/sct|176106009&subject:Patient.gender=male&subject:Patient.birthdate=le1986-06-17\n```\n\n---\n\n## Design Notes\n\n| Aspect | Detail |\n|---|---|\n| **BPH SNOMED code** | `266569009` \u2014 *Benign prostatic hyperplasia (disorder)* |\n| **TURP SNOMED code** | `176106009` \u2014 *Transurethral resection of prostate (procedure)* |\n| **RxNorm level** | Ingredient-level codes; subsumes all dose forms & strengths via RxNorm hierarchy |\n| **Chained params** | `subject:Patient.gender` & `subject:Patient.birthdate` resolve the chain to `Patient` specifically, avoiding Group/Device ambiguity |\n| **Birth-date cutoff** | `le1986-06-17` derived from current date `2026-06-17` minus 40 years |\n| **Multi-drug OR** | Comma-separated `code` values apply OR logic within a single query per FHIR spec \u00a73.2.1 |\n| **Cross-indication path** | Query 2 intentionally captures empirical alpha-blocker prescribers who never attached a `266569009` Condition code, ensuring those patients aren't missed in the union |\n| **Post-query union** | Extract `subject.reference` (e.g., `Patient/123`) from each bundle, deduplicate across all three result sets |",
+      "prompt_text": "I need to identify all BPH patients using a multi-resource union restricted to males aged 40 and older. Run three queries, each filtered to male patients with a birth date consistent with age 40 or above: (1) Condition resources for a benign prostatic hyperplasia diagnosis coded in SNOMED CT; (2) MedicationRequest resources for the alpha-blockers and 5-alpha-reductase inhibitors used to manage BPH \u2014 tamsulosin, terazosin, and finasteride, all coded in RxNorm (some patients receive empirical alpha-blocker therapy without a coded BPH diagnosis, making this a true cross-indication path); (3) Procedure resources for transurethral resection of the prostate (TURP) coded in SNOMED CT. Apply sex and birth-date chained search parameters to all three queries, then union the distinct patient IDs."
      },
      "2-naive": {
       "precision": 1.0,
@@ -343,18 +343,18 @@
       "passed": true,
       "expected_count": 121,
       "actual_count": 121,
-      "elapsed_sec": 63.2,
+      "elapsed_sec": 123.9,
       "queries_generated": 3,
-      "primary_query_url": "Condition?code=http://snomed.info/sct|266569009&patient.birthdate=le1986-04-28&patient.gender=male",
+      "primary_query_url": "Condition?code=http://snomed.info/sct|266569009&patient.gender=male&patient.birthdate=le1986-06-17",
       "additional_query_urls": [
-       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|77492,http://www.nlm.nih.gov/research/umls/rxnorm|25025,http://www.nlm.nih.gov/research/umls/rxnorm|37798&patient.birthdate=le1986-04-28&patient.gender=male",
-       "Procedure?code=http://snomed.info/sct|90199006&patient.birthdate=le1986-04-28&patient.gender=male"
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|77492,http://www.nlm.nih.gov/research/umls/rxnorm|37798,http://www.nlm.nih.gov/research/umls/rxnorm|25025&patient.gender=male&patient.birthdate=le1986-06-17",
+       "Procedure?code=http://snomed.info/sct|90199006&patient.gender=male&patient.birthdate=le1986-06-17"
       ],
-      "raw_response": "All three queries validated cleanly. Here is the full results summary:\n\n---\n\n## Results Summary \u2014 BPH Cohort (Male, Age \u2265 40)\n\n| # | Resource | Intent | Filters Active | **Count** |\n|---|----------|--------|---------------|-----------|\n| 1 | `Condition` | BPH diagnosis | SNOMED `266569009` \u00b7 `patient.gender=male` \u00b7 `patient.birthdate\u22641986-04-28` | **100** |\n| 2 | `MedicationRequest` | BPH medications | RxNorm `77492`/`25025`/`37798` \u00b7 same demographic filters | **110** |\n| 3 | `Procedure` | TURP surgery | SNOMED `90199006` \u00b7 same demographic filters | **9** |\n| | | | **Raw union (before dedup)** | **\u2264 219** |\n\n---\n\n### \u2705 Coding Validation (sampled records confirm correct hits)\n\n**Query 1 \u2014 BPH Condition** \u2014 Each record carries all three coding systems simultaneously:\n- `http://snomed.info/sct|266569009` \u2192 *Benign prostatic hyperplasia* \u2714\n- `http://hl7.org/fhir/sid/icd-10-cm|N40.0` \u2192 *BPH without LUTS* \u2714\n- `http://hl7.org/fhir/sid/icd-9-cm|600.00` \u2192 *Hypertrophy of prostate (legacy)* \u2714\n\n**Query 2 \u2014 BPH MedicationRequest** \u2014 All three RxNorm ingredients are firing:\n- `77492` \u2192 **tamsulosin** (\u03b1\u2081-blocker) \u2714\n- `25025` \u2192 **finasteride** (5-\u03b1 reductase inhibitor) \u2714\n- `37798` \u2192 **terazosin** (\u03b1\u2081-blocker) \u2714\n\n**Query 3 \u2014 TURP Procedure** \u2014 Dual-coded on all 9 records:\n- `http://snomed.info/sct|90199006` \u2192 *Transurethral prostatectomy* \u2714\n- `http://www.ama-assn.org/go/cpt|52601` \u2192 *Transurethral electrosurgical resection of prostate* \u2714\n\n---\n\n### Union Instructions\n\nCollect `subject.reference` (or `patient.reference`) from all three result sets, deduplicate by patient ID \u2014 that is your final BPH cohort. Expect meaningful overlap between Queries 1 and 2 (diagnosed patients are often also prescribed), while Query 3 patients (post-TURP) may or may not carry a separate Condition record.\n\n---\n\n### Final Validated Queries\n\n```\nCondition?code=http://snomed.info/sct|266569009&patient.birthdate=le1986-04-28&patient.gender=male\n\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|77492,http://www.nlm.nih.gov/research/umls/rxnorm|25025,http://www.nlm.nih.gov/research/umls/rxnorm|37798&patient.birthdate=le1986-04-28&patient.gender=male\n\nProcedure?code=http://snomed.info/sct|90199006&patient.birthdate=le1986-04-28&patient.gender=male\n```",
-      "prompt_text": "Run three queries restricted to male patients age 40+. (1) Condition?code=http://snomed.info/sct|266569009&patient.birthdate=le1986-04-28&patient.gender=male \u2014 BPH dx. (2) MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|77492,http://www.nlm.nih.gov/research/umls/rxnorm|25025,http://www.nlm.nih.gov/research/umls/rxnorm|37798&patient.birthdate=le1986-04-28&patient.gender=male \u2014 BPH meds. (3) Procedure?code=http://snomed.info/sct|90199006&patient.birthdate=le1986-04-28&patient.gender=male \u2014 TURP. Union the patient IDs.",
+      "raw_response": "All codes verified and counts confirmed:\n- \u2705 **BPH Condition** (SNOMED `266569009` \u2014 \"Benign prostatic hyperplasia\"): **100 records**\n- \u2705 **BPH Medications** (RxNorm `77492` tamsulosin + `37798` terazosin + `25025` finasteride): **110 records**\n- \u2705 **TURP Procedure** (SNOMED `90199006` \u2014 \"Transurethral prostatectomy\"): **9 records**\n\n**Code Inventory Summary:**\n\n| Query | Code System | Code(s) | Display |\n|---|---|---|---|\n| Condition | SNOMED CT | `266569009` | Benign prostatic hyperplasia |\n| MedicationRequest | RxNorm | `77492` | tamsulosin (alpha-blocker) |\n| MedicationRequest | RxNorm | `37798` | terazosin (alpha-blocker) |\n| MedicationRequest | RxNorm | `25025` | finasteride (5-ARI) |\n| Procedure | SNOMED CT | `90199006` | Transurethral prostatectomy |\n\n**Demographic filter:** `patient.gender=male` + `patient.birthdate=le1986-06-17` (\u226540 years old as of 2026-06-17 \u2014 the current date minus 40 years).\n\n---\n\n```\nCondition?code=http://snomed.info/sct|266569009&patient.gender=male&patient.birthdate=le1986-06-17\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|77492,http://www.nlm.nih.gov/research/umls/rxnorm|37798,http://www.nlm.nih.gov/research/umls/rxnorm|25025&patient.gender=male&patient.birthdate=le1986-06-17\nProcedure?code=http://snomed.info/sct|90199006&patient.gender=male&patient.birthdate=le1986-06-17\n```",
+      "prompt_text": "I need to identify all BPH patients using a multi-resource union restricted to males aged 40 and older. Run three queries, each filtered to male patients with a birth date consistent with age 40 or above: (1) Condition resources for a benign prostatic hyperplasia diagnosis coded in SNOMED CT; (2) MedicationRequest resources for the alpha-blockers and 5-alpha-reductase inhibitors used to manage BPH \u2014 tamsulosin, terazosin, and finasteride, all coded in RxNorm (some patients receive empirical alpha-blocker therapy without a coded BPH diagnosis, making this a true cross-indication path); (3) Procedure resources for transurethral resection of the prostate (TURP) coded in SNOMED CT. Apply sex and birth-date chained search parameters to all three queries, then union the distinct patient IDs.",
       "run_metadata": {
-       "output_tokens": 1231,
-       "tool_calls_count": 6,
+       "output_tokens": 1020,
+       "tool_calls_count": 35,
        "stop_reason": "complete",
        "fallback_used": false
       }
@@ -410,18 +410,18 @@
       "passed": true,
       "expected_count": 121,
       "actual_count": 121,
-      "elapsed_sec": 45.7,
+      "elapsed_sec": 117.1,
       "queries_generated": 3,
-      "primary_query_url": "Condition?code=http://snomed.info/sct|266569009&patient.birthdate=le1986-04-28&patient.gender=male",
+      "primary_query_url": "Condition?code=http://snomed.info/sct|266569009&patient.gender=male&patient.birthdate=le1986-06-17",
       "additional_query_urls": [
-       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|77492,http://www.nlm.nih.gov/research/umls/rxnorm|25025,http://www.nlm.nih.gov/research/umls/rxnorm|37798&patient.birthdate=le1986-04-28&patient.gender=male",
-       "Procedure?code=http://snomed.info/sct|90199006&patient.birthdate=le1986-04-28&patient.gender=male"
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|77492,http://www.nlm.nih.gov/research/umls/rxnorm|37798,http://www.nlm.nih.gov/research/umls/rxnorm|25025&patient.gender=male&patient.birthdate=le1986-06-17",
+       "Procedure?code=http://snomed.info/sct|90199006&patient.gender=male&patient.birthdate=le1986-06-17"
       ],
-      "raw_response": "All three queries executed successfully and validated. Here is the complete picture before the final answer:\n\n---\n\n### \u2705 Query Validation Summary\n\n| # | Signal | Resource | Key Codes Confirmed on Server | Count |\n|---|--------|----------|-------------------------------|-------|\n| 1 | BPH Diagnosis | `Condition` | `SNOMED 266569009` \u2013 *Benign prostatic hyperplasia* (also co-coded with ICD-10 N40.0 / ICD-9 600.00) | **100** |\n| 2 | BPH Medications | `MedicationRequest` | `RxNorm 77492` \u2013 tamsulosin \u00b7 `RxNorm 25025` \u2013 finasteride \u00b7 `RxNorm 37798` \u2013 dutasteride | **110** |\n| 3 | TURP Procedure | `Procedure` | `SNOMED 90199006` \u2013 *Transurethral prostatectomy* (also CPT 52601 present) | **9** |\n\n**Age/sex filters confirmed working:** `patient.birthdate=le1986-04-28` (born on or before 2026-06-09 minus 40 years = \u226540 yrs old) + `patient.gender=male`\n\n---\n\n### \ud83d\udd17 Union Logic\n- Queries are **OR / union** across all three evidence streams (Playbook 12 \u2014 Cohort).\n- A patient qualifies if they appear in **any** of the three result sets (BPH dx **OR** BPH meds **OR** TURP).\n- TURP adds only 9 patients but is a high-specificity signal (the CPT 52601 is co-coded, meaning no TURP patients are missed).\n- **No double-counting**: deduplicate on `patient.id` after union.\n\n---\n\n### FINAL ANSWER\n\n```\nCondition?code=http://snomed.info/sct|266569009&patient.birthdate=le1986-04-28&patient.gender=male\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|77492,http://www.nlm.nih.gov/research/umls/rxnorm|25025,http://www.nlm.nih.gov/research/umls/rxnorm|37798&patient.birthdate=le1986-04-28&patient.gender=male\nProcedure?code=http://snomed.info/sct|90199006&patient.birthdate=le1986-04-28&patient.gender=male\n```",
-      "prompt_text": "Run three queries restricted to male patients age 40+. (1) Condition?code=http://snomed.info/sct|266569009&patient.birthdate=le1986-04-28&patient.gender=male \u2014 BPH dx. (2) MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|77492,http://www.nlm.nih.gov/research/umls/rxnorm|25025,http://www.nlm.nih.gov/research/umls/rxnorm|37798&patient.birthdate=le1986-04-28&patient.gender=male \u2014 BPH meds. (3) Procedure?code=http://snomed.info/sct|90199006&patient.birthdate=le1986-04-28&patient.gender=male \u2014 TURP. Union the patient IDs.",
+      "raw_response": "All three queries return solid, non-zero counts. Here is the full evidence table before the final answer:\n\n---\n\n### Evidence Summary\n\n| Layer | Code(s) | System | How Confirmed | Count |\n|---|---|---|---|---|\n| **Condition \u2014 BPH dx** | `266569009` \"Benign prostatic hyperplasia\" | SNOMED CT | Live server sample (all 3/3 BPH Conditions used this code) | **100** |\n| **MedicationRequest \u2014 tamsulosin** | `77492` | RxNorm | Live server sample | *(part of 110)* |\n| **MedicationRequest \u2014 terazosin** | `37798` | RxNorm | Live server sample | *(part of 110)* |\n| **MedicationRequest \u2014 finasteride** | `25025` | RxNorm | Live server sample (found on 4th\u20135th records; 84148 returned 0, 25025 confirmed) | *(part of 110)* |\n| **Procedure \u2014 TURP** | `90199006` \"Transurethral prostatectomy\" | SNOMED CT | Live server sample (all 3/3 TURP Procedures used this code) | **9** |\n| **Sex filter** | `patient.gender=male` | \u2014 | Standard FHIR chained param | Applied to all 3 |\n| **Age \u226540 filter** | `patient.birthdate=le1986-06-17` | \u2014 | 2026-06-17 \u2212 40 yr = 1986-06-17 | Applied to all 3 |\n\n---\n\n### Playbook Assignments\n- **Playbook 3 (Age-restricted):** `patient.birthdate=le1986-06-17` on all three queries\n- **Playbook 4 (Sex-specific):** `patient.gender=male` on all three queries\n- **Playbook 5 (Iatrogenic/empirical):** Medication query deliberately captures alpha-blocker prescriptions made *without* a coded BPH diagnosis\n- **Playbook 12 (Cohort = OR / multi-resource union):** Three separate queries; evaluator unions the distinct patient sets\n\n---\n\n**FINAL ANSWER:**\n\n```\nCondition?code=http://snomed.info/sct|266569009&patient.gender=male&patient.birthdate=le1986-06-17\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|77492,http://www.nlm.nih.gov/research/umls/rxnorm|37798,http://www.nlm.nih.gov/research/umls/rxnorm|25025&patient.gender=male&patient.birthdate=le1986-06-17\nProcedure?code=http://snomed.info/sct|90199006&patient.gender=male&patient.birthdate=le1986-06-17\n```",
+      "prompt_text": "I need to identify all BPH patients using a multi-resource union restricted to males aged 40 and older. Run three queries, each filtered to male patients with a birth date consistent with age 40 or above: (1) Condition resources for a benign prostatic hyperplasia diagnosis coded in SNOMED CT; (2) MedicationRequest resources for the alpha-blockers and 5-alpha-reductase inhibitors used to manage BPH \u2014 tamsulosin, terazosin, and finasteride, all coded in RxNorm (some patients receive empirical alpha-blocker therapy without a coded BPH diagnosis, making this a true cross-indication path); (3) Procedure resources for transurethral resection of the prostate (TURP) coded in SNOMED CT. Apply sex and birth-date chained search parameters to all three queries, then union the distinct patient IDs.",
       "run_metadata": {
-       "output_tokens": 956,
-       "tool_calls_count": 6,
+       "output_tokens": 1083,
+       "tool_calls_count": 30,
        "stop_reason": "complete",
        "fallback_used": false
       }
@@ -467,15 +467,15 @@
       "passed": true,
       "expected_count": 121,
       "actual_count": 121,
-      "elapsed_sec": 68.8,
+      "elapsed_sec": 63.5,
       "queries_generated": 3,
-      "primary_query_url": "Patient?gender=male&birthdate=le1986-04-28&_has:Condition:patient:code=http://snomed.info/sct|266569009&_elements=id",
+      "primary_query_url": "Condition?code:below=http://snomed.info/sct|266569009&subject:Patient.gender=male&subject:Patient.birthdate=le1986-06-17",
       "additional_query_urls": [
-       "Patient?gender=male&birthdate=le1986-04-28&_has:MedicationRequest:patient:code=http://www.nlm.nih.gov/research/umls/rxnorm|77492,http://www.nlm.nih.gov/research/umls/rxnorm|25025,http://www.nlm.nih.gov/research/umls/rxnorm|37798&_elements=id",
-       "Patient?gender=male&birthdate=le1986-04-28&_has:Procedure:patient:code=http://snomed.info/sct|90199006&_elements=id"
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|77492,http://www.nlm.nih.gov/research/umls/rxnorm|37798,http://www.nlm.nih.gov/research/umls/rxnorm|25025&subject:Patient.gender=male&subject:Patient.birthdate=le1986-06-17",
+       "Procedure?code:below=http://snomed.info/sct|236991006&subject:Patient.gender=male&subject:Patient.birthdate=le1986-06-17"
       ],
-      "raw_response": "Patient?gender=male&birthdate=le1986-04-28&_has:Condition:patient:code=http://snomed.info/sct|266569009&_elements=id\nPatient?gender=male&birthdate=le1986-04-28&_has:MedicationRequest:patient:code=http://www.nlm.nih.gov/research/umls/rxnorm|77492,http://www.nlm.nih.gov/research/umls/rxnorm|25025,http://www.nlm.nih.gov/research/umls/rxnorm|37798&_elements=id\nPatient?gender=male&birthdate=le1986-04-28&_has:Procedure:patient:code=http://snomed.info/sct|90199006&_elements=id",
-      "prompt_text": "Run three queries restricted to male patients age 40+. (1) Condition?code=http://snomed.info/sct|266569009&patient.birthdate=le1986-04-28&patient.gender=male \u2014 BPH dx. (2) MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|77492,http://www.nlm.nih.gov/research/umls/rxnorm|25025,http://www.nlm.nih.gov/research/umls/rxnorm|37798&patient.birthdate=le1986-04-28&patient.gender=male \u2014 BPH meds. (3) Procedure?code=http://snomed.info/sct|90199006&patient.birthdate=le1986-04-28&patient.gender=male \u2014 TURP. Union the patient IDs."
+      "raw_response": "Condition?code:below=http://snomed.info/sct|266569009&subject:Patient.gender=male&subject:Patient.birthdate=le1986-06-17\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|77492,http://www.nlm.nih.gov/research/umls/rxnorm|37798,http://www.nlm.nih.gov/research/umls/rxnorm|25025&subject:Patient.gender=male&subject:Patient.birthdate=le1986-06-17\nProcedure?code:below=http://snomed.info/sct|236991006&subject:Patient.gender=male&subject:Patient.birthdate=le1986-06-17",
+      "prompt_text": "I need to identify all BPH patients using a multi-resource union restricted to males aged 40 and older. Run three queries, each filtered to male patients with a birth date consistent with age 40 or above: (1) Condition resources for a benign prostatic hyperplasia diagnosis coded in SNOMED CT; (2) MedicationRequest resources for the alpha-blockers and 5-alpha-reductase inhibitors used to manage BPH \u2014 tamsulosin, terazosin, and finasteride, all coded in RxNorm (some patients receive empirical alpha-blocker therapy without a coded BPH diagnosis, making this a true cross-indication path); (3) Procedure resources for transurethral resection of the prostate (TURP) coded in SNOMED CT. Apply sex and birth-date chained search parameters to all three queries, then union the distinct patient IDs."
      },
      "2-naive": {
       "precision": 1.0,
@@ -531,18 +531,18 @@
       "passed": true,
       "expected_count": 121,
       "actual_count": 121,
-      "elapsed_sec": 33.5,
+      "elapsed_sec": 60.0,
       "queries_generated": 3,
-      "primary_query_url": "Condition?code=http://snomed.info/sct|266569009&patient.birthdate=le1986-04-28&patient.gender=male",
+      "primary_query_url": "Condition?code=http://snomed.info/sct|266569009&patient.gender=male&patient.birthdate=le1986-06-17",
       "additional_query_urls": [
-       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|77492,http://www.nlm.nih.gov/research/umls/rxnorm|25025,http://www.nlm.nih.gov/research/umls/rxnorm|37798&patient.birthdate=le1986-04-28&patient.gender=male",
-       "Procedure?code=http://snomed.info/sct|90199006&patient.birthdate=le1986-04-28&patient.gender=male"
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|77492,http://www.nlm.nih.gov/research/umls/rxnorm|37798,http://www.nlm.nih.gov/research/umls/rxnorm|25025&patient.gender=male&patient.birthdate=le1986-06-17",
+       "Procedure?code=http://snomed.info/sct|90199006&patient.gender=male&patient.birthdate=le1986-06-17"
       ],
-      "raw_response": "Condition?code=http://snomed.info/sct|266569009&patient.birthdate=le1986-04-28&patient.gender=male\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|77492,http://www.nlm.nih.gov/research/umls/rxnorm|25025,http://www.nlm.nih.gov/research/umls/rxnorm|37798&patient.birthdate=le1986-04-28&patient.gender=male\nProcedure?code=http://snomed.info/sct|90199006&patient.birthdate=le1986-04-28&patient.gender=male",
-      "prompt_text": "Run three queries restricted to male patients age 40+. (1) Condition?code=http://snomed.info/sct|266569009&patient.birthdate=le1986-04-28&patient.gender=male \u2014 BPH dx. (2) MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|77492,http://www.nlm.nih.gov/research/umls/rxnorm|25025,http://www.nlm.nih.gov/research/umls/rxnorm|37798&patient.birthdate=le1986-04-28&patient.gender=male \u2014 BPH meds. (3) Procedure?code=http://snomed.info/sct|90199006&patient.birthdate=le1986-04-28&patient.gender=male \u2014 TURP. Union the patient IDs.",
+      "raw_response": "Condition?code=http://snomed.info/sct|266569009&patient.gender=male&patient.birthdate=le1986-06-17\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|77492,http://www.nlm.nih.gov/research/umls/rxnorm|37798,http://www.nlm.nih.gov/research/umls/rxnorm|25025&patient.gender=male&patient.birthdate=le1986-06-17\nProcedure?code=http://snomed.info/sct|90199006&patient.gender=male&patient.birthdate=le1986-06-17",
+      "prompt_text": "I need to identify all BPH patients using a multi-resource union restricted to males aged 40 and older. Run three queries, each filtered to male patients with a birth date consistent with age 40 or above: (1) Condition resources for a benign prostatic hyperplasia diagnosis coded in SNOMED CT; (2) MedicationRequest resources for the alpha-blockers and 5-alpha-reductase inhibitors used to manage BPH \u2014 tamsulosin, terazosin, and finasteride, all coded in RxNorm (some patients receive empirical alpha-blocker therapy without a coded BPH diagnosis, making this a true cross-indication path); (3) Procedure resources for transurethral resection of the prostate (TURP) coded in SNOMED CT. Apply sex and birth-date chained search parameters to all three queries, then union the distinct patient IDs.",
       "run_metadata": {
-       "output_tokens": 663,
-       "tool_calls_count": 0,
+       "output_tokens": 2085,
+       "tool_calls_count": 13,
        "stop_reason": "complete",
        "fallback_used": false
       }
@@ -597,18 +597,18 @@
       "passed": true,
       "expected_count": 121,
       "actual_count": 121,
-      "elapsed_sec": 106.7,
+      "elapsed_sec": 64.6,
       "queries_generated": 3,
-      "primary_query_url": "Condition?code=http://snomed.info/sct|266569009&patient.birthdate=le1986-04-28&patient.gender=male",
+      "primary_query_url": "Condition?code=http://snomed.info/sct|266569009&patient.gender=male&patient.birthdate=le1986-06-17",
       "additional_query_urls": [
-       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|77492,http://www.nlm.nih.gov/research/umls/rxnorm|25025,http://www.nlm.nih.gov/research/umls/rxnorm|37798&patient.birthdate=le1986-04-28&patient.gender=male",
-       "Procedure?code=http://snomed.info/sct|90199006&patient.birthdate=le1986-04-28&patient.gender=male"
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|77492,http://www.nlm.nih.gov/research/umls/rxnorm|37798,http://www.nlm.nih.gov/research/umls/rxnorm|25025&subject.gender=male&subject.birthdate=le1986-06-17",
+       "Procedure?code=http://snomed.info/sct|90199006&patient.gender=male&patient.birthdate=le1986-06-17"
       ],
-      "raw_response": "Condition?code=http://snomed.info/sct|266569009&patient.birthdate=le1986-04-28&patient.gender=male\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|77492,http://www.nlm.nih.gov/research/umls/rxnorm|25025,http://www.nlm.nih.gov/research/umls/rxnorm|37798&patient.birthdate=le1986-04-28&patient.gender=male\nProcedure?code=http://snomed.info/sct|90199006&patient.birthdate=le1986-04-28&patient.gender=male",
-      "prompt_text": "Run three queries restricted to male patients age 40+. (1) Condition?code=http://snomed.info/sct|266569009&patient.birthdate=le1986-04-28&patient.gender=male \u2014 BPH dx. (2) MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|77492,http://www.nlm.nih.gov/research/umls/rxnorm|25025,http://www.nlm.nih.gov/research/umls/rxnorm|37798&patient.birthdate=le1986-04-28&patient.gender=male \u2014 BPH meds. (3) Procedure?code=http://snomed.info/sct|90199006&patient.birthdate=le1986-04-28&patient.gender=male \u2014 TURP. Union the patient IDs.",
+      "raw_response": "Condition?code=http://snomed.info/sct|266569009&patient.gender=male&patient.birthdate=le1986-06-17\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|77492,http://www.nlm.nih.gov/research/umls/rxnorm|37798,http://www.nlm.nih.gov/research/umls/rxnorm|25025&subject.gender=male&subject.birthdate=le1986-06-17\nProcedure?code=http://snomed.info/sct|90199006&patient.gender=male&patient.birthdate=le1986-06-17",
+      "prompt_text": "I need to identify all BPH patients using a multi-resource union restricted to males aged 40 and older. Run three queries, each filtered to male patients with a birth date consistent with age 40 or above: (1) Condition resources for a benign prostatic hyperplasia diagnosis coded in SNOMED CT; (2) MedicationRequest resources for the alpha-blockers and 5-alpha-reductase inhibitors used to manage BPH \u2014 tamsulosin, terazosin, and finasteride, all coded in RxNorm (some patients receive empirical alpha-blocker therapy without a coded BPH diagnosis, making this a true cross-indication path); (3) Procedure resources for transurethral resection of the prostate (TURP) coded in SNOMED CT. Apply sex and birth-date chained search parameters to all three queries, then union the distinct patient IDs.",
       "run_metadata": {
-       "output_tokens": 1143,
-       "tool_calls_count": 21,
+       "output_tokens": 940,
+       "tool_calls_count": 25,
        "stop_reason": "complete",
        "fallback_used": false
       }
@@ -856,12 +856,12 @@
       "passed": true,
       "expected_count": 100,
       "actual_count": 100,
-      "elapsed_sec": 0.1,
+      "elapsed_sec": 13.0,
       "queries_generated": 1,
-      "primary_query_url": "Condition?code=http://snomed.info/sct|266569009&patient.birthdate=le1986-04-28&patient.gender=male",
+      "primary_query_url": "Condition?code=http://snomed.info/sct|266569009&patient.gender=male&patient.birthdate=le1986-06-17",
       "additional_query_urls": [],
-      "raw_response": "Condition?code=http://snomed.info/sct|266569009&patient.birthdate=le1986-04-28&patient.gender=male",
-      "prompt_text": "I need male patients age 40+ with BPH. SNOMED 266569009 (Benign prostatic hyperplasia) covers the condition. FHIR has no patient.age search parameter, so use chained search with patient.birthdate <= (today - 40 years). With reference date 2026-04-28, that means patient.birthdate <= 1986-04-28. Add patient.gender=male via chained search. Query: Condition?code=http://snomed.info/sct|266569009&patient.birthdate=le1986-04-28&patient.gender=male"
+      "raw_response": "Condition?code=http://snomed.info/sct|266569009&patient.gender=male&patient.birthdate=le1986-06-17",
+      "prompt_text": "I need to find male patients aged 40 and older with a documented benign prostatic hyperplasia diagnosis. Search Condition resources for the SNOMED CT code for benign prostatic hyperplasia, then apply chained patient filters for sex equal to male and a birth date on or before the date corresponding to 40 years prior to today \u2014 FHIR does not support a direct patient.age parameter, so the age constraint must be expressed as a patient.birthdate upper bound. Do not broaden to prostate cancer or other prostate conditions, which are clinically and code-distinctly different."
      },
      "2-naive": {
       "precision": 1.0,
@@ -910,15 +910,15 @@
       "passed": true,
       "expected_count": 100,
       "actual_count": 100,
-      "elapsed_sec": 18.2,
+      "elapsed_sec": 37.2,
       "queries_generated": 1,
-      "primary_query_url": "Condition?code=http://snomed.info/sct|266569009&patient.birthdate=le1986-04-28&patient.gender=male",
+      "primary_query_url": "Condition?code=http://snomed.info/sct|266569009&subject.gender=male&subject.birthdate=le1986-06-17",
       "additional_query_urls": [],
-      "raw_response": "Condition?code=http://snomed.info/sct|266569009&patient.birthdate=le1986-04-28&patient.gender=male",
-      "prompt_text": "I need male patients age 40+ with BPH. SNOMED 266569009 (Benign prostatic hyperplasia) covers the condition. FHIR has no patient.age search parameter, so use chained search with patient.birthdate <= (today - 40 years). With reference date 2026-04-28, that means patient.birthdate <= 1986-04-28. Add patient.gender=male via chained search. Query: Condition?code=http://snomed.info/sct|266569009&patient.birthdate=le1986-04-28&patient.gender=male",
+      "raw_response": "FINAL ANSWER:\n\nCondition?code=http://snomed.info/sct|266569009&subject.gender=male&subject.birthdate=le1986-06-17",
+      "prompt_text": "I need to find male patients aged 40 and older with a documented benign prostatic hyperplasia diagnosis. Search Condition resources for the SNOMED CT code for benign prostatic hyperplasia, then apply chained patient filters for sex equal to male and a birth date on or before the date corresponding to 40 years prior to today \u2014 FHIR does not support a direct patient.age parameter, so the age constraint must be expressed as a patient.birthdate upper bound. Do not broaden to prostate cancer or other prostate conditions, which are clinically and code-distinctly different.",
       "run_metadata": {
-       "output_tokens": 48,
-       "tool_calls_count": 1,
+       "output_tokens": 59,
+       "tool_calls_count": 7,
        "stop_reason": "complete",
        "fallback_used": false
       }
@@ -970,12 +970,12 @@
       "passed": true,
       "expected_count": 100,
       "actual_count": 100,
-      "elapsed_sec": 16.4,
+      "elapsed_sec": 18.0,
       "queries_generated": 1,
-      "primary_query_url": "Condition?code=http://snomed.info/sct|266569009&patient.birthdate=le1986-04-28&patient.gender=male",
+      "primary_query_url": "Condition?code=http://snomed.info/sct|266569009&patient.gender=male&patient.birthdate=le1986-06-17",
       "additional_query_urls": [],
-      "raw_response": "Condition?code=http://snomed.info/sct|266569009&patient.birthdate=le1986-04-28&patient.gender=male",
-      "prompt_text": "I need male patients age 40+ with BPH. SNOMED 266569009 (Benign prostatic hyperplasia) covers the condition. FHIR has no patient.age search parameter, so use chained search with patient.birthdate <= (today - 40 years). With reference date 2026-04-28, that means patient.birthdate <= 1986-04-28. Add patient.gender=male via chained search. Query: Condition?code=http://snomed.info/sct|266569009&patient.birthdate=le1986-04-28&patient.gender=male",
+      "raw_response": "Condition?code=http://snomed.info/sct|266569009&patient.gender=male&patient.birthdate=le1986-06-17",
+      "prompt_text": "I need to find male patients aged 40 and older with a documented benign prostatic hyperplasia diagnosis. Search Condition resources for the SNOMED CT code for benign prostatic hyperplasia, then apply chained patient filters for sex equal to male and a birth date on or before the date corresponding to 40 years prior to today \u2014 FHIR does not support a direct patient.age parameter, so the age constraint must be expressed as a patient.birthdate upper bound. Do not broaden to prostate cancer or other prostate conditions, which are clinically and code-distinctly different.",
       "run_metadata": {
        "output_tokens": 48,
        "tool_calls_count": 1,
@@ -1022,12 +1022,12 @@
       "passed": true,
       "expected_count": 100,
       "actual_count": 100,
-      "elapsed_sec": 0.1,
+      "elapsed_sec": 12.4,
       "queries_generated": 1,
-      "primary_query_url": "Condition?code=http://snomed.info/sct|266569009&patient.birthdate=le1986-06-11&patient.gender=male",
+      "primary_query_url": "Condition?code=http://snomed.info/sct|266569009&patient.gender=male&patient.birthdate=le1986-06-18",
       "additional_query_urls": [],
-      "raw_response": "Condition?code=http://snomed.info/sct|266569009&patient.birthdate=le1986-06-11&patient.gender=male",
-      "prompt_text": "I need male patients age 40+ with BPH. SNOMED 266569009 (Benign prostatic hyperplasia) covers the condition. FHIR has no patient.age search parameter, so use chained search with patient.birthdate <= (today - 40 years). With reference date 2026-04-28, that means patient.birthdate <= 1986-04-28. Add patient.gender=male via chained search. Query: Condition?code=http://snomed.info/sct|266569009&patient.birthdate=le1986-04-28&patient.gender=male"
+      "raw_response": "Condition?code=http://snomed.info/sct|266569009&patient.gender=male&patient.birthdate=le1986-06-18",
+      "prompt_text": "I need to find male patients aged 40 and older with a documented benign prostatic hyperplasia diagnosis. Search Condition resources for the SNOMED CT code for benign prostatic hyperplasia, then apply chained patient filters for sex equal to male and a birth date on or before the date corresponding to 40 years prior to today \u2014 FHIR does not support a direct patient.age parameter, so the age constraint must be expressed as a patient.birthdate upper bound. Do not broaden to prostate cancer or other prostate conditions, which are clinically and code-distinctly different."
      }
     },
     "copilot:claude-sonnet-4.6": {
@@ -1072,15 +1072,12 @@
       "passed": true,
       "expected_count": 100,
       "actual_count": 100,
-      "elapsed_sec": 36.5,
-      "queries_generated": 3,
-      "primary_query_url": "Condition?code=http://snomed.info/sct|266569009&patient.birthdate=le1986-06-02&patient.gender=male",
-      "additional_query_urls": [
-       "Condition?code=http://snomed.info/sct|266569009&patient.birthdate=le1986-06-02&patient.gender=male&_include=Condition:patient",
-       "Condition?code=http://snomed.info/sct|266569009&patient.birthdate=le1986-06-02&patient.gender=male&clinical-status=active"
-      ],
-      "raw_response": "## FHIR Query for Male Patients Age 40+ with BPH\n\n```\nCondition?code=http://snomed.info/sct|266569009&patient.birthdate=le1986-06-02&patient.gender=male\n```\n\n---\n\n### Query Breakdown\n\n| Component | Value | Rationale |\n|---|---|---|\n| `ResourceType` | `Condition` | Primary resource for diagnoses |\n| `code` | `http://snomed.info/sct\\|266569009` | SNOMED CT: Benign prostatic hyperplasia |\n| `patient.birthdate=le1986-06-02` | Chained param on Patient | Age \u2265 40 as of **current date 2026-06-02** |\n| `patient.gender=male` | Chained param on Patient | Biologically male patients |\n\n---\n\n### \u26a0\ufe0f Date Correction Note\n\nYour request specified reference date **2026-04-28** \u2192 `le1986-04-28`, but the current system date is **2026-06-02**. The correct cutoff is:\n\n> `2026-06-02 \u2212 40 years = 1986-06-02` \u2192 `le1986-06-02`\n\nUsing `le1986-04-28` would **exclude** patients born between `1986-04-29` and `1986-06-02` who are already 40.\n\n---\n\n### Optional Enhancements\n\n**Include Patient resources in response:**\n```\nCondition?code=http://snomed.info/sct|266569009&patient.birthdate=le1986-06-02&patient.gender=male&_include=Condition:patient\n```\n\n**Add clinical status filter (active conditions only):**\n```\nCondition?code=http://snomed.info/sct|266569009&patient.birthdate=le1986-06-02&patient.gender=male&clinical-status=active\n```",
-      "prompt_text": "I need male patients age 40+ with BPH. SNOMED 266569009 (Benign prostatic hyperplasia) covers the condition. FHIR has no patient.age search parameter, so use chained search with patient.birthdate <= (today - 40 years). With reference date 2026-04-28, that means patient.birthdate <= 1986-04-28. Add patient.gender=male via chained search. Query: Condition?code=http://snomed.info/sct|266569009&patient.birthdate=le1986-04-28&patient.gender=male"
+      "elapsed_sec": 39.8,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|266569009&patient.gender=male&patient.birthdate=le1986-06-17",
+      "additional_query_urls": [],
+      "raw_response": "## FHIR Query\n\n```\nCondition?code=http://snomed.info/sct|266569009&patient.gender=male&patient.birthdate=le1986-06-17\n```\n\n---\n\n## Parameter Breakdown\n\n| Parameter | Value | Rationale |\n|---|---|---|\n| `code` | `http://snomed.info/sct\\|266569009` | SNOMED CT: *Benign prostatic hypertrophy (disorder)* \u2014 the canonical concept for BPH, distinct from malignant/other prostate conditions |\n| `patient.gender` | `male` | Chained filter on the referenced Patient resource's `gender` field |\n| `patient.birthdate` | `le1986-06-17` | Chained upper-bound birthdate constraint: born **on or before** 1986-06-17 ensures age \u2265 40 as of today (2026-06-17) |\n\n---\n\n## Design Notes\n\n- **Age \u2192 Birthdate math:** `2026-06-17 \u2212 40 years = 1986-06-17`. Using `le` (less than or equal) on `birthdate` is the correct FHIR idiom since no native `age` search parameter exists.\n- **Chained parameters** (`patient.gender`, `patient.birthdate`) push the patient-level filters directly into the `Condition` query, avoiding a two-step Patient \u2192 Condition lookup.\n- **Code scope discipline:** SNOMED `266569009` (BPH) is used exclusively. Prostate cancer (`93974005`) and other prostate disorders carry different concept IDs and are intentionally excluded.\n- **Clinical status** \u2014 if you wish to restrict to *active* diagnoses only, append `&clinical-status=active`.",
+      "prompt_text": "I need to find male patients aged 40 and older with a documented benign prostatic hyperplasia diagnosis. Search Condition resources for the SNOMED CT code for benign prostatic hyperplasia, then apply chained patient filters for sex equal to male and a birth date on or before the date corresponding to 40 years prior to today \u2014 FHIR does not support a direct patient.age parameter, so the age constraint must be expressed as a patient.birthdate upper bound. Do not broaden to prostate cancer or other prostate conditions, which are clinically and code-distinctly different."
      },
      "2-naive": {
       "precision": 1.0,
@@ -1129,15 +1126,15 @@
       "passed": true,
       "expected_count": 100,
       "actual_count": 100,
-      "elapsed_sec": 128.6,
+      "elapsed_sec": 35.9,
       "queries_generated": 1,
-      "primary_query_url": "Condition?code=http://snomed.info/sct|266569009,http://hl7.org/fhir/sid/icd-10-cm|N40.0,http://hl7.org/fhir/sid/icd-10-cm|N40.1,http://hl7.org/fhir/sid/icd-9-cm|600.00&patient.birthdate=le1986-04-28&patient.gender=male",
+      "primary_query_url": "Condition?code=http://snomed.info/sct|266569009&subject:Patient.gender=male&subject:Patient.birthdate=le1986-06-17",
       "additional_query_urls": [],
-      "raw_response": "All checks are complete. Here is a full accounting of every finding and the rationale for the final query:\n\n---\n\n## Analysis & Findings\n\n### 1. Server Profile\n- **FHIR R4 (4.0.1)** on Azure FHIR Server \u2014 no US Core IG loaded.\n- Chained search (`patient.birthdate`, `patient.gender`) **is supported** \u2014 the count query returned 100, confirming both filter chains work correctly.\n\n### 2. Code System Audit (5 sampled BPH Conditions)\nEvery single record carries a **consistent triple coding**:\n\n| System | Code | Display |\n|---|---|---|\n| `http://snomed.info/sct` | **266569009** | Benign prostatic hyperplasia |\n| `http://hl7.org/fhir/sid/icd-10-cm` | **N40.0** | BPH without lower urinary tract symptoms |\n| `http://hl7.org/fhir/sid/icd-9-cm` | **600.00** | Hypertrophy (benign) of prostate without urinary obstruction |\n\n\u2192 Your proposed SNOMED-only code **alone** captures all records. However, FHIR code matching is OR-based, so adding the ICD-10 and ICD-9 codes costs nothing and future-proofs against records that may carry only one system.\n\n### 3. ICD-10 Subtype Coverage (VSAC + Server Counts)\n| ICD-10 Code | Description | Server Count |\n|---|---|---|\n| N40.0 | BPH **without** LUTS | \u2705 100 |\n| N40.1 | BPH **with** LUTS | \u274c 0 (not in this dataset) |\n\nVSAC \"Benign Prostatic Hyperplasia\" value sets include both N40.0 and N40.1. N40.1 is absent from this server's data, but should remain in the query for completeness.\n\n### 4. Patient Filters \u2014 Correctness Confirmed\n- `patient.gender=male` \u2705 \u2014 appropriate for a prostate condition; confirmed by chained search support.\n- `patient.birthdate=le1986-04-28` \u2705 \u2014 correct derivation of \"age 40+\" with reference date 2026-04-28.\n\n### 5. What Was Improved\nYour original SNOMED-only code is sufficient on **this** server, but real EHR systems may encode BPH with only ICD-10 or only ICD-9. Adding N40.0, N40.1, and 600.00 as additional `code=` values ensures the query is robust across all coding patterns without changing the count here (still 100).\n\n---\n\n## Final Query\n\n```\nCondition?code=http://snomed.info/sct|266569009,http://hl7.org/fhir/sid/icd-10-cm|N40.0,http://hl7.org/fhir/sid/icd-10-cm|N40.1,http://hl7.org/fhir/sid/icd-9-cm|600.00&patient.birthdate=le1986-04-28&patient.gender=male\n```",
-      "prompt_text": "I need male patients age 40+ with BPH. SNOMED 266569009 (Benign prostatic hyperplasia) covers the condition. FHIR has no patient.age search parameter, so use chained search with patient.birthdate <= (today - 40 years). With reference date 2026-04-28, that means patient.birthdate <= 1986-04-28. Add patient.gender=male via chained search. Query: Condition?code=http://snomed.info/sct|266569009&patient.birthdate=le1986-04-28&patient.gender=male",
+      "raw_response": "The query returns **100 results** \u2014 a clinically plausible count, not zero (confirming the code is correct) and not implausibly large (confirming the patient filters are working). Here is the full evidence chain:\n\n| Step | Finding |\n|---|---|\n| **SNOMED CT code** | `266569009` \u2014 \"Benign prostatic hyperplasia\" (confirmed by UMLS and by all 5 sampled server Conditions) |\n| **Server code system** | `http://snomed.info/sct` (used in every sampled Condition resource) |\n| **Age \u2265 40 \u2192 birthdate \u2264** | 2026-06-17 minus 40 years = **1986-06-17** (expressed as `le1986-06-17`) |\n| **Sex filter** | `subject:Patient.gender=male` (chained through the Condition's `subject` reference) |\n| **Result count** | 100 \u2014 valid, no broadening needed |\n\n---\n\n**FINAL ANSWER**\n\n```\nCondition?code=http://snomed.info/sct|266569009&subject:Patient.gender=male&subject:Patient.birthdate=le1986-06-17\n```",
+      "prompt_text": "I need to find male patients aged 40 and older with a documented benign prostatic hyperplasia diagnosis. Search Condition resources for the SNOMED CT code for benign prostatic hyperplasia, then apply chained patient filters for sex equal to male and a birth date on or before the date corresponding to 40 years prior to today \u2014 FHIR does not support a direct patient.age parameter, so the age constraint must be expressed as a patient.birthdate upper bound. Do not broaden to prostate cancer or other prostate conditions, which are clinically and code-distinctly different.",
       "run_metadata": {
-       "output_tokens": 920,
-       "tool_calls_count": 11,
+       "output_tokens": 446,
+       "tool_calls_count": 4,
        "stop_reason": "complete",
        "fallback_used": false
       }
@@ -1189,15 +1186,15 @@
       "passed": true,
       "expected_count": 100,
       "actual_count": 100,
-      "elapsed_sec": 100.2,
+      "elapsed_sec": 39.7,
       "queries_generated": 1,
-      "primary_query_url": "Condition?code=http://snomed.info/sct|266569009,http://hl7.org/fhir/sid/icd-10-cm|N40.0,http://hl7.org/fhir/sid/icd-10-cm|N40.1&patient.birthdate=le1986-06-09&patient.gender=male",
+      "primary_query_url": "Condition?code=http://snomed.info/sct|266569009&patient.gender=male&patient.birthdate=le1986-06-17",
       "additional_query_urls": [],
-      "raw_response": "All evidence is gathered. Here is a full analysis before the final answer:\n\n---\n\n## Findings & Corrections\n\n### \u2705 SNOMED Code `266569009` \u2014 Confirmed Correct\nUMLS confirms it as \"Benign prostatic hyperplasia,\" and all 5 sampled Condition resources on this server use exactly `http://snomed.info/sct|266569009`. No correction needed here.\n\n### \u26a0\ufe0f Date Correction \u2014 `1986-04-28` \u2192 `1986-06-09`\nThe user computed `patient.birthdate <= 1986-04-28` using a reference date of **2026-04-28**. However, the current datetime is **2026-06-09**, so the correct 40-year cutoff is:\n> `le1986-06-09`\n\nUsing the stale date `1986-04-28` would silently exclude patients born April 29 \u2013 June 9, 1986 (41 days of false negatives).\n\n### \u2705 Chained `patient.gender=male` + `patient.birthdate` \u2014 Confirmed Working\nThe count query returned 100 results, proving both chained parameters are supported on this server.\n\n### \ud83d\udccb Multi-Code Expansion (Playbook 8)\nThe server stores BPH conditions with **dual coding**: SNOMED `266569009` + ICD-10-CM `N40.0`/`N40.1` on the same resource. Adding ICD-10-CM codes ensures any records that may only carry the ICD-10 code (e.g., legacy data) are also captured. The combined query still returns 100, confirming the SNOMED code already covers all current records \u2014 but ICD-10 codes future-proof the query.\n\n| Code | System | Display |\n|---|---|---|\n| `266569009` | SNOMED CT | Benign prostatic hyperplasia |\n| `N40.0` | ICD-10-CM | BPH without lower urinary tract symptoms |\n| `N40.1` | ICD-10-CM | BPH with lower urinary tract symptoms |\n\n---\n\n## Final Answer\n\n```\nCondition?code=http://snomed.info/sct|266569009,http://hl7.org/fhir/sid/icd-10-cm|N40.0,http://hl7.org/fhir/sid/icd-10-cm|N40.1&patient.birthdate=le1986-06-09&patient.gender=male\n```",
-      "prompt_text": "I need male patients age 40+ with BPH. SNOMED 266569009 (Benign prostatic hyperplasia) covers the condition. FHIR has no patient.age search parameter, so use chained search with patient.birthdate <= (today - 40 years). With reference date 2026-04-28, that means patient.birthdate <= 1986-04-28. Add patient.gender=male via chained search. Query: Condition?code=http://snomed.info/sct|266569009&patient.birthdate=le1986-04-28&patient.gender=male",
+      "raw_response": "The query returns **100 results** \u2014 a clinically sensible count. All three filters are confirmed working:\n\n| Component | Value | Evidence |\n|---|---|---|\n| **SNOMED CT code** | `266569009` \u2014 \"Benign prostatic hyperplasia\" | All 5 sampled Conditions used this exact code |\n| **Sex filter** | `patient.gender=male` | Chained search param resolves correctly |\n| **Age \u2265 40 filter** | `patient.birthdate=le1986-06-17` | 40 years before today (2026-06-17); FHIR has no `age` param so upper-bound birthdate is the correct expression |\n\nNo broadening to prostate cancer or other prostate conditions was performed \u2014 `266569009` is clinically and code-distinctly scoped to BPH only.\n\n---\n\n**FINAL ANSWER:**\n\n```\nCondition?code=http://snomed.info/sct|266569009&patient.gender=male&patient.birthdate=le1986-06-17\n```",
+      "prompt_text": "I need to find male patients aged 40 and older with a documented benign prostatic hyperplasia diagnosis. Search Condition resources for the SNOMED CT code for benign prostatic hyperplasia, then apply chained patient filters for sex equal to male and a birth date on or before the date corresponding to 40 years prior to today \u2014 FHIR does not support a direct patient.age parameter, so the age constraint must be expressed as a patient.birthdate upper bound. Do not broaden to prostate cancer or other prostate conditions, which are clinically and code-distinctly different.",
       "run_metadata": {
-       "output_tokens": 1160,
-       "tool_calls_count": 10,
+       "output_tokens": 447,
+       "tool_calls_count": 4,
        "stop_reason": "complete",
        "fallback_used": false
       }
@@ -1239,12 +1236,12 @@
       "passed": true,
       "expected_count": 100,
       "actual_count": 100,
-      "elapsed_sec": 20.8,
+      "elapsed_sec": 17.7,
       "queries_generated": 1,
-      "primary_query_url": "Condition?code=http://snomed.info/sct|266569009&patient.birthdate=le1986-04-28&patient.gender=male",
+      "primary_query_url": "Condition?code=http://snomed.info/sct|266569009&patient.gender=male&patient.birthdate=le1986-06-17",
       "additional_query_urls": [],
-      "raw_response": "Condition?code=http://snomed.info/sct|266569009&patient.birthdate=le1986-04-28&patient.gender=male",
-      "prompt_text": "I need male patients age 40+ with BPH. SNOMED 266569009 (Benign prostatic hyperplasia) covers the condition. FHIR has no patient.age search parameter, so use chained search with patient.birthdate <= (today - 40 years). With reference date 2026-04-28, that means patient.birthdate <= 1986-04-28. Add patient.gender=male via chained search. Query: Condition?code=http://snomed.info/sct|266569009&patient.birthdate=le1986-04-28&patient.gender=male"
+      "raw_response": "Condition?code=http://snomed.info/sct|266569009&patient.gender=male&patient.birthdate=le1986-06-17",
+      "prompt_text": "I need to find male patients aged 40 and older with a documented benign prostatic hyperplasia diagnosis. Search Condition resources for the SNOMED CT code for benign prostatic hyperplasia, then apply chained patient filters for sex equal to male and a birth date on or before the date corresponding to 40 years prior to today \u2014 FHIR does not support a direct patient.age parameter, so the age constraint must be expressed as a patient.birthdate upper bound. Do not broaden to prostate cancer or other prostate conditions, which are clinically and code-distinctly different."
      },
      "2-naive": {
       "precision": 1.0,
@@ -1293,15 +1290,15 @@
       "passed": true,
       "expected_count": 100,
       "actual_count": 100,
-      "elapsed_sec": 24.0,
+      "elapsed_sec": 35.5,
       "queries_generated": 1,
-      "primary_query_url": "Condition?code=http://snomed.info/sct|266569009&patient.birthdate=le1986-04-28&patient.gender=male",
+      "primary_query_url": "Condition?code=http://snomed.info/sct|266569009&patient.gender=male&patient.birthdate=le1986-06-17",
       "additional_query_urls": [],
-      "raw_response": "Condition?code=http://snomed.info/sct|266569009&patient.birthdate=le1986-04-28&patient.gender=male",
-      "prompt_text": "I need male patients age 40+ with BPH. SNOMED 266569009 (Benign prostatic hyperplasia) covers the condition. FHIR has no patient.age search parameter, so use chained search with patient.birthdate <= (today - 40 years). With reference date 2026-04-28, that means patient.birthdate <= 1986-04-28. Add patient.gender=male via chained search. Query: Condition?code=http://snomed.info/sct|266569009&patient.birthdate=le1986-04-28&patient.gender=male",
+      "raw_response": "Condition?code=http://snomed.info/sct|266569009&patient.gender=male&patient.birthdate=le1986-06-17",
+      "prompt_text": "I need to find male patients aged 40 and older with a documented benign prostatic hyperplasia diagnosis. Search Condition resources for the SNOMED CT code for benign prostatic hyperplasia, then apply chained patient filters for sex equal to male and a birth date on or before the date corresponding to 40 years prior to today \u2014 FHIR does not support a direct patient.age parameter, so the age constraint must be expressed as a patient.birthdate upper bound. Do not broaden to prostate cancer or other prostate conditions, which are clinically and code-distinctly different.",
       "run_metadata": {
-       "output_tokens": 243,
-       "tool_calls_count": 0,
+       "output_tokens": 169,
+       "tool_calls_count": 9,
        "stop_reason": "complete",
        "fallback_used": false
       }
@@ -1353,15 +1350,15 @@
       "passed": true,
       "expected_count": 100,
       "actual_count": 100,
-      "elapsed_sec": 27.8,
+      "elapsed_sec": 42.3,
       "queries_generated": 1,
-      "primary_query_url": "Condition?code=http://snomed.info/sct|266569009&patient.birthdate=le1986-04-28&patient.gender=male",
+      "primary_query_url": "Condition?code=http://snomed.info/sct|266569009&patient.gender=male&patient.birthdate=le1986-06-17",
       "additional_query_urls": [],
-      "raw_response": "Condition?code=http://snomed.info/sct|266569009&patient.birthdate=le1986-04-28&patient.gender=male",
-      "prompt_text": "I need male patients age 40+ with BPH. SNOMED 266569009 (Benign prostatic hyperplasia) covers the condition. FHIR has no patient.age search parameter, so use chained search with patient.birthdate <= (today - 40 years). With reference date 2026-04-28, that means patient.birthdate <= 1986-04-28. Add patient.gender=male via chained search. Query: Condition?code=http://snomed.info/sct|266569009&patient.birthdate=le1986-04-28&patient.gender=male",
+      "raw_response": "Condition?code=http://snomed.info/sct|266569009&patient.gender=male&patient.birthdate=le1986-06-17",
+      "prompt_text": "I need to find male patients aged 40 and older with a documented benign prostatic hyperplasia diagnosis. Search Condition resources for the SNOMED CT code for benign prostatic hyperplasia, then apply chained patient filters for sex equal to male and a birth date on or before the date corresponding to 40 years prior to today \u2014 FHIR does not support a direct patient.age parameter, so the age constraint must be expressed as a patient.birthdate upper bound. Do not broaden to prostate cancer or other prostate conditions, which are clinically and code-distinctly different.",
       "run_metadata": {
-       "output_tokens": 101,
-       "tool_calls_count": 3,
+       "output_tokens": 322,
+       "tool_calls_count": 7,
        "stop_reason": "complete",
        "fallback_used": false
       }
@@ -1585,7 +1582,7 @@
       "passed": true,
       "expected_count": 110,
       "actual_count": 110,
-      "elapsed_sec": 0.1,
+      "elapsed_sec": 12.9,
       "queries_generated": 1,
       "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|77492,http://www.nlm.nih.gov/research/umls/rxnorm|25025,http://www.nlm.nih.gov/research/umls/rxnorm|37798",
       "additional_query_urls": [],
@@ -1639,7 +1636,7 @@
       "passed": true,
       "expected_count": 110,
       "actual_count": 110,
-      "elapsed_sec": 16.8,
+      "elapsed_sec": 16.3,
       "queries_generated": 1,
       "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|77492,http://www.nlm.nih.gov/research/umls/rxnorm|25025,http://www.nlm.nih.gov/research/umls/rxnorm|37798",
       "additional_query_urls": [],
@@ -1699,7 +1696,7 @@
       "passed": true,
       "expected_count": 110,
       "actual_count": 110,
-      "elapsed_sec": 16.1,
+      "elapsed_sec": 16.5,
       "queries_generated": 1,
       "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|77492,http://www.nlm.nih.gov/research/umls/rxnorm|25025,http://www.nlm.nih.gov/research/umls/rxnorm|37798",
       "additional_query_urls": [],
@@ -1749,7 +1746,7 @@
       "passed": true,
       "expected_count": 110,
       "actual_count": 110,
-      "elapsed_sec": 0.1,
+      "elapsed_sec": 12.4,
       "queries_generated": 1,
       "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|77492,http://www.nlm.nih.gov/research/umls/rxnorm|25025,http://www.nlm.nih.gov/research/umls/rxnorm|37798",
       "additional_query_urls": [],
@@ -1794,20 +1791,20 @@
      },
      "1-expert": {
       "precision": 1.0,
-      "recall": 1.0,
-      "f1": 1.0,
-      "passed": true,
+      "recall": 0.4364,
+      "f1": 0.6076,
+      "passed": false,
       "expected_count": 110,
-      "actual_count": 110,
-      "elapsed_sec": 42.6,
+      "actual_count": 48,
+      "elapsed_sec": 30.0,
       "queries_generated": 4,
-      "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|77492,http://www.nlm.nih.gov/research/umls/rxnorm|25025,http://www.nlm.nih.gov/research/umls/rxnorm|37798",
+      "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|77492",
       "additional_query_urls": [
-       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|77492",
        "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|25025",
-       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|37798"
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|37798",
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|77492,http://www.nlm.nih.gov/research/umls/rxnorm|25025,http://www.nlm.nih.gov/research/umls/rxnorm|37798"
       ],
-      "raw_response": "## FHIR Queries for BPH-Class Drugs (MedicationRequest)\n\n### Option A \u2014 Single Combined Query (OR logic via comma separation)\n\n```\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|77492,http://www.nlm.nih.gov/research/umls/rxnorm|25025,http://www.nlm.nih.gov/research/umls/rxnorm|37798\n```\n\n---\n\n### Option B \u2014 Individual Queries Per Drug\n\n```\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|77492\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|25025\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|37798\n```\n\n---\n\n### Reference Table\n\n| Drug | RxNorm Code | Drug Class |\n|---|---|---|\n| Tamsulosin | `77492` | Alpha-1 blocker |\n| Finasteride | `25025` | 5-alpha reductase inhibitor |\n| Terazosin | `37798` | Alpha-1 blocker |\n\n### Notes\n- **Option A** is preferred for efficiency \u2014 FHIR comma-separated values apply **OR** logic within a single parameter, returning all matches in one request.\n- The `code` parameter on `MedicationRequest` searches both `medicationCodeableConcept.coding` and chained `medication.code` (referenced Medication resource).\n- These are **ingredient-level** RxNorm codes (ingredients), so consider supplementing with **clinical drug** (SCD) or **branded drug** (SBD) codes if your server does not perform RxNorm hierarchy expansion.",
+      "raw_response": "```\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|77492\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|25025\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|37798\n```\n\n**Alternatively, as a single combined OR query:**\n```\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|77492,http://www.nlm.nih.gov/research/umls/rxnorm|25025,http://www.nlm.nih.gov/research/umls/rxnorm|37798\n```\n\n---\n\n### Notes\n\n| Drug | RxNorm Code | BPH Class |\n|---|---|---|\n| Tamsulosin | `77492` | Alpha-1 blocker |\n| Finasteride | `25025` | 5-alpha reductase inhibitor |\n| Terazosin | `37798` | Alpha-1 blocker |\n\n- These are **ingredient-level** RxNorm codes. If your system stores clinical drugs (dose-form specific), results may be incomplete \u2014 consider also querying with product-level RxNorm codes or using the `:text` modifier (e.g., `code:text=tamsulosin`).\n- The `code` parameter in `MedicationRequest` searches `medicationCodeableConcept`. If medications are stored as references (`medicationReference` \u2192 `Medication`), add `_include=MedicationRequest:medication` and/or chain via `medication.code=...`.\n- Comma-separated values apply **OR** logic per the FHIR spec, making the combined query equivalent to the three individual queries.",
       "prompt_text": "I need MedicationRequest resources for BPH-class drugs. RxNorm ingredient codes: tamsulosin (77492), finasteride (25025), terazosin (37798). Search MedicationRequest with these codes."
      },
      "2-naive": {
@@ -1857,15 +1854,15 @@
       "passed": true,
       "expected_count": 110,
       "actual_count": 110,
-      "elapsed_sec": 59.9,
+      "elapsed_sec": 46.9,
       "queries_generated": 1,
       "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|77492,http://www.nlm.nih.gov/research/umls/rxnorm|25025,http://www.nlm.nih.gov/research/umls/rxnorm|37798",
       "additional_query_urls": [],
-      "raw_response": "The investigation confirms everything needed:\n\n- **FHIR R4** (4.0.1) on Azure \u2014 no special IGs loaded.\n- **MedicationRequest coding**: The server uses **RxNorm ingredient codes exclusively** (no dual-coding with NDC or other systems). Samples confirmed `25025` (finasteride) and `77492` (tamsulosin) are live on the server.\n- **Count**: The combined three-ingredient query returns **110 MedicationRequests** \u2014 a healthy, realistic cohort size.\n- No additional code-system translation needed (no SNOMED/NDC crosswalk required).\n\n---\n\n`MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|77492,http://www.nlm.nih.gov/research/umls/rxnorm|25025,http://www.nlm.nih.gov/research/umls/rxnorm|37798`",
+      "raw_response": "Everything checks out perfectly. Here's a full summary of the evidence:\n\n| Drug | RxNorm Code | Verified Display | MedicationRequest Count |\n|---|---|---|---|\n| Tamsulosin (\u03b1-blocker) | 77492 | tamsulosin | 48 |\n| Finasteride (5\u03b1-reductase inhibitor) | 25025 | finasteride | 43 |\n| Terazosin (\u03b1-blocker) | 37798 | terazosin | 19 |\n| **Combined BPH cohort** | all three | \u2014 | **110** |\n\n**Key findings:**\n- \u2705 Server uses `http://www.nlm.nih.gov/research/umls/rxnorm` for medication codes\n- \u2705 The correct search parameter is `code=` (not `medication=` or `medication.code=`)\n- \u2705 All three RxNorm ingredient codes confirmed via VSAC lookup and live in the sample data\n- \u2705 48 + 43 + 19 = 110 \u2014 the union total is clean (no overlap)\n\n---\n\n**FINAL ANSWER:**\n\n```\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|77492,http://www.nlm.nih.gov/research/umls/rxnorm|25025,http://www.nlm.nih.gov/research/umls/rxnorm|37798\n```",
       "prompt_text": "I need MedicationRequest resources for BPH-class drugs. RxNorm ingredient codes: tamsulosin (77492), finasteride (25025), terazosin (37798). Search MedicationRequest with these codes.",
       "run_metadata": {
-       "output_tokens": 505,
-       "tool_calls_count": 3,
+       "output_tokens": 364,
+       "tool_calls_count": 10,
        "stop_reason": "complete",
        "fallback_used": false
       }
@@ -1917,15 +1914,15 @@
       "passed": true,
       "expected_count": 110,
       "actual_count": 110,
-      "elapsed_sec": 34.1,
+      "elapsed_sec": 31.4,
       "queries_generated": 1,
       "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|77492,http://www.nlm.nih.gov/research/umls/rxnorm|25025,http://www.nlm.nih.gov/research/umls/rxnorm|37798",
       "additional_query_urls": [],
-      "raw_response": "\u2705 **Verification complete.** Here's what was confirmed:\n\n| Check | Result |\n|---|---|\n| **Server code system** | `http://www.nlm.nih.gov/research/umls/rxnorm` confirmed in live samples |\n| **Tamsulosin (77492)** | \u2705 Found in server samples |\n| **Finasteride (25025)** | \u2705 Found in server samples |\n| **Terazosin (37798)** | \u2705 Included in union query |\n| **Total matching MedicationRequests** | **110** records |\n\nThe three ingredients are comma-unioned into a single `code=` parameter (Playbook 1/8), so any prescription matching **any** of the three BPH drugs is returned.\n\n---\n\n**FINAL ANSWER:**\n\n```\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|77492,http://www.nlm.nih.gov/research/umls/rxnorm|25025,http://www.nlm.nih.gov/research/umls/rxnorm|37798\n```",
+      "raw_response": "All checks passed. Here's a summary of what was confirmed:\n\n| Drug | RxNorm Code | VSAC Verified | Found on Server |\n|---|---|---|---|\n| Tamsulosin (alpha-blocker) | 77492 | \u2705 | \u2705 (sampled) |\n| Finasteride (5-ARI) | 25025 | \u2705 | \u2014 |\n| Terazosin (alpha-blocker) | 37798 | \u2705 | \u2705 (sampled) |\n\n- **Server code system:** `http://www.nlm.nih.gov/research/umls/rxnorm` (confirmed via sample)\n- **Combined result count:** 110 MedicationRequest resources\n- **Strategy:** Playbook 1 \u2014 all three ingredient codes unioned via comma-separated `code=` in a single query\n\n---\n\n```\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|77492,http://www.nlm.nih.gov/research/umls/rxnorm|25025,http://www.nlm.nih.gov/research/umls/rxnorm|37798\n```",
       "prompt_text": "I need MedicationRequest resources for BPH-class drugs. RxNorm ingredient codes: tamsulosin (77492), finasteride (25025), terazosin (37798). Search MedicationRequest with these codes.",
       "run_metadata": {
-       "output_tokens": 325,
-       "tool_calls_count": 3,
+       "output_tokens": 353,
+       "tool_calls_count": 5,
        "stop_reason": "complete",
        "fallback_used": false
       }
@@ -1969,7 +1966,7 @@
       "passed": true,
       "expected_count": 110,
       "actual_count": 110,
-      "elapsed_sec": 66.9,
+      "elapsed_sec": 16.2,
       "queries_generated": 1,
       "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|77492,http://www.nlm.nih.gov/research/umls/rxnorm|25025,http://www.nlm.nih.gov/research/umls/rxnorm|37798",
       "additional_query_urls": [],
@@ -2025,15 +2022,15 @@
       "passed": true,
       "expected_count": 110,
       "actual_count": 110,
-      "elapsed_sec": 28.1,
+      "elapsed_sec": 22.3,
       "queries_generated": 1,
       "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|77492,http://www.nlm.nih.gov/research/umls/rxnorm|25025,http://www.nlm.nih.gov/research/umls/rxnorm|37798",
       "additional_query_urls": [],
       "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|77492,http://www.nlm.nih.gov/research/umls/rxnorm|25025,http://www.nlm.nih.gov/research/umls/rxnorm|37798",
       "prompt_text": "I need MedicationRequest resources for BPH-class drugs. RxNorm ingredient codes: tamsulosin (77492), finasteride (25025), terazosin (37798). Search MedicationRequest with these codes.",
       "run_metadata": {
-       "output_tokens": 269,
-       "tool_calls_count": 0,
+       "output_tokens": 204,
+       "tool_calls_count": 2,
        "stop_reason": "complete",
        "fallback_used": false
       }
@@ -2085,14 +2082,14 @@
       "passed": true,
       "expected_count": 110,
       "actual_count": 110,
-      "elapsed_sec": 35.7,
+      "elapsed_sec": 24.3,
       "queries_generated": 1,
       "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|77492,http://www.nlm.nih.gov/research/umls/rxnorm|25025,http://www.nlm.nih.gov/research/umls/rxnorm|37798",
       "additional_query_urls": [],
       "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|77492,http://www.nlm.nih.gov/research/umls/rxnorm|25025,http://www.nlm.nih.gov/research/umls/rxnorm|37798",
       "prompt_text": "I need MedicationRequest resources for BPH-class drugs. RxNorm ingredient codes: tamsulosin (77492), finasteride (25025), terazosin (37798). Search MedicationRequest with these codes.",
       "run_metadata": {
-       "output_tokens": 123,
+       "output_tokens": 245,
        "tool_calls_count": 3,
        "stop_reason": "complete",
        "fallback_used": false
@@ -2323,12 +2320,12 @@
       "passed": true,
       "expected_count": 9,
       "actual_count": 9,
-      "elapsed_sec": 0.1,
+      "elapsed_sec": 7.4,
       "queries_generated": 1,
       "primary_query_url": "Procedure?code=http://snomed.info/sct|90199006",
       "additional_query_urls": [],
       "raw_response": "Procedure?code=http://snomed.info/sct|90199006",
-      "prompt_text": "Search Procedure resources with SNOMED 90199006 (Transurethral prostatectomy). Query: Procedure?code=http://snomed.info/sct|90199006"
+      "prompt_text": "I need to identify patients who underwent a transurethral resection of the prostate (TURP) as surgical treatment for benign prostatic hyperplasia. Search Procedure resources for the SNOMED CT code for transurethral prostatectomy \u2014 this is a urologic-surgical procedure distinct from the urologic-diagnostic prostate biopsy used for prostate cancer detection. The procedure-based cohort captures patients who reached the surgical management threshold regardless of whether a BPH diagnosis code appears in their Condition record."
      },
      "2-naive": {
       "precision": 1.0,
@@ -2377,15 +2374,15 @@
       "passed": true,
       "expected_count": 9,
       "actual_count": 9,
-      "elapsed_sec": 11.9,
+      "elapsed_sec": 31.5,
       "queries_generated": 1,
       "primary_query_url": "Procedure?code=http://snomed.info/sct|90199006",
       "additional_query_urls": [],
       "raw_response": "Procedure?code=http://snomed.info/sct|90199006",
-      "prompt_text": "Search Procedure resources with SNOMED 90199006 (Transurethral prostatectomy). Query: Procedure?code=http://snomed.info/sct|90199006",
+      "prompt_text": "I need to identify patients who underwent a transurethral resection of the prostate (TURP) as surgical treatment for benign prostatic hyperplasia. Search Procedure resources for the SNOMED CT code for transurethral prostatectomy \u2014 this is a urologic-surgical procedure distinct from the urologic-diagnostic prostate biopsy used for prostate cancer detection. The procedure-based cohort captures patients who reached the surgical management threshold regardless of whether a BPH diagnosis code appears in their Condition record.",
       "run_metadata": {
        "output_tokens": 25,
-       "tool_calls_count": 1,
+       "tool_calls_count": 8,
        "stop_reason": "complete",
        "fallback_used": false
       }
@@ -2437,15 +2434,15 @@
       "passed": true,
       "expected_count": 9,
       "actual_count": 9,
-      "elapsed_sec": 11.2,
+      "elapsed_sec": 19.8,
       "queries_generated": 1,
       "primary_query_url": "Procedure?code=http://snomed.info/sct|90199006",
       "additional_query_urls": [],
       "raw_response": "Procedure?code=http://snomed.info/sct|90199006",
-      "prompt_text": "Search Procedure resources with SNOMED 90199006 (Transurethral prostatectomy). Query: Procedure?code=http://snomed.info/sct|90199006",
+      "prompt_text": "I need to identify patients who underwent a transurethral resection of the prostate (TURP) as surgical treatment for benign prostatic hyperplasia. Search Procedure resources for the SNOMED CT code for transurethral prostatectomy \u2014 this is a urologic-surgical procedure distinct from the urologic-diagnostic prostate biopsy used for prostate cancer detection. The procedure-based cohort captures patients who reached the surgical management threshold regardless of whether a BPH diagnosis code appears in their Condition record.",
       "run_metadata": {
        "output_tokens": 25,
-       "tool_calls_count": 1,
+       "tool_calls_count": 4,
        "stop_reason": "complete",
        "fallback_used": false
       }
@@ -2487,12 +2484,12 @@
       "passed": true,
       "expected_count": 9,
       "actual_count": 9,
-      "elapsed_sec": 0.1,
+      "elapsed_sec": 7.4,
       "queries_generated": 1,
       "primary_query_url": "Procedure?code=http://snomed.info/sct|90199006",
       "additional_query_urls": [],
       "raw_response": "Procedure?code=http://snomed.info/sct|90199006",
-      "prompt_text": "Search Procedure resources with SNOMED 90199006 (Transurethral prostatectomy). Query: Procedure?code=http://snomed.info/sct|90199006"
+      "prompt_text": "I need to identify patients who underwent a transurethral resection of the prostate (TURP) as surgical treatment for benign prostatic hyperplasia. Search Procedure resources for the SNOMED CT code for transurethral prostatectomy \u2014 this is a urologic-surgical procedure distinct from the urologic-diagnostic prostate biopsy used for prostate cancer detection. The procedure-based cohort captures patients who reached the surgical management threshold regardless of whether a BPH diagnosis code appears in their Condition record."
      }
     },
     "copilot:claude-sonnet-4.6": {
@@ -2533,23 +2530,21 @@
       "prompt_text": "Find patients who have undergone transurethral resection of the prostate (TURP) \u2014 the standard surgical treatment for symptomatic benign prostatic hyperplasia not responsive to medical therapy."
      },
      "1-expert": {
-      "precision": 1.0,
-      "recall": 1.0,
-      "f1": 1.0,
-      "passed": true,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
       "expected_count": 9,
-      "actual_count": 9,
-      "elapsed_sec": 21.5,
-      "queries_generated": 5,
-      "primary_query_url": "Procedure?code=http://snomed.info/sct|90199006",
+      "actual_count": 0,
+      "elapsed_sec": 17.3,
+      "queries_generated": 3,
+      "primary_query_url": "Procedure?code=http://snomed.info/sct|90470006",
       "additional_query_urls": [
-       "Procedure?code=http://snomed.info/sct|90199006&_include=Procedure:subject",
-       "Procedure?code=http://snomed.info/sct|90199006&status=completed",
-       "Procedure?code=http://snomed.info/sct|90199006&date=ge2024-01-01&date=le2026-06-02",
-       "Procedure?code=http://snomed.info/sct|90199006&_include=Procedure:encounter"
+       "Procedure?code=http://snomed.info/sct|90470006&_include=Procedure:patient",
+       "Procedure?code=http://snomed.info/sct|90470006&_include=Procedure:patient&_revinclude=Condition:subject&_revinclude=Condition:code=http://hl7.org/fhir/sid/icd-10-cm|N40.1"
       ],
-      "raw_response": "## FHIR Query: Procedure \u2013 Transurethral Prostatectomy (SNOMED 90199006)\n\n```\nProcedure?code=http://snomed.info/sct|90199006\n```\n\n---\n\n### \ud83d\udd0d Query Breakdown\n\n| Component | Value | Description |\n|---|---|---|\n| **Resource** | `Procedure` | Clinical procedure records |\n| **Parameter** | `code` | Coded identifier for the procedure |\n| **System** | `http://snomed.info/sct` | SNOMED CT terminology system |\n| **Code** | `90199006` | Transurethral prostatectomy (TURP) |\n\n---\n\n### \ud83d\udccb Clinical Context\n\n- **Procedure Name:** Transurethral Prostatectomy (TURP)\n- **SNOMED Code:** `90199006`\n- **Clinical Use:** Surgical treatment for benign prostatic hyperplasia (BPH) or obstructive urinary symptoms\n- **Procedure Type:** Minimally invasive urological surgery (endoscopic/transurethral approach)\n\n---\n\n### \ud83d\udd17 Suggested Extensions\n\n```\n# Include the patient subject\nProcedure?code=http://snomed.info/sct|90199006&_include=Procedure:subject\n\n# Filter by status (completed procedures only)\nProcedure?code=http://snomed.info/sct|90199006&status=completed\n\n# Filter by date range\nProcedure?code=http://snomed.info/sct|90199006&date=ge2024-01-01&date=le2026-06-02\n\n# Include encounter context\nProcedure?code=http://snomed.info/sct|90199006&_include=Procedure:encounter\n```",
-      "prompt_text": "Search Procedure resources with SNOMED 90199006 (Transurethral prostatectomy). Query: Procedure?code=http://snomed.info/sct|90199006"
+      "raw_response": "```\nProcedure?code=http://snomed.info/sct|90470006\n```\n\n**Explanation:**\n\n| Component | Detail |\n|-----------|--------|\n| **Resource** | `Procedure` \u2014 captures performed surgical interventions |\n| **SNOMED CT Code** | `90470006` \u2014 *Transurethral prostatectomy (procedure)* |\n| **Code System** | `http://snomed.info/sct` |\n\n**Clinical Rationale:**\n\n- **`90470006` (Transurethral prostatectomy)** is the canonical SNOMED CT concept for TURP \u2014 a surgical procedure involving endoscopic resection of obstructing prostatic tissue via the urethra to relieve lower urinary tract symptoms (LUTS) caused by BPH.\n- This is **explicitly distinct** from:\n  - `176106009` \u2014 *Biopsy of prostate* (diagnostic, cancer detection)\n  - `713651007` \u2014 *Transrectal ultrasound guided biopsy of prostate* (diagnostic)\n- The `Procedure` resource is the correct FHIR target (not `Condition`) because TURP is a performed clinical act, not a diagnosis.\n- The query intentionally **does not require** a co-occurring BPH `Condition` record \u2014 patients who reached the surgical threshold are captured regardless of whether `N40.1` (BPH with LUTS) appears in their record, fulfilling the procedure-based cohort definition you described.\n\nTo also retrieve associated patient demographics or the BPH diagnosis alongside results, you could extend with:\n```\nProcedure?code=http://snomed.info/sct|90470006&_include=Procedure:patient\nProcedure?code=http://snomed.info/sct|90470006&_include=Procedure:patient&_revinclude=Condition:subject&_revinclude=Condition:code=http://hl7.org/fhir/sid/icd-10-cm|N40.1\n```",
+      "prompt_text": "I need to identify patients who underwent a transurethral resection of the prostate (TURP) as surgical treatment for benign prostatic hyperplasia. Search Procedure resources for the SNOMED CT code for transurethral prostatectomy \u2014 this is a urologic-surgical procedure distinct from the urologic-diagnostic prostate biopsy used for prostate cancer detection. The procedure-based cohort captures patients who reached the surgical management threshold regardless of whether a BPH diagnosis code appears in their Condition record."
      },
      "2-naive": {
       "precision": 1.0,
@@ -2598,17 +2593,15 @@
       "passed": true,
       "expected_count": 9,
       "actual_count": 9,
-      "elapsed_sec": 36.5,
-      "queries_generated": 2,
+      "elapsed_sec": 30.5,
+      "queries_generated": 1,
       "primary_query_url": "Procedure?code=http://snomed.info/sct|90199006",
-      "additional_query_urls": [
-       "Procedure?code=http://snomed.info/sct|90199006,http://www.ama-assn.org/go/cpt|52601"
-      ],
-      "raw_response": "Here's a clear summary of the search results:\n\n---\n\n## \ud83d\udd0d FHIR Search Results \u2014 Transurethral Prostatectomy\n\n### Query Executed\n```\nProcedure?code=http://snomed.info/sct|90199006\n```\n\n---\n\n### \ud83d\udcca Result Summary\n\n| Field | Value |\n|---|---|\n| **Resource Type** | `Procedure` |\n| **Entries Returned** | **9** |\n| **Total (server-reported)** | Not paginated (null) |\n\n---\n\n### \ud83e\uddec Sample Codings Found on Matched Resources\n\nAll 9 returned `Procedure` records carry **dual codings** \u2014 both SNOMED CT and CPT simultaneously:\n\n| System | Code | Display |\n|---|---|---|\n| `http://snomed.info/sct` | **90199006** | Transurethral prostatectomy |\n| `http://www.ama-assn.org/go/cpt` | **52601** | Transurethral electrosurgical resection of prostate (TURP) |\n\n---\n\n### \ud83d\udca1 Key Observations\n\n1. **SNOMED match confirmed** \u2014 The query on `http://snomed.info/sct|90199006` successfully retrieved all intended records.\n2. **Dual-coded resources** \u2014 Every matched resource also carries CPT code **52601** (*Transurethral electrosurgical resection of prostate / TURP*), which is the standard billing code for this procedure.\n3. **Broader coverage possible** \u2014 Since CPT `52601` is co-present on all records, you could alternatively search by CPT code to reach the same cohort, or **union both** for maximum recall if some records carry only one system:\n\n```\nProcedure?code=http://snomed.info/sct|90199006,http://www.ama-assn.org/go/cpt|52601\n```",
-      "prompt_text": "Search Procedure resources with SNOMED 90199006 (Transurethral prostatectomy). Query: Procedure?code=http://snomed.info/sct|90199006",
+      "additional_query_urls": [],
+      "raw_response": "All evidence converges cleanly. Here's the full picture:\n\n---\n\n### \ud83d\udd0d Evidence Summary\n\n| Layer | Finding |\n|---|---|\n| **UMLS CUI** | C0040771 \u2014 *Transurethral Resection of Prostate* |\n| **SNOMED CT code** | `90199006` \u2014 \"Transurethral prostatectomy\" |\n| **UMLS crosswalk confirms** | NCI C15343 \"Transurethral Prostatic Resection\" \u2014 same concept |\n| **Server sampling (5/5)** | All sampled Procedure resources encode this as `http://snomed.info/sct\\|90199006` |\n| **Verified count** | **9 Procedure resources** returned \u2014 a clinically plausible surgical cohort |\n\n### \u2705 Code Distinctions (as requested)\n- **TURP** (`90199006`): *Transurethral prostatectomy* \u2014 surgical treatment for BPH \u2714\n- **Prostate biopsy** (e.g., SNOMED `176106009`): diagnostic procedure for prostate cancer \u2014 **not included** \u2714\n\n---\n\n**FINAL ANSWER:**\n\n```\nProcedure?code=http://snomed.info/sct|90199006\n```",
+      "prompt_text": "I need to identify patients who underwent a transurethral resection of the prostate (TURP) as surgical treatment for benign prostatic hyperplasia. Search Procedure resources for the SNOMED CT code for transurethral prostatectomy \u2014 this is a urologic-surgical procedure distinct from the urologic-diagnostic prostate biopsy used for prostate cancer detection. The procedure-based cohort captures patients who reached the surgical management threshold regardless of whether a BPH diagnosis code appears in their Condition record.",
       "run_metadata": {
-       "output_tokens": 464,
-       "tool_calls_count": 1,
+       "output_tokens": 465,
+       "tool_calls_count": 4,
        "stop_reason": "complete",
        "fallback_used": false
       }
@@ -2654,24 +2647,23 @@
       }
      },
      "3-expert": {
-      "precision": 1.0,
-      "recall": 1.0,
-      "f1": 1.0,
-      "passed": true,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
       "expected_count": 9,
-      "actual_count": 9,
-      "elapsed_sec": 18.3,
-      "queries_generated": 3,
-      "primary_query_url": "Procedure?code=http://snomed.info/sct|90199006",
+      "actual_count": 0,
+      "elapsed_sec": 34.2,
+      "queries_generated": 2,
+      "primary_query_url": "Procedure?code=http://snomed.info/sct\\|90199006",
       "additional_query_urls": [
-       "Procedure?code=http://snomed.info/sct\\|90199006",
-       "Procedure?code=http://snomed.info/sct|90199006,http://www.ama-assn.org/go/cpt|52601"
+       "Procedure?code=http://snomed.info/sct|90199006"
       ],
-      "raw_response": "Here are the results from the live FHIR server:\n\n---\n\n## \ud83d\udd0d Search Results: `Procedure?code=http://snomed.info/sct|90199006`\n\n### Summary\n| Field | Value |\n|---|---|\n| **Query** | `Procedure?code=http://snomed.info/sct\\|90199006` |\n| **Resource Type** | `Procedure` |\n| **Entries Returned** | **9** |\n| **Total (server-reported)** | Not provided (paged) |\n\n---\n\n### \ud83d\udccb Code Systems Found in Matching Records\n\n| System | Code | Display |\n|---|---|---|\n| `http://snomed.info/sct` | **90199006** | Transurethral prostatectomy |\n| `http://www.ama-assn.org/go/cpt` | **52601** | Transurethral electrosurgical resection of prostate (TURP) |\n\n---\n\n### \ud83d\udca1 Key Observations\n\n1. **SNOMED hit confirmed** \u2014 The SNOMED CT code `90199006` (`Transurethral prostatectomy`) is actively used on this server and the query returned **9 Procedure resources**.\n2. **Dual-coded records** \u2014 Each matching `Procedure` resource is **dual-coded**: both the SNOMED code (`90199006`) and the CPT code (`52601` \u2014 *Transurethral electrosurgical resection of prostate / TURP*) are present in the same record. This indicates the server follows a common clinical practice of pairing SNOMED with CPT codes.\n3. **Broadening tip** \u2014 If you want to ensure you capture **all TURP procedures** regardless of which code system was used as the primary code, consider a **multi-code query**:\n\n```\nProcedure?code=http://snomed.info/sct|90199006,http://www.ama-assn.org/go/cpt|52601\n```\n\n---\n\n**FINAL ANSWER:**\n```\nProcedure?code=http://snomed.info/sct|90199006\n```",
-      "prompt_text": "Search Procedure resources with SNOMED 90199006 (Transurethral prostatectomy). Query: Procedure?code=http://snomed.info/sct|90199006",
+      "raw_response": "All evidence is confirmed. Here's what was found:\n\n### Discovery Summary\n\n| Step | Finding |\n|---|---|\n| **UMLS search** | CUI `C0040771` \u2192 \"Transurethral Resection of Prostate\" \u2014 the canonical surgical procedure |\n| **Server sample (5/5 Procedures)** | Every sampled record carries **SNOMED CT `90199006`** \u2014 `\"Transurethral prostatectomy (procedure)\"` \u2014 consistently dual-coded with CPT `52601` |\n| **VSAC code lookup** | `90199006` confirmed as `\"Transurethral prostatectomy (procedure)\"` in SNOMED CT 2026-03-01 \u2014 precisely the surgical TURP, distinct from diagnostic codes like prostate needle biopsy |\n| **Count validation** | `Procedure?code=http://snomed.info/sct\\|90199006` \u2192 **9 matching Procedure records** |\n\n### Code Rationale\n- **SNOMED `90199006`** \u2014 *Transurethral prostatectomy (procedure)* \u2014 is the correct and precise code. It represents the full surgical TURP (tissue resection via the urethra), not the diagnostic prostate biopsy (`432343007`) or open prostatectomy (`30426000`), ensuring no cross-contamination with oncology pathways.\n- The server dual-codes every record with **CPT `52601`** (Transurethral electrosurgical resection of prostate), but since the user requested SNOMED and the counts are identical, one system is sufficient.\n\n---\n\n**FINAL ANSWER**\n\n```\nProcedure?code=http://snomed.info/sct|90199006\n```",
+      "prompt_text": "I need to identify patients who underwent a transurethral resection of the prostate (TURP) as surgical treatment for benign prostatic hyperplasia. Search Procedure resources for the SNOMED CT code for transurethral prostatectomy \u2014 this is a urologic-surgical procedure distinct from the urologic-diagnostic prostate biopsy used for prostate cancer detection. The procedure-based cohort captures patients who reached the surgical management threshold regardless of whether a BPH diagnosis code appears in their Condition record.",
       "run_metadata": {
-       "output_tokens": 510,
-       "tool_calls_count": 1,
+       "output_tokens": 661,
+       "tool_calls_count": 4,
        "stop_reason": "complete",
        "fallback_used": false
       }
@@ -2707,18 +2699,18 @@
       "prompt_text": "Find patients who have undergone transurethral resection of the prostate (TURP) \u2014 the standard surgical treatment for symptomatic benign prostatic hyperplasia not responsive to medical therapy."
      },
      "1-expert": {
-      "precision": 1.0,
-      "recall": 1.0,
-      "f1": 1.0,
-      "passed": true,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
       "expected_count": 9,
-      "actual_count": 9,
-      "elapsed_sec": 22.6,
+      "actual_count": 0,
+      "elapsed_sec": 41.4,
       "queries_generated": 1,
-      "primary_query_url": "Procedure?code=http://snomed.info/sct|90199006",
+      "primary_query_url": "Procedure?code=http://snomed.info/sct|265764009&_include=Procedure:patient",
       "additional_query_urls": [],
-      "raw_response": "Procedure?code=http://snomed.info/sct|90199006",
-      "prompt_text": "Search Procedure resources with SNOMED 90199006 (Transurethral prostatectomy). Query: Procedure?code=http://snomed.info/sct|90199006"
+      "raw_response": "Procedure?code=http://snomed.info/sct|265764009&_include=Procedure:patient",
+      "prompt_text": "I need to identify patients who underwent a transurethral resection of the prostate (TURP) as surgical treatment for benign prostatic hyperplasia. Search Procedure resources for the SNOMED CT code for transurethral prostatectomy \u2014 this is a urologic-surgical procedure distinct from the urologic-diagnostic prostate biopsy used for prostate cancer detection. The procedure-based cohort captures patients who reached the surgical management threshold regardless of whether a BPH diagnosis code appears in their Condition record."
      },
      "2-naive": {
       "precision": 1.0,
@@ -2767,15 +2759,15 @@
       "passed": true,
       "expected_count": 9,
       "actual_count": 9,
-      "elapsed_sec": 22.0,
+      "elapsed_sec": 30.0,
       "queries_generated": 1,
       "primary_query_url": "Procedure?code=http://snomed.info/sct|90199006",
       "additional_query_urls": [],
       "raw_response": "Procedure?code=http://snomed.info/sct|90199006",
-      "prompt_text": "Search Procedure resources with SNOMED 90199006 (Transurethral prostatectomy). Query: Procedure?code=http://snomed.info/sct|90199006",
+      "prompt_text": "I need to identify patients who underwent a transurethral resection of the prostate (TURP) as surgical treatment for benign prostatic hyperplasia. Search Procedure resources for the SNOMED CT code for transurethral prostatectomy \u2014 this is a urologic-surgical procedure distinct from the urologic-diagnostic prostate biopsy used for prostate cancer detection. The procedure-based cohort captures patients who reached the surgical management threshold regardless of whether a BPH diagnosis code appears in their Condition record.",
       "run_metadata": {
-       "output_tokens": 115,
-       "tool_calls_count": 0,
+       "output_tokens": 62,
+       "tool_calls_count": 5,
        "stop_reason": "complete",
        "fallback_used": false
       }
@@ -2827,15 +2819,15 @@
       "passed": true,
       "expected_count": 9,
       "actual_count": 9,
-      "elapsed_sec": 19.9,
+      "elapsed_sec": 35.8,
       "queries_generated": 1,
       "primary_query_url": "Procedure?code=http://snomed.info/sct|90199006",
       "additional_query_urls": [],
       "raw_response": "Procedure?code=http://snomed.info/sct|90199006",
-      "prompt_text": "Search Procedure resources with SNOMED 90199006 (Transurethral prostatectomy). Query: Procedure?code=http://snomed.info/sct|90199006",
+      "prompt_text": "I need to identify patients who underwent a transurethral resection of the prostate (TURP) as surgical treatment for benign prostatic hyperplasia. Search Procedure resources for the SNOMED CT code for transurethral prostatectomy \u2014 this is a urologic-surgical procedure distinct from the urologic-diagnostic prostate biopsy used for prostate cancer detection. The procedure-based cohort captures patients who reached the surgical management threshold regardless of whether a BPH diagnosis code appears in their Condition record.",
       "run_metadata": {
-       "output_tokens": 65,
-       "tool_calls_count": 2,
+       "output_tokens": 179,
+       "tool_calls_count": 6,
        "stop_reason": "complete",
        "fallback_used": false
       }
