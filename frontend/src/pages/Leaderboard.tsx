@@ -26,41 +26,6 @@ function getRow(data: LB, pred: (m: string) => boolean) {
   return data.rows.find(r => pred(r.model))
 }
 
-// ---- "What moves the needle?" lever-impact hero (Opus controlled subset) ----
-function ImpactHero({ data }: { data: LB }) {
-  const plain = getRow(data, m => m === 'copilot:claude-opus-4.7')
-  const skill = getRow(data, m => m.includes('opus') && m.includes('fhirskill'))
-  if (!plain) return null
-  const base = plain.tiers['1']?.f1
-  const naive = plain.tiers['1']?.by_prompt?.naive
-  const expert = plain.tiers['1']?.by_prompt?.expert
-  const levers = [
-    { label: 'Better prompt (naive → expert)', delta: (expert != null && naive != null) ? expert - naive : null },
-    { label: '+ Anthropic FHIR skill', delta: (skill?.tiers['1']?.f1 != null && base != null) ? skill.tiers['1'].f1! - base : null },
-    { label: '+ our agentic tools (T2)', delta: (plain.tiers['2']?.f1 != null && base != null) ? plain.tiers['2'].f1! - base : null },
-  ]
-  const max = Math.max(0.12, ...levers.map(l => Math.abs(l.delta ?? 0)))
-  return (
-    <div className="impact-hero">
-      <h2>What moves the needle?</h2>
-      <p className="subtitle">F1 lift from the same Opus baseline ({fmt(base)}) across all 388
-        test cases — isolating each lever. <strong>Only tools matter for a frontier model.</strong></p>
-      {levers.map(l => (
-        <div key={l.label} className="lever">
-          <div className="lever-label">{l.label}</div>
-          <div className="lever-track">
-            <div className="lever-bar" style={{
-              width: `${(Math.abs(l.delta ?? 0) / max) * 100}%`,
-              background: (l.delta ?? 0) >= 0.03 ? '#3b82f6' : '#cbd5e1',
-            }} />
-          </div>
-          <div className="lever-val">{l.delta == null ? '—' : (l.delta >= 0 ? '+' : '') + l.delta.toFixed(3)}</div>
-        </div>
-      ))}
-    </div>
-  )
-}
-
 // ---- 2D prompt × tier heatmap per model ------------------------------------
 function Heatmap({ rows }: { rows: LeaderboardRow[] }) {
   return (
@@ -220,8 +185,6 @@ export default function Leaderboard() {
           cases (every dx/meds/labs/comprehensive/trick variant). Matches the deck's headline table.
           <em>(The "Best achievable" panel below is the one comprehensive-cohort view.)</em></p>
       </div>
-
-      <ImpactHero data={data} />
 
       <h2 style={{ marginTop: 28 }}>Prompt × tier, per model</h2>
       <p className="subtitle">Rows = prompt sophistication, columns = capability tier. Watch the rows
