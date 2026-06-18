@@ -10,9 +10,12 @@ set -uo pipefail
 cd "$(dirname "$0")/.."
 if [[ -f .env ]]; then set -o allexport; source .env; set +o allexport; fi
 SRV="${1:?usage: setup_mimic_server.sh <server>}"
-SUB=11a09cd2-9add-4367-9951-bbe32d977d66
-STORAGE_ID="/subscriptions/${SUB}/resourceGroups/jaerwinllm/providers/Microsoft.Storage/storageAccounts/jaerwinimport"
-ROLE=ba92f5b4-2d11-453d-a403-e96b0029c9fe   # Storage Blob Data Contributor
+# Azure infra — set these in .env (see .env.example), not hard-coded:
+SUB="${FHIR_SUBSCRIPTION:?set FHIR_SUBSCRIPTION (Azure subscription id)}"
+STORAGE="${FHIR_IMPORT_STORAGE:?set FHIR_IMPORT_STORAGE (storage account name)}"
+STORAGE_RG="${FHIR_IMPORT_STORAGE_RG:?set FHIR_IMPORT_STORAGE_RG (storage account resource group)}"
+STORAGE_ID="/subscriptions/${SUB}/resourceGroups/${STORAGE_RG}/providers/Microsoft.Storage/storageAccounts/${STORAGE}"
+ROLE=ba92f5b4-2d11-453d-a403-e96b0029c9fe   # Storage Blob Data Contributor (well-known Azure role id)
 URL="https://${SRV}.azurewebsites.net"
 PROP_WAIT="${PROP_WAIT:-180}"
 
@@ -37,7 +40,7 @@ done
 azr webapp config appsettings set -g "$SRV" -n "$SRV" --settings \
   FhirServer__Operations__Import__Enabled=true \
   FhirServer__Operations__Import__InitialImportMode=false \
-  "FhirServer__Operations__IntegrationDataStore__StorageAccountUri=https://jaerwinimport.blob.core.windows.net" \
+  "FhirServer__Operations__IntegrationDataStore__StorageAccountUri=https://${STORAGE}.blob.core.windows.net" \
   TaskHosting__Enabled=true TaskHosting__MaxRunningTaskCount=6 -o none
 echo "  settings set; waiting ${PROP_WAIT}s for RBAC propagation..."
 sleep "$PROP_WAIT"

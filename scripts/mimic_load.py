@@ -22,7 +22,10 @@ sys.path.insert(0, str(REPO / "scripts"))
 from src.fhir.client import FHIRClient  # noqa: E402
 import reload_phenotype  # noqa: E402  -- wipe_server reads its module-global BASE_URL
 
-BLOB_BASE = "https://jaerwinimport.blob.core.windows.net/fhir-mimic"
+import os  # noqa: E402
+# Storage account / container from env (set in .env; see .env.example).
+BLOB_BASE = (f"https://{os.environ.get('FHIR_IMPORT_STORAGE', 'CHANGE_ME')}"
+             f".blob.core.windows.net/{os.environ.get('FHIR_IMPORT_CONTAINER', 'fhir-mimic')}")
 FILES = [
     ("MimicOrganization", "Organization"), ("MimicLocation", "Location"),
     ("MimicPatient", "Patient"),
