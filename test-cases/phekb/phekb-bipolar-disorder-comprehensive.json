@@ -4,11 +4,11 @@
   "source_id": "bipolar-disorder",
   "name": "Bipolar Disorder - Comprehensive Provider Query (Multi-Resource)",
   "description": "Provider-level query identifying bipolar patients via Condition + MedicationRequest. Path C captures patients on mood stabilizers without coded bipolar dx.",
-  "prompt": "I need to identify my complete bipolar disorder patient population. Some patients have a coded bipolar diagnosis. Others are on mood stabilizers (lithium, valproate, lamotrigine) without ever getting a formal bipolar diagnosis. Run multiple FHIR queries \u2014 diagnosis and mood stabilizer medications \u2014 and union the patient sets.",
+  "prompt": "I need to identify my complete bipolar disorder patient population. Some patients have a coded bipolar diagnosis. Others are on mood stabilizers (lithium, valproate, lamotrigine) without ever getting a formal bipolar diagnosis. Run multiple FHIR queries — diagnosis and mood stabilizer medications — and union the patient sets.",
   "prompts": {
     "naive": "Find all bipolar patients.",
-    "broad": "Find all bipolar disorder patients \u2014 by diagnosis or by mood stabilizer medications. Run multiple queries and union the patient sets.",
-    "expert": "Run two queries. (1) Condition?code=http://snomed.info/sct|13746004 \u2014 bipolar dx. (2) MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6448,http://www.nlm.nih.gov/research/umls/rxnorm|40254,http://www.nlm.nih.gov/research/umls/rxnorm|28439 \u2014 mood stabilizers. Union the patient IDs."
+    "broad": "Find all bipolar disorder patients — by diagnosis or by mood stabilizer medications. Run multiple queries and union the patient sets.",
+    "expert": "I need to identify all patients with bipolar disorder using a union across Condition and MedicationRequest resources. First, search Condition resources for a bipolar disorder diagnosis coded in SNOMED CT. Then search MedicationRequest resources for the core mood stabilizers used in bipolar management — lithium, valproate, and lamotrigine — all coded in RxNorm. Union the patient sets; the medication path captures patients treated for bipolar disorder who may lack a formally coded diagnosis, but note that valproate and lamotrigine are cross-indicated with epilepsy and migraine, so the medication-only subset will include some non-bipolar patients."
   },
   "metadata": {
     "implementation_guide": "US Core 5.0.0",

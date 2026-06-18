@@ -3,12 +3,12 @@
   "source": "phekb",
   "source_id": "neonatal-abstinence-syndrome",
   "name": "Neonatal Abstinence Syndrome - Comprehensive Provider Query (Multi-Resource)",
-  "description": "Provider-level query identifying NAS / opioid-exposed-infant patients via Condition (multi-system) + MedicationRequest (morphine taper). Note: the full PheKB algorithm uses 6 indicators including maternal records \u2014 Synthea individual-patient modules can't model birthing-person-infant dyads, so this captures the 2 infant-side indicators (NOWS dx + opioid Rx).",
-  "prompt": "I need to identify all opioid-exposed infants for a perinatal quality program. Some have a coded NAS / NOWS diagnosis (SNOMED or ICD-10 P96.1). Others are on morphine for symptom management without a formal NAS diagnosis. Run multiple FHIR queries \u2014 diagnosis (multi-system) and morphine \u2014 and union the patient sets.",
+  "description": "Provider-level query identifying NAS / opioid-exposed-infant patients via Condition (multi-system) + MedicationRequest (morphine taper). Note: the full PheKB algorithm uses 6 indicators including maternal records — Synthea individual-patient modules can't model birthing-person-infant dyads, so this captures the 2 infant-side indicators (NOWS dx + opioid Rx).",
+  "prompt": "I need to identify all opioid-exposed infants for a perinatal quality program. Some have a coded NAS / NOWS diagnosis (SNOMED or ICD-10 P96.1). Others are on morphine for symptom management without a formal NAS diagnosis. Run multiple FHIR queries — diagnosis (multi-system) and morphine — and union the patient sets.",
   "prompts": {
     "naive": "Find all NAS infants.",
-    "broad": "Find all NAS / opioid-exposed infants \u2014 by diagnosis (SNOMED 414819007 or ICD-10 P96.1) or by morphine prescription (used for NOWS taper). Run multiple queries and union.",
-    "expert": "Run two queries. (1) Condition?code=http://snomed.info/sct|414819007,http://hl7.org/fhir/sid/icd-10-cm|P96.1 \u2014 NAS dx. (2) MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|7052 \u2014 morphine. Union the patient IDs."
+    "broad": "Find all NAS / opioid-exposed infants — by diagnosis (SNOMED 414819007 or ICD-10 P96.1) or by morphine prescription (used for NOWS taper). Run multiple queries and union.",
+    "expert": "I need a comprehensive neonatal abstinence syndrome cohort by combining the infant-side indicators available in individual-patient records. Run two queries and union the results: first, search Condition resources for the NAS / neonatal opioid withdrawal syndrome diagnosis coded in both SNOMED CT and ICD-10-CM (the ICD-10 code for neonatal withdrawal symptoms from maternal drug use), since real-world EHRs use both systems; second, search MedicationRequest resources for morphine coded in RxNorm, as morphine taper is the primary pharmacologic treatment for NOWS in neonates. Note that the full PheKB algorithm uses six opioid-exposure indicators including maternal records, which cannot be modeled in individual-patient FHIR data."
   },
   "metadata": {
     "implementation_guide": "US Core 5.0.0",

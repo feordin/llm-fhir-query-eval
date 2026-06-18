@@ -8,7 +8,7 @@
   "prompts": {
     "naive": "Find kids with peanut allergy.",
     "broad": "Find pediatric patients (ages 1 through 17) with a documented diagnosis of peanut allergy.",
-    "expert": "I need pediatric patients (ages 1-17) with peanut allergy. SNOMED 91935009 (Allergy to peanut). FHIR has no patient.age \u2014 use chained patient.birthdate. With reference date 2026-04-28: ages 1-17 inclusive means birthdate in (2008-04-28, 2025-04-28]. Query: Condition?code=http://snomed.info/sct|91935009&patient.birthdate=gt2008-04-28&patient.birthdate=le2025-04-28"
+    "expert": "I need to find pediatric patients with a documented peanut allergy diagnosis, restricting the cohort to children between one and seventeen years of age. Search Condition resources for the SNOMED CT code representing allergy to peanut. Because FHIR R4 does not expose a direct patient age parameter, the age restriction must be implemented as a chained filter on the patient's birthdate — computing the date range that corresponds to ages one through seventeen relative to the current reference date and applying both a lower and upper bound on the birthdate field."
   },
   "metadata": {
     "implementation_guide": "US Core 5.0.0",

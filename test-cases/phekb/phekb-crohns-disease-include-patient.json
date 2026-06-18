@@ -3,12 +3,12 @@
   "source": "phekb",
   "source_id": "crohns-disease",
   "name": "Crohn's Disease - Conditions with Patient via _include (Single-Call Bundle)",
-  "description": "**FHIR _include test.** Find Crohn's disease Conditions AND return the referenced Patient resources in the same bundle response. The `_include` parameter follows references forward \u2014 Condition.subject points to Patient, so `_include=Condition:patient` pulls patient demographics into one round trip. Tests whether LLM understands `_include` as the forward-chain mechanism for assembling patient context.",
+  "description": "**FHIR _include test.** Find Crohn's disease Conditions AND return the referenced Patient resources in the same bundle response. The `_include` parameter follows references forward — Condition.subject points to Patient, so `_include=Condition:patient` pulls patient demographics into one round trip. Tests whether LLM understands `_include` as the forward-chain mechanism for assembling patient context.",
   "prompt": "Find Crohn's disease conditions and include the referenced patient demographics in the same response. The intent is to retrieve both the Condition resources and their Patient resources in a single API call rather than making separate Patient lookups for each condition.",
   "prompts": {
     "naive": "Find Crohn's conditions with patients.",
-    "broad": "Find Condition resources for Crohn's disease and use FHIR `_include` to also return the Patient resources referenced by Condition.subject \u2014 so a single bundle contains both the conditions and the patient demographics.",
-    "expert": "I need Condition resources with the Crohn's SNOMED codes (34000006, 7620006, 196977009, 1197732001, 1197733006), AND in the same bundle the Patient resources they reference. Use `Condition?code=...&_include=Condition:patient`. The `_include=Condition:patient` parameter tells the server to follow Condition.subject (the patient reference) forward and return matched Patient resources alongside the matched Conditions in one bundle. Each entry has search.mode='match' for direct matches and search.mode='include' for the included Patient resources."
+    "broad": "Find Condition resources for Crohn's disease and use FHIR `_include` to also return the Patient resources referenced by Condition.subject — so a single bundle contains both the conditions and the patient demographics.",
+    "expert": "I need to retrieve Crohn's disease Condition records and, in the same response bundle, the Patient demographic resources they reference — a single round-trip rather than two separate calls. Search Condition resources using the full set of Crohn's SNOMED codes (covering the colonic, jejunoileal, terminal ileal, and broader disease variants), and request that the server follow each Condition's patient reference forward to include the matching Patient resources alongside the matched Conditions in one bundle; entries for direct condition matches and included patient records will appear together in the response."
   },
   "metadata": {
     "implementation_guide": "US Core 5.0.0",

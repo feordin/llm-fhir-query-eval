@@ -3,17 +3,17 @@
   "source": "phekb",
   "source_id": "familial-hypercholesterolemia",
   "name": "Familial Hypercholesterolemia - Severely Elevated LDL-C Query",
-  "description": "Tests ability to find FH patients via severely elevated LDL cholesterol. The Geisinger PheKB FH algorithm uses LDL-C \u2265 190 mg/dL as the FH-specific case threshold (Dutch Lipid Clinic Network 'definite' FH category requires untreated LDL \u2265 8.5 mmol/L = ~330 mg/dL, but \u2265190 mg/dL is the more inclusive definite-FH cutoff). This is distinct from the general 'high cholesterol' threshold of LDL \u2265 130 \u2014 testing whether LLM knows the FH-specific cutoff vs general lipid management cutoffs.",
+  "description": "Tests ability to find FH patients via severely elevated LDL cholesterol. The Geisinger PheKB FH algorithm uses LDL-C ≥ 190 mg/dL as the FH-specific case threshold (Dutch Lipid Clinic Network 'definite' FH category requires untreated LDL ≥ 8.5 mmol/L = ~330 mg/dL, but ≥190 mg/dL is the more inclusive definite-FH cutoff). This is distinct from the general 'high cholesterol' threshold of LDL ≥ 130 — testing whether LLM knows the FH-specific cutoff vs general lipid management cutoffs.",
   "prompt": "Find laboratory observations for LDL cholesterol where the value is at or above 190 mg/dL, indicating severely elevated LDL consistent with familial hypercholesterolemia.",
   "prompts": {
     "naive": "Find patients with very high LDL cholesterol.",
-    "broad": "Find Observation resources for low-density lipoprotein (LDL) cholesterol where the value is greater than or equal to 190 mg/dL. LDL \u2265 190 mg/dL is the threshold used in Dutch Lipid Clinic Network criteria for definite familial hypercholesterolemia.",
-    "expert": "I need Observation resources for severely elevated LDL-C consistent with FH. Use LOINC 2089-1 (Cholesterol in LDL [Mass/volume] in Serum or Plasma). Apply a value-quantity filter with the ge prefix at threshold 190, unit mg/dL. The query should look like: Observation?code=http://loinc.org|2089-1&value-quantity=ge190. Note this is the FH-specific cutoff \u2014 general 'high cholesterol' uses LDL \u2265 130 (LOINC same code, different threshold)."
+    "broad": "Find Observation resources for low-density lipoprotein (LDL) cholesterol where the value is greater than or equal to 190 mg/dL. LDL ≥ 190 mg/dL is the threshold used in Dutch Lipid Clinic Network criteria for definite familial hypercholesterolemia.",
+    "expert": "I need to find patients with severely elevated LDL cholesterol consistent with familial hypercholesterolemia. Search Observation resources for LDL cholesterol measured in serum or plasma using the relevant LOINC code, and filter to values at or above one hundred ninety milligrams per deciliter — the FH-specific threshold, which is substantially higher than the general lipid management cutoff of one hundred thirty. This lab-based path is particularly important for FH because many genetically affected patients are identified through lipid screening before receiving a formal diagnosis, making the Observation query essential for capturing the full cohort."
   },
   "metadata": {
     "implementation_guide": "US Core 5.0.0",
     "algorithm_path": "lab-path",
-    "algorithm_path_description": "Patients with severely elevated LDL-C (Paths A and D). Path D is particularly important for FH \u2014 many genetically affected patients are not diagnosed until lab screening reveals very high LDL. Tests value-quantity filtering with ge threshold and FH-specific (not general lipid management) cutoff.",
+    "algorithm_path_description": "Patients with severely elevated LDL-C (Paths A and D). Path D is particularly important for FH — many genetically affected patients are not diagnosed until lab screening reveals very high LDL. Tests value-quantity filtering with ge threshold and FH-specific (not general lipid management) cutoff.",
     "code_systems": [
       "LOINC"
     ],

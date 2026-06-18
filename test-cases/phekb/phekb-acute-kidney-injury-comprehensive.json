@@ -4,11 +4,11 @@
   "source_id": "acute-kidney-injury",
   "name": "AKI - Comprehensive Provider Query (Multi-Resource)",
   "description": "Provider-level query identifying AKI patients via Condition (AKI dx) + Observation (elevated creatinine).",
-  "prompt": "I need to identify my complete AKI patient population. Some patients have a coded AKI diagnosis. Others have only a documented elevated creatinine without yet getting a formal AKI diagnosis. Run multiple FHIR queries \u2014 diagnosis and creatinine \u2014 and union the patient sets.",
+  "prompt": "I need to identify my complete AKI patient population. Some patients have a coded AKI diagnosis. Others have only a documented elevated creatinine without yet getting a formal AKI diagnosis. Run multiple FHIR queries — diagnosis and creatinine — and union the patient sets.",
   "prompts": {
     "naive": "Find all my AKI patients.",
-    "broad": "Find all AKI patients \u2014 by diagnosis or by elevated creatinine (\u22651.5 mg/dL). Run multiple queries and union the patient sets.",
-    "expert": "Run two queries. (1) Condition?code=http://snomed.info/sct|14669001 \u2014 AKI dx. (2) Observation?code=http://loinc.org|2160-0&value-quantity=ge1.5||mg/dL \u2014 elevated creatinine. Union the patient IDs."
+    "broad": "Find all AKI patients — by diagnosis or by elevated creatinine (≥1.5 mg/dL). Run multiple queries and union the patient sets.",
+    "expert": "I need to identify all patients with acute kidney injury using both diagnostic and laboratory evidence, taking the union of two independent queries. First, search Condition resources for a documented AKI diagnosis coded in SNOMED CT. Second, search Observation resources for serum creatinine results (coded in LOINC) at or above the threshold associated with AKI — approximately one and a half milligrams per deciliter or higher. Return the union of patient IDs across both queries, since some patients will have a formal diagnosis without a recorded creatinine threshold result and others will have the laboratory finding without a coded diagnosis."
   },
   "metadata": {
     "implementation_guide": "US Core 5.0.0",

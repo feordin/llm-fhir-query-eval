@@ -4,11 +4,11 @@
   "source_id": "stroke",
   "name": "Stroke - Comprehensive Provider Query (Multi-Resource)",
   "description": "Provider-level query identifying all stroke patients via Condition (stroke dx) + MedicationRequest (alteplase or antiplatelets). Path C captures patients on antiplatelets without coded stroke dx (primary prevention or undocumented TIA).",
-  "prompt": "I need to identify my complete stroke patient population for a stroke quality initiative. Some patients have a coded cerebral infarction or CVA diagnosis. Others are on aspirin or clopidogrel without a formal stroke diagnosis \u2014 typically primary cardiovascular prevention or undocumented TIAs. Run multiple FHIR queries \u2014 diagnosis and stroke-relevant medications \u2014 and union the patient sets.",
+  "prompt": "I need to identify my complete stroke patient population for a stroke quality initiative. Some patients have a coded cerebral infarction or CVA diagnosis. Others are on aspirin or clopidogrel without a formal stroke diagnosis — typically primary cardiovascular prevention or undocumented TIAs. Run multiple FHIR queries — diagnosis and stroke-relevant medications — and union the patient sets.",
   "prompts": {
     "naive": "Find all my stroke patients.",
-    "broad": "Find all stroke patients \u2014 by diagnosis, by alteplase (acute thrombolysis), or by antiplatelet medications. Run multiple queries and union the patient sets.",
-    "expert": "Run two queries. (1) Condition?code=http://snomed.info/sct|432504007,http://snomed.info/sct|230690007 \u2014 stroke/CVA dx. (2) MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|8410,http://www.nlm.nih.gov/research/umls/rxnorm|1191,http://www.nlm.nih.gov/research/umls/rxnorm|32968 \u2014 alteplase + antiplatelets. Union the patient IDs."
+    "broad": "Find all stroke patients — by diagnosis, by alteplase (acute thrombolysis), or by antiplatelet medications. Run multiple queries and union the patient sets.",
+    "expert": "I need to identify all stroke patients using a union across Condition and MedicationRequest resources. Search Condition resources for stroke and cerebrovascular accident diagnoses coded in SNOMED CT — include both the specific cerebral infarction concept and the broader cerebrovascular accident term. Also search MedicationRequest resources for alteplase (the acute thrombolytic agent, RxNorm coded) and the antiplatelet agents aspirin and clopidogrel used for secondary prevention (both RxNorm coded). Union the patient sets; alteplase is highly stroke-specific, but antiplatelets are heavily cross-indicated across coronary artery disease, peripheral arterial disease, and carotid artery disease, so the medication-only subset will include many non-stroke patients."
   },
   "metadata": {
     "implementation_guide": "US Core 5.0.0",

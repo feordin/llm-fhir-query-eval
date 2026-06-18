@@ -3,17 +3,17 @@
   "source": "phekb",
   "source_id": "hiv",
   "name": "HIV - Low CD4 Count (AIDS Threshold) Query",
-  "description": "Tests ability to find HIV/AIDS patients via low CD4 cell count. CD4 < 200 cells/\u03bcL defines AIDS regardless of opportunistic infections. CD4 monitoring guides ART decisions and prophylaxis (e.g., PJP prophylaxis at CD4 < 200). This test exercises a less-than threshold value-quantity filter on a cell-count Observation \u2014 a unique data type for the suite.",
+  "description": "Tests ability to find HIV/AIDS patients via low CD4 cell count. CD4 < 200 cells/μL defines AIDS regardless of opportunistic infections. CD4 monitoring guides ART decisions and prophylaxis (e.g., PJP prophylaxis at CD4 < 200). This test exercises a less-than threshold value-quantity filter on a cell-count Observation — a unique data type for the suite.",
   "prompt": "Find laboratory observations for CD4 cell counts where the value is below 200 cells per microliter, indicating AIDS or severe HIV-related immunosuppression.",
   "prompts": {
     "naive": "Find patients with low CD4 counts.",
-    "broad": "Find Observation resources for CD4 helper T-cell counts where the value is less than 200 cells per microliter. CD4 < 200 cells/\u03bcL is the CDC threshold for AIDS diagnosis regardless of opportunistic infections. CD4 < 200 also triggers prophylaxis for opportunistic infections like Pneumocystis jirovecii pneumonia (PJP).",
-    "expert": "I need Observation resources for low CD4 counts. Use LOINC 24467-3 (CD3+CD4+ T helper cells [#/volume] in Blood). Apply a value-quantity filter with the lt prefix at threshold 200, unit cells/\u03bcL. The query should look like: Observation?code=http://loinc.org|24467-3&value-quantity=lt200. CD4 < 200 defines AIDS per CDC criteria."
+    "broad": "Find Observation resources for CD4 helper T-cell counts where the value is less than 200 cells per microliter. CD4 < 200 cells/μL is the CDC threshold for AIDS diagnosis regardless of opportunistic infections. CD4 < 200 also triggers prophylaxis for opportunistic infections like Pneumocystis jirovecii pneumonia (PJP).",
+    "expert": "I need to find HIV patients at the AIDS stage by searching Observation resources for low CD4 T-cell counts. Use the LOINC code for CD3-positive CD4-positive T-helper cells as an absolute count per volume in blood, and apply a value filter for counts strictly below two hundred cells per microliter — the CDC threshold that defines AIDS-stage HIV regardless of opportunistic infections. This cell-count observation query captures only the AIDS-stage subset of the HIV population; patients with well-controlled HIV on antiretroviral therapy typically have CD4 counts well above this threshold and will not be returned."
   },
   "metadata": {
     "implementation_guide": "US Core 5.0.0",
     "algorithm_path": "lab-path",
-    "algorithm_path_description": "Patients with low CD4 (Paths A and B for AIDS-stage HIV). Tests cell-count Observation queries \u2014 a unique data type. Distinguishes AIDS-stage HIV from controlled HIV (CD4 \u2265 500) and partially-controlled HIV (CD4 200-500).",
+    "algorithm_path_description": "Patients with low CD4 (Paths A and B for AIDS-stage HIV). Tests cell-count Observation queries — a unique data type. Distinguishes AIDS-stage HIV from controlled HIV (CD4 ≥ 500) and partially-controlled HIV (CD4 200-500).",
     "code_systems": [
       "LOINC"
     ],

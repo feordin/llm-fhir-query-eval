@@ -4,11 +4,11 @@
   "source_id": "urinary-incontinence",
   "name": "Urinary Incontinence - Comprehensive Provider Query (Multi-Resource)",
   "description": "Provider-level query identifying UI patients via Condition + MedicationRequest. Path C (anticholinergic without UI dx) reflects undiagnosed overactive bladder.",
-  "prompt": "I need to identify my complete urinary incontinence patient population for a women's health and geriatrics initiative. Some patients have a coded UI diagnosis. Others are on antimuscarinic medications (oxybutynin, tolterodine, solifenacin) for overactive bladder symptoms without a formal UI diagnosis. Run multiple FHIR queries \u2014 diagnosis and antimuscarinics \u2014 and union the patient sets.",
+  "prompt": "I need to identify my complete urinary incontinence patient population for a women's health and geriatrics initiative. Some patients have a coded UI diagnosis. Others are on antimuscarinic medications (oxybutynin, tolterodine, solifenacin) for overactive bladder symptoms without a formal UI diagnosis. Run multiple FHIR queries — diagnosis and antimuscarinics — and union the patient sets.",
   "prompts": {
     "naive": "Find all UI patients.",
-    "broad": "Find all urinary incontinence patients \u2014 by diagnosis or by antimuscarinic medication prescriptions (oxybutynin, tolterodine, solifenacin). Run multiple queries and union the patient sets.",
-    "expert": "Run two queries. (1) Condition?code=http://snomed.info/sct|165232002 \u2014 UI dx. (2) MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|32675,http://www.nlm.nih.gov/research/umls/rxnorm|119565,http://www.nlm.nih.gov/research/umls/rxnorm|322167 \u2014 antimuscarinics. Union the patient IDs."
+    "broad": "Find all urinary incontinence patients — by diagnosis or by antimuscarinic medication prescriptions (oxybutynin, tolterodine, solifenacin). Run multiple queries and union the patient sets.",
+    "expert": "I need a comprehensive urinary incontinence cohort by combining diagnosis and medication evidence. Run two queries and union the patient sets: first, search Condition resources for the urinary incontinence diagnosis in SNOMED CT; second, search MedicationRequest resources for the three antimuscarinic agents used to treat overactive bladder and urge incontinence — oxybutynin, tolterodine, and solifenacin — all coded in RxNorm. The medication path captures patients with undiagnosed or under-coded overactive bladder who are nonetheless being treated pharmacologically; all three drugs must be included to achieve full recall."
   },
   "metadata": {
     "implementation_guide": "US Core 5.0.0",

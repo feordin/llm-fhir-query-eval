@@ -4,11 +4,11 @@
   "source_id": "diverticulitis",
   "name": "Diverticulitis - Comprehensive Provider Query (Multi-Resource)",
   "description": "Provider-level query identifying all diverticulitis patients using Condition (diverticulitis dx) + MedicationRequest (cipro/metro). Path C patients have cipro+metro without diverticulitis dx (likely treated empirically for intra-abdominal infection or unconfirmed UTI/IAI).",
-  "prompt": "I need to identify my complete diverticulitis patient population for a colorectal quality initiative. Some patients have a coded diverticulitis diagnosis. Others were prescribed ciprofloxacin and metronidazole empirically for suspected intra-abdominal infection without ever getting a formal diverticulitis diagnosis. Run multiple FHIR queries \u2014 diagnosis and antibiotic medications \u2014 and union the patient sets.",
+  "prompt": "I need to identify my complete diverticulitis patient population for a colorectal quality initiative. Some patients have a coded diverticulitis diagnosis. Others were prescribed ciprofloxacin and metronidazole empirically for suspected intra-abdominal infection without ever getting a formal diverticulitis diagnosis. Run multiple FHIR queries — diagnosis and antibiotic medications — and union the patient sets.",
   "prompts": {
     "naive": "Find all patients with diverticulitis or on cipro/metro.",
-    "broad": "Find all diverticulitis patients \u2014 by diagnosis or by ciprofloxacin/metronidazole antibiotic regimen. Run multiple queries and union the patient sets.",
-    "expert": "Run two queries. (1) Condition?code=http://snomed.info/sct|307496006 \u2014 diverticulitis dx. (2) MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|2551,http://www.nlm.nih.gov/research/umls/rxnorm|6922 \u2014 cipro+metro. Union the patient IDs."
+    "broad": "Find all diverticulitis patients — by diagnosis or by ciprofloxacin/metronidazole antibiotic regimen. Run multiple queries and union the patient sets.",
+    "expert": "I need to identify all diverticulitis patients using both diagnostic coding and antibiotic prescribing evidence, taking the union across two queries. First, search Condition resources for a diverticulitis diagnosis coded in SNOMED CT. Second, search MedicationRequest resources for the standard oral antibiotic regimen used in diverticulitis — ciprofloxacin and metronidazole, each coded in RxNorm — to capture Path C patients who were treated empirically without a formal coded diagnosis. Return the union of patient IDs; be aware that the antibiotic query will include cross-indicated patients treated for UTI, C. difficile, or other intra-abdominal infections."
   },
   "metadata": {
     "implementation_guide": "US Core 5.0.0",

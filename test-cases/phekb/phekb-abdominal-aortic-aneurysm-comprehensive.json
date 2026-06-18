@@ -4,11 +4,11 @@
   "source_id": "abdominal-aortic-aneurysm",
   "name": "AAA - Comprehensive Provider Query (Multi-Resource)",
   "description": "Provider-level query identifying all AAA patients via Condition (AAA dx) + Procedure (AAA repair).",
-  "prompt": "I need to identify my complete abdominal aortic aneurysm patient population for a vascular surgery quality initiative. Some patients have a coded AAA diagnosis. Others may have only an AAA repair procedure on record. Run multiple FHIR queries \u2014 diagnosis and AAA repair procedures \u2014 and union the patient sets.",
+  "prompt": "I need to identify my complete abdominal aortic aneurysm patient population for a vascular surgery quality initiative. Some patients have a coded AAA diagnosis. Others may have only an AAA repair procedure on record. Run multiple FHIR queries — diagnosis and AAA repair procedures — and union the patient sets.",
   "prompts": {
     "naive": "Find all my AAA patients.",
-    "broad": "Find all AAA patients \u2014 by diagnosis (including ruptured) or by repair procedure (open or endovascular). Run multiple queries and union the patient sets.",
-    "expert": "Run two queries. (1) Condition?code=http://snomed.info/sct|233985008,http://snomed.info/sct|14336007 \u2014 AAA dx variants. (2) Procedure?code=http://snomed.info/sct|24165007,http://snomed.info/sct|441788006 \u2014 AAA repair. Union the patient IDs."
+    "broad": "Find all AAA patients — by diagnosis (including ruptured) or by repair procedure (open or endovascular). Run multiple queries and union the patient sets.",
+    "expert": "I need to identify all patients with an abdominal aortic aneurysm using two complementary resources. First, search Condition resources for AAA diagnoses — using SNOMED CT, and cover both the intact and ruptured forms since the ruptured variant carries a distinct code and must not be dropped. Second, search Procedure resources for AAA repair, covering both open surgical repair (with graft) and endovascular repair, each coded separately in SNOMED CT. Take the union of patient IDs across both queries; a patient appearing in either Condition or Procedure should be included in the final cohort."
   },
   "metadata": {
     "implementation_guide": "US Core 5.0.0",

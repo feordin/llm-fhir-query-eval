@@ -3,12 +3,12 @@
   "source": "phekb",
   "source_id": "sleep-apnea",
   "name": "Sleep Apnea - Polysomnography WITHOUT Diagnosis (Negative Sleep Study)",
-  "description": "**Negation test on Procedure resource.** Find patients who underwent polysomnography but do NOT have a sleep apnea diagnosis. These are negative sleep studies \u2014 patients evaluated for sleep apnea but found not to have it. Clinically important: these patients may need workup for other sleep disorders (insomnia, restless legs, narcolepsy). Tests two-query subtraction with a Procedure-based query on the kept side.",
+  "description": "**Negation test on Procedure resource.** Find patients who underwent polysomnography but do NOT have a sleep apnea diagnosis. These are negative sleep studies — patients evaluated for sleep apnea but found not to have it. Clinically important: these patients may need workup for other sleep disorders (insomnia, restless legs, narcolepsy). Tests two-query subtraction with a Procedure-based query on the kept side.",
   "prompt": "Find patients who have undergone a polysomnography sleep study but do NOT have any sleep apnea diagnosis. The intent is to identify patients with negative sleep studies who may have other sleep disorders requiring different workup.",
   "prompts": {
     "naive": "Find sleep studies without sleep apnea.",
     "broad": "Find patients with a polysomnography Procedure but NO sleep apnea Condition. Use a two-query subtraction: polysomnography patients minus sleep-apnea-diagnosed patients.",
-    "expert": "Set difference: Procedure patients (polysomnography 60554003) MINUS Condition patients (sleep apnea codes 73430006, 78275009, 27405005, 1101000119103, 230493001). Two queries: (1) `Procedure?code=http://snomed.info/sct|60554003`, (2) `Condition?code=http://snomed.info/sct|73430006,78275009,27405005,1101000119103,230493001`. Return query 1 MINUS query 2. The remaining patients are negative-study cases."
+    "expert": "I need to find patients who underwent polysomnography but do not have a sleep apnea diagnosis — that is, patients with a negative overnight sleep study. This requires a two-query set-subtraction approach: first, retrieve all patients with a Procedure record for polysomnography coded in SNOMED CT; second, retrieve all patients with a Condition record for any sleep apnea diagnosis coded in SNOMED CT, which should cover obstructive sleep apnea of the adult, obstructive sleep apnea syndrome, central sleep apnea syndrome, and mixed sleep apnea. Return the patients from the polysomnography query minus those who appear in the sleep apnea diagnosis query; the remaining patients are those evaluated but not found to have sleep apnea."
   },
   "metadata": {
     "implementation_guide": "US Core 5.0.0",

@@ -4,11 +4,11 @@
   "source_id": "copd",
   "name": "COPD - Comprehensive Provider Query (Multi-Resource)",
   "description": "Provider-level query identifying COPD patients via Condition + MedicationRequest. Path C (med only without dx) reflects bronchodilator use without formal COPD diagnosis (often asthma cross-indication).",
-  "prompt": "I need to identify my complete COPD patient population for a chronic disease management program. Some patients have a coded COPD or emphysema diagnosis. Others are on inhaled bronchodilators (albuterol, salmeterol) for chronic respiratory symptoms but may not have a formal COPD diagnosis. Run multiple FHIR queries \u2014 diagnosis and bronchodilator medications \u2014 and union the patient sets.",
+  "prompt": "I need to identify my complete COPD patient population for a chronic disease management program. Some patients have a coded COPD or emphysema diagnosis. Others are on inhaled bronchodilators (albuterol, salmeterol) for chronic respiratory symptoms but may not have a formal COPD diagnosis. Run multiple FHIR queries — diagnosis and bronchodilator medications — and union the patient sets.",
   "prompts": {
     "naive": "Find all COPD patients.",
-    "broad": "Find all COPD patients \u2014 by diagnosis (COPD or emphysema) or by inhaled bronchodilator prescriptions (albuterol, salmeterol). Run multiple queries and union the patient sets.",
-    "expert": "Run two queries. (1) Condition?code=http://snomed.info/sct|13645005,http://snomed.info/sct|87433001 \u2014 COPD/emphysema dx. (2) MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|435,http://www.nlm.nih.gov/research/umls/rxnorm|36117 \u2014 bronchodilators. Union the patient IDs."
+    "broad": "Find all COPD patients — by diagnosis (COPD or emphysema) or by inhaled bronchodilator prescriptions (albuterol, salmeterol). Run multiple queries and union the patient sets.",
+    "expert": "I need to identify all COPD patients using a two-resource union. First, search Condition resources for COPD and pulmonary emphysema diagnoses in SNOMED CT — these are the two principal diagnostic variants for this phenotype. Second, search MedicationRequest resources for inhaled bronchodilators used in COPD management, specifically the short-acting agent albuterol and the long-acting agent salmeterol, both coded in RxNorm. Note that both bronchodilators are heavily cross-indicated with asthma, so the medication path will include asthma patients without a COPD diagnosis. Union all patient IDs from both queries."
   },
   "metadata": {
     "implementation_guide": "US Core 5.0.0",

@@ -3,12 +3,12 @@
   "source": "phekb",
   "source_id": "endometriosis",
   "name": "Endometriosis - Comprehensive Provider Query (Multi-Resource)",
-  "description": "Provider-level query identifying endometriosis patients via Condition + MedicationRequest. Path C (med only) reflects leuprolide use without endometriosis dx \u2014 could indicate undiagnosed pelvic pain or off-label use.",
-  "prompt": "I need to identify my complete endometriosis patient population for a women's health quality program. Some female patients have a coded endometriosis diagnosis. Others are on leuprolide for chronic pelvic pain or hormonal suppression without a formal endometriosis diagnosis. Run multiple FHIR queries \u2014 diagnosis and leuprolide \u2014 and union the patient sets.",
+  "description": "Provider-level query identifying endometriosis patients via Condition + MedicationRequest. Path C (med only) reflects leuprolide use without endometriosis dx — could indicate undiagnosed pelvic pain or off-label use.",
+  "prompt": "I need to identify my complete endometriosis patient population for a women's health quality program. Some female patients have a coded endometriosis diagnosis. Others are on leuprolide for chronic pelvic pain or hormonal suppression without a formal endometriosis diagnosis. Run multiple FHIR queries — diagnosis and leuprolide — and union the patient sets.",
   "prompts": {
     "naive": "Find all endometriosis patients.",
-    "broad": "Find all female endometriosis patients \u2014 by diagnosis or by leuprolide (GnRH agonist) prescriptions. Run multiple queries and union the patient sets.",
-    "expert": "Run two queries (female-restricted). (1) Condition?code=http://snomed.info/sct|76376003&patient.gender=female \u2014 endometriosis dx. (2) MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|752899&patient.gender=female \u2014 leuprolide. Union the patient IDs."
+    "broad": "Find all female endometriosis patients — by diagnosis or by leuprolide (GnRH agonist) prescriptions. Run multiple queries and union the patient sets.",
+    "expert": "I need to identify female patients with endometriosis using a multi-resource union, restricted to female patients throughout. Run two searches and union the results: first, search Condition resources for the SNOMED CT code for endometriosis of the uterus, with a patient gender filter for female; second, search MedicationRequest resources for leuprolide acetate (a GnRH agonist used in endometriosis management), again restricted to female patients. The medication path captures women on leuprolide who may not have a formal endometriosis diagnosis coded, though leuprolide is also used for prostate cancer androgen-deprivation therapy in males — the female sex restriction eliminates that overlap."
   },
   "metadata": {
     "implementation_guide": "US Core 5.0.0",

@@ -3,12 +3,12 @@
   "source": "phekb",
   "source_id": "post-event-pain",
   "name": "Post-event Pain - Comprehensive Query (Pediatric Scoliosis + Pain Score)",
-  "description": "Tests ability to find pediatric scoliosis-surgery patients with post-operative pain assessment. Per PheKB algorithm, the cohort requires age \u22656 + scoliosis dx + surgery + \u22653 NRS pain scores per encounter.",
+  "description": "Tests ability to find pediatric scoliosis-surgery patients with post-operative pain assessment. Per PheKB algorithm, the cohort requires age ≥6 + scoliosis dx + surgery + ≥3 NRS pain scores per encounter.",
   "prompt": "Find pediatric scoliosis patients with post-operative pain severity scores.",
   "prompts": {
     "naive": "Find pediatric pain patients.",
-    "broad": "Find pediatric scoliosis surgery patients with documented post-operative pain severity scores (NRS 0-10) \u2014 used in pain pharmacogenetics studies.",
-    "expert": "Run two queries. (1) Condition?code=http://hl7.org/fhir/sid/icd-10-cm|M41.9 \u2014 scoliosis. (2) Observation?code=http://loinc.org|38208-5&value-quantity=ge4 \u2014 pain score >=4. Union the patient IDs."
+    "broad": "Find pediatric scoliosis surgery patients with documented post-operative pain severity scores (NRS 0-10) — used in pain pharmacogenetics studies.",
+    "expert": "I need to identify pediatric patients in the post-event pain phenotype using a multi-resource union based on the PheKB algorithm for scoliosis surgery patients with post-operative pain assessment. Run two searches and union the patient sets: first, search Condition resources for scoliosis using the ICD-10-CM code for unspecified scoliosis; second, search Observation resources for numeric pain severity scores coded with the appropriate LOINC term for patient-reported pain severity, filtering for scores at or above four on the numeric rating scale (indicating at least moderate pain). The PheKB cohort requires pediatric age (six years or older) and at least three pain score observations per encounter, but the union across both paths first establishes the candidate population."
   },
   "metadata": {
     "implementation_guide": "US Core 5.0.0",

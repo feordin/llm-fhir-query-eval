@@ -3,12 +3,12 @@
   "source": "phekb",
   "source_id": "statins-and-mace",
   "name": "Statins and MACE - Comprehensive Provider Query",
-  "description": "Provider-level query for statin-treated patients with MACE/AMI per PheKB BioVU algorithm. Combines AMI dx (multi-system), elevated Troponin, and statin Rx. Note: the temporal '180-day prior' constraint is not enforceable in single FHIR queries \u2014 would require post-processing.",
-  "prompt": "I need to identify patients on statins who developed AMI for a cardiovascular outcomes registry. Some have coded AMI diagnoses. Others are on atorvastatin and have elevated troponin without a formal AMI diagnosis. Run multiple FHIR queries \u2014 AMI diagnosis, atorvastatin, and troponin \u2014 and union the patient sets.",
+  "description": "Provider-level query for statin-treated patients with MACE/AMI per PheKB BioVU algorithm. Combines AMI dx (multi-system), elevated Troponin, and statin Rx. Note: the temporal '180-day prior' constraint is not enforceable in single FHIR queries — would require post-processing.",
+  "prompt": "I need to identify patients on statins who developed AMI for a cardiovascular outcomes registry. Some have coded AMI diagnoses. Others are on atorvastatin and have elevated troponin without a formal AMI diagnosis. Run multiple FHIR queries — AMI diagnosis, atorvastatin, and troponin — and union the patient sets.",
   "prompts": {
     "naive": "Find statin-treated AMI patients.",
-    "broad": "Find patients on statins with possible AMI \u2014 by AMI diagnosis, by atorvastatin prescription, or by elevated cardiac troponin I (>=0.10 ng/mL). Run multiple queries and union.",
-    "expert": "Run three queries. (1) Condition?code=http://snomed.info/sct|22298006,http://hl7.org/fhir/sid/icd-10-cm|I21.0,http://hl7.org/fhir/sid/icd-10-cm|I21.9 \u2014 AMI dx. (2) MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|83367 \u2014 atorvastatin. (3) Observation?code=http://loinc.org|10839-9&value-quantity=ge0.10 \u2014 troponin. Union the patient IDs."
+    "broad": "Find patients on statins with possible AMI — by AMI diagnosis, by atorvastatin prescription, or by elevated cardiac troponin I (>=0.10 ng/mL). Run multiple queries and union.",
+    "expert": "I need to identify patients in the statins-and-MACE phenotype per the PheKB BioVU algorithm, which requires combining evidence from three FHIR resource types. First, query Condition resources for acute myocardial infarction diagnoses across both SNOMED CT and ICD-10-CM (covering STEMI of the anterior wall and unspecified AMI variants). Second, query Observation resources for cardiac troponin I values at or above the PheKB-defined threshold for AMI confirmation, using the appropriate LOINC code for troponin I in serum or plasma. Third, query MedicationRequest resources for atorvastatin (RxNorm), representing prior statin therapy — note that the full algorithm requires the statin prescription to precede the AMI by at least 180 days, a temporal constraint that cannot be enforced in a single FHIR query and would need post-processing. Take the union of patient IDs across all three queries."
   },
   "metadata": {
     "implementation_guide": "US Core 5.0.0",

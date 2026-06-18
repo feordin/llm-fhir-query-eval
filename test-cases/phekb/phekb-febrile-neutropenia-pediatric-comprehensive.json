@@ -4,11 +4,11 @@
   "source_id": "febrile-neutropenia-pediatric",
   "name": "Febrile Neutropenia (Pediatric) - Comprehensive Provider Query",
   "description": "Provider-level multi-resource query for pediatric FN. Per PheKB ELSA-FN, requires both fever + neutropenia documentation (dx OR labs) + IV antibiotics. Tests union across Condition (D70 + R50.81), Observation (ANC<0.5, Temp>38), and MedicationRequest (cefepime).",
-  "prompt": "I need to identify all pediatric patients with febrile neutropenia for an oncology supportive care quality program. Some have coded neutropenia and fever diagnoses. Others have ANC <500 with temperature >38\u00b0C and are on empiric IV antibiotics. Run multiple FHIR queries \u2014 diagnoses, labs, and antibiotics \u2014 and union the patient sets.",
+  "prompt": "I need to identify all pediatric patients with febrile neutropenia for an oncology supportive care quality program. Some have coded neutropenia and fever diagnoses. Others have ANC <500 with temperature >38°C and are on empiric IV antibiotics. Run multiple FHIR queries — diagnoses, labs, and antibiotics — and union the patient sets.",
   "prompts": {
     "naive": "Find children with febrile neutropenia.",
-    "broad": "Find pediatric patients with febrile neutropenia \u2014 by neutropenia/fever diagnoses (D70 or R50.81), by ANC <500/\u03bcL with fever, or by empiric cefepime. Run multiple queries and union.",
-    "expert": "Run four queries. (1) Condition?code=http://hl7.org/fhir/sid/icd-10-cm|D70,http://hl7.org/fhir/sid/icd-10-cm|R50.81 \u2014 neutropenia + fever. (2) Observation?code=http://loinc.org|751-8&value-quantity=lt0.5 \u2014 ANC. (3) Observation?code=http://loinc.org|8310-5&value-quantity=gt38 \u2014 temp. (4) MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|20481 \u2014 cefepime. Union the patient IDs."
+    "broad": "Find pediatric patients with febrile neutropenia — by neutropenia/fever diagnoses (D70 or R50.81), by ANC <500/μL with fever, or by empiric cefepime. Run multiple queries and union.",
+    "expert": "I need to identify all pediatric patients with febrile neutropenia using a union across multiple resource types, following the ELSA-FN algorithm. Search Condition resources for both neutropenia and fever coded in ICD-10-CM, then search Observation resources for an absolute neutrophil count below the severe neutropenia threshold and for body temperature above the fever threshold — both coded in LOINC. Also search MedicationRequest resources for cefepime in RxNorm, the standard empiric IV antibiotic for febrile neutropenia, which is cross-indicated with other gram-negative and hospital-acquired infections. Union the patient sets across all four queries to capture patients identified by any combination of diagnosis codes, lab values, or antibiotic treatment."
   },
   "metadata": {
     "implementation_guide": "US Core 5.0.0",

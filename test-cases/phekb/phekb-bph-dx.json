@@ -3,12 +3,12 @@
   "source": "phekb",
   "source_id": "bph",
   "name": "BPH (Benign Prostatic Hyperplasia) - Diagnosis Code Query (Male, Age 40+)",
-  "description": "Tests ability to find BPH patients via diagnosis codes with sex (Male) and age (>=40) restrictions. Second prostate phenotype (after PCa) \u2014 tests differential dx with non-malignant counterpart. The expected query uses the new PatientFilters schema and chained patient.birthdate filter.",
+  "description": "Tests ability to find BPH patients via diagnosis codes with sex (Male) and age (>=40) restrictions. Second prostate phenotype (after PCa) — tests differential dx with non-malignant counterpart. The expected query uses the new PatientFilters schema and chained patient.birthdate filter.",
   "prompt": "Find male patients age 40 and older with a diagnosis of benign prostatic hyperplasia.",
   "prompts": {
     "naive": "Find men with BPH.",
-    "broad": "Find male patients age 40 and older with a diagnosis of benign prostatic hyperplasia (BPH) \u2014 also known as prostate enlargement. This is a non-malignant condition distinct from prostate cancer.",
-    "expert": "I need male patients age 40+ with BPH. SNOMED 266569009 (Benign prostatic hyperplasia) covers the condition. FHIR has no patient.age search parameter, so use chained search with patient.birthdate <= (today - 40 years). With reference date 2026-04-28, that means patient.birthdate <= 1986-04-28. Add patient.gender=male via chained search. Query: Condition?code=http://snomed.info/sct|266569009&patient.birthdate=le1986-04-28&patient.gender=male"
+    "broad": "Find male patients age 40 and older with a diagnosis of benign prostatic hyperplasia (BPH) — also known as prostate enlargement. This is a non-malignant condition distinct from prostate cancer.",
+    "expert": "I need to find male patients aged 40 and older with a documented benign prostatic hyperplasia diagnosis. Search Condition resources for the SNOMED CT code for benign prostatic hyperplasia, then apply chained patient filters for sex equal to male and a birth date on or before the date corresponding to 40 years prior to today — FHIR does not support a direct patient.age parameter, so the age constraint must be expressed as a patient.birthdate upper bound. Do not broaden to prostate cancer or other prostate conditions, which are clinically and code-distinctly different."
   },
   "metadata": {
     "implementation_guide": "US Core 5.0.0",

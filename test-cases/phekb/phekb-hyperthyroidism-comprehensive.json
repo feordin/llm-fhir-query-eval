@@ -7,8 +7,8 @@
   "prompt": "I need to identify my complete hyperthyroidism patient population. Some patients have a coded hyperthyroidism or Graves' diagnosis. Others are on methimazole. Some have only a suppressed TSH without a formal diagnosis (subclinical hyperthyroidism). Run multiple FHIR queries and union the patient sets.",
   "prompts": {
     "naive": "Find all hyperthyroid patients.",
-    "broad": "Find all hyperthyroid patients \u2014 by diagnosis (hyperthyroidism or Graves'), methimazole, or suppressed TSH (<0.1 mIU/L). Run multiple queries and union the patient sets.",
-    "expert": "Run three queries. (1) Condition?code=http://snomed.info/sct|34486009,http://snomed.info/sct|353295004 \u2014 hyperthyroid dx. (2) MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6835 \u2014 methimazole. (3) Observation?code=http://loinc.org|3016-3&value-quantity=lt0.1||mIU/L \u2014 suppressed TSH. Union the patient IDs."
+    "broad": "Find all hyperthyroid patients — by diagnosis (hyperthyroidism or Graves'), methimazole, or suppressed TSH (<0.1 mIU/L). Run multiple queries and union the patient sets.",
+    "expert": "To find the full hyperthyroidism cohort, I need to run three independent queries and union the resulting patient sets. First, search Condition resources for hyperthyroidism diagnoses — both a general hyperthyroidism concept and Graves' disease specifically (coded in SNOMED CT), since Graves' is the most common autoimmune cause and may be recorded distinctly. Second, search MedicationRequest resources for methimazole (coded in RxNorm), the primary antithyroid drug used to suppress hormone synthesis. Third, search Observation resources for a TSH result coded in LOINC that falls below the suppressed threshold — markedly low TSH is the biochemical hallmark of hyperthyroidism and captures subclinical cases without a formal diagnosis. Patients identified by any of these three paths should be included in the final cohort."
   },
   "metadata": {
     "implementation_guide": "US Core 5.0.0",

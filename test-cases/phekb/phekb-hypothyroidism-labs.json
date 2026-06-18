@@ -8,7 +8,7 @@
   "prompts": {
     "naive": "Find patients with high TSH lab values.",
     "broad": "Find lab observations for thyroid stimulating hormone (TSH, also called thyrotropin) where the value is above the upper limit of normal (typically > 5 milli-international units per liter), which suggests primary hypothyroidism.",
-    "expert": "I need to find Observation resources for elevated TSH. The standard LOINC code for TSH in serum or plasma is 3016-3 (Thyrotropin:ACnc:Pt:Ser/Plas:Qn). The PheKB hypothyroidism algorithm uses a threshold of TSH > 5 mIU/L. Use a value-quantity filter with the gt prefix and unit mIU/L. The query should look like: Observation?code=http://loinc.org|3016-3&value-quantity=gt5|http://unitsofmeasure.org|m[IU]/L. Note that some FHIR servers accept simpler unit notation."
+    "expert": "I need to find patients with laboratory evidence of hypothyroidism via an elevated thyroid-stimulating hormone value. Query Observation resources using the LOINC code for thyrotropin concentration in serum or plasma, and filter for values greater than the PheKB-defined threshold of 5 mIU/L. This captures both Path A patients (who also have a diagnosis and are on thyroid replacement therapy) and Path D tricky patients (who have abnormal TSH but were never formally diagnosed or treated) — the latter being the harder cohort that a diagnosis-only query would miss."
   },
   "metadata": {
     "implementation_guide": "US Core 5.0.0",

@@ -4,11 +4,11 @@
   "source_id": "parkinsons-disease",
   "name": "Parkinson's Disease - Comprehensive Provider Query (Multi-Resource)",
   "description": "Provider-level query identifying PD patients via Condition + MedicationRequest. Path C (med only without dx) reflects levodopa use without formal PD documentation (atypical parkinsonism, restless legs).",
-  "prompt": "I need to identify my complete Parkinson's disease patient population for a movement disorders clinic registry. Some patients have a coded PD diagnosis. Others are on levodopa for parkinsonian symptoms without a formal Parkinson's diagnosis. Run multiple FHIR queries \u2014 diagnosis and levodopa \u2014 and union the patient sets.",
+  "prompt": "I need to identify my complete Parkinson's disease patient population for a movement disorders clinic registry. Some patients have a coded PD diagnosis. Others are on levodopa for parkinsonian symptoms without a formal Parkinson's diagnosis. Run multiple FHIR queries — diagnosis and levodopa — and union the patient sets.",
   "prompts": {
     "naive": "Find all Parkinson's patients.",
-    "broad": "Find all Parkinson's disease patients \u2014 by diagnosis or by levodopa prescriptions. Run multiple queries and union the patient sets.",
-    "expert": "Run two queries. (1) Condition?code=http://snomed.info/sct|49049000 \u2014 PD dx. (2) MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6375 \u2014 levodopa. Union the patient IDs."
+    "broad": "Find all Parkinson's disease patients — by diagnosis or by levodopa prescriptions. Run multiple queries and union the patient sets.",
+    "expert": "I need to identify Parkinson's disease patients using a union across two resource types. First, search Condition resources for a documented Parkinson's disease diagnosis coded in SNOMED CT. Second, search MedicationRequest resources for levodopa prescriptions (coded in RxNorm), the cornerstone pharmacotherapy for Parkinson's disease. Union the patient sets from both queries — the medication path will include some patients without a formal PD diagnosis, such as those with atypical parkinsonism syndromes or restless legs syndrome in whom levodopa is used off-label, and these represent the cross-indication population in Path C."
   },
   "metadata": {
     "implementation_guide": "US Core 5.0.0",

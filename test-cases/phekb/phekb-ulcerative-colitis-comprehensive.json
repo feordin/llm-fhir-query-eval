@@ -3,12 +3,12 @@
   "source": "phekb",
   "source_id": "ulcerative-colitis",
   "name": "Ulcerative Colitis - Comprehensive Provider Query (Multi-Resource)",
-  "description": "Provider-level query identifying UC patients via Condition + MedicationRequest. Path C (med only without dx) reflects mesalamine use without UC dx \u2014 Crohn's disease is the primary cross-indication.",
-  "prompt": "I need to identify my complete ulcerative colitis patient population for an IBD clinic registry. Some patients have a coded UC diagnosis. Others are on mesalamine for ongoing IBD management without a formal UC diagnosis. Run multiple FHIR queries \u2014 diagnosis and mesalamine \u2014 and union the patient sets.",
+  "description": "Provider-level query identifying UC patients via Condition + MedicationRequest. Path C (med only without dx) reflects mesalamine use without UC dx — Crohn's disease is the primary cross-indication.",
+  "prompt": "I need to identify my complete ulcerative colitis patient population for an IBD clinic registry. Some patients have a coded UC diagnosis. Others are on mesalamine for ongoing IBD management without a formal UC diagnosis. Run multiple FHIR queries — diagnosis and mesalamine — and union the patient sets.",
   "prompts": {
     "naive": "Find all UC patients.",
-    "broad": "Find all ulcerative colitis patients \u2014 by diagnosis or by mesalamine (5-ASA) prescriptions. Run multiple queries and union the patient sets.",
-    "expert": "Run two queries. (1) Condition?code=http://snomed.info/sct|64766004 \u2014 UC dx. (2) MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|52582 \u2014 mesalamine. Union the patient IDs."
+    "broad": "Find all ulcerative colitis patients — by diagnosis or by mesalamine (5-ASA) prescriptions. Run multiple queries and union the patient sets.",
+    "expert": "To identify the full ulcerative colitis cohort, I need to union results from two queries. First, search Condition resources for an ulcerative colitis diagnosis coded in SNOMED CT. Second, search MedicationRequest resources for mesalamine (also known as 5-aminosalicylic acid or 5-ASA) coded in RxNorm, the first-line maintenance therapy for UC. Note the cross-indication: mesalamine is also used for Crohn's disease, a related but distinct inflammatory bowel disease, so the medication-only stratum will include some Crohn's patients without a UC diagnosis."
   },
   "metadata": {
     "implementation_guide": "US Core 5.0.0",
