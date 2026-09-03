@@ -250,6 +250,162 @@
       "prompt_text": "I need to identify my complete hypertension-treated patient population for a quality initiative on BP control. From clinical experience, HTN patients are documented in different ways: most have a formal diagnosis code (essential, benign, malignant, systolic, or labile HTN), most are on at least one antihypertensive class, and many have measured SBP > 140 mmHg on at least one office visit.\n\nPlease run multiple FHIR queries to capture the full population:\n1. Patients with any hypertension diagnosis (essential, benign, malignant, systolic, or labile)\n2. Patients prescribed antihypertensive medications (ACE-I, ARB, CCB, BB, or diuretic)\n3. Patients with systolic blood pressure measurements above 140 mmHg\n\nFor each query, return the matching resources. I want the union of all patients found across these three approaches."
      }
     },
+    "copilot:claude-opus-4.7+mimic": {
+     "1-naive": {
+      "precision": 0.9561,
+      "recall": 0.068,
+      "f1": 0.1271,
+      "passed": false,
+      "expected_count": 84776,
+      "actual_count": 6034,
+      "elapsed_sec": 33.9,
+      "queries_generated": 4,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|59621000,http://snomed.info/sct|1201005,http://snomed.info/sct|56218007,http://snomed.info/sct|56218007,http://snomed.info/sct|48146000,http://snomed.info/sct|46481004,http://snomed.info/sct|38341003",
+      "additional_query_urls": [
+       "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|I10,http://hl7.org/fhir/sid/icd-10-cm|I11,http://hl7.org/fhir/sid/icd-10-cm|I11.0,http://hl7.org/fhir/sid/icd-10-cm|I11.9,http://hl7.org/fhir/sid/icd-10-cm|I12,http://hl7.org/fhir/sid/icd-10-cm|I13,http://hl7.org/fhir/sid/icd-10-cm|I15",
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|18867,http://www.nlm.nih.gov/research/umls/rxnorm|29046,http://www.nlm.nih.gov/research/umls/rxnorm|38454,http://www.nlm.nih.gov/research/umls/rxnorm|50166,http://www.nlm.nih.gov/research/umls/rxnorm|54552,http://www.nlm.nih.gov/research/umls/rxnorm|35208,http://www.nlm.nih.gov/research/umls/rxnorm|83515,http://www.nlm.nih.gov/research/umls/rxnorm|69749,http://www.nlm.nih.gov/research/umls/rxnorm|52175,http://www.nlm.nih.gov/research/umls/rxnorm|17767,http://www.nlm.nih.gov/research/umls/rxnorm|1998,http://www.nlm.nih.gov/research/umls/rxnorm|6918,http://www.nlm.nih.gov/research/umls/rxnorm|20352,http://www.nlm.nih.gov/research/umls/rxnorm|7417,http://www.nlm.nih.gov/research/umls/rxnorm|8787,http://www.nlm.nih.gov/research/umls/rxnorm|3443,http://www.nlm.nih.gov/research/umls/rxnorm|5487,http://www.nlm.nih.gov/research/umls/rxnorm|4603,http://www.nlm.nih.gov/research/umls/rxnorm|33770",
+       "Observation?code=http://loinc.org|8480-6&value-quantity=gt140|http://unitsofmeasure.org|mm[Hg]"
+      ],
+      "raw_response": "Condition?code=http://snomed.info/sct|59621000,http://snomed.info/sct|1201005,http://snomed.info/sct|56218007,http://snomed.info/sct|56218007,http://snomed.info/sct|48146000,http://snomed.info/sct|46481004,http://snomed.info/sct|38341003\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|I10,http://hl7.org/fhir/sid/icd-10-cm|I11,http://hl7.org/fhir/sid/icd-10-cm|I11.0,http://hl7.org/fhir/sid/icd-10-cm|I11.9,http://hl7.org/fhir/sid/icd-10-cm|I12,http://hl7.org/fhir/sid/icd-10-cm|I13,http://hl7.org/fhir/sid/icd-10-cm|I15\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|18867,http://www.nlm.nih.gov/research/umls/rxnorm|29046,http://www.nlm.nih.gov/research/umls/rxnorm|38454,http://www.nlm.nih.gov/research/umls/rxnorm|50166,http://www.nlm.nih.gov/research/umls/rxnorm|54552,http://www.nlm.nih.gov/research/umls/rxnorm|35208,http://www.nlm.nih.gov/research/umls/rxnorm|83515,http://www.nlm.nih.gov/research/umls/rxnorm|69749,http://www.nlm.nih.gov/research/umls/rxnorm|52175,http://www.nlm.nih.gov/research/umls/rxnorm|17767,http://www.nlm.nih.gov/research/umls/rxnorm|1998,http://www.nlm.nih.gov/research/umls/rxnorm|6918,http://www.nlm.nih.gov/research/umls/rxnorm|20352,http://www.nlm.nih.gov/research/umls/rxnorm|7417,http://www.nlm.nih.gov/research/umls/rxnorm|8787,http://www.nlm.nih.gov/research/umls/rxnorm|3443,http://www.nlm.nih.gov/research/umls/rxnorm|5487,http://www.nlm.nih.gov/research/umls/rxnorm|4603,http://www.nlm.nih.gov/research/umls/rxnorm|33770\nObservation?code=http://loinc.org|8480-6&value-quantity=gt140|http://unitsofmeasure.org|mm[Hg]",
+      "prompt_text": "I need to identify my complete hypertension-treated patient population for a quality initiative on BP control. From clinical experience, HTN patients are documented in different ways: most have a formal diagnosis code (essential, benign, malignant, systolic, or labile HTN), most are on at least one antihypertensive class, and many have measured SBP > 140 mmHg on at least one office visit.\n\nPlease run multiple FHIR queries to capture the full population:\n1. Patients with any hypertension diagnosis (essential, benign, malignant, systolic, or labile)\n2. Patients prescribed antihypertensive medications (ACE-I, ARB, CCB, BB, or diuretic)\n3. Patients with systolic blood pressure measurements above 140 mmHg\n\nFor each query, return the matching resources. I want the union of all patients found across these three approaches."
+     },
+     "1-broad": {
+      "precision": 0.9986,
+      "recall": 0.0747,
+      "f1": 0.139,
+      "passed": false,
+      "expected_count": 84776,
+      "actual_count": 6342,
+      "elapsed_sec": 36.5,
+      "queries_generated": 3,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|59621000,http://snomed.info/sct|1201005,http://snomed.info/sct|56218007,http://snomed.info/sct|56218007,http://snomed.info/sct|48146000,http://snomed.info/sct|46481004,http://snomed.info/sct|38341003,http://hl7.org/fhir/sid/icd-10-cm|I10,http://hl7.org/fhir/sid/icd-10-cm|I15.0,http://hl7.org/fhir/sid/icd-10-cm|I15.1,http://hl7.org/fhir/sid/icd-10-cm|I15.2,http://hl7.org/fhir/sid/icd-10-cm|I15.8,http://hl7.org/fhir/sid/icd-10-cm|I15.9",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|29046,http://www.nlm.nih.gov/research/umls/rxnorm|18867,http://www.nlm.nih.gov/research/umls/rxnorm|3827,http://www.nlm.nih.gov/research/umls/rxnorm|50166,http://www.nlm.nih.gov/research/umls/rxnorm|30131,http://www.nlm.nih.gov/research/umls/rxnorm|35208,http://www.nlm.nih.gov/research/umls/rxnorm|83515,http://www.nlm.nih.gov/research/umls/rxnorm|69749,http://www.nlm.nih.gov/research/umls/rxnorm|73494,http://www.nlm.nih.gov/research/umls/rxnorm|321064,http://www.nlm.nih.gov/research/umls/rxnorm|1998,http://www.nlm.nih.gov/research/umls/rxnorm|17767,http://www.nlm.nih.gov/research/umls/rxnorm|6918,http://www.nlm.nih.gov/research/umls/rxnorm|8787,http://www.nlm.nih.gov/research/umls/rxnorm|10763,http://www.nlm.nih.gov/research/umls/rxnorm|1373458,http://www.nlm.nih.gov/research/umls/rxnorm|20352,http://www.nlm.nih.gov/research/umls/rxnorm|2409,http://www.nlm.nih.gov/research/umls/rxnorm|1520,http://www.nlm.nih.gov/research/umls/rxnorm|4603,http://www.nlm.nih.gov/research/umls/rxnorm|5487,http://www.nlm.nih.gov/research/umls/rxnorm|38413,http://www.nlm.nih.gov/research/umls/rxnorm|3443,http://www.nlm.nih.gov/research/umls/rxnorm|33770",
+       "Observation?code=http://loinc.org|8480-6&value-quantity=gt140|http://unitsofmeasure.org|mm[Hg]"
+      ],
+      "raw_response": "Condition?code=http://snomed.info/sct|59621000,http://snomed.info/sct|1201005,http://snomed.info/sct|56218007,http://snomed.info/sct|56218007,http://snomed.info/sct|48146000,http://snomed.info/sct|46481004,http://snomed.info/sct|38341003,http://hl7.org/fhir/sid/icd-10-cm|I10,http://hl7.org/fhir/sid/icd-10-cm|I15.0,http://hl7.org/fhir/sid/icd-10-cm|I15.1,http://hl7.org/fhir/sid/icd-10-cm|I15.2,http://hl7.org/fhir/sid/icd-10-cm|I15.8,http://hl7.org/fhir/sid/icd-10-cm|I15.9\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|29046,http://www.nlm.nih.gov/research/umls/rxnorm|18867,http://www.nlm.nih.gov/research/umls/rxnorm|3827,http://www.nlm.nih.gov/research/umls/rxnorm|50166,http://www.nlm.nih.gov/research/umls/rxnorm|30131,http://www.nlm.nih.gov/research/umls/rxnorm|35208,http://www.nlm.nih.gov/research/umls/rxnorm|83515,http://www.nlm.nih.gov/research/umls/rxnorm|69749,http://www.nlm.nih.gov/research/umls/rxnorm|73494,http://www.nlm.nih.gov/research/umls/rxnorm|321064,http://www.nlm.nih.gov/research/umls/rxnorm|1998,http://www.nlm.nih.gov/research/umls/rxnorm|17767,http://www.nlm.nih.gov/research/umls/rxnorm|6918,http://www.nlm.nih.gov/research/umls/rxnorm|8787,http://www.nlm.nih.gov/research/umls/rxnorm|10763,http://www.nlm.nih.gov/research/umls/rxnorm|1373458,http://www.nlm.nih.gov/research/umls/rxnorm|20352,http://www.nlm.nih.gov/research/umls/rxnorm|2409,http://www.nlm.nih.gov/research/umls/rxnorm|1520,http://www.nlm.nih.gov/research/umls/rxnorm|4603,http://www.nlm.nih.gov/research/umls/rxnorm|5487,http://www.nlm.nih.gov/research/umls/rxnorm|38413,http://www.nlm.nih.gov/research/umls/rxnorm|3443,http://www.nlm.nih.gov/research/umls/rxnorm|33770\nObservation?code=http://loinc.org|8480-6&value-quantity=gt140|http://unitsofmeasure.org|mm[Hg]",
+      "prompt_text": "I need to identify my complete hypertension-treated patient population for a quality initiative on BP control. From clinical experience, HTN patients are documented in different ways: most have a formal diagnosis code (essential, benign, malignant, systolic, or labile HTN), most are on at least one antihypertensive class, and many have measured SBP > 140 mmHg on at least one office visit.\n\nPlease run multiple FHIR queries to capture the full population:\n1. Patients with any hypertension diagnosis (essential, benign, malignant, systolic, or labile)\n2. Patients prescribed antihypertensive medications (ACE-I, ARB, CCB, BB, or diuretic)\n3. Patients with systolic blood pressure measurements above 140 mmHg\n\nFor each query, return the matching resources. I want the union of all patients found across these three approaches."
+     },
+     "1-expert": {
+      "precision": 0.8833,
+      "recall": 0.0575,
+      "f1": 0.1079,
+      "passed": false,
+      "expected_count": 84776,
+      "actual_count": 5517,
+      "elapsed_sec": 51.6,
+      "queries_generated": 3,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|59621000,http://snomed.info/sct|1201005,http://snomed.info/sct|56218007,http://snomed.info/sct|56218007,http://snomed.info/sct|48146000,http://snomed.info/sct|46481004,http://hl7.org/fhir/sid/icd-10-cm|I10,http://hl7.org/fhir/sid/icd-10-cm|I11.0,http://hl7.org/fhir/sid/icd-10-cm|I11.9,http://hl7.org/fhir/sid/icd-10-cm|I12.0,http://hl7.org/fhir/sid/icd-10-cm|I12.9,http://hl7.org/fhir/sid/icd-10-cm|I13.0,http://hl7.org/fhir/sid/icd-10-cm|I13.10,http://hl7.org/fhir/sid/icd-10-cm|I13.11,http://hl7.org/fhir/sid/icd-10-cm|I13.2,http://hl7.org/fhir/sid/icd-10-cm|I15.0,http://hl7.org/fhir/sid/icd-10-cm|I15.1,http://hl7.org/fhir/sid/icd-10-cm|I15.2,http://hl7.org/fhir/sid/icd-10-cm|I15.8,http://hl7.org/fhir/sid/icd-10-cm|I15.9",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|29046,http://www.nlm.nih.gov/research/umls/rxnorm|18867,http://www.nlm.nih.gov/research/umls/rxnorm|50166,http://www.nlm.nih.gov/research/umls/rxnorm|3827,http://www.nlm.nih.gov/research/umls/rxnorm|35208,http://www.nlm.nih.gov/research/umls/rxnorm|54552,http://www.nlm.nih.gov/research/umls/rxnorm|30131,http://www.nlm.nih.gov/research/umls/rxnorm|52175,http://www.nlm.nih.gov/research/umls/rxnorm|83515,http://www.nlm.nih.gov/research/umls/rxnorm|69749,http://www.nlm.nih.gov/research/umls/rxnorm|73494,http://www.nlm.nih.gov/research/umls/rxnorm|321064,http://www.nlm.nih.gov/research/umls/rxnorm|17767,http://www.nlm.nih.gov/research/umls/rxnorm|1998,http://www.nlm.nih.gov/research/umls/rxnorm|2404,http://www.nlm.nih.gov/research/umls/rxnorm|20352,http://www.nlm.nih.gov/research/umls/rxnorm|6918,http://www.nlm.nih.gov/research/umls/rxnorm|7417,http://www.nlm.nih.gov/research/umls/rxnorm|8787,http://www.nlm.nih.gov/research/umls/rxnorm|10600,http://www.nlm.nih.gov/research/umls/rxnorm|1520,http://www.nlm.nih.gov/research/umls/rxnorm|19484,http://www.nlm.nih.gov/research/umls/rxnorm|4603,http://www.nlm.nih.gov/research/umls/rxnorm|5487,http://www.nlm.nih.gov/research/umls/rxnorm|33770,http://www.nlm.nih.gov/research/umls/rxnorm|38413,http://www.nlm.nih.gov/research/umls/rxnorm|9997,http://www.nlm.nih.gov/research/umls/rxnorm|3443",
+       "Observation?code=http://loinc.org|8480-6&value-quantity=gt140|http://unitsofmeasure.org|mm[Hg]"
+      ],
+      "raw_response": "Condition?code=http://snomed.info/sct|59621000,http://snomed.info/sct|1201005,http://snomed.info/sct|56218007,http://snomed.info/sct|56218007,http://snomed.info/sct|48146000,http://snomed.info/sct|46481004,http://hl7.org/fhir/sid/icd-10-cm|I10,http://hl7.org/fhir/sid/icd-10-cm|I11.0,http://hl7.org/fhir/sid/icd-10-cm|I11.9,http://hl7.org/fhir/sid/icd-10-cm|I12.0,http://hl7.org/fhir/sid/icd-10-cm|I12.9,http://hl7.org/fhir/sid/icd-10-cm|I13.0,http://hl7.org/fhir/sid/icd-10-cm|I13.10,http://hl7.org/fhir/sid/icd-10-cm|I13.11,http://hl7.org/fhir/sid/icd-10-cm|I13.2,http://hl7.org/fhir/sid/icd-10-cm|I15.0,http://hl7.org/fhir/sid/icd-10-cm|I15.1,http://hl7.org/fhir/sid/icd-10-cm|I15.2,http://hl7.org/fhir/sid/icd-10-cm|I15.8,http://hl7.org/fhir/sid/icd-10-cm|I15.9\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|29046,http://www.nlm.nih.gov/research/umls/rxnorm|18867,http://www.nlm.nih.gov/research/umls/rxnorm|50166,http://www.nlm.nih.gov/research/umls/rxnorm|3827,http://www.nlm.nih.gov/research/umls/rxnorm|35208,http://www.nlm.nih.gov/research/umls/rxnorm|54552,http://www.nlm.nih.gov/research/umls/rxnorm|30131,http://www.nlm.nih.gov/research/umls/rxnorm|52175,http://www.nlm.nih.gov/research/umls/rxnorm|83515,http://www.nlm.nih.gov/research/umls/rxnorm|69749,http://www.nlm.nih.gov/research/umls/rxnorm|73494,http://www.nlm.nih.gov/research/umls/rxnorm|321064,http://www.nlm.nih.gov/research/umls/rxnorm|17767,http://www.nlm.nih.gov/research/umls/rxnorm|1998,http://www.nlm.nih.gov/research/umls/rxnorm|2404,http://www.nlm.nih.gov/research/umls/rxnorm|20352,http://www.nlm.nih.gov/research/umls/rxnorm|6918,http://www.nlm.nih.gov/research/umls/rxnorm|7417,http://www.nlm.nih.gov/research/umls/rxnorm|8787,http://www.nlm.nih.gov/research/umls/rxnorm|10600,http://www.nlm.nih.gov/research/umls/rxnorm|1520,http://www.nlm.nih.gov/research/umls/rxnorm|19484,http://www.nlm.nih.gov/research/umls/rxnorm|4603,http://www.nlm.nih.gov/research/umls/rxnorm|5487,http://www.nlm.nih.gov/research/umls/rxnorm|33770,http://www.nlm.nih.gov/research/umls/rxnorm|38413,http://www.nlm.nih.gov/research/umls/rxnorm|9997,http://www.nlm.nih.gov/research/umls/rxnorm|3443\nObservation?code=http://loinc.org|8480-6&value-quantity=gt140|http://unitsofmeasure.org|mm[Hg]",
+      "prompt_text": "I need to identify my complete hypertension-treated patient population for a quality initiative on BP control. From clinical experience, HTN patients are documented in different ways: most have a formal diagnosis code (essential, benign, malignant, systolic, or labile HTN), most are on at least one antihypertensive class, and many have measured SBP > 140 mmHg on at least one office visit.\n\nPlease run multiple FHIR queries to capture the full population:\n1. Patients with any hypertension diagnosis (essential, benign, malignant, systolic, or labile)\n2. Patients prescribed antihypertensive medications (ACE-I, ARB, CCB, BB, or diuretic)\n3. Patients with systolic blood pressure measurements above 140 mmHg\n\nFor each query, return the matching resources. I want the union of all patients found across these three approaches."
+     },
+     "2-naive": {
+      "precision": 0.8827,
+      "recall": 0.0593,
+      "f1": 0.1111,
+      "passed": false,
+      "expected_count": 84776,
+      "actual_count": 5694,
+      "elapsed_sec": 125.5,
+      "queries_generated": 3,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|I10,http://hl7.org/fhir/sid/icd-10-cm|I11.0,http://hl7.org/fhir/sid/icd-10-cm|I11.9,http://hl7.org/fhir/sid/icd-10-cm|I12.0,http://hl7.org/fhir/sid/icd-10-cm|I12.9,http://hl7.org/fhir/sid/icd-10-cm|I13.0,http://hl7.org/fhir/sid/icd-10-cm|I13.10,http://hl7.org/fhir/sid/icd-10-cm|I13.11,http://hl7.org/fhir/sid/icd-10-cm|I13.2,http://hl7.org/fhir/sid/icd-10-cm|I15.0,http://hl7.org/fhir/sid/icd-10-cm|I15.1,http://hl7.org/fhir/sid/icd-10-cm|I15.2,http://hl7.org/fhir/sid/icd-10-cm|I15.8,http://hl7.org/fhir/sid/icd-10-cm|I15.9",
+      "additional_query_urls": [
+       "MedicationRequest?code=lisinopril,enalapril,ramipril,benazepril,captopril,fosinopril,quinapril,perindopril,trandolapril,moexipril,losartan,valsartan,olmesartan,irbesartan,telmisartan,candesartan,azilsartan,amlodipine,nifedipine,diltiazem,verapamil,felodipine,nicardipine,isradipine,nisoldipine,clevidipine,metoprolol,atenolol,propranolol,carvedilol,bisoprolol,nebivolol,labetalol,nadolol,acebutolol,betaxolol,pindolol,timolol,hydrochlorothiazide,chlorthalidone,furosemide,bumetanide,torsemide,spironolactone,eplerenone,amiloride,triamterene,indapamide,metolazone,chlorothiazide",
+       "Observation?code=http://loinc.org|8480-6&value-quantity=gt140"
+      ],
+      "raw_response": "FINAL ANSWER:\n\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|I10,http://hl7.org/fhir/sid/icd-10-cm|I11.0,http://hl7.org/fhir/sid/icd-10-cm|I11.9,http://hl7.org/fhir/sid/icd-10-cm|I12.0,http://hl7.org/fhir/sid/icd-10-cm|I12.9,http://hl7.org/fhir/sid/icd-10-cm|I13.0,http://hl7.org/fhir/sid/icd-10-cm|I13.10,http://hl7.org/fhir/sid/icd-10-cm|I13.11,http://hl7.org/fhir/sid/icd-10-cm|I13.2,http://hl7.org/fhir/sid/icd-10-cm|I15.0,http://hl7.org/fhir/sid/icd-10-cm|I15.1,http://hl7.org/fhir/sid/icd-10-cm|I15.2,http://hl7.org/fhir/sid/icd-10-cm|I15.8,http://hl7.org/fhir/sid/icd-10-cm|I15.9\nMedicationRequest?code=lisinopril,enalapril,ramipril,benazepril,captopril,fosinopril,quinapril,perindopril,trandolapril,moexipril,losartan,valsartan,olmesartan,irbesartan,telmisartan,candesartan,azilsartan,amlodipine,nifedipine,diltiazem,verapamil,felodipine,nicardipine,isradipine,nisoldipine,clevidipine,metoprolol,atenolol,propranolol,carvedilol,bisoprolol,nebivolol,labetalol,nadolol,acebutolol,betaxolol,pindolol,timolol,hydrochlorothiazide,chlorthalidone,furosemide,bumetanide,torsemide,spironolactone,eplerenone,amiloride,triamterene,indapamide,metolazone,chlorothiazide\nObservation?code=http://loinc.org|8480-6&value-quantity=gt140",
+      "prompt_text": "I need to identify my complete hypertension-treated patient population for a quality initiative on BP control. From clinical experience, HTN patients are documented in different ways: most have a formal diagnosis code (essential, benign, malignant, systolic, or labile HTN), most are on at least one antihypertensive class, and many have measured SBP > 140 mmHg on at least one office visit.\n\nPlease run multiple FHIR queries to capture the full population:\n1. Patients with any hypertension diagnosis (essential, benign, malignant, systolic, or labile)\n2. Patients prescribed antihypertensive medications (ACE-I, ARB, CCB, BB, or diuretic)\n3. Patients with systolic blood pressure measurements above 140 mmHg\n\nFor each query, return the matching resources. I want the union of all patients found across these three approaches."
+     },
+     "2-broad": {
+      "precision": 0.8833,
+      "recall": 0.0575,
+      "f1": 0.1079,
+      "passed": false,
+      "expected_count": 84776,
+      "actual_count": 5517,
+      "elapsed_sec": 220.4,
+      "queries_generated": 3,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|I10,http://hl7.org/fhir/sid/icd-10-cm|I11.0,http://hl7.org/fhir/sid/icd-10-cm|I11.9,http://hl7.org/fhir/sid/icd-10-cm|I12.0,http://hl7.org/fhir/sid/icd-10-cm|I12.9,http://hl7.org/fhir/sid/icd-10-cm|I13.0,http://hl7.org/fhir/sid/icd-10-cm|I13.10,http://hl7.org/fhir/sid/icd-10-cm|I13.11,http://hl7.org/fhir/sid/icd-10-cm|I13.2,http://hl7.org/fhir/sid/icd-10-cm|I15.0,http://hl7.org/fhir/sid/icd-10-cm|I15.1,http://hl7.org/fhir/sid/icd-10-cm|I15.2,http://hl7.org/fhir/sid/icd-10-cm|I15.8,http://hl7.org/fhir/sid/icd-10-cm|I15.9",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|29046,http://www.nlm.nih.gov/research/umls/rxnorm|18867,http://www.nlm.nih.gov/research/umls/rxnorm|38454,http://www.nlm.nih.gov/research/umls/rxnorm|35208,http://www.nlm.nih.gov/research/umls/rxnorm|30131,http://www.nlm.nih.gov/research/umls/rxnorm|52175,http://www.nlm.nih.gov/research/umls/rxnorm|83515,http://www.nlm.nih.gov/research/umls/rxnorm|69749,http://www.nlm.nih.gov/research/umls/rxnorm|17767,http://www.nlm.nih.gov/research/umls/rxnorm|1998,http://www.nlm.nih.gov/research/umls/rxnorm|17391,http://www.nlm.nih.gov/research/umls/rxnorm|20352,http://www.nlm.nih.gov/research/umls/rxnorm|1202,http://www.nlm.nih.gov/research/umls/rxnorm|17128,http://www.nlm.nih.gov/research/umls/rxnorm|6918,http://www.nlm.nih.gov/research/umls/rxnorm|6984,http://www.nlm.nih.gov/research/umls/rxnorm|3443,http://www.nlm.nih.gov/research/umls/rxnorm|4603,http://www.nlm.nih.gov/research/umls/rxnorm|5487,http://www.nlm.nih.gov/research/umls/rxnorm|3827",
+       "Observation?combo-code-value-quantity=http://loinc.org|8480-6$gt140"
+      ],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|I10,http://hl7.org/fhir/sid/icd-10-cm|I11.0,http://hl7.org/fhir/sid/icd-10-cm|I11.9,http://hl7.org/fhir/sid/icd-10-cm|I12.0,http://hl7.org/fhir/sid/icd-10-cm|I12.9,http://hl7.org/fhir/sid/icd-10-cm|I13.0,http://hl7.org/fhir/sid/icd-10-cm|I13.10,http://hl7.org/fhir/sid/icd-10-cm|I13.11,http://hl7.org/fhir/sid/icd-10-cm|I13.2,http://hl7.org/fhir/sid/icd-10-cm|I15.0,http://hl7.org/fhir/sid/icd-10-cm|I15.1,http://hl7.org/fhir/sid/icd-10-cm|I15.2,http://hl7.org/fhir/sid/icd-10-cm|I15.8,http://hl7.org/fhir/sid/icd-10-cm|I15.9\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|29046,http://www.nlm.nih.gov/research/umls/rxnorm|18867,http://www.nlm.nih.gov/research/umls/rxnorm|38454,http://www.nlm.nih.gov/research/umls/rxnorm|35208,http://www.nlm.nih.gov/research/umls/rxnorm|30131,http://www.nlm.nih.gov/research/umls/rxnorm|52175,http://www.nlm.nih.gov/research/umls/rxnorm|83515,http://www.nlm.nih.gov/research/umls/rxnorm|69749,http://www.nlm.nih.gov/research/umls/rxnorm|17767,http://www.nlm.nih.gov/research/umls/rxnorm|1998,http://www.nlm.nih.gov/research/umls/rxnorm|17391,http://www.nlm.nih.gov/research/umls/rxnorm|20352,http://www.nlm.nih.gov/research/umls/rxnorm|1202,http://www.nlm.nih.gov/research/umls/rxnorm|17128,http://www.nlm.nih.gov/research/umls/rxnorm|6918,http://www.nlm.nih.gov/research/umls/rxnorm|6984,http://www.nlm.nih.gov/research/umls/rxnorm|3443,http://www.nlm.nih.gov/research/umls/rxnorm|4603,http://www.nlm.nih.gov/research/umls/rxnorm|5487,http://www.nlm.nih.gov/research/umls/rxnorm|3827\nObservation?combo-code-value-quantity=http://loinc.org|8480-6$gt140",
+      "prompt_text": "I need to identify my complete hypertension-treated patient population for a quality initiative on BP control. From clinical experience, HTN patients are documented in different ways: most have a formal diagnosis code (essential, benign, malignant, systolic, or labile HTN), most are on at least one antihypertensive class, and many have measured SBP > 140 mmHg on at least one office visit.\n\nPlease run multiple FHIR queries to capture the full population:\n1. Patients with any hypertension diagnosis (essential, benign, malignant, systolic, or labile)\n2. Patients prescribed antihypertensive medications (ACE-I, ARB, CCB, BB, or diuretic)\n3. Patients with systolic blood pressure measurements above 140 mmHg\n\nFor each query, return the matching resources. I want the union of all patients found across these three approaches."
+     },
+     "2-expert": {
+      "precision": 0.8826,
+      "recall": 0.0567,
+      "f1": 0.1066,
+      "passed": false,
+      "expected_count": 84776,
+      "actual_count": 5450,
+      "elapsed_sec": 88.9,
+      "queries_generated": 3,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|I10,http://hl7.org/fhir/sid/icd-10-cm|I11.0,http://hl7.org/fhir/sid/icd-10-cm|I11.9,http://hl7.org/fhir/sid/icd-10-cm|I12.0,http://hl7.org/fhir/sid/icd-10-cm|I12.9,http://hl7.org/fhir/sid/icd-10-cm|I13.0,http://hl7.org/fhir/sid/icd-10-cm|I13.10,http://hl7.org/fhir/sid/icd-10-cm|I13.11,http://hl7.org/fhir/sid/icd-10-cm|I13.2,http://hl7.org/fhir/sid/icd-10-cm|I15.0,http://hl7.org/fhir/sid/icd-10-cm|I15.1,http://hl7.org/fhir/sid/icd-10-cm|I15.2,http://hl7.org/fhir/sid/icd-10-cm|I15.8,http://hl7.org/fhir/sid/icd-10-cm|I15.9,http://hl7.org/fhir/sid/icd-10-cm|I16.0,http://hl7.org/fhir/sid/icd-10-cm|I16.1,http://hl7.org/fhir/sid/icd-10-cm|I16.9",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|29046,http://www.nlm.nih.gov/research/umls/rxnorm|3827,http://www.nlm.nih.gov/research/umls/rxnorm|18867,http://www.nlm.nih.gov/research/umls/rxnorm|52175,http://www.nlm.nih.gov/research/umls/rxnorm|69749,http://www.nlm.nih.gov/research/umls/rxnorm|321064,http://www.nlm.nih.gov/research/umls/rxnorm|17767,http://www.nlm.nih.gov/research/umls/rxnorm|1191,http://www.nlm.nih.gov/research/umls/rxnorm|6918,http://www.nlm.nih.gov/research/umls/rxnorm|1202,http://www.nlm.nih.gov/research/umls/rxnorm|20352,http://www.nlm.nih.gov/research/umls/rxnorm|5487,http://www.nlm.nih.gov/research/umls/rxnorm|4603,http://www.nlm.nih.gov/research/umls/rxnorm|2409",
+       "Observation?code=http://loinc.org|8480-6&value-quantity=gt140"
+      ],
+      "raw_response": "Based on my investigation: the server uses ICD-10-CM for conditions (HTN codes present, ~106K resources), NDC for medications (RxNorm not available), and does not appear to have BP observations indexed. I'll provide the three standard queries; the union will be taken by the evaluator.\n\nFINAL ANSWER:\n\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|I10,http://hl7.org/fhir/sid/icd-10-cm|I11.0,http://hl7.org/fhir/sid/icd-10-cm|I11.9,http://hl7.org/fhir/sid/icd-10-cm|I12.0,http://hl7.org/fhir/sid/icd-10-cm|I12.9,http://hl7.org/fhir/sid/icd-10-cm|I13.0,http://hl7.org/fhir/sid/icd-10-cm|I13.10,http://hl7.org/fhir/sid/icd-10-cm|I13.11,http://hl7.org/fhir/sid/icd-10-cm|I13.2,http://hl7.org/fhir/sid/icd-10-cm|I15.0,http://hl7.org/fhir/sid/icd-10-cm|I15.1,http://hl7.org/fhir/sid/icd-10-cm|I15.2,http://hl7.org/fhir/sid/icd-10-cm|I15.8,http://hl7.org/fhir/sid/icd-10-cm|I15.9,http://hl7.org/fhir/sid/icd-10-cm|I16.0,http://hl7.org/fhir/sid/icd-10-cm|I16.1,http://hl7.org/fhir/sid/icd-10-cm|I16.9\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|29046,http://www.nlm.nih.gov/research/umls/rxnorm|3827,http://www.nlm.nih.gov/research/umls/rxnorm|18867,http://www.nlm.nih.gov/research/umls/rxnorm|52175,http://www.nlm.nih.gov/research/umls/rxnorm|69749,http://www.nlm.nih.gov/research/umls/rxnorm|321064,http://www.nlm.nih.gov/research/umls/rxnorm|17767,http://www.nlm.nih.gov/research/umls/rxnorm|1191,http://www.nlm.nih.gov/research/umls/rxnorm|6918,http://www.nlm.nih.gov/research/umls/rxnorm|1202,http://www.nlm.nih.gov/research/umls/rxnorm|20352,http://www.nlm.nih.gov/research/umls/rxnorm|5487,http://www.nlm.nih.gov/research/umls/rxnorm|4603,http://www.nlm.nih.gov/research/umls/rxnorm|2409\nObservation?code=http://loinc.org|8480-6&value-quantity=gt140",
+      "prompt_text": "I need to identify my complete hypertension-treated patient population for a quality initiative on BP control. From clinical experience, HTN patients are documented in different ways: most have a formal diagnosis code (essential, benign, malignant, systolic, or labile HTN), most are on at least one antihypertensive class, and many have measured SBP > 140 mmHg on at least one office visit.\n\nPlease run multiple FHIR queries to capture the full population:\n1. Patients with any hypertension diagnosis (essential, benign, malignant, systolic, or labile)\n2. Patients prescribed antihypertensive medications (ACE-I, ARB, CCB, BB, or diuretic)\n3. Patients with systolic blood pressure measurements above 140 mmHg\n\nFor each query, return the matching resources. I want the union of all patients found across these three approaches."
+     },
+     "3-naive": {
+      "precision": 0.9792,
+      "recall": 0.0733,
+      "f1": 0.1364,
+      "passed": false,
+      "expected_count": 84776,
+      "actual_count": 6345,
+      "elapsed_sec": 76.6,
+      "queries_generated": 3,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|I10,http://hl7.org/fhir/sid/icd-10-cm|I15.0,http://hl7.org/fhir/sid/icd-10-cm|I15.1,http://hl7.org/fhir/sid/icd-10-cm|I15.2,http://hl7.org/fhir/sid/icd-10-cm|I15.8,http://hl7.org/fhir/sid/icd-10-cm|I15.9,http://hl7.org/fhir/sid/icd-10-cm|R03.0",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|29046,http://www.nlm.nih.gov/research/umls/rxnorm|3827,http://www.nlm.nih.gov/research/umls/rxnorm|52175,http://www.nlm.nih.gov/research/umls/rxnorm|69749,http://www.nlm.nih.gov/research/umls/rxnorm|17767,http://www.nlm.nih.gov/research/umls/rxnorm|6918,http://www.nlm.nih.gov/research/umls/rxnorm|1202,http://www.nlm.nih.gov/research/umls/rxnorm|5487,http://www.nlm.nih.gov/research/umls/rxnorm|4603",
+       "Observation?code=http://loinc.org|8480-6&value-quantity=gt140"
+      ],
+      "raw_response": "FINAL ANSWER:\n\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|I10,http://hl7.org/fhir/sid/icd-10-cm|I15.0,http://hl7.org/fhir/sid/icd-10-cm|I15.1,http://hl7.org/fhir/sid/icd-10-cm|I15.2,http://hl7.org/fhir/sid/icd-10-cm|I15.8,http://hl7.org/fhir/sid/icd-10-cm|I15.9,http://hl7.org/fhir/sid/icd-10-cm|R03.0\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|29046,http://www.nlm.nih.gov/research/umls/rxnorm|3827,http://www.nlm.nih.gov/research/umls/rxnorm|52175,http://www.nlm.nih.gov/research/umls/rxnorm|69749,http://www.nlm.nih.gov/research/umls/rxnorm|17767,http://www.nlm.nih.gov/research/umls/rxnorm|6918,http://www.nlm.nih.gov/research/umls/rxnorm|1202,http://www.nlm.nih.gov/research/umls/rxnorm|5487,http://www.nlm.nih.gov/research/umls/rxnorm|4603\nObservation?code=http://loinc.org|8480-6&value-quantity=gt140",
+      "prompt_text": "I need to identify my complete hypertension-treated patient population for a quality initiative on BP control. From clinical experience, HTN patients are documented in different ways: most have a formal diagnosis code (essential, benign, malignant, systolic, or labile HTN), most are on at least one antihypertensive class, and many have measured SBP > 140 mmHg on at least one office visit.\n\nPlease run multiple FHIR queries to capture the full population:\n1. Patients with any hypertension diagnosis (essential, benign, malignant, systolic, or labile)\n2. Patients prescribed antihypertensive medications (ACE-I, ARB, CCB, BB, or diuretic)\n3. Patients with systolic blood pressure measurements above 140 mmHg\n\nFor each query, return the matching resources. I want the union of all patients found across these three approaches."
+     },
+     "3-broad": {
+      "precision": 0.8833,
+      "recall": 0.0575,
+      "f1": 0.1079,
+      "passed": false,
+      "expected_count": 84776,
+      "actual_count": 5517,
+      "elapsed_sec": 83.0,
+      "queries_generated": 3,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|I10,http://hl7.org/fhir/sid/icd-10-cm|I11.0,http://hl7.org/fhir/sid/icd-10-cm|I11.9,http://hl7.org/fhir/sid/icd-10-cm|I12.0,http://hl7.org/fhir/sid/icd-10-cm|I12.9,http://hl7.org/fhir/sid/icd-10-cm|I13.0,http://hl7.org/fhir/sid/icd-10-cm|I13.10,http://hl7.org/fhir/sid/icd-10-cm|I13.11,http://hl7.org/fhir/sid/icd-10-cm|I13.2,http://hl7.org/fhir/sid/icd-10-cm|I15.0,http://hl7.org/fhir/sid/icd-10-cm|I15.1,http://hl7.org/fhir/sid/icd-10-cm|I15.2,http://hl7.org/fhir/sid/icd-10-cm|I15.8,http://hl7.org/fhir/sid/icd-10-cm|I15.9",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|29046,http://www.nlm.nih.gov/research/umls/rxnorm|3827,http://www.nlm.nih.gov/research/umls/rxnorm|35208,http://www.nlm.nih.gov/research/umls/rxnorm|18867,http://www.nlm.nih.gov/research/umls/rxnorm|1998,http://www.nlm.nih.gov/research/umls/rxnorm|30131,http://www.nlm.nih.gov/research/umls/rxnorm|50166,http://www.nlm.nih.gov/research/umls/rxnorm|52175,http://www.nlm.nih.gov/research/umls/rxnorm|69749,http://www.nlm.nih.gov/research/umls/rxnorm|83515,http://www.nlm.nih.gov/research/umls/rxnorm|118463,http://www.nlm.nih.gov/research/umls/rxnorm|73494,http://www.nlm.nih.gov/research/umls/rxnorm|214354,http://www.nlm.nih.gov/research/umls/rxnorm|17767,http://www.nlm.nih.gov/research/umls/rxnorm|7417,http://www.nlm.nih.gov/research/umls/rxnorm|3443,http://www.nlm.nih.gov/research/umls/rxnorm|11170,http://www.nlm.nih.gov/research/umls/rxnorm|4316,http://www.nlm.nih.gov/research/umls/rxnorm|6918,http://www.nlm.nih.gov/research/umls/rxnorm|1202,http://www.nlm.nih.gov/research/umls/rxnorm|20352,http://www.nlm.nih.gov/research/umls/rxnorm|8787,http://www.nlm.nih.gov/research/umls/rxnorm|19484,http://www.nlm.nih.gov/research/umls/rxnorm|6185,http://www.nlm.nih.gov/research/umls/rxnorm|5487,http://www.nlm.nih.gov/research/umls/rxnorm|4603,http://www.nlm.nih.gov/research/umls/rxnorm|2409,http://www.nlm.nih.gov/research/umls/rxnorm|9997,http://www.nlm.nih.gov/research/umls/rxnorm|1808,http://www.nlm.nih.gov/research/umls/rxnorm|38413,http://www.nlm.nih.gov/research/umls/rxnorm|4109",
+       "Observation?code=http://loinc.org|8480-6&value-quantity=gt140|http://unitsofmeasure.org|mm[Hg]"
+      ],
+      "raw_response": "Playbook 12 (cohort = OR union across dx + meds + labs). Server uses ICD-10-CM for Conditions. Delivering the three-arm union:\n\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|I10,http://hl7.org/fhir/sid/icd-10-cm|I11.0,http://hl7.org/fhir/sid/icd-10-cm|I11.9,http://hl7.org/fhir/sid/icd-10-cm|I12.0,http://hl7.org/fhir/sid/icd-10-cm|I12.9,http://hl7.org/fhir/sid/icd-10-cm|I13.0,http://hl7.org/fhir/sid/icd-10-cm|I13.10,http://hl7.org/fhir/sid/icd-10-cm|I13.11,http://hl7.org/fhir/sid/icd-10-cm|I13.2,http://hl7.org/fhir/sid/icd-10-cm|I15.0,http://hl7.org/fhir/sid/icd-10-cm|I15.1,http://hl7.org/fhir/sid/icd-10-cm|I15.2,http://hl7.org/fhir/sid/icd-10-cm|I15.8,http://hl7.org/fhir/sid/icd-10-cm|I15.9\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|29046,http://www.nlm.nih.gov/research/umls/rxnorm|3827,http://www.nlm.nih.gov/research/umls/rxnorm|35208,http://www.nlm.nih.gov/research/umls/rxnorm|18867,http://www.nlm.nih.gov/research/umls/rxnorm|1998,http://www.nlm.nih.gov/research/umls/rxnorm|30131,http://www.nlm.nih.gov/research/umls/rxnorm|50166,http://www.nlm.nih.gov/research/umls/rxnorm|52175,http://www.nlm.nih.gov/research/umls/rxnorm|69749,http://www.nlm.nih.gov/research/umls/rxnorm|83515,http://www.nlm.nih.gov/research/umls/rxnorm|118463,http://www.nlm.nih.gov/research/umls/rxnorm|73494,http://www.nlm.nih.gov/research/umls/rxnorm|214354,http://www.nlm.nih.gov/research/umls/rxnorm|17767,http://www.nlm.nih.gov/research/umls/rxnorm|7417,http://www.nlm.nih.gov/research/umls/rxnorm|3443,http://www.nlm.nih.gov/research/umls/rxnorm|11170,http://www.nlm.nih.gov/research/umls/rxnorm|4316,http://www.nlm.nih.gov/research/umls/rxnorm|6918,http://www.nlm.nih.gov/research/umls/rxnorm|1202,http://www.nlm.nih.gov/research/umls/rxnorm|20352,http://www.nlm.nih.gov/research/umls/rxnorm|8787,http://www.nlm.nih.gov/research/umls/rxnorm|19484,http://www.nlm.nih.gov/research/umls/rxnorm|6185,http://www.nlm.nih.gov/research/umls/rxnorm|5487,http://www.nlm.nih.gov/research/umls/rxnorm|4603,http://www.nlm.nih.gov/research/umls/rxnorm|2409,http://www.nlm.nih.gov/research/umls/rxnorm|9997,http://www.nlm.nih.gov/research/umls/rxnorm|1808,http://www.nlm.nih.gov/research/umls/rxnorm|38413,http://www.nlm.nih.gov/research/umls/rxnorm|4109\nObservation?code=http://loinc.org|8480-6&value-quantity=gt140|http://unitsofmeasure.org|mm[Hg]",
+      "prompt_text": "I need to identify my complete hypertension-treated patient population for a quality initiative on BP control. From clinical experience, HTN patients are documented in different ways: most have a formal diagnosis code (essential, benign, malignant, systolic, or labile HTN), most are on at least one antihypertensive class, and many have measured SBP > 140 mmHg on at least one office visit.\n\nPlease run multiple FHIR queries to capture the full population:\n1. Patients with any hypertension diagnosis (essential, benign, malignant, systolic, or labile)\n2. Patients prescribed antihypertensive medications (ACE-I, ARB, CCB, BB, or diuretic)\n3. Patients with systolic blood pressure measurements above 140 mmHg\n\nFor each query, return the matching resources. I want the union of all patients found across these three approaches."
+     },
+     "3-expert": {
+      "precision": 0.8707,
+      "recall": 0.0567,
+      "f1": 0.1065,
+      "passed": false,
+      "expected_count": 84776,
+      "actual_count": 5523,
+      "elapsed_sec": 88.4,
+      "queries_generated": 3,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|I10,http://hl7.org/fhir/sid/icd-10-cm|I11.0,http://hl7.org/fhir/sid/icd-10-cm|I11.9,http://hl7.org/fhir/sid/icd-10-cm|I12.0,http://hl7.org/fhir/sid/icd-10-cm|I12.9,http://hl7.org/fhir/sid/icd-10-cm|I13.0,http://hl7.org/fhir/sid/icd-10-cm|I13.10,http://hl7.org/fhir/sid/icd-10-cm|I13.11,http://hl7.org/fhir/sid/icd-10-cm|I13.2,http://hl7.org/fhir/sid/icd-10-cm|I15.0,http://hl7.org/fhir/sid/icd-10-cm|I15.1,http://hl7.org/fhir/sid/icd-10-cm|I15.2,http://hl7.org/fhir/sid/icd-10-cm|I15.8,http://hl7.org/fhir/sid/icd-10-cm|I15.9,http://hl7.org/fhir/sid/icd-10-cm|R03.0",
+      "additional_query_urls": [
+       "MedicationRequest?medication.ingredient-code:text=lisinopril,enalapril,ramipril,captopril,benazepril,losartan,valsartan,irbesartan,olmesartan,candesartan,telmisartan,amlodipine,nifedipine,diltiazem,verapamil,metoprolol,atenolol,carvedilol,bisoprolol,propranolol,labetalol,hydrochlorothiazide,chlorthalidone,furosemide,spironolactone",
+       "Observation?code=http://loinc.org|8480-6&value-quantity=gt140|http://unitsofmeasure.org|mm[Hg]"
+      ],
+      "raw_response": "Based on inspection: server is MIMIC-FHIR, Conditions use ICD-10-CM, Observations use LOINC (though BP LOINC 8480-6 may be absent), and MedicationRequests reference Medication resources coded in NDC/formulary. I'll emit the three-query union with best-available codes.\n\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|I10,http://hl7.org/fhir/sid/icd-10-cm|I11.0,http://hl7.org/fhir/sid/icd-10-cm|I11.9,http://hl7.org/fhir/sid/icd-10-cm|I12.0,http://hl7.org/fhir/sid/icd-10-cm|I12.9,http://hl7.org/fhir/sid/icd-10-cm|I13.0,http://hl7.org/fhir/sid/icd-10-cm|I13.10,http://hl7.org/fhir/sid/icd-10-cm|I13.11,http://hl7.org/fhir/sid/icd-10-cm|I13.2,http://hl7.org/fhir/sid/icd-10-cm|I15.0,http://hl7.org/fhir/sid/icd-10-cm|I15.1,http://hl7.org/fhir/sid/icd-10-cm|I15.2,http://hl7.org/fhir/sid/icd-10-cm|I15.8,http://hl7.org/fhir/sid/icd-10-cm|I15.9,http://hl7.org/fhir/sid/icd-10-cm|R03.0\nMedicationRequest?medication.ingredient-code:text=lisinopril,enalapril,ramipril,captopril,benazepril,losartan,valsartan,irbesartan,olmesartan,candesartan,telmisartan,amlodipine,nifedipine,diltiazem,verapamil,metoprolol,atenolol,carvedilol,bisoprolol,propranolol,labetalol,hydrochlorothiazide,chlorthalidone,furosemide,spironolactone\nObservation?code=http://loinc.org|8480-6&value-quantity=gt140|http://unitsofmeasure.org|mm[Hg]",
+      "prompt_text": "I need to identify my complete hypertension-treated patient population for a quality initiative on BP control. From clinical experience, HTN patients are documented in different ways: most have a formal diagnosis code (essential, benign, malignant, systolic, or labile HTN), most are on at least one antihypertensive class, and many have measured SBP > 140 mmHg on at least one office visit.\n\nPlease run multiple FHIR queries to capture the full population:\n1. Patients with any hypertension diagnosis (essential, benign, malignant, systolic, or labile)\n2. Patients prescribed antihypertensive medications (ACE-I, ARB, CCB, BB, or diuretic)\n3. Patients with systolic blood pressure measurements above 140 mmHg\n\nFor each query, return the matching resources. I want the union of all patients found across these three approaches."
+     }
+    },
     "copilot:claude-sonnet-4.6": {
      "1-naive": {
       "precision": 1.0,
@@ -1094,6 +1250,134 @@
       "prompt_text": "I need to identify all hypertension patients. Hypertension is documented under multiple SNOMED codes from NCQA's 'Essential Hypertension' VSAC (OID 2.16.840.1.113883.3.464.1003.104.11.1029): Essential hypertension (59621000) is the parent, with subtype variants Benign essential hypertension (1201005), Malignant essential hypertension (78975002), Systolic essential hypertension (429457004), and Labile essential hypertension (371125006). Search Condition resources for all five codes."
      }
     },
+    "copilot:claude-opus-4.7+mimic": {
+     "1-naive": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 84776,
+      "actual_count": 0,
+      "elapsed_sec": 7.0,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|38341003",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|38341003",
+      "prompt_text": "Find all patients with hypertension."
+     },
+     "1-broad": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 84776,
+      "actual_count": 0,
+      "elapsed_sec": 7.8,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|59621000,http://snomed.info/sct|1201005,http://snomed.info/sct|70272006,http://snomed.info/sct|56218007,http://snomed.info/sct|48146000",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|59621000,http://snomed.info/sct|1201005,http://snomed.info/sct|70272006,http://snomed.info/sct|56218007,http://snomed.info/sct|48146000",
+      "prompt_text": "Find all patients diagnosed with any form of hypertension \u2014 essential hypertension (the most common general code), benign or malignant essential hypertension, systolic essential hypertension, or labile (variable) essential hypertension."
+     },
+     "1-expert": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 84776,
+      "actual_count": 0,
+      "elapsed_sec": 7.4,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|59621000,http://snomed.info/sct|1201005,http://snomed.info/sct|78975002,http://snomed.info/sct|429457004,http://snomed.info/sct|371125006",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|59621000,http://snomed.info/sct|1201005,http://snomed.info/sct|78975002,http://snomed.info/sct|429457004,http://snomed.info/sct|371125006",
+      "prompt_text": "I need to identify all hypertension patients. Hypertension is documented under multiple SNOMED codes from NCQA's 'Essential Hypertension' VSAC (OID 2.16.840.1.113883.3.464.1003.104.11.1029): Essential hypertension (59621000) is the parent, with subtype variants Benign essential hypertension (1201005), Malignant essential hypertension (78975002), Systolic essential hypertension (429457004), and Labile essential hypertension (371125006). Search Condition resources for all five codes."
+     },
+     "2-naive": {
+      "precision": 1.0,
+      "recall": 0.0749,
+      "f1": 0.1393,
+      "passed": false,
+      "expected_count": 84776,
+      "actual_count": 6346,
+      "elapsed_sec": 27.8,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|I10",
+      "additional_query_urls": [],
+      "raw_response": "FINAL ANSWER:\n\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|I10",
+      "prompt_text": "Find all patients with hypertension."
+     },
+     "2-broad": {
+      "precision": 1.0,
+      "recall": 0.0605,
+      "f1": 0.1141,
+      "passed": false,
+      "expected_count": 84776,
+      "actual_count": 5127,
+      "elapsed_sec": 45.7,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|I10,http://hl7.org/fhir/sid/icd-9-cm|401.0,http://hl7.org/fhir/sid/icd-9-cm|401.1,http://hl7.org/fhir/sid/icd-9-cm|401.9",
+      "additional_query_urls": [],
+      "raw_response": "FINAL ANSWER:\n\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|I10,http://hl7.org/fhir/sid/icd-9-cm|401.0,http://hl7.org/fhir/sid/icd-9-cm|401.1,http://hl7.org/fhir/sid/icd-9-cm|401.9",
+      "prompt_text": "Find all patients diagnosed with any form of hypertension \u2014 essential hypertension (the most common general code), benign or malignant essential hypertension, systolic essential hypertension, or labile (variable) essential hypertension."
+     },
+     "2-expert": {
+      "precision": 1.0,
+      "recall": 0.0749,
+      "f1": 0.1393,
+      "passed": false,
+      "expected_count": 84776,
+      "actual_count": 6346,
+      "elapsed_sec": 26.5,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|I10",
+      "additional_query_urls": [],
+      "raw_response": "FINAL ANSWER:\n\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|I10",
+      "prompt_text": "I need to identify all hypertension patients. Hypertension is documented under multiple SNOMED codes from NCQA's 'Essential Hypertension' VSAC (OID 2.16.840.1.113883.3.464.1003.104.11.1029): Essential hypertension (59621000) is the parent, with subtype variants Benign essential hypertension (1201005), Malignant essential hypertension (78975002), Systolic essential hypertension (429457004), and Labile essential hypertension (371125006). Search Condition resources for all five codes."
+     },
+     "3-naive": {
+      "precision": 0.8826,
+      "recall": 0.0567,
+      "f1": 0.1066,
+      "passed": false,
+      "expected_count": 84776,
+      "actual_count": 5450,
+      "elapsed_sec": 39.8,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|I10,http://hl7.org/fhir/sid/icd-10-cm|I11.0,http://hl7.org/fhir/sid/icd-10-cm|I11.9,http://hl7.org/fhir/sid/icd-10-cm|I12.0,http://hl7.org/fhir/sid/icd-10-cm|I12.9,http://hl7.org/fhir/sid/icd-10-cm|I13.0,http://hl7.org/fhir/sid/icd-10-cm|I13.10,http://hl7.org/fhir/sid/icd-10-cm|I13.11,http://hl7.org/fhir/sid/icd-10-cm|I13.2,http://hl7.org/fhir/sid/icd-10-cm|I15.0,http://hl7.org/fhir/sid/icd-10-cm|I15.1,http://hl7.org/fhir/sid/icd-10-cm|I15.2,http://hl7.org/fhir/sid/icd-10-cm|I15.8,http://hl7.org/fhir/sid/icd-10-cm|I15.9,http://hl7.org/fhir/sid/icd-10-cm|I16.0,http://hl7.org/fhir/sid/icd-10-cm|I16.1,http://hl7.org/fhir/sid/icd-10-cm|I16.9",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|I10,http://hl7.org/fhir/sid/icd-10-cm|I11.0,http://hl7.org/fhir/sid/icd-10-cm|I11.9,http://hl7.org/fhir/sid/icd-10-cm|I12.0,http://hl7.org/fhir/sid/icd-10-cm|I12.9,http://hl7.org/fhir/sid/icd-10-cm|I13.0,http://hl7.org/fhir/sid/icd-10-cm|I13.10,http://hl7.org/fhir/sid/icd-10-cm|I13.11,http://hl7.org/fhir/sid/icd-10-cm|I13.2,http://hl7.org/fhir/sid/icd-10-cm|I15.0,http://hl7.org/fhir/sid/icd-10-cm|I15.1,http://hl7.org/fhir/sid/icd-10-cm|I15.2,http://hl7.org/fhir/sid/icd-10-cm|I15.8,http://hl7.org/fhir/sid/icd-10-cm|I15.9,http://hl7.org/fhir/sid/icd-10-cm|I16.0,http://hl7.org/fhir/sid/icd-10-cm|I16.1,http://hl7.org/fhir/sid/icd-10-cm|I16.9",
+      "prompt_text": "Find all patients with hypertension."
+     },
+     "3-broad": {
+      "precision": 1.0,
+      "recall": 0.0605,
+      "f1": 0.1141,
+      "passed": false,
+      "expected_count": 84776,
+      "actual_count": 5127,
+      "elapsed_sec": 58.2,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|I10,http://hl7.org/fhir/sid/icd-9-cm|401.0,http://hl7.org/fhir/sid/icd-9-cm|401.1,http://hl7.org/fhir/sid/icd-9-cm|401.9",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|I10,http://hl7.org/fhir/sid/icd-9-cm|401.0,http://hl7.org/fhir/sid/icd-9-cm|401.1,http://hl7.org/fhir/sid/icd-9-cm|401.9",
+      "prompt_text": "Find all patients diagnosed with any form of hypertension \u2014 essential hypertension (the most common general code), benign or malignant essential hypertension, systolic essential hypertension, or labile (variable) essential hypertension."
+     },
+     "3-expert": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 84776,
+      "actual_count": 0,
+      "elapsed_sec": 7.6,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|59621000,http://snomed.info/sct|1201005,http://snomed.info/sct|78975002,http://snomed.info/sct|429457004,http://snomed.info/sct|371125006",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|59621000,http://snomed.info/sct|1201005,http://snomed.info/sct|78975002,http://snomed.info/sct|429457004,http://snomed.info/sct|371125006",
+      "prompt_text": "I need to identify all hypertension patients. Hypertension is documented under multiple SNOMED codes from NCQA's 'Essential Hypertension' VSAC (OID 2.16.840.1.113883.3.464.1003.104.11.1029): Essential hypertension (59621000) is the parent, with subtype variants Benign essential hypertension (1201005), Malignant essential hypertension (78975002), Systolic essential hypertension (429457004), and Labile essential hypertension (371125006). Search Condition resources for all five codes."
+     }
+    },
     "copilot:claude-sonnet-4.6": {
      "1-naive": {
       "precision": 0.0,
@@ -1817,6 +2101,143 @@
       "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|29046,http://www.nlm.nih.gov/research/umls/rxnorm|52175,http://www.nlm.nih.gov/research/umls/rxnorm|17767,http://www.nlm.nih.gov/research/umls/rxnorm|20352,http://www.nlm.nih.gov/research/umls/rxnorm|4603",
       "additional_query_urls": [],
       "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|29046,http://www.nlm.nih.gov/research/umls/rxnorm|52175,http://www.nlm.nih.gov/research/umls/rxnorm|17767,http://www.nlm.nih.gov/research/umls/rxnorm|20352,http://www.nlm.nih.gov/research/umls/rxnorm|4603",
+      "prompt_text": "I need MedicationRequest resources for any antihypertensive class. Use these RxNorm ingredient codes: 29046 (lisinopril, ACE-I), 52175 (losartan, ARB), 17767 (amlodipine, CCB), 20352 (carvedilol, BB), 4603 (furosemide, loop diuretic). Combine in a single comma-separated code search."
+     }
+    },
+    "copilot:claude-opus-4.7+mimic": {
+     "1-naive": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 70960,
+      "actual_count": 0,
+      "elapsed_sec": 12.7,
+      "queries_generated": 9,
+      "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|29046&status=active",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|18867&status=active",
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1998&status=active",
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|3827&status=active",
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|5487&status=active",
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|38454&status=active",
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|17767&status=active",
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|52175&status=active",
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|35208&status=active"
+      ],
+      "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|29046&status=active\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|18867&status=active\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1998&status=active\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|3827&status=active\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|5487&status=active\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|38454&status=active\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|17767&status=active\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|52175&status=active\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|35208&status=active",
+      "prompt_text": "Find patients on blood pressure medications."
+     },
+     "1-broad": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 70960,
+      "actual_count": 0,
+      "elapsed_sec": 8.0,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|29046,52175,203160,4603,4278",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|29046,52175,203160,4603,4278",
+      "prompt_text": "Find patients prescribed any antihypertensive drug class \u2014 ACE inhibitors (e.g., lisinopril), angiotensin receptor blockers (ARBs, e.g., losartan), calcium channel blockers (e.g., amlodipine), beta blockers (e.g., carvedilol), or diuretics (e.g., furosemide)."
+     },
+     "1-expert": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 70960,
+      "actual_count": 0,
+      "elapsed_sec": 8.3,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|29046,http://www.nlm.nih.gov/research/umls/rxnorm|52175,http://www.nlm.nih.gov/research/umls/rxnorm|17767,http://www.nlm.nih.gov/research/umls/rxnorm|20352,http://www.nlm.nih.gov/research/umls/rxnorm|4603",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|29046,http://www.nlm.nih.gov/research/umls/rxnorm|52175,http://www.nlm.nih.gov/research/umls/rxnorm|17767,http://www.nlm.nih.gov/research/umls/rxnorm|20352,http://www.nlm.nih.gov/research/umls/rxnorm|4603",
+      "prompt_text": "I need MedicationRequest resources for any antihypertensive class. Use these RxNorm ingredient codes: 29046 (lisinopril, ACE-I), 52175 (losartan, ARB), 17767 (amlodipine, CCB), 20352 (carvedilol, BB), 4603 (furosemide, loop diuretic). Combine in a single comma-separated code search."
+     },
+     "2-naive": {
+      "precision": 0.8079,
+      "recall": 0.048,
+      "f1": 0.0906,
+      "passed": false,
+      "expected_count": 70960,
+      "actual_count": 4217,
+      "elapsed_sec": 49.2,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?code=http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Amlodipine,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Lisinopril,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Losartan,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Metoprolol,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Atenolol,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Hydrochlorothiazide,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Furosemide,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Carvedilol,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Valsartan,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Enalapril,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Diltiazem,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Nifedipine,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Propranolol,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Clonidine,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Hydralazine,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Labetalol,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Spironolactone,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Chlorthalidone,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Nicardipine,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Bumetanide",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?code=http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Amlodipine,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Lisinopril,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Losartan,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Metoprolol,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Atenolol,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Hydrochlorothiazide,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Furosemide,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Carvedilol,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Valsartan,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Enalapril,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Diltiazem,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Nifedipine,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Propranolol,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Clonidine,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Hydralazine,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Labetalol,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Spironolactone,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Chlorthalidone,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Nicardipine,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Bumetanide",
+      "prompt_text": "Find patients on blood pressure medications."
+     },
+     "2-broad": {
+      "precision": 0.8037,
+      "recall": 0.0449,
+      "f1": 0.0851,
+      "passed": false,
+      "expected_count": 70960,
+      "actual_count": 3968,
+      "elapsed_sec": 65.6,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?code=http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Lisinopril,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Enalapril,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Captopril,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Ramipril,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Benazepril,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Quinapril,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Fosinopril,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Perindopril,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Trandolapril,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Moexipril,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Losartan,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Valsartan,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Irbesartan,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Olmesartan,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Telmisartan,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Candesartan,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Azilsartan,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Eprosartan,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Amlodipine,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Nifedipine,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Diltiazem,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Verapamil,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Nicardipine,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Felodipine,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Isradipine,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Nimodipine,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Clevidipine,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Metoprolol,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Atenolol,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Carvedilol,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Propranolol,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Labetalol,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Bisoprolol,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Nebivolol,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Nadolol,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Esmolol,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Acebutolol,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Betaxolol,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Pindolol,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Sotalol,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Timolol,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Furosemide,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Hydrochlorothiazide,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Chlorthalidone,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Spironolactone,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Bumetanide,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Torsemide,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Metolazone,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Indapamide,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Amiloride,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Triamterene,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Eplerenone,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Chlorothiazide",
+      "additional_query_urls": [],
+      "raw_response": "FINAL ANSWER:\n\nMedicationRequest?code=http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Lisinopril,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Enalapril,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Captopril,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Ramipril,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Benazepril,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Quinapril,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Fosinopril,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Perindopril,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Trandolapril,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Moexipril,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Losartan,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Valsartan,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Irbesartan,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Olmesartan,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Telmisartan,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Candesartan,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Azilsartan,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Eprosartan,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Amlodipine,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Nifedipine,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Diltiazem,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Verapamil,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Nicardipine,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Felodipine,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Isradipine,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Nimodipine,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Clevidipine,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Metoprolol,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Atenolol,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Carvedilol,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Propranolol,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Labetalol,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Bisoprolol,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Nebivolol,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Nadolol,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Esmolol,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Acebutolol,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Betaxolol,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Pindolol,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Sotalol,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Timolol,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Furosemide,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Hydrochlorothiazide,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Chlorthalidone,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Spironolactone,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Bumetanide,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Torsemide,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Metolazone,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Indapamide,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Amiloride,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Triamterene,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Eplerenone,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Chlorothiazide",
+      "prompt_text": "Find patients prescribed any antihypertensive drug class \u2014 ACE inhibitors (e.g., lisinopril), angiotensin receptor blockers (ARBs, e.g., losartan), calcium channel blockers (e.g., amlodipine), beta blockers (e.g., carvedilol), or diuretics (e.g., furosemide)."
+     },
+     "2-expert": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 70960,
+      "actual_count": 0,
+      "elapsed_sec": 19.1,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|29046,http://www.nlm.nih.gov/research/umls/rxnorm|52175,http://www.nlm.nih.gov/research/umls/rxnorm|17767,http://www.nlm.nih.gov/research/umls/rxnorm|20352,http://www.nlm.nih.gov/research/umls/rxnorm|4603",
+      "additional_query_urls": [],
+      "raw_response": "FINAL ANSWER:\n\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|29046,http://www.nlm.nih.gov/research/umls/rxnorm|52175,http://www.nlm.nih.gov/research/umls/rxnorm|17767,http://www.nlm.nih.gov/research/umls/rxnorm|20352,http://www.nlm.nih.gov/research/umls/rxnorm|4603",
+      "prompt_text": "I need MedicationRequest resources for any antihypertensive class. Use these RxNorm ingredient codes: 29046 (lisinopril, ACE-I), 52175 (losartan, ARB), 17767 (amlodipine, CCB), 20352 (carvedilol, BB), 4603 (furosemide, loop diuretic). Combine in a single comma-separated code search."
+     },
+     "3-naive": {
+      "precision": 0.8918,
+      "recall": 0.0833,
+      "f1": 0.1523,
+      "passed": false,
+      "expected_count": 70960,
+      "actual_count": 6625,
+      "elapsed_sec": 58.5,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?code=http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Amlodipine,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Lisinopril,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Metoprolol",
+      "additional_query_urls": [],
+      "raw_response": "Good - covered major antihypertensive classes (ACE-I, ARB, BB, CCB, thiazide, loop diuretic, alpha/beta).\n\nMedicationRequest?code=http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Amlodipine,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Lisinopril,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Metoprolol Tartrate,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Losartan Potassium,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Hydrochlorothiazide,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Furosemide,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Carvedilol,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Diltiazem,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Labetalol",
+      "prompt_text": "Find patients on blood pressure medications."
+     },
+     "3-broad": {
+      "precision": 0.9226,
+      "recall": 0.0671,
+      "f1": 0.125,
+      "passed": false,
+      "expected_count": 70960,
+      "actual_count": 5158,
+      "elapsed_sec": 37.5,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?code=http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Lisinopril,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Losartan,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Amlodipine,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Carvedilol,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Furosemide",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?code=http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Lisinopril,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Losartan,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Amlodipine,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Carvedilol,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Furosemide",
+      "prompt_text": "Find patients prescribed any antihypertensive drug class \u2014 ACE inhibitors (e.g., lisinopril), angiotensin receptor blockers (ARBs, e.g., losartan), calcium channel blockers (e.g., amlodipine), beta blockers (e.g., carvedilol), or diuretics (e.g., furosemide)."
+     },
+     "3-expert": {
+      "precision": 0.9226,
+      "recall": 0.0671,
+      "f1": 0.125,
+      "passed": false,
+      "expected_count": 70960,
+      "actual_count": 5158,
+      "elapsed_sec": 30.4,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?code=http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Lisinopril,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Losartan,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Amlodipine,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Carvedilol,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Furosemide",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?code=http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Lisinopril,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Losartan,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Amlodipine,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Carvedilol,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Furosemide",
       "prompt_text": "I need MedicationRequest resources for any antihypertensive class. Use these RxNorm ingredient codes: 29046 (lisinopril, ACE-I), 52175 (losartan, ARB), 17767 (amlodipine, CCB), 20352 (carvedilol, BB), 4603 (furosemide, loop diuretic). Combine in a single comma-separated code search."
      }
     },

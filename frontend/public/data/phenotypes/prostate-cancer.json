@@ -272,6 +272,170 @@
       "prompt_text": "I need to identify my complete prostate cancer patient population for a quality improvement initiative on ADT adherence and PSA surveillance. From clinical experience, PCa patients are documented in different ways: most have a formal prostate cancer diagnosis (often stage-specific), most are on ADT or anti-androgens (leuprolide, bicalutamide, enzalutamide, abiraterone, degarelix), most have undergone biopsy, and many have elevated PSA.\n\nPlease run multiple FHIR queries to capture the full population:\n1. Patients with any prostate cancer diagnosis\n2. Patients prescribed ADT/anti-androgens (leuprolide, bicalutamide, enzalutamide, abiraterone, degarelix)\n3. Patients who have undergone prostate biopsy\n4. Patients with elevated PSA (>4 ng/mL)\n\nFor each query, return the matching resources. I want the union of all patients found. Note: this is a male-only population."
      }
     },
+    "copilot:claude-opus-4.7+mimic": {
+     "1-naive": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 4487,
+      "actual_count": 0,
+      "elapsed_sec": 10.8,
+      "queries_generated": 4,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|399068003",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1100071,http://www.nlm.nih.gov/research/umls/rxnorm|1156775,http://www.nlm.nih.gov/research/umls/rxnorm|1307397,http://www.nlm.nih.gov/research/umls/rxnorm|1157702,http://www.nlm.nih.gov/research/umls/rxnorm|1112201",
+       "Procedure?code=http://snomed.info/sct|65801008",
+       "Observation?code=http://loinc.org|2857-1&value-quantity=gt4|http://unitsofmeasure.org|ng/mL"
+      ],
+      "raw_response": "Condition?code=http://snomed.info/sct|399068003\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1100071,http://www.nlm.nih.gov/research/umls/rxnorm|1156775,http://www.nlm.nih.gov/research/umls/rxnorm|1307397,http://www.nlm.nih.gov/research/umls/rxnorm|1157702,http://www.nlm.nih.gov/research/umls/rxnorm|1112201\nProcedure?code=http://snomed.info/sct|65801008\nObservation?code=http://loinc.org|2857-1&value-quantity=gt4|http://unitsofmeasure.org|ng/mL",
+      "prompt_text": "I need to identify my complete prostate cancer patient population for a quality improvement initiative on ADT adherence and PSA surveillance. From clinical experience, PCa patients are documented in different ways: most have a formal prostate cancer diagnosis (often stage-specific), most are on ADT or anti-androgens (leuprolide, bicalutamide, enzalutamide, abiraterone, degarelix), most have undergone biopsy, and many have elevated PSA.\n\nPlease run multiple FHIR queries to capture the full population:\n1. Patients with any prostate cancer diagnosis\n2. Patients prescribed ADT/anti-androgens (leuprolide, bicalutamide, enzalutamide, abiraterone, degarelix)\n3. Patients who have undergone prostate biopsy\n4. Patients with elevated PSA (>4 ng/mL)\n\nFor each query, return the matching resources. I want the union of all patients found. Note: this is a male-only population."
+     },
+     "1-broad": {
+      "precision": 1.0,
+      "recall": 0.1841,
+      "f1": 0.3109,
+      "passed": false,
+      "expected_count": 4487,
+      "actual_count": 826,
+      "elapsed_sec": 17.9,
+      "queries_generated": 4,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|399068003,http://snomed.info/sct|254900004,http://snomed.info/sct|427492003,http://snomed.info/sct|278060005,http://hl7.org/fhir/sid/icd-10-cm|C61&patient.gender=male",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|203146,http://www.nlm.nih.gov/research/umls/rxnorm|1247,http://www.nlm.nih.gov/research/umls/rxnorm|1100076,http://www.nlm.nih.gov/research/umls/rxnorm|1091602,http://www.nlm.nih.gov/research/umls/rxnorm|475230&patient.gender=male",
+       "Procedure?code=http://snomed.info/sct|65801008,http://snomed.info/sct|396234004,http://snomed.info/sct|176099002&patient.gender=male",
+       "Observation?code=http://loinc.org|2857-1,http://loinc.org|10886-0,http://loinc.org|35741-8&value-quantity=gt4|http://unitsofmeasure.org|ng/mL&patient.gender=male"
+      ],
+      "raw_response": "Condition?code=http://snomed.info/sct|399068003,http://snomed.info/sct|254900004,http://snomed.info/sct|427492003,http://snomed.info/sct|278060005,http://hl7.org/fhir/sid/icd-10-cm|C61&patient.gender=male\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|203146,http://www.nlm.nih.gov/research/umls/rxnorm|1247,http://www.nlm.nih.gov/research/umls/rxnorm|1100076,http://www.nlm.nih.gov/research/umls/rxnorm|1091602,http://www.nlm.nih.gov/research/umls/rxnorm|475230&patient.gender=male\nProcedure?code=http://snomed.info/sct|65801008,http://snomed.info/sct|396234004,http://snomed.info/sct|176099002&patient.gender=male\nObservation?code=http://loinc.org|2857-1,http://loinc.org|10886-0,http://loinc.org|35741-8&value-quantity=gt4|http://unitsofmeasure.org|ng/mL&patient.gender=male",
+      "prompt_text": "I need to identify my complete prostate cancer patient population for a quality improvement initiative on ADT adherence and PSA surveillance. From clinical experience, PCa patients are documented in different ways: most have a formal prostate cancer diagnosis (often stage-specific), most are on ADT or anti-androgens (leuprolide, bicalutamide, enzalutamide, abiraterone, degarelix), most have undergone biopsy, and many have elevated PSA.\n\nPlease run multiple FHIR queries to capture the full population:\n1. Patients with any prostate cancer diagnosis\n2. Patients prescribed ADT/anti-androgens (leuprolide, bicalutamide, enzalutamide, abiraterone, degarelix)\n3. Patients who have undergone prostate biopsy\n4. Patients with elevated PSA (>4 ng/mL)\n\nFor each query, return the matching resources. I want the union of all patients found. Note: this is a male-only population."
+     },
+     "1-expert": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 4487,
+      "actual_count": 0,
+      "elapsed_sec": 12.2,
+      "queries_generated": 4,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|399068003",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|203819,http://www.nlm.nih.gov/research/umls/rxnorm|1546442,http://www.nlm.nih.gov/research/umls/rxnorm|1307399,http://www.nlm.nih.gov/research/umls/rxnorm|1100076,http://www.nlm.nih.gov/research/umls/rxnorm|475230",
+       "Procedure?code=http://snomed.info/sct|65801008",
+       "Observation?code=http://loinc.org|2857-1&value-quantity=gt4|http://unitsofmeasure.org|ng/mL"
+      ],
+      "raw_response": "Condition?code=http://snomed.info/sct|399068003\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|203819,http://www.nlm.nih.gov/research/umls/rxnorm|1546442,http://www.nlm.nih.gov/research/umls/rxnorm|1307399,http://www.nlm.nih.gov/research/umls/rxnorm|1100076,http://www.nlm.nih.gov/research/umls/rxnorm|475230\nProcedure?code=http://snomed.info/sct|65801008\nObservation?code=http://loinc.org|2857-1&value-quantity=gt4|http://unitsofmeasure.org|ng/mL",
+      "prompt_text": "I need to identify my complete prostate cancer patient population for a quality improvement initiative on ADT adherence and PSA surveillance. From clinical experience, PCa patients are documented in different ways: most have a formal prostate cancer diagnosis (often stage-specific), most are on ADT or anti-androgens (leuprolide, bicalutamide, enzalutamide, abiraterone, degarelix), most have undergone biopsy, and many have elevated PSA.\n\nPlease run multiple FHIR queries to capture the full population:\n1. Patients with any prostate cancer diagnosis\n2. Patients prescribed ADT/anti-androgens (leuprolide, bicalutamide, enzalutamide, abiraterone, degarelix)\n3. Patients who have undergone prostate biopsy\n4. Patients with elevated PSA (>4 ng/mL)\n\nFor each query, return the matching resources. I want the union of all patients found. Note: this is a male-only population."
+     },
+     "2-naive": {
+      "precision": 0.6253,
+      "recall": 0.7488,
+      "f1": 0.6815,
+      "passed": false,
+      "expected_count": 4487,
+      "actual_count": 5373,
+      "elapsed_sec": 151.0,
+      "queries_generated": 4,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-9-cm|185,http://hl7.org/fhir/sid/icd-9-cm|V10.46,http://hl7.org/fhir/sid/icd-9-cm|233.4",
+      "additional_query_urls": [
+       "MedicationRequest?medication.code=Enzalutamide,Abiraterone,Casodex,Leuprolide,Bicalutamide,Degarelix,Lupron,Firmagon,Xtandi,Zytiga",
+       "Procedure?code=http://hl7.org/fhir/sid/icd-9-cm|60.11",
+       "Observation?code=http://loinc.org|2857-1&value-quantity=gt4"
+      ],
+      "raw_response": "Based on my exploration, here are the queries:\n\nFINAL ANSWER:\n\nCondition?code=http://hl7.org/fhir/sid/icd-9-cm|185,http://hl7.org/fhir/sid/icd-9-cm|V10.46,http://hl7.org/fhir/sid/icd-9-cm|233.4\nMedicationRequest?medication.code=Enzalutamide,Abiraterone,Casodex,Leuprolide,Bicalutamide,Degarelix,Lupron,Firmagon,Xtandi,Zytiga\nProcedure?code=http://hl7.org/fhir/sid/icd-9-cm|60.11\nObservation?code=http://loinc.org|2857-1&value-quantity=gt4",
+      "prompt_text": "I need to identify my complete prostate cancer patient population for a quality improvement initiative on ADT adherence and PSA surveillance. From clinical experience, PCa patients are documented in different ways: most have a formal prostate cancer diagnosis (often stage-specific), most are on ADT or anti-androgens (leuprolide, bicalutamide, enzalutamide, abiraterone, degarelix), most have undergone biopsy, and many have elevated PSA.\n\nPlease run multiple FHIR queries to capture the full population:\n1. Patients with any prostate cancer diagnosis\n2. Patients prescribed ADT/anti-androgens (leuprolide, bicalutamide, enzalutamide, abiraterone, degarelix)\n3. Patients who have undergone prostate biopsy\n4. Patients with elevated PSA (>4 ng/mL)\n\nFor each query, return the matching resources. I want the union of all patients found. Note: this is a male-only population."
+     },
+     "2-broad": {
+      "precision": 0.6254,
+      "recall": 0.7497,
+      "f1": 0.6819,
+      "passed": false,
+      "expected_count": 4487,
+      "actual_count": 5379,
+      "elapsed_sec": 66.9,
+      "queries_generated": 4,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-9-cm|185,http://hl7.org/fhir/sid/icd-9-cm|V10.46,http://hl7.org/fhir/sid/icd-9-cm|233.4",
+      "additional_query_urls": [
+       "MedicationRequest?code=Leuprolide,Bicalutamide,Enzalutamide,Abiraterone,Degarelix,leuprolide,bicalutamide,enzalutamide,abiraterone,degarelix",
+       "Procedure?code=http://hl7.org/fhir/sid/icd-9-cm|60.11,http://hl7.org/fhir/sid/icd-9-cm|60.12",
+       "Observation?code=http://loinc.org|2857-1&value-quantity=gt4"
+      ],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-9-cm|185,http://hl7.org/fhir/sid/icd-9-cm|V10.46,http://hl7.org/fhir/sid/icd-9-cm|233.4\nMedicationRequest?code=Leuprolide,Bicalutamide,Enzalutamide,Abiraterone,Degarelix,leuprolide,bicalutamide,enzalutamide,abiraterone,degarelix\nProcedure?code=http://hl7.org/fhir/sid/icd-9-cm|60.11,http://hl7.org/fhir/sid/icd-9-cm|60.12\nObservation?code=http://loinc.org|2857-1&value-quantity=gt4",
+      "prompt_text": "I need to identify my complete prostate cancer patient population for a quality improvement initiative on ADT adherence and PSA surveillance. From clinical experience, PCa patients are documented in different ways: most have a formal prostate cancer diagnosis (often stage-specific), most are on ADT or anti-androgens (leuprolide, bicalutamide, enzalutamide, abiraterone, degarelix), most have undergone biopsy, and many have elevated PSA.\n\nPlease run multiple FHIR queries to capture the full population:\n1. Patients with any prostate cancer diagnosis\n2. Patients prescribed ADT/anti-androgens (leuprolide, bicalutamide, enzalutamide, abiraterone, degarelix)\n3. Patients who have undergone prostate biopsy\n4. Patients with elevated PSA (>4 ng/mL)\n\nFor each query, return the matching resources. I want the union of all patients found. Note: this is a male-only population."
+     },
+     "2-expert": {
+      "precision": 0.5917,
+      "recall": 0.8003,
+      "f1": 0.6804,
+      "passed": false,
+      "expected_count": 4487,
+      "actual_count": 6069,
+      "elapsed_sec": 105.4,
+      "queries_generated": 4,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-9-cm|185,http://hl7.org/fhir/sid/icd-9-cm|V10.46,http://hl7.org/fhir/sid/icd-9-cm|233.4,http://hl7.org/fhir/sid/icd-10-cm|C61,http://hl7.org/fhir/sid/icd-10-cm|Z85.46",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Leuprolide",
+       "Procedure?code=http://hl7.org/fhir/sid/icd-9-cm|60.11,http://hl7.org/fhir/sid/icd-9-cm|60.12",
+       "Observation?code=http://loinc.org|2857-1&value-quantity=gt4"
+      ],
+      "raw_response": "FINAL ANSWER:\n\nCondition?code=http://hl7.org/fhir/sid/icd-9-cm|185,http://hl7.org/fhir/sid/icd-9-cm|V10.46,http://hl7.org/fhir/sid/icd-9-cm|233.4,http://hl7.org/fhir/sid/icd-10-cm|C61,http://hl7.org/fhir/sid/icd-10-cm|Z85.46\nMedicationRequest?code=http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Leuprolide Acetate,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Bicalutamide,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Enzalutamide,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Abiraterone,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Abiraterone Acetate,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Degarelix\nProcedure?code=http://hl7.org/fhir/sid/icd-9-cm|60.11,http://hl7.org/fhir/sid/icd-9-cm|60.12\nObservation?code=http://loinc.org|2857-1&value-quantity=gt4",
+      "prompt_text": "I need to identify my complete prostate cancer patient population for a quality improvement initiative on ADT adherence and PSA surveillance. From clinical experience, PCa patients are documented in different ways: most have a formal prostate cancer diagnosis (often stage-specific), most are on ADT or anti-androgens (leuprolide, bicalutamide, enzalutamide, abiraterone, degarelix), most have undergone biopsy, and many have elevated PSA.\n\nPlease run multiple FHIR queries to capture the full population:\n1. Patients with any prostate cancer diagnosis\n2. Patients prescribed ADT/anti-androgens (leuprolide, bicalutamide, enzalutamide, abiraterone, degarelix)\n3. Patients who have undergone prostate biopsy\n4. Patients with elevated PSA (>4 ng/mL)\n\nFor each query, return the matching resources. I want the union of all patients found. Note: this is a male-only population."
+     },
+     "3-naive": {
+      "precision": 0.5919,
+      "recall": 0.8001,
+      "f1": 0.6804,
+      "passed": false,
+      "expected_count": 4487,
+      "actual_count": 6065,
+      "elapsed_sec": 275.2,
+      "queries_generated": 4,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-9-cm|185,http://hl7.org/fhir/sid/icd-9-cm|V10.46,http://hl7.org/fhir/sid/icd-10-cm|C61,http://hl7.org/fhir/sid/icd-10-cm|Z85.46&patient.gender=male",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Leuprolide",
+       "Procedure?code=http://hl7.org/fhir/sid/icd-9-cm|60.11&patient.gender=male",
+       "Observation?code=http://loinc.org|2857-1&value-quantity=gt4&patient.gender=male"
+      ],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-9-cm|185,http://hl7.org/fhir/sid/icd-9-cm|V10.46,http://hl7.org/fhir/sid/icd-10-cm|C61,http://hl7.org/fhir/sid/icd-10-cm|Z85.46&patient.gender=male\nMedicationRequest?code=http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Leuprolide Acetate,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Casodex&patient.gender=male\nProcedure?code=http://hl7.org/fhir/sid/icd-9-cm|60.11&patient.gender=male\nObservation?code=http://loinc.org|2857-1&value-quantity=gt4&patient.gender=male",
+      "prompt_text": "I need to identify my complete prostate cancer patient population for a quality improvement initiative on ADT adherence and PSA surveillance. From clinical experience, PCa patients are documented in different ways: most have a formal prostate cancer diagnosis (often stage-specific), most are on ADT or anti-androgens (leuprolide, bicalutamide, enzalutamide, abiraterone, degarelix), most have undergone biopsy, and many have elevated PSA.\n\nPlease run multiple FHIR queries to capture the full population:\n1. Patients with any prostate cancer diagnosis\n2. Patients prescribed ADT/anti-androgens (leuprolide, bicalutamide, enzalutamide, abiraterone, degarelix)\n3. Patients who have undergone prostate biopsy\n4. Patients with elevated PSA (>4 ng/mL)\n\nFor each query, return the matching resources. I want the union of all patients found. Note: this is a male-only population."
+     },
+     "3-broad": {
+      "precision": 0.5919,
+      "recall": 0.8001,
+      "f1": 0.6804,
+      "passed": false,
+      "expected_count": 4487,
+      "actual_count": 6065,
+      "elapsed_sec": 315.0,
+      "queries_generated": 4,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-9-cm|185,http://hl7.org/fhir/sid/icd-9-cm|V10.46,http://hl7.org/fhir/sid/icd-10-cm|C61,http://hl7.org/fhir/sid/icd-10-cm|Z85.46&patient.gender=male",
+      "additional_query_urls": [
+       "MedicationRequest?code=Leuprolide,Bicalutamide,Enzalutamide,Abiraterone,Degarelix&patient.gender=male",
+       "Procedure?code=http://hl7.org/fhir/sid/icd-9-cm|60.11,http://snomed.info/sct|65801008,http://snomed.info/sct|176099009&patient.gender=male",
+       "Observation?code=http://loinc.org|2857-1&value-quantity=gt4&patient.gender=male"
+      ],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-9-cm|185,http://hl7.org/fhir/sid/icd-9-cm|V10.46,http://hl7.org/fhir/sid/icd-10-cm|C61,http://hl7.org/fhir/sid/icd-10-cm|Z85.46&patient.gender=male\nMedicationRequest?code=Leuprolide,Bicalutamide,Enzalutamide,Abiraterone,Degarelix&patient.gender=male\nProcedure?code=http://hl7.org/fhir/sid/icd-9-cm|60.11,http://snomed.info/sct|65801008,http://snomed.info/sct|176099009&patient.gender=male\nObservation?code=http://loinc.org|2857-1&value-quantity=gt4&patient.gender=male",
+      "prompt_text": "I need to identify my complete prostate cancer patient population for a quality improvement initiative on ADT adherence and PSA surveillance. From clinical experience, PCa patients are documented in different ways: most have a formal prostate cancer diagnosis (often stage-specific), most are on ADT or anti-androgens (leuprolide, bicalutamide, enzalutamide, abiraterone, degarelix), most have undergone biopsy, and many have elevated PSA.\n\nPlease run multiple FHIR queries to capture the full population:\n1. Patients with any prostate cancer diagnosis\n2. Patients prescribed ADT/anti-androgens (leuprolide, bicalutamide, enzalutamide, abiraterone, degarelix)\n3. Patients who have undergone prostate biopsy\n4. Patients with elevated PSA (>4 ng/mL)\n\nFor each query, return the matching resources. I want the union of all patients found. Note: this is a male-only population."
+     },
+     "3-expert": {
+      "precision": 0.9979,
+      "recall": 0.7252,
+      "f1": 0.84,
+      "passed": true,
+      "expected_count": 4487,
+      "actual_count": 3261,
+      "elapsed_sec": 232.8,
+      "queries_generated": 4,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-9-cm|185,http://hl7.org/fhir/sid/icd-9-cm|233.4&patient.gender=male",
+      "additional_query_urls": [
+       "MedicationRequest?code:text=leuprolide,bicalutamide,enzalutamide,abiraterone,degarelix&patient.gender=male",
+       "Procedure?code=http://hl7.org/fhir/sid/icd-9-cm|60.11,http://hl7.org/fhir/sid/icd-9-cm|60.12&patient.gender=male",
+       "Observation?code=http://loinc.org|2857-1&value-quantity=gt4&patient.gender=male"
+      ],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-9-cm|185,http://hl7.org/fhir/sid/icd-9-cm|233.4&patient.gender=male\nMedicationRequest?code:text=leuprolide,bicalutamide,enzalutamide,abiraterone,degarelix&patient.gender=male\nProcedure?code=http://hl7.org/fhir/sid/icd-9-cm|60.11,http://hl7.org/fhir/sid/icd-9-cm|60.12&patient.gender=male\nObservation?code=http://loinc.org|2857-1&value-quantity=gt4&patient.gender=male",
+      "prompt_text": "I need to identify my complete prostate cancer patient population for a quality improvement initiative on ADT adherence and PSA surveillance. From clinical experience, PCa patients are documented in different ways: most have a formal prostate cancer diagnosis (often stage-specific), most are on ADT or anti-androgens (leuprolide, bicalutamide, enzalutamide, abiraterone, degarelix), most have undergone biopsy, and many have elevated PSA.\n\nPlease run multiple FHIR queries to capture the full population:\n1. Patients with any prostate cancer diagnosis\n2. Patients prescribed ADT/anti-androgens (leuprolide, bicalutamide, enzalutamide, abiraterone, degarelix)\n3. Patients who have undergone prostate biopsy\n4. Patients with elevated PSA (>4 ng/mL)\n\nFor each query, return the matching resources. I want the union of all patients found. Note: this is a male-only population."
+     }
+    },
     "copilot:claude-sonnet-4.6": {
      "1-naive": {
       "precision": 1.0,
@@ -1132,6 +1296,134 @@
       "primary_query_url": "Condition?code=http://snomed.info/sct|399068003,http://snomed.info/sct|93974005,http://snomed.info/sct|94503003,http://snomed.info/sct|126906006,http://snomed.info/sct|369485004",
       "additional_query_urls": [],
       "raw_response": "Condition?code=http://snomed.info/sct|399068003,http://snomed.info/sct|93974005,http://snomed.info/sct|94503003,http://snomed.info/sct|126906006,http://snomed.info/sct|369485004",
+      "prompt_text": "I need to identify all prostate cancer patients. PCa is documented under multiple SNOMED codes: Malignant neoplasm of prostate (399068003) is the parent concept, with stage-specific Primary malignant neoplasm of prostate (93974005), Metastatic malignant neoplasm to prostate (94503003), Neoplasm of prostate (126906006), and Malignant tumor involving prostate by direct extension from bladder (369485004). Search Condition resources for all five codes. Note this phenotype is male-only \u2014 female patients should not appear in expected results."
+     }
+    },
+    "copilot:claude-opus-4.7+mimic": {
+     "1-naive": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 1925,
+      "actual_count": 0,
+      "elapsed_sec": 7.6,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|399068003",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|399068003",
+      "prompt_text": "Find all patients with prostate cancer."
+     },
+     "1-broad": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 1925,
+      "actual_count": 0,
+      "elapsed_sec": 8.3,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|399068003,http://snomed.info/sct|314994000,http://snomed.info/sct|94574000,http://snomed.info/sct|126906006",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|399068003,http://snomed.info/sct|314994000,http://snomed.info/sct|94574000,http://snomed.info/sct|126906006",
+      "prompt_text": "Find all patients diagnosed with prostate cancer \u2014 including the parent malignant neoplasm of prostate concept, primary malignant neoplasm of prostate, metastatic malignant neoplasm to prostate, and broader prostate neoplasms."
+     },
+     "1-expert": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 1925,
+      "actual_count": 0,
+      "elapsed_sec": 8.0,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|399068003,http://snomed.info/sct|93974005,http://snomed.info/sct|94503003,http://snomed.info/sct|126906006,http://snomed.info/sct|369485004&subject:Patient.gender=male",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|399068003,http://snomed.info/sct|93974005,http://snomed.info/sct|94503003,http://snomed.info/sct|126906006,http://snomed.info/sct|369485004&subject:Patient.gender=male",
+      "prompt_text": "I need to identify all prostate cancer patients. PCa is documented under multiple SNOMED codes: Malignant neoplasm of prostate (399068003) is the parent concept, with stage-specific Primary malignant neoplasm of prostate (93974005), Metastatic malignant neoplasm to prostate (94503003), Neoplasm of prostate (126906006), and Malignant tumor involving prostate by direct extension from bladder (369485004). Search Condition resources for all five codes. Note this phenotype is male-only \u2014 female patients should not appear in expected results."
+     },
+     "2-naive": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 1925,
+      "actual_count": 1925,
+      "elapsed_sec": 24.6,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-9-cm|185,http://hl7.org/fhir/sid/icd-10-cm|C61",
+      "additional_query_urls": [],
+      "raw_response": "FINAL ANSWER:\n\nCondition?code=http://hl7.org/fhir/sid/icd-9-cm|185,http://hl7.org/fhir/sid/icd-10-cm|C61",
+      "prompt_text": "Find all patients with prostate cancer."
+     },
+     "2-broad": {
+      "precision": 0.871,
+      "recall": 1.0,
+      "f1": 0.9311,
+      "passed": true,
+      "expected_count": 1925,
+      "actual_count": 2210,
+      "elapsed_sec": 25.5,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-9-cm|185,http://hl7.org/fhir/sid/icd-9-cm|198.82,http://hl7.org/fhir/sid/icd-9-cm|233.4,http://hl7.org/fhir/sid/icd-9-cm|236.5,http://hl7.org/fhir/sid/icd-10-cm|C61,http://hl7.org/fhir/sid/icd-10-cm|C79.82,http://hl7.org/fhir/sid/icd-10-cm|D07.5,http://hl7.org/fhir/sid/icd-10-cm|D40.0",
+      "additional_query_urls": [],
+      "raw_response": "FINAL ANSWER:\n\nCondition?code=http://hl7.org/fhir/sid/icd-9-cm|185,http://hl7.org/fhir/sid/icd-9-cm|198.82,http://hl7.org/fhir/sid/icd-9-cm|233.4,http://hl7.org/fhir/sid/icd-9-cm|236.5,http://hl7.org/fhir/sid/icd-10-cm|C61,http://hl7.org/fhir/sid/icd-10-cm|C79.82,http://hl7.org/fhir/sid/icd-10-cm|D07.5,http://hl7.org/fhir/sid/icd-10-cm|D40.0",
+      "prompt_text": "Find all patients diagnosed with prostate cancer \u2014 including the parent malignant neoplasm of prostate concept, primary malignant neoplasm of prostate, metastatic malignant neoplasm to prostate, and broader prostate neoplasms."
+     },
+     "2-expert": {
+      "precision": 0.9984,
+      "recall": 1.0,
+      "f1": 0.9992,
+      "passed": true,
+      "expected_count": 1925,
+      "actual_count": 1928,
+      "elapsed_sec": 24.8,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-9-cm|185,http://hl7.org/fhir/sid/icd-9-cm|233.4,http://hl7.org/fhir/sid/icd-10-cm|C61",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-9-cm|185,http://hl7.org/fhir/sid/icd-9-cm|233.4,http://hl7.org/fhir/sid/icd-10-cm|C61",
+      "prompt_text": "I need to identify all prostate cancer patients. PCa is documented under multiple SNOMED codes: Malignant neoplasm of prostate (399068003) is the parent concept, with stage-specific Primary malignant neoplasm of prostate (93974005), Metastatic malignant neoplasm to prostate (94503003), Neoplasm of prostate (126906006), and Malignant tumor involving prostate by direct extension from bladder (369485004). Search Condition resources for all five codes. Note this phenotype is male-only \u2014 female patients should not appear in expected results."
+     },
+     "3-naive": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 1925,
+      "actual_count": 1925,
+      "elapsed_sec": 23.2,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-9-cm|185,http://hl7.org/fhir/sid/icd-10-cm|C61",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-9-cm|185,http://hl7.org/fhir/sid/icd-10-cm|C61",
+      "prompt_text": "Find all patients with prostate cancer."
+     },
+     "3-broad": {
+      "precision": 0.9197,
+      "recall": 1.0,
+      "f1": 0.9582,
+      "passed": true,
+      "expected_count": 1925,
+      "actual_count": 2093,
+      "elapsed_sec": 27.8,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-9-cm|185,http://hl7.org/fhir/sid/icd-9-cm|233.4,http://hl7.org/fhir/sid/icd-9-cm|236.5,http://hl7.org/fhir/sid/icd-9-cm|222.2,http://hl7.org/fhir/sid/icd-9-cm|198.82,http://hl7.org/fhir/sid/icd-10-cm|C61,http://hl7.org/fhir/sid/icd-10-cm|D07.5,http://hl7.org/fhir/sid/icd-10-cm|D29.1,http://hl7.org/fhir/sid/icd-10-cm|D40.0",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-9-cm|185,http://hl7.org/fhir/sid/icd-9-cm|233.4,http://hl7.org/fhir/sid/icd-9-cm|236.5,http://hl7.org/fhir/sid/icd-9-cm|222.2,http://hl7.org/fhir/sid/icd-9-cm|198.82,http://hl7.org/fhir/sid/icd-10-cm|C61,http://hl7.org/fhir/sid/icd-10-cm|D07.5,http://hl7.org/fhir/sid/icd-10-cm|D29.1,http://hl7.org/fhir/sid/icd-10-cm|D40.0",
+      "prompt_text": "Find all patients diagnosed with prostate cancer \u2014 including the parent malignant neoplasm of prostate concept, primary malignant neoplasm of prostate, metastatic malignant neoplasm to prostate, and broader prostate neoplasms."
+     },
+     "3-expert": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 1925,
+      "actual_count": 1925,
+      "elapsed_sec": 31.2,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-9-cm|185,http://hl7.org/fhir/sid/icd-10-cm|C61&patient.gender=male",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-9-cm|185,http://hl7.org/fhir/sid/icd-10-cm|C61&patient.gender=male",
       "prompt_text": "I need to identify all prostate cancer patients. PCa is documented under multiple SNOMED codes: Malignant neoplasm of prostate (399068003) is the parent concept, with stage-specific Primary malignant neoplasm of prostate (93974005), Metastatic malignant neoplasm to prostate (94503003), Neoplasm of prostate (126906006), and Malignant tumor involving prostate by direct extension from bladder (369485004). Search Condition resources for all five codes. Note this phenotype is male-only \u2014 female patients should not appear in expected results."
      }
     },
@@ -2573,6 +2865,154 @@
       "expected_count": 38,
       "actual_count": 38,
       "elapsed_sec": 10.6,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|42375,http://www.nlm.nih.gov/research/umls/rxnorm|83008,http://www.nlm.nih.gov/research/umls/rxnorm|1307298,http://www.nlm.nih.gov/research/umls/rxnorm|1100072,http://www.nlm.nih.gov/research/umls/rxnorm|475230",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|42375,http://www.nlm.nih.gov/research/umls/rxnorm|83008,http://www.nlm.nih.gov/research/umls/rxnorm|1307298,http://www.nlm.nih.gov/research/umls/rxnorm|1100072,http://www.nlm.nih.gov/research/umls/rxnorm|475230",
+      "prompt_text": "I need MedicationRequest resources for any prostate cancer hormonal therapy. Use these RxNorm ingredient codes: 42375 (leuprolide, GnRH agonist), 83008 (bicalutamide, anti-androgen), 1307298 (enzalutamide), 1100072 (abiraterone), 475230 (degarelix, GnRH antagonist). Combine in a single comma-separated code search. These drugs are essentially PCa-specific \u2014 minimal cross-indication."
+     }
+    },
+    "copilot:claude-opus-4.7+mimic": {
+     "1-naive": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 253,
+      "actual_count": 0,
+      "elapsed_sec": 10.9,
+      "queries_generated": 2,
+      "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|203160,310866,321208,1100076,1998148,1547225,4508,72302,1727442,1985537",
+      "additional_query_urls": [
+       "Patient?_has:MedicationRequest:patient:code=http://www.nlm.nih.gov/research/umls/rxnorm|203160,310866,321208,1100076,1998148,1547225,4508,72302,1727442,1985537"
+      ],
+      "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|203160,310866,321208,1100076,1998148,1547225,4508,72302,1727442,1985537\nPatient?_has:MedicationRequest:patient:code=http://www.nlm.nih.gov/research/umls/rxnorm|203160,310866,321208,1100076,1998148,1547225,4508,72302,1727442,1985537",
+      "prompt_text": "Find patients on prostate cancer drugs."
+     },
+     "1-broad": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 253,
+      "actual_count": 0,
+      "elapsed_sec": 9.6,
+      "queries_generated": 5,
+      "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6373",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|475230",
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1546",
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1307423",
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1100076"
+      ],
+      "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6373\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|475230\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1546\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1307423\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1100076",
+      "prompt_text": "Find patients prescribed androgen deprivation therapy or anti-androgens for prostate cancer \u2014 GnRH agonists (leuprolide), GnRH antagonists (degarelix), first-generation anti-androgens (bicalutamide), and next-generation anti-androgens (enzalutamide, abiraterone)."
+     },
+     "1-expert": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 253,
+      "actual_count": 0,
+      "elapsed_sec": 8.4,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|42375,http://www.nlm.nih.gov/research/umls/rxnorm|83008,http://www.nlm.nih.gov/research/umls/rxnorm|1307298,http://www.nlm.nih.gov/research/umls/rxnorm|1100072,http://www.nlm.nih.gov/research/umls/rxnorm|475230",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|42375,http://www.nlm.nih.gov/research/umls/rxnorm|83008,http://www.nlm.nih.gov/research/umls/rxnorm|1307298,http://www.nlm.nih.gov/research/umls/rxnorm|1100072,http://www.nlm.nih.gov/research/umls/rxnorm|475230",
+      "prompt_text": "I need MedicationRequest resources for any prostate cancer hormonal therapy. Use these RxNorm ingredient codes: 42375 (leuprolide, GnRH agonist), 83008 (bicalutamide, anti-androgen), 1307298 (enzalutamide), 1100072 (abiraterone), 475230 (degarelix, GnRH antagonist). Combine in a single comma-separated code search. These drugs are essentially PCa-specific \u2014 minimal cross-indication."
+     },
+     "2-naive": {
+      "precision": 0.9806,
+      "recall": 1.0,
+      "f1": 0.9902,
+      "passed": true,
+      "expected_count": 253,
+      "actual_count": 258,
+      "elapsed_sec": 62.6,
+      "queries_generated": 8,
+      "primary_query_url": "MedicationRequest?medication.code:text=leuprolide",
+      "additional_query_urls": [
+       "MedicationRequest?medication.code:text=bicalutamide",
+       "MedicationRequest?medication.code:text=enzalutamide",
+       "MedicationRequest?medication.code:text=goserelin",
+       "MedicationRequest?medication.code:text=flutamide",
+       "MedicationRequest?medication.code:text=degarelix",
+       "MedicationRequest?medication.code:text=abiraterone",
+       "MedicationRequest?medication.code:text=triptorelin"
+      ],
+      "raw_response": "FINAL ANSWER:\n\nMedicationRequest?medication.code:text=leuprolide\nMedicationRequest?medication.code:text=bicalutamide\nMedicationRequest?medication.code:text=enzalutamide\nMedicationRequest?medication.code:text=goserelin\nMedicationRequest?medication.code:text=flutamide\nMedicationRequest?medication.code:text=degarelix\nMedicationRequest?medication.code:text=abiraterone\nMedicationRequest?medication.code:text=triptorelin",
+      "prompt_text": "Find patients on prostate cancer drugs."
+     },
+     "2-broad": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 253,
+      "actual_count": 253,
+      "elapsed_sec": 64.0,
+      "queries_generated": 5,
+      "primary_query_url": "MedicationRequest?medication.code:text=leuprolide",
+      "additional_query_urls": [
+       "MedicationRequest?medication.code:text=bicalutamide",
+       "MedicationRequest?medication.code:text=enzalutamide",
+       "MedicationRequest?medication.code:text=abiraterone",
+       "MedicationRequest?medication.code:text=degarelix"
+      ],
+      "raw_response": "MedicationRequest?medication.code:text=leuprolide\nMedicationRequest?medication.code:text=bicalutamide\nMedicationRequest?medication.code:text=enzalutamide\nMedicationRequest?medication.code:text=abiraterone\nMedicationRequest?medication.code:text=degarelix",
+      "prompt_text": "Find patients prescribed androgen deprivation therapy or anti-androgens for prostate cancer \u2014 GnRH agonists (leuprolide), GnRH antagonists (degarelix), first-generation anti-androgens (bicalutamide), and next-generation anti-androgens (enzalutamide, abiraterone)."
+     },
+     "2-expert": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 253,
+      "actual_count": 0,
+      "elapsed_sec": 21.7,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|42375,http://www.nlm.nih.gov/research/umls/rxnorm|83008,http://www.nlm.nih.gov/research/umls/rxnorm|1307298,http://www.nlm.nih.gov/research/umls/rxnorm|1100072,http://www.nlm.nih.gov/research/umls/rxnorm|475230",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|42375,http://www.nlm.nih.gov/research/umls/rxnorm|83008,http://www.nlm.nih.gov/research/umls/rxnorm|1307298,http://www.nlm.nih.gov/research/umls/rxnorm|1100072,http://www.nlm.nih.gov/research/umls/rxnorm|475230",
+      "prompt_text": "I need MedicationRequest resources for any prostate cancer hormonal therapy. Use these RxNorm ingredient codes: 42375 (leuprolide, GnRH agonist), 83008 (bicalutamide, anti-androgen), 1307298 (enzalutamide), 1100072 (abiraterone), 475230 (degarelix, GnRH antagonist). Combine in a single comma-separated code search. These drugs are essentially PCa-specific \u2014 minimal cross-indication."
+     },
+     "3-naive": {
+      "precision": 0.9806,
+      "recall": 1.0,
+      "f1": 0.9902,
+      "passed": true,
+      "expected_count": 253,
+      "actual_count": 258,
+      "elapsed_sec": 59.3,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|42375,http://www.nlm.nih.gov/research/umls/rxnorm|83008,http://www.nlm.nih.gov/research/umls/rxnorm|1307298,http://www.nlm.nih.gov/research/umls/rxnorm|50610,http://www.nlm.nih.gov/research/umls/rxnorm|475230,http://www.nlm.nih.gov/research/umls/rxnorm|4508",
+      "additional_query_urls": [],
+      "raw_response": "Chained search works. Final answer:\n\nMedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|42375,http://www.nlm.nih.gov/research/umls/rxnorm|83008,http://www.nlm.nih.gov/research/umls/rxnorm|1307298,http://www.nlm.nih.gov/research/umls/rxnorm|50610,http://www.nlm.nih.gov/research/umls/rxnorm|475230,http://www.nlm.nih.gov/research/umls/rxnorm|4508",
+      "prompt_text": "Find patients on prostate cancer drugs."
+     },
+     "3-broad": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 253,
+      "actual_count": 253,
+      "elapsed_sec": 60.8,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|42375,83008,1307298,475230",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|42375,83008,1307298,475230",
+      "prompt_text": "Find patients prescribed androgen deprivation therapy or anti-androgens for prostate cancer \u2014 GnRH agonists (leuprolide), GnRH antagonists (degarelix), first-generation anti-androgens (bicalutamide), and next-generation anti-androgens (enzalutamide, abiraterone)."
+     },
+     "3-expert": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 253,
+      "actual_count": 0,
+      "elapsed_sec": 21.1,
       "queries_generated": 1,
       "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|42375,http://www.nlm.nih.gov/research/umls/rxnorm|83008,http://www.nlm.nih.gov/research/umls/rxnorm|1307298,http://www.nlm.nih.gov/research/umls/rxnorm|1100072,http://www.nlm.nih.gov/research/umls/rxnorm|475230",
       "additional_query_urls": [],

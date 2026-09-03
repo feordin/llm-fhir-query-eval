@@ -1050,6 +1050,143 @@
       "prompt_text": "I need a comprehensive urinary incontinence cohort by combining diagnosis and medication evidence. Run two queries and union the patient sets: first, search Condition resources for the urinary incontinence diagnosis in SNOMED CT; second, search MedicationRequest resources for the three antimuscarinic agents used to treat overactive bladder and urge incontinence \u2014 oxybutynin, tolterodine, and solifenacin \u2014 all coded in RxNorm. The medication path captures patients with undiagnosed or under-coded overactive bladder who are nonetheless being treated pharmacologically; all three drugs must be included to achieve full recall."
      }
     },
+    "copilot:claude-opus-4.7+mimic": {
+     "1-naive": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 4512,
+      "actual_count": 0,
+      "elapsed_sec": 9.8,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|165232002,48626005,87557004,7367005,236648008,236647003",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|165232002,48626005,87557004,7367005,236648008,236647003",
+      "prompt_text": "Find all UI patients."
+     },
+     "1-broad": {
+      "precision": 0.5521,
+      "recall": 0.0552,
+      "f1": 0.1003,
+      "passed": false,
+      "expected_count": 4512,
+      "actual_count": 451,
+      "elapsed_sec": 12.7,
+      "queries_generated": 4,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|165232002,http://hl7.org/fhir/sid/icd-10-cm|N39.3,http://hl7.org/fhir/sid/icd-10-cm|N39.41,http://hl7.org/fhir/sid/icd-10-cm|N39.46",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|7715",
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|38400",
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|351290"
+      ],
+      "raw_response": "Condition?code=http://snomed.info/sct|165232002,http://hl7.org/fhir/sid/icd-10-cm|N39.3,http://hl7.org/fhir/sid/icd-10-cm|N39.41,http://hl7.org/fhir/sid/icd-10-cm|N39.46\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|7715\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|38400\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|351290",
+      "prompt_text": "Find all urinary incontinence patients \u2014 by diagnosis or by antimuscarinic medication prescriptions (oxybutynin, tolterodine, solifenacin). Run multiple queries and union the patient sets."
+     },
+     "1-expert": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 4512,
+      "actual_count": 0,
+      "elapsed_sec": 9.0,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|165232002",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|7715,http://www.nlm.nih.gov/research/umls/rxnorm|38400,http://www.nlm.nih.gov/research/umls/rxnorm|351247"
+      ],
+      "raw_response": "Condition?code=http://snomed.info/sct|165232002\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|7715,http://www.nlm.nih.gov/research/umls/rxnorm|38400,http://www.nlm.nih.gov/research/umls/rxnorm|351247",
+      "prompt_text": "I need a comprehensive urinary incontinence cohort by combining diagnosis and medication evidence. Run two queries and union the patient sets: first, search Condition resources for the urinary incontinence diagnosis in SNOMED CT; second, search MedicationRequest resources for the three antimuscarinic agents used to treat overactive bladder and urge incontinence \u2014 oxybutynin, tolterodine, and solifenacin \u2014 all coded in RxNorm. The medication path captures patients with undiagnosed or under-coded overactive bladder who are nonetheless being treated pharmacologically; all three drugs must be included to achieve full recall."
+     },
+     "2-naive": {
+      "precision": 0.9244,
+      "recall": 1.0,
+      "f1": 0.9607,
+      "passed": true,
+      "expected_count": 4512,
+      "actual_count": 4881,
+      "elapsed_sec": 53.2,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|N39.3,http://hl7.org/fhir/sid/icd-10-cm|N39.4,http://hl7.org/fhir/sid/icd-10-cm|R32,http://hl7.org/fhir/sid/icd-10-cm|R39.81",
+      "additional_query_urls": [
+       "Condition?code=http://hl7.org/fhir/sid/icd-9-cm|788.30,http://hl7.org/fhir/sid/icd-9-cm|788.31,http://hl7.org/fhir/sid/icd-9-cm|788.32,http://hl7.org/fhir/sid/icd-9-cm|788.33,http://hl7.org/fhir/sid/icd-9-cm|788.34,http://hl7.org/fhir/sid/icd-9-cm|788.35,http://hl7.org/fhir/sid/icd-9-cm|788.36,http://hl7.org/fhir/sid/icd-9-cm|788.37,http://hl7.org/fhir/sid/icd-9-cm|788.38,http://hl7.org/fhir/sid/icd-9-cm|788.39,http://hl7.org/fhir/sid/icd-9-cm|625.6,http://hl7.org/fhir/sid/icd-9-cm|307.6"
+      ],
+      "raw_response": "FINAL ANSWER:\n\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|N39.3,http://hl7.org/fhir/sid/icd-10-cm|N39.4,http://hl7.org/fhir/sid/icd-10-cm|R32,http://hl7.org/fhir/sid/icd-10-cm|R39.81\nCondition?code=http://hl7.org/fhir/sid/icd-9-cm|788.30,http://hl7.org/fhir/sid/icd-9-cm|788.31,http://hl7.org/fhir/sid/icd-9-cm|788.32,http://hl7.org/fhir/sid/icd-9-cm|788.33,http://hl7.org/fhir/sid/icd-9-cm|788.34,http://hl7.org/fhir/sid/icd-9-cm|788.35,http://hl7.org/fhir/sid/icd-9-cm|788.36,http://hl7.org/fhir/sid/icd-9-cm|788.37,http://hl7.org/fhir/sid/icd-9-cm|788.38,http://hl7.org/fhir/sid/icd-9-cm|788.39,http://hl7.org/fhir/sid/icd-9-cm|625.6,http://hl7.org/fhir/sid/icd-9-cm|307.6",
+      "prompt_text": "Find all UI patients."
+     },
+     "2-broad": {
+      "precision": 0.9244,
+      "recall": 1.0,
+      "f1": 0.9607,
+      "passed": true,
+      "expected_count": 4512,
+      "actual_count": 4881,
+      "elapsed_sec": 141.7,
+      "queries_generated": 5,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|N39.3,http://hl7.org/fhir/sid/icd-10-cm|N39.4,http://hl7.org/fhir/sid/icd-10-cm|R32,http://hl7.org/fhir/sid/icd-10-cm|R39.81",
+      "additional_query_urls": [
+       "Condition?code=http://hl7.org/fhir/sid/icd-9-cm|788.30,http://hl7.org/fhir/sid/icd-9-cm|788.31,http://hl7.org/fhir/sid/icd-9-cm|788.32,http://hl7.org/fhir/sid/icd-9-cm|788.33,http://hl7.org/fhir/sid/icd-9-cm|788.34,http://hl7.org/fhir/sid/icd-9-cm|788.35,http://hl7.org/fhir/sid/icd-9-cm|788.36,http://hl7.org/fhir/sid/icd-9-cm|788.37,http://hl7.org/fhir/sid/icd-9-cm|788.38,http://hl7.org/fhir/sid/icd-9-cm|788.39,http://hl7.org/fhir/sid/icd-9-cm|625.6",
+       "MedicationStatement?code:text=oxybutynin",
+       "MedicationStatement?code:text=tolterodine",
+       "MedicationStatement?code:text=solifenacin"
+      ],
+      "raw_response": "FINAL ANSWER:\n\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|N39.3,http://hl7.org/fhir/sid/icd-10-cm|N39.4,http://hl7.org/fhir/sid/icd-10-cm|R32,http://hl7.org/fhir/sid/icd-10-cm|R39.81\nCondition?code=http://hl7.org/fhir/sid/icd-9-cm|788.30,http://hl7.org/fhir/sid/icd-9-cm|788.31,http://hl7.org/fhir/sid/icd-9-cm|788.32,http://hl7.org/fhir/sid/icd-9-cm|788.33,http://hl7.org/fhir/sid/icd-9-cm|788.34,http://hl7.org/fhir/sid/icd-9-cm|788.35,http://hl7.org/fhir/sid/icd-9-cm|788.36,http://hl7.org/fhir/sid/icd-9-cm|788.37,http://hl7.org/fhir/sid/icd-9-cm|788.38,http://hl7.org/fhir/sid/icd-9-cm|788.39,http://hl7.org/fhir/sid/icd-9-cm|625.6\nMedicationStatement?code:text=oxybutynin\nMedicationStatement?code:text=tolterodine\nMedicationStatement?code:text=solifenacin",
+      "prompt_text": "Find all urinary incontinence patients \u2014 by diagnosis or by antimuscarinic medication prescriptions (oxybutynin, tolterodine, solifenacin). Run multiple queries and union the patient sets."
+     },
+     "2-expert": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 4512,
+      "actual_count": 0,
+      "elapsed_sec": 86.2,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|165232002",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|7597,http://www.nlm.nih.gov/research/umls/rxnorm|38316,http://www.nlm.nih.gov/research/umls/rxnorm|253182"
+      ],
+      "raw_response": "Condition?code=http://snomed.info/sct|165232002\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|7597,http://www.nlm.nih.gov/research/umls/rxnorm|38316,http://www.nlm.nih.gov/research/umls/rxnorm|253182",
+      "prompt_text": "I need a comprehensive urinary incontinence cohort by combining diagnosis and medication evidence. Run two queries and union the patient sets: first, search Condition resources for the urinary incontinence diagnosis in SNOMED CT; second, search MedicationRequest resources for the three antimuscarinic agents used to treat overactive bladder and urge incontinence \u2014 oxybutynin, tolterodine, and solifenacin \u2014 all coded in RxNorm. The medication path captures patients with undiagnosed or under-coded overactive bladder who are nonetheless being treated pharmacologically; all three drugs must be included to achieve full recall."
+     },
+     "3-naive": {
+      "elapsed_sec": 9.2,
+      "error": "Could not parse FHIR query from LLM response: Could you clarify what \"UI\" stands for? Common possibilities include:\n\n- **Urinary Incontinence**\n- **Urinary Infection** (UTI is more standard)\n- **Uveit"
+     },
+     "3-broad": {
+      "precision": 0.7903,
+      "recall": 1.0,
+      "f1": 0.8829,
+      "passed": true,
+      "expected_count": 4512,
+      "actual_count": 5709,
+      "elapsed_sec": 222.9,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|N39.3,http://hl7.org/fhir/sid/icd-10-cm|N39.41,http://hl7.org/fhir/sid/icd-10-cm|N39.42,http://hl7.org/fhir/sid/icd-10-cm|N39.43,http://hl7.org/fhir/sid/icd-10-cm|N39.44,http://hl7.org/fhir/sid/icd-10-cm|N39.45,http://hl7.org/fhir/sid/icd-10-cm|N39.46,http://hl7.org/fhir/sid/icd-10-cm|N39.490,http://hl7.org/fhir/sid/icd-10-cm|N39.491,http://hl7.org/fhir/sid/icd-10-cm|N39.498,http://hl7.org/fhir/sid/icd-10-cm|R32,http://hl7.org/fhir/sid/icd-10-cm|N32.81,http://hl7.org/fhir/sid/icd-9-cm|788.30,http://hl7.org/fhir/sid/icd-9-cm|788.31,http://hl7.org/fhir/sid/icd-9-cm|788.32,http://hl7.org/fhir/sid/icd-9-cm|788.33,http://hl7.org/fhir/sid/icd-9-cm|788.34,http://hl7.org/fhir/sid/icd-9-cm|788.35,http://hl7.org/fhir/sid/icd-9-cm|788.36,http://hl7.org/fhir/sid/icd-9-cm|788.37,http://hl7.org/fhir/sid/icd-9-cm|788.38,http://hl7.org/fhir/sid/icd-9-cm|788.39,http://hl7.org/fhir/sid/icd-9-cm|625.6,http://hl7.org/fhir/sid/icd-9-cm|596.51",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|7409,http://www.nlm.nih.gov/research/umls/rxnorm|37798,http://www.nlm.nih.gov/research/umls/rxnorm|360155"
+      ],
+      "raw_response": "Based on my investigation, the server's Condition resources use ICD-9 and ICD-10, but Medication/MedicationRequest resources have no discoverable codings (verified with multiple systems including RxNorm). The strongest evidence for the phenotype comes from the diagnosis query. I'll emit the union queries using standard code systems as intended.\n\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|N39.3,http://hl7.org/fhir/sid/icd-10-cm|N39.41,http://hl7.org/fhir/sid/icd-10-cm|N39.42,http://hl7.org/fhir/sid/icd-10-cm|N39.43,http://hl7.org/fhir/sid/icd-10-cm|N39.44,http://hl7.org/fhir/sid/icd-10-cm|N39.45,http://hl7.org/fhir/sid/icd-10-cm|N39.46,http://hl7.org/fhir/sid/icd-10-cm|N39.490,http://hl7.org/fhir/sid/icd-10-cm|N39.491,http://hl7.org/fhir/sid/icd-10-cm|N39.498,http://hl7.org/fhir/sid/icd-10-cm|R32,http://hl7.org/fhir/sid/icd-10-cm|N32.81,http://hl7.org/fhir/sid/icd-9-cm|788.30,http://hl7.org/fhir/sid/icd-9-cm|788.31,http://hl7.org/fhir/sid/icd-9-cm|788.32,http://hl7.org/fhir/sid/icd-9-cm|788.33,http://hl7.org/fhir/sid/icd-9-cm|788.34,http://hl7.org/fhir/sid/icd-9-cm|788.35,http://hl7.org/fhir/sid/icd-9-cm|788.36,http://hl7.org/fhir/sid/icd-9-cm|788.37,http://hl7.org/fhir/sid/icd-9-cm|788.38,http://hl7.org/fhir/sid/icd-9-cm|788.39,http://hl7.org/fhir/sid/icd-9-cm|625.6,http://hl7.org/fhir/sid/icd-9-cm|596.51\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|7409,http://www.nlm.nih.gov/research/umls/rxnorm|37798,http://www.nlm.nih.gov/research/umls/rxnorm|360155",
+      "prompt_text": "Find all urinary incontinence patients \u2014 by diagnosis or by antimuscarinic medication prescriptions (oxybutynin, tolterodine, solifenacin). Run multiple queries and union the patient sets."
+     },
+     "3-expert": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 4512,
+      "actual_count": 0,
+      "elapsed_sec": 40.5,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|165232002",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|7052,http://www.nlm.nih.gov/research/umls/rxnorm|39789,http://www.nlm.nih.gov/research/umls/rxnorm|232906"
+      ],
+      "raw_response": "Condition?code=http://snomed.info/sct|165232002\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|7052,http://www.nlm.nih.gov/research/umls/rxnorm|39789,http://www.nlm.nih.gov/research/umls/rxnorm|232906",
+      "prompt_text": "I need a comprehensive urinary incontinence cohort by combining diagnosis and medication evidence. Run two queries and union the patient sets: first, search Condition resources for the urinary incontinence diagnosis in SNOMED CT; second, search MedicationRequest resources for the three antimuscarinic agents used to treat overactive bladder and urge incontinence \u2014 oxybutynin, tolterodine, and solifenacin \u2014 all coded in RxNorm. The medication path captures patients with undiagnosed or under-coded overactive bladder who are nonetheless being treated pharmacologically; all three drugs must be included to achieve full recall."
+     }
+    },
     "copilot:claude-sonnet-4.6": {
      "1-naive": {
       "precision": 1.0,
@@ -1823,6 +1960,134 @@
       "prompt_text": "I need to identify patients with a documented urinary incontinence diagnosis. Search Condition resources for the urinary incontinence concept in SNOMED CT. This is a direct diagnosis-code query and the first non-cancer genitourinary phenotype in the suite."
      }
     },
+    "copilot:claude-opus-4.7+mimic": {
+     "1-naive": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 4512,
+      "actual_count": 0,
+      "elapsed_sec": 7.5,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|165232002",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|165232002",
+      "prompt_text": "Find patients with urinary incontinence."
+     },
+     "1-broad": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 4512,
+      "actual_count": 0,
+      "elapsed_sec": 7.4,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|165232002",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|165232002",
+      "prompt_text": "Find patients diagnosed with urinary incontinence \u2014 involuntary leakage of urine, common in older adults."
+     },
+     "1-expert": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 4512,
+      "actual_count": 0,
+      "elapsed_sec": 7.4,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|165232002",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|165232002",
+      "prompt_text": "I need to identify patients with a documented urinary incontinence diagnosis. Search Condition resources for the urinary incontinence concept in SNOMED CT. This is a direct diagnosis-code query and the first non-cancer genitourinary phenotype in the suite."
+     },
+     "2-naive": {
+      "precision": 0.8429,
+      "recall": 1.0,
+      "f1": 0.9147,
+      "passed": true,
+      "expected_count": 4512,
+      "actual_count": 5353,
+      "elapsed_sec": 60.7,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|N39.3,http://hl7.org/fhir/sid/icd-10-cm|N39.4,http://hl7.org/fhir/sid/icd-10-cm|N39.41,http://hl7.org/fhir/sid/icd-10-cm|N39.42,http://hl7.org/fhir/sid/icd-10-cm|N39.43,http://hl7.org/fhir/sid/icd-10-cm|N39.44,http://hl7.org/fhir/sid/icd-10-cm|N39.45,http://hl7.org/fhir/sid/icd-10-cm|N39.46,http://hl7.org/fhir/sid/icd-10-cm|N39.490,http://hl7.org/fhir/sid/icd-10-cm|N39.491,http://hl7.org/fhir/sid/icd-10-cm|N39.492,http://hl7.org/fhir/sid/icd-10-cm|N39.498,http://hl7.org/fhir/sid/icd-10-cm|R32,http://hl7.org/fhir/sid/icd-10-cm|R39.81,http://hl7.org/fhir/sid/icd-9-cm|788.30,http://hl7.org/fhir/sid/icd-9-cm|788.31,http://hl7.org/fhir/sid/icd-9-cm|788.32,http://hl7.org/fhir/sid/icd-9-cm|788.33,http://hl7.org/fhir/sid/icd-9-cm|788.34,http://hl7.org/fhir/sid/icd-9-cm|788.35,http://hl7.org/fhir/sid/icd-9-cm|788.36,http://hl7.org/fhir/sid/icd-9-cm|788.37,http://hl7.org/fhir/sid/icd-9-cm|788.38,http://hl7.org/fhir/sid/icd-9-cm|788.39,http://hl7.org/fhir/sid/icd-9-cm|625.6",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|N39.3,http://hl7.org/fhir/sid/icd-10-cm|N39.4,http://hl7.org/fhir/sid/icd-10-cm|N39.41,http://hl7.org/fhir/sid/icd-10-cm|N39.42,http://hl7.org/fhir/sid/icd-10-cm|N39.43,http://hl7.org/fhir/sid/icd-10-cm|N39.44,http://hl7.org/fhir/sid/icd-10-cm|N39.45,http://hl7.org/fhir/sid/icd-10-cm|N39.46,http://hl7.org/fhir/sid/icd-10-cm|N39.490,http://hl7.org/fhir/sid/icd-10-cm|N39.491,http://hl7.org/fhir/sid/icd-10-cm|N39.492,http://hl7.org/fhir/sid/icd-10-cm|N39.498,http://hl7.org/fhir/sid/icd-10-cm|R32,http://hl7.org/fhir/sid/icd-10-cm|R39.81,http://hl7.org/fhir/sid/icd-9-cm|788.30,http://hl7.org/fhir/sid/icd-9-cm|788.31,http://hl7.org/fhir/sid/icd-9-cm|788.32,http://hl7.org/fhir/sid/icd-9-cm|788.33,http://hl7.org/fhir/sid/icd-9-cm|788.34,http://hl7.org/fhir/sid/icd-9-cm|788.35,http://hl7.org/fhir/sid/icd-9-cm|788.36,http://hl7.org/fhir/sid/icd-9-cm|788.37,http://hl7.org/fhir/sid/icd-9-cm|788.38,http://hl7.org/fhir/sid/icd-9-cm|788.39,http://hl7.org/fhir/sid/icd-9-cm|625.6",
+      "prompt_text": "Find patients with urinary incontinence."
+     },
+     "2-broad": {
+      "precision": 0.9244,
+      "recall": 1.0,
+      "f1": 0.9607,
+      "passed": true,
+      "expected_count": 4512,
+      "actual_count": 4881,
+      "elapsed_sec": 59.0,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|165232002,http://snomed.info/sct|87557004,http://snomed.info/sct|413343005,http://snomed.info/sct|397878005,http://snomed.info/sct|22220005,http://snomed.info/sct|60241006,http://snomed.info/sct|129847007,http://hl7.org/fhir/sid/icd-10-cm|N39.3,http://hl7.org/fhir/sid/icd-10-cm|N39.4,http://hl7.org/fhir/sid/icd-10-cm|R32,http://hl7.org/fhir/sid/icd-10-cm|R39.81,http://hl7.org/fhir/sid/icd-9-cm|788.30,http://hl7.org/fhir/sid/icd-9-cm|788.31,http://hl7.org/fhir/sid/icd-9-cm|788.32,http://hl7.org/fhir/sid/icd-9-cm|788.33,http://hl7.org/fhir/sid/icd-9-cm|788.34,http://hl7.org/fhir/sid/icd-9-cm|788.35,http://hl7.org/fhir/sid/icd-9-cm|788.36,http://hl7.org/fhir/sid/icd-9-cm|788.37,http://hl7.org/fhir/sid/icd-9-cm|788.38,http://hl7.org/fhir/sid/icd-9-cm|788.39,http://hl7.org/fhir/sid/icd-9-cm|625.6,http://hl7.org/fhir/sid/icd-9-cm|307.6",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|165232002,http://snomed.info/sct|87557004,http://snomed.info/sct|413343005,http://snomed.info/sct|397878005,http://snomed.info/sct|22220005,http://snomed.info/sct|60241006,http://snomed.info/sct|129847007,http://hl7.org/fhir/sid/icd-10-cm|N39.3,http://hl7.org/fhir/sid/icd-10-cm|N39.4,http://hl7.org/fhir/sid/icd-10-cm|R32,http://hl7.org/fhir/sid/icd-10-cm|R39.81,http://hl7.org/fhir/sid/icd-9-cm|788.30,http://hl7.org/fhir/sid/icd-9-cm|788.31,http://hl7.org/fhir/sid/icd-9-cm|788.32,http://hl7.org/fhir/sid/icd-9-cm|788.33,http://hl7.org/fhir/sid/icd-9-cm|788.34,http://hl7.org/fhir/sid/icd-9-cm|788.35,http://hl7.org/fhir/sid/icd-9-cm|788.36,http://hl7.org/fhir/sid/icd-9-cm|788.37,http://hl7.org/fhir/sid/icd-9-cm|788.38,http://hl7.org/fhir/sid/icd-9-cm|788.39,http://hl7.org/fhir/sid/icd-9-cm|625.6,http://hl7.org/fhir/sid/icd-9-cm|307.6",
+      "prompt_text": "Find patients diagnosed with urinary incontinence \u2014 involuntary leakage of urine, common in older adults."
+     },
+     "2-expert": {
+      "precision": 0.9978,
+      "recall": 1.0,
+      "f1": 0.9989,
+      "passed": true,
+      "expected_count": 4512,
+      "actual_count": 4522,
+      "elapsed_sec": 69.8,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|N39.3,http://hl7.org/fhir/sid/icd-10-cm|N39.4,http://hl7.org/fhir/sid/icd-10-cm|R32,http://hl7.org/fhir/sid/icd-10-cm|R39.81,http://hl7.org/fhir/sid/icd-9-cm|788.30,http://hl7.org/fhir/sid/icd-9-cm|788.31,http://hl7.org/fhir/sid/icd-9-cm|788.32,http://hl7.org/fhir/sid/icd-9-cm|788.33,http://hl7.org/fhir/sid/icd-9-cm|788.34,http://hl7.org/fhir/sid/icd-9-cm|788.35,http://hl7.org/fhir/sid/icd-9-cm|788.36,http://hl7.org/fhir/sid/icd-9-cm|788.37,http://hl7.org/fhir/sid/icd-9-cm|788.38,http://hl7.org/fhir/sid/icd-9-cm|788.39",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|N39.3,http://hl7.org/fhir/sid/icd-10-cm|N39.4,http://hl7.org/fhir/sid/icd-10-cm|R32,http://hl7.org/fhir/sid/icd-10-cm|R39.81,http://hl7.org/fhir/sid/icd-9-cm|788.30,http://hl7.org/fhir/sid/icd-9-cm|788.31,http://hl7.org/fhir/sid/icd-9-cm|788.32,http://hl7.org/fhir/sid/icd-9-cm|788.33,http://hl7.org/fhir/sid/icd-9-cm|788.34,http://hl7.org/fhir/sid/icd-9-cm|788.35,http://hl7.org/fhir/sid/icd-9-cm|788.36,http://hl7.org/fhir/sid/icd-9-cm|788.37,http://hl7.org/fhir/sid/icd-9-cm|788.38,http://hl7.org/fhir/sid/icd-9-cm|788.39",
+      "prompt_text": "I need to identify patients with a documented urinary incontinence diagnosis. Search Condition resources for the urinary incontinence concept in SNOMED CT. This is a direct diagnosis-code query and the first non-cancer genitourinary phenotype in the suite."
+     },
+     "3-naive": {
+      "precision": 0.9942,
+      "recall": 0.3777,
+      "f1": 0.5474,
+      "passed": false,
+      "expected_count": 4512,
+      "actual_count": 1714,
+      "elapsed_sec": 28.9,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|165232002,http://snomed.info/sct|87557004,http://snomed.info/sct|397878005,http://snomed.info/sct|413343005,http://snomed.info/sct|22220005,http://snomed.info/sct|60241006,http://snomed.info/sct|129847007,http://snomed.info/sct|129853007,http://snomed.info/sct|8009008,http://hl7.org/fhir/sid/icd-10-cm|N39.3,http://hl7.org/fhir/sid/icd-10-cm|N39.4,http://hl7.org/fhir/sid/icd-10-cm|R32,http://hl7.org/fhir/sid/icd-10-cm|R39.81",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|165232002,http://snomed.info/sct|87557004,http://snomed.info/sct|397878005,http://snomed.info/sct|413343005,http://snomed.info/sct|22220005,http://snomed.info/sct|60241006,http://snomed.info/sct|129847007,http://snomed.info/sct|129853007,http://snomed.info/sct|8009008,http://hl7.org/fhir/sid/icd-10-cm|N39.3,http://hl7.org/fhir/sid/icd-10-cm|N39.4,http://hl7.org/fhir/sid/icd-10-cm|R32,http://hl7.org/fhir/sid/icd-10-cm|R39.81",
+      "prompt_text": "Find patients with urinary incontinence."
+     },
+     "3-broad": {
+      "precision": 0.9942,
+      "recall": 0.3777,
+      "f1": 0.5474,
+      "passed": false,
+      "expected_count": 4512,
+      "actual_count": 1714,
+      "elapsed_sec": 30.5,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|165232002,http://snomed.info/sct|397878005,http://snomed.info/sct|413343005,http://snomed.info/sct|87557004,http://snomed.info/sct|22220005,http://snomed.info/sct|60241006,http://snomed.info/sct|444620007,http://snomed.info/sct|129847007,http://snomed.info/sct|129853007,http://hl7.org/fhir/sid/icd-10-cm|N39.3,http://hl7.org/fhir/sid/icd-10-cm|N39.4,http://hl7.org/fhir/sid/icd-10-cm|R32,http://hl7.org/fhir/sid/icd-10-cm|R39.81",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|165232002,http://snomed.info/sct|397878005,http://snomed.info/sct|413343005,http://snomed.info/sct|87557004,http://snomed.info/sct|22220005,http://snomed.info/sct|60241006,http://snomed.info/sct|444620007,http://snomed.info/sct|129847007,http://snomed.info/sct|129853007,http://hl7.org/fhir/sid/icd-10-cm|N39.3,http://hl7.org/fhir/sid/icd-10-cm|N39.4,http://hl7.org/fhir/sid/icd-10-cm|R32,http://hl7.org/fhir/sid/icd-10-cm|R39.81",
+      "prompt_text": "Find patients diagnosed with urinary incontinence \u2014 involuntary leakage of urine, common in older adults."
+     },
+     "3-expert": {
+      "precision": 0.8923,
+      "recall": 0.6589,
+      "f1": 0.758,
+      "passed": true,
+      "expected_count": 4512,
+      "actual_count": 3332,
+      "elapsed_sec": 49.2,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-9-cm|788.30,http://hl7.org/fhir/sid/icd-9-cm|788.31,http://hl7.org/fhir/sid/icd-9-cm|788.32,http://hl7.org/fhir/sid/icd-9-cm|788.33,http://hl7.org/fhir/sid/icd-9-cm|788.34,http://hl7.org/fhir/sid/icd-9-cm|788.35,http://hl7.org/fhir/sid/icd-9-cm|788.36,http://hl7.org/fhir/sid/icd-9-cm|788.37,http://hl7.org/fhir/sid/icd-9-cm|788.38,http://hl7.org/fhir/sid/icd-9-cm|788.39,http://hl7.org/fhir/sid/icd-9-cm|625.6",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-9-cm|788.30,http://hl7.org/fhir/sid/icd-9-cm|788.31,http://hl7.org/fhir/sid/icd-9-cm|788.32,http://hl7.org/fhir/sid/icd-9-cm|788.33,http://hl7.org/fhir/sid/icd-9-cm|788.34,http://hl7.org/fhir/sid/icd-9-cm|788.35,http://hl7.org/fhir/sid/icd-9-cm|788.36,http://hl7.org/fhir/sid/icd-9-cm|788.37,http://hl7.org/fhir/sid/icd-9-cm|788.38,http://hl7.org/fhir/sid/icd-9-cm|788.39,http://hl7.org/fhir/sid/icd-9-cm|625.6",
+      "prompt_text": "I need to identify patients with a documented urinary incontinence diagnosis. Search Condition resources for the urinary incontinence concept in SNOMED CT. This is a direct diagnosis-code query and the first non-cancer genitourinary phenotype in the suite."
+     }
+    },
     "copilot:claude-sonnet-4.6": {
      "1-naive": {
       "precision": 1.0,
@@ -2571,6 +2836,143 @@
       "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|7593,http://www.nlm.nih.gov/research/umls/rxnorm|38400,http://www.nlm.nih.gov/research/umls/rxnorm|400447",
       "additional_query_urls": [],
       "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|7593,http://www.nlm.nih.gov/research/umls/rxnorm|38400,http://www.nlm.nih.gov/research/umls/rxnorm|400447",
+      "prompt_text": "Identify patients being treated pharmacologically for overactive bladder or urge urinary incontinence. Search MedicationRequest resources for the three first-line antimuscarinic agents used for this condition \u2014 oxybutynin, tolterodine, and solifenacin \u2014 all coded in RxNorm. All three must be queried together to achieve full cohort recall; a query covering only one drug will miss patients managed on the others. Note that antimuscarinics are also occasionally prescribed for other conditions, so a medication-only approach will include some cross-indication patients."
+     }
+    },
+    "copilot:claude-opus-4.7+mimic": {
+     "1-naive": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 3688,
+      "actual_count": 0,
+      "elapsed_sec": 9.3,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|7623,38154,73137,349159,352200,386148,819555",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|7623,38154,73137,349159,352200,386148,819555",
+      "prompt_text": "Find patients on UI medications."
+     },
+     "1-broad": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 3688,
+      "actual_count": 0,
+      "elapsed_sec": 9.0,
+      "queries_generated": 3,
+      "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|7593",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|38400",
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|400888"
+      ],
+      "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|7593\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|38400\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|400888",
+      "prompt_text": "Find patients prescribed antimuscarinics for overactive bladder \u2014 including oxybutynin, tolterodine, and solifenacin."
+     },
+     "1-expert": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 3688,
+      "actual_count": 0,
+      "elapsed_sec": 8.1,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|7715,http://www.nlm.nih.gov/research/umls/rxnorm|37798,http://www.nlm.nih.gov/research/umls/rxnorm|400888",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|7715,http://www.nlm.nih.gov/research/umls/rxnorm|37798,http://www.nlm.nih.gov/research/umls/rxnorm|400888",
+      "prompt_text": "Identify patients being treated pharmacologically for overactive bladder or urge urinary incontinence. Search MedicationRequest resources for the three first-line antimuscarinic agents used for this condition \u2014 oxybutynin, tolterodine, and solifenacin \u2014 all coded in RxNorm. All three must be queried together to achieve full cohort recall; a query covering only one drug will miss patients managed on the others. Note that antimuscarinics are also occasionally prescribed for other conditions, so a medication-only approach will include some cross-indication patients."
+     },
+     "2-naive": {
+      "precision": 0.9949,
+      "recall": 1.0,
+      "f1": 0.9974,
+      "passed": true,
+      "expected_count": 3688,
+      "actual_count": 3707,
+      "elapsed_sec": 115.7,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|32675,http://www.nlm.nih.gov/research/umls/rxnorm|119565,http://www.nlm.nih.gov/research/umls/rxnorm|322167,http://www.nlm.nih.gov/research/umls/rxnorm|857562",
+      "additional_query_urls": [],
+      "raw_response": "FINAL ANSWER:\n\nMedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|32675,http://www.nlm.nih.gov/research/umls/rxnorm|119565,http://www.nlm.nih.gov/research/umls/rxnorm|322167,http://www.nlm.nih.gov/research/umls/rxnorm|857562",
+      "prompt_text": "Find patients on UI medications."
+     },
+     "2-broad": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 3688,
+      "actual_count": 3688,
+      "elapsed_sec": 59.7,
+      "queries_generated": 3,
+      "primary_query_url": "MedicationRequest?medication.code:text=oxybutynin",
+      "additional_query_urls": [
+       "MedicationRequest?medication.code:text=tolterodine",
+       "MedicationRequest?medication.code:text=solifenacin"
+      ],
+      "raw_response": "FINAL ANSWER:\n\nMedicationRequest?medication.code:text=oxybutynin\nMedicationRequest?medication.code:text=tolterodine\nMedicationRequest?medication.code:text=solifenacin",
+      "prompt_text": "Find patients prescribed antimuscarinics for overactive bladder \u2014 including oxybutynin, tolterodine, and solifenacin."
+     },
+     "2-expert": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 3688,
+      "actual_count": 3688,
+      "elapsed_sec": 60.0,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|32675,http://www.nlm.nih.gov/research/umls/rxnorm|119565,http://www.nlm.nih.gov/research/umls/rxnorm|322167",
+      "additional_query_urls": [],
+      "raw_response": "FINAL ANSWER:\n\nMedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|32675,http://www.nlm.nih.gov/research/umls/rxnorm|119565,http://www.nlm.nih.gov/research/umls/rxnorm|322167",
+      "prompt_text": "Identify patients being treated pharmacologically for overactive bladder or urge urinary incontinence. Search MedicationRequest resources for the three first-line antimuscarinic agents used for this condition \u2014 oxybutynin, tolterodine, and solifenacin \u2014 all coded in RxNorm. All three must be queried together to achieve full cohort recall; a query covering only one drug will miss patients managed on the others. Note that antimuscarinics are also occasionally prescribed for other conditions, so a medication-only approach will include some cross-indication patients."
+     },
+     "3-naive": {
+      "precision": 0.9949,
+      "recall": 1.0,
+      "f1": 0.9974,
+      "passed": true,
+      "expected_count": 3688,
+      "actual_count": 3707,
+      "elapsed_sec": 109.6,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|32675,http://www.nlm.nih.gov/research/umls/rxnorm|119565,http://www.nlm.nih.gov/research/umls/rxnorm|322167,http://www.nlm.nih.gov/research/umls/rxnorm|857562",
+      "additional_query_urls": [],
+      "raw_response": "FINAL ANSWER:\n\nMedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|32675,http://www.nlm.nih.gov/research/umls/rxnorm|119565,http://www.nlm.nih.gov/research/umls/rxnorm|322167,http://www.nlm.nih.gov/research/umls/rxnorm|857562",
+      "prompt_text": "Find patients on UI medications."
+     },
+     "3-broad": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 3688,
+      "actual_count": 3688,
+      "elapsed_sec": 74.2,
+      "queries_generated": 3,
+      "primary_query_url": "MedicationRequest?medication.code:text=oxybutynin",
+      "additional_query_urls": [
+       "MedicationRequest?medication.code:text=tolterodine",
+       "MedicationRequest?medication.code:text=solifenacin"
+      ],
+      "raw_response": "FINAL ANSWER:\n\nMedicationRequest?medication.code:text=oxybutynin\nMedicationRequest?medication.code:text=tolterodine\nMedicationRequest?medication.code:text=solifenacin",
+      "prompt_text": "Find patients prescribed antimuscarinics for overactive bladder \u2014 including oxybutynin, tolterodine, and solifenacin."
+     },
+     "3-expert": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 3688,
+      "actual_count": 3688,
+      "elapsed_sec": 68.8,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|32675,http://www.nlm.nih.gov/research/umls/rxnorm|119565,http://www.nlm.nih.gov/research/umls/rxnorm|322167",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|32675,http://www.nlm.nih.gov/research/umls/rxnorm|119565,http://www.nlm.nih.gov/research/umls/rxnorm|322167",
       "prompt_text": "Identify patients being treated pharmacologically for overactive bladder or urge urinary incontinence. Search MedicationRequest resources for the three first-line antimuscarinic agents used for this condition \u2014 oxybutynin, tolterodine, and solifenacin \u2014 all coded in RxNorm. All three must be queried together to achieve full cohort recall; a query covering only one drug will miss patients managed on the others. Note that antimuscarinics are also occasionally prescribed for other conditions, so a medication-only approach will include some cross-indication patients."
      }
     },

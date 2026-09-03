@@ -1037,6 +1037,156 @@
       "prompt_text": "I need to identify patients with drug-induced liver injury (DILI) using a multi-resource union that mirrors the published PheKB algorithm. Run three separate searches and union the patient sets: first, search Condition resources for DILI diagnoses coded in SNOMED CT (drug-induced disorder of liver) and in ICD-10-CM across the relevant hepatic-injury categories \u2014 toxic liver disease, acute and subacute hepatic failure, and elevated liver transaminases; second, search MedicationRequest resources for methotrexate, which is a well-documented hepatotoxin; third, search Observation resources for ALT measurements coded in LOINC at or above the five-times-upper-limit-of-normal threshold used by the PheKB algorithm (approximately 225 U/L). Union all patient IDs across the three result sets."
      }
     },
+    "copilot:claude-opus-4.7+mimic": {
+     "1-naive": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 16286,
+      "actual_count": 0,
+      "elapsed_sec": 7.1,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|235876002",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|235876002",
+      "prompt_text": "Find all DILI patients."
+     },
+     "1-broad": {
+      "precision": 1.0,
+      "recall": 0.0024,
+      "f1": 0.0048,
+      "passed": false,
+      "expected_count": 16286,
+      "actual_count": 39,
+      "elapsed_sec": 9.7,
+      "queries_generated": 4,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|235880000",
+      "additional_query_urls": [
+       "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|K71.9,http://hl7.org/fhir/sid/icd-10-cm|K72.0,http://hl7.org/fhir/sid/icd-10-cm|R74.01",
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6851",
+       "Observation?code=http://loinc.org|1742-6&value-quantity=ge225|http://unitsofmeasure.org|U/L"
+      ],
+      "raw_response": "Condition?code=http://snomed.info/sct|235880000\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|K71.9,http://hl7.org/fhir/sid/icd-10-cm|K72.0,http://hl7.org/fhir/sid/icd-10-cm|R74.01\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6851\nObservation?code=http://loinc.org|1742-6&value-quantity=ge225|http://unitsofmeasure.org|U/L",
+      "prompt_text": "Find all DILI patients \u2014 by multi-system diagnosis (SNOMED + ICD-10 K71.9, K72.0, R74.01), by methotrexate prescription, or by ALT >=5x ULN (>=225 U/L). Run multiple queries and union."
+     },
+     "1-expert": {
+      "precision": 0.3686,
+      "recall": 0.08,
+      "f1": 0.1315,
+      "passed": false,
+      "expected_count": 16286,
+      "actual_count": 3535,
+      "elapsed_sec": 14.9,
+      "queries_generated": 3,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|235875001,http://hl7.org/fhir/sid/icd-10-cm|K71,http://hl7.org/fhir/sid/icd-10-cm|K71.0,http://hl7.org/fhir/sid/icd-10-cm|K71.1,http://hl7.org/fhir/sid/icd-10-cm|K71.2,http://hl7.org/fhir/sid/icd-10-cm|K71.6,http://hl7.org/fhir/sid/icd-10-cm|K71.9,http://hl7.org/fhir/sid/icd-10-cm|K72.0,http://hl7.org/fhir/sid/icd-10-cm|R74.0,http://hl7.org/fhir/sid/icd-10-cm|R74.01",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6851",
+       "Observation?code=http://loinc.org|1742-6&value-quantity=ge225|http://unitsofmeasure.org|U/L"
+      ],
+      "raw_response": "Condition?code=http://snomed.info/sct|235875001,http://hl7.org/fhir/sid/icd-10-cm|K71,http://hl7.org/fhir/sid/icd-10-cm|K71.0,http://hl7.org/fhir/sid/icd-10-cm|K71.1,http://hl7.org/fhir/sid/icd-10-cm|K71.2,http://hl7.org/fhir/sid/icd-10-cm|K71.6,http://hl7.org/fhir/sid/icd-10-cm|K71.9,http://hl7.org/fhir/sid/icd-10-cm|K72.0,http://hl7.org/fhir/sid/icd-10-cm|R74.0,http://hl7.org/fhir/sid/icd-10-cm|R74.01\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6851\nObservation?code=http://loinc.org|1742-6&value-quantity=ge225|http://unitsofmeasure.org|U/L",
+      "prompt_text": "I need to identify patients with drug-induced liver injury (DILI) using a multi-resource union that mirrors the published PheKB algorithm. Run three separate searches and union the patient sets: first, search Condition resources for DILI diagnoses coded in SNOMED CT (drug-induced disorder of liver) and in ICD-10-CM across the relevant hepatic-injury categories \u2014 toxic liver disease, acute and subacute hepatic failure, and elevated liver transaminases; second, search MedicationRequest resources for methotrexate, which is a well-documented hepatotoxin; third, search Observation resources for ALT measurements coded in LOINC at or above the five-times-upper-limit-of-normal threshold used by the PheKB algorithm (approximately 225 U/L). Union all patient IDs across the three result sets."
+     },
+     "2-naive": {
+      "precision": 0.9275,
+      "recall": 0.0448,
+      "f1": 0.0854,
+      "passed": false,
+      "expected_count": 16286,
+      "actual_count": 786,
+      "elapsed_sec": 35.4,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|K71.0,http://hl7.org/fhir/sid/icd-10-cm|K71.10,http://hl7.org/fhir/sid/icd-10-cm|K71.11,http://hl7.org/fhir/sid/icd-10-cm|K71.2,http://hl7.org/fhir/sid/icd-10-cm|K71.3,http://hl7.org/fhir/sid/icd-10-cm|K71.4,http://hl7.org/fhir/sid/icd-10-cm|K71.50,http://hl7.org/fhir/sid/icd-10-cm|K71.51,http://hl7.org/fhir/sid/icd-10-cm|K71.6,http://hl7.org/fhir/sid/icd-10-cm|K71.7,http://hl7.org/fhir/sid/icd-10-cm|K71.8,http://hl7.org/fhir/sid/icd-10-cm|K71.9",
+      "additional_query_urls": [
+       "Condition?code=http://hl7.org/fhir/sid/icd-9-cm|573.3"
+      ],
+      "raw_response": "FINAL ANSWER:\n\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|K71.0,http://hl7.org/fhir/sid/icd-10-cm|K71.10,http://hl7.org/fhir/sid/icd-10-cm|K71.11,http://hl7.org/fhir/sid/icd-10-cm|K71.2,http://hl7.org/fhir/sid/icd-10-cm|K71.3,http://hl7.org/fhir/sid/icd-10-cm|K71.4,http://hl7.org/fhir/sid/icd-10-cm|K71.50,http://hl7.org/fhir/sid/icd-10-cm|K71.51,http://hl7.org/fhir/sid/icd-10-cm|K71.6,http://hl7.org/fhir/sid/icd-10-cm|K71.7,http://hl7.org/fhir/sid/icd-10-cm|K71.8,http://hl7.org/fhir/sid/icd-10-cm|K71.9\nCondition?code=http://hl7.org/fhir/sid/icd-9-cm|573.3",
+      "prompt_text": "Find all DILI patients."
+     },
+     "2-broad": {
+      "precision": 1.0,
+      "recall": 0.1356,
+      "f1": 0.2389,
+      "passed": false,
+      "expected_count": 16286,
+      "actual_count": 2209,
+      "elapsed_sec": 182.1,
+      "queries_generated": 4,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|K71.9,http://hl7.org/fhir/sid/icd-10-cm|K72.0,http://hl7.org/fhir/sid/icd-10-cm|R74.01",
+      "additional_query_urls": [
+       "Condition?code=http://snomed.info/sct|197354009,http://snomed.info/sct|235880000,http://snomed.info/sct|41309000",
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6851",
+       "Observation?code=http://loinc.org|1742-6&value-quantity=ge225"
+      ],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|K71.9,http://hl7.org/fhir/sid/icd-10-cm|K72.0,http://hl7.org/fhir/sid/icd-10-cm|R74.01\nCondition?code=http://snomed.info/sct|197354009,http://snomed.info/sct|235880000,http://snomed.info/sct|41309000\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6851\nObservation?code=http://loinc.org|1742-6&value-quantity=ge225",
+      "prompt_text": "Find all DILI patients \u2014 by multi-system diagnosis (SNOMED + ICD-10 K71.9, K72.0, R74.01), by methotrexate prescription, or by ALT >=5x ULN (>=225 U/L). Run multiple queries and union."
+     },
+     "2-expert": {
+      "precision": 0.5559,
+      "recall": 0.2889,
+      "f1": 0.3802,
+      "passed": false,
+      "expected_count": 16286,
+      "actual_count": 8463,
+      "elapsed_sec": 180.7,
+      "queries_generated": 3,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|K71,http://hl7.org/fhir/sid/icd-10-cm|K71.0,http://hl7.org/fhir/sid/icd-10-cm|K71.1,http://hl7.org/fhir/sid/icd-10-cm|K71.10,http://hl7.org/fhir/sid/icd-10-cm|K71.11,http://hl7.org/fhir/sid/icd-10-cm|K71.2,http://hl7.org/fhir/sid/icd-10-cm|K71.3,http://hl7.org/fhir/sid/icd-10-cm|K71.4,http://hl7.org/fhir/sid/icd-10-cm|K71.5,http://hl7.org/fhir/sid/icd-10-cm|K71.50,http://hl7.org/fhir/sid/icd-10-cm|K71.51,http://hl7.org/fhir/sid/icd-10-cm|K71.6,http://hl7.org/fhir/sid/icd-10-cm|K71.7,http://hl7.org/fhir/sid/icd-10-cm|K71.8,http://hl7.org/fhir/sid/icd-10-cm|K71.9,http://hl7.org/fhir/sid/icd-10-cm|K72.0,http://hl7.org/fhir/sid/icd-10-cm|K72.00,http://hl7.org/fhir/sid/icd-10-cm|K72.01,http://hl7.org/fhir/sid/icd-10-cm|K72.02,http://hl7.org/fhir/sid/icd-10-cm|R74.0,http://hl7.org/fhir/sid/icd-10-cm|R74.01,http://hl7.org/fhir/sid/icd-10-cm|R74.02,http://snomed.info/sct|197354009",
+      "additional_query_urls": [
+       "MedicationRequest?medication.code=http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-ndc|00517571025",
+       "Observation?code=http://loinc.org|1742-6&value-quantity=ge225"
+      ],
+      "raw_response": "Final answer:\n\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|K71,http://hl7.org/fhir/sid/icd-10-cm|K71.0,http://hl7.org/fhir/sid/icd-10-cm|K71.1,http://hl7.org/fhir/sid/icd-10-cm|K71.10,http://hl7.org/fhir/sid/icd-10-cm|K71.11,http://hl7.org/fhir/sid/icd-10-cm|K71.2,http://hl7.org/fhir/sid/icd-10-cm|K71.3,http://hl7.org/fhir/sid/icd-10-cm|K71.4,http://hl7.org/fhir/sid/icd-10-cm|K71.5,http://hl7.org/fhir/sid/icd-10-cm|K71.50,http://hl7.org/fhir/sid/icd-10-cm|K71.51,http://hl7.org/fhir/sid/icd-10-cm|K71.6,http://hl7.org/fhir/sid/icd-10-cm|K71.7,http://hl7.org/fhir/sid/icd-10-cm|K71.8,http://hl7.org/fhir/sid/icd-10-cm|K71.9,http://hl7.org/fhir/sid/icd-10-cm|K72.0,http://hl7.org/fhir/sid/icd-10-cm|K72.00,http://hl7.org/fhir/sid/icd-10-cm|K72.01,http://hl7.org/fhir/sid/icd-10-cm|K72.02,http://hl7.org/fhir/sid/icd-10-cm|R74.0,http://hl7.org/fhir/sid/icd-10-cm|R74.01,http://hl7.org/fhir/sid/icd-10-cm|R74.02,http://snomed.info/sct|197354009\nMedicationRequest?medication.code=http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-ndc|00517571025\nObservation?code=http://loinc.org|1742-6&value-quantity=ge225",
+      "prompt_text": "I need to identify patients with drug-induced liver injury (DILI) using a multi-resource union that mirrors the published PheKB algorithm. Run three separate searches and union the patient sets: first, search Condition resources for DILI diagnoses coded in SNOMED CT (drug-induced disorder of liver) and in ICD-10-CM across the relevant hepatic-injury categories \u2014 toxic liver disease, acute and subacute hepatic failure, and elevated liver transaminases; second, search MedicationRequest resources for methotrexate, which is a well-documented hepatotoxin; third, search Observation resources for ALT measurements coded in LOINC at or above the five-times-upper-limit-of-normal threshold used by the PheKB algorithm (approximately 225 U/L). Union all patient IDs across the three result sets."
+     },
+     "3-naive": {
+      "precision": 0.792,
+      "recall": 0.0133,
+      "f1": 0.0262,
+      "passed": false,
+      "expected_count": 16286,
+      "actual_count": 274,
+      "elapsed_sec": 35.8,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|K71.0,http://hl7.org/fhir/sid/icd-10-cm|K71.1,http://hl7.org/fhir/sid/icd-10-cm|K71.10,http://hl7.org/fhir/sid/icd-10-cm|K71.11,http://hl7.org/fhir/sid/icd-10-cm|K71.2,http://hl7.org/fhir/sid/icd-10-cm|K71.3,http://hl7.org/fhir/sid/icd-10-cm|K71.4,http://hl7.org/fhir/sid/icd-10-cm|K71.5,http://hl7.org/fhir/sid/icd-10-cm|K71.50,http://hl7.org/fhir/sid/icd-10-cm|K71.51,http://hl7.org/fhir/sid/icd-10-cm|K71.6,http://hl7.org/fhir/sid/icd-10-cm|K71.7,http://hl7.org/fhir/sid/icd-10-cm|K71.8,http://hl7.org/fhir/sid/icd-10-cm|K71.9",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|K71.0,http://hl7.org/fhir/sid/icd-10-cm|K71.1,http://hl7.org/fhir/sid/icd-10-cm|K71.10,http://hl7.org/fhir/sid/icd-10-cm|K71.11,http://hl7.org/fhir/sid/icd-10-cm|K71.2,http://hl7.org/fhir/sid/icd-10-cm|K71.3,http://hl7.org/fhir/sid/icd-10-cm|K71.4,http://hl7.org/fhir/sid/icd-10-cm|K71.5,http://hl7.org/fhir/sid/icd-10-cm|K71.50,http://hl7.org/fhir/sid/icd-10-cm|K71.51,http://hl7.org/fhir/sid/icd-10-cm|K71.6,http://hl7.org/fhir/sid/icd-10-cm|K71.7,http://hl7.org/fhir/sid/icd-10-cm|K71.8,http://hl7.org/fhir/sid/icd-10-cm|K71.9",
+      "prompt_text": "Find all DILI patients."
+     },
+     "3-broad": {
+      "precision": 1.0,
+      "recall": 0.1356,
+      "f1": 0.2389,
+      "passed": false,
+      "expected_count": 16286,
+      "actual_count": 2209,
+      "elapsed_sec": 116.3,
+      "queries_generated": 3,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|K71.9,http://hl7.org/fhir/sid/icd-10-cm|K72.0,http://hl7.org/fhir/sid/icd-10-cm|R74.01,http://snomed.info/sct|197354009",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6851",
+       "Observation?code=http://loinc.org|1742-6&value-quantity=ge225"
+      ],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|K71.9,http://hl7.org/fhir/sid/icd-10-cm|K72.0,http://hl7.org/fhir/sid/icd-10-cm|R74.01,http://snomed.info/sct|197354009\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6851\nObservation?code=http://loinc.org|1742-6&value-quantity=ge225",
+      "prompt_text": "Find all DILI patients \u2014 by multi-system diagnosis (SNOMED + ICD-10 K71.9, K72.0, R74.01), by methotrexate prescription, or by ALT >=5x ULN (>=225 U/L). Run multiple queries and union."
+     },
+     "3-expert": {
+      "precision": 0.362,
+      "recall": 0.0775,
+      "f1": 0.1277,
+      "passed": false,
+      "expected_count": 16286,
+      "actual_count": 3486,
+      "elapsed_sec": 58.7,
+      "queries_generated": 3,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|197354009,http://hl7.org/fhir/sid/icd-10-cm|K71,http://hl7.org/fhir/sid/icd-10-cm|K71.0,http://hl7.org/fhir/sid/icd-10-cm|K71.9,http://hl7.org/fhir/sid/icd-10-cm|K72.0,http://hl7.org/fhir/sid/icd-10-cm|R74.0",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6851",
+       "Observation?code=http://loinc.org|1742-6&value-quantity=ge225||U/L"
+      ],
+      "raw_response": "Condition?code=http://snomed.info/sct|197354009,http://hl7.org/fhir/sid/icd-10-cm|K71,http://hl7.org/fhir/sid/icd-10-cm|K71.0,http://hl7.org/fhir/sid/icd-10-cm|K71.9,http://hl7.org/fhir/sid/icd-10-cm|K72.0,http://hl7.org/fhir/sid/icd-10-cm|R74.0\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6851\nObservation?code=http://loinc.org|1742-6&value-quantity=ge225||U/L",
+      "prompt_text": "I need to identify patients with drug-induced liver injury (DILI) using a multi-resource union that mirrors the published PheKB algorithm. Run three separate searches and union the patient sets: first, search Condition resources for DILI diagnoses coded in SNOMED CT (drug-induced disorder of liver) and in ICD-10-CM across the relevant hepatic-injury categories \u2014 toxic liver disease, acute and subacute hepatic failure, and elevated liver transaminases; second, search MedicationRequest resources for methotrexate, which is a well-documented hepatotoxin; third, search Observation resources for ALT measurements coded in LOINC at or above the five-times-upper-limit-of-normal threshold used by the PheKB algorithm (approximately 225 U/L). Union all patient IDs across the three result sets."
+     }
+    },
     "copilot:claude-sonnet-4.6": {
      "1-naive": {
       "precision": 1.0,
@@ -1819,6 +1969,141 @@
       "primary_query_url": "Condition?code=http://snomed.info/sct|197354009,http://hl7.org/fhir/sid/icd-10-cm|K71.9,http://hl7.org/fhir/sid/icd-10-cm|K72.0,http://hl7.org/fhir/sid/icd-10-cm|R74.0",
       "additional_query_urls": [],
       "raw_response": "Condition?code=http://snomed.info/sct|197354009,http://hl7.org/fhir/sid/icd-10-cm|K71.9,http://hl7.org/fhir/sid/icd-10-cm|K72.0,http://hl7.org/fhir/sid/icd-10-cm|R74.0",
+      "prompt_text": "I need to find patients with a documented diagnosis of drug-induced liver injury across multiple code systems, as real-world EHR data codes DILI under several ICD-10-CM categories rather than a single post-coordinated term. Search Condition resources and cast a wide net across the relevant coding systems: the SNOMED CT concept for drug-induced disorder of liver, and the ICD-10-CM codes covering toxic liver disease (unspecified), acute and subacute hepatic failure, and elevation of liver transaminase levels. Do not restrict to just one code or one system \u2014 the PheKB algorithm explicitly spans all four of these coded representations."
+     }
+    },
+    "copilot:claude-opus-4.7+mimic": {
+     "1-naive": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 9718,
+      "actual_count": 0,
+      "elapsed_sec": 7.6,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|235891000",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|235891000",
+      "prompt_text": "Find patients with DILI."
+     },
+     "1-broad": {
+      "precision": 0.4034,
+      "recall": 0.183,
+      "f1": 0.2517,
+      "passed": false,
+      "expected_count": 9718,
+      "actual_count": 4408,
+      "elapsed_sec": 230.1,
+      "queries_generated": 4,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|235863003,197354009,197270009,74551001,235865005,235866006,197358007,76783007,371039008",
+      "additional_query_urls": [
+       "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|K71.0,K71.10,K71.11,K71.2,K71.6,K71.8,K71.9,K72.00,K72.90,T50.905A",
+       "Observation?code=http://loinc.org|1742-6&value-quantity=gt120&_lastUpdated=ge2026-02-28",
+       "Observation?code=http://loinc.org|1920-8&value-quantity=gt120&_lastUpdated=ge2026-02-28"
+      ],
+      "raw_response": "Condition?code=http://snomed.info/sct|235863003,197354009,197270009,74551001,235865005,235866006,197358007,76783007,371039008\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|K71.0,K71.10,K71.11,K71.2,K71.6,K71.8,K71.9,K72.00,K72.90,T50.905A\nObservation?code=http://loinc.org|1742-6&value-quantity=gt120&_lastUpdated=ge2026-02-28\nObservation?code=http://loinc.org|1920-8&value-quantity=gt120&_lastUpdated=ge2026-02-28",
+      "prompt_text": "Find patients with drug-induced liver injury or any documented liver injury suggestive of drug toxicity \u2014 toxic liver disease, hepatic failure, or persistently elevated transaminases."
+     },
+     "1-expert": {
+      "precision": 0.1095,
+      "recall": 0.039,
+      "f1": 0.0575,
+      "passed": false,
+      "expected_count": 9718,
+      "actual_count": 3460,
+      "elapsed_sec": 12.9,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|197354009,http://hl7.org/fhir/sid/icd-10-cm|K71.9,http://hl7.org/fhir/sid/icd-10-cm|K72.0,http://hl7.org/fhir/sid/icd-10-cm|R74.0",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|197354009,http://hl7.org/fhir/sid/icd-10-cm|K71.9,http://hl7.org/fhir/sid/icd-10-cm|K72.0,http://hl7.org/fhir/sid/icd-10-cm|R74.0",
+      "prompt_text": "I need to find patients with a documented diagnosis of drug-induced liver injury across multiple code systems, as real-world EHR data codes DILI under several ICD-10-CM categories rather than a single post-coordinated term. Search Condition resources and cast a wide net across the relevant coding systems: the SNOMED CT concept for drug-induced disorder of liver, and the ICD-10-CM codes covering toxic liver disease (unspecified), acute and subacute hepatic failure, and elevation of liver transaminase levels. Do not restrict to just one code or one system \u2014 the PheKB algorithm explicitly spans all four of these coded representations."
+     },
+     "2-naive": {
+      "precision": 0.7583,
+      "recall": 0.0613,
+      "f1": 0.1135,
+      "passed": false,
+      "expected_count": 9718,
+      "actual_count": 786,
+      "elapsed_sec": 46.7,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|K71.0,http://hl7.org/fhir/sid/icd-10-cm|K71.10,http://hl7.org/fhir/sid/icd-10-cm|K71.11,http://hl7.org/fhir/sid/icd-10-cm|K71.2,http://hl7.org/fhir/sid/icd-10-cm|K71.3,http://hl7.org/fhir/sid/icd-10-cm|K71.4,http://hl7.org/fhir/sid/icd-10-cm|K71.50,http://hl7.org/fhir/sid/icd-10-cm|K71.51,http://hl7.org/fhir/sid/icd-10-cm|K71.6,http://hl7.org/fhir/sid/icd-10-cm|K71.7,http://hl7.org/fhir/sid/icd-10-cm|K71.8,http://hl7.org/fhir/sid/icd-10-cm|K71.9,http://hl7.org/fhir/sid/icd-9-cm|573.3",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|K71.0,http://hl7.org/fhir/sid/icd-10-cm|K71.10,http://hl7.org/fhir/sid/icd-10-cm|K71.11,http://hl7.org/fhir/sid/icd-10-cm|K71.2,http://hl7.org/fhir/sid/icd-10-cm|K71.3,http://hl7.org/fhir/sid/icd-10-cm|K71.4,http://hl7.org/fhir/sid/icd-10-cm|K71.50,http://hl7.org/fhir/sid/icd-10-cm|K71.51,http://hl7.org/fhir/sid/icd-10-cm|K71.6,http://hl7.org/fhir/sid/icd-10-cm|K71.7,http://hl7.org/fhir/sid/icd-10-cm|K71.8,http://hl7.org/fhir/sid/icd-10-cm|K71.9,http://hl7.org/fhir/sid/icd-9-cm|573.3",
+      "prompt_text": "Find patients with DILI."
+     },
+     "2-broad": {
+      "precision": 0.6359,
+      "recall": 0.4478,
+      "f1": 0.5255,
+      "passed": false,
+      "expected_count": 9718,
+      "actual_count": 6844,
+      "elapsed_sec": 46.5,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|K71.0,http://hl7.org/fhir/sid/icd-10-cm|K71.10,http://hl7.org/fhir/sid/icd-10-cm|K71.11,http://hl7.org/fhir/sid/icd-10-cm|K71.2,http://hl7.org/fhir/sid/icd-10-cm|K71.3,http://hl7.org/fhir/sid/icd-10-cm|K71.4,http://hl7.org/fhir/sid/icd-10-cm|K71.50,http://hl7.org/fhir/sid/icd-10-cm|K71.51,http://hl7.org/fhir/sid/icd-10-cm|K71.6,http://hl7.org/fhir/sid/icd-10-cm|K71.7,http://hl7.org/fhir/sid/icd-10-cm|K71.8,http://hl7.org/fhir/sid/icd-10-cm|K71.9,http://hl7.org/fhir/sid/icd-10-cm|K72.00,http://hl7.org/fhir/sid/icd-10-cm|K72.01,http://hl7.org/fhir/sid/icd-10-cm|K72.10,http://hl7.org/fhir/sid/icd-10-cm|K72.11,http://hl7.org/fhir/sid/icd-10-cm|K72.90,http://hl7.org/fhir/sid/icd-10-cm|K72.91,http://hl7.org/fhir/sid/icd-10-cm|R74.0,http://hl7.org/fhir/sid/icd-9-cm|573.3,http://hl7.org/fhir/sid/icd-9-cm|570,http://hl7.org/fhir/sid/icd-9-cm|572.2,http://hl7.org/fhir/sid/icd-9-cm|572.4,http://hl7.org/fhir/sid/icd-9-cm|572.8,http://hl7.org/fhir/sid/icd-9-cm|790.4",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|K71.0,http://hl7.org/fhir/sid/icd-10-cm|K71.10,http://hl7.org/fhir/sid/icd-10-cm|K71.11,http://hl7.org/fhir/sid/icd-10-cm|K71.2,http://hl7.org/fhir/sid/icd-10-cm|K71.3,http://hl7.org/fhir/sid/icd-10-cm|K71.4,http://hl7.org/fhir/sid/icd-10-cm|K71.50,http://hl7.org/fhir/sid/icd-10-cm|K71.51,http://hl7.org/fhir/sid/icd-10-cm|K71.6,http://hl7.org/fhir/sid/icd-10-cm|K71.7,http://hl7.org/fhir/sid/icd-10-cm|K71.8,http://hl7.org/fhir/sid/icd-10-cm|K71.9,http://hl7.org/fhir/sid/icd-10-cm|K72.00,http://hl7.org/fhir/sid/icd-10-cm|K72.01,http://hl7.org/fhir/sid/icd-10-cm|K72.10,http://hl7.org/fhir/sid/icd-10-cm|K72.11,http://hl7.org/fhir/sid/icd-10-cm|K72.90,http://hl7.org/fhir/sid/icd-10-cm|K72.91,http://hl7.org/fhir/sid/icd-10-cm|R74.0,http://hl7.org/fhir/sid/icd-9-cm|573.3,http://hl7.org/fhir/sid/icd-9-cm|570,http://hl7.org/fhir/sid/icd-9-cm|572.2,http://hl7.org/fhir/sid/icd-9-cm|572.4,http://hl7.org/fhir/sid/icd-9-cm|572.8,http://hl7.org/fhir/sid/icd-9-cm|790.4",
+      "prompt_text": "Find patients with drug-induced liver injury or any documented liver injury suggestive of drug toxicity \u2014 toxic liver disease, hepatic failure, or persistently elevated transaminases."
+     },
+     "2-expert": {
+      "precision": 0.3012,
+      "recall": 0.1367,
+      "f1": 0.188,
+      "passed": false,
+      "expected_count": 9718,
+      "actual_count": 4409,
+      "elapsed_sec": 25.2,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|K71.9,http://hl7.org/fhir/sid/icd-10-cm|K72.00,http://hl7.org/fhir/sid/icd-10-cm|R74.0,http://snomed.info/sct|1088007",
+      "additional_query_urls": [],
+      "raw_response": "FINAL ANSWER:\n\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|K71.9,http://hl7.org/fhir/sid/icd-10-cm|K72.00,http://hl7.org/fhir/sid/icd-10-cm|R74.0,http://snomed.info/sct|1088007",
+      "prompt_text": "I need to find patients with a documented diagnosis of drug-induced liver injury across multiple code systems, as real-world EHR data codes DILI under several ICD-10-CM categories rather than a single post-coordinated term. Search Condition resources and cast a wide net across the relevant coding systems: the SNOMED CT concept for drug-induced disorder of liver, and the ICD-10-CM codes covering toxic liver disease (unspecified), acute and subacute hepatic failure, and elevation of liver transaminase levels. Do not restrict to just one code or one system \u2014 the PheKB algorithm explicitly spans all four of these coded representations."
+     },
+     "3-naive": {
+      "precision": 0.3066,
+      "recall": 0.0086,
+      "f1": 0.0168,
+      "passed": false,
+      "expected_count": 9718,
+      "actual_count": 274,
+      "elapsed_sec": 41.8,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|K71.0,http://hl7.org/fhir/sid/icd-10-cm|K71.10,http://hl7.org/fhir/sid/icd-10-cm|K71.11,http://hl7.org/fhir/sid/icd-10-cm|K71.2,http://hl7.org/fhir/sid/icd-10-cm|K71.3,http://hl7.org/fhir/sid/icd-10-cm|K71.4,http://hl7.org/fhir/sid/icd-10-cm|K71.50,http://hl7.org/fhir/sid/icd-10-cm|K71.51,http://hl7.org/fhir/sid/icd-10-cm|K71.6,http://hl7.org/fhir/sid/icd-10-cm|K71.7,http://hl7.org/fhir/sid/icd-10-cm|K71.8,http://hl7.org/fhir/sid/icd-10-cm|K71.9",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|K71.0,http://hl7.org/fhir/sid/icd-10-cm|K71.10,http://hl7.org/fhir/sid/icd-10-cm|K71.11,http://hl7.org/fhir/sid/icd-10-cm|K71.2,http://hl7.org/fhir/sid/icd-10-cm|K71.3,http://hl7.org/fhir/sid/icd-10-cm|K71.4,http://hl7.org/fhir/sid/icd-10-cm|K71.50,http://hl7.org/fhir/sid/icd-10-cm|K71.51,http://hl7.org/fhir/sid/icd-10-cm|K71.6,http://hl7.org/fhir/sid/icd-10-cm|K71.7,http://hl7.org/fhir/sid/icd-10-cm|K71.8,http://hl7.org/fhir/sid/icd-10-cm|K71.9",
+      "prompt_text": "Find patients with DILI."
+     },
+     "3-broad": {
+      "precision": 0.6977,
+      "recall": 0.412,
+      "f1": 0.5181,
+      "passed": false,
+      "expected_count": 9718,
+      "actual_count": 5739,
+      "elapsed_sec": 312.6,
+      "queries_generated": 3,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|K71,http://hl7.org/fhir/sid/icd-10-cm|K71.0,http://hl7.org/fhir/sid/icd-10-cm|K71.10,http://hl7.org/fhir/sid/icd-10-cm|K71.11,http://hl7.org/fhir/sid/icd-10-cm|K71.2,http://hl7.org/fhir/sid/icd-10-cm|K71.3,http://hl7.org/fhir/sid/icd-10-cm|K71.4,http://hl7.org/fhir/sid/icd-10-cm|K71.50,http://hl7.org/fhir/sid/icd-10-cm|K71.51,http://hl7.org/fhir/sid/icd-10-cm|K71.6,http://hl7.org/fhir/sid/icd-10-cm|K71.7,http://hl7.org/fhir/sid/icd-10-cm|K71.8,http://hl7.org/fhir/sid/icd-10-cm|K71.9,http://hl7.org/fhir/sid/icd-10-cm|K72.00,http://hl7.org/fhir/sid/icd-10-cm|K72.01,http://hl7.org/fhir/sid/icd-10-cm|K72.10,http://hl7.org/fhir/sid/icd-10-cm|K72.11,http://hl7.org/fhir/sid/icd-10-cm|K72.90,http://hl7.org/fhir/sid/icd-10-cm|K72.91",
+      "additional_query_urls": [
+       "Condition?code=http://hl7.org/fhir/sid/icd-9-cm|573.3,http://hl7.org/fhir/sid/icd-9-cm|570,http://hl7.org/fhir/sid/icd-9-cm|572.2,http://hl7.org/fhir/sid/icd-9-cm|572.4,http://hl7.org/fhir/sid/icd-9-cm|572.8",
+       "Observation?code=http://loinc.org|1742-6,http://loinc.org|1920-8&value-quantity=gt120"
+      ],
+      "raw_response": "FINAL ANSWER:\n\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|K71,http://hl7.org/fhir/sid/icd-10-cm|K71.0,http://hl7.org/fhir/sid/icd-10-cm|K71.10,http://hl7.org/fhir/sid/icd-10-cm|K71.11,http://hl7.org/fhir/sid/icd-10-cm|K71.2,http://hl7.org/fhir/sid/icd-10-cm|K71.3,http://hl7.org/fhir/sid/icd-10-cm|K71.4,http://hl7.org/fhir/sid/icd-10-cm|K71.50,http://hl7.org/fhir/sid/icd-10-cm|K71.51,http://hl7.org/fhir/sid/icd-10-cm|K71.6,http://hl7.org/fhir/sid/icd-10-cm|K71.7,http://hl7.org/fhir/sid/icd-10-cm|K71.8,http://hl7.org/fhir/sid/icd-10-cm|K71.9,http://hl7.org/fhir/sid/icd-10-cm|K72.00,http://hl7.org/fhir/sid/icd-10-cm|K72.01,http://hl7.org/fhir/sid/icd-10-cm|K72.10,http://hl7.org/fhir/sid/icd-10-cm|K72.11,http://hl7.org/fhir/sid/icd-10-cm|K72.90,http://hl7.org/fhir/sid/icd-10-cm|K72.91\nCondition?code=http://hl7.org/fhir/sid/icd-9-cm|573.3,http://hl7.org/fhir/sid/icd-9-cm|570,http://hl7.org/fhir/sid/icd-9-cm|572.2,http://hl7.org/fhir/sid/icd-9-cm|572.4,http://hl7.org/fhir/sid/icd-9-cm|572.8\nObservation?code=http://loinc.org|1742-6,http://loinc.org|1920-8&value-quantity=gt120",
+      "prompt_text": "Find patients with drug-induced liver injury or any documented liver injury suggestive of drug toxicity \u2014 toxic liver disease, hepatic failure, or persistently elevated transaminases."
+     },
+     "3-expert": {
+      "precision": 0.1095,
+      "recall": 0.039,
+      "f1": 0.0575,
+      "passed": false,
+      "expected_count": 9718,
+      "actual_count": 3460,
+      "elapsed_sec": 47.3,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|235875005,http://hl7.org/fhir/sid/icd-10-cm|K71.9,http://hl7.org/fhir/sid/icd-10-cm|K72.0,http://hl7.org/fhir/sid/icd-10-cm|R74.0",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|235875005,http://hl7.org/fhir/sid/icd-10-cm|K71.9,http://hl7.org/fhir/sid/icd-10-cm|K72.0,http://hl7.org/fhir/sid/icd-10-cm|R74.0",
       "prompt_text": "I need to find patients with a documented diagnosis of drug-induced liver injury across multiple code systems, as real-world EHR data codes DILI under several ICD-10-CM categories rather than a single post-coordinated term. Search Condition resources and cast a wide net across the relevant coding systems: the SNOMED CT concept for drug-induced disorder of liver, and the ICD-10-CM codes covering toxic liver disease (unspecified), acute and subacute hepatic failure, and elevation of liver transaminase levels. Do not restrict to just one code or one system \u2014 the PheKB algorithm explicitly spans all four of these coded representations."
      }
     },
@@ -3330,6 +3615,134 @@
       "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6851",
       "additional_query_urls": [],
       "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6851",
+      "prompt_text": "I need to find patients with medication orders for methotrexate, which serves as the representative hepatotoxin in this DILI phenotype. Search MedicationRequest resources for methotrexate using its RxNorm code. Be aware this is a high-cross-indication medication \u2014 the vast majority of methotrexate users are treated for rheumatoid arthritis, psoriasis, or malignancies and have not developed DILI, so a medication-only cohort will substantially over-capture relative to the true DILI population."
+     }
+    },
+    "copilot:claude-opus-4.7+mimic": {
+     "1-naive": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 389,
+      "actual_count": 0,
+      "elapsed_sec": 7.6,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6851&status=active",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6851&status=active",
+      "prompt_text": "Find patients on methotrexate."
+     },
+     "1-broad": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 389,
+      "actual_count": 0,
+      "elapsed_sec": 7.7,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6851",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6851",
+      "prompt_text": "Find patients prescribed methotrexate \u2014 a documented hepatotoxin used for rheumatoid arthritis, psoriasis, and other inflammatory conditions, monitored for liver toxicity."
+     },
+     "1-expert": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 389,
+      "actual_count": 0,
+      "elapsed_sec": 7.5,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6851",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6851",
+      "prompt_text": "I need to find patients with medication orders for methotrexate, which serves as the representative hepatotoxin in this DILI phenotype. Search MedicationRequest resources for methotrexate using its RxNorm code. Be aware this is a high-cross-indication medication \u2014 the vast majority of methotrexate users are treated for rheumatoid arthritis, psoriasis, or malignancies and have not developed DILI, so a medication-only cohort will substantially over-capture relative to the true DILI population."
+     },
+     "2-naive": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 389,
+      "actual_count": 389,
+      "elapsed_sec": 30.3,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?medication.code:text=methotrexate",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?medication.code:text=methotrexate",
+      "prompt_text": "Find patients on methotrexate."
+     },
+     "2-broad": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 389,
+      "actual_count": 389,
+      "elapsed_sec": 22.0,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|6851",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|6851",
+      "prompt_text": "Find patients prescribed methotrexate \u2014 a documented hepatotoxin used for rheumatoid arthritis, psoriasis, and other inflammatory conditions, monitored for liver toxicity."
+     },
+     "2-expert": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 389,
+      "actual_count": 389,
+      "elapsed_sec": 29.1,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|6851",
+      "additional_query_urls": [],
+      "raw_response": "FINAL ANSWER:\n\nMedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|6851",
+      "prompt_text": "I need to find patients with medication orders for methotrexate, which serves as the representative hepatotoxin in this DILI phenotype. Search MedicationRequest resources for methotrexate using its RxNorm code. Be aware this is a high-cross-indication medication \u2014 the vast majority of methotrexate users are treated for rheumatoid arthritis, psoriasis, or malignancies and have not developed DILI, so a medication-only cohort will substantially over-capture relative to the true DILI population."
+     },
+     "3-naive": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 389,
+      "actual_count": 389,
+      "elapsed_sec": 25.3,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|6851",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|6851",
+      "prompt_text": "Find patients on methotrexate."
+     },
+     "3-broad": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 389,
+      "actual_count": 389,
+      "elapsed_sec": 32.5,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?medication.code:text=methotrexate",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?medication.code:text=methotrexate",
+      "prompt_text": "Find patients prescribed methotrexate \u2014 a documented hepatotoxin used for rheumatoid arthritis, psoriasis, and other inflammatory conditions, monitored for liver toxicity."
+     },
+     "3-expert": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 389,
+      "actual_count": 389,
+      "elapsed_sec": 31.1,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|6851",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|6851",
       "prompt_text": "I need to find patients with medication orders for methotrexate, which serves as the representative hepatotoxin in this DILI phenotype. Search MedicationRequest resources for methotrexate using its RxNorm code. Be aware this is a high-cross-indication medication \u2014 the vast majority of methotrexate users are treated for rheumatoid arthritis, psoriasis, or malignancies and have not developed DILI, so a medication-only cohort will substantially over-capture relative to the true DILI population."
      }
     },

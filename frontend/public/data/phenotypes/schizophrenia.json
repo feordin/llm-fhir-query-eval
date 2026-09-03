@@ -231,6 +231,150 @@
       "prompt_text": "I need to identify all schizophrenia patients using both diagnostic coding and antipsychotic prescribing evidence, taking the union across two queries. First, search Condition resources for a schizophrenia diagnosis coded in SNOMED CT. Second, search MedicationRequest resources for antipsychotic agents \u2014 both the typical agent haloperidol and the atypical agents risperidone, olanzapine, and quetiapine, all coded in RxNorm \u2014 to capture Path C patients on antipsychotics without a schizophrenia diagnosis (typically bipolar mania, MDD with adjunct treatment, or dementia-related agitation). Return the union of patient IDs across both queries."
      }
     },
+    "copilot:claude-opus-4.7+mimic": {
+     "1-naive": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 2877,
+      "actual_count": 0,
+      "elapsed_sec": 7.2,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|58214004",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|58214004",
+      "prompt_text": "Find all schizophrenia patients."
+     },
+     "1-broad": {
+      "precision": 1.0,
+      "recall": 0.3556,
+      "f1": 0.5246,
+      "passed": false,
+      "expected_count": 2877,
+      "actual_count": 1023,
+      "elapsed_sec": 20.6,
+      "queries_generated": 4,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|58214004&_include=Condition:patient",
+      "additional_query_urls": [
+       "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|F20.9,http://hl7.org/fhir/sid/icd-10-cm|F20.0,http://hl7.org/fhir/sid/icd-10-cm|F20.1,http://hl7.org/fhir/sid/icd-10-cm|F20.2,http://hl7.org/fhir/sid/icd-10-cm|F20.3,http://hl7.org/fhir/sid/icd-10-cm|F20.5,http://hl7.org/fhir/sid/icd-10-cm|F20.81,http://hl7.org/fhir/sid/icd-10-cm|F20.89&_include=Condition:patient",
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|312078,http://www.nlm.nih.gov/research/umls/rxnorm|35636,http://www.nlm.nih.gov/research/umls/rxnorm|61381,http://www.nlm.nih.gov/research/umls/rxnorm|59762,http://www.nlm.nih.gov/research/umls/rxnorm|115698,http://www.nlm.nih.gov/research/umls/rxnorm|4493,http://www.nlm.nih.gov/research/umls/rxnorm|8331,http://www.nlm.nih.gov/research/umls/rxnorm|40790&_include=MedicationRequest:patient",
+       "MedicationStatement?code=http://www.nlm.nih.gov/research/umls/rxnorm|312078,http://www.nlm.nih.gov/research/umls/rxnorm|35636,http://www.nlm.nih.gov/research/umls/rxnorm|61381,http://www.nlm.nih.gov/research/umls/rxnorm|59762,http://www.nlm.nih.gov/research/umls/rxnorm|115698&_include=MedicationStatement:subject"
+      ],
+      "raw_response": "Condition?code=http://snomed.info/sct|58214004&_include=Condition:patient\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|F20.9,http://hl7.org/fhir/sid/icd-10-cm|F20.0,http://hl7.org/fhir/sid/icd-10-cm|F20.1,http://hl7.org/fhir/sid/icd-10-cm|F20.2,http://hl7.org/fhir/sid/icd-10-cm|F20.3,http://hl7.org/fhir/sid/icd-10-cm|F20.5,http://hl7.org/fhir/sid/icd-10-cm|F20.81,http://hl7.org/fhir/sid/icd-10-cm|F20.89&_include=Condition:patient\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|312078,http://www.nlm.nih.gov/research/umls/rxnorm|35636,http://www.nlm.nih.gov/research/umls/rxnorm|61381,http://www.nlm.nih.gov/research/umls/rxnorm|59762,http://www.nlm.nih.gov/research/umls/rxnorm|115698,http://www.nlm.nih.gov/research/umls/rxnorm|4493,http://www.nlm.nih.gov/research/umls/rxnorm|8331,http://www.nlm.nih.gov/research/umls/rxnorm|40790&_include=MedicationRequest:patient\nMedicationStatement?code=http://www.nlm.nih.gov/research/umls/rxnorm|312078,http://www.nlm.nih.gov/research/umls/rxnorm|35636,http://www.nlm.nih.gov/research/umls/rxnorm|61381,http://www.nlm.nih.gov/research/umls/rxnorm|59762,http://www.nlm.nih.gov/research/umls/rxnorm|115698&_include=MedicationStatement:subject",
+      "prompt_text": "Find all schizophrenia patients \u2014 by diagnosis or by antipsychotic medications. Run multiple queries and union the patient sets."
+     },
+     "1-expert": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 2877,
+      "actual_count": 0,
+      "elapsed_sec": 8.8,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|58214004",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|3639,http://www.nlm.nih.gov/research/umls/rxnorm|35636,http://www.nlm.nih.gov/research/umls/rxnorm|7646,http://www.nlm.nih.gov/research/umls/rxnorm|61381"
+      ],
+      "raw_response": "Condition?code=http://snomed.info/sct|58214004\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|3639,http://www.nlm.nih.gov/research/umls/rxnorm|35636,http://www.nlm.nih.gov/research/umls/rxnorm|7646,http://www.nlm.nih.gov/research/umls/rxnorm|61381",
+      "prompt_text": "I need to identify all schizophrenia patients using both diagnostic coding and antipsychotic prescribing evidence, taking the union across two queries. First, search Condition resources for a schizophrenia diagnosis coded in SNOMED CT. Second, search MedicationRequest resources for antipsychotic agents \u2014 both the typical agent haloperidol and the atypical agents risperidone, olanzapine, and quetiapine, all coded in RxNorm \u2014 to capture Path C patients on antipsychotics without a schizophrenia diagnosis (typically bipolar mania, MDD with adjunct treatment, or dementia-related agitation). Return the union of patient IDs across both queries."
+     },
+     "2-naive": {
+      "precision": 0.8791,
+      "recall": 0.9075,
+      "f1": 0.8931,
+      "passed": true,
+      "expected_count": 2877,
+      "actual_count": 2970,
+      "elapsed_sec": 48.8,
+      "queries_generated": 1,
+      "primary_query_url": "Patient?_has:Condition:patient:code=http://hl7.org/fhir/sid/icd-10-cm|F20.0,http://hl7.org/fhir/sid/icd-10-cm|F20.1,http://hl7.org/fhir/sid/icd-10-cm|F20.2,http://hl7.org/fhir/sid/icd-10-cm|F20.3,http://hl7.org/fhir/sid/icd-10-cm|F20.5,http://hl7.org/fhir/sid/icd-10-cm|F20.81,http://hl7.org/fhir/sid/icd-10-cm|F20.89,http://hl7.org/fhir/sid/icd-10-cm|F20.9,http://hl7.org/fhir/sid/icd-10-cm|F25.0,http://hl7.org/fhir/sid/icd-10-cm|F25.1,http://hl7.org/fhir/sid/icd-10-cm|F25.8,http://hl7.org/fhir/sid/icd-10-cm|F25.9,http://hl7.org/fhir/sid/icd-9-cm|295.00,http://hl7.org/fhir/sid/icd-9-cm|295.10,http://hl7.org/fhir/sid/icd-9-cm|295.20,http://hl7.org/fhir/sid/icd-9-cm|295.30,http://hl7.org/fhir/sid/icd-9-cm|295.40,http://hl7.org/fhir/sid/icd-9-cm|295.50,http://hl7.org/fhir/sid/icd-9-cm|295.60,http://hl7.org/fhir/sid/icd-9-cm|295.70,http://hl7.org/fhir/sid/icd-9-cm|295.80,http://hl7.org/fhir/sid/icd-9-cm|295.90",
+      "additional_query_urls": [],
+      "raw_response": "Final Answer:\n\nPatient?_has:Condition:patient:code=http://hl7.org/fhir/sid/icd-10-cm|F20.0,http://hl7.org/fhir/sid/icd-10-cm|F20.1,http://hl7.org/fhir/sid/icd-10-cm|F20.2,http://hl7.org/fhir/sid/icd-10-cm|F20.3,http://hl7.org/fhir/sid/icd-10-cm|F20.5,http://hl7.org/fhir/sid/icd-10-cm|F20.81,http://hl7.org/fhir/sid/icd-10-cm|F20.89,http://hl7.org/fhir/sid/icd-10-cm|F20.9,http://hl7.org/fhir/sid/icd-10-cm|F25.0,http://hl7.org/fhir/sid/icd-10-cm|F25.1,http://hl7.org/fhir/sid/icd-10-cm|F25.8,http://hl7.org/fhir/sid/icd-10-cm|F25.9,http://hl7.org/fhir/sid/icd-9-cm|295.00,http://hl7.org/fhir/sid/icd-9-cm|295.10,http://hl7.org/fhir/sid/icd-9-cm|295.20,http://hl7.org/fhir/sid/icd-9-cm|295.30,http://hl7.org/fhir/sid/icd-9-cm|295.40,http://hl7.org/fhir/sid/icd-9-cm|295.50,http://hl7.org/fhir/sid/icd-9-cm|295.60,http://hl7.org/fhir/sid/icd-9-cm|295.70,http://hl7.org/fhir/sid/icd-9-cm|295.80,http://hl7.org/fhir/sid/icd-9-cm|295.90",
+      "prompt_text": "Find all schizophrenia patients."
+     },
+     "2-broad": {
+      "precision": 0.8891,
+      "recall": 1.0,
+      "f1": 0.9413,
+      "passed": true,
+      "expected_count": 2877,
+      "actual_count": 3236,
+      "elapsed_sec": 87.4,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-9-cm|295.00,295.01,295.02,295.03,295.04,295.05,295.10,295.11,295.12,295.13,295.14,295.15,295.20,295.21,295.22,295.23,295.24,295.25,295.30,295.31,295.32,295.33,295.34,295.35,295.40,295.41,295.42,295.43,295.44,295.45,295.50,295.51,295.52,295.53,295.54,295.55,295.60,295.61,295.62,295.63,295.64,295.65,295.70,295.71,295.72,295.73,295.74,295.75,295.80,295.81,295.82,295.83,295.84,295.85,295.90,295.91,295.92,295.93,295.94,295.95",
+      "additional_query_urls": [
+       "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|F20,F20.0,F20.1,F20.2,F20.3,F20.5,F20.8,F20.81,F20.89,F20.9,F25,F25.0,F25.1,F25.8,F25.9"
+      ],
+      "raw_response": "FINAL ANSWER:\n\nCondition?code=http://hl7.org/fhir/sid/icd-9-cm|295.00,295.01,295.02,295.03,295.04,295.05,295.10,295.11,295.12,295.13,295.14,295.15,295.20,295.21,295.22,295.23,295.24,295.25,295.30,295.31,295.32,295.33,295.34,295.35,295.40,295.41,295.42,295.43,295.44,295.45,295.50,295.51,295.52,295.53,295.54,295.55,295.60,295.61,295.62,295.63,295.64,295.65,295.70,295.71,295.72,295.73,295.74,295.75,295.80,295.81,295.82,295.83,295.84,295.85,295.90,295.91,295.92,295.93,295.94,295.95\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|F20,F20.0,F20.1,F20.2,F20.3,F20.5,F20.8,F20.81,F20.89,F20.9,F25,F25.0,F25.1,F25.8,F25.9",
+      "prompt_text": "Find all schizophrenia patients \u2014 by diagnosis or by antipsychotic medications. Run multiple queries and union the patient sets."
+     },
+     "2-expert": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 2877,
+      "actual_count": 0,
+      "elapsed_sec": 39.3,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|58214004",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|3947,http://www.nlm.nih.gov/research/umls/rxnorm|35636,http://www.nlm.nih.gov/research/umls/rxnorm|7646,http://www.nlm.nih.gov/research/umls/rxnorm|51272"
+      ],
+      "raw_response": "Condition?code=http://snomed.info/sct|58214004\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|3947,http://www.nlm.nih.gov/research/umls/rxnorm|35636,http://www.nlm.nih.gov/research/umls/rxnorm|7646,http://www.nlm.nih.gov/research/umls/rxnorm|51272",
+      "prompt_text": "I need to identify all schizophrenia patients using both diagnostic coding and antipsychotic prescribing evidence, taking the union across two queries. First, search Condition resources for a schizophrenia diagnosis coded in SNOMED CT. Second, search MedicationRequest resources for antipsychotic agents \u2014 both the typical agent haloperidol and the atypical agents risperidone, olanzapine, and quetiapine, all coded in RxNorm \u2014 to capture Path C patients on antipsychotics without a schizophrenia diagnosis (typically bipolar mania, MDD with adjunct treatment, or dementia-related agitation). Return the union of patient IDs across both queries."
+     },
+     "3-naive": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 2877,
+      "actual_count": 2877,
+      "elapsed_sec": 49.9,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-9-cm|295.00,http://hl7.org/fhir/sid/icd-9-cm|295.01,http://hl7.org/fhir/sid/icd-9-cm|295.02,http://hl7.org/fhir/sid/icd-9-cm|295.03,http://hl7.org/fhir/sid/icd-9-cm|295.04,http://hl7.org/fhir/sid/icd-9-cm|295.05,http://hl7.org/fhir/sid/icd-9-cm|295.10,http://hl7.org/fhir/sid/icd-9-cm|295.11,http://hl7.org/fhir/sid/icd-9-cm|295.12,http://hl7.org/fhir/sid/icd-9-cm|295.13,http://hl7.org/fhir/sid/icd-9-cm|295.14,http://hl7.org/fhir/sid/icd-9-cm|295.15,http://hl7.org/fhir/sid/icd-9-cm|295.20,http://hl7.org/fhir/sid/icd-9-cm|295.21,http://hl7.org/fhir/sid/icd-9-cm|295.22,http://hl7.org/fhir/sid/icd-9-cm|295.23,http://hl7.org/fhir/sid/icd-9-cm|295.24,http://hl7.org/fhir/sid/icd-9-cm|295.25,http://hl7.org/fhir/sid/icd-9-cm|295.30,http://hl7.org/fhir/sid/icd-9-cm|295.31,http://hl7.org/fhir/sid/icd-9-cm|295.32,http://hl7.org/fhir/sid/icd-9-cm|295.33,http://hl7.org/fhir/sid/icd-9-cm|295.34,http://hl7.org/fhir/sid/icd-9-cm|295.35,http://hl7.org/fhir/sid/icd-9-cm|295.40,http://hl7.org/fhir/sid/icd-9-cm|295.41,http://hl7.org/fhir/sid/icd-9-cm|295.42,http://hl7.org/fhir/sid/icd-9-cm|295.43,http://hl7.org/fhir/sid/icd-9-cm|295.44,http://hl7.org/fhir/sid/icd-9-cm|295.45,http://hl7.org/fhir/sid/icd-9-cm|295.50,http://hl7.org/fhir/sid/icd-9-cm|295.51,http://hl7.org/fhir/sid/icd-9-cm|295.52,http://hl7.org/fhir/sid/icd-9-cm|295.53,http://hl7.org/fhir/sid/icd-9-cm|295.54,http://hl7.org/fhir/sid/icd-9-cm|295.55,http://hl7.org/fhir/sid/icd-9-cm|295.60,http://hl7.org/fhir/sid/icd-9-cm|295.61,http://hl7.org/fhir/sid/icd-9-cm|295.62,http://hl7.org/fhir/sid/icd-9-cm|295.63,http://hl7.org/fhir/sid/icd-9-cm|295.64,http://hl7.org/fhir/sid/icd-9-cm|295.65,http://hl7.org/fhir/sid/icd-9-cm|295.70,http://hl7.org/fhir/sid/icd-9-cm|295.71,http://hl7.org/fhir/sid/icd-9-cm|295.72,http://hl7.org/fhir/sid/icd-9-cm|295.73,http://hl7.org/fhir/sid/icd-9-cm|295.74,http://hl7.org/fhir/sid/icd-9-cm|295.75,http://hl7.org/fhir/sid/icd-9-cm|295.80,http://hl7.org/fhir/sid/icd-9-cm|295.81,http://hl7.org/fhir/sid/icd-9-cm|295.82,http://hl7.org/fhir/sid/icd-9-cm|295.83,http://hl7.org/fhir/sid/icd-9-cm|295.84,http://hl7.org/fhir/sid/icd-9-cm|295.85,http://hl7.org/fhir/sid/icd-9-cm|295.90,http://hl7.org/fhir/sid/icd-9-cm|295.91,http://hl7.org/fhir/sid/icd-9-cm|295.92,http://hl7.org/fhir/sid/icd-9-cm|295.93,http://hl7.org/fhir/sid/icd-9-cm|295.94,http://hl7.org/fhir/sid/icd-9-cm|295.95,http://hl7.org/fhir/sid/icd-10-cm|F20.0,http://hl7.org/fhir/sid/icd-10-cm|F20.1,http://hl7.org/fhir/sid/icd-10-cm|F20.2,http://hl7.org/fhir/sid/icd-10-cm|F20.3,http://hl7.org/fhir/sid/icd-10-cm|F20.5,http://hl7.org/fhir/sid/icd-10-cm|F20.81,http://hl7.org/fhir/sid/icd-10-cm|F20.89,http://hl7.org/fhir/sid/icd-10-cm|F20.9",
+      "additional_query_urls": [],
+      "raw_response": "Final answer:\n\nCondition?code=http://hl7.org/fhir/sid/icd-9-cm|295.00,http://hl7.org/fhir/sid/icd-9-cm|295.01,http://hl7.org/fhir/sid/icd-9-cm|295.02,http://hl7.org/fhir/sid/icd-9-cm|295.03,http://hl7.org/fhir/sid/icd-9-cm|295.04,http://hl7.org/fhir/sid/icd-9-cm|295.05,http://hl7.org/fhir/sid/icd-9-cm|295.10,http://hl7.org/fhir/sid/icd-9-cm|295.11,http://hl7.org/fhir/sid/icd-9-cm|295.12,http://hl7.org/fhir/sid/icd-9-cm|295.13,http://hl7.org/fhir/sid/icd-9-cm|295.14,http://hl7.org/fhir/sid/icd-9-cm|295.15,http://hl7.org/fhir/sid/icd-9-cm|295.20,http://hl7.org/fhir/sid/icd-9-cm|295.21,http://hl7.org/fhir/sid/icd-9-cm|295.22,http://hl7.org/fhir/sid/icd-9-cm|295.23,http://hl7.org/fhir/sid/icd-9-cm|295.24,http://hl7.org/fhir/sid/icd-9-cm|295.25,http://hl7.org/fhir/sid/icd-9-cm|295.30,http://hl7.org/fhir/sid/icd-9-cm|295.31,http://hl7.org/fhir/sid/icd-9-cm|295.32,http://hl7.org/fhir/sid/icd-9-cm|295.33,http://hl7.org/fhir/sid/icd-9-cm|295.34,http://hl7.org/fhir/sid/icd-9-cm|295.35,http://hl7.org/fhir/sid/icd-9-cm|295.40,http://hl7.org/fhir/sid/icd-9-cm|295.41,http://hl7.org/fhir/sid/icd-9-cm|295.42,http://hl7.org/fhir/sid/icd-9-cm|295.43,http://hl7.org/fhir/sid/icd-9-cm|295.44,http://hl7.org/fhir/sid/icd-9-cm|295.45,http://hl7.org/fhir/sid/icd-9-cm|295.50,http://hl7.org/fhir/sid/icd-9-cm|295.51,http://hl7.org/fhir/sid/icd-9-cm|295.52,http://hl7.org/fhir/sid/icd-9-cm|295.53,http://hl7.org/fhir/sid/icd-9-cm|295.54,http://hl7.org/fhir/sid/icd-9-cm|295.55,http://hl7.org/fhir/sid/icd-9-cm|295.60,http://hl7.org/fhir/sid/icd-9-cm|295.61,http://hl7.org/fhir/sid/icd-9-cm|295.62,http://hl7.org/fhir/sid/icd-9-cm|295.63,http://hl7.org/fhir/sid/icd-9-cm|295.64,http://hl7.org/fhir/sid/icd-9-cm|295.65,http://hl7.org/fhir/sid/icd-9-cm|295.70,http://hl7.org/fhir/sid/icd-9-cm|295.71,http://hl7.org/fhir/sid/icd-9-cm|295.72,http://hl7.org/fhir/sid/icd-9-cm|295.73,http://hl7.org/fhir/sid/icd-9-cm|295.74,http://hl7.org/fhir/sid/icd-9-cm|295.75,http://hl7.org/fhir/sid/icd-9-cm|295.80,http://hl7.org/fhir/sid/icd-9-cm|295.81,http://hl7.org/fhir/sid/icd-9-cm|295.82,http://hl7.org/fhir/sid/icd-9-cm|295.83,http://hl7.org/fhir/sid/icd-9-cm|295.84,http://hl7.org/fhir/sid/icd-9-cm|295.85,http://hl7.org/fhir/sid/icd-9-cm|295.90,http://hl7.org/fhir/sid/icd-9-cm|295.91,http://hl7.org/fhir/sid/icd-9-cm|295.92,http://hl7.org/fhir/sid/icd-9-cm|295.93,http://hl7.org/fhir/sid/icd-9-cm|295.94,http://hl7.org/fhir/sid/icd-9-cm|295.95,http://hl7.org/fhir/sid/icd-10-cm|F20.0,http://hl7.org/fhir/sid/icd-10-cm|F20.1,http://hl7.org/fhir/sid/icd-10-cm|F20.2,http://hl7.org/fhir/sid/icd-10-cm|F20.3,http://hl7.org/fhir/sid/icd-10-cm|F20.5,http://hl7.org/fhir/sid/icd-10-cm|F20.81,http://hl7.org/fhir/sid/icd-10-cm|F20.89,http://hl7.org/fhir/sid/icd-10-cm|F20.9",
+      "prompt_text": "Find all schizophrenia patients."
+     },
+     "3-broad": {
+      "precision": 0.8891,
+      "recall": 1.0,
+      "f1": 0.9413,
+      "passed": true,
+      "expected_count": 2877,
+      "actual_count": 3236,
+      "elapsed_sec": 107.3,
+      "queries_generated": 4,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-9-cm|295.00,http://hl7.org/fhir/sid/icd-9-cm|295.10,http://hl7.org/fhir/sid/icd-9-cm|295.20,http://hl7.org/fhir/sid/icd-9-cm|295.30,http://hl7.org/fhir/sid/icd-9-cm|295.40,http://hl7.org/fhir/sid/icd-9-cm|295.50,http://hl7.org/fhir/sid/icd-9-cm|295.60,http://hl7.org/fhir/sid/icd-9-cm|295.70,http://hl7.org/fhir/sid/icd-9-cm|295.80,http://hl7.org/fhir/sid/icd-9-cm|295.90,http://hl7.org/fhir/sid/icd-9-cm|295.01,http://hl7.org/fhir/sid/icd-9-cm|295.11,http://hl7.org/fhir/sid/icd-9-cm|295.21,http://hl7.org/fhir/sid/icd-9-cm|295.31,http://hl7.org/fhir/sid/icd-9-cm|295.41,http://hl7.org/fhir/sid/icd-9-cm|295.51,http://hl7.org/fhir/sid/icd-9-cm|295.61,http://hl7.org/fhir/sid/icd-9-cm|295.71,http://hl7.org/fhir/sid/icd-9-cm|295.81,http://hl7.org/fhir/sid/icd-9-cm|295.91,http://hl7.org/fhir/sid/icd-9-cm|295.02,http://hl7.org/fhir/sid/icd-9-cm|295.12,http://hl7.org/fhir/sid/icd-9-cm|295.22,http://hl7.org/fhir/sid/icd-9-cm|295.32,http://hl7.org/fhir/sid/icd-9-cm|295.42,http://hl7.org/fhir/sid/icd-9-cm|295.52,http://hl7.org/fhir/sid/icd-9-cm|295.62,http://hl7.org/fhir/sid/icd-9-cm|295.72,http://hl7.org/fhir/sid/icd-9-cm|295.82,http://hl7.org/fhir/sid/icd-9-cm|295.92,http://hl7.org/fhir/sid/icd-9-cm|295.03,http://hl7.org/fhir/sid/icd-9-cm|295.13,http://hl7.org/fhir/sid/icd-9-cm|295.23,http://hl7.org/fhir/sid/icd-9-cm|295.33,http://hl7.org/fhir/sid/icd-9-cm|295.43,http://hl7.org/fhir/sid/icd-9-cm|295.53,http://hl7.org/fhir/sid/icd-9-cm|295.63,http://hl7.org/fhir/sid/icd-9-cm|295.73,http://hl7.org/fhir/sid/icd-9-cm|295.83,http://hl7.org/fhir/sid/icd-9-cm|295.93,http://hl7.org/fhir/sid/icd-9-cm|295.04,http://hl7.org/fhir/sid/icd-9-cm|295.14,http://hl7.org/fhir/sid/icd-9-cm|295.24,http://hl7.org/fhir/sid/icd-9-cm|295.34,http://hl7.org/fhir/sid/icd-9-cm|295.44,http://hl7.org/fhir/sid/icd-9-cm|295.54,http://hl7.org/fhir/sid/icd-9-cm|295.64,http://hl7.org/fhir/sid/icd-9-cm|295.74,http://hl7.org/fhir/sid/icd-9-cm|295.84,http://hl7.org/fhir/sid/icd-9-cm|295.94,http://hl7.org/fhir/sid/icd-9-cm|295.05,http://hl7.org/fhir/sid/icd-9-cm|295.15,http://hl7.org/fhir/sid/icd-9-cm|295.25,http://hl7.org/fhir/sid/icd-9-cm|295.35,http://hl7.org/fhir/sid/icd-9-cm|295.45,http://hl7.org/fhir/sid/icd-9-cm|295.55,http://hl7.org/fhir/sid/icd-9-cm|295.65,http://hl7.org/fhir/sid/icd-9-cm|295.75,http://hl7.org/fhir/sid/icd-9-cm|295.85,http://hl7.org/fhir/sid/icd-9-cm|295.95",
+      "additional_query_urls": [
+       "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|F20.0,http://hl7.org/fhir/sid/icd-10-cm|F20.1,http://hl7.org/fhir/sid/icd-10-cm|F20.2,http://hl7.org/fhir/sid/icd-10-cm|F20.3,http://hl7.org/fhir/sid/icd-10-cm|F20.5,http://hl7.org/fhir/sid/icd-10-cm|F20.81,http://hl7.org/fhir/sid/icd-10-cm|F20.89,http://hl7.org/fhir/sid/icd-10-cm|F20.9,http://hl7.org/fhir/sid/icd-10-cm|F25.0,http://hl7.org/fhir/sid/icd-10-cm|F25.1,http://hl7.org/fhir/sid/icd-10-cm|F25.8,http://hl7.org/fhir/sid/icd-10-cm|F25.9",
+       "Condition?code=http://snomed.info/sct|58214004,http://snomed.info/sct|64905009,http://snomed.info/sct|35252006,http://snomed.info/sct|191542003,http://snomed.info/sct|191484002,http://snomed.info/sct|26025008,http://snomed.info/sct|83746006,http://snomed.info/sct|191526005,http://snomed.info/sct|268617001",
+       "MedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|2626,http://www.nlm.nih.gov/research/umls/rxnorm|5093,http://www.nlm.nih.gov/research/umls/rxnorm|61381,http://www.nlm.nih.gov/research/umls/rxnorm|35636,http://www.nlm.nih.gov/research/umls/rxnorm|51272,http://www.nlm.nih.gov/research/umls/rxnorm|89013,http://www.nlm.nih.gov/research/umls/rxnorm|115698,http://www.nlm.nih.gov/research/umls/rxnorm|679314,http://www.nlm.nih.gov/research/umls/rxnorm|1040028,http://www.nlm.nih.gov/research/umls/rxnorm|784649,http://www.nlm.nih.gov/research/umls/rxnorm|4496,http://www.nlm.nih.gov/research/umls/rxnorm|8076,http://www.nlm.nih.gov/research/umls/rxnorm|10502,http://www.nlm.nih.gov/research/umls/rxnorm|10800,http://www.nlm.nih.gov/research/umls/rxnorm|2403,http://www.nlm.nih.gov/research/umls/rxnorm|6475,http://www.nlm.nih.gov/research/umls/rxnorm|8331,http://www.nlm.nih.gov/research/umls/rxnorm|10510,http://www.nlm.nih.gov/research/umls/rxnorm|1658314,http://www.nlm.nih.gov/research/umls/rxnorm|1667655"
+      ],
+      "raw_response": "FINAL ANSWER:\n\nCondition?code=http://hl7.org/fhir/sid/icd-9-cm|295.00,http://hl7.org/fhir/sid/icd-9-cm|295.10,http://hl7.org/fhir/sid/icd-9-cm|295.20,http://hl7.org/fhir/sid/icd-9-cm|295.30,http://hl7.org/fhir/sid/icd-9-cm|295.40,http://hl7.org/fhir/sid/icd-9-cm|295.50,http://hl7.org/fhir/sid/icd-9-cm|295.60,http://hl7.org/fhir/sid/icd-9-cm|295.70,http://hl7.org/fhir/sid/icd-9-cm|295.80,http://hl7.org/fhir/sid/icd-9-cm|295.90,http://hl7.org/fhir/sid/icd-9-cm|295.01,http://hl7.org/fhir/sid/icd-9-cm|295.11,http://hl7.org/fhir/sid/icd-9-cm|295.21,http://hl7.org/fhir/sid/icd-9-cm|295.31,http://hl7.org/fhir/sid/icd-9-cm|295.41,http://hl7.org/fhir/sid/icd-9-cm|295.51,http://hl7.org/fhir/sid/icd-9-cm|295.61,http://hl7.org/fhir/sid/icd-9-cm|295.71,http://hl7.org/fhir/sid/icd-9-cm|295.81,http://hl7.org/fhir/sid/icd-9-cm|295.91,http://hl7.org/fhir/sid/icd-9-cm|295.02,http://hl7.org/fhir/sid/icd-9-cm|295.12,http://hl7.org/fhir/sid/icd-9-cm|295.22,http://hl7.org/fhir/sid/icd-9-cm|295.32,http://hl7.org/fhir/sid/icd-9-cm|295.42,http://hl7.org/fhir/sid/icd-9-cm|295.52,http://hl7.org/fhir/sid/icd-9-cm|295.62,http://hl7.org/fhir/sid/icd-9-cm|295.72,http://hl7.org/fhir/sid/icd-9-cm|295.82,http://hl7.org/fhir/sid/icd-9-cm|295.92,http://hl7.org/fhir/sid/icd-9-cm|295.03,http://hl7.org/fhir/sid/icd-9-cm|295.13,http://hl7.org/fhir/sid/icd-9-cm|295.23,http://hl7.org/fhir/sid/icd-9-cm|295.33,http://hl7.org/fhir/sid/icd-9-cm|295.43,http://hl7.org/fhir/sid/icd-9-cm|295.53,http://hl7.org/fhir/sid/icd-9-cm|295.63,http://hl7.org/fhir/sid/icd-9-cm|295.73,http://hl7.org/fhir/sid/icd-9-cm|295.83,http://hl7.org/fhir/sid/icd-9-cm|295.93,http://hl7.org/fhir/sid/icd-9-cm|295.04,http://hl7.org/fhir/sid/icd-9-cm|295.14,http://hl7.org/fhir/sid/icd-9-cm|295.24,http://hl7.org/fhir/sid/icd-9-cm|295.34,http://hl7.org/fhir/sid/icd-9-cm|295.44,http://hl7.org/fhir/sid/icd-9-cm|295.54,http://hl7.org/fhir/sid/icd-9-cm|295.64,http://hl7.org/fhir/sid/icd-9-cm|295.74,http://hl7.org/fhir/sid/icd-9-cm|295.84,http://hl7.org/fhir/sid/icd-9-cm|295.94,http://hl7.org/fhir/sid/icd-9-cm|295.05,http://hl7.org/fhir/sid/icd-9-cm|295.15,http://hl7.org/fhir/sid/icd-9-cm|295.25,http://hl7.org/fhir/sid/icd-9-cm|295.35,http://hl7.org/fhir/sid/icd-9-cm|295.45,http://hl7.org/fhir/sid/icd-9-cm|295.55,http://hl7.org/fhir/sid/icd-9-cm|295.65,http://hl7.org/fhir/sid/icd-9-cm|295.75,http://hl7.org/fhir/sid/icd-9-cm|295.85,http://hl7.org/fhir/sid/icd-9-cm|295.95\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|F20.0,http://hl7.org/fhir/sid/icd-10-cm|F20.1,http://hl7.org/fhir/sid/icd-10-cm|F20.2,http://hl7.org/fhir/sid/icd-10-cm|F20.3,http://hl7.org/fhir/sid/icd-10-cm|F20.5,http://hl7.org/fhir/sid/icd-10-cm|F20.81,http://hl7.org/fhir/sid/icd-10-cm|F20.89,http://hl7.org/fhir/sid/icd-10-cm|F20.9,http://hl7.org/fhir/sid/icd-10-cm|F25.0,http://hl7.org/fhir/sid/icd-10-cm|F25.1,http://hl7.org/fhir/sid/icd-10-cm|F25.8,http://hl7.org/fhir/sid/icd-10-cm|F25.9\nCondition?code=http://snomed.info/sct|58214004,http://snomed.info/sct|64905009,http://snomed.info/sct|35252006,http://snomed.info/sct|191542003,http://snomed.info/sct|191484002,http://snomed.info/sct|26025008,http://snomed.info/sct|83746006,http://snomed.info/sct|191526005,http://snomed.info/sct|268617001\nMedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|2626,http://www.nlm.nih.gov/research/umls/rxnorm|5093,http://www.nlm.nih.gov/research/umls/rxnorm|61381,http://www.nlm.nih.gov/research/umls/rxnorm|35636,http://www.nlm.nih.gov/research/umls/rxnorm|51272,http://www.nlm.nih.gov/research/umls/rxnorm|89013,http://www.nlm.nih.gov/research/umls/rxnorm|115698,http://www.nlm.nih.gov/research/umls/rxnorm|679314,http://www.nlm.nih.gov/research/umls/rxnorm|1040028,http://www.nlm.nih.gov/research/umls/rxnorm|784649,http://www.nlm.nih.gov/research/umls/rxnorm|4496,http://www.nlm.nih.gov/research/umls/rxnorm|8076,http://www.nlm.nih.gov/research/umls/rxnorm|10502,http://www.nlm.nih.gov/research/umls/rxnorm|10800,http://www.nlm.nih.gov/research/umls/rxnorm|2403,http://www.nlm.nih.gov/research/umls/rxnorm|6475,http://www.nlm.nih.gov/research/umls/rxnorm|8331,http://www.nlm.nih.gov/research/umls/rxnorm|10510,http://www.nlm.nih.gov/research/umls/rxnorm|1658314,http://www.nlm.nih.gov/research/umls/rxnorm|1667655",
+      "prompt_text": "Find all schizophrenia patients \u2014 by diagnosis or by antipsychotic medications. Run multiple queries and union the patient sets."
+     },
+     "3-expert": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 2877,
+      "actual_count": 0,
+      "elapsed_sec": 60.9,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|58214004,http://snomed.info/sct|64905009,http://snomed.info/sct|35252006,http://snomed.info/sct|191542003,http://snomed.info/sct|111484002,http://snomed.info/sct|26025008,http://snomed.info/sct|83746006,http://snomed.info/sct|31658008,http://snomed.info/sct|29599000,http://snomed.info/sct|71103003,http://snomed.info/sct|85861002,http://snomed.info/sct|16990005,http://snomed.info/sct|191527001",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|5093,http://www.nlm.nih.gov/research/umls/rxnorm|35636,http://www.nlm.nih.gov/research/umls/rxnorm|61381,http://www.nlm.nih.gov/research/umls/rxnorm|51272"
+      ],
+      "raw_response": "Condition?code=http://snomed.info/sct|58214004,http://snomed.info/sct|64905009,http://snomed.info/sct|35252006,http://snomed.info/sct|191542003,http://snomed.info/sct|111484002,http://snomed.info/sct|26025008,http://snomed.info/sct|83746006,http://snomed.info/sct|31658008,http://snomed.info/sct|29599000,http://snomed.info/sct|71103003,http://snomed.info/sct|85861002,http://snomed.info/sct|16990005,http://snomed.info/sct|191527001\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|5093,http://www.nlm.nih.gov/research/umls/rxnorm|35636,http://www.nlm.nih.gov/research/umls/rxnorm|61381,http://www.nlm.nih.gov/research/umls/rxnorm|51272",
+      "prompt_text": "I need to identify all schizophrenia patients using both diagnostic coding and antipsychotic prescribing evidence, taking the union across two queries. First, search Condition resources for a schizophrenia diagnosis coded in SNOMED CT. Second, search MedicationRequest resources for antipsychotic agents \u2014 both the typical agent haloperidol and the atypical agents risperidone, olanzapine, and quetiapine, all coded in RxNorm \u2014 to capture Path C patients on antipsychotics without a schizophrenia diagnosis (typically bipolar mania, MDD with adjunct treatment, or dementia-related agitation). Return the union of patient IDs across both queries."
+     }
+    },
     "copilot:claude-sonnet-4.6": {
      "1-naive": {
       "precision": 1.0,
@@ -1054,6 +1198,134 @@
       "prompt_text": "I need to find patients with a documented schizophrenia diagnosis from their clinical records. Search Condition resources for the schizophrenia concept coded in SNOMED CT, as recorded on the problem list or as an encounter diagnosis, without requiring any associated medication evidence."
      }
     },
+    "copilot:claude-opus-4.7+mimic": {
+     "1-naive": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 2877,
+      "actual_count": 0,
+      "elapsed_sec": 7.5,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|58214004",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|58214004",
+      "prompt_text": "Find patients with schizophrenia."
+     },
+     "1-broad": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 2877,
+      "actual_count": 0,
+      "elapsed_sec": 7.3,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|58214004",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|58214004",
+      "prompt_text": "Find patients diagnosed with schizophrenia \u2014 a chronic psychotic disorder characterized by hallucinations, delusions, and disorganized thinking."
+     },
+     "1-expert": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 2877,
+      "actual_count": 0,
+      "elapsed_sec": 7.0,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|58214004",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|58214004",
+      "prompt_text": "I need to find patients with a documented schizophrenia diagnosis from their clinical records. Search Condition resources for the schizophrenia concept coded in SNOMED CT, as recorded on the problem list or as an encounter diagnosis, without requiring any associated medication evidence."
+     },
+     "2-naive": {
+      "precision": 1.0,
+      "recall": 0.7348,
+      "f1": 0.8471,
+      "passed": true,
+      "expected_count": 2877,
+      "actual_count": 2114,
+      "elapsed_sec": 52.9,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-9-cm|295.00,http://hl7.org/fhir/sid/icd-9-cm|295.01,http://hl7.org/fhir/sid/icd-9-cm|295.02,http://hl7.org/fhir/sid/icd-9-cm|295.03,http://hl7.org/fhir/sid/icd-9-cm|295.04,http://hl7.org/fhir/sid/icd-9-cm|295.05,http://hl7.org/fhir/sid/icd-9-cm|295.10,http://hl7.org/fhir/sid/icd-9-cm|295.11,http://hl7.org/fhir/sid/icd-9-cm|295.12,http://hl7.org/fhir/sid/icd-9-cm|295.13,http://hl7.org/fhir/sid/icd-9-cm|295.14,http://hl7.org/fhir/sid/icd-9-cm|295.15,http://hl7.org/fhir/sid/icd-9-cm|295.20,http://hl7.org/fhir/sid/icd-9-cm|295.21,http://hl7.org/fhir/sid/icd-9-cm|295.22,http://hl7.org/fhir/sid/icd-9-cm|295.23,http://hl7.org/fhir/sid/icd-9-cm|295.24,http://hl7.org/fhir/sid/icd-9-cm|295.25,http://hl7.org/fhir/sid/icd-9-cm|295.30,http://hl7.org/fhir/sid/icd-9-cm|295.31,http://hl7.org/fhir/sid/icd-9-cm|295.32,http://hl7.org/fhir/sid/icd-9-cm|295.33,http://hl7.org/fhir/sid/icd-9-cm|295.34,http://hl7.org/fhir/sid/icd-9-cm|295.35,http://hl7.org/fhir/sid/icd-9-cm|295.40,http://hl7.org/fhir/sid/icd-9-cm|295.41,http://hl7.org/fhir/sid/icd-9-cm|295.42,http://hl7.org/fhir/sid/icd-9-cm|295.43,http://hl7.org/fhir/sid/icd-9-cm|295.44,http://hl7.org/fhir/sid/icd-9-cm|295.45,http://hl7.org/fhir/sid/icd-9-cm|295.50,http://hl7.org/fhir/sid/icd-9-cm|295.51,http://hl7.org/fhir/sid/icd-9-cm|295.52,http://hl7.org/fhir/sid/icd-9-cm|295.53,http://hl7.org/fhir/sid/icd-9-cm|295.54,http://hl7.org/fhir/sid/icd-9-cm|295.55,http://hl7.org/fhir/sid/icd-9-cm|295.60,http://hl7.org/fhir/sid/icd-9-cm|295.61,http://hl7.org/fhir/sid/icd-9-cm|295.62,http://hl7.org/fhir/sid/icd-9-cm|295.63,http://hl7.org/fhir/sid/icd-9-cm|295.64,http://hl7.org/fhir/sid/icd-9-cm|295.65,http://hl7.org/fhir/sid/icd-9-cm|295.70,http://hl7.org/fhir/sid/icd-9-cm|295.71,http://hl7.org/fhir/sid/icd-9-cm|295.72,http://hl7.org/fhir/sid/icd-9-cm|295.73,http://hl7.org/fhir/sid/icd-9-cm|295.74,http://hl7.org/fhir/sid/icd-9-cm|295.75,http://hl7.org/fhir/sid/icd-9-cm|295.80,http://hl7.org/fhir/sid/icd-9-cm|295.81,http://hl7.org/fhir/sid/icd-9-cm|295.82,http://hl7.org/fhir/sid/icd-9-cm|295.83,http://hl7.org/fhir/sid/icd-9-cm|295.84,http://hl7.org/fhir/sid/icd-9-cm|295.85,http://hl7.org/fhir/sid/icd-9-cm|295.90,http://hl7.org/fhir/sid/icd-9-cm|295.91,http://hl7.org/fhir/sid/icd-9-cm|295.92,http://hl7.org/fhir/sid/icd-9-cm|295.93,http://hl7.org/fhir/sid/icd-9-cm|295.94,http://hl7.org/fhir/sid/icd-9-cm|295.95",
+      "additional_query_urls": [],
+      "raw_response": "FINAL ANSWER:\n\nCondition?code=http://hl7.org/fhir/sid/icd-9-cm|295.00,http://hl7.org/fhir/sid/icd-9-cm|295.01,http://hl7.org/fhir/sid/icd-9-cm|295.02,http://hl7.org/fhir/sid/icd-9-cm|295.03,http://hl7.org/fhir/sid/icd-9-cm|295.04,http://hl7.org/fhir/sid/icd-9-cm|295.05,http://hl7.org/fhir/sid/icd-9-cm|295.10,http://hl7.org/fhir/sid/icd-9-cm|295.11,http://hl7.org/fhir/sid/icd-9-cm|295.12,http://hl7.org/fhir/sid/icd-9-cm|295.13,http://hl7.org/fhir/sid/icd-9-cm|295.14,http://hl7.org/fhir/sid/icd-9-cm|295.15,http://hl7.org/fhir/sid/icd-9-cm|295.20,http://hl7.org/fhir/sid/icd-9-cm|295.21,http://hl7.org/fhir/sid/icd-9-cm|295.22,http://hl7.org/fhir/sid/icd-9-cm|295.23,http://hl7.org/fhir/sid/icd-9-cm|295.24,http://hl7.org/fhir/sid/icd-9-cm|295.25,http://hl7.org/fhir/sid/icd-9-cm|295.30,http://hl7.org/fhir/sid/icd-9-cm|295.31,http://hl7.org/fhir/sid/icd-9-cm|295.32,http://hl7.org/fhir/sid/icd-9-cm|295.33,http://hl7.org/fhir/sid/icd-9-cm|295.34,http://hl7.org/fhir/sid/icd-9-cm|295.35,http://hl7.org/fhir/sid/icd-9-cm|295.40,http://hl7.org/fhir/sid/icd-9-cm|295.41,http://hl7.org/fhir/sid/icd-9-cm|295.42,http://hl7.org/fhir/sid/icd-9-cm|295.43,http://hl7.org/fhir/sid/icd-9-cm|295.44,http://hl7.org/fhir/sid/icd-9-cm|295.45,http://hl7.org/fhir/sid/icd-9-cm|295.50,http://hl7.org/fhir/sid/icd-9-cm|295.51,http://hl7.org/fhir/sid/icd-9-cm|295.52,http://hl7.org/fhir/sid/icd-9-cm|295.53,http://hl7.org/fhir/sid/icd-9-cm|295.54,http://hl7.org/fhir/sid/icd-9-cm|295.55,http://hl7.org/fhir/sid/icd-9-cm|295.60,http://hl7.org/fhir/sid/icd-9-cm|295.61,http://hl7.org/fhir/sid/icd-9-cm|295.62,http://hl7.org/fhir/sid/icd-9-cm|295.63,http://hl7.org/fhir/sid/icd-9-cm|295.64,http://hl7.org/fhir/sid/icd-9-cm|295.65,http://hl7.org/fhir/sid/icd-9-cm|295.70,http://hl7.org/fhir/sid/icd-9-cm|295.71,http://hl7.org/fhir/sid/icd-9-cm|295.72,http://hl7.org/fhir/sid/icd-9-cm|295.73,http://hl7.org/fhir/sid/icd-9-cm|295.74,http://hl7.org/fhir/sid/icd-9-cm|295.75,http://hl7.org/fhir/sid/icd-9-cm|295.80,http://hl7.org/fhir/sid/icd-9-cm|295.81,http://hl7.org/fhir/sid/icd-9-cm|295.82,http://hl7.org/fhir/sid/icd-9-cm|295.83,http://hl7.org/fhir/sid/icd-9-cm|295.84,http://hl7.org/fhir/sid/icd-9-cm|295.85,http://hl7.org/fhir/sid/icd-9-cm|295.90,http://hl7.org/fhir/sid/icd-9-cm|295.91,http://hl7.org/fhir/sid/icd-9-cm|295.92,http://hl7.org/fhir/sid/icd-9-cm|295.93,http://hl7.org/fhir/sid/icd-9-cm|295.94,http://hl7.org/fhir/sid/icd-9-cm|295.95",
+      "prompt_text": "Find patients with schizophrenia."
+     },
+     "2-broad": {
+      "precision": 1.0,
+      "recall": 0.7348,
+      "f1": 0.8471,
+      "passed": true,
+      "expected_count": 2877,
+      "actual_count": 2114,
+      "elapsed_sec": 53.4,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-9-cm|295.00,http://hl7.org/fhir/sid/icd-9-cm|295.01,http://hl7.org/fhir/sid/icd-9-cm|295.02,http://hl7.org/fhir/sid/icd-9-cm|295.03,http://hl7.org/fhir/sid/icd-9-cm|295.04,http://hl7.org/fhir/sid/icd-9-cm|295.05,http://hl7.org/fhir/sid/icd-9-cm|295.10,http://hl7.org/fhir/sid/icd-9-cm|295.11,http://hl7.org/fhir/sid/icd-9-cm|295.12,http://hl7.org/fhir/sid/icd-9-cm|295.13,http://hl7.org/fhir/sid/icd-9-cm|295.14,http://hl7.org/fhir/sid/icd-9-cm|295.15,http://hl7.org/fhir/sid/icd-9-cm|295.20,http://hl7.org/fhir/sid/icd-9-cm|295.21,http://hl7.org/fhir/sid/icd-9-cm|295.22,http://hl7.org/fhir/sid/icd-9-cm|295.23,http://hl7.org/fhir/sid/icd-9-cm|295.24,http://hl7.org/fhir/sid/icd-9-cm|295.25,http://hl7.org/fhir/sid/icd-9-cm|295.30,http://hl7.org/fhir/sid/icd-9-cm|295.31,http://hl7.org/fhir/sid/icd-9-cm|295.32,http://hl7.org/fhir/sid/icd-9-cm|295.33,http://hl7.org/fhir/sid/icd-9-cm|295.34,http://hl7.org/fhir/sid/icd-9-cm|295.35,http://hl7.org/fhir/sid/icd-9-cm|295.40,http://hl7.org/fhir/sid/icd-9-cm|295.41,http://hl7.org/fhir/sid/icd-9-cm|295.42,http://hl7.org/fhir/sid/icd-9-cm|295.43,http://hl7.org/fhir/sid/icd-9-cm|295.44,http://hl7.org/fhir/sid/icd-9-cm|295.45,http://hl7.org/fhir/sid/icd-9-cm|295.50,http://hl7.org/fhir/sid/icd-9-cm|295.51,http://hl7.org/fhir/sid/icd-9-cm|295.52,http://hl7.org/fhir/sid/icd-9-cm|295.53,http://hl7.org/fhir/sid/icd-9-cm|295.54,http://hl7.org/fhir/sid/icd-9-cm|295.55,http://hl7.org/fhir/sid/icd-9-cm|295.60,http://hl7.org/fhir/sid/icd-9-cm|295.61,http://hl7.org/fhir/sid/icd-9-cm|295.62,http://hl7.org/fhir/sid/icd-9-cm|295.63,http://hl7.org/fhir/sid/icd-9-cm|295.64,http://hl7.org/fhir/sid/icd-9-cm|295.65,http://hl7.org/fhir/sid/icd-9-cm|295.70,http://hl7.org/fhir/sid/icd-9-cm|295.71,http://hl7.org/fhir/sid/icd-9-cm|295.72,http://hl7.org/fhir/sid/icd-9-cm|295.73,http://hl7.org/fhir/sid/icd-9-cm|295.74,http://hl7.org/fhir/sid/icd-9-cm|295.75,http://hl7.org/fhir/sid/icd-9-cm|295.80,http://hl7.org/fhir/sid/icd-9-cm|295.81,http://hl7.org/fhir/sid/icd-9-cm|295.82,http://hl7.org/fhir/sid/icd-9-cm|295.83,http://hl7.org/fhir/sid/icd-9-cm|295.84,http://hl7.org/fhir/sid/icd-9-cm|295.85,http://hl7.org/fhir/sid/icd-9-cm|295.90,http://hl7.org/fhir/sid/icd-9-cm|295.91,http://hl7.org/fhir/sid/icd-9-cm|295.92,http://hl7.org/fhir/sid/icd-9-cm|295.93,http://hl7.org/fhir/sid/icd-9-cm|295.94,http://hl7.org/fhir/sid/icd-9-cm|295.95",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-9-cm|295.00,http://hl7.org/fhir/sid/icd-9-cm|295.01,http://hl7.org/fhir/sid/icd-9-cm|295.02,http://hl7.org/fhir/sid/icd-9-cm|295.03,http://hl7.org/fhir/sid/icd-9-cm|295.04,http://hl7.org/fhir/sid/icd-9-cm|295.05,http://hl7.org/fhir/sid/icd-9-cm|295.10,http://hl7.org/fhir/sid/icd-9-cm|295.11,http://hl7.org/fhir/sid/icd-9-cm|295.12,http://hl7.org/fhir/sid/icd-9-cm|295.13,http://hl7.org/fhir/sid/icd-9-cm|295.14,http://hl7.org/fhir/sid/icd-9-cm|295.15,http://hl7.org/fhir/sid/icd-9-cm|295.20,http://hl7.org/fhir/sid/icd-9-cm|295.21,http://hl7.org/fhir/sid/icd-9-cm|295.22,http://hl7.org/fhir/sid/icd-9-cm|295.23,http://hl7.org/fhir/sid/icd-9-cm|295.24,http://hl7.org/fhir/sid/icd-9-cm|295.25,http://hl7.org/fhir/sid/icd-9-cm|295.30,http://hl7.org/fhir/sid/icd-9-cm|295.31,http://hl7.org/fhir/sid/icd-9-cm|295.32,http://hl7.org/fhir/sid/icd-9-cm|295.33,http://hl7.org/fhir/sid/icd-9-cm|295.34,http://hl7.org/fhir/sid/icd-9-cm|295.35,http://hl7.org/fhir/sid/icd-9-cm|295.40,http://hl7.org/fhir/sid/icd-9-cm|295.41,http://hl7.org/fhir/sid/icd-9-cm|295.42,http://hl7.org/fhir/sid/icd-9-cm|295.43,http://hl7.org/fhir/sid/icd-9-cm|295.44,http://hl7.org/fhir/sid/icd-9-cm|295.45,http://hl7.org/fhir/sid/icd-9-cm|295.50,http://hl7.org/fhir/sid/icd-9-cm|295.51,http://hl7.org/fhir/sid/icd-9-cm|295.52,http://hl7.org/fhir/sid/icd-9-cm|295.53,http://hl7.org/fhir/sid/icd-9-cm|295.54,http://hl7.org/fhir/sid/icd-9-cm|295.55,http://hl7.org/fhir/sid/icd-9-cm|295.60,http://hl7.org/fhir/sid/icd-9-cm|295.61,http://hl7.org/fhir/sid/icd-9-cm|295.62,http://hl7.org/fhir/sid/icd-9-cm|295.63,http://hl7.org/fhir/sid/icd-9-cm|295.64,http://hl7.org/fhir/sid/icd-9-cm|295.65,http://hl7.org/fhir/sid/icd-9-cm|295.70,http://hl7.org/fhir/sid/icd-9-cm|295.71,http://hl7.org/fhir/sid/icd-9-cm|295.72,http://hl7.org/fhir/sid/icd-9-cm|295.73,http://hl7.org/fhir/sid/icd-9-cm|295.74,http://hl7.org/fhir/sid/icd-9-cm|295.75,http://hl7.org/fhir/sid/icd-9-cm|295.80,http://hl7.org/fhir/sid/icd-9-cm|295.81,http://hl7.org/fhir/sid/icd-9-cm|295.82,http://hl7.org/fhir/sid/icd-9-cm|295.83,http://hl7.org/fhir/sid/icd-9-cm|295.84,http://hl7.org/fhir/sid/icd-9-cm|295.85,http://hl7.org/fhir/sid/icd-9-cm|295.90,http://hl7.org/fhir/sid/icd-9-cm|295.91,http://hl7.org/fhir/sid/icd-9-cm|295.92,http://hl7.org/fhir/sid/icd-9-cm|295.93,http://hl7.org/fhir/sid/icd-9-cm|295.94,http://hl7.org/fhir/sid/icd-9-cm|295.95",
+      "prompt_text": "Find patients diagnosed with schizophrenia \u2014 a chronic psychotic disorder characterized by hallucinations, delusions, and disorganized thinking."
+     },
+     "2-expert": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 2877,
+      "actual_count": 0,
+      "elapsed_sec": 21.5,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|58214004",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|58214004",
+      "prompt_text": "I need to find patients with a documented schizophrenia diagnosis from their clinical records. Search Condition resources for the schizophrenia concept coded in SNOMED CT, as recorded on the problem list or as an encounter diagnosis, without requiring any associated medication evidence."
+     },
+     "3-naive": {
+      "precision": 1.0,
+      "recall": 0.7348,
+      "f1": 0.8471,
+      "passed": true,
+      "expected_count": 2877,
+      "actual_count": 2114,
+      "elapsed_sec": 33.3,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-9-cm|295.00,295.01,295.02,295.03,295.04,295.05,295.10,295.11,295.12,295.13,295.14,295.15,295.20,295.21,295.22,295.23,295.24,295.25,295.30,295.31,295.32,295.33,295.34,295.35,295.40,295.41,295.42,295.43,295.44,295.45,295.50,295.51,295.52,295.53,295.54,295.55,295.60,295.61,295.62,295.63,295.64,295.65,295.70,295.71,295.72,295.73,295.74,295.75,295.80,295.81,295.82,295.83,295.84,295.85,295.90,295.91,295.92,295.93,295.94,295.95",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-9-cm|295.00,295.01,295.02,295.03,295.04,295.05,295.10,295.11,295.12,295.13,295.14,295.15,295.20,295.21,295.22,295.23,295.24,295.25,295.30,295.31,295.32,295.33,295.34,295.35,295.40,295.41,295.42,295.43,295.44,295.45,295.50,295.51,295.52,295.53,295.54,295.55,295.60,295.61,295.62,295.63,295.64,295.65,295.70,295.71,295.72,295.73,295.74,295.75,295.80,295.81,295.82,295.83,295.84,295.85,295.90,295.91,295.92,295.93,295.94,295.95",
+      "prompt_text": "Find patients with schizophrenia."
+     },
+     "3-broad": {
+      "precision": 1.0,
+      "recall": 0.7348,
+      "f1": 0.8471,
+      "passed": true,
+      "expected_count": 2877,
+      "actual_count": 2114,
+      "elapsed_sec": 44.9,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-9-cm|295.00,http://hl7.org/fhir/sid/icd-9-cm|295.01,http://hl7.org/fhir/sid/icd-9-cm|295.02,http://hl7.org/fhir/sid/icd-9-cm|295.03,http://hl7.org/fhir/sid/icd-9-cm|295.04,http://hl7.org/fhir/sid/icd-9-cm|295.05,http://hl7.org/fhir/sid/icd-9-cm|295.10,http://hl7.org/fhir/sid/icd-9-cm|295.11,http://hl7.org/fhir/sid/icd-9-cm|295.12,http://hl7.org/fhir/sid/icd-9-cm|295.13,http://hl7.org/fhir/sid/icd-9-cm|295.14,http://hl7.org/fhir/sid/icd-9-cm|295.15,http://hl7.org/fhir/sid/icd-9-cm|295.20,http://hl7.org/fhir/sid/icd-9-cm|295.21,http://hl7.org/fhir/sid/icd-9-cm|295.22,http://hl7.org/fhir/sid/icd-9-cm|295.23,http://hl7.org/fhir/sid/icd-9-cm|295.24,http://hl7.org/fhir/sid/icd-9-cm|295.25,http://hl7.org/fhir/sid/icd-9-cm|295.30,http://hl7.org/fhir/sid/icd-9-cm|295.31,http://hl7.org/fhir/sid/icd-9-cm|295.32,http://hl7.org/fhir/sid/icd-9-cm|295.33,http://hl7.org/fhir/sid/icd-9-cm|295.34,http://hl7.org/fhir/sid/icd-9-cm|295.35,http://hl7.org/fhir/sid/icd-9-cm|295.40,http://hl7.org/fhir/sid/icd-9-cm|295.41,http://hl7.org/fhir/sid/icd-9-cm|295.42,http://hl7.org/fhir/sid/icd-9-cm|295.43,http://hl7.org/fhir/sid/icd-9-cm|295.44,http://hl7.org/fhir/sid/icd-9-cm|295.45,http://hl7.org/fhir/sid/icd-9-cm|295.50,http://hl7.org/fhir/sid/icd-9-cm|295.51,http://hl7.org/fhir/sid/icd-9-cm|295.52,http://hl7.org/fhir/sid/icd-9-cm|295.53,http://hl7.org/fhir/sid/icd-9-cm|295.54,http://hl7.org/fhir/sid/icd-9-cm|295.55,http://hl7.org/fhir/sid/icd-9-cm|295.60,http://hl7.org/fhir/sid/icd-9-cm|295.61,http://hl7.org/fhir/sid/icd-9-cm|295.62,http://hl7.org/fhir/sid/icd-9-cm|295.63,http://hl7.org/fhir/sid/icd-9-cm|295.64,http://hl7.org/fhir/sid/icd-9-cm|295.65,http://hl7.org/fhir/sid/icd-9-cm|295.70,http://hl7.org/fhir/sid/icd-9-cm|295.71,http://hl7.org/fhir/sid/icd-9-cm|295.72,http://hl7.org/fhir/sid/icd-9-cm|295.73,http://hl7.org/fhir/sid/icd-9-cm|295.74,http://hl7.org/fhir/sid/icd-9-cm|295.75,http://hl7.org/fhir/sid/icd-9-cm|295.80,http://hl7.org/fhir/sid/icd-9-cm|295.81,http://hl7.org/fhir/sid/icd-9-cm|295.82,http://hl7.org/fhir/sid/icd-9-cm|295.83,http://hl7.org/fhir/sid/icd-9-cm|295.84,http://hl7.org/fhir/sid/icd-9-cm|295.85,http://hl7.org/fhir/sid/icd-9-cm|295.90,http://hl7.org/fhir/sid/icd-9-cm|295.91,http://hl7.org/fhir/sid/icd-9-cm|295.92,http://hl7.org/fhir/sid/icd-9-cm|295.93,http://hl7.org/fhir/sid/icd-9-cm|295.94,http://hl7.org/fhir/sid/icd-9-cm|295.95",
+      "additional_query_urls": [],
+      "raw_response": "Final answer:\n\nCondition?code=http://hl7.org/fhir/sid/icd-9-cm|295.00,http://hl7.org/fhir/sid/icd-9-cm|295.01,http://hl7.org/fhir/sid/icd-9-cm|295.02,http://hl7.org/fhir/sid/icd-9-cm|295.03,http://hl7.org/fhir/sid/icd-9-cm|295.04,http://hl7.org/fhir/sid/icd-9-cm|295.05,http://hl7.org/fhir/sid/icd-9-cm|295.10,http://hl7.org/fhir/sid/icd-9-cm|295.11,http://hl7.org/fhir/sid/icd-9-cm|295.12,http://hl7.org/fhir/sid/icd-9-cm|295.13,http://hl7.org/fhir/sid/icd-9-cm|295.14,http://hl7.org/fhir/sid/icd-9-cm|295.15,http://hl7.org/fhir/sid/icd-9-cm|295.20,http://hl7.org/fhir/sid/icd-9-cm|295.21,http://hl7.org/fhir/sid/icd-9-cm|295.22,http://hl7.org/fhir/sid/icd-9-cm|295.23,http://hl7.org/fhir/sid/icd-9-cm|295.24,http://hl7.org/fhir/sid/icd-9-cm|295.25,http://hl7.org/fhir/sid/icd-9-cm|295.30,http://hl7.org/fhir/sid/icd-9-cm|295.31,http://hl7.org/fhir/sid/icd-9-cm|295.32,http://hl7.org/fhir/sid/icd-9-cm|295.33,http://hl7.org/fhir/sid/icd-9-cm|295.34,http://hl7.org/fhir/sid/icd-9-cm|295.35,http://hl7.org/fhir/sid/icd-9-cm|295.40,http://hl7.org/fhir/sid/icd-9-cm|295.41,http://hl7.org/fhir/sid/icd-9-cm|295.42,http://hl7.org/fhir/sid/icd-9-cm|295.43,http://hl7.org/fhir/sid/icd-9-cm|295.44,http://hl7.org/fhir/sid/icd-9-cm|295.45,http://hl7.org/fhir/sid/icd-9-cm|295.50,http://hl7.org/fhir/sid/icd-9-cm|295.51,http://hl7.org/fhir/sid/icd-9-cm|295.52,http://hl7.org/fhir/sid/icd-9-cm|295.53,http://hl7.org/fhir/sid/icd-9-cm|295.54,http://hl7.org/fhir/sid/icd-9-cm|295.55,http://hl7.org/fhir/sid/icd-9-cm|295.60,http://hl7.org/fhir/sid/icd-9-cm|295.61,http://hl7.org/fhir/sid/icd-9-cm|295.62,http://hl7.org/fhir/sid/icd-9-cm|295.63,http://hl7.org/fhir/sid/icd-9-cm|295.64,http://hl7.org/fhir/sid/icd-9-cm|295.65,http://hl7.org/fhir/sid/icd-9-cm|295.70,http://hl7.org/fhir/sid/icd-9-cm|295.71,http://hl7.org/fhir/sid/icd-9-cm|295.72,http://hl7.org/fhir/sid/icd-9-cm|295.73,http://hl7.org/fhir/sid/icd-9-cm|295.74,http://hl7.org/fhir/sid/icd-9-cm|295.75,http://hl7.org/fhir/sid/icd-9-cm|295.80,http://hl7.org/fhir/sid/icd-9-cm|295.81,http://hl7.org/fhir/sid/icd-9-cm|295.82,http://hl7.org/fhir/sid/icd-9-cm|295.83,http://hl7.org/fhir/sid/icd-9-cm|295.84,http://hl7.org/fhir/sid/icd-9-cm|295.85,http://hl7.org/fhir/sid/icd-9-cm|295.90,http://hl7.org/fhir/sid/icd-9-cm|295.91,http://hl7.org/fhir/sid/icd-9-cm|295.92,http://hl7.org/fhir/sid/icd-9-cm|295.93,http://hl7.org/fhir/sid/icd-9-cm|295.94,http://hl7.org/fhir/sid/icd-9-cm|295.95",
+      "prompt_text": "Find patients diagnosed with schizophrenia \u2014 a chronic psychotic disorder characterized by hallucinations, delusions, and disorganized thinking."
+     },
+     "3-expert": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 2877,
+      "actual_count": 0,
+      "elapsed_sec": 18.9,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|58214004,http://snomed.info/sct|64905009,http://snomed.info/sct|111484002,http://snomed.info/sct|35252006,http://snomed.info/sct|20419004,http://snomed.info/sct|26025008,http://snomed.info/sct|38295006",
+      "additional_query_urls": [],
+      "raw_response": "Final answer:\n\nCondition?code=http://snomed.info/sct|58214004,http://snomed.info/sct|64905009,http://snomed.info/sct|111484002,http://snomed.info/sct|35252006,http://snomed.info/sct|20419004,http://snomed.info/sct|26025008,http://snomed.info/sct|38295006",
+      "prompt_text": "I need to find patients with a documented schizophrenia diagnosis from their clinical records. Search Condition resources for the schizophrenia concept coded in SNOMED CT, as recorded on the problem list or as an encounter diagnosis, without requiring any associated medication evidence."
+     }
+    },
     "copilot:claude-sonnet-4.6": {
      "1-naive": {
       "precision": 1.0,
@@ -1781,6 +2053,150 @@
       "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|3947,http://www.nlm.nih.gov/research/umls/rxnorm|35636,http://www.nlm.nih.gov/research/umls/rxnorm|61381,http://www.nlm.nih.gov/research/umls/rxnorm|51272",
       "additional_query_urls": [],
       "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|3947,http://www.nlm.nih.gov/research/umls/rxnorm|35636,http://www.nlm.nih.gov/research/umls/rxnorm|61381,http://www.nlm.nih.gov/research/umls/rxnorm|51272",
+      "prompt_text": "I need to identify patients being treated pharmacologically with antipsychotic medications, covering both typical and atypical drug classes. Search MedicationRequest resources for haloperidol (a first-generation typical antipsychotic), and the atypical agents risperidone, olanzapine, and quetiapine \u2014 all coded in RxNorm. This medication-only cohort carries substantial cross-indication contamination: quetiapine in particular is widely prescribed for bipolar disorder, major depressive disorder as an adjunct, dementia-related agitation, and insomnia, so many returned patients will not have schizophrenia as their primary indication."
+     }
+    },
+    "copilot:claude-opus-4.7+mimic": {
+     "1-naive": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 25571,
+      "actual_count": 0,
+      "elapsed_sec": 12.1,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|32937,http://www.nlm.nih.gov/research/umls/rxnorm|61381,http://www.nlm.nih.gov/research/umls/rxnorm|8163,http://www.nlm.nih.gov/research/umls/rxnorm|3616,http://www.nlm.nih.gov/research/umls/rxnorm|5489,http://www.nlm.nih.gov/research/umls/rxnorm|9997,http://www.nlm.nih.gov/research/umls/rxnorm|40790,http://www.nlm.nih.gov/research/umls/rxnorm|119579,http://www.nlm.nih.gov/research/umls/rxnorm|115698,http://www.nlm.nih.gov/research/umls/rxnorm|72625,http://www.nlm.nih.gov/research/umls/rxnorm|312078,http://www.nlm.nih.gov/research/umls/rxnorm|352393,http://www.nlm.nih.gov/research/umls/rxnorm|444863,http://www.nlm.nih.gov/research/umls/rxnorm|596724&status=active",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|32937,http://www.nlm.nih.gov/research/umls/rxnorm|61381,http://www.nlm.nih.gov/research/umls/rxnorm|8163,http://www.nlm.nih.gov/research/umls/rxnorm|3616,http://www.nlm.nih.gov/research/umls/rxnorm|5489,http://www.nlm.nih.gov/research/umls/rxnorm|9997,http://www.nlm.nih.gov/research/umls/rxnorm|40790,http://www.nlm.nih.gov/research/umls/rxnorm|119579,http://www.nlm.nih.gov/research/umls/rxnorm|115698,http://www.nlm.nih.gov/research/umls/rxnorm|72625,http://www.nlm.nih.gov/research/umls/rxnorm|312078,http://www.nlm.nih.gov/research/umls/rxnorm|352393,http://www.nlm.nih.gov/research/umls/rxnorm|444863,http://www.nlm.nih.gov/research/umls/rxnorm|596724&status=active",
+      "prompt_text": "Find patients on antipsychotics."
+     },
+     "1-broad": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 25571,
+      "actual_count": 0,
+      "elapsed_sec": 9.0,
+      "queries_generated": 4,
+      "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|3947",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|35636",
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|7646",
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|61381"
+      ],
+      "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|3947\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|35636\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|7646\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|61381",
+      "prompt_text": "Find patients prescribed antipsychotic medications \u2014 including the typical antipsychotic haloperidol and atypicals risperidone, olanzapine, and quetiapine."
+     },
+     "1-expert": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 25571,
+      "actual_count": 0,
+      "elapsed_sec": 8.8,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|3639,http://www.nlm.nih.gov/research/umls/rxnorm|35636,http://www.nlm.nih.gov/research/umls/rxnorm|7646,http://www.nlm.nih.gov/research/umls/rxnorm|119565",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|3639,http://www.nlm.nih.gov/research/umls/rxnorm|35636,http://www.nlm.nih.gov/research/umls/rxnorm|7646,http://www.nlm.nih.gov/research/umls/rxnorm|119565",
+      "prompt_text": "I need to identify patients being treated pharmacologically with antipsychotic medications, covering both typical and atypical drug classes. Search MedicationRequest resources for haloperidol (a first-generation typical antipsychotic), and the atypical agents risperidone, olanzapine, and quetiapine \u2014 all coded in RxNorm. This medication-only cohort carries substantial cross-indication contamination: quetiapine in particular is widely prescribed for bipolar disorder, major depressive disorder as an adjunct, dementia-related agitation, and insomnia, so many returned patients will not have schizophrenia as their primary indication."
+     },
+     "2-naive": {
+      "precision": 0.6628,
+      "recall": 0.051,
+      "f1": 0.0946,
+      "passed": false,
+      "expected_count": 25571,
+      "actual_count": 1966,
+      "elapsed_sec": 412.0,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|10239,http://www.nlm.nih.gov/research/umls/rxnorm|1040028,http://www.nlm.nih.gov/research/umls/rxnorm|10498,http://www.nlm.nih.gov/research/umls/rxnorm|10502,http://www.nlm.nih.gov/research/umls/rxnorm|10510,http://www.nlm.nih.gov/research/umls/rxnorm|10588,http://www.nlm.nih.gov/research/umls/rxnorm|10800,http://www.nlm.nih.gov/research/umls/rxnorm|10804,http://www.nlm.nih.gov/research/umls/rxnorm|10805,http://www.nlm.nih.gov/research/umls/rxnorm|114176,http://www.nlm.nih.gov/research/umls/rxnorm|115698,http://www.nlm.nih.gov/research/umls/rxnorm|1373,http://www.nlm.nih.gov/research/umls/rxnorm|155,http://www.nlm.nih.gov/research/umls/rxnorm|1658314,http://www.nlm.nih.gov/research/umls/rxnorm|1667655,http://www.nlm.nih.gov/research/umls/rxnorm|16735,http://www.nlm.nih.gov/research/umls/rxnorm|1791685,http://www.nlm.nih.gov/research/umls/rxnorm|19777,http://www.nlm.nih.gov/research/umls/rxnorm|21877,http://www.nlm.nih.gov/research/umls/rxnorm|2403,http://www.nlm.nih.gov/research/umls/rxnorm|2406,http://www.nlm.nih.gov/research/umls/rxnorm|2620,http://www.nlm.nih.gov/research/umls/rxnorm|2626,http://www.nlm.nih.gov/research/umls/rxnorm|29961,http://www.nlm.nih.gov/research/umls/rxnorm|33739,http://www.nlm.nih.gov/research/umls/rxnorm|35350,http://www.nlm.nih.gov/research/umls/rxnorm|35636,http://www.nlm.nih.gov/research/umls/rxnorm|3648,http://www.nlm.nih.gov/research/umls/rxnorm|37416,http://www.nlm.nih.gov/research/umls/rxnorm|38133,http://www.nlm.nih.gov/research/umls/rxnorm|39468,http://www.nlm.nih.gov/research/umls/rxnorm|40003,http://www.nlm.nih.gov/research/umls/rxnorm|41996,http://www.nlm.nih.gov/research/umls/rxnorm|4495,http://www.nlm.nih.gov/research/umls/rxnorm|4496,http://www.nlm.nih.gov/research/umls/rxnorm|4507,http://www.nlm.nih.gov/research/umls/rxnorm|46303,http://www.nlm.nih.gov/research/umls/rxnorm|5093,http://www.nlm.nih.gov/research/umls/rxnorm|51272,http://www.nlm.nih.gov/research/umls/rxnorm|55244,http://www.nlm.nih.gov/research/umls/rxnorm|59860,http://www.nlm.nih.gov/research/umls/rxnorm|61381,http://www.nlm.nih.gov/research/umls/rxnorm|6475,http://www.nlm.nih.gov/research/umls/rxnorm|6779,http://www.nlm.nih.gov/research/umls/rxnorm|679314,http://www.nlm.nih.gov/research/umls/rxnorm|6852,http://www.nlm.nih.gov/research/umls/rxnorm|7019,http://www.nlm.nih.gov/research/umls/rxnorm|73178,http://www.nlm.nih.gov/research/umls/rxnorm|7815,http://www.nlm.nih.gov/research/umls/rxnorm|784649,http://www.nlm.nih.gov/research/umls/rxnorm|7974,http://www.nlm.nih.gov/research/umls/rxnorm|8042,http://www.nlm.nih.gov/research/umls/rxnorm|8076,http://www.nlm.nih.gov/research/umls/rxnorm|8331,http://www.nlm.nih.gov/research/umls/rxnorm|8348,http://www.nlm.nih.gov/research/umls/rxnorm|8704,http://www.nlm.nih.gov/research/umls/rxnorm|8742,http://www.nlm.nih.gov/research/umls/rxnorm|8766,http://www.nlm.nih.gov/research/umls/rxnorm|89013",
+      "additional_query_urls": [],
+      "raw_response": "FINAL ANSWER:\n\nMedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|10239,http://www.nlm.nih.gov/research/umls/rxnorm|1040028,http://www.nlm.nih.gov/research/umls/rxnorm|10498,http://www.nlm.nih.gov/research/umls/rxnorm|10502,http://www.nlm.nih.gov/research/umls/rxnorm|10510,http://www.nlm.nih.gov/research/umls/rxnorm|10588,http://www.nlm.nih.gov/research/umls/rxnorm|10800,http://www.nlm.nih.gov/research/umls/rxnorm|10804,http://www.nlm.nih.gov/research/umls/rxnorm|10805,http://www.nlm.nih.gov/research/umls/rxnorm|114176,http://www.nlm.nih.gov/research/umls/rxnorm|115698,http://www.nlm.nih.gov/research/umls/rxnorm|1373,http://www.nlm.nih.gov/research/umls/rxnorm|155,http://www.nlm.nih.gov/research/umls/rxnorm|1658314,http://www.nlm.nih.gov/research/umls/rxnorm|1667655,http://www.nlm.nih.gov/research/umls/rxnorm|16735,http://www.nlm.nih.gov/research/umls/rxnorm|1791685,http://www.nlm.nih.gov/research/umls/rxnorm|19777,http://www.nlm.nih.gov/research/umls/rxnorm|21877,http://www.nlm.nih.gov/research/umls/rxnorm|2403,http://www.nlm.nih.gov/research/umls/rxnorm|2406,http://www.nlm.nih.gov/research/umls/rxnorm|2620,http://www.nlm.nih.gov/research/umls/rxnorm|2626,http://www.nlm.nih.gov/research/umls/rxnorm|29961,http://www.nlm.nih.gov/research/umls/rxnorm|33739,http://www.nlm.nih.gov/research/umls/rxnorm|35350,http://www.nlm.nih.gov/research/umls/rxnorm|35636,http://www.nlm.nih.gov/research/umls/rxnorm|3648,http://www.nlm.nih.gov/research/umls/rxnorm|37416,http://www.nlm.nih.gov/research/umls/rxnorm|38133,http://www.nlm.nih.gov/research/umls/rxnorm|39468,http://www.nlm.nih.gov/research/umls/rxnorm|40003,http://www.nlm.nih.gov/research/umls/rxnorm|41996,http://www.nlm.nih.gov/research/umls/rxnorm|4495,http://www.nlm.nih.gov/research/umls/rxnorm|4496,http://www.nlm.nih.gov/research/umls/rxnorm|4507,http://www.nlm.nih.gov/research/umls/rxnorm|46303,http://www.nlm.nih.gov/research/umls/rxnorm|5093,http://www.nlm.nih.gov/research/umls/rxnorm|51272,http://www.nlm.nih.gov/research/umls/rxnorm|55244,http://www.nlm.nih.gov/research/umls/rxnorm|59860,http://www.nlm.nih.gov/research/umls/rxnorm|61381,http://www.nlm.nih.gov/research/umls/rxnorm|6475,http://www.nlm.nih.gov/research/umls/rxnorm|6779,http://www.nlm.nih.gov/research/umls/rxnorm|679314,http://www.nlm.nih.gov/research/umls/rxnorm|6852,http://www.nlm.nih.gov/research/umls/rxnorm|7019,http://www.nlm.nih.gov/research/umls/rxnorm|73178,http://www.nlm.nih.gov/research/umls/rxnorm|7815,http://www.nlm.nih.gov/research/umls/rxnorm|784649,http://www.nlm.nih.gov/research/umls/rxnorm|7974,http://www.nlm.nih.gov/research/umls/rxnorm|8042,http://www.nlm.nih.gov/research/umls/rxnorm|8076,http://www.nlm.nih.gov/research/umls/rxnorm|8331,http://www.nlm.nih.gov/research/umls/rxnorm|8348,http://www.nlm.nih.gov/research/umls/rxnorm|8704,http://www.nlm.nih.gov/research/umls/rxnorm|8742,http://www.nlm.nih.gov/research/umls/rxnorm|8766,http://www.nlm.nih.gov/research/umls/rxnorm|89013",
+      "prompt_text": "Find patients on antipsychotics."
+     },
+     "2-broad": {
+      "precision": 0.9995,
+      "recall": 0.3337,
+      "f1": 0.5003,
+      "passed": false,
+      "expected_count": 25571,
+      "actual_count": 8536,
+      "elapsed_sec": 101.5,
+      "queries_generated": 4,
+      "primary_query_url": "MedicationRequest?medication.code:text=haloperidol",
+      "additional_query_urls": [
+       "MedicationRequest?medication.code:text=risperidone",
+       "MedicationRequest?medication.code:text=olanzapine",
+       "MedicationRequest?medication.code:text=quetiapine"
+      ],
+      "raw_response": "MedicationRequest?medication.code:text=haloperidol\nMedicationRequest?medication.code:text=risperidone\nMedicationRequest?medication.code:text=olanzapine\nMedicationRequest?medication.code:text=quetiapine",
+      "prompt_text": "Find patients prescribed antipsychotic medications \u2014 including the typical antipsychotic haloperidol and atypicals risperidone, olanzapine, and quetiapine."
+     },
+     "2-expert": {
+      "precision": 1.0,
+      "recall": 0.0757,
+      "f1": 0.1408,
+      "passed": false,
+      "expected_count": 25571,
+      "actual_count": 1937,
+      "elapsed_sec": 59.5,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|5093,http://www.nlm.nih.gov/research/umls/rxnorm|35636,http://www.nlm.nih.gov/research/umls/rxnorm|61381,http://www.nlm.nih.gov/research/umls/rxnorm|51272",
+      "additional_query_urls": [],
+      "raw_response": "Good enough \u2014 the chain search returns the correct magnitude.\n\nMedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|5093,http://www.nlm.nih.gov/research/umls/rxnorm|35636,http://www.nlm.nih.gov/research/umls/rxnorm|61381,http://www.nlm.nih.gov/research/umls/rxnorm|51272",
+      "prompt_text": "I need to identify patients being treated pharmacologically with antipsychotic medications, covering both typical and atypical drug classes. Search MedicationRequest resources for haloperidol (a first-generation typical antipsychotic), and the atypical agents risperidone, olanzapine, and quetiapine \u2014 all coded in RxNorm. This medication-only cohort carries substantial cross-indication contamination: quetiapine in particular is widely prescribed for bipolar disorder, major depressive disorder as an adjunct, dementia-related agitation, and insomnia, so many returned patients will not have schizophrenia as their primary indication."
+     },
+     "3-naive": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 25571,
+      "actual_count": 0,
+      "elapsed_sec": 73.7,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|10239,http://www.nlm.nih.gov/research/umls/rxnorm|1040028,http://www.nlm.nih.gov/research/umls/rxnorm|10498,http://www.nlm.nih.gov/research/umls/rxnorm|10502,http://www.nlm.nih.gov/research/umls/rxnorm|10510,http://www.nlm.nih.gov/research/umls/rxnorm|10588,http://www.nlm.nih.gov/research/umls/rxnorm|10800,http://www.nlm.nih.gov/research/umls/rxnorm|10804,http://www.nlm.nih.gov/research/umls/rxnorm|10805,http://www.nlm.nih.gov/research/umls/rxnorm|114176,http://www.nlm.nih.gov/research/umls/rxnorm|115698,http://www.nlm.nih.gov/research/umls/rxnorm|1373,http://www.nlm.nih.gov/research/umls/rxnorm|155,http://www.nlm.nih.gov/research/umls/rxnorm|1658314,http://www.nlm.nih.gov/research/umls/rxnorm|1667655,http://www.nlm.nih.gov/research/umls/rxnorm|16735,http://www.nlm.nih.gov/research/umls/rxnorm|1791685,http://www.nlm.nih.gov/research/umls/rxnorm|19777,http://www.nlm.nih.gov/research/umls/rxnorm|21877,http://www.nlm.nih.gov/research/umls/rxnorm|2403,http://www.nlm.nih.gov/research/umls/rxnorm|2406,http://www.nlm.nih.gov/research/umls/rxnorm|2620,http://www.nlm.nih.gov/research/umls/rxnorm|2626,http://www.nlm.nih.gov/research/umls/rxnorm|29961,http://www.nlm.nih.gov/research/umls/rxnorm|33739,http://www.nlm.nih.gov/research/umls/rxnorm|35350,http://www.nlm.nih.gov/research/umls/rxnorm|35636,http://www.nlm.nih.gov/research/umls/rxnorm|3648,http://www.nlm.nih.gov/research/umls/rxnorm|37416,http://www.nlm.nih.gov/research/umls/rxnorm|38133,http://www.nlm.nih.gov/research/umls/rxnorm|39468,http://www.nlm.nih.gov/research/umls/rxnorm|40003,http://www.nlm.nih.gov/research/umls/rxnorm|41996,http://www.nlm.nih.gov/research/umls/rxnorm|4495,http://www.nlm.nih.gov/research/umls/rxnorm|4496,http://www.nlm.nih.gov/research/umls/rxnorm|4507,http://www.nlm.nih.gov/research/umls/rxnorm|46303,http://www.nlm.nih.gov/research/umls/rxnorm|5093,http://www.nlm.nih.gov/research/umls/rxnorm|51272,http://www.nlm.nih.gov/research/umls/rxnorm|55244,http://www.nlm.nih.gov/research/umls/rxnorm|59860,http://www.nlm.nih.gov/research/umls/rxnorm|61381,http://www.nlm.nih.gov/research/umls/rxnorm|6475,http://www.nlm.nih.gov/research/umls/rxnorm|6779,http://www.nlm.nih.gov/research/umls/rxnorm|679314,http://www.nlm.nih.gov/research/umls/rxnorm|6852,http://www.nlm.nih.gov/research/umls/rxnorm|7019,http://www.nlm.nih.gov/research/umls/rxnorm|73178,http://www.nlm.nih.gov/research/umls/rxnorm|7815,http://www.nlm.nih.gov/research/umls/rxnorm|784649,http://www.nlm.nih.gov/research/umls/rxnorm|7974,http://www.nlm.nih.gov/research/umls/rxnorm|8042,http://www.nlm.nih.gov/research/umls/rxnorm|8076,http://www.nlm.nih.gov/research/umls/rxnorm|8331,http://www.nlm.nih.gov/research/umls/rxnorm|8348,http://www.nlm.nih.gov/research/umls/rxnorm|8704,http://www.nlm.nih.gov/research/umls/rxnorm|8742,http://www.nlm.nih.gov/research/umls/rxnorm|8766,http://www.nlm.nih.gov/research/umls/rxnorm|89013",
+      "additional_query_urls": [],
+      "raw_response": "Based on the VSAC \"Antipsychotics\" value set (OID 2.16.840.1.113762.1.4.1206.45), the standard FHIR query is:\n\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|10239,http://www.nlm.nih.gov/research/umls/rxnorm|1040028,http://www.nlm.nih.gov/research/umls/rxnorm|10498,http://www.nlm.nih.gov/research/umls/rxnorm|10502,http://www.nlm.nih.gov/research/umls/rxnorm|10510,http://www.nlm.nih.gov/research/umls/rxnorm|10588,http://www.nlm.nih.gov/research/umls/rxnorm|10800,http://www.nlm.nih.gov/research/umls/rxnorm|10804,http://www.nlm.nih.gov/research/umls/rxnorm|10805,http://www.nlm.nih.gov/research/umls/rxnorm|114176,http://www.nlm.nih.gov/research/umls/rxnorm|115698,http://www.nlm.nih.gov/research/umls/rxnorm|1373,http://www.nlm.nih.gov/research/umls/rxnorm|155,http://www.nlm.nih.gov/research/umls/rxnorm|1658314,http://www.nlm.nih.gov/research/umls/rxnorm|1667655,http://www.nlm.nih.gov/research/umls/rxnorm|16735,http://www.nlm.nih.gov/research/umls/rxnorm|1791685,http://www.nlm.nih.gov/research/umls/rxnorm|19777,http://www.nlm.nih.gov/research/umls/rxnorm|21877,http://www.nlm.nih.gov/research/umls/rxnorm|2403,http://www.nlm.nih.gov/research/umls/rxnorm|2406,http://www.nlm.nih.gov/research/umls/rxnorm|2620,http://www.nlm.nih.gov/research/umls/rxnorm|2626,http://www.nlm.nih.gov/research/umls/rxnorm|29961,http://www.nlm.nih.gov/research/umls/rxnorm|33739,http://www.nlm.nih.gov/research/umls/rxnorm|35350,http://www.nlm.nih.gov/research/umls/rxnorm|35636,http://www.nlm.nih.gov/research/umls/rxnorm|3648,http://www.nlm.nih.gov/research/umls/rxnorm|37416,http://www.nlm.nih.gov/research/umls/rxnorm|38133,http://www.nlm.nih.gov/research/umls/rxnorm|39468,http://www.nlm.nih.gov/research/umls/rxnorm|40003,http://www.nlm.nih.gov/research/umls/rxnorm|41996,http://www.nlm.nih.gov/research/umls/rxnorm|4495,http://www.nlm.nih.gov/research/umls/rxnorm|4496,http://www.nlm.nih.gov/research/umls/rxnorm|4507,http://www.nlm.nih.gov/research/umls/rxnorm|46303,http://www.nlm.nih.gov/research/umls/rxnorm|5093,http://www.nlm.nih.gov/research/umls/rxnorm|51272,http://www.nlm.nih.gov/research/umls/rxnorm|55244,http://www.nlm.nih.gov/research/umls/rxnorm|59860,http://www.nlm.nih.gov/research/umls/rxnorm|61381,http://www.nlm.nih.gov/research/umls/rxnorm|6475,http://www.nlm.nih.gov/research/umls/rxnorm|6779,http://www.nlm.nih.gov/research/umls/rxnorm|679314,http://www.nlm.nih.gov/research/umls/rxnorm|6852,http://www.nlm.nih.gov/research/umls/rxnorm|7019,http://www.nlm.nih.gov/research/umls/rxnorm|73178,http://www.nlm.nih.gov/research/umls/rxnorm|7815,http://www.nlm.nih.gov/research/umls/rxnorm|784649,http://www.nlm.nih.gov/research/umls/rxnorm|7974,http://www.nlm.nih.gov/research/umls/rxnorm|8042,http://www.nlm.nih.gov/research/umls/rxnorm|8076,http://www.nlm.nih.gov/research/umls/rxnorm|8331,http://www.nlm.nih.gov/research/umls/rxnorm|8348,http://www.nlm.nih.gov/research/umls/rxnorm|8704,http://www.nlm.nih.gov/research/umls/rxnorm|8742,http://www.nlm.nih.gov/research/umls/rxnorm|8766,http://www.nlm.nih.gov/research/umls/rxnorm|89013",
+      "prompt_text": "Find patients on antipsychotics."
+     },
+     "3-broad": {
+      "precision": 0.9995,
+      "recall": 0.3337,
+      "f1": 0.5003,
+      "passed": false,
+      "expected_count": 25571,
+      "actual_count": 8536,
+      "elapsed_sec": 102.2,
+      "queries_generated": 4,
+      "primary_query_url": "MedicationRequest?medication.code:text=haloperidol",
+      "additional_query_urls": [
+       "MedicationRequest?medication.code:text=risperidone",
+       "MedicationRequest?medication.code:text=olanzapine",
+       "MedicationRequest?medication.code:text=quetiapine"
+      ],
+      "raw_response": "MedicationRequest?medication.code:text=haloperidol\nMedicationRequest?medication.code:text=risperidone\nMedicationRequest?medication.code:text=olanzapine\nMedicationRequest?medication.code:text=quetiapine",
+      "prompt_text": "Find patients prescribed antipsychotic medications \u2014 including the typical antipsychotic haloperidol and atypicals risperidone, olanzapine, and quetiapine."
+     },
+     "3-expert": {
+      "precision": 0.9995,
+      "recall": 0.3337,
+      "f1": 0.5003,
+      "passed": false,
+      "expected_count": 25571,
+      "actual_count": 8536,
+      "elapsed_sec": 105.1,
+      "queries_generated": 4,
+      "primary_query_url": "MedicationRequest?medication.code:text=haloperidol",
+      "additional_query_urls": [
+       "MedicationRequest?medication.code:text=risperidone",
+       "MedicationRequest?medication.code:text=olanzapine",
+       "MedicationRequest?medication.code:text=quetiapine"
+      ],
+      "raw_response": "MedicationRequest?medication.code:text=haloperidol\nMedicationRequest?medication.code:text=risperidone\nMedicationRequest?medication.code:text=olanzapine\nMedicationRequest?medication.code:text=quetiapine",
       "prompt_text": "I need to identify patients being treated pharmacologically with antipsychotic medications, covering both typical and atypical drug classes. Search MedicationRequest resources for haloperidol (a first-generation typical antipsychotic), and the atypical agents risperidone, olanzapine, and quetiapine \u2014 all coded in RxNorm. This medication-only cohort carries substantial cross-indication contamination: quetiapine in particular is widely prescribed for bipolar disorder, major depressive disorder as an adjunct, dementia-related agitation, and insomnia, so many returned patients will not have schizophrenia as their primary indication."
      }
     },

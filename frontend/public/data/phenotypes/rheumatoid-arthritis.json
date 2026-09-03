@@ -1032,6 +1032,161 @@
       "prompt_text": "I need to identify my complete rheumatoid arthritis patient population for a treat-to-target quality initiative. From clinical experience, RA patients are documented in different ways: some have a formal diagnosis code (any RA SNOMED code), some are on DMARDs or biologics (methotrexate, hydroxychloroquine, sulfasalazine, adalimumab, infliximab), and some have positive rheumatoid factor on labs.\n\nPlease run multiple FHIR queries to capture the full population:\n1. Patients with any rheumatoid arthritis diagnosis (parent RA, seropositive, joint-specific, or in remission)\n2. Patients prescribed DMARDs or biologic anti-TNF agents\n3. Patients with positive rheumatoid factor lab results (>14 IU/mL)\n\nFor each query, return the matching resources. I want the union of all patients found across these three approaches. Note that the union will overcount because DMARDs are used for many non-RA indications and RF can be positive in lupus and other conditions \u2014 but it provides the screening pool for chart review."
      }
     },
+    "copilot:claude-opus-4.7+mimic": {
+     "1-naive": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 4158,
+      "actual_count": 0,
+      "elapsed_sec": 13.3,
+      "queries_generated": 3,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|69896004,http://snomed.info/sct|239791004,http://snomed.info/sct|287008002,http://snomed.info/sct|287009005,http://snomed.info/sct|287010000,http://snomed.info/sct|201766001,http://snomed.info/sct|427108005",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6851,http://www.nlm.nih.gov/research/umls/rxnorm|5521,http://www.nlm.nih.gov/research/umls/rxnorm|9524,http://www.nlm.nih.gov/research/umls/rxnorm|327361,http://www.nlm.nih.gov/research/umls/rxnorm|191831",
+       "Observation?code=http://loinc.org|11572-5&value-quantity=gt14|http://unitsofmeasure.org|[IU]/mL"
+      ],
+      "raw_response": "Condition?code=http://snomed.info/sct|69896004,http://snomed.info/sct|239791004,http://snomed.info/sct|287008002,http://snomed.info/sct|287009005,http://snomed.info/sct|287010000,http://snomed.info/sct|201766001,http://snomed.info/sct|427108005\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6851,http://www.nlm.nih.gov/research/umls/rxnorm|5521,http://www.nlm.nih.gov/research/umls/rxnorm|9524,http://www.nlm.nih.gov/research/umls/rxnorm|327361,http://www.nlm.nih.gov/research/umls/rxnorm|191831\nObservation?code=http://loinc.org|11572-5&value-quantity=gt14|http://unitsofmeasure.org|[IU]/mL",
+      "prompt_text": "I need to identify my complete rheumatoid arthritis patient population for a treat-to-target quality initiative. From clinical experience, RA patients are documented in different ways: some have a formal diagnosis code (any RA SNOMED code), some are on DMARDs or biologics (methotrexate, hydroxychloroquine, sulfasalazine, adalimumab, infliximab), and some have positive rheumatoid factor on labs.\n\nPlease run multiple FHIR queries to capture the full population:\n1. Patients with any rheumatoid arthritis diagnosis (parent RA, seropositive, joint-specific, or in remission)\n2. Patients prescribed DMARDs or biologic anti-TNF agents\n3. Patients with positive rheumatoid factor lab results (>14 IU/mL)\n\nFor each query, return the matching resources. I want the union of all patients found across these three approaches. Note that the union will overcount because DMARDs are used for many non-RA indications and RF can be positive in lupus and other conditions \u2014 but it provides the screening pool for chart review."
+     },
+     "1-broad": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 4158,
+      "actual_count": 0,
+      "elapsed_sec": 11.5,
+      "queries_generated": 3,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|69896004,http://snomed.info/sct|239791008,http://snomed.info/sct|287008007,http://snomed.info/sct|287009004,http://snomed.info/sct|201766005,http://snomed.info/sct|427451000124101",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6851,http://www.nlm.nih.gov/research/umls/rxnorm|5521,http://www.nlm.nih.gov/research/umls/rxnorm|9524,http://www.nlm.nih.gov/research/umls/rxnorm|327361,http://www.nlm.nih.gov/research/umls/rxnorm|253337",
+       "Observation?code=http://loinc.org|11572-5&value-quantity=gt14|http://unitsofmeasure.org|[IU]/mL"
+      ],
+      "raw_response": "Condition?code=http://snomed.info/sct|69896004,http://snomed.info/sct|239791008,http://snomed.info/sct|287008007,http://snomed.info/sct|287009004,http://snomed.info/sct|201766005,http://snomed.info/sct|427451000124101\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6851,http://www.nlm.nih.gov/research/umls/rxnorm|5521,http://www.nlm.nih.gov/research/umls/rxnorm|9524,http://www.nlm.nih.gov/research/umls/rxnorm|327361,http://www.nlm.nih.gov/research/umls/rxnorm|253337\nObservation?code=http://loinc.org|11572-5&value-quantity=gt14|http://unitsofmeasure.org|[IU]/mL",
+      "prompt_text": "I need to identify my complete rheumatoid arthritis patient population for a treat-to-target quality initiative. From clinical experience, RA patients are documented in different ways: some have a formal diagnosis code (any RA SNOMED code), some are on DMARDs or biologics (methotrexate, hydroxychloroquine, sulfasalazine, adalimumab, infliximab), and some have positive rheumatoid factor on labs.\n\nPlease run multiple FHIR queries to capture the full population:\n1. Patients with any rheumatoid arthritis diagnosis (parent RA, seropositive, joint-specific, or in remission)\n2. Patients prescribed DMARDs or biologic anti-TNF agents\n3. Patients with positive rheumatoid factor lab results (>14 IU/mL)\n\nFor each query, return the matching resources. I want the union of all patients found across these three approaches. Note that the union will overcount because DMARDs are used for many non-RA indications and RF can be positive in lupus and other conditions \u2014 but it provides the screening pool for chart review."
+     },
+     "1-expert": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 4158,
+      "actual_count": 0,
+      "elapsed_sec": 10.4,
+      "queries_generated": 3,
+      "primary_query_url": "Condition?code:below=http://snomed.info/sct|69896004",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6851,http://www.nlm.nih.gov/research/umls/rxnorm|5521,http://www.nlm.nih.gov/research/umls/rxnorm|9524,http://www.nlm.nih.gov/research/umls/rxnorm|327361,http://www.nlm.nih.gov/research/umls/rxnorm|191831",
+       "Observation?code=http://loinc.org|11572-5&value-quantity=gt14|http://unitsofmeasure.org|[IU]/mL"
+      ],
+      "raw_response": "Condition?code:below=http://snomed.info/sct|69896004\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6851,http://www.nlm.nih.gov/research/umls/rxnorm|5521,http://www.nlm.nih.gov/research/umls/rxnorm|9524,http://www.nlm.nih.gov/research/umls/rxnorm|327361,http://www.nlm.nih.gov/research/umls/rxnorm|191831\nObservation?code=http://loinc.org|11572-5&value-quantity=gt14|http://unitsofmeasure.org|[IU]/mL",
+      "prompt_text": "I need to identify my complete rheumatoid arthritis patient population for a treat-to-target quality initiative. From clinical experience, RA patients are documented in different ways: some have a formal diagnosis code (any RA SNOMED code), some are on DMARDs or biologics (methotrexate, hydroxychloroquine, sulfasalazine, adalimumab, infliximab), and some have positive rheumatoid factor on labs.\n\nPlease run multiple FHIR queries to capture the full population:\n1. Patients with any rheumatoid arthritis diagnosis (parent RA, seropositive, joint-specific, or in remission)\n2. Patients prescribed DMARDs or biologic anti-TNF agents\n3. Patients with positive rheumatoid factor lab results (>14 IU/mL)\n\nFor each query, return the matching resources. I want the union of all patients found across these three approaches. Note that the union will overcount because DMARDs are used for many non-RA indications and RF can be positive in lupus and other conditions \u2014 but it provides the screening pool for chart review."
+     },
+     "2-naive": {
+      "precision": 0.9973,
+      "recall": 0.9921,
+      "f1": 0.9947,
+      "passed": true,
+      "expected_count": 4158,
+      "actual_count": 4136,
+      "elapsed_sec": 176.3,
+      "queries_generated": 3,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|M05.9,http://hl7.org/fhir/sid/icd-10-cm|M06.9,http://hl7.org/fhir/sid/icd-10-cm|M06.00,http://hl7.org/fhir/sid/icd-10-cm|M06.09,http://hl7.org/fhir/sid/icd-10-cm|M05.79,http://hl7.org/fhir/sid/icd-10-cm|M05.70,http://hl7.org/fhir/sid/icd-10-cm|M05.19,http://hl7.org/fhir/sid/icd-10-cm|M06.4,http://hl7.org/fhir/sid/icd-10-cm|M08.00,http://hl7.org/fhir/sid/icd-9-cm|714.0,http://hl7.org/fhir/sid/icd-9-cm|714.1,http://hl7.org/fhir/sid/icd-9-cm|714.2,http://hl7.org/fhir/sid/icd-9-cm|714.30,http://hl7.org/fhir/sid/icd-9-cm|714.31,http://hl7.org/fhir/sid/icd-9-cm|714.32,http://hl7.org/fhir/sid/icd-9-cm|714.33,http://hl7.org/fhir/sid/icd-9-cm|714.4,http://hl7.org/fhir/sid/icd-9-cm|714.81,http://hl7.org/fhir/sid/icd-9-cm|714.89,http://hl7.org/fhir/sid/icd-9-cm|714.9",
+      "additional_query_urls": [
+       "MedicationStatement?medication.code=http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-ndc|00054455020,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-ndc|61703040820,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-ndc|00378171201,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-ndc|00074379902,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-ndc|00378635001,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-ndc|57894003001,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-ndc|00517571025",
+       "Observation?code=http://loinc.org|11572-5,http://loinc.org|6928-6,http://loinc.org|5299-3,http://loinc.org|15205-8,http://loinc.org|15204-1,http://loinc.org|17857-4,http://loinc.org|5300-9&value-quantity=gt14"
+      ],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|M05.9,http://hl7.org/fhir/sid/icd-10-cm|M06.9,http://hl7.org/fhir/sid/icd-10-cm|M06.00,http://hl7.org/fhir/sid/icd-10-cm|M06.09,http://hl7.org/fhir/sid/icd-10-cm|M05.79,http://hl7.org/fhir/sid/icd-10-cm|M05.70,http://hl7.org/fhir/sid/icd-10-cm|M05.19,http://hl7.org/fhir/sid/icd-10-cm|M06.4,http://hl7.org/fhir/sid/icd-10-cm|M08.00,http://hl7.org/fhir/sid/icd-9-cm|714.0,http://hl7.org/fhir/sid/icd-9-cm|714.1,http://hl7.org/fhir/sid/icd-9-cm|714.2,http://hl7.org/fhir/sid/icd-9-cm|714.30,http://hl7.org/fhir/sid/icd-9-cm|714.31,http://hl7.org/fhir/sid/icd-9-cm|714.32,http://hl7.org/fhir/sid/icd-9-cm|714.33,http://hl7.org/fhir/sid/icd-9-cm|714.4,http://hl7.org/fhir/sid/icd-9-cm|714.81,http://hl7.org/fhir/sid/icd-9-cm|714.89,http://hl7.org/fhir/sid/icd-9-cm|714.9\nMedicationStatement?medication.code=http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-ndc|00054455020,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-ndc|61703040820,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-ndc|00378171201,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-ndc|00074379902,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-ndc|00378635001,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-ndc|57894003001,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-ndc|00517571025\nObservation?code=http://loinc.org|11572-5,http://loinc.org|6928-6,http://loinc.org|5299-3,http://loinc.org|15205-8,http://loinc.org|15204-1,http://loinc.org|17857-4,http://loinc.org|5300-9&value-quantity=gt14",
+      "prompt_text": "I need to identify my complete rheumatoid arthritis patient population for a treat-to-target quality initiative. From clinical experience, RA patients are documented in different ways: some have a formal diagnosis code (any RA SNOMED code), some are on DMARDs or biologics (methotrexate, hydroxychloroquine, sulfasalazine, adalimumab, infliximab), and some have positive rheumatoid factor on labs.\n\nPlease run multiple FHIR queries to capture the full population:\n1. Patients with any rheumatoid arthritis diagnosis (parent RA, seropositive, joint-specific, or in remission)\n2. Patients prescribed DMARDs or biologic anti-TNF agents\n3. Patients with positive rheumatoid factor lab results (>14 IU/mL)\n\nFor each query, return the matching resources. I want the union of all patients found across these three approaches. Note that the union will overcount because DMARDs are used for many non-RA indications and RF can be positive in lupus and other conditions \u2014 but it provides the screening pool for chart review."
+     },
+     "2-broad": {
+      "precision": 0.9875,
+      "recall": 0.9882,
+      "f1": 0.9879,
+      "passed": true,
+      "expected_count": 4158,
+      "actual_count": 4161,
+      "elapsed_sec": 206.2,
+      "queries_generated": 3,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|M05.10,http://hl7.org/fhir/sid/icd-10-cm|M05.20,http://hl7.org/fhir/sid/icd-10-cm|M05.30,http://hl7.org/fhir/sid/icd-10-cm|M05.40,http://hl7.org/fhir/sid/icd-10-cm|M05.50,http://hl7.org/fhir/sid/icd-10-cm|M05.60,http://hl7.org/fhir/sid/icd-10-cm|M05.70,http://hl7.org/fhir/sid/icd-10-cm|M05.79,http://hl7.org/fhir/sid/icd-10-cm|M05.80,http://hl7.org/fhir/sid/icd-10-cm|M05.9,http://hl7.org/fhir/sid/icd-10-cm|M06.00,http://hl7.org/fhir/sid/icd-10-cm|M06.09,http://hl7.org/fhir/sid/icd-10-cm|M06.80,http://hl7.org/fhir/sid/icd-10-cm|M06.89,http://hl7.org/fhir/sid/icd-10-cm|M06.9,http://hl7.org/fhir/sid/icd-10-cm|M08.00,http://hl7.org/fhir/sid/icd-10-cm|M08.20,http://hl7.org/fhir/sid/icd-10-cm|M08.3,http://hl7.org/fhir/sid/icd-10-cm|M08.40,http://hl7.org/fhir/sid/icd-10-cm|M08.90,http://hl7.org/fhir/sid/icd-9-cm|714.0,http://hl7.org/fhir/sid/icd-9-cm|714.1,http://hl7.org/fhir/sid/icd-9-cm|714.2,http://hl7.org/fhir/sid/icd-9-cm|714.30,http://hl7.org/fhir/sid/icd-9-cm|714.31,http://hl7.org/fhir/sid/icd-9-cm|714.32,http://hl7.org/fhir/sid/icd-9-cm|714.33,http://hl7.org/fhir/sid/icd-9-cm|714.4,http://hl7.org/fhir/sid/icd-9-cm|714.81,http://hl7.org/fhir/sid/icd-9-cm|714.89,http://hl7.org/fhir/sid/icd-9-cm|714.9",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Methotrexate,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Infliximab,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|InFLIXimab",
+       "Observation?code=http://loinc.org|11572-5&value-quantity=gt14"
+      ],
+      "raw_response": "FINAL ANSWER:\n\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|M05.10,http://hl7.org/fhir/sid/icd-10-cm|M05.20,http://hl7.org/fhir/sid/icd-10-cm|M05.30,http://hl7.org/fhir/sid/icd-10-cm|M05.40,http://hl7.org/fhir/sid/icd-10-cm|M05.50,http://hl7.org/fhir/sid/icd-10-cm|M05.60,http://hl7.org/fhir/sid/icd-10-cm|M05.70,http://hl7.org/fhir/sid/icd-10-cm|M05.79,http://hl7.org/fhir/sid/icd-10-cm|M05.80,http://hl7.org/fhir/sid/icd-10-cm|M05.9,http://hl7.org/fhir/sid/icd-10-cm|M06.00,http://hl7.org/fhir/sid/icd-10-cm|M06.09,http://hl7.org/fhir/sid/icd-10-cm|M06.80,http://hl7.org/fhir/sid/icd-10-cm|M06.89,http://hl7.org/fhir/sid/icd-10-cm|M06.9,http://hl7.org/fhir/sid/icd-10-cm|M08.00,http://hl7.org/fhir/sid/icd-10-cm|M08.20,http://hl7.org/fhir/sid/icd-10-cm|M08.3,http://hl7.org/fhir/sid/icd-10-cm|M08.40,http://hl7.org/fhir/sid/icd-10-cm|M08.90,http://hl7.org/fhir/sid/icd-9-cm|714.0,http://hl7.org/fhir/sid/icd-9-cm|714.1,http://hl7.org/fhir/sid/icd-9-cm|714.2,http://hl7.org/fhir/sid/icd-9-cm|714.30,http://hl7.org/fhir/sid/icd-9-cm|714.31,http://hl7.org/fhir/sid/icd-9-cm|714.32,http://hl7.org/fhir/sid/icd-9-cm|714.33,http://hl7.org/fhir/sid/icd-9-cm|714.4,http://hl7.org/fhir/sid/icd-9-cm|714.81,http://hl7.org/fhir/sid/icd-9-cm|714.89,http://hl7.org/fhir/sid/icd-9-cm|714.9\nMedicationRequest?code=http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Methotrexate,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Infliximab,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|InFLIXimab\nObservation?code=http://loinc.org|11572-5&value-quantity=gt14",
+      "prompt_text": "I need to identify my complete rheumatoid arthritis patient population for a treat-to-target quality initiative. From clinical experience, RA patients are documented in different ways: some have a formal diagnosis code (any RA SNOMED code), some are on DMARDs or biologics (methotrexate, hydroxychloroquine, sulfasalazine, adalimumab, infliximab), and some have positive rheumatoid factor on labs.\n\nPlease run multiple FHIR queries to capture the full population:\n1. Patients with any rheumatoid arthritis diagnosis (parent RA, seropositive, joint-specific, or in remission)\n2. Patients prescribed DMARDs or biologic anti-TNF agents\n3. Patients with positive rheumatoid factor lab results (>14 IU/mL)\n\nFor each query, return the matching resources. I want the union of all patients found across these three approaches. Note that the union will overcount because DMARDs are used for many non-RA indications and RF can be positive in lupus and other conditions \u2014 but it provides the screening pool for chart review."
+     },
+     "2-expert": {
+      "precision": 1.0,
+      "recall": 0.9644,
+      "f1": 0.9819,
+      "passed": true,
+      "expected_count": 4158,
+      "actual_count": 4010,
+      "elapsed_sec": 165.1,
+      "queries_generated": 3,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-9-cm|714.0,http://hl7.org/fhir/sid/icd-9-cm|714.1,http://hl7.org/fhir/sid/icd-9-cm|714.2,http://hl7.org/fhir/sid/icd-9-cm|714.30,http://hl7.org/fhir/sid/icd-9-cm|714.31,http://hl7.org/fhir/sid/icd-9-cm|714.32,http://hl7.org/fhir/sid/icd-9-cm|714.33,http://hl7.org/fhir/sid/icd-9-cm|714.4,http://hl7.org/fhir/sid/icd-9-cm|714.81,http://hl7.org/fhir/sid/icd-10-cm|M05.9,http://hl7.org/fhir/sid/icd-10-cm|M06.9,http://hl7.org/fhir/sid/icd-10-cm|M06.0,http://hl7.org/fhir/sid/icd-10-cm|M06.00,http://hl7.org/fhir/sid/icd-10-cm|M06.8,http://hl7.org/fhir/sid/icd-10-cm|M08.0",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6851,http://www.nlm.nih.gov/research/umls/rxnorm|5521,http://www.nlm.nih.gov/research/umls/rxnorm|9524,http://www.nlm.nih.gov/research/umls/rxnorm|327361,http://www.nlm.nih.gov/research/umls/rxnorm|253337",
+       "Observation?code=http://loinc.org|11572-5&value-quantity=gt14"
+      ],
+      "raw_response": "Final answer:\n\nCondition?code=http://hl7.org/fhir/sid/icd-9-cm|714.0,http://hl7.org/fhir/sid/icd-9-cm|714.1,http://hl7.org/fhir/sid/icd-9-cm|714.2,http://hl7.org/fhir/sid/icd-9-cm|714.30,http://hl7.org/fhir/sid/icd-9-cm|714.31,http://hl7.org/fhir/sid/icd-9-cm|714.32,http://hl7.org/fhir/sid/icd-9-cm|714.33,http://hl7.org/fhir/sid/icd-9-cm|714.4,http://hl7.org/fhir/sid/icd-9-cm|714.81,http://hl7.org/fhir/sid/icd-10-cm|M05.9,http://hl7.org/fhir/sid/icd-10-cm|M06.9,http://hl7.org/fhir/sid/icd-10-cm|M06.0,http://hl7.org/fhir/sid/icd-10-cm|M06.00,http://hl7.org/fhir/sid/icd-10-cm|M06.8,http://hl7.org/fhir/sid/icd-10-cm|M08.0\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6851,http://www.nlm.nih.gov/research/umls/rxnorm|5521,http://www.nlm.nih.gov/research/umls/rxnorm|9524,http://www.nlm.nih.gov/research/umls/rxnorm|327361,http://www.nlm.nih.gov/research/umls/rxnorm|253337\nObservation?code=http://loinc.org|11572-5&value-quantity=gt14",
+      "prompt_text": "I need to identify my complete rheumatoid arthritis patient population for a treat-to-target quality initiative. From clinical experience, RA patients are documented in different ways: some have a formal diagnosis code (any RA SNOMED code), some are on DMARDs or biologics (methotrexate, hydroxychloroquine, sulfasalazine, adalimumab, infliximab), and some have positive rheumatoid factor on labs.\n\nPlease run multiple FHIR queries to capture the full population:\n1. Patients with any rheumatoid arthritis diagnosis (parent RA, seropositive, joint-specific, or in remission)\n2. Patients prescribed DMARDs or biologic anti-TNF agents\n3. Patients with positive rheumatoid factor lab results (>14 IU/mL)\n\nFor each query, return the matching resources. I want the union of all patients found across these three approaches. Note that the union will overcount because DMARDs are used for many non-RA indications and RF can be positive in lupus and other conditions \u2014 but it provides the screening pool for chart review."
+     },
+     "3-naive": {
+      "precision": 1.0,
+      "recall": 0.975,
+      "f1": 0.9873,
+      "passed": true,
+      "expected_count": 4158,
+      "actual_count": 4054,
+      "elapsed_sec": 134.2,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|M05.9,http://hl7.org/fhir/sid/icd-10-cm|M06.9,http://hl7.org/fhir/sid/icd-10-cm|M06.09,http://hl7.org/fhir/sid/icd-10-cm|M06.00,http://hl7.org/fhir/sid/icd-10-cm|M06.8,http://hl7.org/fhir/sid/icd-10-cm|M05.79,http://hl7.org/fhir/sid/icd-9-cm|714.0,http://hl7.org/fhir/sid/icd-9-cm|714.1,http://hl7.org/fhir/sid/icd-9-cm|714.2,http://hl7.org/fhir/sid/icd-9-cm|714.30,http://hl7.org/fhir/sid/icd-9-cm|714.9",
+      "additional_query_urls": [
+       "Observation?code=http://loinc.org|11572-5,http://loinc.org|6852-4,http://loinc.org|5138-9&value-quantity=gt14"
+      ],
+      "raw_response": "Playbook 12 (cohort = OR across evidence sources) + Playbook 7 (threshold for RF lab). Server uses ICD-10-CM/ICD-9-CM for conditions, LOINC for labs, and Medication resources indexed via `_content` (no RxNorm/NDC display codes exposed) \u2014 so drug hits are gathered via `Medication?_content=...&_revinclude=MedicationRequest:medication` to pull patient links.\n\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|M05.9,http://hl7.org/fhir/sid/icd-10-cm|M06.9,http://hl7.org/fhir/sid/icd-10-cm|M06.09,http://hl7.org/fhir/sid/icd-10-cm|M06.00,http://hl7.org/fhir/sid/icd-10-cm|M06.8,http://hl7.org/fhir/sid/icd-10-cm|M05.79,http://hl7.org/fhir/sid/icd-9-cm|714.0,http://hl7.org/fhir/sid/icd-9-cm|714.1,http://hl7.org/fhir/sid/icd-9-cm|714.2,http://hl7.org/fhir/sid/icd-9-cm|714.30,http://hl7.org/fhir/sid/icd-9-cm|714.9\nMedication?_content=methotrexate,hydroxychloroquine,sulfasalazine,adalimumab,infliximab&_revinclude=MedicationRequest:medication\nObservation?code=http://loinc.org|11572-5,http://loinc.org|6852-4,http://loinc.org|5138-9&value-quantity=gt14",
+      "prompt_text": "I need to identify my complete rheumatoid arthritis patient population for a treat-to-target quality initiative. From clinical experience, RA patients are documented in different ways: some have a formal diagnosis code (any RA SNOMED code), some are on DMARDs or biologics (methotrexate, hydroxychloroquine, sulfasalazine, adalimumab, infliximab), and some have positive rheumatoid factor on labs.\n\nPlease run multiple FHIR queries to capture the full population:\n1. Patients with any rheumatoid arthritis diagnosis (parent RA, seropositive, joint-specific, or in remission)\n2. Patients prescribed DMARDs or biologic anti-TNF agents\n3. Patients with positive rheumatoid factor lab results (>14 IU/mL)\n\nFor each query, return the matching resources. I want the union of all patients found across these three approaches. Note that the union will overcount because DMARDs are used for many non-RA indications and RF can be positive in lupus and other conditions \u2014 but it provides the screening pool for chart review."
+     },
+     "3-broad": {
+      "precision": 0.9951,
+      "recall": 0.677,
+      "f1": 0.8058,
+      "passed": true,
+      "expected_count": 4158,
+      "actual_count": 2829,
+      "elapsed_sec": 141.3,
+      "queries_generated": 4,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|M06.9,http://hl7.org/fhir/sid/icd-10-cm|M05.9,http://hl7.org/fhir/sid/icd-10-cm|M05.79,http://hl7.org/fhir/sid/icd-10-cm|M05.70,http://hl7.org/fhir/sid/icd-10-cm|M06.09,http://hl7.org/fhir/sid/icd-10-cm|M06.00,http://hl7.org/fhir/sid/icd-10-cm|M06.4,http://hl7.org/fhir/sid/icd-10-cm|M06.8,http://hl7.org/fhir/sid/icd-10-cm|M06.89,http://hl7.org/fhir/sid/icd-10-cm|M08.00,http://hl7.org/fhir/sid/icd-10-cm|M08.20,http://hl7.org/fhir/sid/icd-10-cm|M08.40,http://hl7.org/fhir/sid/icd-9-cm|714.0,http://hl7.org/fhir/sid/icd-9-cm|714.30",
+      "additional_query_urls": [
+       "Condition?code=http://snomed.info/sct|69896004,http://snomed.info/sct|287008004,http://snomed.info/sct|1177000,http://snomed.info/sct|239791008,http://snomed.info/sct|449411008",
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6851,http://www.nlm.nih.gov/research/umls/rxnorm|5521,http://www.nlm.nih.gov/research/umls/rxnorm|9524,http://www.nlm.nih.gov/research/umls/rxnorm|327361,http://www.nlm.nih.gov/research/umls/rxnorm|71535,http://www.nlm.nih.gov/research/umls/rxnorm|117312,http://www.nlm.nih.gov/research/umls/rxnorm|614391,http://www.nlm.nih.gov/research/umls/rxnorm|1373478",
+       "Observation?code=http://loinc.org|5171-6,http://loinc.org|11572-5,http://loinc.org|6852-0&value-quantity=gt14||[IU]/mL"
+      ],
+      "raw_response": "Based on my investigation:\n- Server uses **ICD-10-CM** for Conditions and **LOINC** for Observations\n- MedicationRequest references Medication resources (MIMIC uses NDC; chained/text search not supported)\n- ICD-10 diagnosis query returned 2,515 hits; RF lab query returned 1,852 hits\n\nFINAL ANSWER:\n\n```\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|M06.9,http://hl7.org/fhir/sid/icd-10-cm|M05.9,http://hl7.org/fhir/sid/icd-10-cm|M05.79,http://hl7.org/fhir/sid/icd-10-cm|M05.70,http://hl7.org/fhir/sid/icd-10-cm|M06.09,http://hl7.org/fhir/sid/icd-10-cm|M06.00,http://hl7.org/fhir/sid/icd-10-cm|M06.4,http://hl7.org/fhir/sid/icd-10-cm|M06.8,http://hl7.org/fhir/sid/icd-10-cm|M06.89,http://hl7.org/fhir/sid/icd-10-cm|M08.00,http://hl7.org/fhir/sid/icd-10-cm|M08.20,http://hl7.org/fhir/sid/icd-10-cm|M08.40,http://hl7.org/fhir/sid/icd-9-cm|714.0,http://hl7.org/fhir/sid/icd-9-cm|714.30\nCondition?code=http://snomed.info/sct|69896004,http://snomed.info/sct|287008004,http://snomed.info/sct|1177000,http://snomed.info/sct|239791008,http://snomed.info/sct|449411008\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6851,http://www.nlm.nih.gov/research/umls/rxnorm|5521,http://www.nlm.nih.gov/research/umls/rxnorm|9524,http://www.nlm.nih.gov/research/umls/rxnorm|327361,http://www.nlm.nih.gov/research/umls/rxnorm|71535,http://www.nlm.nih.gov/research/umls/rxnorm|117312,http://www.nlm.nih.gov/research/umls/rxnorm|614391,http://www.nlm.nih.gov/research/umls/rxnorm|1373478\nObservation?code=http://loinc.org|5171-6,http://loinc.org|11572-5,http://loinc.org|6852-0&value-quantity=gt14||[IU]/mL\n```",
+      "prompt_text": "I need to identify my complete rheumatoid arthritis patient population for a treat-to-target quality initiative. From clinical experience, RA patients are documented in different ways: some have a formal diagnosis code (any RA SNOMED code), some are on DMARDs or biologics (methotrexate, hydroxychloroquine, sulfasalazine, adalimumab, infliximab), and some have positive rheumatoid factor on labs.\n\nPlease run multiple FHIR queries to capture the full population:\n1. Patients with any rheumatoid arthritis diagnosis (parent RA, seropositive, joint-specific, or in remission)\n2. Patients prescribed DMARDs or biologic anti-TNF agents\n3. Patients with positive rheumatoid factor lab results (>14 IU/mL)\n\nFor each query, return the matching resources. I want the union of all patients found across these three approaches. Note that the union will overcount because DMARDs are used for many non-RA indications and RF can be positive in lupus and other conditions \u2014 but it provides the screening pool for chart review."
+     },
+     "3-expert": {
+      "precision": 1.0,
+      "recall": 0.7047,
+      "f1": 0.8267,
+      "passed": true,
+      "expected_count": 4158,
+      "actual_count": 2930,
+      "elapsed_sec": 143.5,
+      "queries_generated": 3,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|M05.9,http://hl7.org/fhir/sid/icd-10-cm|M05.79,http://hl7.org/fhir/sid/icd-10-cm|M05.80,http://hl7.org/fhir/sid/icd-10-cm|M05.89,http://hl7.org/fhir/sid/icd-10-cm|M06.00,http://hl7.org/fhir/sid/icd-10-cm|M06.09,http://hl7.org/fhir/sid/icd-10-cm|M06.9,http://hl7.org/fhir/sid/icd-10-cm|M06.1,http://hl7.org/fhir/sid/icd-10-cm|M06.4,http://hl7.org/fhir/sid/icd-10-cm|M06.8,http://hl7.org/fhir/sid/icd-9-cm|714.0,http://hl7.org/fhir/sid/icd-9-cm|714.1,http://hl7.org/fhir/sid/icd-9-cm|714.2,http://hl7.org/fhir/sid/icd-9-cm|714.30,http://hl7.org/fhir/sid/icd-9-cm|714.31,http://hl7.org/fhir/sid/icd-9-cm|714.32,http://hl7.org/fhir/sid/icd-9-cm|714.33,http://hl7.org/fhir/sid/icd-9-cm|714.81,http://hl7.org/fhir/sid/icd-9-cm|714.89,http://hl7.org/fhir/sid/icd-9-cm|714.9",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6851,http://www.nlm.nih.gov/research/umls/rxnorm|5521,http://www.nlm.nih.gov/research/umls/rxnorm|9524,http://www.nlm.nih.gov/research/umls/rxnorm|327361,http://www.nlm.nih.gov/research/umls/rxnorm|33884,http://www.nlm.nih.gov/research/umls/rxnorm|1373478,http://www.nlm.nih.gov/research/umls/rxnorm|253182,http://www.nlm.nih.gov/research/umls/rxnorm|117055",
+       "Observation?code=http://loinc.org|11572-5&value-quantity=gt14|http://unitsofmeasure.org|[IU]/mL"
+      ],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|M05.9,http://hl7.org/fhir/sid/icd-10-cm|M05.79,http://hl7.org/fhir/sid/icd-10-cm|M05.80,http://hl7.org/fhir/sid/icd-10-cm|M05.89,http://hl7.org/fhir/sid/icd-10-cm|M06.00,http://hl7.org/fhir/sid/icd-10-cm|M06.09,http://hl7.org/fhir/sid/icd-10-cm|M06.9,http://hl7.org/fhir/sid/icd-10-cm|M06.1,http://hl7.org/fhir/sid/icd-10-cm|M06.4,http://hl7.org/fhir/sid/icd-10-cm|M06.8,http://hl7.org/fhir/sid/icd-9-cm|714.0,http://hl7.org/fhir/sid/icd-9-cm|714.1,http://hl7.org/fhir/sid/icd-9-cm|714.2,http://hl7.org/fhir/sid/icd-9-cm|714.30,http://hl7.org/fhir/sid/icd-9-cm|714.31,http://hl7.org/fhir/sid/icd-9-cm|714.32,http://hl7.org/fhir/sid/icd-9-cm|714.33,http://hl7.org/fhir/sid/icd-9-cm|714.81,http://hl7.org/fhir/sid/icd-9-cm|714.89,http://hl7.org/fhir/sid/icd-9-cm|714.9\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6851,http://www.nlm.nih.gov/research/umls/rxnorm|5521,http://www.nlm.nih.gov/research/umls/rxnorm|9524,http://www.nlm.nih.gov/research/umls/rxnorm|327361,http://www.nlm.nih.gov/research/umls/rxnorm|33884,http://www.nlm.nih.gov/research/umls/rxnorm|1373478,http://www.nlm.nih.gov/research/umls/rxnorm|253182,http://www.nlm.nih.gov/research/umls/rxnorm|117055\nObservation?code=http://loinc.org|11572-5&value-quantity=gt14|http://unitsofmeasure.org|[IU]/mL",
+      "prompt_text": "I need to identify my complete rheumatoid arthritis patient population for a treat-to-target quality initiative. From clinical experience, RA patients are documented in different ways: some have a formal diagnosis code (any RA SNOMED code), some are on DMARDs or biologics (methotrexate, hydroxychloroquine, sulfasalazine, adalimumab, infliximab), and some have positive rheumatoid factor on labs.\n\nPlease run multiple FHIR queries to capture the full population:\n1. Patients with any rheumatoid arthritis diagnosis (parent RA, seropositive, joint-specific, or in remission)\n2. Patients prescribed DMARDs or biologic anti-TNF agents\n3. Patients with positive rheumatoid factor lab results (>14 IU/mL)\n\nFor each query, return the matching resources. I want the union of all patients found across these three approaches. Note that the union will overcount because DMARDs are used for many non-RA indications and RF can be positive in lupus and other conditions \u2014 but it provides the screening pool for chart review."
+     }
+    },
     "copilot:claude-sonnet-4.6": {
      "1-naive": {
       "elapsed_sec": 211.0,
@@ -1892,6 +2047,138 @@
       "primary_query_url": "Condition?code=http://snomed.info/sct|69896004,http://snomed.info/sct|11055151000119108,http://snomed.info/sct|201766009,http://snomed.info/sct|1073811000119102,http://snomed.info/sct|143441000119108",
       "additional_query_urls": [],
       "raw_response": "Condition?code=http://snomed.info/sct|69896004,http://snomed.info/sct|11055151000119108,http://snomed.info/sct|201766009,http://snomed.info/sct|1073811000119102,http://snomed.info/sct|143441000119108",
+      "prompt_text": "I need to identify all rheumatoid arthritis patients. RA is documented under multiple SNOMED codes: Rheumatoid arthritis (69896004) is the parent concept, with specific variants including Seropositive rheumatoid arthritis of multiple joints (11055151000119108), Rheumatoid arthritis of shoulder (201766009), Rheumatoid arthritis of right knee (1073811000119102), and Rheumatoid arthritis in remission (143441000119108). All five codes are members of the AIR Steward 'Rheumatoid Arthritis' VSAC value set (OID 2.16.840.1.113883.3.464.1003.113.11.1081). Search Condition resources for all five codes."
+     }
+    },
+    "copilot:claude-opus-4.7+mimic": {
+     "1-naive": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 2960,
+      "actual_count": 0,
+      "elapsed_sec": 7.5,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|69896004",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|69896004",
+      "prompt_text": "Find all patients with rheumatoid arthritis."
+     },
+     "1-broad": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 2960,
+      "actual_count": 0,
+      "elapsed_sec": 13.5,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code:in=http://snomed.info/sct?fhir_vs=ecl/(<<69896004)MINUS(<<410502007)MINUS(<<3439008",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code:in=http://snomed.info/sct?fhir_vs=ecl/(<<69896004)MINUS(<<410502007)MINUS(<<3439008)",
+      "prompt_text": "Find all patients diagnosed with any form of rheumatoid arthritis \u2014 including the general parent concept, seropositive RA of multiple joints, joint-specific variants such as RA of the shoulder or knee, and RA in remission. Exclude juvenile chronic polyarthritis and inflammatory polyarthropathy."
+     },
+     "1-expert": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 2960,
+      "actual_count": 0,
+      "elapsed_sec": 7.5,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|69896004,http://snomed.info/sct|11055151000119108,http://snomed.info/sct|201766009,http://snomed.info/sct|1073811000119102,http://snomed.info/sct|143441000119108",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|69896004,http://snomed.info/sct|11055151000119108,http://snomed.info/sct|201766009,http://snomed.info/sct|1073811000119102,http://snomed.info/sct|143441000119108",
+      "prompt_text": "I need to identify all rheumatoid arthritis patients. RA is documented under multiple SNOMED codes: Rheumatoid arthritis (69896004) is the parent concept, with specific variants including Seropositive rheumatoid arthritis of multiple joints (11055151000119108), Rheumatoid arthritis of shoulder (201766009), Rheumatoid arthritis of right knee (1073811000119102), and Rheumatoid arthritis in remission (143441000119108). All five codes are members of the AIR Steward 'Rheumatoid Arthritis' VSAC value set (OID 2.16.840.1.113883.3.464.1003.113.11.1081). Search Condition resources for all five codes."
+     },
+     "2-naive": {
+      "precision": 1.0,
+      "recall": 0.928,
+      "f1": 0.9627,
+      "passed": true,
+      "expected_count": 2960,
+      "actual_count": 2747,
+      "elapsed_sec": 41.1,
+      "queries_generated": 1,
+      "primary_query_url": "Patient?_has:Condition:patient:code:text=rheumatoid",
+      "additional_query_urls": [],
+      "raw_response": "Patient?_has:Condition:patient:code:text=rheumatoid arthritis",
+      "prompt_text": "Find all patients with rheumatoid arthritis."
+     },
+     "2-broad": {
+      "precision": 1.0,
+      "recall": 0.9402,
+      "f1": 0.9692,
+      "passed": true,
+      "expected_count": 2960,
+      "actual_count": 2783,
+      "elapsed_sec": 166.4,
+      "queries_generated": 4,
+      "primary_query_url": "Condition?patient.identifier=&code=http://hl7.org/fhir/sid/icd-9-cm|714.0,http://hl7.org/fhir/sid/icd-9-cm|714.1,http://hl7.org/fhir/sid/icd-9-cm|714.2,http://hl7.org/fhir/sid/icd-9-cm|714.81,http://hl7.org/fhir/sid/icd-10-cm|M05.9,http://hl7.org/fhir/sid/icd-10-cm|M06.9,http://hl7.org/fhir/sid/icd-10-cm|M05.10,http://hl7.org/fhir/sid/icd-10-cm|M05.111,http://hl7.org/fhir/sid/icd-10-cm|M05.112,http://hl7.org/fhir/sid/icd-10-cm|M05.119,http://hl7.org/fhir/sid/icd-10-cm|M05.121,http://hl7.org/fhir/sid/icd-10-cm|M05.122,http://hl7.org/fhir/sid/icd-10-cm|M05.129,http://hl7.org/fhir/sid/icd-10-cm|M05.131,http://hl7.org/fhir/sid/icd-10-cm|M05.132,http://hl7.org/fhir/sid/icd-10-cm|M05.139,http://hl7.org/fhir/sid/icd-10-cm|M05.141,http://hl7.org/fhir/sid/icd-10-cm|M05.142,http://hl7.org/fhir/sid/icd-10-cm|M05.149,http://hl7.org/fhir/sid/icd-10-cm|M05.151,http://hl7.org/fhir/sid/icd-10-cm|M05.152,http://hl7.org/fhir/sid/icd-10-cm|M05.159,http://hl7.org/fhir/sid/icd-10-cm|M05.161,http://hl7.org/fhir/sid/icd-10-cm|M05.162,http://hl7.org/fhir/sid/icd-10-cm|M05.169,http://hl7.org/fhir/sid/icd-10-cm|M05.171,http://hl7.org/fhir/sid/icd-10-cm|M05.172,http://hl7.org/fhir/sid/icd-10-cm|M05.179,http://hl7.org/fhir/sid/icd-10-cm|M05.19,http://hl7.org/fhir/sid/icd-10-cm|M05.20,http://hl7.org/fhir/sid/icd-10-cm|M05.211,http://hl7.org/fhir/sid/icd-10-cm|M05.212,http://hl7.org/fhir/sid/icd-10-cm|M05.219,http://hl7.org/fhir/sid/icd-10-cm|M05.221,http://hl7.org/fhir/sid/icd-10-cm|M05.222,http://hl7.org/fhir/sid/icd-10-cm|M05.229,http://hl7.org/fhir/sid/icd-10-cm|M05.231,http://hl7.org/fhir/sid/icd-10-cm|M05.232,http://hl7.org/fhir/sid/icd-10-cm|M05.239,http://hl7.org/fhir/sid/icd-10-cm|M05.241,http://hl7.org/fhir/sid/icd-10-cm|M05.242,http://hl7.org/fhir/sid/icd-10-cm|M05.249,http://hl7.org/fhir/sid/icd-10-cm|M05.251,http://hl7.org/fhir/sid/icd-10-cm|M05.252,http://hl7.org/fhir/sid/icd-10-cm|M05.259,http://hl7.org/fhir/sid/icd-10-cm|M05.261,http://hl7.org/fhir/sid/icd-10-cm|M05.262,http://hl7.org/fhir/sid/icd-10-cm|M05.269,http://hl7.org/fhir/sid/icd-10-cm|M05.271,http://hl7.org/fhir/sid/icd-10-cm|M05.272,http://hl7.org/fhir/sid/icd-10-cm|M05.279,http://hl7.org/fhir/sid/icd-10-cm|M05.29",
+      "additional_query_urls": [
+       "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|M05.30,http://hl7.org/fhir/sid/icd-10-cm|M05.311,http://hl7.org/fhir/sid/icd-10-cm|M05.312,http://hl7.org/fhir/sid/icd-10-cm|M05.319,http://hl7.org/fhir/sid/icd-10-cm|M05.321,http://hl7.org/fhir/sid/icd-10-cm|M05.322,http://hl7.org/fhir/sid/icd-10-cm|M05.329,http://hl7.org/fhir/sid/icd-10-cm|M05.331,http://hl7.org/fhir/sid/icd-10-cm|M05.332,http://hl7.org/fhir/sid/icd-10-cm|M05.339,http://hl7.org/fhir/sid/icd-10-cm|M05.341,http://hl7.org/fhir/sid/icd-10-cm|M05.342,http://hl7.org/fhir/sid/icd-10-cm|M05.349,http://hl7.org/fhir/sid/icd-10-cm|M05.351,http://hl7.org/fhir/sid/icd-10-cm|M05.352,http://hl7.org/fhir/sid/icd-10-cm|M05.359,http://hl7.org/fhir/sid/icd-10-cm|M05.361,http://hl7.org/fhir/sid/icd-10-cm|M05.362,http://hl7.org/fhir/sid/icd-10-cm|M05.369,http://hl7.org/fhir/sid/icd-10-cm|M05.371,http://hl7.org/fhir/sid/icd-10-cm|M05.372,http://hl7.org/fhir/sid/icd-10-cm|M05.379,http://hl7.org/fhir/sid/icd-10-cm|M05.39,http://hl7.org/fhir/sid/icd-10-cm|M05.40,http://hl7.org/fhir/sid/icd-10-cm|M05.411,http://hl7.org/fhir/sid/icd-10-cm|M05.412,http://hl7.org/fhir/sid/icd-10-cm|M05.419,http://hl7.org/fhir/sid/icd-10-cm|M05.421,http://hl7.org/fhir/sid/icd-10-cm|M05.422,http://hl7.org/fhir/sid/icd-10-cm|M05.429,http://hl7.org/fhir/sid/icd-10-cm|M05.431,http://hl7.org/fhir/sid/icd-10-cm|M05.432,http://hl7.org/fhir/sid/icd-10-cm|M05.439,http://hl7.org/fhir/sid/icd-10-cm|M05.441,http://hl7.org/fhir/sid/icd-10-cm|M05.442,http://hl7.org/fhir/sid/icd-10-cm|M05.449,http://hl7.org/fhir/sid/icd-10-cm|M05.451,http://hl7.org/fhir/sid/icd-10-cm|M05.452,http://hl7.org/fhir/sid/icd-10-cm|M05.459,http://hl7.org/fhir/sid/icd-10-cm|M05.461,http://hl7.org/fhir/sid/icd-10-cm|M05.462,http://hl7.org/fhir/sid/icd-10-cm|M05.469,http://hl7.org/fhir/sid/icd-10-cm|M05.471,http://hl7.org/fhir/sid/icd-10-cm|M05.472,http://hl7.org/fhir/sid/icd-10-cm|M05.479,http://hl7.org/fhir/sid/icd-10-cm|M05.49,http://hl7.org/fhir/sid/icd-10-cm|M05.50,http://hl7.org/fhir/sid/icd-10-cm|M05.511,http://hl7.org/fhir/sid/icd-10-cm|M05.512,http://hl7.org/fhir/sid/icd-10-cm|M05.519,http://hl7.org/fhir/sid/icd-10-cm|M05.521,http://hl7.org/fhir/sid/icd-10-cm|M05.522,http://hl7.org/fhir/sid/icd-10-cm|M05.529,http://hl7.org/fhir/sid/icd-10-cm|M05.531,http://hl7.org/fhir/sid/icd-10-cm|M05.532,http://hl7.org/fhir/sid/icd-10-cm|M05.539,http://hl7.org/fhir/sid/icd-10-cm|M05.541,http://hl7.org/fhir/sid/icd-10-cm|M05.542,http://hl7.org/fhir/sid/icd-10-cm|M05.549,http://hl7.org/fhir/sid/icd-10-cm|M05.551,http://hl7.org/fhir/sid/icd-10-cm|M05.552,http://hl7.org/fhir/sid/icd-10-cm|M05.559,http://hl7.org/fhir/sid/icd-10-cm|M05.561,http://hl7.org/fhir/sid/icd-10-cm|M05.562,http://hl7.org/fhir/sid/icd-10-cm|M05.569,http://hl7.org/fhir/sid/icd-10-cm|M05.571,http://hl7.org/fhir/sid/icd-10-cm|M05.572,http://hl7.org/fhir/sid/icd-10-cm|M05.579,http://hl7.org/fhir/sid/icd-10-cm|M05.59",
+       "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|M05.60,http://hl7.org/fhir/sid/icd-10-cm|M05.611,http://hl7.org/fhir/sid/icd-10-cm|M05.612,http://hl7.org/fhir/sid/icd-10-cm|M05.619,http://hl7.org/fhir/sid/icd-10-cm|M05.621,http://hl7.org/fhir/sid/icd-10-cm|M05.622,http://hl7.org/fhir/sid/icd-10-cm|M05.629,http://hl7.org/fhir/sid/icd-10-cm|M05.631,http://hl7.org/fhir/sid/icd-10-cm|M05.632,http://hl7.org/fhir/sid/icd-10-cm|M05.639,http://hl7.org/fhir/sid/icd-10-cm|M05.641,http://hl7.org/fhir/sid/icd-10-cm|M05.642,http://hl7.org/fhir/sid/icd-10-cm|M05.649,http://hl7.org/fhir/sid/icd-10-cm|M05.651,http://hl7.org/fhir/sid/icd-10-cm|M05.652,http://hl7.org/fhir/sid/icd-10-cm|M05.659,http://hl7.org/fhir/sid/icd-10-cm|M05.661,http://hl7.org/fhir/sid/icd-10-cm|M05.662,http://hl7.org/fhir/sid/icd-10-cm|M05.669,http://hl7.org/fhir/sid/icd-10-cm|M05.671,http://hl7.org/fhir/sid/icd-10-cm|M05.672,http://hl7.org/fhir/sid/icd-10-cm|M05.679,http://hl7.org/fhir/sid/icd-10-cm|M05.69,http://hl7.org/fhir/sid/icd-10-cm|M05.70,http://hl7.org/fhir/sid/icd-10-cm|M05.711,http://hl7.org/fhir/sid/icd-10-cm|M05.712,http://hl7.org/fhir/sid/icd-10-cm|M05.719,http://hl7.org/fhir/sid/icd-10-cm|M05.721,http://hl7.org/fhir/sid/icd-10-cm|M05.722,http://hl7.org/fhir/sid/icd-10-cm|M05.729,http://hl7.org/fhir/sid/icd-10-cm|M05.731,http://hl7.org/fhir/sid/icd-10-cm|M05.732,http://hl7.org/fhir/sid/icd-10-cm|M05.739,http://hl7.org/fhir/sid/icd-10-cm|M05.741,http://hl7.org/fhir/sid/icd-10-cm|M05.742,http://hl7.org/fhir/sid/icd-10-cm|M05.749,http://hl7.org/fhir/sid/icd-10-cm|M05.751,http://hl7.org/fhir/sid/icd-10-cm|M05.752,http://hl7.org/fhir/sid/icd-10-cm|M05.759,http://hl7.org/fhir/sid/icd-10-cm|M05.761,http://hl7.org/fhir/sid/icd-10-cm|M05.762,http://hl7.org/fhir/sid/icd-10-cm|M05.769,http://hl7.org/fhir/sid/icd-10-cm|M05.771,http://hl7.org/fhir/sid/icd-10-cm|M05.772,http://hl7.org/fhir/sid/icd-10-cm|M05.779,http://hl7.org/fhir/sid/icd-10-cm|M05.79,http://hl7.org/fhir/sid/icd-10-cm|M05.80,http://hl7.org/fhir/sid/icd-10-cm|M05.811,http://hl7.org/fhir/sid/icd-10-cm|M05.812,http://hl7.org/fhir/sid/icd-10-cm|M05.819,http://hl7.org/fhir/sid/icd-10-cm|M05.821,http://hl7.org/fhir/sid/icd-10-cm|M05.822,http://hl7.org/fhir/sid/icd-10-cm|M05.829,http://hl7.org/fhir/sid/icd-10-cm|M05.831,http://hl7.org/fhir/sid/icd-10-cm|M05.832,http://hl7.org/fhir/sid/icd-10-cm|M05.839,http://hl7.org/fhir/sid/icd-10-cm|M05.841,http://hl7.org/fhir/sid/icd-10-cm|M05.842,http://hl7.org/fhir/sid/icd-10-cm|M05.849,http://hl7.org/fhir/sid/icd-10-cm|M05.851,http://hl7.org/fhir/sid/icd-10-cm|M05.852,http://hl7.org/fhir/sid/icd-10-cm|M05.859,http://hl7.org/fhir/sid/icd-10-cm|M05.861,http://hl7.org/fhir/sid/icd-10-cm|M05.862,http://hl7.org/fhir/sid/icd-10-cm|M05.869,http://hl7.org/fhir/sid/icd-10-cm|M05.871,http://hl7.org/fhir/sid/icd-10-cm|M05.872,http://hl7.org/fhir/sid/icd-10-cm|M05.879,http://hl7.org/fhir/sid/icd-10-cm|M05.89",
+       "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|M06.00,http://hl7.org/fhir/sid/icd-10-cm|M06.011,http://hl7.org/fhir/sid/icd-10-cm|M06.012,http://hl7.org/fhir/sid/icd-10-cm|M06.019,http://hl7.org/fhir/sid/icd-10-cm|M06.021,http://hl7.org/fhir/sid/icd-10-cm|M06.022,http://hl7.org/fhir/sid/icd-10-cm|M06.029,http://hl7.org/fhir/sid/icd-10-cm|M06.031,http://hl7.org/fhir/sid/icd-10-cm|M06.032,http://hl7.org/fhir/sid/icd-10-cm|M06.039,http://hl7.org/fhir/sid/icd-10-cm|M06.041,http://hl7.org/fhir/sid/icd-10-cm|M06.042,http://hl7.org/fhir/sid/icd-10-cm|M06.049,http://hl7.org/fhir/sid/icd-10-cm|M06.051,http://hl7.org/fhir/sid/icd-10-cm|M06.052,http://hl7.org/fhir/sid/icd-10-cm|M06.059,http://hl7.org/fhir/sid/icd-10-cm|M06.061,http://hl7.org/fhir/sid/icd-10-cm|M06.062,http://hl7.org/fhir/sid/icd-10-cm|M06.069,http://hl7.org/fhir/sid/icd-10-cm|M06.071,http://hl7.org/fhir/sid/icd-10-cm|M06.072,http://hl7.org/fhir/sid/icd-10-cm|M06.079,http://hl7.org/fhir/sid/icd-10-cm|M06.09,http://hl7.org/fhir/sid/icd-10-cm|M06.80,http://hl7.org/fhir/sid/icd-10-cm|M06.811,http://hl7.org/fhir/sid/icd-10-cm|M06.812,http://hl7.org/fhir/sid/icd-10-cm|M06.819,http://hl7.org/fhir/sid/icd-10-cm|M06.821,http://hl7.org/fhir/sid/icd-10-cm|M06.822,http://hl7.org/fhir/sid/icd-10-cm|M06.829,http://hl7.org/fhir/sid/icd-10-cm|M06.831,http://hl7.org/fhir/sid/icd-10-cm|M06.832,http://hl7.org/fhir/sid/icd-10-cm|M06.839,http://hl7.org/fhir/sid/icd-10-cm|M06.841,http://hl7.org/fhir/sid/icd-10-cm|M06.842,http://hl7.org/fhir/sid/icd-10-cm|M06.849,http://hl7.org/fhir/sid/icd-10-cm|M06.851,http://hl7.org/fhir/sid/icd-10-cm|M06.852,http://hl7.org/fhir/sid/icd-10-cm|M06.859,http://hl7.org/fhir/sid/icd-10-cm|M06.861,http://hl7.org/fhir/sid/icd-10-cm|M06.862,http://hl7.org/fhir/sid/icd-10-cm|M06.869,http://hl7.org/fhir/sid/icd-10-cm|M06.871,http://hl7.org/fhir/sid/icd-10-cm|M06.872,http://hl7.org/fhir/sid/icd-10-cm|M06.879,http://hl7.org/fhir/sid/icd-10-cm|M06.89,http://hl7.org/fhir/sid/icd-10-cm|M06.9,http://hl7.org/fhir/sid/icd-9-cm|714.0,http://hl7.org/fhir/sid/icd-9-cm|714.1,http://hl7.org/fhir/sid/icd-9-cm|714.2,http://hl7.org/fhir/sid/icd-9-cm|714.81"
+      ],
+      "raw_response": "Final answer:\n\nCondition?patient.identifier=&code=http://hl7.org/fhir/sid/icd-9-cm|714.0,http://hl7.org/fhir/sid/icd-9-cm|714.1,http://hl7.org/fhir/sid/icd-9-cm|714.2,http://hl7.org/fhir/sid/icd-9-cm|714.81,http://hl7.org/fhir/sid/icd-10-cm|M05.9,http://hl7.org/fhir/sid/icd-10-cm|M06.9,http://hl7.org/fhir/sid/icd-10-cm|M05.10,http://hl7.org/fhir/sid/icd-10-cm|M05.111,http://hl7.org/fhir/sid/icd-10-cm|M05.112,http://hl7.org/fhir/sid/icd-10-cm|M05.119,http://hl7.org/fhir/sid/icd-10-cm|M05.121,http://hl7.org/fhir/sid/icd-10-cm|M05.122,http://hl7.org/fhir/sid/icd-10-cm|M05.129,http://hl7.org/fhir/sid/icd-10-cm|M05.131,http://hl7.org/fhir/sid/icd-10-cm|M05.132,http://hl7.org/fhir/sid/icd-10-cm|M05.139,http://hl7.org/fhir/sid/icd-10-cm|M05.141,http://hl7.org/fhir/sid/icd-10-cm|M05.142,http://hl7.org/fhir/sid/icd-10-cm|M05.149,http://hl7.org/fhir/sid/icd-10-cm|M05.151,http://hl7.org/fhir/sid/icd-10-cm|M05.152,http://hl7.org/fhir/sid/icd-10-cm|M05.159,http://hl7.org/fhir/sid/icd-10-cm|M05.161,http://hl7.org/fhir/sid/icd-10-cm|M05.162,http://hl7.org/fhir/sid/icd-10-cm|M05.169,http://hl7.org/fhir/sid/icd-10-cm|M05.171,http://hl7.org/fhir/sid/icd-10-cm|M05.172,http://hl7.org/fhir/sid/icd-10-cm|M05.179,http://hl7.org/fhir/sid/icd-10-cm|M05.19,http://hl7.org/fhir/sid/icd-10-cm|M05.20,http://hl7.org/fhir/sid/icd-10-cm|M05.211,http://hl7.org/fhir/sid/icd-10-cm|M05.212,http://hl7.org/fhir/sid/icd-10-cm|M05.219,http://hl7.org/fhir/sid/icd-10-cm|M05.221,http://hl7.org/fhir/sid/icd-10-cm|M05.222,http://hl7.org/fhir/sid/icd-10-cm|M05.229,http://hl7.org/fhir/sid/icd-10-cm|M05.231,http://hl7.org/fhir/sid/icd-10-cm|M05.232,http://hl7.org/fhir/sid/icd-10-cm|M05.239,http://hl7.org/fhir/sid/icd-10-cm|M05.241,http://hl7.org/fhir/sid/icd-10-cm|M05.242,http://hl7.org/fhir/sid/icd-10-cm|M05.249,http://hl7.org/fhir/sid/icd-10-cm|M05.251,http://hl7.org/fhir/sid/icd-10-cm|M05.252,http://hl7.org/fhir/sid/icd-10-cm|M05.259,http://hl7.org/fhir/sid/icd-10-cm|M05.261,http://hl7.org/fhir/sid/icd-10-cm|M05.262,http://hl7.org/fhir/sid/icd-10-cm|M05.269,http://hl7.org/fhir/sid/icd-10-cm|M05.271,http://hl7.org/fhir/sid/icd-10-cm|M05.272,http://hl7.org/fhir/sid/icd-10-cm|M05.279,http://hl7.org/fhir/sid/icd-10-cm|M05.29\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|M05.30,http://hl7.org/fhir/sid/icd-10-cm|M05.311,http://hl7.org/fhir/sid/icd-10-cm|M05.312,http://hl7.org/fhir/sid/icd-10-cm|M05.319,http://hl7.org/fhir/sid/icd-10-cm|M05.321,http://hl7.org/fhir/sid/icd-10-cm|M05.322,http://hl7.org/fhir/sid/icd-10-cm|M05.329,http://hl7.org/fhir/sid/icd-10-cm|M05.331,http://hl7.org/fhir/sid/icd-10-cm|M05.332,http://hl7.org/fhir/sid/icd-10-cm|M05.339,http://hl7.org/fhir/sid/icd-10-cm|M05.341,http://hl7.org/fhir/sid/icd-10-cm|M05.342,http://hl7.org/fhir/sid/icd-10-cm|M05.349,http://hl7.org/fhir/sid/icd-10-cm|M05.351,http://hl7.org/fhir/sid/icd-10-cm|M05.352,http://hl7.org/fhir/sid/icd-10-cm|M05.359,http://hl7.org/fhir/sid/icd-10-cm|M05.361,http://hl7.org/fhir/sid/icd-10-cm|M05.362,http://hl7.org/fhir/sid/icd-10-cm|M05.369,http://hl7.org/fhir/sid/icd-10-cm|M05.371,http://hl7.org/fhir/sid/icd-10-cm|M05.372,http://hl7.org/fhir/sid/icd-10-cm|M05.379,http://hl7.org/fhir/sid/icd-10-cm|M05.39,http://hl7.org/fhir/sid/icd-10-cm|M05.40,http://hl7.org/fhir/sid/icd-10-cm|M05.411,http://hl7.org/fhir/sid/icd-10-cm|M05.412,http://hl7.org/fhir/sid/icd-10-cm|M05.419,http://hl7.org/fhir/sid/icd-10-cm|M05.421,http://hl7.org/fhir/sid/icd-10-cm|M05.422,http://hl7.org/fhir/sid/icd-10-cm|M05.429,http://hl7.org/fhir/sid/icd-10-cm|M05.431,http://hl7.org/fhir/sid/icd-10-cm|M05.432,http://hl7.org/fhir/sid/icd-10-cm|M05.439,http://hl7.org/fhir/sid/icd-10-cm|M05.441,http://hl7.org/fhir/sid/icd-10-cm|M05.442,http://hl7.org/fhir/sid/icd-10-cm|M05.449,http://hl7.org/fhir/sid/icd-10-cm|M05.451,http://hl7.org/fhir/sid/icd-10-cm|M05.452,http://hl7.org/fhir/sid/icd-10-cm|M05.459,http://hl7.org/fhir/sid/icd-10-cm|M05.461,http://hl7.org/fhir/sid/icd-10-cm|M05.462,http://hl7.org/fhir/sid/icd-10-cm|M05.469,http://hl7.org/fhir/sid/icd-10-cm|M05.471,http://hl7.org/fhir/sid/icd-10-cm|M05.472,http://hl7.org/fhir/sid/icd-10-cm|M05.479,http://hl7.org/fhir/sid/icd-10-cm|M05.49,http://hl7.org/fhir/sid/icd-10-cm|M05.50,http://hl7.org/fhir/sid/icd-10-cm|M05.511,http://hl7.org/fhir/sid/icd-10-cm|M05.512,http://hl7.org/fhir/sid/icd-10-cm|M05.519,http://hl7.org/fhir/sid/icd-10-cm|M05.521,http://hl7.org/fhir/sid/icd-10-cm|M05.522,http://hl7.org/fhir/sid/icd-10-cm|M05.529,http://hl7.org/fhir/sid/icd-10-cm|M05.531,http://hl7.org/fhir/sid/icd-10-cm|M05.532,http://hl7.org/fhir/sid/icd-10-cm|M05.539,http://hl7.org/fhir/sid/icd-10-cm|M05.541,http://hl7.org/fhir/sid/icd-10-cm|M05.542,http://hl7.org/fhir/sid/icd-10-cm|M05.549,http://hl7.org/fhir/sid/icd-10-cm|M05.551,http://hl7.org/fhir/sid/icd-10-cm|M05.552,http://hl7.org/fhir/sid/icd-10-cm|M05.559,http://hl7.org/fhir/sid/icd-10-cm|M05.561,http://hl7.org/fhir/sid/icd-10-cm|M05.562,http://hl7.org/fhir/sid/icd-10-cm|M05.569,http://hl7.org/fhir/sid/icd-10-cm|M05.571,http://hl7.org/fhir/sid/icd-10-cm|M05.572,http://hl7.org/fhir/sid/icd-10-cm|M05.579,http://hl7.org/fhir/sid/icd-10-cm|M05.59\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|M05.60,http://hl7.org/fhir/sid/icd-10-cm|M05.611,http://hl7.org/fhir/sid/icd-10-cm|M05.612,http://hl7.org/fhir/sid/icd-10-cm|M05.619,http://hl7.org/fhir/sid/icd-10-cm|M05.621,http://hl7.org/fhir/sid/icd-10-cm|M05.622,http://hl7.org/fhir/sid/icd-10-cm|M05.629,http://hl7.org/fhir/sid/icd-10-cm|M05.631,http://hl7.org/fhir/sid/icd-10-cm|M05.632,http://hl7.org/fhir/sid/icd-10-cm|M05.639,http://hl7.org/fhir/sid/icd-10-cm|M05.641,http://hl7.org/fhir/sid/icd-10-cm|M05.642,http://hl7.org/fhir/sid/icd-10-cm|M05.649,http://hl7.org/fhir/sid/icd-10-cm|M05.651,http://hl7.org/fhir/sid/icd-10-cm|M05.652,http://hl7.org/fhir/sid/icd-10-cm|M05.659,http://hl7.org/fhir/sid/icd-10-cm|M05.661,http://hl7.org/fhir/sid/icd-10-cm|M05.662,http://hl7.org/fhir/sid/icd-10-cm|M05.669,http://hl7.org/fhir/sid/icd-10-cm|M05.671,http://hl7.org/fhir/sid/icd-10-cm|M05.672,http://hl7.org/fhir/sid/icd-10-cm|M05.679,http://hl7.org/fhir/sid/icd-10-cm|M05.69,http://hl7.org/fhir/sid/icd-10-cm|M05.70,http://hl7.org/fhir/sid/icd-10-cm|M05.711,http://hl7.org/fhir/sid/icd-10-cm|M05.712,http://hl7.org/fhir/sid/icd-10-cm|M05.719,http://hl7.org/fhir/sid/icd-10-cm|M05.721,http://hl7.org/fhir/sid/icd-10-cm|M05.722,http://hl7.org/fhir/sid/icd-10-cm|M05.729,http://hl7.org/fhir/sid/icd-10-cm|M05.731,http://hl7.org/fhir/sid/icd-10-cm|M05.732,http://hl7.org/fhir/sid/icd-10-cm|M05.739,http://hl7.org/fhir/sid/icd-10-cm|M05.741,http://hl7.org/fhir/sid/icd-10-cm|M05.742,http://hl7.org/fhir/sid/icd-10-cm|M05.749,http://hl7.org/fhir/sid/icd-10-cm|M05.751,http://hl7.org/fhir/sid/icd-10-cm|M05.752,http://hl7.org/fhir/sid/icd-10-cm|M05.759,http://hl7.org/fhir/sid/icd-10-cm|M05.761,http://hl7.org/fhir/sid/icd-10-cm|M05.762,http://hl7.org/fhir/sid/icd-10-cm|M05.769,http://hl7.org/fhir/sid/icd-10-cm|M05.771,http://hl7.org/fhir/sid/icd-10-cm|M05.772,http://hl7.org/fhir/sid/icd-10-cm|M05.779,http://hl7.org/fhir/sid/icd-10-cm|M05.79,http://hl7.org/fhir/sid/icd-10-cm|M05.80,http://hl7.org/fhir/sid/icd-10-cm|M05.811,http://hl7.org/fhir/sid/icd-10-cm|M05.812,http://hl7.org/fhir/sid/icd-10-cm|M05.819,http://hl7.org/fhir/sid/icd-10-cm|M05.821,http://hl7.org/fhir/sid/icd-10-cm|M05.822,http://hl7.org/fhir/sid/icd-10-cm|M05.829,http://hl7.org/fhir/sid/icd-10-cm|M05.831,http://hl7.org/fhir/sid/icd-10-cm|M05.832,http://hl7.org/fhir/sid/icd-10-cm|M05.839,http://hl7.org/fhir/sid/icd-10-cm|M05.841,http://hl7.org/fhir/sid/icd-10-cm|M05.842,http://hl7.org/fhir/sid/icd-10-cm|M05.849,http://hl7.org/fhir/sid/icd-10-cm|M05.851,http://hl7.org/fhir/sid/icd-10-cm|M05.852,http://hl7.org/fhir/sid/icd-10-cm|M05.859,http://hl7.org/fhir/sid/icd-10-cm|M05.861,http://hl7.org/fhir/sid/icd-10-cm|M05.862,http://hl7.org/fhir/sid/icd-10-cm|M05.869,http://hl7.org/fhir/sid/icd-10-cm|M05.871,http://hl7.org/fhir/sid/icd-10-cm|M05.872,http://hl7.org/fhir/sid/icd-10-cm|M05.879,http://hl7.o",
+      "prompt_text": "Find all patients diagnosed with any form of rheumatoid arthritis \u2014 including the general parent concept, seropositive RA of multiple joints, joint-specific variants such as RA of the shoulder or knee, and RA in remission. Exclude juvenile chronic polyarthritis and inflammatory polyarthropathy."
+     },
+     "2-expert": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 2960,
+      "actual_count": 0,
+      "elapsed_sec": 25.8,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|69896004,http://snomed.info/sct|11055151000119108,http://snomed.info/sct|201766009,http://snomed.info/sct|1073811000119102,http://snomed.info/sct|143441000119108",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|69896004,http://snomed.info/sct|11055151000119108,http://snomed.info/sct|201766009,http://snomed.info/sct|1073811000119102,http://snomed.info/sct|143441000119108",
+      "prompt_text": "I need to identify all rheumatoid arthritis patients. RA is documented under multiple SNOMED codes: Rheumatoid arthritis (69896004) is the parent concept, with specific variants including Seropositive rheumatoid arthritis of multiple joints (11055151000119108), Rheumatoid arthritis of shoulder (201766009), Rheumatoid arthritis of right knee (1073811000119102), and Rheumatoid arthritis in remission (143441000119108). All five codes are members of the AIR Steward 'Rheumatoid Arthritis' VSAC value set (OID 2.16.840.1.113883.3.464.1003.113.11.1081). Search Condition resources for all five codes."
+     },
+     "3-naive": {
+      "precision": 1.0,
+      "recall": 0.928,
+      "f1": 0.9627,
+      "passed": true,
+      "expected_count": 2960,
+      "actual_count": 2747,
+      "elapsed_sec": 34.4,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code:text=rheumatoid",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code:text=rheumatoid arthritis",
+      "prompt_text": "Find all patients with rheumatoid arthritis."
+     },
+     "3-broad": {
+      "precision": 1.0,
+      "recall": 0.9351,
+      "f1": 0.9665,
+      "passed": true,
+      "expected_count": 2960,
+      "actual_count": 2768,
+      "elapsed_sec": 63.1,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-9-cm|714.0,http://hl7.org/fhir/sid/icd-9-cm|714.1,http://hl7.org/fhir/sid/icd-9-cm|714.2,http://hl7.org/fhir/sid/icd-9-cm|714.81,http://hl7.org/fhir/sid/icd-10-cm|M05.9,http://hl7.org/fhir/sid/icd-10-cm|M05.79,http://hl7.org/fhir/sid/icd-10-cm|M05.19,http://hl7.org/fhir/sid/icd-10-cm|M05.29,http://hl7.org/fhir/sid/icd-10-cm|M05.39,http://hl7.org/fhir/sid/icd-10-cm|M05.49,http://hl7.org/fhir/sid/icd-10-cm|M05.59,http://hl7.org/fhir/sid/icd-10-cm|M05.69,http://hl7.org/fhir/sid/icd-10-cm|M05.89,http://hl7.org/fhir/sid/icd-10-cm|M06.00,http://hl7.org/fhir/sid/icd-10-cm|M06.09,http://hl7.org/fhir/sid/icd-10-cm|M06.9,http://hl7.org/fhir/sid/icd-10-cm|M06.89,http://hl7.org/fhir/sid/icd-10-cm|M06.1",
+      "additional_query_urls": [],
+      "raw_response": "Based on the MIMIC server using ICD-9-CM and ICD-10-CM, I'll build a targeted query with RA codes (ICD-9 714.0/.1/.2/.81 and ICD-10 M05.x/M06.0-3,.8-9), explicitly excluding juvenile arthritis (714.30-33, M08.x) and inflammatory polyarthropathy (714.9, M06.4).\n\nCondition?code=http://hl7.org/fhir/sid/icd-9-cm|714.0,http://hl7.org/fhir/sid/icd-9-cm|714.1,http://hl7.org/fhir/sid/icd-9-cm|714.2,http://hl7.org/fhir/sid/icd-9-cm|714.81,http://hl7.org/fhir/sid/icd-10-cm|M05.9,http://hl7.org/fhir/sid/icd-10-cm|M05.79,http://hl7.org/fhir/sid/icd-10-cm|M05.19,http://hl7.org/fhir/sid/icd-10-cm|M05.29,http://hl7.org/fhir/sid/icd-10-cm|M05.39,http://hl7.org/fhir/sid/icd-10-cm|M05.49,http://hl7.org/fhir/sid/icd-10-cm|M05.59,http://hl7.org/fhir/sid/icd-10-cm|M05.69,http://hl7.org/fhir/sid/icd-10-cm|M05.89,http://hl7.org/fhir/sid/icd-10-cm|M06.00,http://hl7.org/fhir/sid/icd-10-cm|M06.09,http://hl7.org/fhir/sid/icd-10-cm|M06.9,http://hl7.org/fhir/sid/icd-10-cm|M06.89,http://hl7.org/fhir/sid/icd-10-cm|M06.1",
+      "prompt_text": "Find all patients diagnosed with any form of rheumatoid arthritis \u2014 including the general parent concept, seropositive RA of multiple joints, joint-specific variants such as RA of the shoulder or knee, and RA in remission. Exclude juvenile chronic polyarthritis and inflammatory polyarthropathy."
+     },
+     "3-expert": {
+      "precision": 1.0,
+      "recall": 0.5922,
+      "f1": 0.7439,
+      "passed": true,
+      "expected_count": 2960,
+      "actual_count": 1753,
+      "elapsed_sec": 24.8,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-9-cm|714.0,http://snomed.info/sct|69896004,http://snomed.info/sct|11055151000119108,http://snomed.info/sct|201766009,http://snomed.info/sct|1073811000119102,http://snomed.info/sct|143441000119108",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-9-cm|714.0,http://snomed.info/sct|69896004,http://snomed.info/sct|11055151000119108,http://snomed.info/sct|201766009,http://snomed.info/sct|1073811000119102,http://snomed.info/sct|143441000119108",
       "prompt_text": "I need to identify all rheumatoid arthritis patients. RA is documented under multiple SNOMED codes: Rheumatoid arthritis (69896004) is the parent concept, with specific variants including Seropositive rheumatoid arthritis of multiple joints (11055151000119108), Rheumatoid arthritis of shoulder (201766009), Rheumatoid arthritis of right knee (1073811000119102), and Rheumatoid arthritis in remission (143441000119108). All five codes are members of the AIR Steward 'Rheumatoid Arthritis' VSAC value set (OID 2.16.840.1.113883.3.464.1003.113.11.1081). Search Condition resources for all five codes."
      }
     },
@@ -3365,6 +3652,165 @@
       "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6851,http://www.nlm.nih.gov/research/umls/rxnorm|5521,http://www.nlm.nih.gov/research/umls/rxnorm|9524,http://www.nlm.nih.gov/research/umls/rxnorm|327361,http://www.nlm.nih.gov/research/umls/rxnorm|191831",
       "additional_query_urls": [],
       "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6851,http://www.nlm.nih.gov/research/umls/rxnorm|5521,http://www.nlm.nih.gov/research/umls/rxnorm|9524,http://www.nlm.nih.gov/research/umls/rxnorm|327361,http://www.nlm.nih.gov/research/umls/rxnorm|191831",
+      "prompt_text": "I need MedicationRequest resources for any DMARD class used in RA. Use these RxNorm ingredient codes: 6851 (methotrexate, anchor csDMARD), 5521 (hydroxychloroquine), 9524 (sulfasalazine), 327361 (adalimumab, anti-TNF biologic), 191831 (infliximab, anti-TNF biologic). Combine in a single comma-separated code search."
+     }
+    },
+    "copilot:claude-opus-4.7+mimic": {
+     "1-naive": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 1741,
+      "actual_count": 0,
+      "elapsed_sec": 13.0,
+      "queries_generated": 10,
+      "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6851",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|327361",
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|105585",
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|191831",
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|121191",
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|5521",
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|9524",
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|27169",
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1132658",
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|614391"
+      ],
+      "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6851\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|327361\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|105585\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|191831\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|121191\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|5521\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|9524\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|27169\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1132658\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|614391",
+      "prompt_text": "Find patients on rheumatoid arthritis medications."
+     },
+     "1-broad": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 1741,
+      "actual_count": 0,
+      "elapsed_sec": 8.9,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6851,http://www.nlm.nih.gov/research/umls/rxnorm|5521,http://www.nlm.nih.gov/research/umls/rxnorm|9524,http://www.nlm.nih.gov/research/umls/rxnorm|327361,http://www.nlm.nih.gov/research/umls/rxnorm|5487",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6851,http://www.nlm.nih.gov/research/umls/rxnorm|5521,http://www.nlm.nih.gov/research/umls/rxnorm|9524,http://www.nlm.nih.gov/research/umls/rxnorm|327361,http://www.nlm.nih.gov/research/umls/rxnorm|5487",
+      "prompt_text": "Find patients prescribed disease-modifying antirheumatic drugs used in rheumatoid arthritis treatment: conventional DMARDs such as methotrexate, hydroxychloroquine, or sulfasalazine; or biologic TNF inhibitors such as adalimumab or infliximab."
+     },
+     "1-expert": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 1741,
+      "actual_count": 0,
+      "elapsed_sec": 8.6,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6851,http://www.nlm.nih.gov/research/umls/rxnorm|5521,http://www.nlm.nih.gov/research/umls/rxnorm|9524,http://www.nlm.nih.gov/research/umls/rxnorm|327361,http://www.nlm.nih.gov/research/umls/rxnorm|191831",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6851,http://www.nlm.nih.gov/research/umls/rxnorm|5521,http://www.nlm.nih.gov/research/umls/rxnorm|9524,http://www.nlm.nih.gov/research/umls/rxnorm|327361,http://www.nlm.nih.gov/research/umls/rxnorm|191831",
+      "prompt_text": "I need MedicationRequest resources for any DMARD class used in RA. Use these RxNorm ingredient codes: 6851 (methotrexate, anchor csDMARD), 5521 (hydroxychloroquine), 9524 (sulfasalazine), 327361 (adalimumab, anti-TNF biologic), 191831 (infliximab, anti-TNF biologic). Combine in a single comma-separated code search."
+     },
+     "2-naive": {
+      "precision": 0.9202,
+      "recall": 1.0,
+      "f1": 0.9584,
+      "passed": true,
+      "expected_count": 1741,
+      "actual_count": 1892,
+      "elapsed_sec": 59.6,
+      "queries_generated": 16,
+      "primary_query_url": "MedicationRequest?medication.code:text=methotrexate",
+      "additional_query_urls": [
+       "MedicationRequest?medication.code:text=adalimumab",
+       "MedicationRequest?medication.code:text=etanercept",
+       "MedicationRequest?medication.code:text=hydroxychloroquine",
+       "MedicationRequest?medication.code:text=leflunomide",
+       "MedicationRequest?medication.code:text=sulfasalazine",
+       "MedicationRequest?medication.code:text=tocilizumab",
+       "MedicationRequest?medication.code:text=abatacept",
+       "MedicationRequest?medication.code:text=rituximab",
+       "MedicationRequest?medication.code:text=tofacitinib",
+       "MedicationRequest?medication.code:text=certolizumab",
+       "MedicationRequest?medication.code:text=golimumab",
+       "MedicationRequest?medication.code:text=anakinra",
+       "MedicationRequest?medication.code:text=baricitinib",
+       "MedicationRequest?medication.code:text=upadacitinib",
+       "MedicationRequest?medication.code:text=sarilumab"
+      ],
+      "raw_response": "MedicationRequest?medication.code:text=methotrexate\nMedicationRequest?medication.code:text=adalimumab\nMedicationRequest?medication.code:text=etanercept\nMedicationRequest?medication.code:text=hydroxychloroquine\nMedicationRequest?medication.code:text=leflunomide\nMedicationRequest?medication.code:text=sulfasalazine\nMedicationRequest?medication.code:text=tocilizumab\nMedicationRequest?medication.code:text=abatacept\nMedicationRequest?medication.code:text=rituximab\nMedicationRequest?medication.code:text=tofacitinib\nMedicationRequest?medication.code:text=certolizumab\nMedicationRequest?medication.code:text=golimumab\nMedicationRequest?medication.code:text=anakinra\nMedicationRequest?medication.code:text=baricitinib\nMedicationRequest?medication.code:text=upadacitinib\nMedicationRequest?medication.code:text=sarilumab",
+      "prompt_text": "Find patients on rheumatoid arthritis medications."
+     },
+     "2-broad": {
+      "precision": 0.623,
+      "recall": 0.0218,
+      "f1": 0.0422,
+      "passed": false,
+      "expected_count": 1741,
+      "actual_count": 61,
+      "elapsed_sec": 69.5,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?code=Methotrexate,Hydroxychloroquine,Sulfasalazine,Adalimumab,Infliximab,Humira,Remicade,Plaquenil,Azulfidine&_include=MedicationRequest:subject",
+      "additional_query_urls": [],
+      "raw_response": "FINAL ANSWER:\n\nMedicationRequest?code=Methotrexate,Hydroxychloroquine,Sulfasalazine,Adalimumab,Infliximab,Humira,Remicade,Plaquenil,Azulfidine&_include=MedicationRequest:subject",
+      "prompt_text": "Find patients prescribed disease-modifying antirheumatic drugs used in rheumatoid arthritis treatment: conventional DMARDs such as methotrexate, hydroxychloroquine, or sulfasalazine; or biologic TNF inhibitors such as adalimumab or infliximab."
+     },
+     "2-expert": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 1741,
+      "actual_count": 0,
+      "elapsed_sec": 18.7,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6851,http://www.nlm.nih.gov/research/umls/rxnorm|5521,http://www.nlm.nih.gov/research/umls/rxnorm|9524,http://www.nlm.nih.gov/research/umls/rxnorm|327361,http://www.nlm.nih.gov/research/umls/rxnorm|191831",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6851,http://www.nlm.nih.gov/research/umls/rxnorm|5521,http://www.nlm.nih.gov/research/umls/rxnorm|9524,http://www.nlm.nih.gov/research/umls/rxnorm|327361,http://www.nlm.nih.gov/research/umls/rxnorm|191831",
+      "prompt_text": "I need MedicationRequest resources for any DMARD class used in RA. Use these RxNorm ingredient codes: 6851 (methotrexate, anchor csDMARD), 5521 (hydroxychloroquine), 9524 (sulfasalazine), 327361 (adalimumab, anti-TNF biologic), 191831 (infliximab, anti-TNF biologic). Combine in a single comma-separated code search."
+     },
+     "3-naive": {
+      "precision": 0.6379,
+      "recall": 0.0213,
+      "f1": 0.0411,
+      "passed": false,
+      "expected_count": 1741,
+      "actual_count": 58,
+      "elapsed_sec": 52.9,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?code=http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Methotrexate,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Hydroxychloroquine",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?code=http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Methotrexate,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Hydroxychloroquine Sulfate,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Infliximab,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Tocilizumab,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Rituximab",
+      "prompt_text": "Find patients on rheumatoid arthritis medications."
+     },
+     "3-broad": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 1741,
+      "actual_count": 1741,
+      "elapsed_sec": 49.3,
+      "queries_generated": 5,
+      "primary_query_url": "MedicationRequest?medication.code:text=methotrexate",
+      "additional_query_urls": [
+       "MedicationRequest?medication.code:text=hydroxychloroquine",
+       "MedicationRequest?medication.code:text=sulfasalazine",
+       "MedicationRequest?medication.code:text=adalimumab",
+       "MedicationRequest?medication.code:text=infliximab"
+      ],
+      "raw_response": "MedicationRequest?medication.code:text=methotrexate\nMedicationRequest?medication.code:text=hydroxychloroquine\nMedicationRequest?medication.code:text=sulfasalazine\nMedicationRequest?medication.code:text=adalimumab\nMedicationRequest?medication.code:text=infliximab",
+      "prompt_text": "Find patients prescribed disease-modifying antirheumatic drugs used in rheumatoid arthritis treatment: conventional DMARDs such as methotrexate, hydroxychloroquine, or sulfasalazine; or biologic TNF inhibitors such as adalimumab or infliximab."
+     },
+     "3-expert": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 1741,
+      "actual_count": 1741,
+      "elapsed_sec": 29.8,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|6851,http://www.nlm.nih.gov/research/umls/rxnorm|5521,http://www.nlm.nih.gov/research/umls/rxnorm|9524,http://www.nlm.nih.gov/research/umls/rxnorm|327361,http://www.nlm.nih.gov/research/umls/rxnorm|191831",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|6851,http://www.nlm.nih.gov/research/umls/rxnorm|5521,http://www.nlm.nih.gov/research/umls/rxnorm|9524,http://www.nlm.nih.gov/research/umls/rxnorm|327361,http://www.nlm.nih.gov/research/umls/rxnorm|191831",
       "prompt_text": "I need MedicationRequest resources for any DMARD class used in RA. Use these RxNorm ingredient codes: 6851 (methotrexate, anchor csDMARD), 5521 (hydroxychloroquine), 9524 (sulfasalazine), 327361 (adalimumab, anti-TNF biologic), 191831 (infliximab, anti-TNF biologic). Combine in a single comma-separated code search."
      }
     },

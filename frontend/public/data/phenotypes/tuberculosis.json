@@ -234,6 +234,148 @@
       "prompt_text": "I need to identify all tuberculosis patients using a two-resource union strategy. First, query Condition resources for TB diagnoses in SNOMED CT \u2014 include both the pulmonary-specific tuberculosis concept and the broader tuberculosis concept, as either may appear depending on documentation specificity. Second, query MedicationRequest resources for rifampin and isoniazid (two of the four standard RIPE regimen drugs) coded in RxNorm; some patients receive anti-TB combination therapy without a coded diagnosis (for example, contact prophylaxis or empirical treatment before microbiologic confirmation), so the medication path captures that clinical reality. Union the distinct patient IDs from both queries."
      }
     },
+    "copilot:claude-opus-4.7+mimic": {
+     "1-naive": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 94,
+      "actual_count": 0,
+      "elapsed_sec": 7.5,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|56717001",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|56717001",
+      "prompt_text": "Find all my TB patients."
+     },
+     "1-broad": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 94,
+      "actual_count": 0,
+      "elapsed_sec": 8.3,
+      "queries_generated": 3,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|56717001",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|9384",
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6038"
+      ],
+      "raw_response": "Condition?code=http://snomed.info/sct|56717001\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|9384\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6038",
+      "prompt_text": "Find all TB patients \u2014 by diagnosis or by anti-TB medications (rifampin, isoniazid). Run multiple queries and union the patient sets."
+     },
+     "1-expert": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 94,
+      "actual_count": 0,
+      "elapsed_sec": 8.3,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|154283005,http://snomed.info/sct|56717001",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|9384,http://www.nlm.nih.gov/research/umls/rxnorm|6038"
+      ],
+      "raw_response": "Condition?code=http://snomed.info/sct|154283005,http://snomed.info/sct|56717001\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|9384,http://www.nlm.nih.gov/research/umls/rxnorm|6038",
+      "prompt_text": "I need to identify all tuberculosis patients using a two-resource union strategy. First, query Condition resources for TB diagnoses in SNOMED CT \u2014 include both the pulmonary-specific tuberculosis concept and the broader tuberculosis concept, as either may appear depending on documentation specificity. Second, query MedicationRequest resources for rifampin and isoniazid (two of the four standard RIPE regimen drugs) coded in RxNorm; some patients receive anti-TB combination therapy without a coded diagnosis (for example, contact prophylaxis or empirical treatment before microbiologic confirmation), so the medication path captures that clinical reality. Union the distinct patient IDs from both queries."
+     },
+     "2-naive": {
+      "precision": 0.3028,
+      "recall": 0.3511,
+      "f1": 0.3251,
+      "passed": false,
+      "expected_count": 94,
+      "actual_count": 109,
+      "elapsed_sec": 31.6,
+      "queries_generated": 1,
+      "primary_query_url": "Patient?_has:Condition:patient:code:text=tuberculosis",
+      "additional_query_urls": [],
+      "raw_response": "Patient?_has:Condition:patient:code:text=tuberculosis",
+      "prompt_text": "Find all my TB patients."
+     },
+     "2-broad": {
+      "precision": 0.3028,
+      "recall": 0.3511,
+      "f1": 0.3251,
+      "passed": false,
+      "expected_count": 94,
+      "actual_count": 109,
+      "elapsed_sec": 80.6,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code:text=tuberculosis&_include=Condition:subject",
+      "additional_query_urls": [],
+      "raw_response": "Based on tools: Condition `code:text=tuberculosis` returns 145 results; medications have no queryable codes on this server. Using Condition text search plus ICD-10 A15-A19 codes as backup.\n\nFINAL ANSWER:\n\nCondition?code:text=tuberculosis&_include=Condition:subject",
+      "prompt_text": "Find all TB patients \u2014 by diagnosis or by anti-TB medications (rifampin, isoniazid). Run multiple queries and union the patient sets."
+     },
+     "2-expert": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 94,
+      "actual_count": 0,
+      "elapsed_sec": 40.6,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|154283005,http://snomed.info/sct|56717001",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|9384,http://www.nlm.nih.gov/research/umls/rxnorm|6038"
+      ],
+      "raw_response": "Condition?code=http://snomed.info/sct|154283005,http://snomed.info/sct|56717001\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|9384,http://www.nlm.nih.gov/research/umls/rxnorm|6038",
+      "prompt_text": "I need to identify all tuberculosis patients using a two-resource union strategy. First, query Condition resources for TB diagnoses in SNOMED CT \u2014 include both the pulmonary-specific tuberculosis concept and the broader tuberculosis concept, as either may appear depending on documentation specificity. Second, query MedicationRequest resources for rifampin and isoniazid (two of the four standard RIPE regimen drugs) coded in RxNorm; some patients receive anti-TB combination therapy without a coded diagnosis (for example, contact prophylaxis or empirical treatment before microbiologic confirmation), so the medication path captures that clinical reality. Union the distinct patient IDs from both queries."
+     },
+     "3-naive": {
+      "precision": 0.7647,
+      "recall": 0.8298,
+      "f1": 0.7959,
+      "passed": true,
+      "expected_count": 94,
+      "actual_count": 102,
+      "elapsed_sec": 33.1,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|A15.0,http://hl7.org/fhir/sid/icd-10-cm|A15.4,http://hl7.org/fhir/sid/icd-10-cm|A15.5,http://hl7.org/fhir/sid/icd-10-cm|A15.6,http://hl7.org/fhir/sid/icd-10-cm|A15.7,http://hl7.org/fhir/sid/icd-10-cm|A15.8,http://hl7.org/fhir/sid/icd-10-cm|A15.9,http://hl7.org/fhir/sid/icd-10-cm|A17.0,http://hl7.org/fhir/sid/icd-10-cm|A17.1,http://hl7.org/fhir/sid/icd-10-cm|A17.8,http://hl7.org/fhir/sid/icd-10-cm|A17.9,http://hl7.org/fhir/sid/icd-10-cm|A18.01,http://hl7.org/fhir/sid/icd-10-cm|A18.02,http://hl7.org/fhir/sid/icd-10-cm|A18.03,http://hl7.org/fhir/sid/icd-10-cm|A18.09,http://hl7.org/fhir/sid/icd-10-cm|A18.10,http://hl7.org/fhir/sid/icd-10-cm|A18.2,http://hl7.org/fhir/sid/icd-10-cm|A18.31,http://hl7.org/fhir/sid/icd-10-cm|A18.4,http://hl7.org/fhir/sid/icd-10-cm|A18.6,http://hl7.org/fhir/sid/icd-10-cm|A18.7,http://hl7.org/fhir/sid/icd-10-cm|A18.81,http://hl7.org/fhir/sid/icd-10-cm|A18.83,http://hl7.org/fhir/sid/icd-10-cm|A18.85,http://hl7.org/fhir/sid/icd-10-cm|A18.89,http://hl7.org/fhir/sid/icd-10-cm|A19.9",
+      "additional_query_urls": [
+       "Condition?code=http://hl7.org/fhir/sid/icd-9-cm|011.90,http://hl7.org/fhir/sid/icd-9-cm|011.93,http://hl7.org/fhir/sid/icd-9-cm|011.94,http://hl7.org/fhir/sid/icd-9-cm|012.10,http://hl7.org/fhir/sid/icd-9-cm|013.60,http://hl7.org/fhir/sid/icd-9-cm|017.90,http://hl7.org/fhir/sid/icd-9-cm|018.90"
+      ],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|A15.0,http://hl7.org/fhir/sid/icd-10-cm|A15.4,http://hl7.org/fhir/sid/icd-10-cm|A15.5,http://hl7.org/fhir/sid/icd-10-cm|A15.6,http://hl7.org/fhir/sid/icd-10-cm|A15.7,http://hl7.org/fhir/sid/icd-10-cm|A15.8,http://hl7.org/fhir/sid/icd-10-cm|A15.9,http://hl7.org/fhir/sid/icd-10-cm|A17.0,http://hl7.org/fhir/sid/icd-10-cm|A17.1,http://hl7.org/fhir/sid/icd-10-cm|A17.8,http://hl7.org/fhir/sid/icd-10-cm|A17.9,http://hl7.org/fhir/sid/icd-10-cm|A18.01,http://hl7.org/fhir/sid/icd-10-cm|A18.02,http://hl7.org/fhir/sid/icd-10-cm|A18.03,http://hl7.org/fhir/sid/icd-10-cm|A18.09,http://hl7.org/fhir/sid/icd-10-cm|A18.10,http://hl7.org/fhir/sid/icd-10-cm|A18.2,http://hl7.org/fhir/sid/icd-10-cm|A18.31,http://hl7.org/fhir/sid/icd-10-cm|A18.4,http://hl7.org/fhir/sid/icd-10-cm|A18.6,http://hl7.org/fhir/sid/icd-10-cm|A18.7,http://hl7.org/fhir/sid/icd-10-cm|A18.81,http://hl7.org/fhir/sid/icd-10-cm|A18.83,http://hl7.org/fhir/sid/icd-10-cm|A18.85,http://hl7.org/fhir/sid/icd-10-cm|A18.89,http://hl7.org/fhir/sid/icd-10-cm|A19.9\nCondition?code=http://hl7.org/fhir/sid/icd-9-cm|011.90,http://hl7.org/fhir/sid/icd-9-cm|011.93,http://hl7.org/fhir/sid/icd-9-cm|011.94,http://hl7.org/fhir/sid/icd-9-cm|012.10,http://hl7.org/fhir/sid/icd-9-cm|013.60,http://hl7.org/fhir/sid/icd-9-cm|017.90,http://hl7.org/fhir/sid/icd-9-cm|018.90",
+      "prompt_text": "Find all my TB patients."
+     },
+     "3-broad": {
+      "precision": 0.2741,
+      "recall": 0.3936,
+      "f1": 0.3231,
+      "passed": false,
+      "expected_count": 94,
+      "actual_count": 135,
+      "elapsed_sec": 78.3,
+      "queries_generated": 3,
+      "primary_query_url": "Condition?code:text=tuberculo",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|9384",
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6038"
+      ],
+      "raw_response": "Based on my investigation: server uses ICD-9/ICD-10 for Conditions and NDC for Medications. Text search on Condition captures TB across both ICD versions (191 hits). Med codes aren't searchable via RxNorm/text on this server, but I'll include queries for completeness.\n\nCondition?code:text=tuberculo\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|9384\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6038",
+      "prompt_text": "Find all TB patients \u2014 by diagnosis or by anti-TB medications (rifampin, isoniazid). Run multiple queries and union the patient sets."
+     },
+     "3-expert": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 94,
+      "actual_count": 0,
+      "elapsed_sec": 44.3,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|154283005,http://snomed.info/sct|56717001",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|9384,http://www.nlm.nih.gov/research/umls/rxnorm|6038"
+      ],
+      "raw_response": "Condition?code=http://snomed.info/sct|154283005,http://snomed.info/sct|56717001\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|9384,http://www.nlm.nih.gov/research/umls/rxnorm|6038",
+      "prompt_text": "I need to identify all tuberculosis patients using a two-resource union strategy. First, query Condition resources for TB diagnoses in SNOMED CT \u2014 include both the pulmonary-specific tuberculosis concept and the broader tuberculosis concept, as either may appear depending on documentation specificity. Second, query MedicationRequest resources for rifampin and isoniazid (two of the four standard RIPE regimen drugs) coded in RxNorm; some patients receive anti-TB combination therapy without a coded diagnosis (for example, contact prophylaxis or empirical treatment before microbiologic confirmation), so the medication path captures that clinical reality. Union the distinct patient IDs from both queries."
+     }
+    },
     "copilot:claude-sonnet-4.6": {
      "1-naive": {
       "precision": 1.0,
@@ -1014,6 +1156,138 @@
       "prompt_text": "I need to identify patients with a documented tuberculosis diagnosis. Search Condition resources using the SNOMED CT codes for pulmonary tuberculosis and for the broader tuberculosis concept \u2014 both variants should be included because the data may carry either the organ-specific or the general coding depending on documentation practice. Do not broaden to latent TB infection or other mycobacterial infections, which are coded and managed distinctly."
      }
     },
+    "copilot:claude-opus-4.7+mimic": {
+     "1-naive": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 94,
+      "actual_count": 0,
+      "elapsed_sec": 6.2,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|56717001",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|56717001",
+      "prompt_text": "Find patients with TB."
+     },
+     "1-broad": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 94,
+      "actual_count": 0,
+      "elapsed_sec": 7.4,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|56717001,http://snomed.info/sct|154283005",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|56717001,http://snomed.info/sct|154283005",
+      "prompt_text": "Find patients diagnosed with tuberculosis \u2014 including pulmonary tuberculosis (most common form) and the broader tuberculosis concept covering extrapulmonary disease."
+     },
+     "1-expert": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 94,
+      "actual_count": 0,
+      "elapsed_sec": 7.2,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|154283005,http://snomed.info/sct|56717001",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|154283005,http://snomed.info/sct|56717001",
+      "prompt_text": "I need to identify patients with a documented tuberculosis diagnosis. Search Condition resources using the SNOMED CT codes for pulmonary tuberculosis and for the broader tuberculosis concept \u2014 both variants should be included because the data may carry either the organ-specific or the general coding depending on documentation practice. Do not broaden to latent TB infection or other mycobacterial infections, which are coded and managed distinctly."
+     },
+     "2-naive": {
+      "precision": 0.7034,
+      "recall": 0.883,
+      "f1": 0.783,
+      "passed": true,
+      "expected_count": 94,
+      "actual_count": 118,
+      "elapsed_sec": 66.0,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|A15.0,http://hl7.org/fhir/sid/icd-10-cm|A15.4,http://hl7.org/fhir/sid/icd-10-cm|A15.5,http://hl7.org/fhir/sid/icd-10-cm|A15.6,http://hl7.org/fhir/sid/icd-10-cm|A15.7,http://hl7.org/fhir/sid/icd-10-cm|A15.8,http://hl7.org/fhir/sid/icd-10-cm|A15.9,http://hl7.org/fhir/sid/icd-10-cm|A17.0,http://hl7.org/fhir/sid/icd-10-cm|A17.1,http://hl7.org/fhir/sid/icd-10-cm|A17.81,http://hl7.org/fhir/sid/icd-10-cm|A17.82,http://hl7.org/fhir/sid/icd-10-cm|A17.83,http://hl7.org/fhir/sid/icd-10-cm|A17.89,http://hl7.org/fhir/sid/icd-10-cm|A17.9,http://hl7.org/fhir/sid/icd-10-cm|A18.01,http://hl7.org/fhir/sid/icd-10-cm|A18.02,http://hl7.org/fhir/sid/icd-10-cm|A18.03,http://hl7.org/fhir/sid/icd-10-cm|A18.09,http://hl7.org/fhir/sid/icd-10-cm|A18.10,http://hl7.org/fhir/sid/icd-10-cm|A18.11,http://hl7.org/fhir/sid/icd-10-cm|A18.12,http://hl7.org/fhir/sid/icd-10-cm|A18.13,http://hl7.org/fhir/sid/icd-10-cm|A18.14,http://hl7.org/fhir/sid/icd-10-cm|A18.15,http://hl7.org/fhir/sid/icd-10-cm|A18.16,http://hl7.org/fhir/sid/icd-10-cm|A18.17,http://hl7.org/fhir/sid/icd-10-cm|A18.18,http://hl7.org/fhir/sid/icd-10-cm|A18.2,http://hl7.org/fhir/sid/icd-10-cm|A18.31,http://hl7.org/fhir/sid/icd-10-cm|A18.32,http://hl7.org/fhir/sid/icd-10-cm|A18.39,http://hl7.org/fhir/sid/icd-10-cm|A18.4,http://hl7.org/fhir/sid/icd-10-cm|A18.50,http://hl7.org/fhir/sid/icd-10-cm|A18.51,http://hl7.org/fhir/sid/icd-10-cm|A18.52,http://hl7.org/fhir/sid/icd-10-cm|A18.53,http://hl7.org/fhir/sid/icd-10-cm|A18.54,http://hl7.org/fhir/sid/icd-10-cm|A18.6,http://hl7.org/fhir/sid/icd-10-cm|A18.7,http://hl7.org/fhir/sid/icd-10-cm|A18.81,http://hl7.org/fhir/sid/icd-10-cm|A18.82,http://hl7.org/fhir/sid/icd-10-cm|A18.83,http://hl7.org/fhir/sid/icd-10-cm|A18.84,http://hl7.org/fhir/sid/icd-10-cm|A18.85,http://hl7.org/fhir/sid/icd-10-cm|A18.89,http://hl7.org/fhir/sid/icd-10-cm|A19.0,http://hl7.org/fhir/sid/icd-10-cm|A19.1,http://hl7.org/fhir/sid/icd-10-cm|A19.2,http://hl7.org/fhir/sid/icd-10-cm|A19.8,http://hl7.org/fhir/sid/icd-10-cm|A19.9",
+      "additional_query_urls": [
+       "Condition?code=http://hl7.org/fhir/sid/icd-9-cm|010.00,http://hl7.org/fhir/sid/icd-9-cm|011.90,http://hl7.org/fhir/sid/icd-9-cm|011.93,http://hl7.org/fhir/sid/icd-9-cm|012.00,http://hl7.org/fhir/sid/icd-9-cm|013.00,http://hl7.org/fhir/sid/icd-9-cm|014.00,http://hl7.org/fhir/sid/icd-9-cm|015.00,http://hl7.org/fhir/sid/icd-9-cm|016.00,http://hl7.org/fhir/sid/icd-9-cm|017.00,http://hl7.org/fhir/sid/icd-9-cm|018.00,http://hl7.org/fhir/sid/icd-9-cm|018.90,http://hl7.org/fhir/sid/icd-9-cm|011.00,http://hl7.org/fhir/sid/icd-9-cm|011.10,http://hl7.org/fhir/sid/icd-9-cm|011.20,http://hl7.org/fhir/sid/icd-9-cm|011.30,http://hl7.org/fhir/sid/icd-9-cm|011.40,http://hl7.org/fhir/sid/icd-9-cm|011.50,http://hl7.org/fhir/sid/icd-9-cm|011.60,http://hl7.org/fhir/sid/icd-9-cm|011.70,http://hl7.org/fhir/sid/icd-9-cm|011.80,http://hl7.org/fhir/sid/icd-9-cm|011.94,http://hl7.org/fhir/sid/icd-9-cm|011.95,http://hl7.org/fhir/sid/icd-9-cm|011.96"
+      ],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|A15.0,http://hl7.org/fhir/sid/icd-10-cm|A15.4,http://hl7.org/fhir/sid/icd-10-cm|A15.5,http://hl7.org/fhir/sid/icd-10-cm|A15.6,http://hl7.org/fhir/sid/icd-10-cm|A15.7,http://hl7.org/fhir/sid/icd-10-cm|A15.8,http://hl7.org/fhir/sid/icd-10-cm|A15.9,http://hl7.org/fhir/sid/icd-10-cm|A17.0,http://hl7.org/fhir/sid/icd-10-cm|A17.1,http://hl7.org/fhir/sid/icd-10-cm|A17.81,http://hl7.org/fhir/sid/icd-10-cm|A17.82,http://hl7.org/fhir/sid/icd-10-cm|A17.83,http://hl7.org/fhir/sid/icd-10-cm|A17.89,http://hl7.org/fhir/sid/icd-10-cm|A17.9,http://hl7.org/fhir/sid/icd-10-cm|A18.01,http://hl7.org/fhir/sid/icd-10-cm|A18.02,http://hl7.org/fhir/sid/icd-10-cm|A18.03,http://hl7.org/fhir/sid/icd-10-cm|A18.09,http://hl7.org/fhir/sid/icd-10-cm|A18.10,http://hl7.org/fhir/sid/icd-10-cm|A18.11,http://hl7.org/fhir/sid/icd-10-cm|A18.12,http://hl7.org/fhir/sid/icd-10-cm|A18.13,http://hl7.org/fhir/sid/icd-10-cm|A18.14,http://hl7.org/fhir/sid/icd-10-cm|A18.15,http://hl7.org/fhir/sid/icd-10-cm|A18.16,http://hl7.org/fhir/sid/icd-10-cm|A18.17,http://hl7.org/fhir/sid/icd-10-cm|A18.18,http://hl7.org/fhir/sid/icd-10-cm|A18.2,http://hl7.org/fhir/sid/icd-10-cm|A18.31,http://hl7.org/fhir/sid/icd-10-cm|A18.32,http://hl7.org/fhir/sid/icd-10-cm|A18.39,http://hl7.org/fhir/sid/icd-10-cm|A18.4,http://hl7.org/fhir/sid/icd-10-cm|A18.50,http://hl7.org/fhir/sid/icd-10-cm|A18.51,http://hl7.org/fhir/sid/icd-10-cm|A18.52,http://hl7.org/fhir/sid/icd-10-cm|A18.53,http://hl7.org/fhir/sid/icd-10-cm|A18.54,http://hl7.org/fhir/sid/icd-10-cm|A18.6,http://hl7.org/fhir/sid/icd-10-cm|A18.7,http://hl7.org/fhir/sid/icd-10-cm|A18.81,http://hl7.org/fhir/sid/icd-10-cm|A18.82,http://hl7.org/fhir/sid/icd-10-cm|A18.83,http://hl7.org/fhir/sid/icd-10-cm|A18.84,http://hl7.org/fhir/sid/icd-10-cm|A18.85,http://hl7.org/fhir/sid/icd-10-cm|A18.89,http://hl7.org/fhir/sid/icd-10-cm|A19.0,http://hl7.org/fhir/sid/icd-10-cm|A19.1,http://hl7.org/fhir/sid/icd-10-cm|A19.2,http://hl7.org/fhir/sid/icd-10-cm|A19.8,http://hl7.org/fhir/sid/icd-10-cm|A19.9\nCondition?code=http://hl7.org/fhir/sid/icd-9-cm|010.00,http://hl7.org/fhir/sid/icd-9-cm|011.90,http://hl7.org/fhir/sid/icd-9-cm|011.93,http://hl7.org/fhir/sid/icd-9-cm|012.00,http://hl7.org/fhir/sid/icd-9-cm|013.00,http://hl7.org/fhir/sid/icd-9-cm|014.00,http://hl7.org/fhir/sid/icd-9-cm|015.00,http://hl7.org/fhir/sid/icd-9-cm|016.00,http://hl7.org/fhir/sid/icd-9-cm|017.00,http://hl7.org/fhir/sid/icd-9-cm|018.00,http://hl7.org/fhir/sid/icd-9-cm|018.90,http://hl7.org/fhir/sid/icd-9-cm|011.00,http://hl7.org/fhir/sid/icd-9-cm|011.10,http://hl7.org/fhir/sid/icd-9-cm|011.20,http://hl7.org/fhir/sid/icd-9-cm|011.30,http://hl7.org/fhir/sid/icd-9-cm|011.40,http://hl7.org/fhir/sid/icd-9-cm|011.50,http://hl7.org/fhir/sid/icd-9-cm|011.60,http://hl7.org/fhir/sid/icd-9-cm|011.70,http://hl7.org/fhir/sid/icd-9-cm|011.80,http://hl7.org/fhir/sid/icd-9-cm|011.94,http://hl7.org/fhir/sid/icd-9-cm|011.95,http://hl7.org/fhir/sid/icd-9-cm|011.96",
+      "prompt_text": "Find patients with TB."
+     },
+     "2-broad": {
+      "precision": 0.3028,
+      "recall": 0.3511,
+      "f1": 0.3251,
+      "passed": false,
+      "expected_count": 94,
+      "actual_count": 109,
+      "elapsed_sec": 20.3,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code:text=tuberculosis",
+      "additional_query_urls": [],
+      "raw_response": "Text-search returns 145 conditions. That's the broadest correct match.\n\nFINAL ANSWER:\n\nCondition?code:text=tuberculosis",
+      "prompt_text": "Find patients diagnosed with tuberculosis \u2014 including pulmonary tuberculosis (most common form) and the broader tuberculosis concept covering extrapulmonary disease."
+     },
+     "2-expert": {
+      "precision": 0.6379,
+      "recall": 0.7872,
+      "f1": 0.7048,
+      "passed": true,
+      "expected_count": 94,
+      "actual_count": 116,
+      "elapsed_sec": 73.7,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|A15.0,http://hl7.org/fhir/sid/icd-10-cm|A15.4,http://hl7.org/fhir/sid/icd-10-cm|A15.5,http://hl7.org/fhir/sid/icd-10-cm|A15.6,http://hl7.org/fhir/sid/icd-10-cm|A15.7,http://hl7.org/fhir/sid/icd-10-cm|A15.8,http://hl7.org/fhir/sid/icd-10-cm|A15.9,http://hl7.org/fhir/sid/icd-10-cm|A17.0,http://hl7.org/fhir/sid/icd-10-cm|A17.1,http://hl7.org/fhir/sid/icd-10-cm|A17.81,http://hl7.org/fhir/sid/icd-10-cm|A17.82,http://hl7.org/fhir/sid/icd-10-cm|A17.83,http://hl7.org/fhir/sid/icd-10-cm|A17.89,http://hl7.org/fhir/sid/icd-10-cm|A17.9,http://hl7.org/fhir/sid/icd-10-cm|A18.01,http://hl7.org/fhir/sid/icd-10-cm|A18.02,http://hl7.org/fhir/sid/icd-10-cm|A18.03,http://hl7.org/fhir/sid/icd-10-cm|A18.09,http://hl7.org/fhir/sid/icd-10-cm|A18.10,http://hl7.org/fhir/sid/icd-10-cm|A18.11,http://hl7.org/fhir/sid/icd-10-cm|A18.12,http://hl7.org/fhir/sid/icd-10-cm|A18.13,http://hl7.org/fhir/sid/icd-10-cm|A18.14,http://hl7.org/fhir/sid/icd-10-cm|A18.15,http://hl7.org/fhir/sid/icd-10-cm|A18.16,http://hl7.org/fhir/sid/icd-10-cm|A18.17,http://hl7.org/fhir/sid/icd-10-cm|A18.18,http://hl7.org/fhir/sid/icd-10-cm|A18.2,http://hl7.org/fhir/sid/icd-10-cm|A18.31,http://hl7.org/fhir/sid/icd-10-cm|A18.32,http://hl7.org/fhir/sid/icd-10-cm|A18.39,http://hl7.org/fhir/sid/icd-10-cm|A18.4,http://hl7.org/fhir/sid/icd-10-cm|A18.50,http://hl7.org/fhir/sid/icd-10-cm|A18.51,http://hl7.org/fhir/sid/icd-10-cm|A18.52,http://hl7.org/fhir/sid/icd-10-cm|A18.53,http://hl7.org/fhir/sid/icd-10-cm|A18.54,http://hl7.org/fhir/sid/icd-10-cm|A18.59,http://hl7.org/fhir/sid/icd-10-cm|A18.6,http://hl7.org/fhir/sid/icd-10-cm|A18.7,http://hl7.org/fhir/sid/icd-10-cm|A18.81,http://hl7.org/fhir/sid/icd-10-cm|A18.82,http://hl7.org/fhir/sid/icd-10-cm|A18.83,http://hl7.org/fhir/sid/icd-10-cm|A18.84,http://hl7.org/fhir/sid/icd-10-cm|A18.85,http://hl7.org/fhir/sid/icd-10-cm|A18.89,http://hl7.org/fhir/sid/icd-10-cm|A19.0,http://hl7.org/fhir/sid/icd-10-cm|A19.1,http://hl7.org/fhir/sid/icd-10-cm|A19.2,http://hl7.org/fhir/sid/icd-10-cm|A19.8,http://hl7.org/fhir/sid/icd-10-cm|A19.9",
+      "additional_query_urls": [
+       "Condition?code=http://hl7.org/fhir/sid/icd-9-cm|011.90,http://hl7.org/fhir/sid/icd-9-cm|011.00,http://hl7.org/fhir/sid/icd-9-cm|011.10,http://hl7.org/fhir/sid/icd-9-cm|011.20,http://hl7.org/fhir/sid/icd-9-cm|011.30,http://hl7.org/fhir/sid/icd-9-cm|011.40,http://hl7.org/fhir/sid/icd-9-cm|011.50,http://hl7.org/fhir/sid/icd-9-cm|011.60,http://hl7.org/fhir/sid/icd-9-cm|011.70,http://hl7.org/fhir/sid/icd-9-cm|011.80,http://hl7.org/fhir/sid/icd-9-cm|012.00,http://hl7.org/fhir/sid/icd-9-cm|012.10,http://hl7.org/fhir/sid/icd-9-cm|012.20,http://hl7.org/fhir/sid/icd-9-cm|012.30,http://hl7.org/fhir/sid/icd-9-cm|012.80,http://hl7.org/fhir/sid/icd-9-cm|013.00,http://hl7.org/fhir/sid/icd-9-cm|013.10,http://hl7.org/fhir/sid/icd-9-cm|013.20,http://hl7.org/fhir/sid/icd-9-cm|013.30,http://hl7.org/fhir/sid/icd-9-cm|013.40,http://hl7.org/fhir/sid/icd-9-cm|013.50,http://hl7.org/fhir/sid/icd-9-cm|013.60,http://hl7.org/fhir/sid/icd-9-cm|013.80,http://hl7.org/fhir/sid/icd-9-cm|013.90,http://hl7.org/fhir/sid/icd-9-cm|014.00,http://hl7.org/fhir/sid/icd-9-cm|014.80,http://hl7.org/fhir/sid/icd-9-cm|015.00,http://hl7.org/fhir/sid/icd-9-cm|015.10,http://hl7.org/fhir/sid/icd-9-cm|015.20,http://hl7.org/fhir/sid/icd-9-cm|015.50,http://hl7.org/fhir/sid/icd-9-cm|015.60,http://hl7.org/fhir/sid/icd-9-cm|015.70,http://hl7.org/fhir/sid/icd-9-cm|015.80,http://hl7.org/fhir/sid/icd-9-cm|015.90,http://hl7.org/fhir/sid/icd-9-cm|016.00,http://hl7.org/fhir/sid/icd-9-cm|016.10,http://hl7.org/fhir/sid/icd-9-cm|016.20,http://hl7.org/fhir/sid/icd-9-cm|016.30,http://hl7.org/fhir/sid/icd-9-cm|016.40,http://hl7.org/fhir/sid/icd-9-cm|016.50,http://hl7.org/fhir/sid/icd-9-cm|016.60,http://hl7.org/fhir/sid/icd-9-cm|016.70,http://hl7.org/fhir/sid/icd-9-cm|016.90,http://hl7.org/fhir/sid/icd-9-cm|017.00,http://hl7.org/fhir/sid/icd-9-cm|017.10,http://hl7.org/fhir/sid/icd-9-cm|017.20,http://hl7.org/fhir/sid/icd-9-cm|017.30,http://hl7.org/fhir/sid/icd-9-cm|017.40,http://hl7.org/fhir/sid/icd-9-cm|017.50,http://hl7.org/fhir/sid/icd-9-cm|017.60,http://hl7.org/fhir/sid/icd-9-cm|017.70,http://hl7.org/fhir/sid/icd-9-cm|017.80,http://hl7.org/fhir/sid/icd-9-cm|017.90,http://hl7.org/fhir/sid/icd-9-cm|018.00,http://hl7.org/fhir/sid/icd-9-cm|018.80,http://hl7.org/fhir/sid/icd-9-cm|018.90"
+      ],
+      "raw_response": "FINAL ANSWER:\n\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|A15.0,http://hl7.org/fhir/sid/icd-10-cm|A15.4,http://hl7.org/fhir/sid/icd-10-cm|A15.5,http://hl7.org/fhir/sid/icd-10-cm|A15.6,http://hl7.org/fhir/sid/icd-10-cm|A15.7,http://hl7.org/fhir/sid/icd-10-cm|A15.8,http://hl7.org/fhir/sid/icd-10-cm|A15.9,http://hl7.org/fhir/sid/icd-10-cm|A17.0,http://hl7.org/fhir/sid/icd-10-cm|A17.1,http://hl7.org/fhir/sid/icd-10-cm|A17.81,http://hl7.org/fhir/sid/icd-10-cm|A17.82,http://hl7.org/fhir/sid/icd-10-cm|A17.83,http://hl7.org/fhir/sid/icd-10-cm|A17.89,http://hl7.org/fhir/sid/icd-10-cm|A17.9,http://hl7.org/fhir/sid/icd-10-cm|A18.01,http://hl7.org/fhir/sid/icd-10-cm|A18.02,http://hl7.org/fhir/sid/icd-10-cm|A18.03,http://hl7.org/fhir/sid/icd-10-cm|A18.09,http://hl7.org/fhir/sid/icd-10-cm|A18.10,http://hl7.org/fhir/sid/icd-10-cm|A18.11,http://hl7.org/fhir/sid/icd-10-cm|A18.12,http://hl7.org/fhir/sid/icd-10-cm|A18.13,http://hl7.org/fhir/sid/icd-10-cm|A18.14,http://hl7.org/fhir/sid/icd-10-cm|A18.15,http://hl7.org/fhir/sid/icd-10-cm|A18.16,http://hl7.org/fhir/sid/icd-10-cm|A18.17,http://hl7.org/fhir/sid/icd-10-cm|A18.18,http://hl7.org/fhir/sid/icd-10-cm|A18.2,http://hl7.org/fhir/sid/icd-10-cm|A18.31,http://hl7.org/fhir/sid/icd-10-cm|A18.32,http://hl7.org/fhir/sid/icd-10-cm|A18.39,http://hl7.org/fhir/sid/icd-10-cm|A18.4,http://hl7.org/fhir/sid/icd-10-cm|A18.50,http://hl7.org/fhir/sid/icd-10-cm|A18.51,http://hl7.org/fhir/sid/icd-10-cm|A18.52,http://hl7.org/fhir/sid/icd-10-cm|A18.53,http://hl7.org/fhir/sid/icd-10-cm|A18.54,http://hl7.org/fhir/sid/icd-10-cm|A18.59,http://hl7.org/fhir/sid/icd-10-cm|A18.6,http://hl7.org/fhir/sid/icd-10-cm|A18.7,http://hl7.org/fhir/sid/icd-10-cm|A18.81,http://hl7.org/fhir/sid/icd-10-cm|A18.82,http://hl7.org/fhir/sid/icd-10-cm|A18.83,http://hl7.org/fhir/sid/icd-10-cm|A18.84,http://hl7.org/fhir/sid/icd-10-cm|A18.85,http://hl7.org/fhir/sid/icd-10-cm|A18.89,http://hl7.org/fhir/sid/icd-10-cm|A19.0,http://hl7.org/fhir/sid/icd-10-cm|A19.1,http://hl7.org/fhir/sid/icd-10-cm|A19.2,http://hl7.org/fhir/sid/icd-10-cm|A19.8,http://hl7.org/fhir/sid/icd-10-cm|A19.9\nCondition?code=http://hl7.org/fhir/sid/icd-9-cm|011.90,http://hl7.org/fhir/sid/icd-9-cm|011.00,http://hl7.org/fhir/sid/icd-9-cm|011.10,http://hl7.org/fhir/sid/icd-9-cm|011.20,http://hl7.org/fhir/sid/icd-9-cm|011.30,http://hl7.org/fhir/sid/icd-9-cm|011.40,http://hl7.org/fhir/sid/icd-9-cm|011.50,http://hl7.org/fhir/sid/icd-9-cm|011.60,http://hl7.org/fhir/sid/icd-9-cm|011.70,http://hl7.org/fhir/sid/icd-9-cm|011.80,http://hl7.org/fhir/sid/icd-9-cm|012.00,http://hl7.org/fhir/sid/icd-9-cm|012.10,http://hl7.org/fhir/sid/icd-9-cm|012.20,http://hl7.org/fhir/sid/icd-9-cm|012.30,http://hl7.org/fhir/sid/icd-9-cm|012.80,http://hl7.org/fhir/sid/icd-9-cm|013.00,http://hl7.org/fhir/sid/icd-9-cm|013.10,http://hl7.org/fhir/sid/icd-9-cm|013.20,http://hl7.org/fhir/sid/icd-9-cm|013.30,http://hl7.org/fhir/sid/icd-9-cm|013.40,http://hl7.org/fhir/sid/icd-9-cm|013.50,http://hl7.org/fhir/sid/icd-9-cm|013.60,http://hl7.org/fhir/sid/icd-9-cm|013.80,http://hl7.org/fhir/sid/icd-9-cm|013.90,http://hl7.org/fhir/sid/icd-9-cm|014.00,http://hl7.org/fhir/sid/icd-9-cm|014.80,http://hl7.org/fhir/sid/icd-9-cm|015.00,http://hl7.org/fhir/sid/icd-9-cm|015.10,http://hl7.org/fhir/sid/icd-9-cm|015.20,http://hl7.org/fhir/sid/icd-9-cm|015.50,http://hl7.org/fhir/sid/icd-9-cm|015.60,http://hl7.org/fhir/sid/icd-9-cm|015.70,http://hl7.org/fhir/sid/icd-9-cm|015.80,http://hl7.org/fhir/sid/icd-9-cm|015.90,http://hl7.org/fhir/sid/icd-9-cm|016.00,http://hl7.org/fhir/sid/icd-9-cm|016.10,http://hl7.org/fhir/sid/icd-9-cm|016.20,http://hl7.org/fhir/sid/icd-9-cm|016.30,http://hl7.org/fhir/sid/icd-9-cm|016.40,http://hl7.org/fhir/sid/icd-9-cm|016.50,http://hl7.org/fhir/sid/icd-9-cm|016.60,http://hl7.org/fhir/sid/icd-9-cm|016.70,http://hl7.org/fhir/sid/icd-9-cm|016.90,http://hl7.org/fhir/sid/icd-9-cm|017.00,http://hl7.org/fhir/sid/icd-9-cm|017.10,http://hl7.org/fhir/sid/icd-9-cm|017.20,http://hl7.org/fhir/sid/icd-9-cm|017.30,http://hl7.org/fhir/sid/icd-9-cm|017.40,http://hl7.org/fhir/sid/icd-9-cm|017.50,http://hl7.org/fhir/sid/icd-9-cm|017.60,http://hl7.org/fhir/sid/icd-9-cm|017.70,http://hl7.org/fhir/sid/icd-9-cm|017.80,http://hl7.org/fhir/sid/icd-9-cm|017.90,http://hl7.org/fhir/sid/icd-9-cm|018.00,http://hl7.org/fhir/sid/icd-9-cm|018.80,http://hl7.org/fhir/sid/icd-9-cm|018.90",
+      "prompt_text": "I need to identify patients with a documented tuberculosis diagnosis. Search Condition resources using the SNOMED CT codes for pulmonary tuberculosis and for the broader tuberculosis concept \u2014 both variants should be included because the data may carry either the organ-specific or the general coding depending on documentation practice. Do not broaden to latent TB infection or other mycobacterial infections, which are coded and managed distinctly."
+     },
+     "3-naive": {
+      "precision": 0.7525,
+      "recall": 0.8085,
+      "f1": 0.7795,
+      "passed": true,
+      "expected_count": 94,
+      "actual_count": 101,
+      "elapsed_sec": 36.1,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|A15.0,http://hl7.org/fhir/sid/icd-10-cm|A15.4,http://hl7.org/fhir/sid/icd-10-cm|A15.5,http://hl7.org/fhir/sid/icd-10-cm|A15.6,http://hl7.org/fhir/sid/icd-10-cm|A15.7,http://hl7.org/fhir/sid/icd-10-cm|A15.8,http://hl7.org/fhir/sid/icd-10-cm|A15.9,http://hl7.org/fhir/sid/icd-10-cm|A17.0,http://hl7.org/fhir/sid/icd-10-cm|A17.9,http://hl7.org/fhir/sid/icd-10-cm|A18.01,http://hl7.org/fhir/sid/icd-10-cm|A18.2,http://hl7.org/fhir/sid/icd-10-cm|A19.9,http://hl7.org/fhir/sid/icd-9-cm|011.90,http://hl7.org/fhir/sid/icd-9-cm|011.93,http://hl7.org/fhir/sid/icd-9-cm|010.90,http://hl7.org/fhir/sid/icd-9-cm|012.00,http://hl7.org/fhir/sid/icd-9-cm|018.90",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|A15.0,http://hl7.org/fhir/sid/icd-10-cm|A15.4,http://hl7.org/fhir/sid/icd-10-cm|A15.5,http://hl7.org/fhir/sid/icd-10-cm|A15.6,http://hl7.org/fhir/sid/icd-10-cm|A15.7,http://hl7.org/fhir/sid/icd-10-cm|A15.8,http://hl7.org/fhir/sid/icd-10-cm|A15.9,http://hl7.org/fhir/sid/icd-10-cm|A17.0,http://hl7.org/fhir/sid/icd-10-cm|A17.9,http://hl7.org/fhir/sid/icd-10-cm|A18.01,http://hl7.org/fhir/sid/icd-10-cm|A18.2,http://hl7.org/fhir/sid/icd-10-cm|A19.9,http://hl7.org/fhir/sid/icd-9-cm|011.90,http://hl7.org/fhir/sid/icd-9-cm|011.93,http://hl7.org/fhir/sid/icd-9-cm|010.90,http://hl7.org/fhir/sid/icd-9-cm|012.00,http://hl7.org/fhir/sid/icd-9-cm|018.90",
+      "prompt_text": "Find patients with TB."
+     },
+     "3-broad": {
+      "precision": 0.3028,
+      "recall": 0.3511,
+      "f1": 0.3251,
+      "passed": false,
+      "expected_count": 94,
+      "actual_count": 109,
+      "elapsed_sec": 25.1,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code:text=tuberculosis",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code:text=tuberculosis",
+      "prompt_text": "Find patients diagnosed with tuberculosis \u2014 including pulmonary tuberculosis (most common form) and the broader tuberculosis concept covering extrapulmonary disease."
+     },
+     "3-expert": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 94,
+      "actual_count": 0,
+      "elapsed_sec": 30.6,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|154283005,http://snomed.info/sct|56717001",
+      "additional_query_urls": [],
+      "raw_response": "FINAL ANSWER:\n\nCondition?code=http://snomed.info/sct|154283005,http://snomed.info/sct|56717001",
+      "prompt_text": "I need to identify patients with a documented tuberculosis diagnosis. Search Condition resources using the SNOMED CT codes for pulmonary tuberculosis and for the broader tuberculosis concept \u2014 both variants should be included because the data may carry either the organ-specific or the general coding depending on documentation practice. Do not broaden to latent TB infection or other mycobacterial infections, which are coded and managed distinctly."
+     }
+    },
     "copilot:claude-sonnet-4.6": {
      "1-naive": {
       "precision": 1.0,
@@ -1755,6 +2029,140 @@
        "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6038"
       ],
       "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|9384\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6038",
+      "prompt_text": "Identify patients treated with first-line anti-tuberculosis medications via their medication orders. Search MedicationRequest resources for rifampin and isoniazid (two of the four drugs in the standard RIPE regimen), both coded in RxNorm. These agents are highly specific to mycobacterial treatment; rifampin does have limited cross-indications (e.g., meningococcal prophylaxis), but the combination query captures the TB treatment population. This medication path also includes patients on contact prophylaxis or empirical treatment who may not carry a coded TB diagnosis."
+     }
+    },
+    "copilot:claude-opus-4.7+mimic": {
+     "1-naive": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 683,
+      "actual_count": 0,
+      "elapsed_sec": 9.2,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6038,http://www.nlm.nih.gov/research/umls/rxnorm|9384,http://www.nlm.nih.gov/research/umls/rxnorm|4083,http://www.nlm.nih.gov/research/umls/rxnorm|8988&status=active",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6038,http://www.nlm.nih.gov/research/umls/rxnorm|9384,http://www.nlm.nih.gov/research/umls/rxnorm|4083,http://www.nlm.nih.gov/research/umls/rxnorm|8988&status=active",
+      "prompt_text": "Find patients on TB drugs."
+     },
+     "1-broad": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 683,
+      "actual_count": 0,
+      "elapsed_sec": 8.9,
+      "queries_generated": 4,
+      "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|9384",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6038",
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|8988",
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|4083"
+      ],
+      "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|9384\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6038\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|8988\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|4083",
+      "prompt_text": "Find patients prescribed anti-tuberculosis medications \u2014 including rifampin and isoniazid, two of the four cornerstone drugs in the standard TB regimen (RIPE: rifampin, isoniazid, pyrazinamide, ethambutol)."
+     },
+     "1-expert": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 683,
+      "actual_count": 0,
+      "elapsed_sec": 7.9,
+      "queries_generated": 2,
+      "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|9384",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6038"
+      ],
+      "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|9384\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6038",
+      "prompt_text": "Identify patients treated with first-line anti-tuberculosis medications via their medication orders. Search MedicationRequest resources for rifampin and isoniazid (two of the four drugs in the standard RIPE regimen), both coded in RxNorm. These agents are highly specific to mycobacterial treatment; rifampin does have limited cross-indications (e.g., meningococcal prophylaxis), but the combination query captures the TB treatment population. This medication path also includes patients on contact prophylaxis or empirical treatment who may not carry a coded TB diagnosis."
+     },
+     "2-naive": {
+      "precision": 0.1874,
+      "recall": 0.9546,
+      "f1": 0.3133,
+      "passed": false,
+      "expected_count": 683,
+      "actual_count": 3479,
+      "elapsed_sec": 71.9,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|6038,http://www.nlm.nih.gov/research/umls/rxnorm|9384,http://www.nlm.nih.gov/research/umls/rxnorm|35617,http://www.nlm.nih.gov/research/umls/rxnorm|35619,http://www.nlm.nih.gov/research/umls/rxnorm|8988,http://www.nlm.nih.gov/research/umls/rxnorm|4083",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|6038,http://www.nlm.nih.gov/research/umls/rxnorm|9384,http://www.nlm.nih.gov/research/umls/rxnorm|35617,http://www.nlm.nih.gov/research/umls/rxnorm|35619,http://www.nlm.nih.gov/research/umls/rxnorm|8988,http://www.nlm.nih.gov/research/umls/rxnorm|4083",
+      "prompt_text": "Find patients on TB drugs."
+     },
+     "2-broad": {
+      "precision": 0.7281,
+      "recall": 1.0,
+      "f1": 0.8427,
+      "passed": true,
+      "expected_count": 683,
+      "actual_count": 938,
+      "elapsed_sec": 66.1,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|9384,http://www.nlm.nih.gov/research/umls/rxnorm|6038,http://www.nlm.nih.gov/research/umls/rxnorm|8988,http://www.nlm.nih.gov/research/umls/rxnorm|4083",
+      "additional_query_urls": [],
+      "raw_response": "FINAL ANSWER:\n\nMedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|9384,http://www.nlm.nih.gov/research/umls/rxnorm|6038,http://www.nlm.nih.gov/research/umls/rxnorm|8988,http://www.nlm.nih.gov/research/umls/rxnorm|4083",
+      "prompt_text": "Find patients prescribed anti-tuberculosis medications \u2014 including rifampin and isoniazid, two of the four cornerstone drugs in the standard TB regimen (RIPE: rifampin, isoniazid, pyrazinamide, ethambutol)."
+     },
+     "2-expert": {
+      "precision": 0.6859,
+      "recall": 0.6105,
+      "f1": 0.646,
+      "passed": false,
+      "expected_count": 683,
+      "actual_count": 608,
+      "elapsed_sec": 39.1,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|9384,http://www.nlm.nih.gov/research/umls/rxnorm|5691",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|9384,http://www.nlm.nih.gov/research/umls/rxnorm|5691",
+      "prompt_text": "Identify patients treated with first-line anti-tuberculosis medications via their medication orders. Search MedicationRequest resources for rifampin and isoniazid (two of the four drugs in the standard RIPE regimen), both coded in RxNorm. These agents are highly specific to mycobacterial treatment; rifampin does have limited cross-indications (e.g., meningococcal prophylaxis), but the combination query captures the TB treatment population. This medication path also includes patients on contact prophylaxis or empirical treatment who may not carry a coded TB diagnosis."
+     },
+     "3-naive": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 683,
+      "actual_count": 0,
+      "elapsed_sec": 44.4,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6038,http://www.nlm.nih.gov/research/umls/rxnorm|9384,http://www.nlm.nih.gov/research/umls/rxnorm|8988,http://www.nlm.nih.gov/research/umls/rxnorm|4083,http://www.nlm.nih.gov/research/umls/rxnorm|35617,http://www.nlm.nih.gov/research/umls/rxnorm|35619,http://www.nlm.nih.gov/research/umls/rxnorm|10109,http://www.nlm.nih.gov/research/umls/rxnorm|3008,http://www.nlm.nih.gov/research/umls/rxnorm|4108,http://www.nlm.nih.gov/research/umls/rxnorm|2049,http://www.nlm.nih.gov/research/umls/rxnorm|1361048,http://www.nlm.nih.gov/research/umls/rxnorm|1161935,http://www.nlm.nih.gov/research/umls/rxnorm|1165465,http://www.nlm.nih.gov/research/umls/rxnorm|1163600,http://www.nlm.nih.gov/research/umls/rxnorm|1156824,http://www.nlm.nih.gov/research/umls/rxnorm|1165458,http://www.nlm.nih.gov/research/umls/rxnorm|1157431,http://www.nlm.nih.gov/research/umls/rxnorm|1161754,http://www.nlm.nih.gov/research/umls/rxnorm|1161346,http://www.nlm.nih.gov/research/umls/rxnorm|1161348,http://www.nlm.nih.gov/research/umls/rxnorm|1156818",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6038,http://www.nlm.nih.gov/research/umls/rxnorm|9384,http://www.nlm.nih.gov/research/umls/rxnorm|8988,http://www.nlm.nih.gov/research/umls/rxnorm|4083,http://www.nlm.nih.gov/research/umls/rxnorm|35617,http://www.nlm.nih.gov/research/umls/rxnorm|35619,http://www.nlm.nih.gov/research/umls/rxnorm|10109,http://www.nlm.nih.gov/research/umls/rxnorm|3008,http://www.nlm.nih.gov/research/umls/rxnorm|4108,http://www.nlm.nih.gov/research/umls/rxnorm|2049,http://www.nlm.nih.gov/research/umls/rxnorm|1361048,http://www.nlm.nih.gov/research/umls/rxnorm|1161935,http://www.nlm.nih.gov/research/umls/rxnorm|1165465,http://www.nlm.nih.gov/research/umls/rxnorm|1163600,http://www.nlm.nih.gov/research/umls/rxnorm|1156824,http://www.nlm.nih.gov/research/umls/rxnorm|1165458,http://www.nlm.nih.gov/research/umls/rxnorm|1157431,http://www.nlm.nih.gov/research/umls/rxnorm|1161754,http://www.nlm.nih.gov/research/umls/rxnorm|1161346,http://www.nlm.nih.gov/research/umls/rxnorm|1161348,http://www.nlm.nih.gov/research/umls/rxnorm|1156818",
+      "prompt_text": "Find patients on TB drugs."
+     },
+     "3-broad": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 683,
+      "actual_count": 0,
+      "elapsed_sec": 40.8,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|9384,http://www.nlm.nih.gov/research/umls/rxnorm|6038,http://www.nlm.nih.gov/research/umls/rxnorm|8988,http://www.nlm.nih.gov/research/umls/rxnorm|4083,http://www.nlm.nih.gov/research/umls/rxnorm|1165465,http://www.nlm.nih.gov/research/umls/rxnorm|1161935,http://www.nlm.nih.gov/research/umls/rxnorm|1163600,http://www.nlm.nih.gov/research/umls/rxnorm|1156824,http://www.nlm.nih.gov/research/umls/rxnorm|106876,http://www.nlm.nih.gov/research/umls/rxnorm|1161346,http://www.nlm.nih.gov/research/umls/rxnorm|1156818,http://www.nlm.nih.gov/research/umls/rxnorm|1157431",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|9384,http://www.nlm.nih.gov/research/umls/rxnorm|6038,http://www.nlm.nih.gov/research/umls/rxnorm|8988,http://www.nlm.nih.gov/research/umls/rxnorm|4083,http://www.nlm.nih.gov/research/umls/rxnorm|1165465,http://www.nlm.nih.gov/research/umls/rxnorm|1161935,http://www.nlm.nih.gov/research/umls/rxnorm|1163600,http://www.nlm.nih.gov/research/umls/rxnorm|1156824,http://www.nlm.nih.gov/research/umls/rxnorm|106876,http://www.nlm.nih.gov/research/umls/rxnorm|1161346,http://www.nlm.nih.gov/research/umls/rxnorm|1156818,http://www.nlm.nih.gov/research/umls/rxnorm|1157431",
+      "prompt_text": "Find patients prescribed anti-tuberculosis medications \u2014 including rifampin and isoniazid, two of the four cornerstone drugs in the standard TB regimen (RIPE: rifampin, isoniazid, pyrazinamide, ethambutol)."
+     },
+     "3-expert": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 683,
+      "actual_count": 0,
+      "elapsed_sec": 30.8,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|9384,http://www.nlm.nih.gov/research/umls/rxnorm|5691",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|9384,http://www.nlm.nih.gov/research/umls/rxnorm|5691",
       "prompt_text": "Identify patients treated with first-line anti-tuberculosis medications via their medication orders. Search MedicationRequest resources for rifampin and isoniazid (two of the four drugs in the standard RIPE regimen), both coded in RxNorm. These agents are highly specific to mycobacterial treatment; rifampin does have limited cross-indications (e.g., meningococcal prophylaxis), but the combination query captures the TB treatment population. This medication path also includes patients on contact prophylaxis or empirical treatment who may not carry a coded TB diagnosis."
      }
     },

@@ -118,6 +118,24 @@ def _load_augmentations() -> dict:
 
 _URL_CODE = re.compile(r"(icd-10-cm|icd-9-cm|icd-10-pcs)\|([^,&\s]+)")
 
+# Shape validators: reject URL-scrape junk ('E11"]', 'E10.x', '250.(0-9)0').
+# Category prefixes (E11, 250, V45) are valid -- matching is hierarchical.
+_ICD_SHAPE = {
+    "icd10cm": re.compile(r"^[A-TV-Z][0-9][0-9A-Z]{0,2}(\.[0-9A-Z]{1,4})?$", re.I),
+    "icd9cm": re.compile(r"^([0-9]{3}|E[0-9]{3}|V[0-9]{2})(\.[0-9]{1,2})?$", re.I),
+    "icd10pcs": re.compile(r"^[0-9A-HJ-NP-Z]{3,7}$", re.I),
+}
+
+
+def _valid_icd(key: str, code: str) -> bool:
+    code = code.strip()
+    # '.x'/'.xx' template suffixes are category shorthand, not codes (real
+    # ICD-10 X placeholders only occur mid-code, e.g. T36.0X1A).
+    if re.search(r"\.[xX]+$", code):
+        return False
+    rx = _ICD_SHAPE.get(key)
+    return bool(rx and rx.match(code))
+
 
 def load_phenotype_icd_codes(phenotype: str, augmentations: dict) -> dict:
     """Gather a phenotype's ICD dx + procedure codes from its test cases.
@@ -134,22 +152,29 @@ def load_phenotype_icd_codes(phenotype: str, augmentations: dict) -> dict:
               glob.glob(str(TEST_CASES / f"phekb-{phenotype}.json")):
         d = json.load(open(fn, encoding="utf-8"))
         meta = d.get("metadata", {}) or {}
+        # Negation cases reference the EXCLUDED cohort's codes (e.g. T1D's
+        # insulin-without-dx subtracts E11 diagnoses) -- not phenotype codes.
+        if meta.get("negation"):
+            continue
         for rc in meta.get("required_codes", []) or []:
             sysu = rc.get("system", "")
             code = str(rc.get("code", ""))
             key = next((sys_key[k] for k in sys_key if k in sysu), None)
-            if key and code:
+            if key and code and _valid_icd(key, code):
                 out[key].add(code)
             # crosswalk SNOMED -> ICD via augmentations
             if "snomed" in sysu and code in augmentations:
                 for aug in augmentations[code]:
                     k2 = next((sys_key[k] for k in sys_key if k in aug.get("system", "")), None)
-                    if k2:
-                        out[k2].add(str(aug.get("code", "")))
+                    ac = str(aug.get("code", ""))
+                    if k2 and _valid_icd(k2, ac):
+                        out[k2].add(ac)
         # inline URL codes
         url = json.dumps(d.get("expected_query", {})) + json.dumps(meta.get("expected_queries", []))
         for sysshort, code in _URL_CODE.findall(url):
-            out[sys_key[sysshort]].add(code)
+            key = sys_key[sysshort]
+            if _valid_icd(key, code):
+                out[key].add(code)
     return out
 
 
@@ -235,8 +260,13 @@ def load_phenotype_lab_criteria(phenotype: str) -> list:
     return list(crits)
 
 
-def build_patient_lab_index(standardized_dir: Path) -> dict:
-    """patient_id -> list of (loinc_code, numeric_value) from standardized labs."""
+def build_patient_lab_index(standardized_dir: Path, loinc_filter: set | None = None) -> dict:
+    """patient_id -> list of (loinc_code, numeric_value) from standardized labs.
+
+    loinc_filter: if given, only these LOINC codes are indexed. On full MIMIC
+    (~118M labevents) an unfiltered index doesn't fit in memory; callers should
+    pass the union of LOINCs their criteria actually reference.
+    """
     idx = defaultdict(list)
     for fn in ["MimicObservationLabevents.ndjson", "MimicObservationED.ndjson"]:
         path = standardized_dir / fn
@@ -256,8 +286,16 @@ def build_patient_lab_index(standardized_dir: Path) -> dict:
                     continue
                 for cd in r.get("code", {}).get("coding", []):
                     if cd.get("system") == "http://loinc.org" and cd.get("code"):
+                        if loinc_filter is not None and cd["code"] not in loinc_filter:
+                            continue
                         idx[pid].append((cd["code"], float(val)))
     return idx
+
+
+def criteria_loinc_union(phenotypes: list) -> set:
+    """Union of LOINC codes referenced by any phenotype's lab criteria."""
+    return {loinc for ph in phenotypes
+            for loinc, _, _ in load_phenotype_lab_criteria(ph)}
 
 
 def count_phenotype_labs(criteria: list, lab_index: dict) -> int:
@@ -308,7 +346,7 @@ def main(argv=None):
     sdir = Path(args.standardized_dir)
     print("Building patient indexes from standardized MIMIC...", file=sys.stderr)
     pidx = build_patient_index(sdir)
-    lidx = build_patient_lab_index(sdir)
+    lidx = build_patient_lab_index(sdir, criteria_loinc_union(args.phenotypes))
     print(f"  {len(pidx)} patients w/ conditions+procedures, {len(lidx)} w/ labs", file=sys.stderr)
 
     rows = []

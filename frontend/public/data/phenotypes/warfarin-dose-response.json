@@ -1030,6 +1030,155 @@
       "prompt_text": "I need to assemble the pharmacogenetic discovery cohort for the PheKB warfarin dose-response phenotype by combining two data sources. First, search MedicationRequest resources for warfarin prescriptions coded in RxNorm \u2014 this identifies the treated population. Second, search Observation resources for INR (prothrombin time international normalized ratio) results using the appropriate LOINC code, which captures anticoagulation monitoring for these patients. Union the patient sets from both queries to form the full warfarin-treated, INR-monitored cohort that is the basis for pharmacogenetic analysis."
      }
     },
+    "copilot:claude-opus-4.7+mimic": {
+     "1-naive": {
+      "precision": 0.1571,
+      "recall": 0.0072,
+      "f1": 0.0138,
+      "passed": false,
+      "expected_count": 23802,
+      "actual_count": 1095,
+      "elapsed_sec": 29.3,
+      "queries_generated": 2,
+      "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|11289",
+      "additional_query_urls": [
+       "Observation?code=http://loinc.org|6301-6"
+      ],
+      "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|11289\nObservation?code=http://loinc.org|6301-6",
+      "prompt_text": "Find warfarin patients with INR."
+     },
+     "1-broad": {
+      "precision": 0.1571,
+      "recall": 0.0072,
+      "f1": 0.0138,
+      "passed": false,
+      "expected_count": 23802,
+      "actual_count": 1095,
+      "elapsed_sec": 26.3,
+      "queries_generated": 5,
+      "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|11289",
+      "additional_query_urls": [
+       "MedicationStatement?code=http://www.nlm.nih.gov/research/umls/rxnorm|11289",
+       "Observation?code=http://loinc.org|6301-6",
+       "Observation?code=http://loinc.org|34714-6",
+       "Observation?code=http://loinc.org|38875-1"
+      ],
+      "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|11289\nMedicationStatement?code=http://www.nlm.nih.gov/research/umls/rxnorm|11289\nObservation?code=http://loinc.org|6301-6\nObservation?code=http://loinc.org|34714-6\nObservation?code=http://loinc.org|38875-1",
+      "prompt_text": "Find all warfarin-treated patients with INR monitoring \u2014 for the warfarin dose-response PGx phenotype. Run multiple queries and union."
+     },
+     "1-expert": {
+      "precision": 0.1571,
+      "recall": 0.0072,
+      "f1": 0.0138,
+      "passed": false,
+      "expected_count": 23802,
+      "actual_count": 1095,
+      "elapsed_sec": 22.0,
+      "queries_generated": 2,
+      "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|11289",
+      "additional_query_urls": [
+       "Observation?code=http://loinc.org|6301-6"
+      ],
+      "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|11289\nObservation?code=http://loinc.org|6301-6",
+      "prompt_text": "I need to assemble the pharmacogenetic discovery cohort for the PheKB warfarin dose-response phenotype by combining two data sources. First, search MedicationRequest resources for warfarin prescriptions coded in RxNorm \u2014 this identifies the treated population. Second, search Observation resources for INR (prothrombin time international normalized ratio) results using the appropriate LOINC code, which captures anticoagulation monitoring for these patients. Union the patient sets from both queries to form the full warfarin-treated, INR-monitored cohort that is the basis for pharmacogenetic analysis."
+     },
+     "2-naive": {
+      "precision": 0.6802,
+      "recall": 0.0937,
+      "f1": 0.1648,
+      "passed": false,
+      "expected_count": 23802,
+      "actual_count": 3280,
+      "elapsed_sec": 49.8,
+      "queries_generated": 2,
+      "primary_query_url": "MedicationRequest?code=http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Warfarin",
+      "additional_query_urls": [
+       "Observation?code=http://loinc.org|6301-6"
+      ],
+      "raw_response": "MedicationRequest?code=http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Warfarin\nObservation?code=http://loinc.org|6301-6",
+      "prompt_text": "Find warfarin patients with INR."
+     },
+     "2-broad": {
+      "precision": 0.6802,
+      "recall": 0.0937,
+      "f1": 0.1648,
+      "passed": false,
+      "expected_count": 23802,
+      "actual_count": 3280,
+      "elapsed_sec": 50.8,
+      "queries_generated": 2,
+      "primary_query_url": "MedicationRequest?code=http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Warfarin",
+      "additional_query_urls": [
+       "Observation?code=http://loinc.org|6301-6"
+      ],
+      "raw_response": "FINAL ANSWER:\n\nMedicationRequest?code=http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Warfarin\nObservation?code=http://loinc.org|6301-6",
+      "prompt_text": "Find all warfarin-treated patients with INR monitoring \u2014 for the warfarin dose-response PGx phenotype. Run multiple queries and union."
+     },
+     "2-expert": {
+      "precision": 0.6802,
+      "recall": 0.0937,
+      "f1": 0.1648,
+      "passed": false,
+      "expected_count": 23802,
+      "actual_count": 3280,
+      "elapsed_sec": 55.0,
+      "queries_generated": 2,
+      "primary_query_url": "MedicationRequest?code=http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Warfarin",
+      "additional_query_urls": [
+       "Observation?code=http://loinc.org|6301-6"
+      ],
+      "raw_response": "MedicationRequest?code=http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Warfarin\nObservation?code=http://loinc.org|6301-6",
+      "prompt_text": "I need to assemble the pharmacogenetic discovery cohort for the PheKB warfarin dose-response phenotype by combining two data sources. First, search MedicationRequest resources for warfarin prescriptions coded in RxNorm \u2014 this identifies the treated population. Second, search Observation resources for INR (prothrombin time international normalized ratio) results using the appropriate LOINC code, which captures anticoagulation monitoring for these patients. Union the patient sets from both queries to form the full warfarin-treated, INR-monitored cohort that is the basis for pharmacogenetic analysis."
+     },
+     "3-naive": {
+      "precision": 0.6802,
+      "recall": 0.0937,
+      "f1": 0.1648,
+      "passed": false,
+      "expected_count": 23802,
+      "actual_count": 3280,
+      "elapsed_sec": 54.7,
+      "queries_generated": 2,
+      "primary_query_url": "MedicationRequest?code=http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Warfarin",
+      "additional_query_urls": [
+       "Observation?code=http://loinc.org|6301-6"
+      ],
+      "raw_response": "MedicationRequest?code=http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Warfarin\nObservation?code=http://loinc.org|6301-6",
+      "prompt_text": "Find warfarin patients with INR."
+     },
+     "3-broad": {
+      "precision": 0.1578,
+      "recall": 0.0073,
+      "f1": 0.0139,
+      "passed": false,
+      "expected_count": 23802,
+      "actual_count": 1096,
+      "elapsed_sec": 48.3,
+      "queries_generated": 2,
+      "primary_query_url": "MedicationRequest?code=http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|warfarin",
+      "additional_query_urls": [
+       "Observation?code=http://loinc.org|6301-6"
+      ],
+      "raw_response": "MedicationRequest?code=http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|warfarin\nObservation?code=http://loinc.org|6301-6",
+      "prompt_text": "Find all warfarin-treated patients with INR monitoring \u2014 for the warfarin dose-response PGx phenotype. Run multiple queries and union."
+     },
+     "3-expert": {
+      "precision": 0.1594,
+      "recall": 0.0074,
+      "f1": 0.0141,
+      "passed": false,
+      "expected_count": 23802,
+      "actual_count": 1098,
+      "elapsed_sec": 64.9,
+      "queries_generated": 2,
+      "primary_query_url": "MedicationRequest?medication.code=http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|warfarin",
+      "additional_query_urls": [
+       "Observation?code=http://loinc.org|6301-6"
+      ],
+      "raw_response": "MedicationRequest?medication.code=http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|warfarin\nObservation?code=http://loinc.org|6301-6",
+      "prompt_text": "I need to assemble the pharmacogenetic discovery cohort for the PheKB warfarin dose-response phenotype by combining two data sources. First, search MedicationRequest resources for warfarin prescriptions coded in RxNorm \u2014 this identifies the treated population. Second, search Observation resources for INR (prothrombin time international normalized ratio) results using the appropriate LOINC code, which captures anticoagulation monitoring for these patients. Union the patient sets from both queries to form the full warfarin-treated, INR-monitored cohort that is the basis for pharmacogenetic analysis."
+     }
+    },
     "copilot:claude-sonnet-4.6": {
      "1-naive": {
       "precision": 1.0,
@@ -2501,6 +2650,136 @@
       "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|11289",
       "additional_query_urls": [],
       "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|11289",
+      "prompt_text": "I need to identify patients prescribed warfarin, forming the at-risk pool for the PheKB warfarin dose-response pharmacogenetic phenotype. Search MedicationRequest resources for warfarin coded in RxNorm. Per the PheKB BioVU algorithm, warfarin-treated patients with subsequent stable in-range INR are the target population for pharmacogenetic discovery, so this medication query defines the primary cohort."
+     }
+    },
+    "copilot:claude-opus-4.7+mimic": {
+     "1-naive": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 18276,
+      "actual_count": 0,
+      "elapsed_sec": 8.1,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|11289&status=active",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|11289&status=active",
+      "prompt_text": "Find patients on warfarin."
+     },
+     "1-broad": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 18276,
+      "actual_count": 0,
+      "elapsed_sec": 7.5,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|11289",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|11289",
+      "prompt_text": "Find patients prescribed warfarin \u2014 an oral anticoagulant requiring INR monitoring (target 2-3 for most indications)."
+     },
+     "1-expert": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 18276,
+      "actual_count": 0,
+      "elapsed_sec": 6.4,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|11289",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|11289",
+      "prompt_text": "I need to identify patients prescribed warfarin, forming the at-risk pool for the PheKB warfarin dose-response pharmacogenetic phenotype. Search MedicationRequest resources for warfarin coded in RxNorm. Per the PheKB BioVU algorithm, warfarin-treated patients with subsequent stable in-range INR are the target population for pharmacogenetic discovery, so this medication query defines the primary cohort."
+     },
+     "2-naive": {
+      "precision": 1.0,
+      "recall": 0.0741,
+      "f1": 0.138,
+      "passed": false,
+      "expected_count": 18276,
+      "actual_count": 1355,
+      "elapsed_sec": 56.9,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|11289",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|11289",
+      "prompt_text": "Find patients on warfarin."
+     },
+     "2-broad": {
+      "precision": 1.0,
+      "recall": 0.0741,
+      "f1": 0.138,
+      "passed": false,
+      "expected_count": 18276,
+      "actual_count": 1355,
+      "elapsed_sec": 53.3,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|11289",
+      "additional_query_urls": [],
+      "raw_response": "FINAL ANSWER:\n\nMedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|11289",
+      "prompt_text": "Find patients prescribed warfarin \u2014 an oral anticoagulant requiring INR monitoring (target 2-3 for most indications)."
+     },
+     "2-expert": {
+      "precision": 1.0,
+      "recall": 0.0741,
+      "f1": 0.138,
+      "passed": false,
+      "expected_count": 18276,
+      "actual_count": 1355,
+      "elapsed_sec": 55.1,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|11289",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|11289",
+      "prompt_text": "I need to identify patients prescribed warfarin, forming the at-risk pool for the PheKB warfarin dose-response pharmacogenetic phenotype. Search MedicationRequest resources for warfarin coded in RxNorm. Per the PheKB BioVU algorithm, warfarin-treated patients with subsequent stable in-range INR are the target population for pharmacogenetic discovery, so this medication query defines the primary cohort."
+     },
+     "3-naive": {
+      "precision": 1.0,
+      "recall": 0.0741,
+      "f1": 0.138,
+      "passed": false,
+      "expected_count": 18276,
+      "actual_count": 1355,
+      "elapsed_sec": 47.1,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|11289",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|11289",
+      "prompt_text": "Find patients on warfarin."
+     },
+     "3-broad": {
+      "precision": 0.5645,
+      "recall": 0.0805,
+      "f1": 0.1409,
+      "passed": false,
+      "expected_count": 18276,
+      "actual_count": 2606,
+      "elapsed_sec": 72.8,
+      "queries_generated": 2,
+      "primary_query_url": "MedicationRequest?medication.code:text=warfarin",
+      "additional_query_urls": [
+       "Observation?code=http://loinc.org|6301-6"
+      ],
+      "raw_response": "MedicationRequest?medication.code:text=warfarin\nObservation?code=http://loinc.org|6301-6",
+      "prompt_text": "Find patients prescribed warfarin \u2014 an oral anticoagulant requiring INR monitoring (target 2-3 for most indications)."
+     },
+     "3-expert": {
+      "precision": 1.0,
+      "recall": 0.0741,
+      "f1": 0.138,
+      "passed": false,
+      "expected_count": 18276,
+      "actual_count": 1355,
+      "elapsed_sec": 45.2,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|11289",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|11289",
       "prompt_text": "I need to identify patients prescribed warfarin, forming the at-risk pool for the PheKB warfarin dose-response pharmacogenetic phenotype. Search MedicationRequest resources for warfarin coded in RxNorm. Per the PheKB BioVU algorithm, warfarin-treated patients with subsequent stable in-range INR are the target population for pharmacogenetic discovery, so this medication query defines the primary cohort."
      }
     },

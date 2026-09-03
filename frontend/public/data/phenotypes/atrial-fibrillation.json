@@ -246,6 +246,149 @@
       "prompt_text": "I am a cardiologist preparing our practice's anticoagulation quality measure for atrial fibrillation patients. I need to identify every patient in our system who has atrial fibrillation, but I know from experience that our problem lists are incomplete. Some patients were started on blood thinners like warfarin or apixaban by their primary care doctor and never had the AF diagnosis formally entered here. Others are on rate control medications like metoprolol or rhythm control drugs like amiodarone that were continued from a hospital discharge without updating their diagnosis list. Please search for:\n\n1. Patients with an atrial fibrillation diagnosis on their problem list\n2. Patients who have active prescriptions for anticoagulants (warfarin, apixaban), antiarrhythmic medications (amiodarone), or rate-control agents (metoprolol) commonly used for AF\n\nI need the union of both groups to get the complete picture."
      }
     },
+    "copilot:claude-opus-4.7+mimic": {
+     "1-naive": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 18319,
+      "actual_count": 0,
+      "elapsed_sec": 8.6,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|49436004",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|11289,3407,3521,8163,32968,68139"
+      ],
+      "raw_response": "Condition?code=http://snomed.info/sct|49436004\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|11289,3407,3521,8163,32968,68139",
+      "prompt_text": "Find all patients with atrial fibrillation. Search both diagnoses and AF-related medication prescriptions to capture the complete population."
+     },
+     "1-broad": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 18319,
+      "actual_count": 0,
+      "elapsed_sec": 9.7,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|49436004",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|11289,http://www.nlm.nih.gov/research/umls/rxnorm|855332,http://www.nlm.nih.gov/research/umls/rxnorm|1599538,http://www.nlm.nih.gov/research/umls/rxnorm|1364430,http://www.nlm.nih.gov/research/umls/rxnorm|1037042,http://www.nlm.nih.gov/research/umls/rxnorm|3407,http://www.nlm.nih.gov/research/umls/rxnorm|8163,http://www.nlm.nih.gov/research/umls/rxnorm|8787"
+      ],
+      "raw_response": "Condition?code=http://snomed.info/sct|49436004\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|11289,http://www.nlm.nih.gov/research/umls/rxnorm|855332,http://www.nlm.nih.gov/research/umls/rxnorm|1599538,http://www.nlm.nih.gov/research/umls/rxnorm|1364430,http://www.nlm.nih.gov/research/umls/rxnorm|1037042,http://www.nlm.nih.gov/research/umls/rxnorm|3407,http://www.nlm.nih.gov/research/umls/rxnorm|8163,http://www.nlm.nih.gov/research/umls/rxnorm|8787",
+      "prompt_text": "Find all patients with atrial fibrillation. Search both diagnoses and AF-related medication prescriptions to capture the complete population."
+     },
+     "1-expert": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 18319,
+      "actual_count": 0,
+      "elapsed_sec": 10.3,
+      "queries_generated": 5,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|49436004",
+      "additional_query_urls": [
+       "MedicationRequest?status=active&code=http://www.nlm.nih.gov/research/umls/rxnorm|11289",
+       "MedicationRequest?status=active&code=http://www.nlm.nih.gov/research/umls/rxnorm|1364430",
+       "MedicationRequest?status=active&code=http://www.nlm.nih.gov/research/umls/rxnorm|703",
+       "MedicationRequest?status=active&code=http://www.nlm.nih.gov/research/umls/rxnorm|6918"
+      ],
+      "raw_response": "Condition?code=http://snomed.info/sct|49436004\nMedicationRequest?status=active&code=http://www.nlm.nih.gov/research/umls/rxnorm|11289\nMedicationRequest?status=active&code=http://www.nlm.nih.gov/research/umls/rxnorm|1364430\nMedicationRequest?status=active&code=http://www.nlm.nih.gov/research/umls/rxnorm|703\nMedicationRequest?status=active&code=http://www.nlm.nih.gov/research/umls/rxnorm|6918",
+      "prompt_text": "I am a cardiologist preparing our practice's anticoagulation quality measure for atrial fibrillation patients. I need to identify every patient in our system who has atrial fibrillation, but I know from experience that our problem lists are incomplete. Some patients were started on blood thinners like warfarin or apixaban by their primary care doctor and never had the AF diagnosis formally entered here. Others are on rate control medications like metoprolol or rhythm control drugs like amiodarone that were continued from a hospital discharge without updating their diagnosis list. Please search for:\n\n1. Patients with an atrial fibrillation diagnosis on their problem list\n2. Patients who have active prescriptions for anticoagulants (warfarin, apixaban), antiarrhythmic medications (amiodarone), or rate-control agents (metoprolol) commonly used for AF\n\nI need the union of both groups to get the complete picture."
+     },
+     "2-naive": {
+      "precision": 0.6694,
+      "recall": 0.1663,
+      "f1": 0.2665,
+      "passed": false,
+      "expected_count": 18319,
+      "actual_count": 4552,
+      "elapsed_sec": 85.9,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|I48,http://hl7.org/fhir/sid/icd-10-cm|I48.0,http://hl7.org/fhir/sid/icd-10-cm|I48.1,http://hl7.org/fhir/sid/icd-10-cm|I48.11,http://hl7.org/fhir/sid/icd-10-cm|I48.19,http://hl7.org/fhir/sid/icd-10-cm|I48.2,http://hl7.org/fhir/sid/icd-10-cm|I48.9,http://hl7.org/fhir/sid/icd-10-cm|I48.91,http://hl7.org/fhir/sid/icd-9-cm|427.3,http://hl7.org/fhir/sid/icd-9-cm|427.31",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1922720,http://www.nlm.nih.gov/research/umls/rxnorm|1922721,http://www.nlm.nih.gov/research/umls/rxnorm|1922763,http://www.nlm.nih.gov/research/umls/rxnorm|1922764,http://www.nlm.nih.gov/research/umls/rxnorm|1922765,http://www.nlm.nih.gov/research/umls/rxnorm|1922766"
+      ],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|I48,http://hl7.org/fhir/sid/icd-10-cm|I48.0,http://hl7.org/fhir/sid/icd-10-cm|I48.1,http://hl7.org/fhir/sid/icd-10-cm|I48.11,http://hl7.org/fhir/sid/icd-10-cm|I48.19,http://hl7.org/fhir/sid/icd-10-cm|I48.2,http://hl7.org/fhir/sid/icd-10-cm|I48.9,http://hl7.org/fhir/sid/icd-10-cm|I48.91,http://hl7.org/fhir/sid/icd-9-cm|427.3,http://hl7.org/fhir/sid/icd-9-cm|427.31\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1922720,http://www.nlm.nih.gov/research/umls/rxnorm|1922721,http://www.nlm.nih.gov/research/umls/rxnorm|1922763,http://www.nlm.nih.gov/research/umls/rxnorm|1922764,http://www.nlm.nih.gov/research/umls/rxnorm|1922765,http://www.nlm.nih.gov/research/umls/rxnorm|1922766",
+      "prompt_text": "Find all patients with atrial fibrillation. Search both diagnoses and AF-related medication prescriptions to capture the complete population."
+     },
+     "2-broad": {
+      "precision": 0.6694,
+      "recall": 0.1663,
+      "f1": 0.2665,
+      "passed": false,
+      "expected_count": 18319,
+      "actual_count": 4552,
+      "elapsed_sec": 88.6,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|I48,http://hl7.org/fhir/sid/icd-10-cm|I48.0,http://hl7.org/fhir/sid/icd-10-cm|I48.1,http://hl7.org/fhir/sid/icd-10-cm|I48.11,http://hl7.org/fhir/sid/icd-10-cm|I48.19,http://hl7.org/fhir/sid/icd-10-cm|I48.2,http://hl7.org/fhir/sid/icd-10-cm|I48.9,http://hl7.org/fhir/sid/icd-10-cm|I48.91,http://hl7.org/fhir/sid/icd-9-cm|427.3,http://hl7.org/fhir/sid/icd-9-cm|427.31",
+      "additional_query_urls": [],
+      "raw_response": "Based on my investigation, the server (MIMIC-on-FHIR) stores Condition codes in ICD-10-CM and ICD-9-CM. MedicationRequest resources have no inline codes in this dataset, so cohort discovery relies on Condition.\n\nFINAL ANSWER:\n\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|I48,http://hl7.org/fhir/sid/icd-10-cm|I48.0,http://hl7.org/fhir/sid/icd-10-cm|I48.1,http://hl7.org/fhir/sid/icd-10-cm|I48.11,http://hl7.org/fhir/sid/icd-10-cm|I48.19,http://hl7.org/fhir/sid/icd-10-cm|I48.2,http://hl7.org/fhir/sid/icd-10-cm|I48.9,http://hl7.org/fhir/sid/icd-10-cm|I48.91,http://hl7.org/fhir/sid/icd-9-cm|427.3,http://hl7.org/fhir/sid/icd-9-cm|427.31",
+      "prompt_text": "Find all patients with atrial fibrillation. Search both diagnoses and AF-related medication prescriptions to capture the complete population."
+     },
+     "2-expert": {
+      "precision": 0.6697,
+      "recall": 0.1665,
+      "f1": 0.2668,
+      "passed": false,
+      "expected_count": 18319,
+      "actual_count": 4556,
+      "elapsed_sec": 77.4,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|I48.0,http://hl7.org/fhir/sid/icd-10-cm|I48.1,http://hl7.org/fhir/sid/icd-10-cm|I48.11,http://hl7.org/fhir/sid/icd-10-cm|I48.19,http://hl7.org/fhir/sid/icd-10-cm|I48.2,http://hl7.org/fhir/sid/icd-10-cm|I48.20,http://hl7.org/fhir/sid/icd-10-cm|I48.21,http://hl7.org/fhir/sid/icd-10-cm|I48.91,http://hl7.org/fhir/sid/icd-9-cm|427.31",
+      "additional_query_urls": [],
+      "raw_response": "Based on my testing, this server exposes ICD-10-CM and ICD-9-CM codes on Conditions, but MedicationRequest has no `code`/`medication` search parameter (only patient/encounter/authoredon/intent/category/etc.), and Medication code searches return 0. So medication-based cohort identification isn't queryable on this server \u2014 I'll return the Condition-based AF cohort covering all I48.x and 427.3x codes.\n\nFINAL ANSWER:\n\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|I48.0,http://hl7.org/fhir/sid/icd-10-cm|I48.1,http://hl7.org/fhir/sid/icd-10-cm|I48.11,http://hl7.org/fhir/sid/icd-10-cm|I48.19,http://hl7.org/fhir/sid/icd-10-cm|I48.2,http://hl7.org/fhir/sid/icd-10-cm|I48.20,http://hl7.org/fhir/sid/icd-10-cm|I48.21,http://hl7.org/fhir/sid/icd-10-cm|I48.91,http://hl7.org/fhir/sid/icd-9-cm|427.31",
+      "prompt_text": "I am a cardiologist preparing our practice's anticoagulation quality measure for atrial fibrillation patients. I need to identify every patient in our system who has atrial fibrillation, but I know from experience that our problem lists are incomplete. Some patients were started on blood thinners like warfarin or apixaban by their primary care doctor and never had the AF diagnosis formally entered here. Others are on rate control medications like metoprolol or rhythm control drugs like amiodarone that were continued from a hospital discharge without updating their diagnosis list. Please search for:\n\n1. Patients with an atrial fibrillation diagnosis on their problem list\n2. Patients who have active prescriptions for anticoagulants (warfarin, apixaban), antiarrhythmic medications (amiodarone), or rate-control agents (metoprolol) commonly used for AF\n\nI need the union of both groups to get the complete picture."
+     },
+     "3-naive": {
+      "precision": 0.6697,
+      "recall": 0.1665,
+      "f1": 0.2668,
+      "passed": false,
+      "expected_count": 18319,
+      "actual_count": 4556,
+      "elapsed_sec": 48.8,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|I48.0,http://hl7.org/fhir/sid/icd-10-cm|I48.1,http://hl7.org/fhir/sid/icd-10-cm|I48.11,http://hl7.org/fhir/sid/icd-10-cm|I48.19,http://hl7.org/fhir/sid/icd-10-cm|I48.2,http://hl7.org/fhir/sid/icd-10-cm|I48.20,http://hl7.org/fhir/sid/icd-10-cm|I48.21,http://hl7.org/fhir/sid/icd-10-cm|I48.91,http://hl7.org/fhir/sid/icd-9-cm|427.31",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|I48.0,http://hl7.org/fhir/sid/icd-10-cm|I48.1,http://hl7.org/fhir/sid/icd-10-cm|I48.11,http://hl7.org/fhir/sid/icd-10-cm|I48.19,http://hl7.org/fhir/sid/icd-10-cm|I48.2,http://hl7.org/fhir/sid/icd-10-cm|I48.20,http://hl7.org/fhir/sid/icd-10-cm|I48.21,http://hl7.org/fhir/sid/icd-10-cm|I48.91,http://hl7.org/fhir/sid/icd-9-cm|427.31",
+      "prompt_text": "Find all patients with atrial fibrillation. Search both diagnoses and AF-related medication prescriptions to capture the complete population."
+     },
+     "3-broad": {
+      "precision": 0.6697,
+      "recall": 0.1665,
+      "f1": 0.2668,
+      "passed": false,
+      "expected_count": 18319,
+      "actual_count": 4556,
+      "elapsed_sec": 54.3,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|I48.0,http://hl7.org/fhir/sid/icd-10-cm|I48.1,http://hl7.org/fhir/sid/icd-10-cm|I48.11,http://hl7.org/fhir/sid/icd-10-cm|I48.19,http://hl7.org/fhir/sid/icd-10-cm|I48.2,http://hl7.org/fhir/sid/icd-10-cm|I48.20,http://hl7.org/fhir/sid/icd-10-cm|I48.21,http://hl7.org/fhir/sid/icd-10-cm|I48.91,http://hl7.org/fhir/sid/icd-9-cm|427.31",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1364430,http://www.nlm.nih.gov/research/umls/rxnorm|1599538,http://www.nlm.nih.gov/research/umls/rxnorm|11289,http://www.nlm.nih.gov/research/umls/rxnorm|703,http://www.nlm.nih.gov/research/umls/rxnorm|321208,http://www.nlm.nih.gov/research/umls/rxnorm|3616,http://www.nlm.nih.gov/research/umls/rxnorm|8163"
+      ],
+      "raw_response": "FINAL ANSWER:\n\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|I48.0,http://hl7.org/fhir/sid/icd-10-cm|I48.1,http://hl7.org/fhir/sid/icd-10-cm|I48.11,http://hl7.org/fhir/sid/icd-10-cm|I48.19,http://hl7.org/fhir/sid/icd-10-cm|I48.2,http://hl7.org/fhir/sid/icd-10-cm|I48.20,http://hl7.org/fhir/sid/icd-10-cm|I48.21,http://hl7.org/fhir/sid/icd-10-cm|I48.91,http://hl7.org/fhir/sid/icd-9-cm|427.31\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1364430,http://www.nlm.nih.gov/research/umls/rxnorm|1599538,http://www.nlm.nih.gov/research/umls/rxnorm|11289,http://www.nlm.nih.gov/research/umls/rxnorm|703,http://www.nlm.nih.gov/research/umls/rxnorm|321208,http://www.nlm.nih.gov/research/umls/rxnorm|3616,http://www.nlm.nih.gov/research/umls/rxnorm|8163",
+      "prompt_text": "Find all patients with atrial fibrillation. Search both diagnoses and AF-related medication prescriptions to capture the complete population."
+     },
+     "3-expert": {
+      "precision": 0.528,
+      "recall": 0.2462,
+      "f1": 0.3359,
+      "passed": false,
+      "expected_count": 18319,
+      "actual_count": 8543,
+      "elapsed_sec": 102.0,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|I48.0,http://hl7.org/fhir/sid/icd-10-cm|I48.1,http://hl7.org/fhir/sid/icd-10-cm|I48.11,http://hl7.org/fhir/sid/icd-10-cm|I48.19,http://hl7.org/fhir/sid/icd-10-cm|I48.2,http://hl7.org/fhir/sid/icd-10-cm|I48.20,http://hl7.org/fhir/sid/icd-10-cm|I48.21,http://hl7.org/fhir/sid/icd-10-cm|I48.91,http://hl7.org/fhir/sid/icd-9-cm|427.31",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Warfarin,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Apixaban,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Amiodarone,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Metoprolol"
+      ],
+      "raw_response": "Playbook 12 (Cohort = OR) + Playbook 8 (multi-system codes).\n\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|I48.0,http://hl7.org/fhir/sid/icd-10-cm|I48.1,http://hl7.org/fhir/sid/icd-10-cm|I48.11,http://hl7.org/fhir/sid/icd-10-cm|I48.19,http://hl7.org/fhir/sid/icd-10-cm|I48.2,http://hl7.org/fhir/sid/icd-10-cm|I48.20,http://hl7.org/fhir/sid/icd-10-cm|I48.21,http://hl7.org/fhir/sid/icd-10-cm|I48.91,http://hl7.org/fhir/sid/icd-9-cm|427.31\nMedicationRequest?code=http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Warfarin,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Apixaban,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Amiodarone,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Metoprolol Tartrate,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Metoprolol Succinate XL",
+      "prompt_text": "I am a cardiologist preparing our practice's anticoagulation quality measure for atrial fibrillation patients. I need to identify every patient in our system who has atrial fibrillation, but I know from experience that our problem lists are incomplete. Some patients were started on blood thinners like warfarin or apixaban by their primary care doctor and never had the AF diagnosis formally entered here. Others are on rate control medications like metoprolol or rhythm control drugs like amiodarone that were continued from a hospital discharge without updating their diagnosis list. Please search for:\n\n1. Patients with an atrial fibrillation diagnosis on their problem list\n2. Patients who have active prescriptions for anticoagulants (warfarin, apixaban), antiarrhythmic medications (amiodarone), or rate-control agents (metoprolol) commonly used for AF\n\nI need the union of both groups to get the complete picture."
+     }
+    },
     "copilot:claude-sonnet-4.6": {
      "1-naive": {
       "precision": 1.0,
@@ -1821,6 +1964,134 @@
       "prompt_text": "I need to identify patients with atrial fibrillation by searching their diagnosis records. Atrial fibrillation has a specific SNOMED code, and the query should target Condition resources. Be aware that AF may also be documented as atrial flutter (a related but distinct arrhythmia) in some patients, though for this query we want specifically atrial fibrillation. The PheKB AF algorithm uses the diagnosis code as the primary inclusion criterion, with exclusion of patients who have had a heart transplant. This query focuses on the inclusion side -- finding all patients with an AF diagnosis on their problem list or encounter records."
      }
     },
+    "copilot:claude-opus-4.7+mimic": {
+     "1-naive": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 18319,
+      "actual_count": 0,
+      "elapsed_sec": 6.7,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|49436004",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|49436004",
+      "prompt_text": "Find all patients diagnosed with atrial fibrillation."
+     },
+     "1-broad": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 18319,
+      "actual_count": 0,
+      "elapsed_sec": 7.3,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|49436004",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|49436004",
+      "prompt_text": "Find all patients diagnosed with atrial fibrillation."
+     },
+     "1-expert": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 18319,
+      "actual_count": 0,
+      "elapsed_sec": 7.1,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|49436004",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|49436004",
+      "prompt_text": "I need to identify patients with atrial fibrillation by searching their diagnosis records. Atrial fibrillation has a specific SNOMED code, and the query should target Condition resources. Be aware that AF may also be documented as atrial flutter (a related but distinct arrhythmia) in some patients, though for this query we want specifically atrial fibrillation. The PheKB AF algorithm uses the diagnosis code as the primary inclusion criterion, with exclusion of patients who have had a heart transplant. This query focuses on the inclusion side -- finding all patients with an AF diagnosis on their problem list or encounter records."
+     },
+     "2-naive": {
+      "precision": 0.6694,
+      "recall": 0.1663,
+      "f1": 0.2665,
+      "passed": false,
+      "expected_count": 18319,
+      "actual_count": 4552,
+      "elapsed_sec": 41.2,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|I48.0,http://hl7.org/fhir/sid/icd-10-cm|I48.1,http://hl7.org/fhir/sid/icd-10-cm|I48.11,http://hl7.org/fhir/sid/icd-10-cm|I48.19,http://hl7.org/fhir/sid/icd-10-cm|I48.2,http://hl7.org/fhir/sid/icd-10-cm|I48.9,http://hl7.org/fhir/sid/icd-10-cm|I48.91,http://hl7.org/fhir/sid/icd-9-cm|427.31",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|I48.0,http://hl7.org/fhir/sid/icd-10-cm|I48.1,http://hl7.org/fhir/sid/icd-10-cm|I48.11,http://hl7.org/fhir/sid/icd-10-cm|I48.19,http://hl7.org/fhir/sid/icd-10-cm|I48.2,http://hl7.org/fhir/sid/icd-10-cm|I48.9,http://hl7.org/fhir/sid/icd-10-cm|I48.91,http://hl7.org/fhir/sid/icd-9-cm|427.31",
+      "prompt_text": "Find all patients diagnosed with atrial fibrillation."
+     },
+     "2-broad": {
+      "precision": 0.6694,
+      "recall": 0.1663,
+      "f1": 0.2665,
+      "passed": false,
+      "expected_count": 18319,
+      "actual_count": 4552,
+      "elapsed_sec": 39.6,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|I48.0,http://hl7.org/fhir/sid/icd-10-cm|I48.1,http://hl7.org/fhir/sid/icd-10-cm|I48.11,http://hl7.org/fhir/sid/icd-10-cm|I48.19,http://hl7.org/fhir/sid/icd-10-cm|I48.2,http://hl7.org/fhir/sid/icd-10-cm|I48.9,http://hl7.org/fhir/sid/icd-10-cm|I48.91,http://hl7.org/fhir/sid/icd-9-cm|427.31",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|I48.0,http://hl7.org/fhir/sid/icd-10-cm|I48.1,http://hl7.org/fhir/sid/icd-10-cm|I48.11,http://hl7.org/fhir/sid/icd-10-cm|I48.19,http://hl7.org/fhir/sid/icd-10-cm|I48.2,http://hl7.org/fhir/sid/icd-10-cm|I48.9,http://hl7.org/fhir/sid/icd-10-cm|I48.91,http://hl7.org/fhir/sid/icd-9-cm|427.31",
+      "prompt_text": "Find all patients diagnosed with atrial fibrillation."
+     },
+     "2-expert": {
+      "precision": 0.6697,
+      "recall": 0.1665,
+      "f1": 0.2668,
+      "passed": false,
+      "expected_count": 18319,
+      "actual_count": 4556,
+      "elapsed_sec": 35.3,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|I48.0,http://hl7.org/fhir/sid/icd-10-cm|I48.1,http://hl7.org/fhir/sid/icd-10-cm|I48.2,http://hl7.org/fhir/sid/icd-10-cm|I48.11,http://hl7.org/fhir/sid/icd-10-cm|I48.19,http://hl7.org/fhir/sid/icd-10-cm|I48.20,http://hl7.org/fhir/sid/icd-10-cm|I48.21,http://hl7.org/fhir/sid/icd-10-cm|I48.91,http://hl7.org/fhir/sid/icd-9-cm|427.31",
+      "additional_query_urls": [],
+      "raw_response": "FINAL ANSWER:\n\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|I48.0,http://hl7.org/fhir/sid/icd-10-cm|I48.1,http://hl7.org/fhir/sid/icd-10-cm|I48.2,http://hl7.org/fhir/sid/icd-10-cm|I48.11,http://hl7.org/fhir/sid/icd-10-cm|I48.19,http://hl7.org/fhir/sid/icd-10-cm|I48.20,http://hl7.org/fhir/sid/icd-10-cm|I48.21,http://hl7.org/fhir/sid/icd-10-cm|I48.91,http://hl7.org/fhir/sid/icd-9-cm|427.31",
+      "prompt_text": "I need to identify patients with atrial fibrillation by searching their diagnosis records. Atrial fibrillation has a specific SNOMED code, and the query should target Condition resources. Be aware that AF may also be documented as atrial flutter (a related but distinct arrhythmia) in some patients, though for this query we want specifically atrial fibrillation. The PheKB AF algorithm uses the diagnosis code as the primary inclusion criterion, with exclusion of patients who have had a heart transplant. This query focuses on the inclusion side -- finding all patients with an AF diagnosis on their problem list or encounter records."
+     },
+     "3-naive": {
+      "precision": 0.6697,
+      "recall": 0.1665,
+      "f1": 0.2668,
+      "passed": false,
+      "expected_count": 18319,
+      "actual_count": 4556,
+      "elapsed_sec": 36.0,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|I48.0,http://hl7.org/fhir/sid/icd-10-cm|I48.1,http://hl7.org/fhir/sid/icd-10-cm|I48.11,http://hl7.org/fhir/sid/icd-10-cm|I48.19,http://hl7.org/fhir/sid/icd-10-cm|I48.2,http://hl7.org/fhir/sid/icd-10-cm|I48.20,http://hl7.org/fhir/sid/icd-10-cm|I48.21,http://hl7.org/fhir/sid/icd-10-cm|I48.91,http://hl7.org/fhir/sid/icd-9-cm|427.31",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|I48.0,http://hl7.org/fhir/sid/icd-10-cm|I48.1,http://hl7.org/fhir/sid/icd-10-cm|I48.11,http://hl7.org/fhir/sid/icd-10-cm|I48.19,http://hl7.org/fhir/sid/icd-10-cm|I48.2,http://hl7.org/fhir/sid/icd-10-cm|I48.20,http://hl7.org/fhir/sid/icd-10-cm|I48.21,http://hl7.org/fhir/sid/icd-10-cm|I48.91,http://hl7.org/fhir/sid/icd-9-cm|427.31",
+      "prompt_text": "Find all patients diagnosed with atrial fibrillation."
+     },
+     "3-broad": {
+      "precision": 0.6697,
+      "recall": 0.1665,
+      "f1": 0.2668,
+      "passed": false,
+      "expected_count": 18319,
+      "actual_count": 4556,
+      "elapsed_sec": 36.6,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|I48.0,http://hl7.org/fhir/sid/icd-10-cm|I48.1,http://hl7.org/fhir/sid/icd-10-cm|I48.11,http://hl7.org/fhir/sid/icd-10-cm|I48.19,http://hl7.org/fhir/sid/icd-10-cm|I48.2,http://hl7.org/fhir/sid/icd-10-cm|I48.20,http://hl7.org/fhir/sid/icd-10-cm|I48.21,http://hl7.org/fhir/sid/icd-10-cm|I48.91,http://hl7.org/fhir/sid/icd-9-cm|427.31",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|I48.0,http://hl7.org/fhir/sid/icd-10-cm|I48.1,http://hl7.org/fhir/sid/icd-10-cm|I48.11,http://hl7.org/fhir/sid/icd-10-cm|I48.19,http://hl7.org/fhir/sid/icd-10-cm|I48.2,http://hl7.org/fhir/sid/icd-10-cm|I48.20,http://hl7.org/fhir/sid/icd-10-cm|I48.21,http://hl7.org/fhir/sid/icd-10-cm|I48.91,http://hl7.org/fhir/sid/icd-9-cm|427.31",
+      "prompt_text": "Find all patients diagnosed with atrial fibrillation."
+     },
+     "3-expert": {
+      "precision": 0.6691,
+      "recall": 0.1705,
+      "f1": 0.2718,
+      "passed": false,
+      "expected_count": 18319,
+      "actual_count": 4669,
+      "elapsed_sec": 34.7,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|I48.0,http://hl7.org/fhir/sid/icd-10-cm|I48.11,http://hl7.org/fhir/sid/icd-10-cm|I48.19,http://hl7.org/fhir/sid/icd-10-cm|I48.20,http://hl7.org/fhir/sid/icd-10-cm|I48.21,http://hl7.org/fhir/sid/icd-10-cm|I48.91,http://hl7.org/fhir/sid/icd-9-cm|427.31",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|I48.0,http://hl7.org/fhir/sid/icd-10-cm|I48.11,http://hl7.org/fhir/sid/icd-10-cm|I48.19,http://hl7.org/fhir/sid/icd-10-cm|I48.20,http://hl7.org/fhir/sid/icd-10-cm|I48.21,http://hl7.org/fhir/sid/icd-10-cm|I48.91,http://hl7.org/fhir/sid/icd-9-cm|427.31",
+      "prompt_text": "I need to identify patients with atrial fibrillation by searching their diagnosis records. Atrial fibrillation has a specific SNOMED code, and the query should target Condition resources. Be aware that AF may also be documented as atrial flutter (a related but distinct arrhythmia) in some patients, though for this query we want specifically atrial fibrillation. The PheKB AF algorithm uses the diagnosis code as the primary inclusion criterion, with exclusion of patients who have had a heart transplant. This query focuses on the inclusion side -- finding all patients with an AF diagnosis on their problem list or encounter records."
+     }
+    },
     "copilot:claude-sonnet-4.6": {
      "1-naive": {
       "precision": 1.0,
@@ -2573,6 +2844,138 @@
        "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6918"
       ],
       "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|11289\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1364430\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|703\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6918",
+      "prompt_text": "I need to find patients prescribed medications commonly used for atrial fibrillation management. The relevant drug classes include oral anticoagulants for stroke prevention (warfarin, a vitamin K antagonist, and apixaban, a direct oral anticoagulant), antiarrhythmic agents for rhythm control (amiodarone, the most commonly used agent for maintaining sinus rhythm in AF), and rate-control medications (metoprolol, a beta-blocker used to control ventricular rate). Search MedicationRequest resources for the specific RxNorm product codes. Some of these medications have other indications -- metoprolol is widely used for hypertension and heart failure -- but when combined with the AF phenotype context, they help identify patients being treated for AF who may lack a formal diagnosis code in the system."
+     }
+    },
+    "copilot:claude-opus-4.7+mimic": {
+     "1-naive": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 58297,
+      "actual_count": 0,
+      "elapsed_sec": 8.8,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|11289,http://www.nlm.nih.gov/research/umls/rxnorm|1364430,http://www.nlm.nih.gov/research/umls/rxnorm|703,http://www.nlm.nih.gov/research/umls/rxnorm|6918",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|11289,http://www.nlm.nih.gov/research/umls/rxnorm|1364430,http://www.nlm.nih.gov/research/umls/rxnorm|703,http://www.nlm.nih.gov/research/umls/rxnorm|6918",
+      "prompt_text": "Find all medication orders for drugs used to manage atrial fibrillation, including warfarin, apixaban, amiodarone, and metoprolol."
+     },
+     "1-broad": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 58297,
+      "actual_count": 0,
+      "elapsed_sec": 8.5,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|11289,http://www.nlm.nih.gov/research/umls/rxnorm|1364430,http://www.nlm.nih.gov/research/umls/rxnorm|703,http://www.nlm.nih.gov/research/umls/rxnorm|6918",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|11289,http://www.nlm.nih.gov/research/umls/rxnorm|1364430,http://www.nlm.nih.gov/research/umls/rxnorm|703,http://www.nlm.nih.gov/research/umls/rxnorm|6918",
+      "prompt_text": "Find all medication orders for drugs used to manage atrial fibrillation, including warfarin, apixaban, amiodarone, and metoprolol."
+     },
+     "1-expert": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 58297,
+      "actual_count": 0,
+      "elapsed_sec": 8.8,
+      "queries_generated": 4,
+      "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|11289",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1364430",
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|703",
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6918"
+      ],
+      "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|11289\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1364430\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|703\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6918",
+      "prompt_text": "I need to find patients prescribed medications commonly used for atrial fibrillation management. The relevant drug classes include oral anticoagulants for stroke prevention (warfarin, a vitamin K antagonist, and apixaban, a direct oral anticoagulant), antiarrhythmic agents for rhythm control (amiodarone, the most commonly used agent for maintaining sinus rhythm in AF), and rate-control medications (metoprolol, a beta-blocker used to control ventricular rate). Search MedicationRequest resources for the specific RxNorm product codes. Some of these medications have other indications -- metoprolol is widely used for hypertension and heart failure -- but when combined with the AF phenotype context, they help identify patients being treated for AF who may lack a formal diagnosis code in the system."
+     },
+     "2-naive": {
+      "precision": 0.9644,
+      "recall": 0.0761,
+      "f1": 0.1411,
+      "passed": false,
+      "expected_count": 58297,
+      "actual_count": 4602,
+      "elapsed_sec": 37.7,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?code=http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Warfarin,Apixaban,Amiodarone,Metoprolol",
+      "additional_query_urls": [],
+      "raw_response": "FINAL ANSWER:\n\nMedicationRequest?code=http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Warfarin,Apixaban,Amiodarone,Metoprolol Tartrate,Metoprolol Succinate XL",
+      "prompt_text": "Find all medication orders for drugs used to manage atrial fibrillation, including warfarin, apixaban, amiodarone, and metoprolol."
+     },
+     "2-broad": {
+      "precision": 0.9644,
+      "recall": 0.0761,
+      "f1": 0.1411,
+      "passed": false,
+      "expected_count": 58297,
+      "actual_count": 4602,
+      "elapsed_sec": 40.6,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?code=http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Warfarin,Apixaban,Amiodarone,Metoprolol",
+      "additional_query_urls": [],
+      "raw_response": "FINAL ANSWER:\n\nMedicationRequest?code=http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Warfarin,Apixaban,Amiodarone,Metoprolol Tartrate,Metoprolol Succinate XL",
+      "prompt_text": "Find all medication orders for drugs used to manage atrial fibrillation, including warfarin, apixaban, amiodarone, and metoprolol."
+     },
+     "2-expert": {
+      "precision": 0.9644,
+      "recall": 0.0761,
+      "f1": 0.1411,
+      "passed": false,
+      "expected_count": 58297,
+      "actual_count": 4602,
+      "elapsed_sec": 36.5,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?code=http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Warfarin,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Apixaban,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Amiodarone,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Metoprolol",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?code=http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Warfarin,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Apixaban,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Amiodarone,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Metoprolol Tartrate,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Metoprolol Succinate XL",
+      "prompt_text": "I need to find patients prescribed medications commonly used for atrial fibrillation management. The relevant drug classes include oral anticoagulants for stroke prevention (warfarin, a vitamin K antagonist, and apixaban, a direct oral anticoagulant), antiarrhythmic agents for rhythm control (amiodarone, the most commonly used agent for maintaining sinus rhythm in AF), and rate-control medications (metoprolol, a beta-blocker used to control ventricular rate). Search MedicationRequest resources for the specific RxNorm product codes. Some of these medications have other indications -- metoprolol is widely used for hypertension and heart failure -- but when combined with the AF phenotype context, they help identify patients being treated for AF who may lack a formal diagnosis code in the system."
+     },
+     "3-naive": {
+      "precision": 0.9644,
+      "recall": 0.0761,
+      "f1": 0.1411,
+      "passed": false,
+      "expected_count": 58297,
+      "actual_count": 4602,
+      "elapsed_sec": 48.1,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?code=http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Warfarin,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Apixaban,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Amiodarone,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Metoprolol",
+      "additional_query_urls": [],
+      "raw_response": "FINAL ANSWER:\n\nMedicationRequest?code=http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Warfarin,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Apixaban,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Amiodarone,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Metoprolol Tartrate,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Metoprolol Succinate XL",
+      "prompt_text": "Find all medication orders for drugs used to manage atrial fibrillation, including warfarin, apixaban, amiodarone, and metoprolol."
+     },
+     "3-broad": {
+      "precision": 0.9644,
+      "recall": 0.0761,
+      "f1": 0.1411,
+      "passed": false,
+      "expected_count": 58297,
+      "actual_count": 4602,
+      "elapsed_sec": 42.3,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?code=http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Warfarin,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Apixaban,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Amiodarone,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Metoprolol",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?code=http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Warfarin,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Apixaban,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Amiodarone,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Metoprolol Tartrate,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Metoprolol Succinate XL",
+      "prompt_text": "Find all medication orders for drugs used to manage atrial fibrillation, including warfarin, apixaban, amiodarone, and metoprolol."
+     },
+     "3-expert": {
+      "precision": 0.9644,
+      "recall": 0.0761,
+      "f1": 0.1411,
+      "passed": false,
+      "expected_count": 58297,
+      "actual_count": 4602,
+      "elapsed_sec": 45.5,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?code=http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Warfarin,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Apixaban,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Amiodarone,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Metoprolol",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?code=http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Warfarin,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Apixaban,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Amiodarone,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Metoprolol",
       "prompt_text": "I need to find patients prescribed medications commonly used for atrial fibrillation management. The relevant drug classes include oral anticoagulants for stroke prevention (warfarin, a vitamin K antagonist, and apixaban, a direct oral anticoagulant), antiarrhythmic agents for rhythm control (amiodarone, the most commonly used agent for maintaining sinus rhythm in AF), and rate-control medications (metoprolol, a beta-blocker used to control ventricular rate). Search MedicationRequest resources for the specific RxNorm product codes. Some of these medications have other indications -- metoprolol is widely used for hypertension and heart failure -- but when combined with the AF phenotype context, they help identify patients being treated for AF who may lack a formal diagnosis code in the system."
      }
     },

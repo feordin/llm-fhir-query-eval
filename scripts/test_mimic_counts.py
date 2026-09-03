@@ -85,3 +85,32 @@ def test_le_with_negative_threshold():
     # T-score -3.0 <= -2.5 -> meets; -2.0 does not
     assert value_meets(-3.0, "le", -2.5) is True
     assert value_meets(-2.0, "le", -2.5) is False
+
+
+# --- _valid_icd: reject URL-scrape junk, accept real codes + categories ------
+from mimic_phenotype_counts import _valid_icd
+
+def test_valid_icd10_specific_and_category():
+    assert _valid_icd("icd10cm", "E11.9") is True
+    assert _valid_icd("icd10cm", "E11") is True
+    assert _valid_icd("icd10cm", "I1A.0") is True  # new-style I1A resistant HTN
+
+def test_valid_icd10_rejects_junk():
+    assert _valid_icd("icd10cm", 'E11"]') is False
+    assert _valid_icd("icd10cm", "E10.x") is False
+    assert _valid_icd("icd10cm", "A15-A19") is False  # range notation
+
+def test_valid_icd9_shapes():
+    assert _valid_icd("icd9cm", "250.01") is True
+    assert _valid_icd("icd9cm", "250") is True
+    assert _valid_icd("icd9cm", "E950.0") is True
+    assert _valid_icd("icd9cm", "V45.1") is True
+
+def test_valid_icd9_rejects_junk_and_procedure_codes():
+    assert _valid_icd("icd9cm", "250.(0-9)0") is False
+    assert _valid_icd("icd9cm", "37.51") is False   # 2-digit proc would prefix-match dx 375.x
+    assert _valid_icd("icd9cm", "010-018.99") is False
+
+def test_valid_icd10pcs():
+    assert _valid_icd("icd10pcs", "02100Z9") is True
+    assert _valid_icd("icd10pcs", "A15-A19") is False

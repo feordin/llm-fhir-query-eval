@@ -229,6 +229,149 @@
       "prompt_text": "I need to identify psoriasis patients by combining evidence across two FHIR resource types. First, query Condition resources for psoriasis diagnoses coded in SNOMED CT. Second, query MedicationRequest resources for methotrexate coded in RxNorm \u2014 recognizing that methotrexate is heavily cross-indicated for rheumatoid arthritis, malignancy, and ectopic pregnancy, so the medication path will over-recall beyond the psoriasis population. Take the union of patient IDs from both queries."
      }
     },
+    "copilot:claude-opus-4.7+mimic": {
+     "1-naive": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 906,
+      "actual_count": 0,
+      "elapsed_sec": 7.0,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|9014002",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|9014002",
+      "prompt_text": "Find all psoriasis patients."
+     },
+     "1-broad": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 906,
+      "actual_count": 0,
+      "elapsed_sec": 7.8,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|9014002&_include=Condition:subject",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6851&_include=MedicationRequest:subject"
+      ],
+      "raw_response": "Condition?code=http://snomed.info/sct|9014002&_include=Condition:subject\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6851&_include=MedicationRequest:subject",
+      "prompt_text": "Find all psoriasis patients \u2014 by diagnosis or by methotrexate prescriptions for systemic therapy. Run multiple queries and union the patient sets."
+     },
+     "1-expert": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 906,
+      "actual_count": 0,
+      "elapsed_sec": 7.8,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|9014002",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6851"
+      ],
+      "raw_response": "Condition?code=http://snomed.info/sct|9014002\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6851",
+      "prompt_text": "I need to identify psoriasis patients by combining evidence across two FHIR resource types. First, query Condition resources for psoriasis diagnoses coded in SNOMED CT. Second, query MedicationRequest resources for methotrexate coded in RxNorm \u2014 recognizing that methotrexate is heavily cross-indicated for rheumatoid arthritis, malignancy, and ectopic pregnancy, so the medication path will over-recall beyond the psoriasis population. Take the union of patient IDs from both queries."
+     },
+     "2-naive": {
+      "precision": 0.4689,
+      "recall": 1.0,
+      "f1": 0.6385,
+      "passed": false,
+      "expected_count": 906,
+      "actual_count": 1932,
+      "elapsed_sec": 25.7,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|L40.0,http://hl7.org/fhir/sid/icd-10-cm|L40.1,http://hl7.org/fhir/sid/icd-10-cm|L40.2,http://hl7.org/fhir/sid/icd-10-cm|L40.3,http://hl7.org/fhir/sid/icd-10-cm|L40.4,http://hl7.org/fhir/sid/icd-10-cm|L40.50,http://hl7.org/fhir/sid/icd-10-cm|L40.51,http://hl7.org/fhir/sid/icd-10-cm|L40.52,http://hl7.org/fhir/sid/icd-10-cm|L40.53,http://hl7.org/fhir/sid/icd-10-cm|L40.54,http://hl7.org/fhir/sid/icd-10-cm|L40.59,http://hl7.org/fhir/sid/icd-10-cm|L40.8,http://hl7.org/fhir/sid/icd-10-cm|L40.9",
+      "additional_query_urls": [
+       "Condition?code=http://hl7.org/fhir/sid/icd-9-cm|696.0,http://hl7.org/fhir/sid/icd-9-cm|696.1,http://hl7.org/fhir/sid/icd-9-cm|696.8"
+      ],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|L40.0,http://hl7.org/fhir/sid/icd-10-cm|L40.1,http://hl7.org/fhir/sid/icd-10-cm|L40.2,http://hl7.org/fhir/sid/icd-10-cm|L40.3,http://hl7.org/fhir/sid/icd-10-cm|L40.4,http://hl7.org/fhir/sid/icd-10-cm|L40.50,http://hl7.org/fhir/sid/icd-10-cm|L40.51,http://hl7.org/fhir/sid/icd-10-cm|L40.52,http://hl7.org/fhir/sid/icd-10-cm|L40.53,http://hl7.org/fhir/sid/icd-10-cm|L40.54,http://hl7.org/fhir/sid/icd-10-cm|L40.59,http://hl7.org/fhir/sid/icd-10-cm|L40.8,http://hl7.org/fhir/sid/icd-10-cm|L40.9\nCondition?code=http://hl7.org/fhir/sid/icd-9-cm|696.0,http://hl7.org/fhir/sid/icd-9-cm|696.1,http://hl7.org/fhir/sid/icd-9-cm|696.8",
+      "prompt_text": "Find all psoriasis patients."
+     },
+     "2-broad": {
+      "precision": 0.4689,
+      "recall": 1.0,
+      "f1": 0.6385,
+      "passed": false,
+      "expected_count": 906,
+      "actual_count": 1932,
+      "elapsed_sec": 109.3,
+      "queries_generated": 3,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|L40.0,http://hl7.org/fhir/sid/icd-10-cm|L40.1,http://hl7.org/fhir/sid/icd-10-cm|L40.2,http://hl7.org/fhir/sid/icd-10-cm|L40.3,http://hl7.org/fhir/sid/icd-10-cm|L40.4,http://hl7.org/fhir/sid/icd-10-cm|L40.50,http://hl7.org/fhir/sid/icd-10-cm|L40.51,http://hl7.org/fhir/sid/icd-10-cm|L40.52,http://hl7.org/fhir/sid/icd-10-cm|L40.53,http://hl7.org/fhir/sid/icd-10-cm|L40.54,http://hl7.org/fhir/sid/icd-10-cm|L40.59,http://hl7.org/fhir/sid/icd-10-cm|L40.8,http://hl7.org/fhir/sid/icd-10-cm|L40.9",
+      "additional_query_urls": [
+       "Condition?code=http://hl7.org/fhir/sid/icd-9-cm|696.0,http://hl7.org/fhir/sid/icd-9-cm|696.1,http://hl7.org/fhir/sid/icd-9-cm|696.8",
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6851,http://www.nlm.nih.gov/research/umls/rxnorm|105585,http://www.nlm.nih.gov/research/umls/rxnorm|105586,http://www.nlm.nih.gov/research/umls/rxnorm|283510,http://www.nlm.nih.gov/research/umls/rxnorm|283511,http://www.nlm.nih.gov/research/umls/rxnorm|283671,http://www.nlm.nih.gov/research/umls/rxnorm|1946772"
+      ],
+      "raw_response": "Based on evidence gathered (MIMIC server uses ICD-10-CM and ICD-9-CM for Conditions; psoriasis L40.* returned 1491 and 696.* returned 2206), I'll provide the verified queries.\n\nFINAL ANSWER:\n\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|L40.0,http://hl7.org/fhir/sid/icd-10-cm|L40.1,http://hl7.org/fhir/sid/icd-10-cm|L40.2,http://hl7.org/fhir/sid/icd-10-cm|L40.3,http://hl7.org/fhir/sid/icd-10-cm|L40.4,http://hl7.org/fhir/sid/icd-10-cm|L40.50,http://hl7.org/fhir/sid/icd-10-cm|L40.51,http://hl7.org/fhir/sid/icd-10-cm|L40.52,http://hl7.org/fhir/sid/icd-10-cm|L40.53,http://hl7.org/fhir/sid/icd-10-cm|L40.54,http://hl7.org/fhir/sid/icd-10-cm|L40.59,http://hl7.org/fhir/sid/icd-10-cm|L40.8,http://hl7.org/fhir/sid/icd-10-cm|L40.9\nCondition?code=http://hl7.org/fhir/sid/icd-9-cm|696.0,http://hl7.org/fhir/sid/icd-9-cm|696.1,http://hl7.org/fhir/sid/icd-9-cm|696.8\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6851,http://www.nlm.nih.gov/research/umls/rxnorm|105585,http://www.nlm.nih.gov/research/umls/rxnorm|105586,http://www.nlm.nih.gov/research/umls/rxnorm|283510,http://www.nlm.nih.gov/research/umls/rxnorm|283511,http://www.nlm.nih.gov/research/umls/rxnorm|283671,http://www.nlm.nih.gov/research/umls/rxnorm|1946772",
+      "prompt_text": "Find all psoriasis patients \u2014 by diagnosis or by methotrexate prescriptions for systemic therapy. Run multiple queries and union the patient sets."
+     },
+     "2-expert": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 906,
+      "actual_count": 0,
+      "elapsed_sec": 40.9,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|9014002",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6851"
+      ],
+      "raw_response": "Condition?code=http://snomed.info/sct|9014002\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6851",
+      "prompt_text": "I need to identify psoriasis patients by combining evidence across two FHIR resource types. First, query Condition resources for psoriasis diagnoses coded in SNOMED CT. Second, query MedicationRequest resources for methotrexate coded in RxNorm \u2014 recognizing that methotrexate is heavily cross-indicated for rheumatoid arthritis, malignancy, and ectopic pregnancy, so the medication path will over-recall beyond the psoriasis population. Take the union of patient IDs from both queries."
+     },
+     "3-naive": {
+      "precision": 0.4689,
+      "recall": 1.0,
+      "f1": 0.6385,
+      "passed": false,
+      "expected_count": 906,
+      "actual_count": 1932,
+      "elapsed_sec": 30.1,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|L40.0,http://hl7.org/fhir/sid/icd-10-cm|L40.1,http://hl7.org/fhir/sid/icd-10-cm|L40.2,http://hl7.org/fhir/sid/icd-10-cm|L40.3,http://hl7.org/fhir/sid/icd-10-cm|L40.4,http://hl7.org/fhir/sid/icd-10-cm|L40.50,http://hl7.org/fhir/sid/icd-10-cm|L40.51,http://hl7.org/fhir/sid/icd-10-cm|L40.52,http://hl7.org/fhir/sid/icd-10-cm|L40.53,http://hl7.org/fhir/sid/icd-10-cm|L40.54,http://hl7.org/fhir/sid/icd-10-cm|L40.59,http://hl7.org/fhir/sid/icd-10-cm|L40.8,http://hl7.org/fhir/sid/icd-10-cm|L40.9,http://hl7.org/fhir/sid/icd-9-cm|696.0,http://hl7.org/fhir/sid/icd-9-cm|696.1,http://hl7.org/fhir/sid/icd-9-cm|696.8",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|L40.0,http://hl7.org/fhir/sid/icd-10-cm|L40.1,http://hl7.org/fhir/sid/icd-10-cm|L40.2,http://hl7.org/fhir/sid/icd-10-cm|L40.3,http://hl7.org/fhir/sid/icd-10-cm|L40.4,http://hl7.org/fhir/sid/icd-10-cm|L40.50,http://hl7.org/fhir/sid/icd-10-cm|L40.51,http://hl7.org/fhir/sid/icd-10-cm|L40.52,http://hl7.org/fhir/sid/icd-10-cm|L40.53,http://hl7.org/fhir/sid/icd-10-cm|L40.54,http://hl7.org/fhir/sid/icd-10-cm|L40.59,http://hl7.org/fhir/sid/icd-10-cm|L40.8,http://hl7.org/fhir/sid/icd-10-cm|L40.9,http://hl7.org/fhir/sid/icd-9-cm|696.0,http://hl7.org/fhir/sid/icd-9-cm|696.1,http://hl7.org/fhir/sid/icd-9-cm|696.8",
+      "prompt_text": "Find all psoriasis patients."
+     },
+     "3-broad": {
+      "precision": 0.4373,
+      "recall": 0.7848,
+      "f1": 0.5616,
+      "passed": false,
+      "expected_count": 906,
+      "actual_count": 1626,
+      "elapsed_sec": 53.7,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|L40.0,http://hl7.org/fhir/sid/icd-10-cm|L40.1,http://hl7.org/fhir/sid/icd-10-cm|L40.2,http://hl7.org/fhir/sid/icd-10-cm|L40.3,http://hl7.org/fhir/sid/icd-10-cm|L40.4,http://hl7.org/fhir/sid/icd-10-cm|L40.8,http://hl7.org/fhir/sid/icd-10-cm|L40.9,http://hl7.org/fhir/sid/icd-9-cm|696.1",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Methotrexate"
+      ],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|L40.0,http://hl7.org/fhir/sid/icd-10-cm|L40.1,http://hl7.org/fhir/sid/icd-10-cm|L40.2,http://hl7.org/fhir/sid/icd-10-cm|L40.3,http://hl7.org/fhir/sid/icd-10-cm|L40.4,http://hl7.org/fhir/sid/icd-10-cm|L40.8,http://hl7.org/fhir/sid/icd-10-cm|L40.9,http://hl7.org/fhir/sid/icd-9-cm|696.1\nMedicationRequest?code=http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Methotrexate",
+      "prompt_text": "Find all psoriasis patients \u2014 by diagnosis or by methotrexate prescriptions for systemic therapy. Run multiple queries and union the patient sets."
+     },
+     "3-expert": {
+      "precision": 0.9467,
+      "recall": 1.0,
+      "f1": 0.9726,
+      "passed": true,
+      "expected_count": 906,
+      "actual_count": 957,
+      "elapsed_sec": 53.9,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|L40.0,http://hl7.org/fhir/sid/icd-10-cm|L40.1,http://hl7.org/fhir/sid/icd-10-cm|L40.2,http://hl7.org/fhir/sid/icd-10-cm|L40.3,http://hl7.org/fhir/sid/icd-10-cm|L40.4,http://hl7.org/fhir/sid/icd-10-cm|L40.50,http://hl7.org/fhir/sid/icd-10-cm|L40.51,http://hl7.org/fhir/sid/icd-10-cm|L40.52,http://hl7.org/fhir/sid/icd-10-cm|L40.53,http://hl7.org/fhir/sid/icd-10-cm|L40.54,http://hl7.org/fhir/sid/icd-10-cm|L40.59,http://hl7.org/fhir/sid/icd-10-cm|L40.8,http://hl7.org/fhir/sid/icd-10-cm|L40.9",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Methotrexate"
+      ],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|L40.0,http://hl7.org/fhir/sid/icd-10-cm|L40.1,http://hl7.org/fhir/sid/icd-10-cm|L40.2,http://hl7.org/fhir/sid/icd-10-cm|L40.3,http://hl7.org/fhir/sid/icd-10-cm|L40.4,http://hl7.org/fhir/sid/icd-10-cm|L40.50,http://hl7.org/fhir/sid/icd-10-cm|L40.51,http://hl7.org/fhir/sid/icd-10-cm|L40.52,http://hl7.org/fhir/sid/icd-10-cm|L40.53,http://hl7.org/fhir/sid/icd-10-cm|L40.54,http://hl7.org/fhir/sid/icd-10-cm|L40.59,http://hl7.org/fhir/sid/icd-10-cm|L40.8,http://hl7.org/fhir/sid/icd-10-cm|L40.9\nMedicationRequest?code=http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Methotrexate",
+      "prompt_text": "I need to identify psoriasis patients by combining evidence across two FHIR resource types. First, query Condition resources for psoriasis diagnoses coded in SNOMED CT. Second, query MedicationRequest resources for methotrexate coded in RxNorm \u2014 recognizing that methotrexate is heavily cross-indicated for rheumatoid arthritis, malignancy, and ectopic pregnancy, so the medication path will over-recall beyond the psoriasis population. Take the union of patient IDs from both queries."
+     }
+    },
     "copilot:claude-sonnet-4.6": {
      "1-naive": {
       "precision": 1.0,
@@ -992,6 +1135,134 @@
       "prompt_text": "I need to find patients with a documented diagnosis of psoriasis. Search Condition resources for the SNOMED CT concept for psoriasis on the problem list or encounter diagnoses. This is the primary immune-mediated skin disease phenotype and should not be broadened to psoriatic arthritis or other skin conditions."
      }
     },
+    "copilot:claude-opus-4.7+mimic": {
+     "1-naive": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 906,
+      "actual_count": 0,
+      "elapsed_sec": 7.8,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|9014002",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|9014002",
+      "prompt_text": "Find patients with psoriasis."
+     },
+     "1-broad": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 906,
+      "actual_count": 0,
+      "elapsed_sec": 6.8,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|9014002",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|9014002",
+      "prompt_text": "Find patients diagnosed with psoriasis \u2014 a chronic immune-mediated inflammatory skin disease."
+     },
+     "1-expert": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 906,
+      "actual_count": 0,
+      "elapsed_sec": 7.0,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|9014002",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|9014002",
+      "prompt_text": "I need to find patients with a documented diagnosis of psoriasis. Search Condition resources for the SNOMED CT concept for psoriasis on the problem list or encounter diagnoses. This is the primary immune-mediated skin disease phenotype and should not be broadened to psoriatic arthritis or other skin conditions."
+     },
+     "2-naive": {
+      "precision": 0.4689,
+      "recall": 1.0,
+      "f1": 0.6385,
+      "passed": false,
+      "expected_count": 906,
+      "actual_count": 1932,
+      "elapsed_sec": 33.1,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|L40.0,http://hl7.org/fhir/sid/icd-10-cm|L40.1,http://hl7.org/fhir/sid/icd-10-cm|L40.2,http://hl7.org/fhir/sid/icd-10-cm|L40.3,http://hl7.org/fhir/sid/icd-10-cm|L40.4,http://hl7.org/fhir/sid/icd-10-cm|L40.50,http://hl7.org/fhir/sid/icd-10-cm|L40.51,http://hl7.org/fhir/sid/icd-10-cm|L40.52,http://hl7.org/fhir/sid/icd-10-cm|L40.53,http://hl7.org/fhir/sid/icd-10-cm|L40.54,http://hl7.org/fhir/sid/icd-10-cm|L40.59,http://hl7.org/fhir/sid/icd-10-cm|L40.8,http://hl7.org/fhir/sid/icd-10-cm|L40.9,http://hl7.org/fhir/sid/icd-9-cm|696.0,http://hl7.org/fhir/sid/icd-9-cm|696.1",
+      "additional_query_urls": [],
+      "raw_response": "FINAL ANSWER:\n\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|L40.0,http://hl7.org/fhir/sid/icd-10-cm|L40.1,http://hl7.org/fhir/sid/icd-10-cm|L40.2,http://hl7.org/fhir/sid/icd-10-cm|L40.3,http://hl7.org/fhir/sid/icd-10-cm|L40.4,http://hl7.org/fhir/sid/icd-10-cm|L40.50,http://hl7.org/fhir/sid/icd-10-cm|L40.51,http://hl7.org/fhir/sid/icd-10-cm|L40.52,http://hl7.org/fhir/sid/icd-10-cm|L40.53,http://hl7.org/fhir/sid/icd-10-cm|L40.54,http://hl7.org/fhir/sid/icd-10-cm|L40.59,http://hl7.org/fhir/sid/icd-10-cm|L40.8,http://hl7.org/fhir/sid/icd-10-cm|L40.9,http://hl7.org/fhir/sid/icd-9-cm|696.0,http://hl7.org/fhir/sid/icd-9-cm|696.1",
+      "prompt_text": "Find patients with psoriasis."
+     },
+     "2-broad": {
+      "precision": 0.4689,
+      "recall": 1.0,
+      "f1": 0.6385,
+      "passed": false,
+      "expected_count": 906,
+      "actual_count": 1932,
+      "elapsed_sec": 25.4,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|L40.0,http://hl7.org/fhir/sid/icd-10-cm|L40.1,http://hl7.org/fhir/sid/icd-10-cm|L40.2,http://hl7.org/fhir/sid/icd-10-cm|L40.3,http://hl7.org/fhir/sid/icd-10-cm|L40.4,http://hl7.org/fhir/sid/icd-10-cm|L40.50,http://hl7.org/fhir/sid/icd-10-cm|L40.51,http://hl7.org/fhir/sid/icd-10-cm|L40.52,http://hl7.org/fhir/sid/icd-10-cm|L40.53,http://hl7.org/fhir/sid/icd-10-cm|L40.54,http://hl7.org/fhir/sid/icd-10-cm|L40.59,http://hl7.org/fhir/sid/icd-10-cm|L40.8,http://hl7.org/fhir/sid/icd-10-cm|L40.9,http://hl7.org/fhir/sid/icd-9-cm|696.0,http://hl7.org/fhir/sid/icd-9-cm|696.1,http://hl7.org/fhir/sid/icd-9-cm|696.8",
+      "additional_query_urls": [],
+      "raw_response": "FINAL ANSWER:\n\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|L40.0,http://hl7.org/fhir/sid/icd-10-cm|L40.1,http://hl7.org/fhir/sid/icd-10-cm|L40.2,http://hl7.org/fhir/sid/icd-10-cm|L40.3,http://hl7.org/fhir/sid/icd-10-cm|L40.4,http://hl7.org/fhir/sid/icd-10-cm|L40.50,http://hl7.org/fhir/sid/icd-10-cm|L40.51,http://hl7.org/fhir/sid/icd-10-cm|L40.52,http://hl7.org/fhir/sid/icd-10-cm|L40.53,http://hl7.org/fhir/sid/icd-10-cm|L40.54,http://hl7.org/fhir/sid/icd-10-cm|L40.59,http://hl7.org/fhir/sid/icd-10-cm|L40.8,http://hl7.org/fhir/sid/icd-10-cm|L40.9,http://hl7.org/fhir/sid/icd-9-cm|696.0,http://hl7.org/fhir/sid/icd-9-cm|696.1,http://hl7.org/fhir/sid/icd-9-cm|696.8",
+      "prompt_text": "Find patients diagnosed with psoriasis \u2014 a chronic immune-mediated inflammatory skin disease."
+     },
+     "2-expert": {
+      "precision": 0.4507,
+      "recall": 0.7826,
+      "f1": 0.572,
+      "passed": false,
+      "expected_count": 906,
+      "actual_count": 1573,
+      "elapsed_sec": 27.5,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|L40.0,http://hl7.org/fhir/sid/icd-10-cm|L40.1,http://hl7.org/fhir/sid/icd-10-cm|L40.2,http://hl7.org/fhir/sid/icd-10-cm|L40.3,http://hl7.org/fhir/sid/icd-10-cm|L40.4,http://hl7.org/fhir/sid/icd-10-cm|L40.8,http://hl7.org/fhir/sid/icd-10-cm|L40.9,http://hl7.org/fhir/sid/icd-9-cm|696.1",
+      "additional_query_urls": [],
+      "raw_response": "FINAL ANSWER:\n\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|L40.0,http://hl7.org/fhir/sid/icd-10-cm|L40.1,http://hl7.org/fhir/sid/icd-10-cm|L40.2,http://hl7.org/fhir/sid/icd-10-cm|L40.3,http://hl7.org/fhir/sid/icd-10-cm|L40.4,http://hl7.org/fhir/sid/icd-10-cm|L40.8,http://hl7.org/fhir/sid/icd-10-cm|L40.9,http://hl7.org/fhir/sid/icd-9-cm|696.1",
+      "prompt_text": "I need to find patients with a documented diagnosis of psoriasis. Search Condition resources for the SNOMED CT concept for psoriasis on the problem list or encounter diagnoses. This is the primary immune-mediated skin disease phenotype and should not be broadened to psoriatic arthritis or other skin conditions."
+     },
+     "3-naive": {
+      "precision": 0.4507,
+      "recall": 0.7826,
+      "f1": 0.572,
+      "passed": false,
+      "expected_count": 906,
+      "actual_count": 1573,
+      "elapsed_sec": 30.2,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|L40.0,http://hl7.org/fhir/sid/icd-10-cm|L40.1,http://hl7.org/fhir/sid/icd-10-cm|L40.2,http://hl7.org/fhir/sid/icd-10-cm|L40.3,http://hl7.org/fhir/sid/icd-10-cm|L40.4,http://hl7.org/fhir/sid/icd-10-cm|L40.8,http://hl7.org/fhir/sid/icd-10-cm|L40.9,http://hl7.org/fhir/sid/icd-9-cm|696.1",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|L40.0,http://hl7.org/fhir/sid/icd-10-cm|L40.1,http://hl7.org/fhir/sid/icd-10-cm|L40.2,http://hl7.org/fhir/sid/icd-10-cm|L40.3,http://hl7.org/fhir/sid/icd-10-cm|L40.4,http://hl7.org/fhir/sid/icd-10-cm|L40.8,http://hl7.org/fhir/sid/icd-10-cm|L40.9,http://hl7.org/fhir/sid/icd-9-cm|696.1",
+      "prompt_text": "Find patients with psoriasis."
+     },
+     "3-broad": {
+      "precision": 0.4689,
+      "recall": 1.0,
+      "f1": 0.6385,
+      "passed": false,
+      "expected_count": 906,
+      "actual_count": 1932,
+      "elapsed_sec": 26.4,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|L40.0,http://hl7.org/fhir/sid/icd-10-cm|L40.1,http://hl7.org/fhir/sid/icd-10-cm|L40.2,http://hl7.org/fhir/sid/icd-10-cm|L40.3,http://hl7.org/fhir/sid/icd-10-cm|L40.4,http://hl7.org/fhir/sid/icd-10-cm|L40.50,http://hl7.org/fhir/sid/icd-10-cm|L40.51,http://hl7.org/fhir/sid/icd-10-cm|L40.52,http://hl7.org/fhir/sid/icd-10-cm|L40.53,http://hl7.org/fhir/sid/icd-10-cm|L40.54,http://hl7.org/fhir/sid/icd-10-cm|L40.59,http://hl7.org/fhir/sid/icd-10-cm|L40.8,http://hl7.org/fhir/sid/icd-10-cm|L40.9,http://hl7.org/fhir/sid/icd-9-cm|696.0,http://hl7.org/fhir/sid/icd-9-cm|696.1,http://hl7.org/fhir/sid/icd-9-cm|696.8",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|L40.0,http://hl7.org/fhir/sid/icd-10-cm|L40.1,http://hl7.org/fhir/sid/icd-10-cm|L40.2,http://hl7.org/fhir/sid/icd-10-cm|L40.3,http://hl7.org/fhir/sid/icd-10-cm|L40.4,http://hl7.org/fhir/sid/icd-10-cm|L40.50,http://hl7.org/fhir/sid/icd-10-cm|L40.51,http://hl7.org/fhir/sid/icd-10-cm|L40.52,http://hl7.org/fhir/sid/icd-10-cm|L40.53,http://hl7.org/fhir/sid/icd-10-cm|L40.54,http://hl7.org/fhir/sid/icd-10-cm|L40.59,http://hl7.org/fhir/sid/icd-10-cm|L40.8,http://hl7.org/fhir/sid/icd-10-cm|L40.9,http://hl7.org/fhir/sid/icd-9-cm|696.0,http://hl7.org/fhir/sid/icd-9-cm|696.1,http://hl7.org/fhir/sid/icd-9-cm|696.8",
+      "prompt_text": "Find patients diagnosed with psoriasis \u2014 a chronic immune-mediated inflammatory skin disease."
+     },
+     "3-expert": {
+      "precision": 0.4507,
+      "recall": 0.7826,
+      "f1": 0.572,
+      "passed": false,
+      "expected_count": 906,
+      "actual_count": 1573,
+      "elapsed_sec": 30.1,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|L40.0,http://hl7.org/fhir/sid/icd-10-cm|L40.1,http://hl7.org/fhir/sid/icd-10-cm|L40.2,http://hl7.org/fhir/sid/icd-10-cm|L40.3,http://hl7.org/fhir/sid/icd-10-cm|L40.4,http://hl7.org/fhir/sid/icd-10-cm|L40.8,http://hl7.org/fhir/sid/icd-10-cm|L40.9,http://hl7.org/fhir/sid/icd-9-cm|696.1,http://hl7.org/fhir/sid/icd-9-cm|696.8",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|L40.0,http://hl7.org/fhir/sid/icd-10-cm|L40.1,http://hl7.org/fhir/sid/icd-10-cm|L40.2,http://hl7.org/fhir/sid/icd-10-cm|L40.3,http://hl7.org/fhir/sid/icd-10-cm|L40.4,http://hl7.org/fhir/sid/icd-10-cm|L40.8,http://hl7.org/fhir/sid/icd-10-cm|L40.9,http://hl7.org/fhir/sid/icd-9-cm|696.1,http://hl7.org/fhir/sid/icd-9-cm|696.8",
+      "prompt_text": "I need to find patients with a documented diagnosis of psoriasis. Search Condition resources for the SNOMED CT concept for psoriasis on the problem list or encounter diagnoses. This is the primary immune-mediated skin disease phenotype and should not be broadened to psoriatic arthritis or other skin conditions."
+     }
+    },
     "copilot:claude-sonnet-4.6": {
      "1-naive": {
       "precision": 1.0,
@@ -1716,6 +1987,153 @@
       "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6851",
       "additional_query_urls": [],
       "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6851",
+      "prompt_text": "Identify patients treated pharmacologically with methotrexate via their medication orders. Search MedicationRequest resources for methotrexate coded in RxNorm. Be aware that methotrexate is heavily cross-indicated \u2014 it is commonly prescribed for rheumatoid arthritis, certain malignancies, and ectopic pregnancy \u2014 so a medication-only cohort will substantially include non-psoriasis patients."
+     }
+    },
+    "copilot:claude-opus-4.7+mimic": {
+     "1-naive": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 389,
+      "actual_count": 0,
+      "elapsed_sec": 10.7,
+      "queries_generated": 8,
+      "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|327361",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|253157",
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|847083",
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1364435",
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1547926",
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1919257",
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6851",
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|10432"
+      ],
+      "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|327361\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|253157\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|847083\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1364435\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1547926\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1919257\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6851\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|10432",
+      "prompt_text": "Find patients on psoriasis medications."
+     },
+     "1-broad": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 389,
+      "actual_count": 0,
+      "elapsed_sec": 7.8,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6851",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6851",
+      "prompt_text": "Find patients prescribed methotrexate \u2014 a systemic immunomodulator used for psoriasis, rheumatoid arthritis, and other inflammatory conditions."
+     },
+     "1-expert": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 389,
+      "actual_count": 0,
+      "elapsed_sec": 8.1,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6851",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6851",
+      "prompt_text": "Identify patients treated pharmacologically with methotrexate via their medication orders. Search MedicationRequest resources for methotrexate coded in RxNorm. Be aware that methotrexate is heavily cross-indicated \u2014 it is commonly prescribed for rheumatoid arthritis, certain malignancies, and ectopic pregnancy \u2014 so a medication-only cohort will substantially include non-psoriasis patients."
+     },
+     "2-naive": {
+      "precision": 0.044,
+      "recall": 0.0283,
+      "f1": 0.0344,
+      "passed": false,
+      "expected_count": 389,
+      "actual_count": 250,
+      "elapsed_sec": 62.3,
+      "queries_generated": 5,
+      "primary_query_url": "MedicationRequest?medication.code:text=adalimumab",
+      "additional_query_urls": [
+       "MedicationRequest?medication.code:text=etanercept",
+       "MedicationRequest?medication.code:text=apremilast",
+       "MedicationRequest?medication.code:text=calcipotriene",
+       "MedicationRequest?medication.code:text=acitretin"
+      ],
+      "raw_response": "FINAL ANSWER:\n\nMedicationRequest?medication.code:text=adalimumab\nMedicationRequest?medication.code:text=etanercept\nMedicationRequest?medication.code:text=apremilast\nMedicationRequest?medication.code:text=calcipotriene\nMedicationRequest?medication.code:text=acitretin",
+      "prompt_text": "Find patients on psoriasis medications."
+     },
+     "2-broad": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 389,
+      "actual_count": 389,
+      "elapsed_sec": 39.3,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|105585,http://www.nlm.nih.gov/research/umls/rxnorm|105586,http://www.nlm.nih.gov/research/umls/rxnorm|283510,http://www.nlm.nih.gov/research/umls/rxnorm|283511,http://www.nlm.nih.gov/research/umls/rxnorm|283671,http://www.nlm.nih.gov/research/umls/rxnorm|1921592,http://www.nlm.nih.gov/research/umls/rxnorm|2671456,http://www.nlm.nih.gov/research/umls/rxnorm|1946772,http://www.nlm.nih.gov/research/umls/rxnorm|311625,http://www.nlm.nih.gov/research/umls/rxnorm|1655956,http://www.nlm.nih.gov/research/umls/rxnorm|1655959,http://www.nlm.nih.gov/research/umls/rxnorm|1655960,http://www.nlm.nih.gov/research/umls/rxnorm|1655967,http://www.nlm.nih.gov/research/umls/rxnorm|1655968",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|105585,http://www.nlm.nih.gov/research/umls/rxnorm|105586,http://www.nlm.nih.gov/research/umls/rxnorm|283510,http://www.nlm.nih.gov/research/umls/rxnorm|283511,http://www.nlm.nih.gov/research/umls/rxnorm|283671,http://www.nlm.nih.gov/research/umls/rxnorm|1921592,http://www.nlm.nih.gov/research/umls/rxnorm|2671456,http://www.nlm.nih.gov/research/umls/rxnorm|1946772,http://www.nlm.nih.gov/research/umls/rxnorm|311625,http://www.nlm.nih.gov/research/umls/rxnorm|1655956,http://www.nlm.nih.gov/research/umls/rxnorm|1655959,http://www.nlm.nih.gov/research/umls/rxnorm|1655960,http://www.nlm.nih.gov/research/umls/rxnorm|1655967,http://www.nlm.nih.gov/research/umls/rxnorm|1655968",
+      "prompt_text": "Find patients prescribed methotrexate \u2014 a systemic immunomodulator used for psoriasis, rheumatoid arthritis, and other inflammatory conditions."
+     },
+     "2-expert": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 389,
+      "actual_count": 389,
+      "elapsed_sec": 43.8,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|105585,http://www.nlm.nih.gov/research/umls/rxnorm|105586,http://www.nlm.nih.gov/research/umls/rxnorm|1441402,http://www.nlm.nih.gov/research/umls/rxnorm|1441411,http://www.nlm.nih.gov/research/umls/rxnorm|1441416,http://www.nlm.nih.gov/research/umls/rxnorm|1441422,http://www.nlm.nih.gov/research/umls/rxnorm|1544378,http://www.nlm.nih.gov/research/umls/rxnorm|1544385,http://www.nlm.nih.gov/research/umls/rxnorm|1544387,http://www.nlm.nih.gov/research/umls/rxnorm|1544389,http://www.nlm.nih.gov/research/umls/rxnorm|1544395,http://www.nlm.nih.gov/research/umls/rxnorm|1544397,http://www.nlm.nih.gov/research/umls/rxnorm|1544401,http://www.nlm.nih.gov/research/umls/rxnorm|1544403,http://www.nlm.nih.gov/research/umls/rxnorm|1655956,http://www.nlm.nih.gov/research/umls/rxnorm|1655959,http://www.nlm.nih.gov/research/umls/rxnorm|1655960,http://www.nlm.nih.gov/research/umls/rxnorm|1655967,http://www.nlm.nih.gov/research/umls/rxnorm|1655968,http://www.nlm.nih.gov/research/umls/rxnorm|1747179,http://www.nlm.nih.gov/research/umls/rxnorm|1747185,http://www.nlm.nih.gov/research/umls/rxnorm|1747192,http://www.nlm.nih.gov/research/umls/rxnorm|1921592,http://www.nlm.nih.gov/research/umls/rxnorm|1946772,http://www.nlm.nih.gov/research/umls/rxnorm|2377333,http://www.nlm.nih.gov/research/umls/rxnorm|2377341,http://www.nlm.nih.gov/research/umls/rxnorm|2377343,http://www.nlm.nih.gov/research/umls/rxnorm|2377345,http://www.nlm.nih.gov/research/umls/rxnorm|2377347,http://www.nlm.nih.gov/research/umls/rxnorm|2377349,http://www.nlm.nih.gov/research/umls/rxnorm|2377351,http://www.nlm.nih.gov/research/umls/rxnorm|2377353,http://www.nlm.nih.gov/research/umls/rxnorm|2671456,http://www.nlm.nih.gov/research/umls/rxnorm|283510,http://www.nlm.nih.gov/research/umls/rxnorm|283511,http://www.nlm.nih.gov/research/umls/rxnorm|283671,http://www.nlm.nih.gov/research/umls/rxnorm|311625",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|105585,http://www.nlm.nih.gov/research/umls/rxnorm|105586,http://www.nlm.nih.gov/research/umls/rxnorm|1441402,http://www.nlm.nih.gov/research/umls/rxnorm|1441411,http://www.nlm.nih.gov/research/umls/rxnorm|1441416,http://www.nlm.nih.gov/research/umls/rxnorm|1441422,http://www.nlm.nih.gov/research/umls/rxnorm|1544378,http://www.nlm.nih.gov/research/umls/rxnorm|1544385,http://www.nlm.nih.gov/research/umls/rxnorm|1544387,http://www.nlm.nih.gov/research/umls/rxnorm|1544389,http://www.nlm.nih.gov/research/umls/rxnorm|1544395,http://www.nlm.nih.gov/research/umls/rxnorm|1544397,http://www.nlm.nih.gov/research/umls/rxnorm|1544401,http://www.nlm.nih.gov/research/umls/rxnorm|1544403,http://www.nlm.nih.gov/research/umls/rxnorm|1655956,http://www.nlm.nih.gov/research/umls/rxnorm|1655959,http://www.nlm.nih.gov/research/umls/rxnorm|1655960,http://www.nlm.nih.gov/research/umls/rxnorm|1655967,http://www.nlm.nih.gov/research/umls/rxnorm|1655968,http://www.nlm.nih.gov/research/umls/rxnorm|1747179,http://www.nlm.nih.gov/research/umls/rxnorm|1747185,http://www.nlm.nih.gov/research/umls/rxnorm|1747192,http://www.nlm.nih.gov/research/umls/rxnorm|1921592,http://www.nlm.nih.gov/research/umls/rxnorm|1946772,http://www.nlm.nih.gov/research/umls/rxnorm|2377333,http://www.nlm.nih.gov/research/umls/rxnorm|2377341,http://www.nlm.nih.gov/research/umls/rxnorm|2377343,http://www.nlm.nih.gov/research/umls/rxnorm|2377345,http://www.nlm.nih.gov/research/umls/rxnorm|2377347,http://www.nlm.nih.gov/research/umls/rxnorm|2377349,http://www.nlm.nih.gov/research/umls/rxnorm|2377351,http://www.nlm.nih.gov/research/umls/rxnorm|2377353,http://www.nlm.nih.gov/research/umls/rxnorm|2671456,http://www.nlm.nih.gov/research/umls/rxnorm|283510,http://www.nlm.nih.gov/research/umls/rxnorm|283511,http://www.nlm.nih.gov/research/umls/rxnorm|283671,http://www.nlm.nih.gov/research/umls/rxnorm|311625",
+      "prompt_text": "Identify patients treated pharmacologically with methotrexate via their medication orders. Search MedicationRequest resources for methotrexate coded in RxNorm. Be aware that methotrexate is heavily cross-indicated \u2014 it is commonly prescribed for rheumatoid arthritis, certain malignancies, and ectopic pregnancy \u2014 so a medication-only cohort will substantially include non-psoriasis patients."
+     },
+     "3-naive": {
+      "precision": 0.6194,
+      "recall": 1.0,
+      "f1": 0.765,
+      "passed": true,
+      "expected_count": 389,
+      "actual_count": 628,
+      "elapsed_sec": 80.0,
+      "queries_generated": 6,
+      "primary_query_url": "MedicationRequest?medication.code:text=adalimumab",
+      "additional_query_urls": [
+       "MedicationRequest?medication.code:text=etanercept",
+       "MedicationRequest?medication.code:text=acitretin",
+       "MedicationRequest?medication.code:text=apremilast",
+       "MedicationRequest?medication.code:text=calcipotriene",
+       "MedicationRequest?medication.code:text=methotrexate"
+      ],
+      "raw_response": "FINAL ANSWER:\n\nMedicationRequest?medication.code:text=adalimumab\nMedicationRequest?medication.code:text=etanercept\nMedicationRequest?medication.code:text=acitretin\nMedicationRequest?medication.code:text=apremilast\nMedicationRequest?medication.code:text=calcipotriene\nMedicationRequest?medication.code:text=methotrexate",
+      "prompt_text": "Find patients on psoriasis medications."
+     },
+     "3-broad": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 389,
+      "actual_count": 389,
+      "elapsed_sec": 29.7,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|6851",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|6851",
+      "prompt_text": "Find patients prescribed methotrexate \u2014 a systemic immunomodulator used for psoriasis, rheumatoid arthritis, and other inflammatory conditions."
+     },
+     "3-expert": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 389,
+      "actual_count": 389,
+      "elapsed_sec": 25.1,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|6851",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|6851",
       "prompt_text": "Identify patients treated pharmacologically with methotrexate via their medication orders. Search MedicationRequest resources for methotrexate coded in RxNorm. Be aware that methotrexate is heavily cross-indicated \u2014 it is commonly prescribed for rheumatoid arthritis, certain malignancies, and ectopic pregnancy \u2014 so a medication-only cohort will substantially include non-psoriasis patients."
      }
     },

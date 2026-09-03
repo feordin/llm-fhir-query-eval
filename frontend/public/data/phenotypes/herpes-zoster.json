@@ -998,6 +998,154 @@
       "prompt_text": "To identify the complete herpes zoster cohort, I need to union results from two queries. First, search Condition resources for a herpes zoster (shingles) diagnosis coded in SNOMED CT. Second, search MedicationRequest resources for acyclovir coded in RxNorm, the standard antiviral treatment for shingles. The medication path will introduce cross-indication overlap because acyclovir is also used to treat herpes simplex virus infections (oral and genital HSV), so patients on acyclovir without a zoster diagnosis may have an HSV indication rather than shingles."
      }
     },
+    "copilot:claude-opus-4.7+mimic": {
+     "1-naive": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 1559,
+      "actual_count": 0,
+      "elapsed_sec": 7.9,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|4740000",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|281"
+      ],
+      "raw_response": "Condition?code=http://snomed.info/sct|4740000\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|281",
+      "prompt_text": "Find all patients with shingles or on acyclovir."
+     },
+     "1-broad": {
+      "precision": 1.0,
+      "recall": 0.2341,
+      "f1": 0.3794,
+      "passed": false,
+      "expected_count": 1559,
+      "actual_count": 365,
+      "elapsed_sec": 8.4,
+      "queries_generated": 3,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|4740000",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|281",
+       "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|B02.9"
+      ],
+      "raw_response": "Condition?code=http://snomed.info/sct|4740000\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|281\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|B02.9",
+      "prompt_text": "Find all herpes zoster patients \u2014 by diagnosis or by acyclovir prescription. Run multiple queries and union the patient sets."
+     },
+     "1-expert": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 1559,
+      "actual_count": 0,
+      "elapsed_sec": 7.4,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|4740000",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|281"
+      ],
+      "raw_response": "Condition?code=http://snomed.info/sct|4740000\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|281",
+      "prompt_text": "To identify the complete herpes zoster cohort, I need to union results from two queries. First, search Condition resources for a herpes zoster (shingles) diagnosis coded in SNOMED CT. Second, search MedicationRequest resources for acyclovir coded in RxNorm, the standard antiviral treatment for shingles. The medication path will introduce cross-indication overlap because acyclovir is also used to treat herpes simplex virus infections (oral and genital HSV), so patients on acyclovir without a zoster diagnosis may have an HSV indication rather than shingles."
+     },
+     "2-naive": {
+      "precision": 0.9914,
+      "recall": 0.7428,
+      "f1": 0.8493,
+      "passed": true,
+      "expected_count": 1559,
+      "actual_count": 1168,
+      "elapsed_sec": 145.6,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|B02.0,http://hl7.org/fhir/sid/icd-10-cm|B02.1,http://hl7.org/fhir/sid/icd-10-cm|B02.2,http://hl7.org/fhir/sid/icd-10-cm|B02.3,http://hl7.org/fhir/sid/icd-10-cm|B02.7,http://hl7.org/fhir/sid/icd-10-cm|B02.8,http://hl7.org/fhir/sid/icd-10-cm|B02.9,http://hl7.org/fhir/sid/icd-9-cm|053.0,http://hl7.org/fhir/sid/icd-9-cm|053.1,http://hl7.org/fhir/sid/icd-9-cm|053.2,http://hl7.org/fhir/sid/icd-9-cm|053.7,http://hl7.org/fhir/sid/icd-9-cm|053.8,http://hl7.org/fhir/sid/icd-9-cm|053.9",
+      "additional_query_urls": [
+       "MedicationRequest?medication.identifier=acyclovir"
+      ],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|B02.0,http://hl7.org/fhir/sid/icd-10-cm|B02.1,http://hl7.org/fhir/sid/icd-10-cm|B02.2,http://hl7.org/fhir/sid/icd-10-cm|B02.3,http://hl7.org/fhir/sid/icd-10-cm|B02.7,http://hl7.org/fhir/sid/icd-10-cm|B02.8,http://hl7.org/fhir/sid/icd-10-cm|B02.9,http://hl7.org/fhir/sid/icd-9-cm|053.0,http://hl7.org/fhir/sid/icd-9-cm|053.1,http://hl7.org/fhir/sid/icd-9-cm|053.2,http://hl7.org/fhir/sid/icd-9-cm|053.7,http://hl7.org/fhir/sid/icd-9-cm|053.8,http://hl7.org/fhir/sid/icd-9-cm|053.9\nMedicationRequest?medication.identifier=acyclovir",
+      "prompt_text": "Find all patients with shingles or on acyclovir."
+     },
+     "2-broad": {
+      "precision": 0.5499,
+      "recall": 1.0,
+      "f1": 0.7096,
+      "passed": true,
+      "expected_count": 1559,
+      "actual_count": 2835,
+      "elapsed_sec": 149.8,
+      "queries_generated": 3,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|B02.0,http://hl7.org/fhir/sid/icd-10-cm|B02.1,http://hl7.org/fhir/sid/icd-10-cm|B02.2,http://hl7.org/fhir/sid/icd-10-cm|B02.21,http://hl7.org/fhir/sid/icd-10-cm|B02.22,http://hl7.org/fhir/sid/icd-10-cm|B02.23,http://hl7.org/fhir/sid/icd-10-cm|B02.24,http://hl7.org/fhir/sid/icd-10-cm|B02.29,http://hl7.org/fhir/sid/icd-10-cm|B02.3,http://hl7.org/fhir/sid/icd-10-cm|B02.30,http://hl7.org/fhir/sid/icd-10-cm|B02.31,http://hl7.org/fhir/sid/icd-10-cm|B02.32,http://hl7.org/fhir/sid/icd-10-cm|B02.33,http://hl7.org/fhir/sid/icd-10-cm|B02.34,http://hl7.org/fhir/sid/icd-10-cm|B02.39,http://hl7.org/fhir/sid/icd-10-cm|B02.7,http://hl7.org/fhir/sid/icd-10-cm|B02.8,http://hl7.org/fhir/sid/icd-10-cm|B02.9",
+      "additional_query_urls": [
+       "Condition?code=http://hl7.org/fhir/sid/icd-9-cm|053,http://hl7.org/fhir/sid/icd-9-cm|053.0,http://hl7.org/fhir/sid/icd-9-cm|053.10,http://hl7.org/fhir/sid/icd-9-cm|053.11,http://hl7.org/fhir/sid/icd-9-cm|053.12,http://hl7.org/fhir/sid/icd-9-cm|053.13,http://hl7.org/fhir/sid/icd-9-cm|053.14,http://hl7.org/fhir/sid/icd-9-cm|053.19,http://hl7.org/fhir/sid/icd-9-cm|053.20,http://hl7.org/fhir/sid/icd-9-cm|053.21,http://hl7.org/fhir/sid/icd-9-cm|053.22,http://hl7.org/fhir/sid/icd-9-cm|053.29,http://hl7.org/fhir/sid/icd-9-cm|053.71,http://hl7.org/fhir/sid/icd-9-cm|053.79,http://hl7.org/fhir/sid/icd-9-cm|053.8,http://hl7.org/fhir/sid/icd-9-cm|053.9",
+       "MedicationRequest?code=http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Acyclovir,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|acyclovir"
+      ],
+      "raw_response": "FINAL ANSWER:\n\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|B02.0,http://hl7.org/fhir/sid/icd-10-cm|B02.1,http://hl7.org/fhir/sid/icd-10-cm|B02.2,http://hl7.org/fhir/sid/icd-10-cm|B02.21,http://hl7.org/fhir/sid/icd-10-cm|B02.22,http://hl7.org/fhir/sid/icd-10-cm|B02.23,http://hl7.org/fhir/sid/icd-10-cm|B02.24,http://hl7.org/fhir/sid/icd-10-cm|B02.29,http://hl7.org/fhir/sid/icd-10-cm|B02.3,http://hl7.org/fhir/sid/icd-10-cm|B02.30,http://hl7.org/fhir/sid/icd-10-cm|B02.31,http://hl7.org/fhir/sid/icd-10-cm|B02.32,http://hl7.org/fhir/sid/icd-10-cm|B02.33,http://hl7.org/fhir/sid/icd-10-cm|B02.34,http://hl7.org/fhir/sid/icd-10-cm|B02.39,http://hl7.org/fhir/sid/icd-10-cm|B02.7,http://hl7.org/fhir/sid/icd-10-cm|B02.8,http://hl7.org/fhir/sid/icd-10-cm|B02.9\nCondition?code=http://hl7.org/fhir/sid/icd-9-cm|053,http://hl7.org/fhir/sid/icd-9-cm|053.0,http://hl7.org/fhir/sid/icd-9-cm|053.10,http://hl7.org/fhir/sid/icd-9-cm|053.11,http://hl7.org/fhir/sid/icd-9-cm|053.12,http://hl7.org/fhir/sid/icd-9-cm|053.13,http://hl7.org/fhir/sid/icd-9-cm|053.14,http://hl7.org/fhir/sid/icd-9-cm|053.19,http://hl7.org/fhir/sid/icd-9-cm|053.20,http://hl7.org/fhir/sid/icd-9-cm|053.21,http://hl7.org/fhir/sid/icd-9-cm|053.22,http://hl7.org/fhir/sid/icd-9-cm|053.29,http://hl7.org/fhir/sid/icd-9-cm|053.71,http://hl7.org/fhir/sid/icd-9-cm|053.79,http://hl7.org/fhir/sid/icd-9-cm|053.8,http://hl7.org/fhir/sid/icd-9-cm|053.9\nMedicationRequest?code=http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Acyclovir,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|acyclovir",
+      "prompt_text": "Find all herpes zoster patients \u2014 by diagnosis or by acyclovir prescription. Run multiple queries and union the patient sets."
+     },
+     "2-expert": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 1559,
+      "actual_count": 0,
+      "elapsed_sec": 37.4,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|4740000",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|281"
+      ],
+      "raw_response": "Condition?code=http://snomed.info/sct|4740000\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|281",
+      "prompt_text": "To identify the complete herpes zoster cohort, I need to union results from two queries. First, search Condition resources for a herpes zoster (shingles) diagnosis coded in SNOMED CT. Second, search MedicationRequest resources for acyclovir coded in RxNorm, the standard antiviral treatment for shingles. The medication path will introduce cross-indication overlap because acyclovir is also used to treat herpes simplex virus infections (oral and genital HSV), so patients on acyclovir without a zoster diagnosis may have an HSV indication rather than shingles."
+     },
+     "3-naive": {
+      "precision": 1.0,
+      "recall": 0.7428,
+      "f1": 0.8524,
+      "passed": true,
+      "expected_count": 1559,
+      "actual_count": 1158,
+      "elapsed_sec": 203.8,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|B02.9,http://hl7.org/fhir/sid/icd-10-cm|B02.8,http://hl7.org/fhir/sid/icd-10-cm|B02.7,http://hl7.org/fhir/sid/icd-10-cm|B02.0,http://hl7.org/fhir/sid/icd-10-cm|B02.1,http://hl7.org/fhir/sid/icd-10-cm|B02.2,http://hl7.org/fhir/sid/icd-10-cm|B02.3,http://hl7.org/fhir/sid/icd-9-cm|053.9,http://hl7.org/fhir/sid/icd-9-cm|053.8,http://hl7.org/fhir/sid/icd-9-cm|053.7,http://hl7.org/fhir/sid/icd-9-cm|053.0,http://hl7.org/fhir/sid/icd-9-cm|053.1,http://hl7.org/fhir/sid/icd-9-cm|053.2",
+      "additional_query_urls": [
+       "MedicationRequest?medication.code:text=acyclovir"
+      ],
+      "raw_response": "Final answer:\n\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|B02.9,http://hl7.org/fhir/sid/icd-10-cm|B02.8,http://hl7.org/fhir/sid/icd-10-cm|B02.7,http://hl7.org/fhir/sid/icd-10-cm|B02.0,http://hl7.org/fhir/sid/icd-10-cm|B02.1,http://hl7.org/fhir/sid/icd-10-cm|B02.2,http://hl7.org/fhir/sid/icd-10-cm|B02.3,http://hl7.org/fhir/sid/icd-9-cm|053.9,http://hl7.org/fhir/sid/icd-9-cm|053.8,http://hl7.org/fhir/sid/icd-9-cm|053.7,http://hl7.org/fhir/sid/icd-9-cm|053.0,http://hl7.org/fhir/sid/icd-9-cm|053.1,http://hl7.org/fhir/sid/icd-9-cm|053.2\nMedicationRequest?medication.code:text=acyclovir",
+      "prompt_text": "Find all patients with shingles or on acyclovir."
+     },
+     "3-broad": {
+      "precision": 1.0,
+      "recall": 0.7428,
+      "f1": 0.8524,
+      "passed": true,
+      "expected_count": 1559,
+      "actual_count": 1158,
+      "elapsed_sec": 71.5,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|B02.9,http://hl7.org/fhir/sid/icd-10-cm|B02.0,http://hl7.org/fhir/sid/icd-10-cm|B02.1,http://hl7.org/fhir/sid/icd-10-cm|B02.2,http://hl7.org/fhir/sid/icd-10-cm|B02.3,http://hl7.org/fhir/sid/icd-10-cm|B02.7,http://hl7.org/fhir/sid/icd-10-cm|B02.8,http://hl7.org/fhir/sid/icd-9-cm|053.9,http://hl7.org/fhir/sid/icd-9-cm|053.0,http://hl7.org/fhir/sid/icd-9-cm|053.1,http://hl7.org/fhir/sid/icd-9-cm|053.2,http://hl7.org/fhir/sid/icd-9-cm|053.7,http://hl7.org/fhir/sid/icd-9-cm|053.8",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|281"
+      ],
+      "raw_response": "Based on my investigation: server uses ICD-10-CM (B02.*) and ICD-9-CM (053.*) for herpes zoster (Condition query returned 1378). Medication coding on this MIMIC server is sparse but I'll include the RxNorm acyclovir query for the union.\n\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|B02.9,http://hl7.org/fhir/sid/icd-10-cm|B02.0,http://hl7.org/fhir/sid/icd-10-cm|B02.1,http://hl7.org/fhir/sid/icd-10-cm|B02.2,http://hl7.org/fhir/sid/icd-10-cm|B02.3,http://hl7.org/fhir/sid/icd-10-cm|B02.7,http://hl7.org/fhir/sid/icd-10-cm|B02.8,http://hl7.org/fhir/sid/icd-9-cm|053.9,http://hl7.org/fhir/sid/icd-9-cm|053.0,http://hl7.org/fhir/sid/icd-9-cm|053.1,http://hl7.org/fhir/sid/icd-9-cm|053.2,http://hl7.org/fhir/sid/icd-9-cm|053.7,http://hl7.org/fhir/sid/icd-9-cm|053.8\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|281",
+      "prompt_text": "Find all herpes zoster patients \u2014 by diagnosis or by acyclovir prescription. Run multiple queries and union the patient sets."
+     },
+     "3-expert": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 1559,
+      "actual_count": 0,
+      "elapsed_sec": 53.1,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|4740000",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|281"
+      ],
+      "raw_response": "Condition?code=http://snomed.info/sct|4740000\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|281",
+      "prompt_text": "To identify the complete herpes zoster cohort, I need to union results from two queries. First, search Condition resources for a herpes zoster (shingles) diagnosis coded in SNOMED CT. Second, search MedicationRequest resources for acyclovir coded in RxNorm, the standard antiviral treatment for shingles. The medication path will introduce cross-indication overlap because acyclovir is also used to treat herpes simplex virus infections (oral and genital HSV), so patients on acyclovir without a zoster diagnosis may have an HSV indication rather than shingles."
+     }
+    },
     "copilot:claude-sonnet-4.6": {
      "1-naive": {
       "precision": 1.0,
@@ -1771,6 +1919,136 @@
       "prompt_text": "I need to identify patients with a documented diagnosis of herpes zoster (shingles) in their clinical record. Search Condition resources for the herpes zoster concept coded in SNOMED CT. Be precise in scoping: herpes zoster is the reactivation of the varicella-zoster virus and is clinically distinct from primary varicella (chickenpox) and from herpes simplex virus infections \u2014 do not broaden to those related but distinct conditions."
      }
     },
+    "copilot:claude-opus-4.7+mimic": {
+     "1-naive": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 1559,
+      "actual_count": 0,
+      "elapsed_sec": 7.1,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|4740000",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|4740000",
+      "prompt_text": "Find patients with shingles."
+     },
+     "1-broad": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 1559,
+      "actual_count": 0,
+      "elapsed_sec": 7.3,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|4740000",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|4740000",
+      "prompt_text": "Find patients diagnosed with herpes zoster \u2014 also known as shingles, a reactivation of varicella-zoster virus that typically presents as a painful unilateral dermatomal rash."
+     },
+     "1-expert": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 1559,
+      "actual_count": 0,
+      "elapsed_sec": 7.2,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|4740000",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|4740000",
+      "prompt_text": "I need to identify patients with a documented diagnosis of herpes zoster (shingles) in their clinical record. Search Condition resources for the herpes zoster concept coded in SNOMED CT. Be precise in scoping: herpes zoster is the reactivation of the varicella-zoster virus and is clinically distinct from primary varicella (chickenpox) and from herpes simplex virus infections \u2014 do not broaden to those related but distinct conditions."
+     },
+     "2-naive": {
+      "precision": 1.0,
+      "recall": 0.3175,
+      "f1": 0.482,
+      "passed": false,
+      "expected_count": 1559,
+      "actual_count": 495,
+      "elapsed_sec": 22.2,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code:text=zoster",
+      "additional_query_urls": [],
+      "raw_response": "FINAL ANSWER:\n\nCondition?code:text=zoster",
+      "prompt_text": "Find patients with shingles."
+     },
+     "2-broad": {
+      "precision": 1.0,
+      "recall": 0.9493,
+      "f1": 0.974,
+      "passed": true,
+      "expected_count": 1559,
+      "actual_count": 1480,
+      "elapsed_sec": 28.0,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|B02,http://hl7.org/fhir/sid/icd-10-cm|B02.0,http://hl7.org/fhir/sid/icd-10-cm|B02.1,http://hl7.org/fhir/sid/icd-10-cm|B02.2,http://hl7.org/fhir/sid/icd-10-cm|B02.21,http://hl7.org/fhir/sid/icd-10-cm|B02.22,http://hl7.org/fhir/sid/icd-10-cm|B02.23,http://hl7.org/fhir/sid/icd-10-cm|B02.24,http://hl7.org/fhir/sid/icd-10-cm|B02.29,http://hl7.org/fhir/sid/icd-10-cm|B02.3,http://hl7.org/fhir/sid/icd-10-cm|B02.30,http://hl7.org/fhir/sid/icd-10-cm|B02.31,http://hl7.org/fhir/sid/icd-10-cm|B02.32,http://hl7.org/fhir/sid/icd-10-cm|B02.33,http://hl7.org/fhir/sid/icd-10-cm|B02.34,http://hl7.org/fhir/sid/icd-10-cm|B02.39,http://hl7.org/fhir/sid/icd-10-cm|B02.7,http://hl7.org/fhir/sid/icd-10-cm|B02.8,http://hl7.org/fhir/sid/icd-10-cm|B02.9,http://hl7.org/fhir/sid/icd-9-cm|053,http://hl7.org/fhir/sid/icd-9-cm|053.0,http://hl7.org/fhir/sid/icd-9-cm|053.9,http://hl7.org/fhir/sid/icd-9-cm|053.19,http://hl7.org/fhir/sid/icd-9-cm|053.79",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|B02,http://hl7.org/fhir/sid/icd-10-cm|B02.0,http://hl7.org/fhir/sid/icd-10-cm|B02.1,http://hl7.org/fhir/sid/icd-10-cm|B02.2,http://hl7.org/fhir/sid/icd-10-cm|B02.21,http://hl7.org/fhir/sid/icd-10-cm|B02.22,http://hl7.org/fhir/sid/icd-10-cm|B02.23,http://hl7.org/fhir/sid/icd-10-cm|B02.24,http://hl7.org/fhir/sid/icd-10-cm|B02.29,http://hl7.org/fhir/sid/icd-10-cm|B02.3,http://hl7.org/fhir/sid/icd-10-cm|B02.30,http://hl7.org/fhir/sid/icd-10-cm|B02.31,http://hl7.org/fhir/sid/icd-10-cm|B02.32,http://hl7.org/fhir/sid/icd-10-cm|B02.33,http://hl7.org/fhir/sid/icd-10-cm|B02.34,http://hl7.org/fhir/sid/icd-10-cm|B02.39,http://hl7.org/fhir/sid/icd-10-cm|B02.7,http://hl7.org/fhir/sid/icd-10-cm|B02.8,http://hl7.org/fhir/sid/icd-10-cm|B02.9,http://hl7.org/fhir/sid/icd-9-cm|053,http://hl7.org/fhir/sid/icd-9-cm|053.0,http://hl7.org/fhir/sid/icd-9-cm|053.9,http://hl7.org/fhir/sid/icd-9-cm|053.19,http://hl7.org/fhir/sid/icd-9-cm|053.79",
+      "prompt_text": "Find patients diagnosed with herpes zoster \u2014 also known as shingles, a reactivation of varicella-zoster virus that typically presents as a painful unilateral dermatomal rash."
+     },
+     "2-expert": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 1559,
+      "actual_count": 1559,
+      "elapsed_sec": 53.0,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|B02.0,http://hl7.org/fhir/sid/icd-10-cm|B02.1,http://hl7.org/fhir/sid/icd-10-cm|B02.21,http://hl7.org/fhir/sid/icd-10-cm|B02.22,http://hl7.org/fhir/sid/icd-10-cm|B02.23,http://hl7.org/fhir/sid/icd-10-cm|B02.24,http://hl7.org/fhir/sid/icd-10-cm|B02.29,http://hl7.org/fhir/sid/icd-10-cm|B02.30,http://hl7.org/fhir/sid/icd-10-cm|B02.31,http://hl7.org/fhir/sid/icd-10-cm|B02.32,http://hl7.org/fhir/sid/icd-10-cm|B02.33,http://hl7.org/fhir/sid/icd-10-cm|B02.34,http://hl7.org/fhir/sid/icd-10-cm|B02.39,http://hl7.org/fhir/sid/icd-10-cm|B02.7,http://hl7.org/fhir/sid/icd-10-cm|B02.8,http://hl7.org/fhir/sid/icd-10-cm|B02.9",
+      "additional_query_urls": [
+       "Condition?code=http://hl7.org/fhir/sid/icd-9-cm|053.0,http://hl7.org/fhir/sid/icd-9-cm|053.10,http://hl7.org/fhir/sid/icd-9-cm|053.11,http://hl7.org/fhir/sid/icd-9-cm|053.12,http://hl7.org/fhir/sid/icd-9-cm|053.13,http://hl7.org/fhir/sid/icd-9-cm|053.14,http://hl7.org/fhir/sid/icd-9-cm|053.19,http://hl7.org/fhir/sid/icd-9-cm|053.20,http://hl7.org/fhir/sid/icd-9-cm|053.21,http://hl7.org/fhir/sid/icd-9-cm|053.22,http://hl7.org/fhir/sid/icd-9-cm|053.29,http://hl7.org/fhir/sid/icd-9-cm|053.71,http://hl7.org/fhir/sid/icd-9-cm|053.79,http://hl7.org/fhir/sid/icd-9-cm|053.8,http://hl7.org/fhir/sid/icd-9-cm|053.9"
+      ],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|B02.0,http://hl7.org/fhir/sid/icd-10-cm|B02.1,http://hl7.org/fhir/sid/icd-10-cm|B02.21,http://hl7.org/fhir/sid/icd-10-cm|B02.22,http://hl7.org/fhir/sid/icd-10-cm|B02.23,http://hl7.org/fhir/sid/icd-10-cm|B02.24,http://hl7.org/fhir/sid/icd-10-cm|B02.29,http://hl7.org/fhir/sid/icd-10-cm|B02.30,http://hl7.org/fhir/sid/icd-10-cm|B02.31,http://hl7.org/fhir/sid/icd-10-cm|B02.32,http://hl7.org/fhir/sid/icd-10-cm|B02.33,http://hl7.org/fhir/sid/icd-10-cm|B02.34,http://hl7.org/fhir/sid/icd-10-cm|B02.39,http://hl7.org/fhir/sid/icd-10-cm|B02.7,http://hl7.org/fhir/sid/icd-10-cm|B02.8,http://hl7.org/fhir/sid/icd-10-cm|B02.9\nCondition?code=http://hl7.org/fhir/sid/icd-9-cm|053.0,http://hl7.org/fhir/sid/icd-9-cm|053.10,http://hl7.org/fhir/sid/icd-9-cm|053.11,http://hl7.org/fhir/sid/icd-9-cm|053.12,http://hl7.org/fhir/sid/icd-9-cm|053.13,http://hl7.org/fhir/sid/icd-9-cm|053.14,http://hl7.org/fhir/sid/icd-9-cm|053.19,http://hl7.org/fhir/sid/icd-9-cm|053.20,http://hl7.org/fhir/sid/icd-9-cm|053.21,http://hl7.org/fhir/sid/icd-9-cm|053.22,http://hl7.org/fhir/sid/icd-9-cm|053.29,http://hl7.org/fhir/sid/icd-9-cm|053.71,http://hl7.org/fhir/sid/icd-9-cm|053.79,http://hl7.org/fhir/sid/icd-9-cm|053.8,http://hl7.org/fhir/sid/icd-9-cm|053.9",
+      "prompt_text": "I need to identify patients with a documented diagnosis of herpes zoster (shingles) in their clinical record. Search Condition resources for the herpes zoster concept coded in SNOMED CT. Be precise in scoping: herpes zoster is the reactivation of the varicella-zoster virus and is clinically distinct from primary varicella (chickenpox) and from herpes simplex virus infections \u2014 do not broaden to those related but distinct conditions."
+     },
+     "3-naive": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 1559,
+      "actual_count": 1559,
+      "elapsed_sec": 28.6,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|B02.0,http://hl7.org/fhir/sid/icd-10-cm|B02.1,http://hl7.org/fhir/sid/icd-10-cm|B02.2,http://hl7.org/fhir/sid/icd-10-cm|B02.21,http://hl7.org/fhir/sid/icd-10-cm|B02.22,http://hl7.org/fhir/sid/icd-10-cm|B02.23,http://hl7.org/fhir/sid/icd-10-cm|B02.24,http://hl7.org/fhir/sid/icd-10-cm|B02.29,http://hl7.org/fhir/sid/icd-10-cm|B02.3,http://hl7.org/fhir/sid/icd-10-cm|B02.30,http://hl7.org/fhir/sid/icd-10-cm|B02.31,http://hl7.org/fhir/sid/icd-10-cm|B02.32,http://hl7.org/fhir/sid/icd-10-cm|B02.33,http://hl7.org/fhir/sid/icd-10-cm|B02.34,http://hl7.org/fhir/sid/icd-10-cm|B02.39,http://hl7.org/fhir/sid/icd-10-cm|B02.7,http://hl7.org/fhir/sid/icd-10-cm|B02.8,http://hl7.org/fhir/sid/icd-10-cm|B02.9,http://hl7.org/fhir/sid/icd-9-cm|053.0,http://hl7.org/fhir/sid/icd-9-cm|053.1,http://hl7.org/fhir/sid/icd-9-cm|053.10,http://hl7.org/fhir/sid/icd-9-cm|053.11,http://hl7.org/fhir/sid/icd-9-cm|053.12,http://hl7.org/fhir/sid/icd-9-cm|053.13,http://hl7.org/fhir/sid/icd-9-cm|053.14,http://hl7.org/fhir/sid/icd-9-cm|053.19,http://hl7.org/fhir/sid/icd-9-cm|053.2,http://hl7.org/fhir/sid/icd-9-cm|053.20,http://hl7.org/fhir/sid/icd-9-cm|053.21,http://hl7.org/fhir/sid/icd-9-cm|053.22,http://hl7.org/fhir/sid/icd-9-cm|053.29,http://hl7.org/fhir/sid/icd-9-cm|053.7,http://hl7.org/fhir/sid/icd-9-cm|053.71,http://hl7.org/fhir/sid/icd-9-cm|053.79,http://hl7.org/fhir/sid/icd-9-cm|053.8,http://hl7.org/fhir/sid/icd-9-cm|053.9",
+      "additional_query_urls": [],
+      "raw_response": "FINAL ANSWER:\n\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|B02.0,http://hl7.org/fhir/sid/icd-10-cm|B02.1,http://hl7.org/fhir/sid/icd-10-cm|B02.2,http://hl7.org/fhir/sid/icd-10-cm|B02.21,http://hl7.org/fhir/sid/icd-10-cm|B02.22,http://hl7.org/fhir/sid/icd-10-cm|B02.23,http://hl7.org/fhir/sid/icd-10-cm|B02.24,http://hl7.org/fhir/sid/icd-10-cm|B02.29,http://hl7.org/fhir/sid/icd-10-cm|B02.3,http://hl7.org/fhir/sid/icd-10-cm|B02.30,http://hl7.org/fhir/sid/icd-10-cm|B02.31,http://hl7.org/fhir/sid/icd-10-cm|B02.32,http://hl7.org/fhir/sid/icd-10-cm|B02.33,http://hl7.org/fhir/sid/icd-10-cm|B02.34,http://hl7.org/fhir/sid/icd-10-cm|B02.39,http://hl7.org/fhir/sid/icd-10-cm|B02.7,http://hl7.org/fhir/sid/icd-10-cm|B02.8,http://hl7.org/fhir/sid/icd-10-cm|B02.9,http://hl7.org/fhir/sid/icd-9-cm|053.0,http://hl7.org/fhir/sid/icd-9-cm|053.1,http://hl7.org/fhir/sid/icd-9-cm|053.10,http://hl7.org/fhir/sid/icd-9-cm|053.11,http://hl7.org/fhir/sid/icd-9-cm|053.12,http://hl7.org/fhir/sid/icd-9-cm|053.13,http://hl7.org/fhir/sid/icd-9-cm|053.14,http://hl7.org/fhir/sid/icd-9-cm|053.19,http://hl7.org/fhir/sid/icd-9-cm|053.2,http://hl7.org/fhir/sid/icd-9-cm|053.20,http://hl7.org/fhir/sid/icd-9-cm|053.21,http://hl7.org/fhir/sid/icd-9-cm|053.22,http://hl7.org/fhir/sid/icd-9-cm|053.29,http://hl7.org/fhir/sid/icd-9-cm|053.7,http://hl7.org/fhir/sid/icd-9-cm|053.71,http://hl7.org/fhir/sid/icd-9-cm|053.79,http://hl7.org/fhir/sid/icd-9-cm|053.8,http://hl7.org/fhir/sid/icd-9-cm|053.9",
+      "prompt_text": "Find patients with shingles."
+     },
+     "3-broad": {
+      "precision": 1.0,
+      "recall": 0.2341,
+      "f1": 0.3794,
+      "passed": false,
+      "expected_count": 1559,
+      "actual_count": 365,
+      "elapsed_sec": 24.2,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|B02.9,http://hl7.org/fhir/sid/icd-10-cm|B02,http://snomed.info/sct|4740000",
+      "additional_query_urls": [],
+      "raw_response": "FINAL ANSWER:\n\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|B02.9,http://hl7.org/fhir/sid/icd-10-cm|B02,http://snomed.info/sct|4740000",
+      "prompt_text": "Find patients diagnosed with herpes zoster \u2014 also known as shingles, a reactivation of varicella-zoster virus that typically presents as a painful unilateral dermatomal rash."
+     },
+     "3-expert": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 1559,
+      "actual_count": 0,
+      "elapsed_sec": 26.0,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|4740000",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|4740000",
+      "prompt_text": "I need to identify patients with a documented diagnosis of herpes zoster (shingles) in their clinical record. Search Condition resources for the herpes zoster concept coded in SNOMED CT. Be precise in scoping: herpes zoster is the reactivation of the varicella-zoster virus and is clinically distinct from primary varicella (chickenpox) and from herpes simplex virus infections \u2014 do not broaden to those related but distinct conditions."
+     }
+    },
     "copilot:claude-sonnet-4.6": {
      "1-naive": {
       "precision": 1.0,
@@ -2487,6 +2765,134 @@
       "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|281",
       "additional_query_urls": [],
       "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|281",
+      "prompt_text": "I need to identify patients who received acyclovir, the primary antiviral used to treat herpes zoster. Search MedicationRequest resources for acyclovir coded in RxNorm. Be aware of the significant cross-indication: acyclovir is also the standard treatment for herpes simplex virus type 1 and type 2 infections (oral cold sores and genital herpes), so this medication-only cohort will include patients treated for HSV rather than zoster \u2014 a diagnosis-plus-medication approach would be needed to isolate true shingles cases."
+     }
+    },
+    "copilot:claude-opus-4.7+mimic": {
+     "1-naive": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 3679,
+      "actual_count": 0,
+      "elapsed_sec": 7.4,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|281",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|281",
+      "prompt_text": "Find patients on acyclovir."
+     },
+     "1-broad": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 3679,
+      "actual_count": 0,
+      "elapsed_sec": 7.7,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|281",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|281",
+      "prompt_text": "Find patients prescribed acyclovir \u2014 an antiviral commonly used to treat herpes zoster (shingles), as well as herpes simplex virus infections."
+     },
+     "1-expert": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 3679,
+      "actual_count": 0,
+      "elapsed_sec": 7.5,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|281",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|281",
+      "prompt_text": "I need to identify patients who received acyclovir, the primary antiviral used to treat herpes zoster. Search MedicationRequest resources for acyclovir coded in RxNorm. Be aware of the significant cross-indication: acyclovir is also the standard treatment for herpes simplex virus type 1 and type 2 infections (oral cold sores and genital herpes), so this medication-only cohort will include patients treated for HSV rather than zoster \u2014 a diagnosis-plus-medication approach would be needed to isolate true shingles cases."
+     },
+     "2-naive": {
+      "precision": 1.0,
+      "recall": 0.6551,
+      "f1": 0.7916,
+      "passed": true,
+      "expected_count": 3679,
+      "actual_count": 2410,
+      "elapsed_sec": 40.8,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?medication.code:text=acyclovir",
+      "additional_query_urls": [],
+      "raw_response": "FINAL ANSWER:\n\nMedicationRequest?medication.code:text=acyclovir",
+      "prompt_text": "Find patients on acyclovir."
+     },
+     "2-broad": {
+      "precision": 1.0,
+      "recall": 0.6551,
+      "f1": 0.7916,
+      "passed": true,
+      "expected_count": 3679,
+      "actual_count": 2410,
+      "elapsed_sec": 38.8,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?medication.code:text=acyclovir",
+      "additional_query_urls": [],
+      "raw_response": "FINAL ANSWER:\n\nMedicationRequest?medication.code:text=acyclovir",
+      "prompt_text": "Find patients prescribed acyclovir \u2014 an antiviral commonly used to treat herpes zoster (shingles), as well as herpes simplex virus infections."
+     },
+     "2-expert": {
+      "precision": 1.0,
+      "recall": 0.6551,
+      "f1": 0.7916,
+      "passed": true,
+      "expected_count": 3679,
+      "actual_count": 2410,
+      "elapsed_sec": 41.5,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|281",
+      "additional_query_urls": [],
+      "raw_response": "FINAL ANSWER:\n\nMedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|281",
+      "prompt_text": "I need to identify patients who received acyclovir, the primary antiviral used to treat herpes zoster. Search MedicationRequest resources for acyclovir coded in RxNorm. Be aware of the significant cross-indication: acyclovir is also the standard treatment for herpes simplex virus type 1 and type 2 infections (oral cold sores and genital herpes), so this medication-only cohort will include patients treated for HSV rather than zoster \u2014 a diagnosis-plus-medication approach would be needed to isolate true shingles cases."
+     },
+     "3-naive": {
+      "precision": 1.0,
+      "recall": 0.6551,
+      "f1": 0.7916,
+      "passed": true,
+      "expected_count": 3679,
+      "actual_count": 2410,
+      "elapsed_sec": 51.9,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?medication.code:text=acyclovir",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?medication.code:text=acyclovir",
+      "prompt_text": "Find patients on acyclovir."
+     },
+     "3-broad": {
+      "precision": 1.0,
+      "recall": 0.6551,
+      "f1": 0.7916,
+      "passed": true,
+      "expected_count": 3679,
+      "actual_count": 2410,
+      "elapsed_sec": 38.2,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?medication.code:text=acyclovir",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?medication.code:text=acyclovir",
+      "prompt_text": "Find patients prescribed acyclovir \u2014 an antiviral commonly used to treat herpes zoster (shingles), as well as herpes simplex virus infections."
+     },
+     "3-expert": {
+      "precision": 1.0,
+      "recall": 0.6551,
+      "f1": 0.7916,
+      "passed": true,
+      "expected_count": 3679,
+      "actual_count": 2410,
+      "elapsed_sec": 45.3,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|281",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|281",
       "prompt_text": "I need to identify patients who received acyclovir, the primary antiviral used to treat herpes zoster. Search MedicationRequest resources for acyclovir coded in RxNorm. Be aware of the significant cross-indication: acyclovir is also the standard treatment for herpes simplex virus type 1 and type 2 infections (oral cold sores and genital herpes), so this medication-only cohort will include patients treated for HSV rather than zoster \u2014 a diagnosis-plus-medication approach would be needed to isolate true shingles cases."
      }
     },

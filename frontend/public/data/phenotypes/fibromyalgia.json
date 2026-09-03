@@ -1024,6 +1024,150 @@
       "prompt_text": "I need to identify all fibromyalgia patients using a union across Condition and MedicationRequest resources. Search Condition resources for fibromyalgia \u2014 coded in SNOMED CT as fibromyositis, the canonical concept \u2014 and separately search MedicationRequest resources for the agents commonly used to manage fibromyalgia symptoms: duloxetine, gabapentin, and amitriptyline, each coded in RxNorm. Union the patient sets; the medication path captures treated patients who may lack a formal diagnosis, but these drugs carry heavy cross-indication \u2014 duloxetine for depression and anxiety, gabapentin for epilepsy and neuropathic pain, amitriptyline for depression and migraine prophylaxis \u2014 so the medication-only cohort will include many non-fibromyalgia patients."
      }
     },
+    "copilot:claude-opus-4.7+mimic": {
+     "1-naive": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 6245,
+      "actual_count": 0,
+      "elapsed_sec": 7.6,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|24693007",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|24693007",
+      "prompt_text": "Find all fibromyalgia patients."
+     },
+     "1-broad": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 6245,
+      "actual_count": 0,
+      "elapsed_sec": 8.8,
+      "queries_generated": 4,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|203082005",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|72625",
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|25480",
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|704"
+      ],
+      "raw_response": "Condition?code=http://snomed.info/sct|203082005\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|72625\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|25480\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|704",
+      "prompt_text": "Find all fibromyalgia patients \u2014 by diagnosis or by chronic-pain medications (duloxetine, gabapentin, amitriptyline). Run multiple queries and union the patient sets."
+     },
+     "1-expert": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 6245,
+      "actual_count": 0,
+      "elapsed_sec": 8.5,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|24693007",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|72625,http://www.nlm.nih.gov/research/umls/rxnorm|25480,http://www.nlm.nih.gov/research/umls/rxnorm|704"
+      ],
+      "raw_response": "Condition?code=http://snomed.info/sct|24693007\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|72625,http://www.nlm.nih.gov/research/umls/rxnorm|25480,http://www.nlm.nih.gov/research/umls/rxnorm|704",
+      "prompt_text": "I need to identify all fibromyalgia patients using a union across Condition and MedicationRequest resources. Search Condition resources for fibromyalgia \u2014 coded in SNOMED CT as fibromyositis, the canonical concept \u2014 and separately search MedicationRequest resources for the agents commonly used to manage fibromyalgia symptoms: duloxetine, gabapentin, and amitriptyline, each coded in RxNorm. Union the patient sets; the medication path captures treated patients who may lack a formal diagnosis, but these drugs carry heavy cross-indication \u2014 duloxetine for depression and anxiety, gabapentin for epilepsy and neuropathic pain, amitriptyline for depression and migraine prophylaxis \u2014 so the medication-only cohort will include many non-fibromyalgia patients."
+     },
+     "2-naive": {
+      "precision": 1.0,
+      "recall": 0.207,
+      "f1": 0.3431,
+      "passed": false,
+      "expected_count": 6245,
+      "actual_count": 1293,
+      "elapsed_sec": 22.7,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|M79.7",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|M79.7",
+      "prompt_text": "Find all fibromyalgia patients."
+     },
+     "2-broad": {
+      "precision": 0.9977,
+      "recall": 0.207,
+      "f1": 0.3429,
+      "passed": false,
+      "expected_count": 6245,
+      "actual_count": 1296,
+      "elapsed_sec": 63.4,
+      "queries_generated": 4,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|M79.7",
+      "additional_query_urls": [
+       "MedicationRequest?medication.code=http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Duloxetine",
+       "MedicationRequest?medication.code=http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Gabapentin",
+       "MedicationRequest?medication.code=http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Amitriptyline"
+      ],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|M79.7\nMedicationRequest?medication.code=http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Duloxetine\nMedicationRequest?medication.code=http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Gabapentin\nMedicationRequest?medication.code=http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Amitriptyline",
+      "prompt_text": "Find all fibromyalgia patients \u2014 by diagnosis or by chronic-pain medications (duloxetine, gabapentin, amitriptyline). Run multiple queries and union the patient sets."
+     },
+     "2-expert": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 6245,
+      "actual_count": 0,
+      "elapsed_sec": 45.2,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|24693007",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|72625,http://www.nlm.nih.gov/research/umls/rxnorm|25480,http://www.nlm.nih.gov/research/umls/rxnorm|704"
+      ],
+      "raw_response": "Condition?code=http://snomed.info/sct|24693007\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|72625,http://www.nlm.nih.gov/research/umls/rxnorm|25480,http://www.nlm.nih.gov/research/umls/rxnorm|704",
+      "prompt_text": "I need to identify all fibromyalgia patients using a union across Condition and MedicationRequest resources. Search Condition resources for fibromyalgia \u2014 coded in SNOMED CT as fibromyositis, the canonical concept \u2014 and separately search MedicationRequest resources for the agents commonly used to manage fibromyalgia symptoms: duloxetine, gabapentin, and amitriptyline, each coded in RxNorm. Union the patient sets; the medication path captures treated patients who may lack a formal diagnosis, but these drugs carry heavy cross-indication \u2014 duloxetine for depression and anxiety, gabapentin for epilepsy and neuropathic pain, amitriptyline for depression and migraine prophylaxis \u2014 so the medication-only cohort will include many non-fibromyalgia patients."
+     },
+     "3-naive": {
+      "precision": 1.0,
+      "recall": 0.207,
+      "f1": 0.3431,
+      "passed": false,
+      "expected_count": 6245,
+      "actual_count": 1293,
+      "elapsed_sec": 14.1,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|24693007,http://hl7.org/fhir/sid/icd-10-cm|M79.7",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|24693007,http://hl7.org/fhir/sid/icd-10-cm|M79.7",
+      "prompt_text": "Find all fibromyalgia patients."
+     },
+     "3-broad": {
+      "precision": 1.0,
+      "recall": 0.5843,
+      "f1": 0.7376,
+      "passed": true,
+      "expected_count": 6245,
+      "actual_count": 3649,
+      "elapsed_sec": 93.7,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|M79.7,http://hl7.org/fhir/sid/icd-9-cm|729.1",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|72625,http://www.nlm.nih.gov/research/umls/rxnorm|25480,http://www.nlm.nih.gov/research/umls/rxnorm|704"
+      ],
+      "raw_response": "Based on my investigation:\n- Fibromyalgia dx: ICD-10 M79.7 returns 2270 Conditions on this server\n- MedicationRequests have no inline codes; medication is referenced. I'll emit RxNorm-based MedicationRequest queries for the three drugs (duloxetine 72625, gabapentin 25480, amitriptyline 704) for union.\n\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|M79.7,http://hl7.org/fhir/sid/icd-9-cm|729.1\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|72625,http://www.nlm.nih.gov/research/umls/rxnorm|25480,http://www.nlm.nih.gov/research/umls/rxnorm|704",
+      "prompt_text": "Find all fibromyalgia patients \u2014 by diagnosis or by chronic-pain medications (duloxetine, gabapentin, amitriptyline). Run multiple queries and union the patient sets."
+     },
+     "3-expert": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 6245,
+      "actual_count": 0,
+      "elapsed_sec": 68.0,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|24693007",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|72625,http://www.nlm.nih.gov/research/umls/rxnorm|25480,http://www.nlm.nih.gov/research/umls/rxnorm|704"
+      ],
+      "raw_response": "Condition?code=http://snomed.info/sct|24693007\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|72625,http://www.nlm.nih.gov/research/umls/rxnorm|25480,http://www.nlm.nih.gov/research/umls/rxnorm|704",
+      "prompt_text": "I need to identify all fibromyalgia patients using a union across Condition and MedicationRequest resources. Search Condition resources for fibromyalgia \u2014 coded in SNOMED CT as fibromyositis, the canonical concept \u2014 and separately search MedicationRequest resources for the agents commonly used to manage fibromyalgia symptoms: duloxetine, gabapentin, and amitriptyline, each coded in RxNorm. Union the patient sets; the medication path captures treated patients who may lack a formal diagnosis, but these drugs carry heavy cross-indication \u2014 duloxetine for depression and anxiety, gabapentin for epilepsy and neuropathic pain, amitriptyline for depression and migraine prophylaxis \u2014 so the medication-only cohort will include many non-fibromyalgia patients."
+     }
+    },
     "copilot:claude-sonnet-4.6": {
      "1-naive": {
       "precision": 1.0,
@@ -1804,6 +1948,134 @@
       "prompt_text": "I need to find patients with a documented fibromyalgia diagnosis. Search Condition resources for fibromyalgia coded in SNOMED CT \u2014 note that the canonical SNOMED term for this condition is fibromyositis, which is the preferred concept for this chronic widespread pain syndrome."
      }
     },
+    "copilot:claude-opus-4.7+mimic": {
+     "1-naive": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 6245,
+      "actual_count": 0,
+      "elapsed_sec": 7.1,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|203082005",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|203082005",
+      "prompt_text": "Find patients with fibromyalgia."
+     },
+     "1-broad": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 6245,
+      "actual_count": 0,
+      "elapsed_sec": 6.9,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|203082005",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|203082005",
+      "prompt_text": "Find patients diagnosed with fibromyalgia \u2014 a chronic widespread pain syndrome with associated fatigue, sleep disturbance, and cognitive symptoms."
+     },
+     "1-expert": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 6245,
+      "actual_count": 0,
+      "elapsed_sec": 7.0,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|24693007",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|24693007",
+      "prompt_text": "I need to find patients with a documented fibromyalgia diagnosis. Search Condition resources for fibromyalgia coded in SNOMED CT \u2014 note that the canonical SNOMED term for this condition is fibromyositis, which is the preferred concept for this chronic widespread pain syndrome."
+     },
+     "2-naive": {
+      "precision": 1.0,
+      "recall": 0.207,
+      "f1": 0.3431,
+      "passed": false,
+      "expected_count": 6245,
+      "actual_count": 1293,
+      "elapsed_sec": 27.6,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|M79.7",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|M79.7",
+      "prompt_text": "Find patients with fibromyalgia."
+     },
+     "2-broad": {
+      "precision": 1.0,
+      "recall": 0.207,
+      "f1": 0.3431,
+      "passed": false,
+      "expected_count": 6245,
+      "actual_count": 1293,
+      "elapsed_sec": 21.2,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|M79.7",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|M79.7",
+      "prompt_text": "Find patients diagnosed with fibromyalgia \u2014 a chronic widespread pain syndrome with associated fatigue, sleep disturbance, and cognitive symptoms."
+     },
+     "2-expert": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 6245,
+      "actual_count": 0,
+      "elapsed_sec": 23.5,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|24693007",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|24693007",
+      "prompt_text": "I need to find patients with a documented fibromyalgia diagnosis. Search Condition resources for fibromyalgia coded in SNOMED CT \u2014 note that the canonical SNOMED term for this condition is fibromyositis, which is the preferred concept for this chronic widespread pain syndrome."
+     },
+     "3-naive": {
+      "precision": 1.0,
+      "recall": 0.207,
+      "f1": 0.3431,
+      "passed": false,
+      "expected_count": 6245,
+      "actual_count": 1293,
+      "elapsed_sec": 20.3,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|M79.7",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|M79.7",
+      "prompt_text": "Find patients with fibromyalgia."
+     },
+     "3-broad": {
+      "precision": 1.0,
+      "recall": 0.207,
+      "f1": 0.3431,
+      "passed": false,
+      "expected_count": 6245,
+      "actual_count": 1293,
+      "elapsed_sec": 22.5,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|203082005,http://hl7.org/fhir/sid/icd-10-cm|M79.7",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|203082005,http://hl7.org/fhir/sid/icd-10-cm|M79.7",
+      "prompt_text": "Find patients diagnosed with fibromyalgia \u2014 a chronic widespread pain syndrome with associated fatigue, sleep disturbance, and cognitive symptoms."
+     },
+     "3-expert": {
+      "precision": 1.0,
+      "recall": 0.207,
+      "f1": 0.3431,
+      "passed": false,
+      "expected_count": 6245,
+      "actual_count": 1293,
+      "elapsed_sec": 36.4,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|203082005,http://snomed.info/sct|95417003,http://hl7.org/fhir/sid/icd-10-cm|M79.7",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|203082005,http://snomed.info/sct|95417003,http://hl7.org/fhir/sid/icd-10-cm|M79.7",
+      "prompt_text": "I need to find patients with a documented fibromyalgia diagnosis. Search Condition resources for fibromyalgia coded in SNOMED CT \u2014 note that the canonical SNOMED term for this condition is fibromyositis, which is the preferred concept for this chronic widespread pain syndrome."
+     }
+    },
     "copilot:claude-sonnet-4.6": {
      "1-naive": {
       "precision": 0.0,
@@ -2536,6 +2808,137 @@
        "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|704"
       ],
       "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|72625\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|25480\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|704",
+      "prompt_text": "Identify patients treated pharmacologically for fibromyalgia symptom management via their medication orders. Search MedicationRequest resources for duloxetine, gabapentin, and amitriptyline \u2014 all coded in RxNorm \u2014 which represent the main drug classes used for fibromyalgia: an SNRI, a gabapentinoid, and a tricyclic antidepressant. All three carry substantial cross-indication: duloxetine is widely prescribed for depression, anxiety, and diabetic neuropathy; gabapentin for epilepsy and neuropathic pain broadly; amitriptyline for depression, migraine prophylaxis, and insomnia \u2014 so a medication-only cohort will include many patients treated for conditions other than fibromyalgia."
+     }
+    },
+    "copilot:claude-opus-4.7+mimic": {
+     "1-naive": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 25458,
+      "actual_count": 0,
+      "elapsed_sec": 12.3,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|7052,http://www.nlm.nih.gov/research/umls/rxnorm|161,http://www.nlm.nih.gov/research/umls/rxnorm|3423,http://www.nlm.nih.gov/research/umls/rxnorm|7804,http://www.nlm.nih.gov/research/umls/rxnorm|7243,http://www.nlm.nih.gov/research/umls/rxnorm|10689,http://www.nlm.nih.gov/research/umls/rxnorm|1819,http://www.nlm.nih.gov/research/umls/rxnorm|4337,http://www.nlm.nih.gov/research/umls/rxnorm|73032&status=active&intent=order",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|7052,http://www.nlm.nih.gov/research/umls/rxnorm|161,http://www.nlm.nih.gov/research/umls/rxnorm|3423,http://www.nlm.nih.gov/research/umls/rxnorm|7804,http://www.nlm.nih.gov/research/umls/rxnorm|7243,http://www.nlm.nih.gov/research/umls/rxnorm|10689,http://www.nlm.nih.gov/research/umls/rxnorm|1819,http://www.nlm.nih.gov/research/umls/rxnorm|4337,http://www.nlm.nih.gov/research/umls/rxnorm|73032&status=active&intent=order",
+      "prompt_text": "Find patients on chronic pain meds."
+     },
+     "1-broad": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 25458,
+      "actual_count": 0,
+      "elapsed_sec": 8.3,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|72625,http://www.nlm.nih.gov/research/umls/rxnorm|25480,http://www.nlm.nih.gov/research/umls/rxnorm|704",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|72625,http://www.nlm.nih.gov/research/umls/rxnorm|25480,http://www.nlm.nih.gov/research/umls/rxnorm|704",
+      "prompt_text": "Find patients prescribed duloxetine (SNRI antidepressant), gabapentin (gabapentinoid), or amitriptyline (tricyclic antidepressant) \u2014 all used in fibromyalgia and other chronic pain conditions."
+     },
+     "1-expert": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 25458,
+      "actual_count": 0,
+      "elapsed_sec": 8.8,
+      "queries_generated": 3,
+      "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|72625",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|25480",
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|704"
+      ],
+      "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|72625\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|25480\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|704",
+      "prompt_text": "Identify patients treated pharmacologically for fibromyalgia symptom management via their medication orders. Search MedicationRequest resources for duloxetine, gabapentin, and amitriptyline \u2014 all coded in RxNorm \u2014 which represent the main drug classes used for fibromyalgia: an SNRI, a gabapentinoid, and a tricyclic antidepressant. All three carry substantial cross-indication: duloxetine is widely prescribed for depression, anxiety, and diabetic neuropathy; gabapentin for epilepsy and neuropathic pain broadly; amitriptyline for depression, migraine prophylaxis, and insomnia \u2014 so a medication-only cohort will include many patients treated for conditions other than fibromyalgia."
+     },
+     "2-naive": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 25458,
+      "actual_count": 0,
+      "elapsed_sec": 46.3,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?code=http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|OxyCODONE",
+      "additional_query_urls": [],
+      "raw_response": "FINAL ANSWER:\n\nMedicationRequest?code=http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|OxyCODONE (Immediate Release),http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Morphine Sulfate,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Fentanyl Patch,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|HYDROmorphone (Dilaudid),http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Methadone,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Oxycodone-Acetaminophen",
+      "prompt_text": "Find patients on chronic pain meds."
+     },
+     "2-broad": {
+      "precision": 0.8496,
+      "recall": 0.1715,
+      "f1": 0.2854,
+      "passed": false,
+      "expected_count": 25458,
+      "actual_count": 5140,
+      "elapsed_sec": 37.1,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?code=http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Duloxetine,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Gabapentin,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Amitriptyline",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?code=http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Duloxetine,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Gabapentin,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Amitriptyline",
+      "prompt_text": "Find patients prescribed duloxetine (SNRI antidepressant), gabapentin (gabapentinoid), or amitriptyline (tricyclic antidepressant) \u2014 all used in fibromyalgia and other chronic pain conditions."
+     },
+     "2-expert": {
+      "precision": 0.8496,
+      "recall": 0.1715,
+      "f1": 0.2854,
+      "passed": false,
+      "expected_count": 25458,
+      "actual_count": 5140,
+      "elapsed_sec": 56.9,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?code=http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Duloxetine,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Gabapentin,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Amitriptyline",
+      "additional_query_urls": [],
+      "raw_response": "FINAL ANSWER:\n\nMedicationRequest?code=http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Duloxetine,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Gabapentin,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Amitriptyline",
+      "prompt_text": "Identify patients treated pharmacologically for fibromyalgia symptom management via their medication orders. Search MedicationRequest resources for duloxetine, gabapentin, and amitriptyline \u2014 all coded in RxNorm \u2014 which represent the main drug classes used for fibromyalgia: an SNRI, a gabapentinoid, and a tricyclic antidepressant. All three carry substantial cross-indication: duloxetine is widely prescribed for depression, anxiety, and diabetic neuropathy; gabapentin for epilepsy and neuropathic pain broadly; amitriptyline for depression, migraine prophylaxis, and insomnia \u2014 so a medication-only cohort will include many patients treated for conditions other than fibromyalgia."
+     },
+     "3-naive": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 25458,
+      "actual_count": 0,
+      "elapsed_sec": 42.4,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?code=http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|OxyCODONE",
+      "additional_query_urls": [],
+      "raw_response": "FINAL ANSWER:\n\nMedicationRequest?code=http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|OxyCODONE (Immediate Release),http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Morphine Sulfate,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Fentanyl Patch,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Methadone,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Gabapentin,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Lidocaine 5% Patch",
+      "prompt_text": "Find patients on chronic pain meds."
+     },
+     "3-broad": {
+      "precision": 0.8496,
+      "recall": 0.1715,
+      "f1": 0.2854,
+      "passed": false,
+      "expected_count": 25458,
+      "actual_count": 5140,
+      "elapsed_sec": 44.0,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?code=http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Duloxetine,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Gabapentin,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Amitriptyline",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?code=http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Duloxetine,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Gabapentin,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Amitriptyline",
+      "prompt_text": "Find patients prescribed duloxetine (SNRI antidepressant), gabapentin (gabapentinoid), or amitriptyline (tricyclic antidepressant) \u2014 all used in fibromyalgia and other chronic pain conditions."
+     },
+     "3-expert": {
+      "precision": 0.8496,
+      "recall": 0.1715,
+      "f1": 0.2854,
+      "passed": false,
+      "expected_count": 25458,
+      "actual_count": 5140,
+      "elapsed_sec": 53.7,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?code=http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Duloxetine,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Gabapentin,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Amitriptyline",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?code=http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Duloxetine,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Gabapentin,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Amitriptyline",
       "prompt_text": "Identify patients treated pharmacologically for fibromyalgia symptom management via their medication orders. Search MedicationRequest resources for duloxetine, gabapentin, and amitriptyline \u2014 all coded in RxNorm \u2014 which represent the main drug classes used for fibromyalgia: an SNRI, a gabapentinoid, and a tricyclic antidepressant. All three carry substantial cross-indication: duloxetine is widely prescribed for depression, anxiety, and diabetic neuropathy; gabapentin for epilepsy and neuropathic pain broadly; amitriptyline for depression, migraine prophylaxis, and insomnia \u2014 so a medication-only cohort will include many patients treated for conditions other than fibromyalgia."
      }
     },

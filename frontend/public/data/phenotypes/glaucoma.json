@@ -231,6 +231,150 @@
       "prompt_text": "I need to identify all glaucoma patients using a two-resource union strategy. First, query Condition resources for glaucoma diagnoses across the clinically relevant SNOMED CT variants: open-angle glaucoma, primary angle-closure glaucoma, and the broader glaucoma concept \u2014 these subtypes are pathophysiologically distinct but all represent the target phenotype. Second, query MedicationRequest resources for timolol (coded in RxNorm), a topical beta-blocker eye drop that is the primary pharmacologic treatment for glaucoma; timolol is also used systemically for hypertension and migraine prophylaxis, so the medication cohort will include some non-glaucoma patients. Union the distinct patient IDs from both queries."
      }
     },
+    "copilot:claude-opus-4.7+mimic": {
+     "1-naive": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 5049,
+      "actual_count": 0,
+      "elapsed_sec": 7.5,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|23986001",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|23986001",
+      "prompt_text": "Find all glaucoma patients."
+     },
+     "1-broad": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 5049,
+      "actual_count": 0,
+      "elapsed_sec": 9.1,
+      "queries_generated": 5,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|23986001",
+      "additional_query_urls": [
+       "Condition?code=http://snomed.info/sct|392288006",
+       "Condition?code=http://snomed.info/sct|84428008",
+       "Condition?code=http://snomed.info/sct|389141003",
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|10600"
+      ],
+      "raw_response": "Condition?code=http://snomed.info/sct|23986001\nCondition?code=http://snomed.info/sct|392288006\nCondition?code=http://snomed.info/sct|84428008\nCondition?code=http://snomed.info/sct|389141003\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|10600",
+      "prompt_text": "Find all glaucoma patients \u2014 by diagnosis (open-angle, angle-closure, broader) or by timolol prescription. Run multiple queries and union the patient sets."
+     },
+     "1-expert": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 5049,
+      "actual_count": 0,
+      "elapsed_sec": 8.3,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|84494001,http://snomed.info/sct|392288006,http://snomed.info/sct|23986001",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|10600"
+      ],
+      "raw_response": "Condition?code=http://snomed.info/sct|84494001,http://snomed.info/sct|392288006,http://snomed.info/sct|23986001\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|10600",
+      "prompt_text": "I need to identify all glaucoma patients using a two-resource union strategy. First, query Condition resources for glaucoma diagnoses across the clinically relevant SNOMED CT variants: open-angle glaucoma, primary angle-closure glaucoma, and the broader glaucoma concept \u2014 these subtypes are pathophysiologically distinct but all represent the target phenotype. Second, query MedicationRequest resources for timolol (coded in RxNorm), a topical beta-blocker eye drop that is the primary pharmacologic treatment for glaucoma; timolol is also used systemically for hypertension and migraine prophylaxis, so the medication cohort will include some non-glaucoma patients. Union the distinct patient IDs from both queries."
+     },
+     "2-naive": {
+      "precision": 0.9758,
+      "recall": 0.064,
+      "f1": 0.1201,
+      "passed": false,
+      "expected_count": 5049,
+      "actual_count": 331,
+      "elapsed_sec": 34.0,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code:text=glaucoma",
+      "additional_query_urls": [],
+      "raw_response": "FINAL ANSWER:\n\nCondition?code:text=glaucoma",
+      "prompt_text": "Find all glaucoma patients."
+     },
+     "2-broad": {
+      "precision": 0.9978,
+      "recall": 0.9741,
+      "f1": 0.9858,
+      "passed": true,
+      "expected_count": 5049,
+      "actual_count": 4929,
+      "elapsed_sec": 135.6,
+      "queries_generated": 3,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|H40.9,http://hl7.org/fhir/sid/icd-10-cm|H40.10X0,http://hl7.org/fhir/sid/icd-10-cm|H40.10X1,http://hl7.org/fhir/sid/icd-10-cm|H40.10X2,http://hl7.org/fhir/sid/icd-10-cm|H40.10X3,http://hl7.org/fhir/sid/icd-10-cm|H40.10X4,http://hl7.org/fhir/sid/icd-10-cm|H40.11X0,http://hl7.org/fhir/sid/icd-10-cm|H40.11X1,http://hl7.org/fhir/sid/icd-10-cm|H40.11X2,http://hl7.org/fhir/sid/icd-10-cm|H40.11X3,http://hl7.org/fhir/sid/icd-10-cm|H40.11X4,http://hl7.org/fhir/sid/icd-10-cm|H40.12X0,http://hl7.org/fhir/sid/icd-10-cm|H40.12X1,http://hl7.org/fhir/sid/icd-10-cm|H40.12X2,http://hl7.org/fhir/sid/icd-10-cm|H40.12X3,http://hl7.org/fhir/sid/icd-10-cm|H40.12X4,http://hl7.org/fhir/sid/icd-10-cm|H40.13X0,http://hl7.org/fhir/sid/icd-10-cm|H40.13X1,http://hl7.org/fhir/sid/icd-10-cm|H40.13X2,http://hl7.org/fhir/sid/icd-10-cm|H40.13X3,http://hl7.org/fhir/sid/icd-10-cm|H40.13X4,http://hl7.org/fhir/sid/icd-10-cm|H40.14X0,http://hl7.org/fhir/sid/icd-10-cm|H40.14X1,http://hl7.org/fhir/sid/icd-10-cm|H40.14X2,http://hl7.org/fhir/sid/icd-10-cm|H40.14X3,http://hl7.org/fhir/sid/icd-10-cm|H40.14X4,http://hl7.org/fhir/sid/icd-10-cm|H40.15,http://hl7.org/fhir/sid/icd-10-cm|H40.20X0,http://hl7.org/fhir/sid/icd-10-cm|H40.20X1,http://hl7.org/fhir/sid/icd-10-cm|H40.20X2,http://hl7.org/fhir/sid/icd-10-cm|H40.20X3,http://hl7.org/fhir/sid/icd-10-cm|H40.20X4,http://hl7.org/fhir/sid/icd-10-cm|H40.21X0,http://hl7.org/fhir/sid/icd-10-cm|H40.21X1,http://hl7.org/fhir/sid/icd-10-cm|H40.21X2,http://hl7.org/fhir/sid/icd-10-cm|H40.21X3,http://hl7.org/fhir/sid/icd-10-cm|H40.21X4,http://hl7.org/fhir/sid/icd-10-cm|H40.22X0,http://hl7.org/fhir/sid/icd-10-cm|H40.22X1,http://hl7.org/fhir/sid/icd-10-cm|H40.22X2,http://hl7.org/fhir/sid/icd-10-cm|H40.22X3,http://hl7.org/fhir/sid/icd-10-cm|H40.22X4,http://hl7.org/fhir/sid/icd-10-cm|H40.23X0,http://hl7.org/fhir/sid/icd-10-cm|H40.23X1,http://hl7.org/fhir/sid/icd-10-cm|H40.23X2,http://hl7.org/fhir/sid/icd-10-cm|H40.23X3,http://hl7.org/fhir/sid/icd-10-cm|H40.23X4,http://hl7.org/fhir/sid/icd-10-cm|H40.24X0,http://hl7.org/fhir/sid/icd-10-cm|H40.24X1,http://hl7.org/fhir/sid/icd-10-cm|H40.24X2,http://hl7.org/fhir/sid/icd-10-cm|H40.24X3,http://hl7.org/fhir/sid/icd-10-cm|H40.24X4,http://hl7.org/fhir/sid/icd-10-cm|H40.30X0,http://hl7.org/fhir/sid/icd-10-cm|H40.40X0,http://hl7.org/fhir/sid/icd-10-cm|H40.50X0,http://hl7.org/fhir/sid/icd-10-cm|H40.60X0,http://hl7.org/fhir/sid/icd-10-cm|H40.811,http://hl7.org/fhir/sid/icd-10-cm|H40.812,http://hl7.org/fhir/sid/icd-10-cm|H40.813,http://hl7.org/fhir/sid/icd-10-cm|H40.819,http://hl7.org/fhir/sid/icd-10-cm|H40.821,http://hl7.org/fhir/sid/icd-10-cm|H40.822,http://hl7.org/fhir/sid/icd-10-cm|H40.823,http://hl7.org/fhir/sid/icd-10-cm|H40.829,http://hl7.org/fhir/sid/icd-10-cm|H40.831,http://hl7.org/fhir/sid/icd-10-cm|H40.832,http://hl7.org/fhir/sid/icd-10-cm|H40.833,http://hl7.org/fhir/sid/icd-10-cm|H40.839,http://hl7.org/fhir/sid/icd-10-cm|H40.89,http://hl7.org/fhir/sid/icd-10-cm|H42,http://hl7.org/fhir/sid/icd-10-cm|Q15.0",
+      "additional_query_urls": [
+       "Condition?code=http://hl7.org/fhir/sid/icd-9-cm|365.00,http://hl7.org/fhir/sid/icd-9-cm|365.01,http://hl7.org/fhir/sid/icd-9-cm|365.02,http://hl7.org/fhir/sid/icd-9-cm|365.03,http://hl7.org/fhir/sid/icd-9-cm|365.04,http://hl7.org/fhir/sid/icd-9-cm|365.10,http://hl7.org/fhir/sid/icd-9-cm|365.11,http://hl7.org/fhir/sid/icd-9-cm|365.12,http://hl7.org/fhir/sid/icd-9-cm|365.13,http://hl7.org/fhir/sid/icd-9-cm|365.15,http://hl7.org/fhir/sid/icd-9-cm|365.20,http://hl7.org/fhir/sid/icd-9-cm|365.21,http://hl7.org/fhir/sid/icd-9-cm|365.22,http://hl7.org/fhir/sid/icd-9-cm|365.23,http://hl7.org/fhir/sid/icd-9-cm|365.24,http://hl7.org/fhir/sid/icd-9-cm|365.31,http://hl7.org/fhir/sid/icd-9-cm|365.32,http://hl7.org/fhir/sid/icd-9-cm|365.41,http://hl7.org/fhir/sid/icd-9-cm|365.42,http://hl7.org/fhir/sid/icd-9-cm|365.43,http://hl7.org/fhir/sid/icd-9-cm|365.44,http://hl7.org/fhir/sid/icd-9-cm|365.51,http://hl7.org/fhir/sid/icd-9-cm|365.52,http://hl7.org/fhir/sid/icd-9-cm|365.59,http://hl7.org/fhir/sid/icd-9-cm|365.60,http://hl7.org/fhir/sid/icd-9-cm|365.61,http://hl7.org/fhir/sid/icd-9-cm|365.62,http://hl7.org/fhir/sid/icd-9-cm|365.63,http://hl7.org/fhir/sid/icd-9-cm|365.64,http://hl7.org/fhir/sid/icd-9-cm|365.65,http://hl7.org/fhir/sid/icd-9-cm|365.70,http://hl7.org/fhir/sid/icd-9-cm|365.71,http://hl7.org/fhir/sid/icd-9-cm|365.72,http://hl7.org/fhir/sid/icd-9-cm|365.73,http://hl7.org/fhir/sid/icd-9-cm|365.74,http://hl7.org/fhir/sid/icd-9-cm|365.81,http://hl7.org/fhir/sid/icd-9-cm|365.82,http://hl7.org/fhir/sid/icd-9-cm|365.83,http://hl7.org/fhir/sid/icd-9-cm|365.89,http://hl7.org/fhir/sid/icd-9-cm|365.9,http://hl7.org/fhir/sid/icd-9-cm|743.20,http://hl7.org/fhir/sid/icd-9-cm|743.21,http://hl7.org/fhir/sid/icd-9-cm|743.22",
+       "MedicationRequest?medication.code=http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Timolol"
+      ],
+      "raw_response": "Based on evidence gathered, providing FHIR queries. Server uses ICD-10-CM, ICD-9-CM for Condition, and mimic-medication-name for MedicationRequest.medication.\n\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|H40.9,http://hl7.org/fhir/sid/icd-10-cm|H40.10X0,http://hl7.org/fhir/sid/icd-10-cm|H40.10X1,http://hl7.org/fhir/sid/icd-10-cm|H40.10X2,http://hl7.org/fhir/sid/icd-10-cm|H40.10X3,http://hl7.org/fhir/sid/icd-10-cm|H40.10X4,http://hl7.org/fhir/sid/icd-10-cm|H40.11X0,http://hl7.org/fhir/sid/icd-10-cm|H40.11X1,http://hl7.org/fhir/sid/icd-10-cm|H40.11X2,http://hl7.org/fhir/sid/icd-10-cm|H40.11X3,http://hl7.org/fhir/sid/icd-10-cm|H40.11X4,http://hl7.org/fhir/sid/icd-10-cm|H40.12X0,http://hl7.org/fhir/sid/icd-10-cm|H40.12X1,http://hl7.org/fhir/sid/icd-10-cm|H40.12X2,http://hl7.org/fhir/sid/icd-10-cm|H40.12X3,http://hl7.org/fhir/sid/icd-10-cm|H40.12X4,http://hl7.org/fhir/sid/icd-10-cm|H40.13X0,http://hl7.org/fhir/sid/icd-10-cm|H40.13X1,http://hl7.org/fhir/sid/icd-10-cm|H40.13X2,http://hl7.org/fhir/sid/icd-10-cm|H40.13X3,http://hl7.org/fhir/sid/icd-10-cm|H40.13X4,http://hl7.org/fhir/sid/icd-10-cm|H40.14X0,http://hl7.org/fhir/sid/icd-10-cm|H40.14X1,http://hl7.org/fhir/sid/icd-10-cm|H40.14X2,http://hl7.org/fhir/sid/icd-10-cm|H40.14X3,http://hl7.org/fhir/sid/icd-10-cm|H40.14X4,http://hl7.org/fhir/sid/icd-10-cm|H40.15,http://hl7.org/fhir/sid/icd-10-cm|H40.20X0,http://hl7.org/fhir/sid/icd-10-cm|H40.20X1,http://hl7.org/fhir/sid/icd-10-cm|H40.20X2,http://hl7.org/fhir/sid/icd-10-cm|H40.20X3,http://hl7.org/fhir/sid/icd-10-cm|H40.20X4,http://hl7.org/fhir/sid/icd-10-cm|H40.21X0,http://hl7.org/fhir/sid/icd-10-cm|H40.21X1,http://hl7.org/fhir/sid/icd-10-cm|H40.21X2,http://hl7.org/fhir/sid/icd-10-cm|H40.21X3,http://hl7.org/fhir/sid/icd-10-cm|H40.21X4,http://hl7.org/fhir/sid/icd-10-cm|H40.22X0,http://hl7.org/fhir/sid/icd-10-cm|H40.22X1,http://hl7.org/fhir/sid/icd-10-cm|H40.22X2,http://hl7.org/fhir/sid/icd-10-cm|H40.22X3,http://hl7.org/fhir/sid/icd-10-cm|H40.22X4,http://hl7.org/fhir/sid/icd-10-cm|H40.23X0,http://hl7.org/fhir/sid/icd-10-cm|H40.23X1,http://hl7.org/fhir/sid/icd-10-cm|H40.23X2,http://hl7.org/fhir/sid/icd-10-cm|H40.23X3,http://hl7.org/fhir/sid/icd-10-cm|H40.23X4,http://hl7.org/fhir/sid/icd-10-cm|H40.24X0,http://hl7.org/fhir/sid/icd-10-cm|H40.24X1,http://hl7.org/fhir/sid/icd-10-cm|H40.24X2,http://hl7.org/fhir/sid/icd-10-cm|H40.24X3,http://hl7.org/fhir/sid/icd-10-cm|H40.24X4,http://hl7.org/fhir/sid/icd-10-cm|H40.30X0,http://hl7.org/fhir/sid/icd-10-cm|H40.40X0,http://hl7.org/fhir/sid/icd-10-cm|H40.50X0,http://hl7.org/fhir/sid/icd-10-cm|H40.60X0,http://hl7.org/fhir/sid/icd-10-cm|H40.811,http://hl7.org/fhir/sid/icd-10-cm|H40.812,http://hl7.org/fhir/sid/icd-10-cm|H40.813,http://hl7.org/fhir/sid/icd-10-cm|H40.819,http://hl7.org/fhir/sid/icd-10-cm|H40.821,http://hl7.org/fhir/sid/icd-10-cm|H40.822,http://hl7.org/fhir/sid/icd-10-cm|H40.823,http://hl7.org/fhir/sid/icd-10-cm|H40.829,http://hl7.org/fhir/sid/icd-10-cm|H40.831,http://hl7.org/fhir/sid/icd-10-cm|H40.832,http://hl7.org/fhir/sid/icd-10-cm|H40.833,http://hl7.org/fhir/sid/icd-10-cm|H40.839,http://hl7.org/fhir/sid/icd-10-cm|H40.89,http://hl7.org/fhir/sid/icd-10-cm|H42,http://hl7.org/fhir/sid/icd-10-cm|Q15.0\nCondition?code=http://hl7.org/fhir/sid/icd-9-cm|365.00,http://hl7.org/fhir/sid/icd-9-cm|365.01,http://hl7.org/fhir/sid/icd-9-cm|365.02,http://hl7.org/fhir/sid/icd-9-cm|365.03,http://hl7.org/fhir/sid/icd-9-cm|365.04,http://hl7.org/fhir/sid/icd-9-cm|365.10,http://hl7.org/fhir/sid/icd-9-cm|365.11,http://hl7.org/fhir/sid/icd-9-cm|365.12,http://hl7.org/fhir/sid/icd-9-cm|365.13,http://hl7.org/fhir/sid/icd-9-cm|365.15,http://hl7.org/fhir/sid/icd-9-cm|365.20,http://hl7.org/fhir/sid/icd-9-cm|365.21,http://hl7.org/fhir/sid/icd-9-cm|365.22,http://hl7.org/fhir/sid/icd-9-cm|365.23,http://hl7.org/fhir/sid/icd-9-cm|365.24,http://hl7.org/fhir/sid/icd-9-cm|365.31,http://hl7.org/fhir/sid/icd-9-cm|365.32,http://hl7.org/fhir/sid/icd-9-cm|365.41,http://hl7.org/fhir/sid/icd-9-cm|365.42,http://hl7.org/fhir/sid/icd-9-cm|365.43,http://hl7.org/fhir/sid/icd-9-cm|365.44,http://hl7.org/fhir/sid/icd-9-cm|365.51,http://hl7.org/fhir/sid/icd-9-cm|365.52,http://hl7.org/fhir/sid/icd-9-cm|365.59,http://hl7.org/fhir/sid/icd-9-cm|365.60,http://hl7.org/fhir/sid/icd-9-cm|365.61,http://hl7.org/fhir/sid/icd-9-cm|365.62,http://hl7.org/fhir/sid/icd-9-cm|365.63,http://hl7.org/fhir/sid/icd-9-cm|365.64,http://hl7.org/fhir/sid/icd-9-cm|365.65,http://hl7.org/fhir/sid/icd-9-cm|365.70,http://hl7.org/fhir/sid/icd-9-cm|365.71,http://hl7.org/fhir/sid/icd-9-cm|365.72,http://hl7.org/fhir/sid/icd-9-cm|365.73,http://hl7.org/fhir/sid/icd-9-cm|365.74,http://hl7.org/fhir/sid/icd-9-cm|365.81,http://hl7.org/fhir/sid/icd-9-cm|365.82,http://hl7.org/fhir/sid/icd-9-cm|365.83,http://hl7.org/fhir/sid/icd-9-cm|365.89,http://hl7.org/fhir/sid/icd-9-cm|365.9,http://hl7.org/fhir/sid/icd-9-cm|743.20,http://hl7.org/fhir/sid/icd-9-cm|743.21,http://hl7.org/fhir/sid/icd-9-cm|743.22\nMedicationRequest?medication.code=http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Timolol Maleate 0.5%,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Timolol Maleate 0.25%,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Timolol Maleate,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Timolol,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Dorzolamide-Timolol",
+      "prompt_text": "Find all glaucoma patients \u2014 by diagnosis (open-angle, angle-closure, broader) or by timolol prescription. Run multiple queries and union the patient sets."
+     },
+     "2-expert": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 5049,
+      "actual_count": 0,
+      "elapsed_sec": 86.2,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|84494001,http://snomed.info/sct|392288006,http://snomed.info/sct|23986001",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|10600"
+      ],
+      "raw_response": "Condition?code=http://snomed.info/sct|84494001,http://snomed.info/sct|392288006,http://snomed.info/sct|23986001\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|10600",
+      "prompt_text": "I need to identify all glaucoma patients using a two-resource union strategy. First, query Condition resources for glaucoma diagnoses across the clinically relevant SNOMED CT variants: open-angle glaucoma, primary angle-closure glaucoma, and the broader glaucoma concept \u2014 these subtypes are pathophysiologically distinct but all represent the target phenotype. Second, query MedicationRequest resources for timolol (coded in RxNorm), a topical beta-blocker eye drop that is the primary pharmacologic treatment for glaucoma; timolol is also used systemically for hypertension and migraine prophylaxis, so the medication cohort will include some non-glaucoma patients. Union the distinct patient IDs from both queries."
+     },
+     "3-naive": {
+      "precision": 0.9758,
+      "recall": 0.064,
+      "f1": 0.1201,
+      "passed": false,
+      "expected_count": 5049,
+      "actual_count": 331,
+      "elapsed_sec": 23.5,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code:text=glaucoma",
+      "additional_query_urls": [],
+      "raw_response": "FINAL ANSWER:\n\nCondition?code:text=glaucoma",
+      "prompt_text": "Find all glaucoma patients."
+     },
+     "3-broad": {
+      "precision": 0.9758,
+      "recall": 0.064,
+      "f1": 0.1201,
+      "passed": false,
+      "expected_count": 5049,
+      "actual_count": 331,
+      "elapsed_sec": 67.5,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code:text=glaucoma",
+      "additional_query_urls": [
+       "MedicationRequest?code:text=timolol"
+      ],
+      "raw_response": "Condition?code:text=glaucoma\nMedicationRequest?code:text=timolol",
+      "prompt_text": "Find all glaucoma patients \u2014 by diagnosis (open-angle, angle-closure, broader) or by timolol prescription. Run multiple queries and union the patient sets."
+     },
+     "3-expert": {
+      "precision": 0.9758,
+      "recall": 0.064,
+      "f1": 0.1201,
+      "passed": false,
+      "expected_count": 5049,
+      "actual_count": 331,
+      "elapsed_sec": 82.9,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code:text=glaucoma",
+      "additional_query_urls": [
+       "MedicationRequest?medication.code:text=timolol"
+      ],
+      "raw_response": "Condition data is coded in ICD-10-CM/ICD-9-CM (not SNOMED CT) on this server, and MedicationRequest/Medication resources use NDC/formulary codes (not RxNorm). SNOMED/RxNorm-coded queries return 0. Using `code:text` union to capture all glaucoma variants and timolol-containing products:\n\nCondition?code:text=glaucoma\nMedicationRequest?medication.code:text=timolol",
+      "prompt_text": "I need to identify all glaucoma patients using a two-resource union strategy. First, query Condition resources for glaucoma diagnoses across the clinically relevant SNOMED CT variants: open-angle glaucoma, primary angle-closure glaucoma, and the broader glaucoma concept \u2014 these subtypes are pathophysiologically distinct but all represent the target phenotype. Second, query MedicationRequest resources for timolol (coded in RxNorm), a topical beta-blocker eye drop that is the primary pharmacologic treatment for glaucoma; timolol is also used systemically for hypertension and migraine prophylaxis, so the medication cohort will include some non-glaucoma patients. Union the distinct patient IDs from both queries."
+     }
+    },
     "copilot:claude-sonnet-4.6": {
      "1-naive": {
       "precision": 1.0,
@@ -1001,6 +1145,137 @@
       "prompt_text": "I need to identify patients with a documented glaucoma diagnosis. Search Condition resources across the three relevant SNOMED CT variants: open-angle glaucoma, primary angle-closure glaucoma, and the broader glaucoma concept \u2014 include all three because the data may carry any of these more-specific or less-specific codes depending on how the clinician documented the subtype. Do not broaden to other ophthalmic conditions such as cataracts or retinal disorders, which are distinct diagnoses."
      }
     },
+    "copilot:claude-opus-4.7+mimic": {
+     "1-naive": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 5049,
+      "actual_count": 0,
+      "elapsed_sec": 6.4,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|23986001",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|23986001",
+      "prompt_text": "Find patients with glaucoma."
+     },
+     "1-broad": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 5049,
+      "actual_count": 0,
+      "elapsed_sec": 8.1,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|23986001,http://snomed.info/sct|392288006,http://snomed.info/sct|84495005",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|23986001,http://snomed.info/sct|392288006,http://snomed.info/sct|84495005",
+      "prompt_text": "Find patients diagnosed with any form of glaucoma \u2014 including open-angle (most common), primary angle-closure, and the broader glaucoma concept."
+     },
+     "1-expert": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 5049,
+      "actual_count": 0,
+      "elapsed_sec": 7.8,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|84494001,http://snomed.info/sct|392288006,http://snomed.info/sct|23986001",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|84494001,http://snomed.info/sct|392288006,http://snomed.info/sct|23986001",
+      "prompt_text": "I need to identify patients with a documented glaucoma diagnosis. Search Condition resources across the three relevant SNOMED CT variants: open-angle glaucoma, primary angle-closure glaucoma, and the broader glaucoma concept \u2014 include all three because the data may carry any of these more-specific or less-specific codes depending on how the clinician documented the subtype. Do not broaden to other ophthalmic conditions such as cataracts or retinal disorders, which are distinct diagnoses."
+     },
+     "2-naive": {
+      "precision": 0.9758,
+      "recall": 0.064,
+      "f1": 0.1201,
+      "passed": false,
+      "expected_count": 5049,
+      "actual_count": 331,
+      "elapsed_sec": 20.9,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code:text=glaucoma",
+      "additional_query_urls": [],
+      "raw_response": "Final Answer:\n\nCondition?code:text=glaucoma",
+      "prompt_text": "Find patients with glaucoma."
+     },
+     "2-broad": {
+      "precision": 0.998,
+      "recall": 0.9733,
+      "f1": 0.9855,
+      "passed": true,
+      "expected_count": 5049,
+      "actual_count": 4924,
+      "elapsed_sec": 166.5,
+      "queries_generated": 3,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|H40.10X0,http://hl7.org/fhir/sid/icd-10-cm|H40.10X1,http://hl7.org/fhir/sid/icd-10-cm|H40.10X2,http://hl7.org/fhir/sid/icd-10-cm|H40.10X3,http://hl7.org/fhir/sid/icd-10-cm|H40.10X4,http://hl7.org/fhir/sid/icd-10-cm|H40.1110,http://hl7.org/fhir/sid/icd-10-cm|H40.1111,http://hl7.org/fhir/sid/icd-10-cm|H40.1112,http://hl7.org/fhir/sid/icd-10-cm|H40.1113,http://hl7.org/fhir/sid/icd-10-cm|H40.1114,http://hl7.org/fhir/sid/icd-10-cm|H40.1120,http://hl7.org/fhir/sid/icd-10-cm|H40.1121,http://hl7.org/fhir/sid/icd-10-cm|H40.1122,http://hl7.org/fhir/sid/icd-10-cm|H40.1123,http://hl7.org/fhir/sid/icd-10-cm|H40.1124,http://hl7.org/fhir/sid/icd-10-cm|H40.1130,http://hl7.org/fhir/sid/icd-10-cm|H40.1131,http://hl7.org/fhir/sid/icd-10-cm|H40.1132,http://hl7.org/fhir/sid/icd-10-cm|H40.1133,http://hl7.org/fhir/sid/icd-10-cm|H40.1134,http://hl7.org/fhir/sid/icd-10-cm|H40.1210,http://hl7.org/fhir/sid/icd-10-cm|H40.1220,http://hl7.org/fhir/sid/icd-10-cm|H40.1230,http://hl7.org/fhir/sid/icd-10-cm|H40.1310,http://hl7.org/fhir/sid/icd-10-cm|H40.1320,http://hl7.org/fhir/sid/icd-10-cm|H40.1330,http://hl7.org/fhir/sid/icd-10-cm|H40.1410,http://hl7.org/fhir/sid/icd-10-cm|H40.1420,http://hl7.org/fhir/sid/icd-10-cm|H40.1430,http://hl7.org/fhir/sid/icd-10-cm|H40.151,http://hl7.org/fhir/sid/icd-10-cm|H40.152,http://hl7.org/fhir/sid/icd-10-cm|H40.153,http://hl7.org/fhir/sid/icd-10-cm|H40.20X0,http://hl7.org/fhir/sid/icd-10-cm|H40.20X1,http://hl7.org/fhir/sid/icd-10-cm|H40.20X2,http://hl7.org/fhir/sid/icd-10-cm|H40.20X3,http://hl7.org/fhir/sid/icd-10-cm|H40.20X4,http://hl7.org/fhir/sid/icd-10-cm|H40.211,http://hl7.org/fhir/sid/icd-10-cm|H40.212,http://hl7.org/fhir/sid/icd-10-cm|H40.213,http://hl7.org/fhir/sid/icd-10-cm|H40.2210,http://hl7.org/fhir/sid/icd-10-cm|H40.2220,http://hl7.org/fhir/sid/icd-10-cm|H40.2230,http://hl7.org/fhir/sid/icd-10-cm|H40.231,http://hl7.org/fhir/sid/icd-10-cm|H40.232,http://hl7.org/fhir/sid/icd-10-cm|H40.233,http://hl7.org/fhir/sid/icd-10-cm|H40.241,http://hl7.org/fhir/sid/icd-10-cm|H40.242,http://hl7.org/fhir/sid/icd-10-cm|H40.243,http://hl7.org/fhir/sid/icd-10-cm|H40.9,http://hl7.org/fhir/sid/icd-10-cm|H42",
+      "additional_query_urls": [
+       "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|H40.31X0,http://hl7.org/fhir/sid/icd-10-cm|H40.31X1,http://hl7.org/fhir/sid/icd-10-cm|H40.31X2,http://hl7.org/fhir/sid/icd-10-cm|H40.31X3,http://hl7.org/fhir/sid/icd-10-cm|H40.31X4,http://hl7.org/fhir/sid/icd-10-cm|H40.32X0,http://hl7.org/fhir/sid/icd-10-cm|H40.32X1,http://hl7.org/fhir/sid/icd-10-cm|H40.32X2,http://hl7.org/fhir/sid/icd-10-cm|H40.32X3,http://hl7.org/fhir/sid/icd-10-cm|H40.32X4,http://hl7.org/fhir/sid/icd-10-cm|H40.33X0,http://hl7.org/fhir/sid/icd-10-cm|H40.33X1,http://hl7.org/fhir/sid/icd-10-cm|H40.33X2,http://hl7.org/fhir/sid/icd-10-cm|H40.33X3,http://hl7.org/fhir/sid/icd-10-cm|H40.33X4,http://hl7.org/fhir/sid/icd-10-cm|H40.41X0,http://hl7.org/fhir/sid/icd-10-cm|H40.42X0,http://hl7.org/fhir/sid/icd-10-cm|H40.43X0,http://hl7.org/fhir/sid/icd-10-cm|H40.51X0,http://hl7.org/fhir/sid/icd-10-cm|H40.52X0,http://hl7.org/fhir/sid/icd-10-cm|H40.53X0,http://hl7.org/fhir/sid/icd-10-cm|H40.61X0,http://hl7.org/fhir/sid/icd-10-cm|H40.62X0,http://hl7.org/fhir/sid/icd-10-cm|H40.63X0,http://hl7.org/fhir/sid/icd-10-cm|H40.811,http://hl7.org/fhir/sid/icd-10-cm|H40.812,http://hl7.org/fhir/sid/icd-10-cm|H40.813,http://hl7.org/fhir/sid/icd-10-cm|H40.821,http://hl7.org/fhir/sid/icd-10-cm|H40.822,http://hl7.org/fhir/sid/icd-10-cm|H40.823,http://hl7.org/fhir/sid/icd-10-cm|H40.89,http://hl7.org/fhir/sid/icd-10-cm|Q15.0",
+       "Condition?code=http://hl7.org/fhir/sid/icd-9-cm|365.10,http://hl7.org/fhir/sid/icd-9-cm|365.11,http://hl7.org/fhir/sid/icd-9-cm|365.12,http://hl7.org/fhir/sid/icd-9-cm|365.13,http://hl7.org/fhir/sid/icd-9-cm|365.15,http://hl7.org/fhir/sid/icd-9-cm|365.20,http://hl7.org/fhir/sid/icd-9-cm|365.21,http://hl7.org/fhir/sid/icd-9-cm|365.22,http://hl7.org/fhir/sid/icd-9-cm|365.23,http://hl7.org/fhir/sid/icd-9-cm|365.24,http://hl7.org/fhir/sid/icd-9-cm|365.31,http://hl7.org/fhir/sid/icd-9-cm|365.32,http://hl7.org/fhir/sid/icd-9-cm|365.41,http://hl7.org/fhir/sid/icd-9-cm|365.42,http://hl7.org/fhir/sid/icd-9-cm|365.43,http://hl7.org/fhir/sid/icd-9-cm|365.44,http://hl7.org/fhir/sid/icd-9-cm|365.51,http://hl7.org/fhir/sid/icd-9-cm|365.52,http://hl7.org/fhir/sid/icd-9-cm|365.59,http://hl7.org/fhir/sid/icd-9-cm|365.60,http://hl7.org/fhir/sid/icd-9-cm|365.61,http://hl7.org/fhir/sid/icd-9-cm|365.62,http://hl7.org/fhir/sid/icd-9-cm|365.63,http://hl7.org/fhir/sid/icd-9-cm|365.64,http://hl7.org/fhir/sid/icd-9-cm|365.65,http://hl7.org/fhir/sid/icd-9-cm|365.70,http://hl7.org/fhir/sid/icd-9-cm|365.71,http://hl7.org/fhir/sid/icd-9-cm|365.72,http://hl7.org/fhir/sid/icd-9-cm|365.73,http://hl7.org/fhir/sid/icd-9-cm|365.74,http://hl7.org/fhir/sid/icd-9-cm|365.81,http://hl7.org/fhir/sid/icd-9-cm|365.82,http://hl7.org/fhir/sid/icd-9-cm|365.83,http://hl7.org/fhir/sid/icd-9-cm|365.89,http://hl7.org/fhir/sid/icd-9-cm|365.9"
+      ],
+      "raw_response": "Based on my exploration: server uses both ICD-10-CM and ICD-9-CM with real glaucoma prevalence (H40.9 alone = 3588 conditions). I'll union across the glaucoma ICD ranges.\n\nFINAL ANSWER:\n\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|H40.10X0,http://hl7.org/fhir/sid/icd-10-cm|H40.10X1,http://hl7.org/fhir/sid/icd-10-cm|H40.10X2,http://hl7.org/fhir/sid/icd-10-cm|H40.10X3,http://hl7.org/fhir/sid/icd-10-cm|H40.10X4,http://hl7.org/fhir/sid/icd-10-cm|H40.1110,http://hl7.org/fhir/sid/icd-10-cm|H40.1111,http://hl7.org/fhir/sid/icd-10-cm|H40.1112,http://hl7.org/fhir/sid/icd-10-cm|H40.1113,http://hl7.org/fhir/sid/icd-10-cm|H40.1114,http://hl7.org/fhir/sid/icd-10-cm|H40.1120,http://hl7.org/fhir/sid/icd-10-cm|H40.1121,http://hl7.org/fhir/sid/icd-10-cm|H40.1122,http://hl7.org/fhir/sid/icd-10-cm|H40.1123,http://hl7.org/fhir/sid/icd-10-cm|H40.1124,http://hl7.org/fhir/sid/icd-10-cm|H40.1130,http://hl7.org/fhir/sid/icd-10-cm|H40.1131,http://hl7.org/fhir/sid/icd-10-cm|H40.1132,http://hl7.org/fhir/sid/icd-10-cm|H40.1133,http://hl7.org/fhir/sid/icd-10-cm|H40.1134,http://hl7.org/fhir/sid/icd-10-cm|H40.1210,http://hl7.org/fhir/sid/icd-10-cm|H40.1220,http://hl7.org/fhir/sid/icd-10-cm|H40.1230,http://hl7.org/fhir/sid/icd-10-cm|H40.1310,http://hl7.org/fhir/sid/icd-10-cm|H40.1320,http://hl7.org/fhir/sid/icd-10-cm|H40.1330,http://hl7.org/fhir/sid/icd-10-cm|H40.1410,http://hl7.org/fhir/sid/icd-10-cm|H40.1420,http://hl7.org/fhir/sid/icd-10-cm|H40.1430,http://hl7.org/fhir/sid/icd-10-cm|H40.151,http://hl7.org/fhir/sid/icd-10-cm|H40.152,http://hl7.org/fhir/sid/icd-10-cm|H40.153,http://hl7.org/fhir/sid/icd-10-cm|H40.20X0,http://hl7.org/fhir/sid/icd-10-cm|H40.20X1,http://hl7.org/fhir/sid/icd-10-cm|H40.20X2,http://hl7.org/fhir/sid/icd-10-cm|H40.20X3,http://hl7.org/fhir/sid/icd-10-cm|H40.20X4,http://hl7.org/fhir/sid/icd-10-cm|H40.211,http://hl7.org/fhir/sid/icd-10-cm|H40.212,http://hl7.org/fhir/sid/icd-10-cm|H40.213,http://hl7.org/fhir/sid/icd-10-cm|H40.2210,http://hl7.org/fhir/sid/icd-10-cm|H40.2220,http://hl7.org/fhir/sid/icd-10-cm|H40.2230,http://hl7.org/fhir/sid/icd-10-cm|H40.231,http://hl7.org/fhir/sid/icd-10-cm|H40.232,http://hl7.org/fhir/sid/icd-10-cm|H40.233,http://hl7.org/fhir/sid/icd-10-cm|H40.241,http://hl7.org/fhir/sid/icd-10-cm|H40.242,http://hl7.org/fhir/sid/icd-10-cm|H40.243,http://hl7.org/fhir/sid/icd-10-cm|H40.9,http://hl7.org/fhir/sid/icd-10-cm|H42\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|H40.31X0,http://hl7.org/fhir/sid/icd-10-cm|H40.31X1,http://hl7.org/fhir/sid/icd-10-cm|H40.31X2,http://hl7.org/fhir/sid/icd-10-cm|H40.31X3,http://hl7.org/fhir/sid/icd-10-cm|H40.31X4,http://hl7.org/fhir/sid/icd-10-cm|H40.32X0,http://hl7.org/fhir/sid/icd-10-cm|H40.32X1,http://hl7.org/fhir/sid/icd-10-cm|H40.32X2,http://hl7.org/fhir/sid/icd-10-cm|H40.32X3,http://hl7.org/fhir/sid/icd-10-cm|H40.32X4,http://hl7.org/fhir/sid/icd-10-cm|H40.33X0,http://hl7.org/fhir/sid/icd-10-cm|H40.33X1,http://hl7.org/fhir/sid/icd-10-cm|H40.33X2,http://hl7.org/fhir/sid/icd-10-cm|H40.33X3,http://hl7.org/fhir/sid/icd-10-cm|H40.33X4,http://hl7.org/fhir/sid/icd-10-cm|H40.41X0,http://hl7.org/fhir/sid/icd-10-cm|H40.42X0,http://hl7.org/fhir/sid/icd-10-cm|H40.43X0,http://hl7.org/fhir/sid/icd-10-cm|H40.51X0,http://hl7.org/fhir/sid/icd-10-cm|H40.52X0,http://hl7.org/fhir/sid/icd-10-cm|H40.53X0,http://hl7.org/fhir/sid/icd-10-cm|H40.61X0,http://hl7.org/fhir/sid/icd-10-cm|H40.62X0,http://hl7.org/fhir/sid/icd-10-cm|H40.63X0,http://hl7.org/fhir/sid/icd-10-cm|H40.811,http://hl7.org/fhir/sid/icd-10-cm|H40.812,http://hl7.org/fhir/sid/icd-10-cm|H40.813,http://hl7.org/fhir/sid/icd-10-cm|H40.821,http://hl7.org/fhir/sid/icd-10-cm|H40.822,http://hl7.org/fhir/sid/icd-10-cm|H40.823,http://hl7.org/fhir/sid/icd-10-cm|H40.89,http://hl7.org/fhir/sid/icd-10-cm|Q15.0\nCondition?code=http://hl7.org/fhir/sid/icd-9-cm|365.10,http://hl7.org/fhir/sid/icd-9-cm|365.11,http://hl7.org/fhir/sid/icd-9-cm|365.12,http://hl7.org/fhir/sid/icd-9-cm|365.13,http://hl7.org/fhir/sid/icd-9-cm|365.15,http://hl7.org/fhir/sid/icd-9-cm|365.20,http://hl7.org/fhir/sid/icd-9-cm|365.21,http://hl7.org/fhir/sid/icd-9-cm|365.22,http://hl7.org/fhir/sid/icd-9-cm|365.23,http://hl7.org/fhir/sid/icd-9-cm|365.24,http://hl7.org/fhir/sid/icd-9-cm|365.31,http://hl7.org/fhir/sid/icd-9-cm|365.32,http://hl7.org/fhir/sid/icd-9-cm|365.41,http://hl7.org/fhir/sid/icd-9-cm|365.42,http://hl7.org/fhir/sid/icd-9-cm|365.43,http://hl7.org/fhir/sid/icd-9-cm|365.44,http://hl7.org/fhir/sid/icd-9-cm|365.51,http://hl7.org/fhir/sid/icd-9-cm|365.52,http://hl7.org/fhir/sid/icd-9-cm|365.59,http://hl7.org/fhir/sid/icd-9-cm|365.60,http://hl7.org/fhir/sid/icd-9-cm|365.61,http://hl7.org/fhir/sid/icd-9-cm|365.62,http://hl7.org/fhir/sid/icd-9-cm|365.63,http://hl7.org/fhir/sid/icd-9-cm|365.64,http://hl7.org/fhir/sid/icd-9-cm|365.65,http://hl7.org/fhir/sid/icd-9-cm|365.70,http://hl7.org/fhir/sid/icd-9-cm|365.71,http://hl7.org/fhir/sid/icd-9-cm|365.72,http://hl7.org/fhir/sid/icd-9-cm|365.73,http://hl7.org/fhir/sid/icd-9-cm|365.74,http://hl7.org/fhir/sid/icd-9-cm|365.81,http://hl7.org/fhir/sid/icd-9-cm|365.82,http://hl7.org/fhir/sid/icd-9-cm|365.83,http://hl7.org/fhir/sid/icd-9-cm|365.89,http://hl7.org/fhir/sid/icd-9-cm|365.9",
+      "prompt_text": "Find patients diagnosed with any form of glaucoma \u2014 including open-angle (most common), primary angle-closure, and the broader glaucoma concept."
+     },
+     "2-expert": {
+      "precision": 0.9758,
+      "recall": 0.064,
+      "f1": 0.1201,
+      "passed": false,
+      "expected_count": 5049,
+      "actual_count": 331,
+      "elapsed_sec": 42.5,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code:text=glaucoma",
+      "additional_query_urls": [],
+      "raw_response": "Final answer:\n\nCondition?code:text=glaucoma",
+      "prompt_text": "I need to identify patients with a documented glaucoma diagnosis. Search Condition resources across the three relevant SNOMED CT variants: open-angle glaucoma, primary angle-closure glaucoma, and the broader glaucoma concept \u2014 include all three because the data may carry any of these more-specific or less-specific codes depending on how the clinician documented the subtype. Do not broaden to other ophthalmic conditions such as cataracts or retinal disorders, which are distinct diagnoses."
+     },
+     "3-naive": {
+      "precision": 0.9758,
+      "recall": 0.064,
+      "f1": 0.1201,
+      "passed": false,
+      "expected_count": 5049,
+      "actual_count": 331,
+      "elapsed_sec": 29.6,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code:text=glaucoma",
+      "additional_query_urls": [],
+      "raw_response": "FINAL ANSWER:\n\nCondition?code:text=glaucoma",
+      "prompt_text": "Find patients with glaucoma."
+     },
+     "3-broad": {
+      "precision": 0.9975,
+      "recall": 0.4652,
+      "f1": 0.6345,
+      "passed": false,
+      "expected_count": 5049,
+      "actual_count": 2355,
+      "elapsed_sec": 64.5,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|H40.9,http://hl7.org/fhir/sid/icd-10-cm|H40.10X0,http://hl7.org/fhir/sid/icd-10-cm|H40.10X1,http://hl7.org/fhir/sid/icd-10-cm|H40.10X2,http://hl7.org/fhir/sid/icd-10-cm|H40.10X3,http://hl7.org/fhir/sid/icd-10-cm|H40.10X4,http://hl7.org/fhir/sid/icd-10-cm|H40.11X0,http://hl7.org/fhir/sid/icd-10-cm|H40.1110,http://hl7.org/fhir/sid/icd-10-cm|H40.1120,http://hl7.org/fhir/sid/icd-10-cm|H40.1130,http://hl7.org/fhir/sid/icd-10-cm|H40.1210,http://hl7.org/fhir/sid/icd-10-cm|H40.1220,http://hl7.org/fhir/sid/icd-10-cm|H40.1230,http://hl7.org/fhir/sid/icd-10-cm|H40.1310,http://hl7.org/fhir/sid/icd-10-cm|H40.1320,http://hl7.org/fhir/sid/icd-10-cm|H40.1330,http://hl7.org/fhir/sid/icd-10-cm|H40.1410,http://hl7.org/fhir/sid/icd-10-cm|H40.1420,http://hl7.org/fhir/sid/icd-10-cm|H40.1430,http://hl7.org/fhir/sid/icd-10-cm|H40.151,http://hl7.org/fhir/sid/icd-10-cm|H40.152,http://hl7.org/fhir/sid/icd-10-cm|H40.153,http://hl7.org/fhir/sid/icd-10-cm|H40.20X0,http://hl7.org/fhir/sid/icd-10-cm|H40.211,http://hl7.org/fhir/sid/icd-10-cm|H40.212,http://hl7.org/fhir/sid/icd-10-cm|H40.213,http://hl7.org/fhir/sid/icd-10-cm|H40.2210,http://hl7.org/fhir/sid/icd-10-cm|H40.2220,http://hl7.org/fhir/sid/icd-10-cm|H40.2230,http://hl7.org/fhir/sid/icd-10-cm|H40.231,http://hl7.org/fhir/sid/icd-10-cm|H40.232,http://hl7.org/fhir/sid/icd-10-cm|H40.233,http://hl7.org/fhir/sid/icd-10-cm|H40.241,http://hl7.org/fhir/sid/icd-10-cm|H40.242,http://hl7.org/fhir/sid/icd-10-cm|H40.243,http://hl7.org/fhir/sid/icd-10-cm|H42",
+      "additional_query_urls": [],
+      "raw_response": "Based on server data (ICD-10-CM), returning a comprehensive glaucoma query:\n\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|H40.9,http://hl7.org/fhir/sid/icd-10-cm|H40.10X0,http://hl7.org/fhir/sid/icd-10-cm|H40.10X1,http://hl7.org/fhir/sid/icd-10-cm|H40.10X2,http://hl7.org/fhir/sid/icd-10-cm|H40.10X3,http://hl7.org/fhir/sid/icd-10-cm|H40.10X4,http://hl7.org/fhir/sid/icd-10-cm|H40.11X0,http://hl7.org/fhir/sid/icd-10-cm|H40.1110,http://hl7.org/fhir/sid/icd-10-cm|H40.1120,http://hl7.org/fhir/sid/icd-10-cm|H40.1130,http://hl7.org/fhir/sid/icd-10-cm|H40.1210,http://hl7.org/fhir/sid/icd-10-cm|H40.1220,http://hl7.org/fhir/sid/icd-10-cm|H40.1230,http://hl7.org/fhir/sid/icd-10-cm|H40.1310,http://hl7.org/fhir/sid/icd-10-cm|H40.1320,http://hl7.org/fhir/sid/icd-10-cm|H40.1330,http://hl7.org/fhir/sid/icd-10-cm|H40.1410,http://hl7.org/fhir/sid/icd-10-cm|H40.1420,http://hl7.org/fhir/sid/icd-10-cm|H40.1430,http://hl7.org/fhir/sid/icd-10-cm|H40.151,http://hl7.org/fhir/sid/icd-10-cm|H40.152,http://hl7.org/fhir/sid/icd-10-cm|H40.153,http://hl7.org/fhir/sid/icd-10-cm|H40.20X0,http://hl7.org/fhir/sid/icd-10-cm|H40.211,http://hl7.org/fhir/sid/icd-10-cm|H40.212,http://hl7.org/fhir/sid/icd-10-cm|H40.213,http://hl7.org/fhir/sid/icd-10-cm|H40.2210,http://hl7.org/fhir/sid/icd-10-cm|H40.2220,http://hl7.org/fhir/sid/icd-10-cm|H40.2230,http://hl7.org/fhir/sid/icd-10-cm|H40.231,http://hl7.org/fhir/sid/icd-10-cm|H40.232,http://hl7.org/fhir/sid/icd-10-cm|H40.233,http://hl7.org/fhir/sid/icd-10-cm|H40.241,http://hl7.org/fhir/sid/icd-10-cm|H40.242,http://hl7.org/fhir/sid/icd-10-cm|H40.243,http://hl7.org/fhir/sid/icd-10-cm|H42",
+      "prompt_text": "Find patients diagnosed with any form of glaucoma \u2014 including open-angle (most common), primary angle-closure, and the broader glaucoma concept."
+     },
+     "3-expert": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 5049,
+      "actual_count": 0,
+      "elapsed_sec": 32.2,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|23986001,http://snomed.info/sct|84494001,http://snomed.info/sct|392288006",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|23986001,http://snomed.info/sct|84494001,http://snomed.info/sct|392288006",
+      "prompt_text": "I need to identify patients with a documented glaucoma diagnosis. Search Condition resources across the three relevant SNOMED CT variants: open-angle glaucoma, primary angle-closure glaucoma, and the broader glaucoma concept \u2014 include all three because the data may carry any of these more-specific or less-specific codes depending on how the clinician documented the subtype. Do not broaden to other ophthalmic conditions such as cataracts or retinal disorders, which are distinct diagnoses."
+     }
+    },
     "copilot:claude-sonnet-4.6": {
      "1-naive": {
       "precision": 1.0,
@@ -1730,6 +2005,134 @@
       "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|10600",
       "additional_query_urls": [],
       "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|10600",
+      "prompt_text": "Identify patients prescribed timolol for glaucoma management via their medication orders. Search MedicationRequest resources for timolol coded in RxNorm \u2014 this is the first-line topical beta-blocker eye drop for intraocular pressure reduction in glaucoma. Be aware that timolol is also used systemically for hypertension and migraine prophylaxis, so a medication-only cohort will include cross-indicated patients who are not being treated for glaucoma."
+     }
+    },
+    "copilot:claude-opus-4.7+mimic": {
+     "1-naive": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 3036,
+      "actual_count": 0,
+      "elapsed_sec": 8.0,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|10600",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|10600",
+      "prompt_text": "Find patients on timolol."
+     },
+     "1-broad": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 3036,
+      "actual_count": 0,
+      "elapsed_sec": 7.6,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|10600",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|10600",
+      "prompt_text": "Find patients prescribed timolol \u2014 a beta-blocker commonly used as eye drops to lower intraocular pressure in glaucoma, but also used systemically for hypertension and migraine prophylaxis."
+     },
+     "1-expert": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 3036,
+      "actual_count": 0,
+      "elapsed_sec": 7.4,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|10600",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|10600",
+      "prompt_text": "Identify patients prescribed timolol for glaucoma management via their medication orders. Search MedicationRequest resources for timolol coded in RxNorm \u2014 this is the first-line topical beta-blocker eye drop for intraocular pressure reduction in glaucoma. Be aware that timolol is also used systemically for hypertension and migraine prophylaxis, so a medication-only cohort will include cross-indicated patients who are not being treated for glaucoma."
+     },
+     "2-naive": {
+      "precision": 0.9781,
+      "recall": 1.0,
+      "f1": 0.9889,
+      "passed": true,
+      "expected_count": 3036,
+      "actual_count": 3104,
+      "elapsed_sec": 55.6,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?medication.code:text=timolol",
+      "additional_query_urls": [],
+      "raw_response": "FINAL ANSWER:\n\nMedicationRequest?medication.code:text=timolol",
+      "prompt_text": "Find patients on timolol."
+     },
+     "2-broad": {
+      "precision": 0.9781,
+      "recall": 1.0,
+      "f1": 0.9889,
+      "passed": true,
+      "expected_count": 3036,
+      "actual_count": 3104,
+      "elapsed_sec": 48.2,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?medication.code:text=timolol",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?medication.code:text=timolol",
+      "prompt_text": "Find patients prescribed timolol \u2014 a beta-blocker commonly used as eye drops to lower intraocular pressure in glaucoma, but also used systemically for hypertension and migraine prophylaxis."
+     },
+     "2-expert": {
+      "precision": 0.9781,
+      "recall": 1.0,
+      "f1": 0.9889,
+      "passed": true,
+      "expected_count": 3036,
+      "actual_count": 3104,
+      "elapsed_sec": 50.8,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?medication.code:text=timolol",
+      "additional_query_urls": [],
+      "raw_response": "FINAL ANSWER:\n\nMedicationRequest?medication.code:text=timolol",
+      "prompt_text": "Identify patients prescribed timolol for glaucoma management via their medication orders. Search MedicationRequest resources for timolol coded in RxNorm \u2014 this is the first-line topical beta-blocker eye drop for intraocular pressure reduction in glaucoma. Be aware that timolol is also used systemically for hypertension and migraine prophylaxis, so a medication-only cohort will include cross-indicated patients who are not being treated for glaucoma."
+     },
+     "3-naive": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 3036,
+      "actual_count": 3036,
+      "elapsed_sec": 37.5,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|10600",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|10600",
+      "prompt_text": "Find patients on timolol."
+     },
+     "3-broad": {
+      "precision": 0.9781,
+      "recall": 1.0,
+      "f1": 0.9889,
+      "passed": true,
+      "expected_count": 3036,
+      "actual_count": 3104,
+      "elapsed_sec": 35.1,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?medication.code:text=timolol",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?medication.code:text=timolol",
+      "prompt_text": "Find patients prescribed timolol \u2014 a beta-blocker commonly used as eye drops to lower intraocular pressure in glaucoma, but also used systemically for hypertension and migraine prophylaxis."
+     },
+     "3-expert": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 3036,
+      "actual_count": 3036,
+      "elapsed_sec": 192.9,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|10600,1992303,1923432,388054,861635",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|10600,1992303,1923432,388054,861635",
       "prompt_text": "Identify patients prescribed timolol for glaucoma management via their medication orders. Search MedicationRequest resources for timolol coded in RxNorm \u2014 this is the first-line topical beta-blocker eye drop for intraocular pressure reduction in glaucoma. Be aware that timolol is also used systemically for hypertension and migraine prophylaxis, so a medication-only cohort will include cross-indicated patients who are not being treated for glaucoma."
      }
     },

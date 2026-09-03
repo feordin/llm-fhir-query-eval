@@ -99,7 +99,7 @@ def main() -> int:
 
     body = build_import_body(Path(args.ndjson_dir), args.blob_base, args.mode)
     n = sum(1 for p in body["parameter"] if p["name"] == "input")
-    print(f"$import body: {n} input files, mode=InitialLoad", flush=True)
+    print(f"$import body: {n} input files, mode={args.mode}", flush=True)
     for p in body["parameter"]:
         if p["name"] == "input":
             t = next(x["valueString"] for x in p["part"] if x["name"] == "type")

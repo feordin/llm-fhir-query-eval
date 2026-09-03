@@ -41,7 +41,8 @@ from run_sanity_matrix import make_provider, make_fhir_client, _read_skill  # no
 
 TC_DIR = REPO / "test-cases" / "phekb"
 RESULTS = REPO / "results"
-PATH_SUFFIX = {"dx": "-dx", "comprehensive": "-comprehensive", "labs": "-labs"}
+PATH_SUFFIX = {"dx": "-dx", "comprehensive": "-comprehensive", "labs": "-labs",
+               "meds": "-meds"}
 
 
 def _find_tc(phenotype: str, path: str) -> Path | None:
@@ -114,6 +115,9 @@ def main(argv=None) -> int:
     ap.add_argument("--cell-timeout-sec", type=int, default=700)
     ap.add_argument("--lean-prompt", action="store_true")
     ap.add_argument("--skill-file", default=None)
+    ap.add_argument("--run-label", default="",
+                    help="suffix appended to the '+mimic' model spec (e.g. '-r2') "
+                         "so repeat runs don't collide with the primary run's cells")
     args = ap.parse_args(argv)
 
     gold_all = json.loads((REPO / args.gold).read_text(encoding="utf-8"))
@@ -124,7 +128,7 @@ def main(argv=None) -> int:
     variants = args.variants.split(",")
     tiers = [int(t) for t in args.tiers.split(",")]
     system_prefix = _read_skill(args.skill_file) if args.skill_file else ""
-    label_model = args.model + ("+fhirskill" if args.skill_file else "+mimic")
+    label_model = args.model + ("+fhirskill" if args.skill_file else "+mimic") + args.run_label
     fhir_client = make_fhir_client(args.fhir_url)
     RESULTS.mkdir(exist_ok=True)
 

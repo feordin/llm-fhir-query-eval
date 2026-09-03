@@ -1115,6 +1115,149 @@
       "prompt_text": "I need to identify putative clopidogrel poor metabolizers per the PheKB Vanderbilt VESPA algorithm \u2014 patients who were on clopidogrel and subsequently experienced an acute myocardial infarction, suggesting inadequate antiplatelet response. Run two queries: first, MedicationRequest resources for clopidogrel coded in RxNorm; second, Condition resources for AMI diagnoses across ICD-10-CM and SNOMED CT. Patients appearing in both queries \u2014 that is, clopidogrel-treated patients who also have an AMI diagnosis \u2014 represent the putative poor-metabolizer cases."
      }
     },
+    "copilot:claude-opus-4.7+mimic": {
+     "1-naive": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 11023,
+      "actual_count": 0,
+      "elapsed_sec": 8.5,
+      "queries_generated": 2,
+      "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|309362",
+      "additional_query_urls": [
+       "Condition?code=http://snomed.info/sct|22298006"
+      ],
+      "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|309362\nCondition?code=http://snomed.info/sct|22298006",
+      "prompt_text": "Find clopidogrel patients with MI."
+     },
+     "1-broad": {
+      "precision": 0.1166,
+      "recall": 0.0387,
+      "f1": 0.0582,
+      "passed": false,
+      "expected_count": 11023,
+      "actual_count": 3662,
+      "elapsed_sec": 31.8,
+      "queries_generated": 2,
+      "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|32968",
+      "additional_query_urls": [
+       "Condition?code=http://snomed.info/sct|57054005,http://hl7.org/fhir/sid/icd-10-cm|I21.0,http://hl7.org/fhir/sid/icd-10-cm|I21.1,http://hl7.org/fhir/sid/icd-10-cm|I21.2,http://hl7.org/fhir/sid/icd-10-cm|I21.3,http://hl7.org/fhir/sid/icd-10-cm|I21.4,http://hl7.org/fhir/sid/icd-10-cm|I21.9"
+      ],
+      "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|32968\nCondition?code=http://snomed.info/sct|57054005,http://hl7.org/fhir/sid/icd-10-cm|I21.0,http://hl7.org/fhir/sid/icd-10-cm|I21.1,http://hl7.org/fhir/sid/icd-10-cm|I21.2,http://hl7.org/fhir/sid/icd-10-cm|I21.3,http://hl7.org/fhir/sid/icd-10-cm|I21.4,http://hl7.org/fhir/sid/icd-10-cm|I21.9",
+      "prompt_text": "Find clopidogrel-treated patients with subsequent acute myocardial infarction \u2014 the case definition for clopidogrel poor metabolizers in the PheKB VESPA pharmacogenetic study."
+     },
+     "1-expert": {
+      "precision": 0.1068,
+      "recall": 0.0495,
+      "f1": 0.0677,
+      "passed": false,
+      "expected_count": 11023,
+      "actual_count": 5113,
+      "elapsed_sec": 42.4,
+      "queries_generated": 2,
+      "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|32968",
+      "additional_query_urls": [
+       "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|I21.0,http://hl7.org/fhir/sid/icd-10-cm|I21.01,http://hl7.org/fhir/sid/icd-10-cm|I21.02,http://hl7.org/fhir/sid/icd-10-cm|I21.09,http://hl7.org/fhir/sid/icd-10-cm|I21.1,http://hl7.org/fhir/sid/icd-10-cm|I21.11,http://hl7.org/fhir/sid/icd-10-cm|I21.19,http://hl7.org/fhir/sid/icd-10-cm|I21.2,http://hl7.org/fhir/sid/icd-10-cm|I21.21,http://hl7.org/fhir/sid/icd-10-cm|I21.29,http://hl7.org/fhir/sid/icd-10-cm|I21.3,http://hl7.org/fhir/sid/icd-10-cm|I21.4,http://hl7.org/fhir/sid/icd-10-cm|I21.9,http://hl7.org/fhir/sid/icd-10-cm|I21.A1,http://hl7.org/fhir/sid/icd-10-cm|I21.A9,http://snomed.info/sct|57054005,http://snomed.info/sct|22298006,http://snomed.info/sct|304914007,http://snomed.info/sct|401314000"
+      ],
+      "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|32968\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|I21.0,http://hl7.org/fhir/sid/icd-10-cm|I21.01,http://hl7.org/fhir/sid/icd-10-cm|I21.02,http://hl7.org/fhir/sid/icd-10-cm|I21.09,http://hl7.org/fhir/sid/icd-10-cm|I21.1,http://hl7.org/fhir/sid/icd-10-cm|I21.11,http://hl7.org/fhir/sid/icd-10-cm|I21.19,http://hl7.org/fhir/sid/icd-10-cm|I21.2,http://hl7.org/fhir/sid/icd-10-cm|I21.21,http://hl7.org/fhir/sid/icd-10-cm|I21.29,http://hl7.org/fhir/sid/icd-10-cm|I21.3,http://hl7.org/fhir/sid/icd-10-cm|I21.4,http://hl7.org/fhir/sid/icd-10-cm|I21.9,http://hl7.org/fhir/sid/icd-10-cm|I21.A1,http://hl7.org/fhir/sid/icd-10-cm|I21.A9,http://snomed.info/sct|57054005,http://snomed.info/sct|22298006,http://snomed.info/sct|304914007,http://snomed.info/sct|401314000",
+      "prompt_text": "I need to identify putative clopidogrel poor metabolizers per the PheKB Vanderbilt VESPA algorithm \u2014 patients who were on clopidogrel and subsequently experienced an acute myocardial infarction, suggesting inadequate antiplatelet response. Run two queries: first, MedicationRequest resources for clopidogrel coded in RxNorm; second, Condition resources for AMI diagnoses across ICD-10-CM and SNOMED CT. Patients appearing in both queries \u2014 that is, clopidogrel-treated patients who also have an AMI diagnosis \u2014 represent the putative poor-metabolizer cases."
+     },
+     "2-naive": {
+      "precision": 0.4814,
+      "recall": 0.4689,
+      "f1": 0.4751,
+      "passed": false,
+      "expected_count": 11023,
+      "actual_count": 10738,
+      "elapsed_sec": 483.6,
+      "queries_generated": 2,
+      "primary_query_url": "MedicationRequest?medication.code=http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-ndc|63653117101,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-ndc|63653117103,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-ndc|63653117106,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-ndc|63653110530,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-ndc|63653110590,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-ndc|68180047101,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-ndc|68180047103,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-ndc|68180047109,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-ndc|65862033730,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-ndc|55111014801",
+      "additional_query_urls": [
+       "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|I21.01,http://hl7.org/fhir/sid/icd-10-cm|I21.02,http://hl7.org/fhir/sid/icd-10-cm|I21.09,http://hl7.org/fhir/sid/icd-10-cm|I21.11,http://hl7.org/fhir/sid/icd-10-cm|I21.19,http://hl7.org/fhir/sid/icd-10-cm|I21.21,http://hl7.org/fhir/sid/icd-10-cm|I21.29,http://hl7.org/fhir/sid/icd-10-cm|I21.3,http://hl7.org/fhir/sid/icd-10-cm|I21.4,http://hl7.org/fhir/sid/icd-10-cm|I21.9,http://hl7.org/fhir/sid/icd-10-cm|I21.A1,http://hl7.org/fhir/sid/icd-10-cm|I21.A9,http://hl7.org/fhir/sid/icd-10-cm|I22.0,http://hl7.org/fhir/sid/icd-10-cm|I22.1,http://hl7.org/fhir/sid/icd-10-cm|I22.2,http://hl7.org/fhir/sid/icd-10-cm|I22.8,http://hl7.org/fhir/sid/icd-10-cm|I22.9,http://hl7.org/fhir/sid/icd-9-cm|410.00,http://hl7.org/fhir/sid/icd-9-cm|410.01,http://hl7.org/fhir/sid/icd-9-cm|410.10,http://hl7.org/fhir/sid/icd-9-cm|410.11,http://hl7.org/fhir/sid/icd-9-cm|410.20,http://hl7.org/fhir/sid/icd-9-cm|410.21,http://hl7.org/fhir/sid/icd-9-cm|410.30,http://hl7.org/fhir/sid/icd-9-cm|410.31,http://hl7.org/fhir/sid/icd-9-cm|410.40,http://hl7.org/fhir/sid/icd-9-cm|410.41,http://hl7.org/fhir/sid/icd-9-cm|410.50,http://hl7.org/fhir/sid/icd-9-cm|410.51,http://hl7.org/fhir/sid/icd-9-cm|410.60,http://hl7.org/fhir/sid/icd-9-cm|410.61,http://hl7.org/fhir/sid/icd-9-cm|410.70,http://hl7.org/fhir/sid/icd-9-cm|410.71,http://hl7.org/fhir/sid/icd-9-cm|410.80,http://hl7.org/fhir/sid/icd-9-cm|410.81,http://hl7.org/fhir/sid/icd-9-cm|410.90,http://hl7.org/fhir/sid/icd-9-cm|410.91"
+      ],
+      "raw_response": "FINAL ANSWER:\n\nMedicationRequest?medication.code=http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-ndc|63653117101,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-ndc|63653117103,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-ndc|63653117106,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-ndc|63653110530,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-ndc|63653110590,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-ndc|68180047101,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-ndc|68180047103,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-ndc|68180047109,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-ndc|65862033730,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-ndc|55111014801\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|I21.01,http://hl7.org/fhir/sid/icd-10-cm|I21.02,http://hl7.org/fhir/sid/icd-10-cm|I21.09,http://hl7.org/fhir/sid/icd-10-cm|I21.11,http://hl7.org/fhir/sid/icd-10-cm|I21.19,http://hl7.org/fhir/sid/icd-10-cm|I21.21,http://hl7.org/fhir/sid/icd-10-cm|I21.29,http://hl7.org/fhir/sid/icd-10-cm|I21.3,http://hl7.org/fhir/sid/icd-10-cm|I21.4,http://hl7.org/fhir/sid/icd-10-cm|I21.9,http://hl7.org/fhir/sid/icd-10-cm|I21.A1,http://hl7.org/fhir/sid/icd-10-cm|I21.A9,http://hl7.org/fhir/sid/icd-10-cm|I22.0,http://hl7.org/fhir/sid/icd-10-cm|I22.1,http://hl7.org/fhir/sid/icd-10-cm|I22.2,http://hl7.org/fhir/sid/icd-10-cm|I22.8,http://hl7.org/fhir/sid/icd-10-cm|I22.9,http://hl7.org/fhir/sid/icd-9-cm|410.00,http://hl7.org/fhir/sid/icd-9-cm|410.01,http://hl7.org/fhir/sid/icd-9-cm|410.10,http://hl7.org/fhir/sid/icd-9-cm|410.11,http://hl7.org/fhir/sid/icd-9-cm|410.20,http://hl7.org/fhir/sid/icd-9-cm|410.21,http://hl7.org/fhir/sid/icd-9-cm|410.30,http://hl7.org/fhir/sid/icd-9-cm|410.31,http://hl7.org/fhir/sid/icd-9-cm|410.40,http://hl7.org/fhir/sid/icd-9-cm|410.41,http://hl7.org/fhir/sid/icd-9-cm|410.50,http://hl7.org/fhir/sid/icd-9-cm|410.51,http://hl7.org/fhir/sid/icd-9-cm|410.60,http://hl7.org/fhir/sid/icd-9-cm|410.61,http://hl7.org/fhir/sid/icd-9-cm|410.70,http://hl7.org/fhir/sid/icd-9-cm|410.71,http://hl7.org/fhir/sid/icd-9-cm|410.80,http://hl7.org/fhir/sid/icd-9-cm|410.81,http://hl7.org/fhir/sid/icd-9-cm|410.90,http://hl7.org/fhir/sid/icd-9-cm|410.91",
+      "prompt_text": "Find clopidogrel patients with MI."
+     },
+     "2-broad": {
+      "precision": 0.5904,
+      "recall": 0.4747,
+      "f1": 0.5263,
+      "passed": false,
+      "expected_count": 11023,
+      "actual_count": 8863,
+      "elapsed_sec": 236.8,
+      "queries_generated": 3,
+      "primary_query_url": "MedicationRequest?medication.code=http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Clopidogrel",
+      "additional_query_urls": [
+       "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|I21.01,http://hl7.org/fhir/sid/icd-10-cm|I21.02,http://hl7.org/fhir/sid/icd-10-cm|I21.09,http://hl7.org/fhir/sid/icd-10-cm|I21.11,http://hl7.org/fhir/sid/icd-10-cm|I21.19,http://hl7.org/fhir/sid/icd-10-cm|I21.21,http://hl7.org/fhir/sid/icd-10-cm|I21.29,http://hl7.org/fhir/sid/icd-10-cm|I21.3,http://hl7.org/fhir/sid/icd-10-cm|I21.4,http://hl7.org/fhir/sid/icd-10-cm|I21.9,http://hl7.org/fhir/sid/icd-10-cm|I22.0,http://hl7.org/fhir/sid/icd-10-cm|I22.1,http://hl7.org/fhir/sid/icd-10-cm|I22.2,http://hl7.org/fhir/sid/icd-10-cm|I22.8,http://hl7.org/fhir/sid/icd-10-cm|I22.9",
+       "Condition?code=http://hl7.org/fhir/sid/icd-9-cm|410.00,http://hl7.org/fhir/sid/icd-9-cm|410.01,http://hl7.org/fhir/sid/icd-9-cm|410.10,http://hl7.org/fhir/sid/icd-9-cm|410.11,http://hl7.org/fhir/sid/icd-9-cm|410.20,http://hl7.org/fhir/sid/icd-9-cm|410.21,http://hl7.org/fhir/sid/icd-9-cm|410.30,http://hl7.org/fhir/sid/icd-9-cm|410.31,http://hl7.org/fhir/sid/icd-9-cm|410.40,http://hl7.org/fhir/sid/icd-9-cm|410.41,http://hl7.org/fhir/sid/icd-9-cm|410.50,http://hl7.org/fhir/sid/icd-9-cm|410.51,http://hl7.org/fhir/sid/icd-9-cm|410.60,http://hl7.org/fhir/sid/icd-9-cm|410.61,http://hl7.org/fhir/sid/icd-9-cm|410.70,http://hl7.org/fhir/sid/icd-9-cm|410.71,http://hl7.org/fhir/sid/icd-9-cm|410.80,http://hl7.org/fhir/sid/icd-9-cm|410.81,http://hl7.org/fhir/sid/icd-9-cm|410.90,http://hl7.org/fhir/sid/icd-9-cm|410.91"
+      ],
+      "raw_response": "Good. Both queries return healthy counts.\n\nFINAL ANSWER:\n\nMedicationRequest?medication.code=http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Clopidogrel\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|I21.01,http://hl7.org/fhir/sid/icd-10-cm|I21.02,http://hl7.org/fhir/sid/icd-10-cm|I21.09,http://hl7.org/fhir/sid/icd-10-cm|I21.11,http://hl7.org/fhir/sid/icd-10-cm|I21.19,http://hl7.org/fhir/sid/icd-10-cm|I21.21,http://hl7.org/fhir/sid/icd-10-cm|I21.29,http://hl7.org/fhir/sid/icd-10-cm|I21.3,http://hl7.org/fhir/sid/icd-10-cm|I21.4,http://hl7.org/fhir/sid/icd-10-cm|I21.9,http://hl7.org/fhir/sid/icd-10-cm|I22.0,http://hl7.org/fhir/sid/icd-10-cm|I22.1,http://hl7.org/fhir/sid/icd-10-cm|I22.2,http://hl7.org/fhir/sid/icd-10-cm|I22.8,http://hl7.org/fhir/sid/icd-10-cm|I22.9\nCondition?code=http://hl7.org/fhir/sid/icd-9-cm|410.00,http://hl7.org/fhir/sid/icd-9-cm|410.01,http://hl7.org/fhir/sid/icd-9-cm|410.10,http://hl7.org/fhir/sid/icd-9-cm|410.11,http://hl7.org/fhir/sid/icd-9-cm|410.20,http://hl7.org/fhir/sid/icd-9-cm|410.21,http://hl7.org/fhir/sid/icd-9-cm|410.30,http://hl7.org/fhir/sid/icd-9-cm|410.31,http://hl7.org/fhir/sid/icd-9-cm|410.40,http://hl7.org/fhir/sid/icd-9-cm|410.41,http://hl7.org/fhir/sid/icd-9-cm|410.50,http://hl7.org/fhir/sid/icd-9-cm|410.51,http://hl7.org/fhir/sid/icd-9-cm|410.60,http://hl7.org/fhir/sid/icd-9-cm|410.61,http://hl7.org/fhir/sid/icd-9-cm|410.70,http://hl7.org/fhir/sid/icd-9-cm|410.71,http://hl7.org/fhir/sid/icd-9-cm|410.80,http://hl7.org/fhir/sid/icd-9-cm|410.81,http://hl7.org/fhir/sid/icd-9-cm|410.90,http://hl7.org/fhir/sid/icd-9-cm|410.91",
+      "prompt_text": "Find clopidogrel-treated patients with subsequent acute myocardial infarction \u2014 the case definition for clopidogrel poor metabolizers in the PheKB VESPA pharmacogenetic study."
+     },
+     "2-expert": {
+      "precision": 0.1069,
+      "recall": 0.0496,
+      "f1": 0.0678,
+      "passed": false,
+      "expected_count": 11023,
+      "actual_count": 5118,
+      "elapsed_sec": 119.1,
+      "queries_generated": 2,
+      "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|32968,http://www.nlm.nih.gov/research/umls/rxnorm|309362,http://www.nlm.nih.gov/research/umls/rxnorm|213169",
+      "additional_query_urls": [
+       "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|I21.01,http://hl7.org/fhir/sid/icd-10-cm|I21.02,http://hl7.org/fhir/sid/icd-10-cm|I21.09,http://hl7.org/fhir/sid/icd-10-cm|I21.11,http://hl7.org/fhir/sid/icd-10-cm|I21.19,http://hl7.org/fhir/sid/icd-10-cm|I21.21,http://hl7.org/fhir/sid/icd-10-cm|I21.29,http://hl7.org/fhir/sid/icd-10-cm|I21.3,http://hl7.org/fhir/sid/icd-10-cm|I21.4,http://hl7.org/fhir/sid/icd-10-cm|I21.9,http://hl7.org/fhir/sid/icd-10-cm|I21.A1,http://hl7.org/fhir/sid/icd-10-cm|I21.A9,http://hl7.org/fhir/sid/icd-10-cm|I22.0,http://hl7.org/fhir/sid/icd-10-cm|I22.1,http://hl7.org/fhir/sid/icd-10-cm|I22.2,http://hl7.org/fhir/sid/icd-10-cm|I22.8,http://hl7.org/fhir/sid/icd-10-cm|I22.9,http://snomed.info/sct|57054005,http://snomed.info/sct|401303003,http://snomed.info/sct|401314000,http://snomed.info/sct|54329005,http://snomed.info/sct|73795002,http://snomed.info/sct|58612006,http://snomed.info/sct|70211005,http://snomed.info/sct|65547006,http://snomed.info/sct|76593002,http://snomed.info/sct|79009004,http://snomed.info/sct|233838001,http://snomed.info/sct|70422006,http://snomed.info/sct|304914007,http://snomed.info/sct|307140009,http://snomed.info/sct|314207007,http://snomed.info/sct|194856005"
+      ],
+      "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|32968,http://www.nlm.nih.gov/research/umls/rxnorm|309362,http://www.nlm.nih.gov/research/umls/rxnorm|213169\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|I21.01,http://hl7.org/fhir/sid/icd-10-cm|I21.02,http://hl7.org/fhir/sid/icd-10-cm|I21.09,http://hl7.org/fhir/sid/icd-10-cm|I21.11,http://hl7.org/fhir/sid/icd-10-cm|I21.19,http://hl7.org/fhir/sid/icd-10-cm|I21.21,http://hl7.org/fhir/sid/icd-10-cm|I21.29,http://hl7.org/fhir/sid/icd-10-cm|I21.3,http://hl7.org/fhir/sid/icd-10-cm|I21.4,http://hl7.org/fhir/sid/icd-10-cm|I21.9,http://hl7.org/fhir/sid/icd-10-cm|I21.A1,http://hl7.org/fhir/sid/icd-10-cm|I21.A9,http://hl7.org/fhir/sid/icd-10-cm|I22.0,http://hl7.org/fhir/sid/icd-10-cm|I22.1,http://hl7.org/fhir/sid/icd-10-cm|I22.2,http://hl7.org/fhir/sid/icd-10-cm|I22.8,http://hl7.org/fhir/sid/icd-10-cm|I22.9,http://snomed.info/sct|57054005,http://snomed.info/sct|401303003,http://snomed.info/sct|401314000,http://snomed.info/sct|54329005,http://snomed.info/sct|73795002,http://snomed.info/sct|58612006,http://snomed.info/sct|70211005,http://snomed.info/sct|65547006,http://snomed.info/sct|76593002,http://snomed.info/sct|79009004,http://snomed.info/sct|233838001,http://snomed.info/sct|70422006,http://snomed.info/sct|304914007,http://snomed.info/sct|307140009,http://snomed.info/sct|314207007,http://snomed.info/sct|194856005",
+      "prompt_text": "I need to identify putative clopidogrel poor metabolizers per the PheKB Vanderbilt VESPA algorithm \u2014 patients who were on clopidogrel and subsequently experienced an acute myocardial infarction, suggesting inadequate antiplatelet response. Run two queries: first, MedicationRequest resources for clopidogrel coded in RxNorm; second, Condition resources for AMI diagnoses across ICD-10-CM and SNOMED CT. Patients appearing in both queries \u2014 that is, clopidogrel-treated patients who also have an AMI diagnosis \u2014 represent the putative poor-metabolizer cases."
+     },
+     "3-naive": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 11023,
+      "actual_count": 0,
+      "elapsed_sec": 160.1,
+      "queries_generated": 1,
+      "primary_query_url": "Patient?_has:Condition:patient:code=http://hl7.org/fhir/sid/icd-10-cm|I21.0,http://hl7.org/fhir/sid/icd-10-cm|I21.01,http://hl7.org/fhir/sid/icd-10-cm|I21.02,http://hl7.org/fhir/sid/icd-10-cm|I21.09,http://hl7.org/fhir/sid/icd-10-cm|I21.1,http://hl7.org/fhir/sid/icd-10-cm|I21.11,http://hl7.org/fhir/sid/icd-10-cm|I21.19,http://hl7.org/fhir/sid/icd-10-cm|I21.2,http://hl7.org/fhir/sid/icd-10-cm|I21.21,http://hl7.org/fhir/sid/icd-10-cm|I21.29,http://hl7.org/fhir/sid/icd-10-cm|I21.3,http://hl7.org/fhir/sid/icd-10-cm|I21.4,http://hl7.org/fhir/sid/icd-10-cm|I21.9,http://hl7.org/fhir/sid/icd-10-cm|I21.A1,http://hl7.org/fhir/sid/icd-10-cm|I21.A9,http://hl7.org/fhir/sid/icd-10-cm|I22.0,http://hl7.org/fhir/sid/icd-10-cm|I22.1,http://hl7.org/fhir/sid/icd-10-cm|I22.2,http://hl7.org/fhir/sid/icd-10-cm|I22.8,http://hl7.org/fhir/sid/icd-10-cm|I22.9,http://hl7.org/fhir/sid/icd-9-cm|410.00,http://hl7.org/fhir/sid/icd-9-cm|410.10,http://hl7.org/fhir/sid/icd-9-cm|410.20,http://hl7.org/fhir/sid/icd-9-cm|410.30,http://hl7.org/fhir/sid/icd-9-cm|410.40,http://hl7.org/fhir/sid/icd-9-cm|410.50,http://hl7.org/fhir/sid/icd-9-cm|410.60,http://hl7.org/fhir/sid/icd-9-cm|410.70,http://hl7.org/fhir/sid/icd-9-cm|410.80,http://hl7.org/fhir/sid/icd-9-cm|410.90&_has:MedicationRequest:patient:code=http://www.nlm.nih.gov/research/umls/rxnorm|32968,http://www.nlm.nih.gov/research/umls/rxnorm|309362,http://www.nlm.nih.gov/research/umls/rxnorm|213169",
+      "additional_query_urls": [],
+      "raw_response": "FINAL ANSWER:\n\nPatient?_has:Condition:patient:code=http://hl7.org/fhir/sid/icd-10-cm|I21.0,http://hl7.org/fhir/sid/icd-10-cm|I21.01,http://hl7.org/fhir/sid/icd-10-cm|I21.02,http://hl7.org/fhir/sid/icd-10-cm|I21.09,http://hl7.org/fhir/sid/icd-10-cm|I21.1,http://hl7.org/fhir/sid/icd-10-cm|I21.11,http://hl7.org/fhir/sid/icd-10-cm|I21.19,http://hl7.org/fhir/sid/icd-10-cm|I21.2,http://hl7.org/fhir/sid/icd-10-cm|I21.21,http://hl7.org/fhir/sid/icd-10-cm|I21.29,http://hl7.org/fhir/sid/icd-10-cm|I21.3,http://hl7.org/fhir/sid/icd-10-cm|I21.4,http://hl7.org/fhir/sid/icd-10-cm|I21.9,http://hl7.org/fhir/sid/icd-10-cm|I21.A1,http://hl7.org/fhir/sid/icd-10-cm|I21.A9,http://hl7.org/fhir/sid/icd-10-cm|I22.0,http://hl7.org/fhir/sid/icd-10-cm|I22.1,http://hl7.org/fhir/sid/icd-10-cm|I22.2,http://hl7.org/fhir/sid/icd-10-cm|I22.8,http://hl7.org/fhir/sid/icd-10-cm|I22.9,http://hl7.org/fhir/sid/icd-9-cm|410.00,http://hl7.org/fhir/sid/icd-9-cm|410.10,http://hl7.org/fhir/sid/icd-9-cm|410.20,http://hl7.org/fhir/sid/icd-9-cm|410.30,http://hl7.org/fhir/sid/icd-9-cm|410.40,http://hl7.org/fhir/sid/icd-9-cm|410.50,http://hl7.org/fhir/sid/icd-9-cm|410.60,http://hl7.org/fhir/sid/icd-9-cm|410.70,http://hl7.org/fhir/sid/icd-9-cm|410.80,http://hl7.org/fhir/sid/icd-9-cm|410.90&_has:MedicationRequest:patient:code=http://www.nlm.nih.gov/research/umls/rxnorm|32968,http://www.nlm.nih.gov/research/umls/rxnorm|309362,http://www.nlm.nih.gov/research/umls/rxnorm|213169",
+      "prompt_text": "Find clopidogrel patients with MI."
+     },
+     "3-broad": {
+      "precision": 0.4578,
+      "recall": 0.0093,
+      "f1": 0.0183,
+      "passed": false,
+      "expected_count": 11023,
+      "actual_count": 225,
+      "elapsed_sec": 127.9,
+      "queries_generated": 1,
+      "primary_query_url": "Patient?_has:MedicationRequest:patient:code=http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Clopidogrel&_has:Condition:patient:code:text=myocardial",
+      "additional_query_urls": [],
+      "raw_response": "225 patients. Final answer:\n\n`Patient?_has:MedicationRequest:patient:code=http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Clopidogrel&_has:Condition:patient:code:text=myocardial infarction`",
+      "prompt_text": "Find clopidogrel-treated patients with subsequent acute myocardial infarction \u2014 the case definition for clopidogrel poor metabolizers in the PheKB VESPA pharmacogenetic study."
+     },
+     "3-expert": {
+      "precision": 0.1069,
+      "recall": 0.0496,
+      "f1": 0.0678,
+      "passed": false,
+      "expected_count": 11023,
+      "actual_count": 5118,
+      "elapsed_sec": 130.9,
+      "queries_generated": 2,
+      "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|32968,309362,749196,213169",
+      "additional_query_urls": [
+       "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|I21.01,http://hl7.org/fhir/sid/icd-10-cm|I21.02,http://hl7.org/fhir/sid/icd-10-cm|I21.09,http://hl7.org/fhir/sid/icd-10-cm|I21.11,http://hl7.org/fhir/sid/icd-10-cm|I21.19,http://hl7.org/fhir/sid/icd-10-cm|I21.21,http://hl7.org/fhir/sid/icd-10-cm|I21.29,http://hl7.org/fhir/sid/icd-10-cm|I21.3,http://hl7.org/fhir/sid/icd-10-cm|I21.4,http://hl7.org/fhir/sid/icd-10-cm|I21.9,http://hl7.org/fhir/sid/icd-10-cm|I21.A1,http://hl7.org/fhir/sid/icd-10-cm|I21.A9,http://hl7.org/fhir/sid/icd-10-cm|I22.0,http://hl7.org/fhir/sid/icd-10-cm|I22.1,http://hl7.org/fhir/sid/icd-10-cm|I22.2,http://hl7.org/fhir/sid/icd-10-cm|I22.8,http://hl7.org/fhir/sid/icd-10-cm|I22.9,http://snomed.info/sct|57054005,http://snomed.info/sct|401303003,http://snomed.info/sct|401314000,http://snomed.info/sct|54329005,http://snomed.info/sct|73795002,http://snomed.info/sct|70211005,http://snomed.info/sct|65547006,http://snomed.info/sct|58612006,http://snomed.info/sct|194856005,http://snomed.info/sct|703211006,http://snomed.info/sct|703360004"
+      ],
+      "raw_response": "Final answer:\n\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|32968,309362,749196,213169\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|I21.01,http://hl7.org/fhir/sid/icd-10-cm|I21.02,http://hl7.org/fhir/sid/icd-10-cm|I21.09,http://hl7.org/fhir/sid/icd-10-cm|I21.11,http://hl7.org/fhir/sid/icd-10-cm|I21.19,http://hl7.org/fhir/sid/icd-10-cm|I21.21,http://hl7.org/fhir/sid/icd-10-cm|I21.29,http://hl7.org/fhir/sid/icd-10-cm|I21.3,http://hl7.org/fhir/sid/icd-10-cm|I21.4,http://hl7.org/fhir/sid/icd-10-cm|I21.9,http://hl7.org/fhir/sid/icd-10-cm|I21.A1,http://hl7.org/fhir/sid/icd-10-cm|I21.A9,http://hl7.org/fhir/sid/icd-10-cm|I22.0,http://hl7.org/fhir/sid/icd-10-cm|I22.1,http://hl7.org/fhir/sid/icd-10-cm|I22.2,http://hl7.org/fhir/sid/icd-10-cm|I22.8,http://hl7.org/fhir/sid/icd-10-cm|I22.9,http://snomed.info/sct|57054005,http://snomed.info/sct|401303003,http://snomed.info/sct|401314000,http://snomed.info/sct|54329005,http://snomed.info/sct|73795002,http://snomed.info/sct|70211005,http://snomed.info/sct|65547006,http://snomed.info/sct|58612006,http://snomed.info/sct|194856005,http://snomed.info/sct|703211006,http://snomed.info/sct|703360004",
+      "prompt_text": "I need to identify putative clopidogrel poor metabolizers per the PheKB Vanderbilt VESPA algorithm \u2014 patients who were on clopidogrel and subsequently experienced an acute myocardial infarction, suggesting inadequate antiplatelet response. Run two queries: first, MedicationRequest resources for clopidogrel coded in RxNorm; second, Condition resources for AMI diagnoses across ICD-10-CM and SNOMED CT. Patients appearing in both queries \u2014 that is, clopidogrel-treated patients who also have an AMI diagnosis \u2014 represent the putative poor-metabolizer cases."
+     }
+    },
     "copilot:claude-sonnet-4.6": {
      "1-naive": {
       "precision": 0.3907,
@@ -1875,6 +2018,134 @@
       "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|32968",
       "additional_query_urls": [],
       "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|32968",
+      "prompt_text": "I need to identify patients who have been prescribed clopidogrel, representing the at-risk exposure pool for the PheKB VESPA pharmacogenomics phenotype. Search MedicationRequest resources for clopidogrel coded in RxNorm. This antiplatelet is used broadly in coronary heart disease, peripheral arterial disease, and post-stroke management, so the medication cohort will span multiple indications before the adverse cardiac event filter is applied."
+     }
+    },
+    "copilot:claude-opus-4.7+mimic": {
+     "1-naive": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 15086,
+      "actual_count": 0,
+      "elapsed_sec": 11.1,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|32968&status=active",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|32968&status=active",
+      "prompt_text": "Find patients on clopidogrel."
+     },
+     "1-broad": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 15086,
+      "actual_count": 0,
+      "elapsed_sec": 7.0,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|32968",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|32968",
+      "prompt_text": "Find patients prescribed clopidogrel \u2014 an antiplatelet agent commonly used after coronary stenting and for secondary stroke prevention."
+     },
+     "1-expert": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 15086,
+      "actual_count": 0,
+      "elapsed_sec": 7.8,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|32968",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|32968",
+      "prompt_text": "I need to identify patients who have been prescribed clopidogrel, representing the at-risk exposure pool for the PheKB VESPA pharmacogenomics phenotype. Search MedicationRequest resources for clopidogrel coded in RxNorm. This antiplatelet is used broadly in coronary heart disease, peripheral arterial disease, and post-stroke management, so the medication cohort will span multiple indications before the adverse cardiac event filter is applied."
+     },
+     "2-naive": {
+      "precision": 1.0,
+      "recall": 0.2538,
+      "f1": 0.4049,
+      "passed": false,
+      "expected_count": 15086,
+      "actual_count": 3829,
+      "elapsed_sec": 45.0,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|1163766,http://www.nlm.nih.gov/research/umls/rxnorm|1163767,http://www.nlm.nih.gov/research/umls/rxnorm|213169,http://www.nlm.nih.gov/research/umls/rxnorm|309362,http://www.nlm.nih.gov/research/umls/rxnorm|329449,http://www.nlm.nih.gov/research/umls/rxnorm|32968,http://www.nlm.nih.gov/research/umls/rxnorm|368301,http://www.nlm.nih.gov/research/umls/rxnorm|374583,http://www.nlm.nih.gov/research/umls/rxnorm|573094,http://www.nlm.nih.gov/research/umls/rxnorm|749195,http://www.nlm.nih.gov/research/umls/rxnorm|749196,http://www.nlm.nih.gov/research/umls/rxnorm|749197,http://www.nlm.nih.gov/research/umls/rxnorm|749198",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|1163766,http://www.nlm.nih.gov/research/umls/rxnorm|1163767,http://www.nlm.nih.gov/research/umls/rxnorm|213169,http://www.nlm.nih.gov/research/umls/rxnorm|309362,http://www.nlm.nih.gov/research/umls/rxnorm|329449,http://www.nlm.nih.gov/research/umls/rxnorm|32968,http://www.nlm.nih.gov/research/umls/rxnorm|368301,http://www.nlm.nih.gov/research/umls/rxnorm|374583,http://www.nlm.nih.gov/research/umls/rxnorm|573094,http://www.nlm.nih.gov/research/umls/rxnorm|749195,http://www.nlm.nih.gov/research/umls/rxnorm|749196,http://www.nlm.nih.gov/research/umls/rxnorm|749197,http://www.nlm.nih.gov/research/umls/rxnorm|749198",
+      "prompt_text": "Find patients on clopidogrel."
+     },
+     "2-broad": {
+      "precision": 1.0,
+      "recall": 0.3092,
+      "f1": 0.4724,
+      "passed": false,
+      "expected_count": 15086,
+      "actual_count": 4665,
+      "elapsed_sec": 32.0,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|309362",
+      "additional_query_urls": [],
+      "raw_response": "FINAL ANSWER:\n\nMedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|309362",
+      "prompt_text": "Find patients prescribed clopidogrel \u2014 an antiplatelet agent commonly used after coronary stenting and for secondary stroke prevention."
+     },
+     "2-expert": {
+      "precision": 1.0,
+      "recall": 0.2538,
+      "f1": 0.4049,
+      "passed": false,
+      "expected_count": 15086,
+      "actual_count": 3829,
+      "elapsed_sec": 58.4,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|1163766,http://www.nlm.nih.gov/research/umls/rxnorm|1163767,http://www.nlm.nih.gov/research/umls/rxnorm|213169,http://www.nlm.nih.gov/research/umls/rxnorm|236991,http://www.nlm.nih.gov/research/umls/rxnorm|309362,http://www.nlm.nih.gov/research/umls/rxnorm|329449,http://www.nlm.nih.gov/research/umls/rxnorm|32968,http://www.nlm.nih.gov/research/umls/rxnorm|368301,http://www.nlm.nih.gov/research/umls/rxnorm|374583,http://www.nlm.nih.gov/research/umls/rxnorm|573094,http://www.nlm.nih.gov/research/umls/rxnorm|749195,http://www.nlm.nih.gov/research/umls/rxnorm|749196,http://www.nlm.nih.gov/research/umls/rxnorm|749197,http://www.nlm.nih.gov/research/umls/rxnorm|749198",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|1163766,http://www.nlm.nih.gov/research/umls/rxnorm|1163767,http://www.nlm.nih.gov/research/umls/rxnorm|213169,http://www.nlm.nih.gov/research/umls/rxnorm|236991,http://www.nlm.nih.gov/research/umls/rxnorm|309362,http://www.nlm.nih.gov/research/umls/rxnorm|329449,http://www.nlm.nih.gov/research/umls/rxnorm|32968,http://www.nlm.nih.gov/research/umls/rxnorm|368301,http://www.nlm.nih.gov/research/umls/rxnorm|374583,http://www.nlm.nih.gov/research/umls/rxnorm|573094,http://www.nlm.nih.gov/research/umls/rxnorm|749195,http://www.nlm.nih.gov/research/umls/rxnorm|749196,http://www.nlm.nih.gov/research/umls/rxnorm|749197,http://www.nlm.nih.gov/research/umls/rxnorm|749198",
+      "prompt_text": "I need to identify patients who have been prescribed clopidogrel, representing the at-risk exposure pool for the PheKB VESPA pharmacogenomics phenotype. Search MedicationRequest resources for clopidogrel coded in RxNorm. This antiplatelet is used broadly in coronary heart disease, peripheral arterial disease, and post-stroke management, so the medication cohort will span multiple indications before the adverse cardiac event filter is applied."
+     },
+     "3-naive": {
+      "precision": 1.0,
+      "recall": 0.2538,
+      "f1": 0.4049,
+      "passed": false,
+      "expected_count": 15086,
+      "actual_count": 3829,
+      "elapsed_sec": 43.6,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|32968",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|32968",
+      "prompt_text": "Find patients on clopidogrel."
+     },
+     "3-broad": {
+      "precision": 1.0,
+      "recall": 0.2538,
+      "f1": 0.4049,
+      "passed": false,
+      "expected_count": 15086,
+      "actual_count": 3829,
+      "elapsed_sec": 63.0,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|32968",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|32968",
+      "prompt_text": "Find patients prescribed clopidogrel \u2014 an antiplatelet agent commonly used after coronary stenting and for secondary stroke prevention."
+     },
+     "3-expert": {
+      "precision": 1.0,
+      "recall": 0.3092,
+      "f1": 0.4724,
+      "passed": false,
+      "expected_count": 15086,
+      "actual_count": 4665,
+      "elapsed_sec": 34.8,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|309362",
+      "additional_query_urls": [],
+      "raw_response": "FINAL ANSWER:\n\nMedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|309362",
       "prompt_text": "I need to identify patients who have been prescribed clopidogrel, representing the at-risk exposure pool for the PheKB VESPA pharmacogenomics phenotype. Search MedicationRequest resources for clopidogrel coded in RxNorm. This antiplatelet is used broadly in coronary heart disease, peripheral arterial disease, and post-stroke management, so the medication cohort will span multiple indications before the adverse cardiac event filter is applied."
      }
     },

@@ -34,9 +34,9 @@ from pathlib import Path
 REPO = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO / "scripts"))
 from mimic_phenotype_counts import (  # noqa: E402
-    build_patient_index, build_patient_lab_index, load_phenotype_icd_codes,
-    load_phenotype_lab_criteria, icd_matches, value_meets, _load_augmentations,
-    PHENOTYPES,
+    build_patient_index, build_patient_lab_index, criteria_loinc_union,
+    load_phenotype_icd_codes, load_phenotype_lab_criteria, icd_matches,
+    value_meets, _load_augmentations, PHENOTYPES,
 )
 
 
@@ -87,7 +87,7 @@ def main(argv=None) -> int:
     sdir = Path(args.standardized_dir)
     print("Building MIMIC patient indexes (offline)...", file=sys.stderr)
     pidx = build_patient_index(sdir)
-    lidx = build_patient_lab_index(sdir)
+    lidx = build_patient_lab_index(sdir, criteria_loinc_union(args.phenotypes))
     print(f"  {len(pidx)} patients w/ conditions/procedures, {len(lidx)} w/ labs",
           file=sys.stderr)
 

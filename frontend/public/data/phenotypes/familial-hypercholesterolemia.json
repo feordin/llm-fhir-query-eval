@@ -1078,6 +1078,161 @@
       "prompt_text": "I need to identify my complete familial hypercholesterolemia (FH) patient population for a genetic testing and cascade screening initiative. From clinical experience, FH patients are documented in different ways: many have a formal FH diagnosis code, most are on statin therapy, and some are undiagnosed but have very elevated LDL.\n\nPlease run multiple FHIR queries to capture the full population:\n1. Patients with any FH diagnosis (parent, heterozygous, homozygous, or LDL receptor mutation variants)\n2. Patients prescribed statin therapy\n3. Patients with LDL cholesterol \u2265 190 mg/dL\n\nFor each query, return the matching resources. I want the union of all patients found. The statin query will substantially overcount \u2014 most statin patients are non-FH. The LDL query catches undiagnosed FH which is the most clinically valuable group for genetic testing referral."
      }
     },
+    "copilot:claude-opus-4.7+mimic": {
+     "1-naive": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 21971,
+      "actual_count": 0,
+      "elapsed_sec": 10.4,
+      "queries_generated": 3,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|398036000,397915002,398027009,238078009,402699008",
+      "additional_query_urls": [
+       "MedicationRequest?code:in=http://hl7.org/fhir/ValueSet/medication-statins",
+       "Observation?code=http://loinc.org|13457-7,2089-1,18262-6&value-quantity=ge190|http://unitsofmeasure.org|mg/dL"
+      ],
+      "raw_response": "Condition?code=http://snomed.info/sct|398036000,397915002,398027009,238078009,402699008\nMedicationRequest?code:in=http://hl7.org/fhir/ValueSet/medication-statins\nObservation?code=http://loinc.org|13457-7,2089-1,18262-6&value-quantity=ge190|http://unitsofmeasure.org|mg/dL",
+      "prompt_text": "I need to identify my complete familial hypercholesterolemia (FH) patient population for a genetic testing and cascade screening initiative. From clinical experience, FH patients are documented in different ways: many have a formal FH diagnosis code, most are on statin therapy, and some are undiagnosed but have very elevated LDL.\n\nPlease run multiple FHIR queries to capture the full population:\n1. Patients with any FH diagnosis (parent, heterozygous, homozygous, or LDL receptor mutation variants)\n2. Patients prescribed statin therapy\n3. Patients with LDL cholesterol \u2265 190 mg/dL\n\nFor each query, return the matching resources. I want the union of all patients found. The statin query will substantially overcount \u2014 most statin patients are non-FH. The LDL query catches undiagnosed FH which is the most clinically valuable group for genetic testing referral."
+     },
+     "1-broad": {
+      "precision": 1.0,
+      "recall": 0.0007,
+      "f1": 0.0015,
+      "passed": false,
+      "expected_count": 21971,
+      "actual_count": 16,
+      "elapsed_sec": 14.2,
+      "queries_generated": 3,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|398036000,http://snomed.info/sct|397915002,http://snomed.info/sct|403829002,http://snomed.info/sct|403830007,http://hl7.org/fhir/sid/icd-10-cm|E78.01",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|83367,http://www.nlm.nih.gov/research/umls/rxnorm|36567,http://www.nlm.nih.gov/research/umls/rxnorm|41127,http://www.nlm.nih.gov/research/umls/rxnorm|42463,http://www.nlm.nih.gov/research/umls/rxnorm|6472,http://www.nlm.nih.gov/research/umls/rxnorm|301542,http://www.nlm.nih.gov/research/umls/rxnorm|35296",
+       "Observation?code=http://loinc.org|18262-6,http://loinc.org|13457-7,http://loinc.org|2089-1&value-quantity=ge190|http://unitsofmeasure.org|mg/dL"
+      ],
+      "raw_response": "```\nCondition?code=http://snomed.info/sct|398036000,http://snomed.info/sct|397915002,http://snomed.info/sct|403829002,http://snomed.info/sct|403830007,http://hl7.org/fhir/sid/icd-10-cm|E78.01\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|83367,http://www.nlm.nih.gov/research/umls/rxnorm|36567,http://www.nlm.nih.gov/research/umls/rxnorm|41127,http://www.nlm.nih.gov/research/umls/rxnorm|42463,http://www.nlm.nih.gov/research/umls/rxnorm|6472,http://www.nlm.nih.gov/research/umls/rxnorm|301542,http://www.nlm.nih.gov/research/umls/rxnorm|35296\nObservation?code=http://loinc.org|18262-6,http://loinc.org|13457-7,http://loinc.org|2089-1&value-quantity=ge190|http://unitsofmeasure.org|mg/dL\n```",
+      "prompt_text": "I need to identify my complete familial hypercholesterolemia (FH) patient population for a genetic testing and cascade screening initiative. From clinical experience, FH patients are documented in different ways: many have a formal FH diagnosis code, most are on statin therapy, and some are undiagnosed but have very elevated LDL.\n\nPlease run multiple FHIR queries to capture the full population:\n1. Patients with any FH diagnosis (parent, heterozygous, homozygous, or LDL receptor mutation variants)\n2. Patients prescribed statin therapy\n3. Patients with LDL cholesterol \u2265 190 mg/dL\n\nFor each query, return the matching resources. I want the union of all patients found. The statin query will substantially overcount \u2014 most statin patients are non-FH. The LDL query catches undiagnosed FH which is the most clinically valuable group for genetic testing referral."
+     },
+     "1-expert": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 21971,
+      "actual_count": 0,
+      "elapsed_sec": 11.9,
+      "queries_generated": 3,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|398036000,397915002,403829002,398037009,238076001,441333003",
+      "additional_query_urls": [
+       "MedicationRequest?code:in=http://hl7.org/fhir/ValueSet/medication-statins&status=active",
+       "Observation?code=http://loinc.org|18262-6,13457-7&value-quantity=ge190|http://unitsofmeasure.org|mg/dL"
+      ],
+      "raw_response": "Condition?code=http://snomed.info/sct|398036000,397915002,403829002,398037009,238076001,441333003\nMedicationRequest?code:in=http://hl7.org/fhir/ValueSet/medication-statins&status=active\nObservation?code=http://loinc.org|18262-6,13457-7&value-quantity=ge190|http://unitsofmeasure.org|mg/dL",
+      "prompt_text": "I need to identify my complete familial hypercholesterolemia (FH) patient population for a genetic testing and cascade screening initiative. From clinical experience, FH patients are documented in different ways: many have a formal FH diagnosis code, most are on statin therapy, and some are undiagnosed but have very elevated LDL.\n\nPlease run multiple FHIR queries to capture the full population:\n1. Patients with any FH diagnosis (parent, heterozygous, homozygous, or LDL receptor mutation variants)\n2. Patients prescribed statin therapy\n3. Patients with LDL cholesterol \u2265 190 mg/dL\n\nFor each query, return the matching resources. I want the union of all patients found. The statin query will substantially overcount \u2014 most statin patients are non-FH. The LDL query catches undiagnosed FH which is the most clinically valuable group for genetic testing referral."
+     },
+     "2-naive": {
+      "precision": 1.0,
+      "recall": 0.0007,
+      "f1": 0.0015,
+      "passed": false,
+      "expected_count": 21971,
+      "actual_count": 16,
+      "elapsed_sec": 89.3,
+      "queries_generated": 3,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|E78.01,http://hl7.org/fhir/sid/icd-10-cm|E78.010,http://hl7.org/fhir/sid/icd-10-cm|E78.011,http://hl7.org/fhir/sid/icd-10-cm|E78.019",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|617311,http://www.nlm.nih.gov/research/umls/rxnorm|259255,http://www.nlm.nih.gov/research/umls/rxnorm|370621,http://www.nlm.nih.gov/research/umls/rxnorm|373888,http://www.nlm.nih.gov/research/umls/rxnorm|314231,http://www.nlm.nih.gov/research/umls/rxnorm|312961,http://www.nlm.nih.gov/research/umls/rxnorm|198211,http://www.nlm.nih.gov/research/umls/rxnorm|200345,http://www.nlm.nih.gov/research/umls/rxnorm|373560,http://www.nlm.nih.gov/research/umls/rxnorm|402354,http://www.nlm.nih.gov/research/umls/rxnorm|405880,http://www.nlm.nih.gov/research/umls/rxnorm|372652,http://www.nlm.nih.gov/research/umls/rxnorm|197903,http://www.nlm.nih.gov/research/umls/rxnorm|197904,http://www.nlm.nih.gov/research/umls/rxnorm|197905,http://www.nlm.nih.gov/research/umls/rxnorm|372255,http://www.nlm.nih.gov/research/umls/rxnorm|310404,http://www.nlm.nih.gov/research/umls/rxnorm|310405,http://www.nlm.nih.gov/research/umls/rxnorm|1163274,http://www.nlm.nih.gov/research/umls/rxnorm|1164454,http://www.nlm.nih.gov/research/umls/rxnorm|476345,http://www.nlm.nih.gov/research/umls/rxnorm|476349,http://www.nlm.nih.gov/research/umls/rxnorm|476350,http://www.nlm.nih.gov/research/umls/rxnorm|476351",
+       "Observation?code=http://loinc.org|2089-1,http://loinc.org|13457-7,http://loinc.org|18262-6&value-quantity=ge190"
+      ],
+      "raw_response": "FINAL ANSWER:\n\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|E78.01,http://hl7.org/fhir/sid/icd-10-cm|E78.010,http://hl7.org/fhir/sid/icd-10-cm|E78.011,http://hl7.org/fhir/sid/icd-10-cm|E78.019\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|617311,http://www.nlm.nih.gov/research/umls/rxnorm|259255,http://www.nlm.nih.gov/research/umls/rxnorm|370621,http://www.nlm.nih.gov/research/umls/rxnorm|373888,http://www.nlm.nih.gov/research/umls/rxnorm|314231,http://www.nlm.nih.gov/research/umls/rxnorm|312961,http://www.nlm.nih.gov/research/umls/rxnorm|198211,http://www.nlm.nih.gov/research/umls/rxnorm|200345,http://www.nlm.nih.gov/research/umls/rxnorm|373560,http://www.nlm.nih.gov/research/umls/rxnorm|402354,http://www.nlm.nih.gov/research/umls/rxnorm|405880,http://www.nlm.nih.gov/research/umls/rxnorm|372652,http://www.nlm.nih.gov/research/umls/rxnorm|197903,http://www.nlm.nih.gov/research/umls/rxnorm|197904,http://www.nlm.nih.gov/research/umls/rxnorm|197905,http://www.nlm.nih.gov/research/umls/rxnorm|372255,http://www.nlm.nih.gov/research/umls/rxnorm|310404,http://www.nlm.nih.gov/research/umls/rxnorm|310405,http://www.nlm.nih.gov/research/umls/rxnorm|1163274,http://www.nlm.nih.gov/research/umls/rxnorm|1164454,http://www.nlm.nih.gov/research/umls/rxnorm|476345,http://www.nlm.nih.gov/research/umls/rxnorm|476349,http://www.nlm.nih.gov/research/umls/rxnorm|476350,http://www.nlm.nih.gov/research/umls/rxnorm|476351\nObservation?code=http://loinc.org|2089-1,http://loinc.org|13457-7,http://loinc.org|18262-6&value-quantity=ge190",
+      "prompt_text": "I need to identify my complete familial hypercholesterolemia (FH) patient population for a genetic testing and cascade screening initiative. From clinical experience, FH patients are documented in different ways: many have a formal FH diagnosis code, most are on statin therapy, and some are undiagnosed but have very elevated LDL.\n\nPlease run multiple FHIR queries to capture the full population:\n1. Patients with any FH diagnosis (parent, heterozygous, homozygous, or LDL receptor mutation variants)\n2. Patients prescribed statin therapy\n3. Patients with LDL cholesterol \u2265 190 mg/dL\n\nFor each query, return the matching resources. I want the union of all patients found. The statin query will substantially overcount \u2014 most statin patients are non-FH. The LDL query catches undiagnosed FH which is the most clinically valuable group for genetic testing referral."
+     },
+     "2-broad": {
+      "precision": 1.0,
+      "recall": 0.3087,
+      "f1": 0.4717,
+      "passed": false,
+      "expected_count": 21971,
+      "actual_count": 6782,
+      "elapsed_sec": 94.7,
+      "queries_generated": 3,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|E78.01,http://hl7.org/fhir/sid/icd-10-cm|E78.010,http://hl7.org/fhir/sid/icd-10-cm|E78.011,http://hl7.org/fhir/sid/icd-10-cm|E78.019,http://hl7.org/fhir/sid/icd-9-cm|272.0",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|617311,http://www.nlm.nih.gov/research/umls/rxnorm|259255,http://www.nlm.nih.gov/research/umls/rxnorm|200345,http://www.nlm.nih.gov/research/umls/rxnorm|859751,http://www.nlm.nih.gov/research/umls/rxnorm|859419,http://www.nlm.nih.gov/research/umls/rxnorm|2167565,http://www.nlm.nih.gov/research/umls/rxnorm|2167569,http://www.nlm.nih.gov/research/umls/rxnorm|1422096,http://www.nlm.nih.gov/research/umls/rxnorm|1422099,http://www.nlm.nih.gov/research/umls/rxnorm|476351,http://www.nlm.nih.gov/research/umls/rxnorm|2535745,http://www.nlm.nih.gov/research/umls/rxnorm|2535749,http://www.nlm.nih.gov/research/umls/rxnorm|404011,http://www.nlm.nih.gov/research/umls/rxnorm|404013,http://www.nlm.nih.gov/research/umls/rxnorm|597984,http://www.nlm.nih.gov/research/umls/rxnorm|597990,http://www.nlm.nih.gov/research/umls/rxnorm|597993",
+       "Observation?code=http://loinc.org|2089-1,http://loinc.org|13457-7,http://loinc.org|18262-6&value-quantity=ge190"
+      ],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|E78.01,http://hl7.org/fhir/sid/icd-10-cm|E78.010,http://hl7.org/fhir/sid/icd-10-cm|E78.011,http://hl7.org/fhir/sid/icd-10-cm|E78.019,http://hl7.org/fhir/sid/icd-9-cm|272.0\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|617311,http://www.nlm.nih.gov/research/umls/rxnorm|259255,http://www.nlm.nih.gov/research/umls/rxnorm|200345,http://www.nlm.nih.gov/research/umls/rxnorm|859751,http://www.nlm.nih.gov/research/umls/rxnorm|859419,http://www.nlm.nih.gov/research/umls/rxnorm|2167565,http://www.nlm.nih.gov/research/umls/rxnorm|2167569,http://www.nlm.nih.gov/research/umls/rxnorm|1422096,http://www.nlm.nih.gov/research/umls/rxnorm|1422099,http://www.nlm.nih.gov/research/umls/rxnorm|476351,http://www.nlm.nih.gov/research/umls/rxnorm|2535745,http://www.nlm.nih.gov/research/umls/rxnorm|2535749,http://www.nlm.nih.gov/research/umls/rxnorm|404011,http://www.nlm.nih.gov/research/umls/rxnorm|404013,http://www.nlm.nih.gov/research/umls/rxnorm|597984,http://www.nlm.nih.gov/research/umls/rxnorm|597990,http://www.nlm.nih.gov/research/umls/rxnorm|597993\nObservation?code=http://loinc.org|2089-1,http://loinc.org|13457-7,http://loinc.org|18262-6&value-quantity=ge190",
+      "prompt_text": "I need to identify my complete familial hypercholesterolemia (FH) patient population for a genetic testing and cascade screening initiative. From clinical experience, FH patients are documented in different ways: many have a formal FH diagnosis code, most are on statin therapy, and some are undiagnosed but have very elevated LDL.\n\nPlease run multiple FHIR queries to capture the full population:\n1. Patients with any FH diagnosis (parent, heterozygous, homozygous, or LDL receptor mutation variants)\n2. Patients prescribed statin therapy\n3. Patients with LDL cholesterol \u2265 190 mg/dL\n\nFor each query, return the matching resources. I want the union of all patients found. The statin query will substantially overcount \u2014 most statin patients are non-FH. The LDL query catches undiagnosed FH which is the most clinically valuable group for genetic testing referral."
+     },
+     "2-expert": {
+      "precision": 1.0,
+      "recall": 0.0007,
+      "f1": 0.0015,
+      "passed": false,
+      "expected_count": 21971,
+      "actual_count": 16,
+      "elapsed_sec": 120.0,
+      "queries_generated": 3,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|E78.01,http://hl7.org/fhir/sid/icd-10-cm|E78.010,http://hl7.org/fhir/sid/icd-10-cm|E78.011,http://hl7.org/fhir/sid/icd-10-cm|E78.019",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1422096,http://www.nlm.nih.gov/research/umls/rxnorm|1422099,http://www.nlm.nih.gov/research/umls/rxnorm|200345,http://www.nlm.nih.gov/research/umls/rxnorm|2167565,http://www.nlm.nih.gov/research/umls/rxnorm|2167569,http://www.nlm.nih.gov/research/umls/rxnorm|2535745,http://www.nlm.nih.gov/research/umls/rxnorm|2535749,http://www.nlm.nih.gov/research/umls/rxnorm|259255,http://www.nlm.nih.gov/research/umls/rxnorm|404011,http://www.nlm.nih.gov/research/umls/rxnorm|404013,http://www.nlm.nih.gov/research/umls/rxnorm|476351,http://www.nlm.nih.gov/research/umls/rxnorm|597984,http://www.nlm.nih.gov/research/umls/rxnorm|597990,http://www.nlm.nih.gov/research/umls/rxnorm|597993,http://www.nlm.nih.gov/research/umls/rxnorm|617311,http://www.nlm.nih.gov/research/umls/rxnorm|859419,http://www.nlm.nih.gov/research/umls/rxnorm|859751,http://www.nlm.nih.gov/research/umls/rxnorm|1422093,http://www.nlm.nih.gov/research/umls/rxnorm|1944264,http://www.nlm.nih.gov/research/umls/rxnorm|197905,http://www.nlm.nih.gov/research/umls/rxnorm|198211,http://www.nlm.nih.gov/research/umls/rxnorm|2001262,http://www.nlm.nih.gov/research/umls/rxnorm|2001266,http://www.nlm.nih.gov/research/umls/rxnorm|2167557,http://www.nlm.nih.gov/research/umls/rxnorm|2167573,http://www.nlm.nih.gov/research/umls/rxnorm|2535747,http://www.nlm.nih.gov/research/umls/rxnorm|2535750,http://www.nlm.nih.gov/research/umls/rxnorm|2689112,http://www.nlm.nih.gov/research/umls/rxnorm|2689121,http://www.nlm.nih.gov/research/umls/rxnorm|2689125,http://www.nlm.nih.gov/research/umls/rxnorm|310405,http://www.nlm.nih.gov/research/umls/rxnorm|312961,http://www.nlm.nih.gov/research/umls/rxnorm|359731,http://www.nlm.nih.gov/research/umls/rxnorm|359732,http://www.nlm.nih.gov/research/umls/rxnorm|360507,http://www.nlm.nih.gov/research/umls/rxnorm|476349,http://www.nlm.nih.gov/research/umls/rxnorm|476350,http://www.nlm.nih.gov/research/umls/rxnorm|597967,http://www.nlm.nih.gov/research/umls/rxnorm|597971,http://www.nlm.nih.gov/research/umls/rxnorm|597974,http://www.nlm.nih.gov/research/umls/rxnorm|597977,http://www.nlm.nih.gov/research/umls/rxnorm|597980,http://www.nlm.nih.gov/research/umls/rxnorm|597987,http://www.nlm.nih.gov/research/umls/rxnorm|617310,http://www.nlm.nih.gov/research/umls/rxnorm|617312,http://www.nlm.nih.gov/research/umls/rxnorm|859424,http://www.nlm.nih.gov/research/umls/rxnorm|859747,http://www.nlm.nih.gov/research/umls/rxnorm|861643,http://www.nlm.nih.gov/research/umls/rxnorm|861648,http://www.nlm.nih.gov/research/umls/rxnorm|861652,http://www.nlm.nih.gov/research/umls/rxnorm|904475,http://www.nlm.nih.gov/research/umls/rxnorm|904481,http://www.nlm.nih.gov/research/umls/rxnorm|1790679,http://www.nlm.nih.gov/research/umls/rxnorm|197903,http://www.nlm.nih.gov/research/umls/rxnorm|197904,http://www.nlm.nih.gov/research/umls/rxnorm|310404,http://www.nlm.nih.gov/research/umls/rxnorm|312962,http://www.nlm.nih.gov/research/umls/rxnorm|314231,http://www.nlm.nih.gov/research/umls/rxnorm|433849,http://www.nlm.nih.gov/research/umls/rxnorm|476345,http://www.nlm.nih.gov/research/umls/rxnorm|904458,http://www.nlm.nih.gov/research/umls/rxnorm|904467",
+       "Observation?code=http://loinc.org|2089-1,http://loinc.org|13457-7,http://loinc.org|18262-6,http://loinc.org|39469-2&value-quantity=ge190"
+      ],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|E78.01,http://hl7.org/fhir/sid/icd-10-cm|E78.010,http://hl7.org/fhir/sid/icd-10-cm|E78.011,http://hl7.org/fhir/sid/icd-10-cm|E78.019\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1422096,http://www.nlm.nih.gov/research/umls/rxnorm|1422099,http://www.nlm.nih.gov/research/umls/rxnorm|200345,http://www.nlm.nih.gov/research/umls/rxnorm|2167565,http://www.nlm.nih.gov/research/umls/rxnorm|2167569,http://www.nlm.nih.gov/research/umls/rxnorm|2535745,http://www.nlm.nih.gov/research/umls/rxnorm|2535749,http://www.nlm.nih.gov/research/umls/rxnorm|259255,http://www.nlm.nih.gov/research/umls/rxnorm|404011,http://www.nlm.nih.gov/research/umls/rxnorm|404013,http://www.nlm.nih.gov/research/umls/rxnorm|476351,http://www.nlm.nih.gov/research/umls/rxnorm|597984,http://www.nlm.nih.gov/research/umls/rxnorm|597990,http://www.nlm.nih.gov/research/umls/rxnorm|597993,http://www.nlm.nih.gov/research/umls/rxnorm|617311,http://www.nlm.nih.gov/research/umls/rxnorm|859419,http://www.nlm.nih.gov/research/umls/rxnorm|859751,http://www.nlm.nih.gov/research/umls/rxnorm|1422093,http://www.nlm.nih.gov/research/umls/rxnorm|1944264,http://www.nlm.nih.gov/research/umls/rxnorm|197905,http://www.nlm.nih.gov/research/umls/rxnorm|198211,http://www.nlm.nih.gov/research/umls/rxnorm|2001262,http://www.nlm.nih.gov/research/umls/rxnorm|2001266,http://www.nlm.nih.gov/research/umls/rxnorm|2167557,http://www.nlm.nih.gov/research/umls/rxnorm|2167573,http://www.nlm.nih.gov/research/umls/rxnorm|2535747,http://www.nlm.nih.gov/research/umls/rxnorm|2535750,http://www.nlm.nih.gov/research/umls/rxnorm|2689112,http://www.nlm.nih.gov/research/umls/rxnorm|2689121,http://www.nlm.nih.gov/research/umls/rxnorm|2689125,http://www.nlm.nih.gov/research/umls/rxnorm|310405,http://www.nlm.nih.gov/research/umls/rxnorm|312961,http://www.nlm.nih.gov/research/umls/rxnorm|359731,http://www.nlm.nih.gov/research/umls/rxnorm|359732,http://www.nlm.nih.gov/research/umls/rxnorm|360507,http://www.nlm.nih.gov/research/umls/rxnorm|476349,http://www.nlm.nih.gov/research/umls/rxnorm|476350,http://www.nlm.nih.gov/research/umls/rxnorm|597967,http://www.nlm.nih.gov/research/umls/rxnorm|597971,http://www.nlm.nih.gov/research/umls/rxnorm|597974,http://www.nlm.nih.gov/research/umls/rxnorm|597977,http://www.nlm.nih.gov/research/umls/rxnorm|597980,http://www.nlm.nih.gov/research/umls/rxnorm|597987,http://www.nlm.nih.gov/research/umls/rxnorm|617310,http://www.nlm.nih.gov/research/umls/rxnorm|617312,http://www.nlm.nih.gov/research/umls/rxnorm|859424,http://www.nlm.nih.gov/research/umls/rxnorm|859747,http://www.nlm.nih.gov/research/umls/rxnorm|861643,http://www.nlm.nih.gov/research/umls/rxnorm|861648,http://www.nlm.nih.gov/research/umls/rxnorm|861652,http://www.nlm.nih.gov/research/umls/rxnorm|904475,http://www.nlm.nih.gov/research/umls/rxnorm|904481,http://www.nlm.nih.gov/research/umls/rxnorm|1790679,http://www.nlm.nih.gov/research/umls/rxnorm|197903,http://www.nlm.nih.gov/research/umls/rxnorm|197904,http://www.nlm.nih.gov/research/umls/rxnorm|310404,http://www.nlm.nih.gov/research/umls/rxnorm|312962,http://www.nlm.nih.gov/research/umls/rxnorm|314231,http://www.nlm.nih.gov/research/umls/rxnorm|433849,http://www.nlm.nih.gov/research/umls/rxnorm|476345,http://www.nlm.nih.gov/research/umls/rxnorm|904458,http://www.nlm.nih.gov/research/umls/rxnorm|904467\nObservation?code=http://loinc.org|2089-1,http://loinc.org|13457-7,http://loinc.org|18262-6,http://loinc.org|39469-2&value-quantity=ge190",
+      "prompt_text": "I need to identify my complete familial hypercholesterolemia (FH) patient population for a genetic testing and cascade screening initiative. From clinical experience, FH patients are documented in different ways: many have a formal FH diagnosis code, most are on statin therapy, and some are undiagnosed but have very elevated LDL.\n\nPlease run multiple FHIR queries to capture the full population:\n1. Patients with any FH diagnosis (parent, heterozygous, homozygous, or LDL receptor mutation variants)\n2. Patients prescribed statin therapy\n3. Patients with LDL cholesterol \u2265 190 mg/dL\n\nFor each query, return the matching resources. I want the union of all patients found. The statin query will substantially overcount \u2014 most statin patients are non-FH. The LDL query catches undiagnosed FH which is the most clinically valuable group for genetic testing referral."
+     },
+     "3-naive": {
+      "precision": 1.0,
+      "recall": 0.3087,
+      "f1": 0.4717,
+      "passed": false,
+      "expected_count": 21971,
+      "actual_count": 6782,
+      "elapsed_sec": 91.2,
+      "queries_generated": 3,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|E78.01,http://hl7.org/fhir/sid/icd-10-cm|E78.010,http://hl7.org/fhir/sid/icd-10-cm|E78.011,http://hl7.org/fhir/sid/icd-10-cm|E78.019,http://hl7.org/fhir/sid/icd-9-cm|272.0",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|83367,http://www.nlm.nih.gov/research/umls/rxnorm|36567,http://www.nlm.nih.gov/research/umls/rxnorm|301542,http://www.nlm.nih.gov/research/umls/rxnorm|42463,http://www.nlm.nih.gov/research/umls/rxnorm|6472,http://www.nlm.nih.gov/research/umls/rxnorm|861634,http://www.nlm.nih.gov/research/umls/rxnorm|41127",
+       "Observation?code=http://loinc.org|2089-1,http://loinc.org|13457-7,http://loinc.org|18262-6&value-quantity=ge190"
+      ],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|E78.01,http://hl7.org/fhir/sid/icd-10-cm|E78.010,http://hl7.org/fhir/sid/icd-10-cm|E78.011,http://hl7.org/fhir/sid/icd-10-cm|E78.019,http://hl7.org/fhir/sid/icd-9-cm|272.0\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|83367,http://www.nlm.nih.gov/research/umls/rxnorm|36567,http://www.nlm.nih.gov/research/umls/rxnorm|301542,http://www.nlm.nih.gov/research/umls/rxnorm|42463,http://www.nlm.nih.gov/research/umls/rxnorm|6472,http://www.nlm.nih.gov/research/umls/rxnorm|861634,http://www.nlm.nih.gov/research/umls/rxnorm|41127\nObservation?code=http://loinc.org|2089-1,http://loinc.org|13457-7,http://loinc.org|18262-6&value-quantity=ge190",
+      "prompt_text": "I need to identify my complete familial hypercholesterolemia (FH) patient population for a genetic testing and cascade screening initiative. From clinical experience, FH patients are documented in different ways: many have a formal FH diagnosis code, most are on statin therapy, and some are undiagnosed but have very elevated LDL.\n\nPlease run multiple FHIR queries to capture the full population:\n1. Patients with any FH diagnosis (parent, heterozygous, homozygous, or LDL receptor mutation variants)\n2. Patients prescribed statin therapy\n3. Patients with LDL cholesterol \u2265 190 mg/dL\n\nFor each query, return the matching resources. I want the union of all patients found. The statin query will substantially overcount \u2014 most statin patients are non-FH. The LDL query catches undiagnosed FH which is the most clinically valuable group for genetic testing referral."
+     },
+     "3-broad": {
+      "precision": 1.0,
+      "recall": 0.3144,
+      "f1": 0.4784,
+      "passed": false,
+      "expected_count": 21971,
+      "actual_count": 6907,
+      "elapsed_sec": 100.2,
+      "queries_generated": 3,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|E78.01,http://hl7.org/fhir/sid/icd-10-cm|E78.00,http://hl7.org/fhir/sid/icd-9-cm|272.0",
+      "additional_query_urls": [
+       "MedicationRequest?code:in=http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.526.3.1572",
+       "Observation?code=http://loinc.org|2089-1,http://loinc.org|13457-7,http://loinc.org|18262-6&value-quantity=ge190|http://unitsofmeasure.org|mg/dL"
+      ],
+      "raw_response": "Based on my investigation:\n- Server uses ICD-10-CM (E78.01 = FH, 17 patients) and ICD-9 for Conditions\n- MedicationRequests use NDC; RxNorm high-intensity statin value set 2.16.840.1.113883.3.526.3.1572 is the canonical set\n- LDL uses LOINC 2089-1\n\nFINAL ANSWER:\n\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|E78.01,http://hl7.org/fhir/sid/icd-10-cm|E78.00,http://hl7.org/fhir/sid/icd-9-cm|272.0\nMedicationRequest?code:in=http://cts.nlm.nih.gov/fhir/ValueSet/2.16.840.1.113883.3.526.3.1572\nObservation?code=http://loinc.org|2089-1,http://loinc.org|13457-7,http://loinc.org|18262-6&value-quantity=ge190|http://unitsofmeasure.org|mg/dL",
+      "prompt_text": "I need to identify my complete familial hypercholesterolemia (FH) patient population for a genetic testing and cascade screening initiative. From clinical experience, FH patients are documented in different ways: many have a formal FH diagnosis code, most are on statin therapy, and some are undiagnosed but have very elevated LDL.\n\nPlease run multiple FHIR queries to capture the full population:\n1. Patients with any FH diagnosis (parent, heterozygous, homozygous, or LDL receptor mutation variants)\n2. Patients prescribed statin therapy\n3. Patients with LDL cholesterol \u2265 190 mg/dL\n\nFor each query, return the matching resources. I want the union of all patients found. The statin query will substantially overcount \u2014 most statin patients are non-FH. The LDL query catches undiagnosed FH which is the most clinically valuable group for genetic testing referral."
+     },
+     "3-expert": {
+      "precision": 1.0,
+      "recall": 0.3087,
+      "f1": 0.4717,
+      "passed": false,
+      "expected_count": 21971,
+      "actual_count": 6782,
+      "elapsed_sec": 94.2,
+      "queries_generated": 3,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|E78.01,http://hl7.org/fhir/sid/icd-9-cm|272.0",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|617311,http://www.nlm.nih.gov/research/umls/rxnorm|617310,http://www.nlm.nih.gov/research/umls/rxnorm|617312,http://www.nlm.nih.gov/research/umls/rxnorm|259255,http://www.nlm.nih.gov/research/umls/rxnorm|859747,http://www.nlm.nih.gov/research/umls/rxnorm|859751,http://www.nlm.nih.gov/research/umls/rxnorm|859419,http://www.nlm.nih.gov/research/umls/rxnorm|859424,http://www.nlm.nih.gov/research/umls/rxnorm|198211,http://www.nlm.nih.gov/research/umls/rxnorm|312961,http://www.nlm.nih.gov/research/umls/rxnorm|200345,http://www.nlm.nih.gov/research/umls/rxnorm|197905,http://www.nlm.nih.gov/research/umls/rxnorm|904475,http://www.nlm.nih.gov/research/umls/rxnorm|904481,http://www.nlm.nih.gov/research/umls/rxnorm|310405,http://www.nlm.nih.gov/research/umls/rxnorm|861643,http://www.nlm.nih.gov/research/umls/rxnorm|861648,http://www.nlm.nih.gov/research/umls/rxnorm|861652",
+       "Observation?code=http://loinc.org|2089-1,http://loinc.org|13457-7,http://loinc.org|18262-6&value-quantity=ge190|http://unitsofmeasure.org|mg/dL"
+      ],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|E78.01,http://hl7.org/fhir/sid/icd-9-cm|272.0\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|617311,http://www.nlm.nih.gov/research/umls/rxnorm|617310,http://www.nlm.nih.gov/research/umls/rxnorm|617312,http://www.nlm.nih.gov/research/umls/rxnorm|259255,http://www.nlm.nih.gov/research/umls/rxnorm|859747,http://www.nlm.nih.gov/research/umls/rxnorm|859751,http://www.nlm.nih.gov/research/umls/rxnorm|859419,http://www.nlm.nih.gov/research/umls/rxnorm|859424,http://www.nlm.nih.gov/research/umls/rxnorm|198211,http://www.nlm.nih.gov/research/umls/rxnorm|312961,http://www.nlm.nih.gov/research/umls/rxnorm|200345,http://www.nlm.nih.gov/research/umls/rxnorm|197905,http://www.nlm.nih.gov/research/umls/rxnorm|904475,http://www.nlm.nih.gov/research/umls/rxnorm|904481,http://www.nlm.nih.gov/research/umls/rxnorm|310405,http://www.nlm.nih.gov/research/umls/rxnorm|861643,http://www.nlm.nih.gov/research/umls/rxnorm|861648,http://www.nlm.nih.gov/research/umls/rxnorm|861652\nObservation?code=http://loinc.org|2089-1,http://loinc.org|13457-7,http://loinc.org|18262-6&value-quantity=ge190|http://unitsofmeasure.org|mg/dL",
+      "prompt_text": "I need to identify my complete familial hypercholesterolemia (FH) patient population for a genetic testing and cascade screening initiative. From clinical experience, FH patients are documented in different ways: many have a formal FH diagnosis code, most are on statin therapy, and some are undiagnosed but have very elevated LDL.\n\nPlease run multiple FHIR queries to capture the full population:\n1. Patients with any FH diagnosis (parent, heterozygous, homozygous, or LDL receptor mutation variants)\n2. Patients prescribed statin therapy\n3. Patients with LDL cholesterol \u2265 190 mg/dL\n\nFor each query, return the matching resources. I want the union of all patients found. The statin query will substantially overcount \u2014 most statin patients are non-FH. The LDL query catches undiagnosed FH which is the most clinically valuable group for genetic testing referral."
+     }
+    },
     "copilot:claude-sonnet-4.6": {
      "1-naive": {
       "precision": 0.863,
@@ -1862,6 +2017,134 @@
       "primary_query_url": "Condition?code=http://snomed.info/sct|398036000,http://snomed.info/sct|238079002,http://snomed.info/sct|238078005,http://snomed.info/sct|403829002,http://snomed.info/sct|403830007",
       "additional_query_urls": [],
       "raw_response": "Condition?code=http://snomed.info/sct|398036000,http://snomed.info/sct|238079002,http://snomed.info/sct|238078005,http://snomed.info/sct|403829002,http://snomed.info/sct|403830007",
+      "prompt_text": "I need to identify all FH patients. FH is documented under multiple SNOMED codes from AIR Steward's 'Familial Hypercholesterolemia' VSAC (OID 2.16.840.1.113762.1.4.1047.85): Familial hypercholesterolemia (398036000) is the parent, with subtype variants Familial hypercholesterolemia - heterozygous (238079002), Familial hypercholesterolemia - homozygous (238078005), FH due to heterozygous LDL receptor mutation (403829002), and FH due to homozygous LDL receptor mutation (403830007). Search Condition resources for all five codes."
+     }
+    },
+    "copilot:claude-opus-4.7+mimic": {
+     "1-naive": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 21971,
+      "actual_count": 0,
+      "elapsed_sec": 7.5,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|398036000",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|398036000",
+      "prompt_text": "Find all patients with familial hypercholesterolemia."
+     },
+     "1-broad": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 21971,
+      "actual_count": 0,
+      "elapsed_sec": 10.1,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|398036000,397915002,405751000,238076009,238077000,398026008,7020002",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|398036000,397915002,405751000,238076009,238077000,398026008,7020002",
+      "prompt_text": "Find all patients diagnosed with any form of familial hypercholesterolemia (FH) \u2014 the parent FH concept, the heterozygous form (one defective LDL receptor allele, the most common), the homozygous form (two defective alleles, severe), and FH variants caused by specific LDL receptor mutations or apolipoprotein B defects."
+     },
+     "1-expert": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 21971,
+      "actual_count": 0,
+      "elapsed_sec": 7.9,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|398036000,http://snomed.info/sct|238079002,http://snomed.info/sct|238078005,http://snomed.info/sct|403829002,http://snomed.info/sct|403830007",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|398036000,http://snomed.info/sct|238079002,http://snomed.info/sct|238078005,http://snomed.info/sct|403829002,http://snomed.info/sct|403830007",
+      "prompt_text": "I need to identify all FH patients. FH is documented under multiple SNOMED codes from AIR Steward's 'Familial Hypercholesterolemia' VSAC (OID 2.16.840.1.113762.1.4.1047.85): Familial hypercholesterolemia (398036000) is the parent, with subtype variants Familial hypercholesterolemia - heterozygous (238079002), Familial hypercholesterolemia - homozygous (238078005), FH due to heterozygous LDL receptor mutation (403829002), and FH due to homozygous LDL receptor mutation (403830007). Search Condition resources for all five codes."
+     },
+     "2-naive": {
+      "precision": 1.0,
+      "recall": 0.0007,
+      "f1": 0.0015,
+      "passed": false,
+      "expected_count": 21971,
+      "actual_count": 16,
+      "elapsed_sec": 21.5,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|398036000,http://snomed.info/sct|397915002,http://hl7.org/fhir/sid/icd-10-cm|E78.01",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|398036000,http://snomed.info/sct|397915002,http://hl7.org/fhir/sid/icd-10-cm|E78.01",
+      "prompt_text": "Find all patients with familial hypercholesterolemia."
+     },
+     "2-broad": {
+      "precision": 1.0,
+      "recall": 0.0007,
+      "f1": 0.0015,
+      "passed": false,
+      "expected_count": 21971,
+      "actual_count": 16,
+      "elapsed_sec": 30.5,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|E78.01,http://hl7.org/fhir/sid/icd-10-cm|E78.010,http://hl7.org/fhir/sid/icd-10-cm|E78.011,http://hl7.org/fhir/sid/icd-10-cm|E78.019",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|E78.01,http://hl7.org/fhir/sid/icd-10-cm|E78.010,http://hl7.org/fhir/sid/icd-10-cm|E78.011,http://hl7.org/fhir/sid/icd-10-cm|E78.019",
+      "prompt_text": "Find all patients diagnosed with any form of familial hypercholesterolemia (FH) \u2014 the parent FH concept, the heterozygous form (one defective LDL receptor allele, the most common), the homozygous form (two defective alleles, severe), and FH variants caused by specific LDL receptor mutations or apolipoprotein B defects."
+     },
+     "2-expert": {
+      "precision": 1.0,
+      "recall": 0.0007,
+      "f1": 0.0015,
+      "passed": false,
+      "expected_count": 21971,
+      "actual_count": 16,
+      "elapsed_sec": 21.2,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|E78.01",
+      "additional_query_urls": [],
+      "raw_response": "ID-10 E78.01 is the specific familial code.\n\nFINAL ANSWER:\n\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|E78.01",
+      "prompt_text": "I need to identify all FH patients. FH is documented under multiple SNOMED codes from AIR Steward's 'Familial Hypercholesterolemia' VSAC (OID 2.16.840.1.113762.1.4.1047.85): Familial hypercholesterolemia (398036000) is the parent, with subtype variants Familial hypercholesterolemia - heterozygous (238079002), Familial hypercholesterolemia - homozygous (238078005), FH due to heterozygous LDL receptor mutation (403829002), and FH due to homozygous LDL receptor mutation (403830007). Search Condition resources for all five codes."
+     },
+     "3-naive": {
+      "precision": 1.0,
+      "recall": 0.0007,
+      "f1": 0.0015,
+      "passed": false,
+      "expected_count": 21971,
+      "actual_count": 16,
+      "elapsed_sec": 29.1,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|E78.01,http://hl7.org/fhir/sid/icd-10-cm|E78.010,http://hl7.org/fhir/sid/icd-10-cm|E78.011,http://hl7.org/fhir/sid/icd-10-cm|E78.019",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|E78.01,http://hl7.org/fhir/sid/icd-10-cm|E78.010,http://hl7.org/fhir/sid/icd-10-cm|E78.011,http://hl7.org/fhir/sid/icd-10-cm|E78.019",
+      "prompt_text": "Find all patients with familial hypercholesterolemia."
+     },
+     "3-broad": {
+      "precision": 1.0,
+      "recall": 0.3086,
+      "f1": 0.4716,
+      "passed": false,
+      "expected_count": 21971,
+      "actual_count": 6780,
+      "elapsed_sec": 48.0,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|E78.010,http://hl7.org/fhir/sid/icd-10-cm|E78.011,http://hl7.org/fhir/sid/icd-10-cm|E78.019,http://hl7.org/fhir/sid/icd-9-cm|272.0,http://snomed.info/sct|398036000,http://snomed.info/sct|238078005,http://snomed.info/sct|238079002,http://snomed.info/sct|403829002,http://snomed.info/sct|403830007,http://snomed.info/sct|403831006",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|E78.010,http://hl7.org/fhir/sid/icd-10-cm|E78.011,http://hl7.org/fhir/sid/icd-10-cm|E78.019,http://hl7.org/fhir/sid/icd-9-cm|272.0,http://snomed.info/sct|398036000,http://snomed.info/sct|238078005,http://snomed.info/sct|238079002,http://snomed.info/sct|403829002,http://snomed.info/sct|403830007,http://snomed.info/sct|403831006",
+      "prompt_text": "Find all patients diagnosed with any form of familial hypercholesterolemia (FH) \u2014 the parent FH concept, the heterozygous form (one defective LDL receptor allele, the most common), the homozygous form (two defective alleles, severe), and FH variants caused by specific LDL receptor mutations or apolipoprotein B defects."
+     },
+     "3-expert": {
+      "precision": 1.0,
+      "recall": 0.0007,
+      "f1": 0.0015,
+      "passed": false,
+      "expected_count": 21971,
+      "actual_count": 16,
+      "elapsed_sec": 25.4,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|E78.01",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|E78.01",
       "prompt_text": "I need to identify all FH patients. FH is documented under multiple SNOMED codes from AIR Steward's 'Familial Hypercholesterolemia' VSAC (OID 2.16.840.1.113762.1.4.1047.85): Familial hypercholesterolemia (398036000) is the parent, with subtype variants Familial hypercholesterolemia - heterozygous (238079002), Familial hypercholesterolemia - homozygous (238078005), FH due to heterozygous LDL receptor mutation (403829002), and FH due to homozygous LDL receptor mutation (403830007). Search Condition resources for all five codes."
      }
     },
@@ -4151,6 +4434,134 @@
       "expected_count": 1942,
       "actual_count": 1942,
       "elapsed_sec": 98.8,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|83367,http://www.nlm.nih.gov/research/umls/rxnorm|36567,http://www.nlm.nih.gov/research/umls/rxnorm|301542,http://www.nlm.nih.gov/research/umls/rxnorm|42463,http://www.nlm.nih.gov/research/umls/rxnorm|6472",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|83367,http://www.nlm.nih.gov/research/umls/rxnorm|36567,http://www.nlm.nih.gov/research/umls/rxnorm|301542,http://www.nlm.nih.gov/research/umls/rxnorm|42463,http://www.nlm.nih.gov/research/umls/rxnorm|6472",
+      "prompt_text": "I need MedicationRequest resources for any statin. Use these RxNorm ingredient codes: 83367 (atorvastatin), 36567 (simvastatin), 301542 (rosuvastatin), 42463 (pravastatin), 6472 (lovastatin). Combine in a single comma-separated code search."
+     }
+    },
+    "copilot:claude-opus-4.7+mimic": {
+     "1-naive": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 58998,
+      "actual_count": 0,
+      "elapsed_sec": 9.9,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|83367,http://www.nlm.nih.gov/research/umls/rxnorm|36567,http://www.nlm.nih.gov/research/umls/rxnorm|42463,http://www.nlm.nih.gov/research/umls/rxnorm|41127,http://www.nlm.nih.gov/research/umls/rxnorm|6472,http://www.nlm.nih.gov/research/umls/rxnorm|301542,http://www.nlm.nih.gov/research/umls/rxnorm|42463&status=active",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|83367,http://www.nlm.nih.gov/research/umls/rxnorm|36567,http://www.nlm.nih.gov/research/umls/rxnorm|42463,http://www.nlm.nih.gov/research/umls/rxnorm|41127,http://www.nlm.nih.gov/research/umls/rxnorm|6472,http://www.nlm.nih.gov/research/umls/rxnorm|301542,http://www.nlm.nih.gov/research/umls/rxnorm|42463&status=active",
+      "prompt_text": "Find patients on statins."
+     },
+     "1-broad": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 58998,
+      "actual_count": 0,
+      "elapsed_sec": 9.6,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|83367,http://www.nlm.nih.gov/research/umls/rxnorm|36567,http://www.nlm.nih.gov/research/umls/rxnorm|301542,http://www.nlm.nih.gov/research/umls/rxnorm|42463,http://www.nlm.nih.gov/research/umls/rxnorm|6472",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|83367,http://www.nlm.nih.gov/research/umls/rxnorm|36567,http://www.nlm.nih.gov/research/umls/rxnorm|301542,http://www.nlm.nih.gov/research/umls/rxnorm|42463,http://www.nlm.nih.gov/research/umls/rxnorm|6472",
+      "prompt_text": "Find patients prescribed any HMG-CoA reductase inhibitor (statin) for cholesterol management \u2014 atorvastatin, simvastatin, rosuvastatin, pravastatin, or lovastatin."
+     },
+     "1-expert": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 58998,
+      "actual_count": 0,
+      "elapsed_sec": 8.5,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|83367,http://www.nlm.nih.gov/research/umls/rxnorm|36567,http://www.nlm.nih.gov/research/umls/rxnorm|301542,http://www.nlm.nih.gov/research/umls/rxnorm|42463,http://www.nlm.nih.gov/research/umls/rxnorm|6472",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|83367,http://www.nlm.nih.gov/research/umls/rxnorm|36567,http://www.nlm.nih.gov/research/umls/rxnorm|301542,http://www.nlm.nih.gov/research/umls/rxnorm|42463,http://www.nlm.nih.gov/research/umls/rxnorm|6472",
+      "prompt_text": "I need MedicationRequest resources for any statin. Use these RxNorm ingredient codes: 83367 (atorvastatin), 36567 (simvastatin), 301542 (rosuvastatin), 42463 (pravastatin), 6472 (lovastatin). Combine in a single comma-separated code search."
+     },
+     "2-naive": {
+      "precision": 0.9139,
+      "recall": 0.1142,
+      "f1": 0.203,
+      "passed": false,
+      "expected_count": 58998,
+      "actual_count": 7371,
+      "elapsed_sec": 48.7,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?code=http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Atorvastatin,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Simvastatin,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Rosuvastatin,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Pravastatin,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Lovastatin,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Fluvastatin,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Pitavastatin",
+      "additional_query_urls": [],
+      "raw_response": "FINAL ANSWER:\n\nMedicationRequest?code=http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Atorvastatin,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Simvastatin,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Rosuvastatin,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Pravastatin,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Lovastatin,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Fluvastatin,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Pitavastatin",
+      "prompt_text": "Find patients on statins."
+     },
+     "2-broad": {
+      "precision": 0.9139,
+      "recall": 0.1142,
+      "f1": 0.203,
+      "passed": false,
+      "expected_count": 58998,
+      "actual_count": 7371,
+      "elapsed_sec": 42.1,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?code=Atorvastatin,Simvastatin,Rosuvastatin,Pravastatin,Lovastatin",
+      "additional_query_urls": [],
+      "raw_response": "FINAL ANSWER:\n\nMedicationRequest?code=Atorvastatin,Simvastatin,Rosuvastatin,Pravastatin,Lovastatin",
+      "prompt_text": "Find patients prescribed any HMG-CoA reductase inhibitor (statin) for cholesterol management \u2014 atorvastatin, simvastatin, rosuvastatin, pravastatin, or lovastatin."
+     },
+     "2-expert": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 58998,
+      "actual_count": 0,
+      "elapsed_sec": 16.4,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|83367,http://www.nlm.nih.gov/research/umls/rxnorm|36567,http://www.nlm.nih.gov/research/umls/rxnorm|301542,http://www.nlm.nih.gov/research/umls/rxnorm|42463,http://www.nlm.nih.gov/research/umls/rxnorm|6472",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|83367,http://www.nlm.nih.gov/research/umls/rxnorm|36567,http://www.nlm.nih.gov/research/umls/rxnorm|301542,http://www.nlm.nih.gov/research/umls/rxnorm|42463,http://www.nlm.nih.gov/research/umls/rxnorm|6472",
+      "prompt_text": "I need MedicationRequest resources for any statin. Use these RxNorm ingredient codes: 83367 (atorvastatin), 36567 (simvastatin), 301542 (rosuvastatin), 42463 (pravastatin), 6472 (lovastatin). Combine in a single comma-separated code search."
+     },
+     "3-naive": {
+      "precision": 0.9139,
+      "recall": 0.1142,
+      "f1": 0.203,
+      "passed": false,
+      "expected_count": 58998,
+      "actual_count": 7371,
+      "elapsed_sec": 55.6,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?code=http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Atorvastatin,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Simvastatin,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Rosuvastatin,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Pravastatin,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Lovastatin,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Fluvastatin,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Pitavastatin",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?code=http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Atorvastatin,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Simvastatin,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Rosuvastatin,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Pravastatin,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Lovastatin,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Fluvastatin,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Pitavastatin",
+      "prompt_text": "Find patients on statins."
+     },
+     "3-broad": {
+      "precision": 0.9139,
+      "recall": 0.1142,
+      "f1": 0.203,
+      "passed": false,
+      "expected_count": 58998,
+      "actual_count": 7371,
+      "elapsed_sec": 37.9,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?code=http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Atorvastatin,Simvastatin,Pravastatin,Lovastatin,Rosuvastatin",
+      "additional_query_urls": [],
+      "raw_response": "FINAL ANSWER:\n\nMedicationRequest?code=http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Atorvastatin,Simvastatin,Pravastatin,Lovastatin,Rosuvastatin Calcium",
+      "prompt_text": "Find patients prescribed any HMG-CoA reductase inhibitor (statin) for cholesterol management \u2014 atorvastatin, simvastatin, rosuvastatin, pravastatin, or lovastatin."
+     },
+     "3-expert": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 58998,
+      "actual_count": 0,
+      "elapsed_sec": 19.4,
       "queries_generated": 1,
       "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|83367,http://www.nlm.nih.gov/research/umls/rxnorm|36567,http://www.nlm.nih.gov/research/umls/rxnorm|301542,http://www.nlm.nih.gov/research/umls/rxnorm|42463,http://www.nlm.nih.gov/research/umls/rxnorm|6472",
       "additional_query_urls": [],

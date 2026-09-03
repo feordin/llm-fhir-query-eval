@@ -987,6 +987,147 @@
       "prompt_text": "I need a comprehensive chronic rhinosinusitis cohort by combining two evidence sources. First, search Condition resources for a chronic sinusitis diagnosis coded in SNOMED CT. Second, search MedicationRequest resources for mometasone, an intranasal corticosteroid used in CRS management, coded in RxNorm. Be aware that mometasone is heavily cross-indicated \u2014 it is also prescribed for allergic rhinitis, asthma, and atopic dermatitis \u2014 so the medication-only arm will include patients treated for those other conditions. Union the patient sets from both queries."
      }
     },
+    "copilot:claude-opus-4.7+mimic": {
+     "1-naive": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 1552,
+      "actual_count": 0,
+      "elapsed_sec": 7.2,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|40055000",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|40055000",
+      "prompt_text": "Find all chronic sinusitis patients."
+     },
+     "1-broad": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 1552,
+      "actual_count": 0,
+      "elapsed_sec": 7.3,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|40055000",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|616447"
+      ],
+      "raw_response": "Condition?code=http://snomed.info/sct|40055000\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|616447",
+      "prompt_text": "Find all chronic rhinosinusitis patients \u2014 by diagnosis or by intranasal corticosteroid (mometasone) prescriptions. Run multiple queries and union the patient sets."
+     },
+     "1-expert": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 1552,
+      "actual_count": 0,
+      "elapsed_sec": 8.1,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|40055000",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|68490"
+      ],
+      "raw_response": "Condition?code=http://snomed.info/sct|40055000\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|68490",
+      "prompt_text": "I need a comprehensive chronic rhinosinusitis cohort by combining two evidence sources. First, search Condition resources for a chronic sinusitis diagnosis coded in SNOMED CT. Second, search MedicationRequest resources for mometasone, an intranasal corticosteroid used in CRS management, coded in RxNorm. Be aware that mometasone is heavily cross-indicated \u2014 it is also prescribed for allergic rhinitis, asthma, and atopic dermatitis \u2014 so the medication-only arm will include patients treated for those other conditions. Union the patient sets from both queries."
+     },
+     "2-naive": {
+      "precision": 1.0,
+      "recall": 0.9852,
+      "f1": 0.9925,
+      "passed": true,
+      "expected_count": 1552,
+      "actual_count": 1529,
+      "elapsed_sec": 49.7,
+      "queries_generated": 1,
+      "primary_query_url": "Patient?_has:Condition:patient:code=http://hl7.org/fhir/sid/icd-10-cm|J32.0,http://hl7.org/fhir/sid/icd-10-cm|J32.1,http://hl7.org/fhir/sid/icd-10-cm|J32.2,http://hl7.org/fhir/sid/icd-10-cm|J32.3,http://hl7.org/fhir/sid/icd-10-cm|J32.4,http://hl7.org/fhir/sid/icd-10-cm|J32.8,http://hl7.org/fhir/sid/icd-10-cm|J32.9,http://hl7.org/fhir/sid/icd-9-cm|473.0,http://hl7.org/fhir/sid/icd-9-cm|473.1,http://hl7.org/fhir/sid/icd-9-cm|473.2,http://hl7.org/fhir/sid/icd-9-cm|473.3,http://hl7.org/fhir/sid/icd-9-cm|473.8,http://hl7.org/fhir/sid/icd-9-cm|473.9",
+      "additional_query_urls": [],
+      "raw_response": "Patient?_has:Condition:patient:code=http://hl7.org/fhir/sid/icd-10-cm|J32.0,http://hl7.org/fhir/sid/icd-10-cm|J32.1,http://hl7.org/fhir/sid/icd-10-cm|J32.2,http://hl7.org/fhir/sid/icd-10-cm|J32.3,http://hl7.org/fhir/sid/icd-10-cm|J32.4,http://hl7.org/fhir/sid/icd-10-cm|J32.8,http://hl7.org/fhir/sid/icd-10-cm|J32.9,http://hl7.org/fhir/sid/icd-9-cm|473.0,http://hl7.org/fhir/sid/icd-9-cm|473.1,http://hl7.org/fhir/sid/icd-9-cm|473.2,http://hl7.org/fhir/sid/icd-9-cm|473.3,http://hl7.org/fhir/sid/icd-9-cm|473.8,http://hl7.org/fhir/sid/icd-9-cm|473.9",
+      "prompt_text": "Find all chronic sinusitis patients."
+     },
+     "2-broad": {
+      "precision": 1.0,
+      "recall": 0.9852,
+      "f1": 0.9925,
+      "passed": true,
+      "expected_count": 1552,
+      "actual_count": 1529,
+      "elapsed_sec": 109.8,
+      "queries_generated": 3,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|J32.0,http://hl7.org/fhir/sid/icd-10-cm|J32.1,http://hl7.org/fhir/sid/icd-10-cm|J32.2,http://hl7.org/fhir/sid/icd-10-cm|J32.3,http://hl7.org/fhir/sid/icd-10-cm|J32.4,http://hl7.org/fhir/sid/icd-10-cm|J32.8,http://hl7.org/fhir/sid/icd-10-cm|J32.9",
+      "additional_query_urls": [
+       "Condition?code=http://hl7.org/fhir/sid/icd-9-cm|473.0,http://hl7.org/fhir/sid/icd-9-cm|473.1,http://hl7.org/fhir/sid/icd-9-cm|473.2,http://hl7.org/fhir/sid/icd-9-cm|473.3,http://hl7.org/fhir/sid/icd-9-cm|473.8,http://hl7.org/fhir/sid/icd-9-cm|473.9",
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1797865,http://www.nlm.nih.gov/research/umls/rxnorm|1797870"
+      ],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|J32.0,http://hl7.org/fhir/sid/icd-10-cm|J32.1,http://hl7.org/fhir/sid/icd-10-cm|J32.2,http://hl7.org/fhir/sid/icd-10-cm|J32.3,http://hl7.org/fhir/sid/icd-10-cm|J32.4,http://hl7.org/fhir/sid/icd-10-cm|J32.8,http://hl7.org/fhir/sid/icd-10-cm|J32.9\nCondition?code=http://hl7.org/fhir/sid/icd-9-cm|473.0,http://hl7.org/fhir/sid/icd-9-cm|473.1,http://hl7.org/fhir/sid/icd-9-cm|473.2,http://hl7.org/fhir/sid/icd-9-cm|473.3,http://hl7.org/fhir/sid/icd-9-cm|473.8,http://hl7.org/fhir/sid/icd-9-cm|473.9\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1797865,http://www.nlm.nih.gov/research/umls/rxnorm|1797870",
+      "prompt_text": "Find all chronic rhinosinusitis patients \u2014 by diagnosis or by intranasal corticosteroid (mometasone) prescriptions. Run multiple queries and union the patient sets."
+     },
+     "2-expert": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 1552,
+      "actual_count": 0,
+      "elapsed_sec": 102.0,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|40055000",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|108118"
+      ],
+      "raw_response": "Condition?code=http://snomed.info/sct|40055000\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|108118",
+      "prompt_text": "I need a comprehensive chronic rhinosinusitis cohort by combining two evidence sources. First, search Condition resources for a chronic sinusitis diagnosis coded in SNOMED CT. Second, search MedicationRequest resources for mometasone, an intranasal corticosteroid used in CRS management, coded in RxNorm. Be aware that mometasone is heavily cross-indicated \u2014 it is also prescribed for allergic rhinitis, asthma, and atopic dermatitis \u2014 so the medication-only arm will include patients treated for those other conditions. Union the patient sets from both queries."
+     },
+     "3-naive": {
+      "precision": 1.0,
+      "recall": 0.9852,
+      "f1": 0.9925,
+      "passed": true,
+      "expected_count": 1552,
+      "actual_count": 1529,
+      "elapsed_sec": 30.5,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|J32.0,http://hl7.org/fhir/sid/icd-10-cm|J32.1,http://hl7.org/fhir/sid/icd-10-cm|J32.2,http://hl7.org/fhir/sid/icd-10-cm|J32.3,http://hl7.org/fhir/sid/icd-10-cm|J32.4,http://hl7.org/fhir/sid/icd-10-cm|J32.8,http://hl7.org/fhir/sid/icd-10-cm|J32.9,http://hl7.org/fhir/sid/icd-9-cm|473.0,http://hl7.org/fhir/sid/icd-9-cm|473.1,http://hl7.org/fhir/sid/icd-9-cm|473.2,http://hl7.org/fhir/sid/icd-9-cm|473.3,http://hl7.org/fhir/sid/icd-9-cm|473.8,http://hl7.org/fhir/sid/icd-9-cm|473.9",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|J32.0,http://hl7.org/fhir/sid/icd-10-cm|J32.1,http://hl7.org/fhir/sid/icd-10-cm|J32.2,http://hl7.org/fhir/sid/icd-10-cm|J32.3,http://hl7.org/fhir/sid/icd-10-cm|J32.4,http://hl7.org/fhir/sid/icd-10-cm|J32.8,http://hl7.org/fhir/sid/icd-10-cm|J32.9,http://hl7.org/fhir/sid/icd-9-cm|473.0,http://hl7.org/fhir/sid/icd-9-cm|473.1,http://hl7.org/fhir/sid/icd-9-cm|473.2,http://hl7.org/fhir/sid/icd-9-cm|473.3,http://hl7.org/fhir/sid/icd-9-cm|473.8,http://hl7.org/fhir/sid/icd-9-cm|473.9",
+      "prompt_text": "Find all chronic sinusitis patients."
+     },
+     "3-broad": {
+      "precision": 1.0,
+      "recall": 0.4207,
+      "f1": 0.5923,
+      "passed": false,
+      "expected_count": 1552,
+      "actual_count": 653,
+      "elapsed_sec": 40.1,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|J32.9,http://hl7.org/fhir/sid/icd-10-cm|J32.0,http://hl7.org/fhir/sid/icd-10-cm|J32.1,http://hl7.org/fhir/sid/icd-10-cm|J32.2,http://hl7.org/fhir/sid/icd-10-cm|J32.3,http://hl7.org/fhir/sid/icd-10-cm|J32.4,http://hl7.org/fhir/sid/icd-10-cm|J32.8",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|895994,http://www.nlm.nih.gov/research/umls/rxnorm|310547,http://www.nlm.nih.gov/research/umls/rxnorm|429551"
+      ],
+      "raw_response": "Condition query has data (764); no mometasone med data available. Final answer:\n\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|J32.9,http://hl7.org/fhir/sid/icd-10-cm|J32.0,http://hl7.org/fhir/sid/icd-10-cm|J32.1,http://hl7.org/fhir/sid/icd-10-cm|J32.2,http://hl7.org/fhir/sid/icd-10-cm|J32.3,http://hl7.org/fhir/sid/icd-10-cm|J32.4,http://hl7.org/fhir/sid/icd-10-cm|J32.8\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|895994,http://www.nlm.nih.gov/research/umls/rxnorm|310547,http://www.nlm.nih.gov/research/umls/rxnorm|429551",
+      "prompt_text": "Find all chronic rhinosinusitis patients \u2014 by diagnosis or by intranasal corticosteroid (mometasone) prescriptions. Run multiple queries and union the patient sets."
+     },
+     "3-expert": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 1552,
+      "actual_count": 0,
+      "elapsed_sec": 88.9,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|40055000,http://snomed.info/sct|46878008,http://snomed.info/sct|60305005,http://snomed.info/sct|74564001,http://snomed.info/sct|27431003,http://snomed.info/sct|232401005,http://snomed.info/sct|232402003",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|108118,http://www.nlm.nih.gov/research/umls/rxnorm|68791"
+      ],
+      "raw_response": "Condition?code=http://snomed.info/sct|40055000,http://snomed.info/sct|46878008,http://snomed.info/sct|60305005,http://snomed.info/sct|74564001,http://snomed.info/sct|27431003,http://snomed.info/sct|232401005,http://snomed.info/sct|232402003\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|108118,http://www.nlm.nih.gov/research/umls/rxnorm|68791",
+      "prompt_text": "I need a comprehensive chronic rhinosinusitis cohort by combining two evidence sources. First, search Condition resources for a chronic sinusitis diagnosis coded in SNOMED CT. Second, search MedicationRequest resources for mometasone, an intranasal corticosteroid used in CRS management, coded in RxNorm. Be aware that mometasone is heavily cross-indicated \u2014 it is also prescribed for allergic rhinitis, asthma, and atopic dermatitis \u2014 so the medication-only arm will include patients treated for those other conditions. Union the patient sets from both queries."
+     }
+    },
     "copilot:claude-sonnet-4.6": {
      "1-naive": {
       "precision": 1.0,
@@ -1748,6 +1889,134 @@
       "prompt_text": "I need to identify patients with a documented diagnosis of chronic rhinosinusitis (chronic sinusitis). Search Condition resources for this diagnosis coded in SNOMED CT. Target chronic sinusitis specifically rather than acute or unspecified sinusitis, which represent distinct clinical entities."
      }
     },
+    "copilot:claude-opus-4.7+mimic": {
+     "1-naive": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 1552,
+      "actual_count": 0,
+      "elapsed_sec": 7.2,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|40055000",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|40055000",
+      "prompt_text": "Find patients with chronic sinusitis."
+     },
+     "1-broad": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 1552,
+      "actual_count": 0,
+      "elapsed_sec": 7.6,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|40055000",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|40055000",
+      "prompt_text": "Find patients diagnosed with chronic rhinosinusitis \u2014 persistent inflammation of nasal and paranasal sinus mucosa lasting 12+ weeks."
+     },
+     "1-expert": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 1552,
+      "actual_count": 0,
+      "elapsed_sec": 7.3,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|40055000",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|40055000",
+      "prompt_text": "I need to identify patients with a documented diagnosis of chronic rhinosinusitis (chronic sinusitis). Search Condition resources for this diagnosis coded in SNOMED CT. Target chronic sinusitis specifically rather than acute or unspecified sinusitis, which represent distinct clinical entities."
+     },
+     "2-naive": {
+      "precision": 1.0,
+      "recall": 0.9852,
+      "f1": 0.9925,
+      "passed": true,
+      "expected_count": 1552,
+      "actual_count": 1529,
+      "elapsed_sec": 32.2,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|J32.0,http://hl7.org/fhir/sid/icd-10-cm|J32.1,http://hl7.org/fhir/sid/icd-10-cm|J32.2,http://hl7.org/fhir/sid/icd-10-cm|J32.3,http://hl7.org/fhir/sid/icd-10-cm|J32.4,http://hl7.org/fhir/sid/icd-10-cm|J32.8,http://hl7.org/fhir/sid/icd-10-cm|J32.9,http://hl7.org/fhir/sid/icd-9-cm|473.0,http://hl7.org/fhir/sid/icd-9-cm|473.1,http://hl7.org/fhir/sid/icd-9-cm|473.2,http://hl7.org/fhir/sid/icd-9-cm|473.3,http://hl7.org/fhir/sid/icd-9-cm|473.8,http://hl7.org/fhir/sid/icd-9-cm|473.9",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|J32.0,http://hl7.org/fhir/sid/icd-10-cm|J32.1,http://hl7.org/fhir/sid/icd-10-cm|J32.2,http://hl7.org/fhir/sid/icd-10-cm|J32.3,http://hl7.org/fhir/sid/icd-10-cm|J32.4,http://hl7.org/fhir/sid/icd-10-cm|J32.8,http://hl7.org/fhir/sid/icd-10-cm|J32.9,http://hl7.org/fhir/sid/icd-9-cm|473.0,http://hl7.org/fhir/sid/icd-9-cm|473.1,http://hl7.org/fhir/sid/icd-9-cm|473.2,http://hl7.org/fhir/sid/icd-9-cm|473.3,http://hl7.org/fhir/sid/icd-9-cm|473.8,http://hl7.org/fhir/sid/icd-9-cm|473.9",
+      "prompt_text": "Find patients with chronic sinusitis."
+     },
+     "2-broad": {
+      "precision": 1.0,
+      "recall": 0.9852,
+      "f1": 0.9925,
+      "passed": true,
+      "expected_count": 1552,
+      "actual_count": 1529,
+      "elapsed_sec": 28.6,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|J32.0,http://hl7.org/fhir/sid/icd-10-cm|J32.1,http://hl7.org/fhir/sid/icd-10-cm|J32.2,http://hl7.org/fhir/sid/icd-10-cm|J32.3,http://hl7.org/fhir/sid/icd-10-cm|J32.4,http://hl7.org/fhir/sid/icd-10-cm|J32.8,http://hl7.org/fhir/sid/icd-10-cm|J32.9,http://hl7.org/fhir/sid/icd-9-cm|473.0,http://hl7.org/fhir/sid/icd-9-cm|473.1,http://hl7.org/fhir/sid/icd-9-cm|473.2,http://hl7.org/fhir/sid/icd-9-cm|473.3,http://hl7.org/fhir/sid/icd-9-cm|473.8,http://hl7.org/fhir/sid/icd-9-cm|473.9",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|J32.0,http://hl7.org/fhir/sid/icd-10-cm|J32.1,http://hl7.org/fhir/sid/icd-10-cm|J32.2,http://hl7.org/fhir/sid/icd-10-cm|J32.3,http://hl7.org/fhir/sid/icd-10-cm|J32.4,http://hl7.org/fhir/sid/icd-10-cm|J32.8,http://hl7.org/fhir/sid/icd-10-cm|J32.9,http://hl7.org/fhir/sid/icd-9-cm|473.0,http://hl7.org/fhir/sid/icd-9-cm|473.1,http://hl7.org/fhir/sid/icd-9-cm|473.2,http://hl7.org/fhir/sid/icd-9-cm|473.3,http://hl7.org/fhir/sid/icd-9-cm|473.8,http://hl7.org/fhir/sid/icd-9-cm|473.9",
+      "prompt_text": "Find patients diagnosed with chronic rhinosinusitis \u2014 persistent inflammation of nasal and paranasal sinus mucosa lasting 12+ weeks."
+     },
+     "2-expert": {
+      "precision": 1.0,
+      "recall": 0.1153,
+      "f1": 0.2068,
+      "passed": false,
+      "expected_count": 1552,
+      "actual_count": 179,
+      "elapsed_sec": 39.1,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|J32.0,http://hl7.org/fhir/sid/icd-10-cm|J32.1,http://hl7.org/fhir/sid/icd-10-cm|J32.2,http://hl7.org/fhir/sid/icd-10-cm|J32.3,http://hl7.org/fhir/sid/icd-10-cm|J32.4,http://hl7.org/fhir/sid/icd-10-cm|J32.8",
+      "additional_query_urls": [],
+      "raw_response": "FINAL ANSWER:\n\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|J32.0,http://hl7.org/fhir/sid/icd-10-cm|J32.1,http://hl7.org/fhir/sid/icd-10-cm|J32.2,http://hl7.org/fhir/sid/icd-10-cm|J32.3,http://hl7.org/fhir/sid/icd-10-cm|J32.4,http://hl7.org/fhir/sid/icd-10-cm|J32.8",
+      "prompt_text": "I need to identify patients with a documented diagnosis of chronic rhinosinusitis (chronic sinusitis). Search Condition resources for this diagnosis coded in SNOMED CT. Target chronic sinusitis specifically rather than acute or unspecified sinusitis, which represent distinct clinical entities."
+     },
+     "3-naive": {
+      "precision": 1.0,
+      "recall": 0.4207,
+      "f1": 0.5923,
+      "passed": false,
+      "expected_count": 1552,
+      "actual_count": 653,
+      "elapsed_sec": 28.0,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|40055000,http://snomed.info/sct|35923002,http://snomed.info/sct|60130002,http://snomed.info/sct|73237007,http://snomed.info/sct|38961000,http://snomed.info/sct|88850006,http://snomed.info/sct|427909005,http://snomed.info/sct|232393006,http://snomed.info/sct|232394000,http://snomed.info/sct|232395004,http://snomed.info/sct|232397007,http://hl7.org/fhir/sid/icd-10-cm|J32.0,http://hl7.org/fhir/sid/icd-10-cm|J32.1,http://hl7.org/fhir/sid/icd-10-cm|J32.2,http://hl7.org/fhir/sid/icd-10-cm|J32.3,http://hl7.org/fhir/sid/icd-10-cm|J32.4,http://hl7.org/fhir/sid/icd-10-cm|J32.8,http://hl7.org/fhir/sid/icd-10-cm|J32.9",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|40055000,http://snomed.info/sct|35923002,http://snomed.info/sct|60130002,http://snomed.info/sct|73237007,http://snomed.info/sct|38961000,http://snomed.info/sct|88850006,http://snomed.info/sct|427909005,http://snomed.info/sct|232393006,http://snomed.info/sct|232394000,http://snomed.info/sct|232395004,http://snomed.info/sct|232397007,http://hl7.org/fhir/sid/icd-10-cm|J32.0,http://hl7.org/fhir/sid/icd-10-cm|J32.1,http://hl7.org/fhir/sid/icd-10-cm|J32.2,http://hl7.org/fhir/sid/icd-10-cm|J32.3,http://hl7.org/fhir/sid/icd-10-cm|J32.4,http://hl7.org/fhir/sid/icd-10-cm|J32.8,http://hl7.org/fhir/sid/icd-10-cm|J32.9",
+      "prompt_text": "Find patients with chronic sinusitis."
+     },
+     "3-broad": {
+      "precision": 1.0,
+      "recall": 0.9852,
+      "f1": 0.9925,
+      "passed": true,
+      "expected_count": 1552,
+      "actual_count": 1529,
+      "elapsed_sec": 45.9,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|J32,http://hl7.org/fhir/sid/icd-10-cm|J32.0,http://hl7.org/fhir/sid/icd-10-cm|J32.1,http://hl7.org/fhir/sid/icd-10-cm|J32.2,http://hl7.org/fhir/sid/icd-10-cm|J32.3,http://hl7.org/fhir/sid/icd-10-cm|J32.4,http://hl7.org/fhir/sid/icd-10-cm|J32.8,http://hl7.org/fhir/sid/icd-10-cm|J32.9,http://snomed.info/sct|40055000,http://snomed.info/sct|35923002,http://snomed.info/sct|60130002,http://snomed.info/sct|73237007,http://snomed.info/sct|38961000,http://snomed.info/sct|88850006,http://snomed.info/sct|427909005,http://hl7.org/fhir/sid/icd-9-cm|473.0,http://hl7.org/fhir/sid/icd-9-cm|473.1,http://hl7.org/fhir/sid/icd-9-cm|473.2,http://hl7.org/fhir/sid/icd-9-cm|473.3,http://hl7.org/fhir/sid/icd-9-cm|473.8,http://hl7.org/fhir/sid/icd-9-cm|473.9",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|J32,http://hl7.org/fhir/sid/icd-10-cm|J32.0,http://hl7.org/fhir/sid/icd-10-cm|J32.1,http://hl7.org/fhir/sid/icd-10-cm|J32.2,http://hl7.org/fhir/sid/icd-10-cm|J32.3,http://hl7.org/fhir/sid/icd-10-cm|J32.4,http://hl7.org/fhir/sid/icd-10-cm|J32.8,http://hl7.org/fhir/sid/icd-10-cm|J32.9,http://snomed.info/sct|40055000,http://snomed.info/sct|35923002,http://snomed.info/sct|60130002,http://snomed.info/sct|73237007,http://snomed.info/sct|38961000,http://snomed.info/sct|88850006,http://snomed.info/sct|427909005,http://hl7.org/fhir/sid/icd-9-cm|473.0,http://hl7.org/fhir/sid/icd-9-cm|473.1,http://hl7.org/fhir/sid/icd-9-cm|473.2,http://hl7.org/fhir/sid/icd-9-cm|473.3,http://hl7.org/fhir/sid/icd-9-cm|473.8,http://hl7.org/fhir/sid/icd-9-cm|473.9",
+      "prompt_text": "Find patients diagnosed with chronic rhinosinusitis \u2014 persistent inflammation of nasal and paranasal sinus mucosa lasting 12+ weeks."
+     },
+     "3-expert": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 1552,
+      "actual_count": 0,
+      "elapsed_sec": 42.1,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|40055000,http://snomed.info/sct|35923002,http://snomed.info/sct|60130002,http://snomed.info/sct|73237007,http://snomed.info/sct|38961000,http://snomed.info/sct|88850006,http://snomed.info/sct|427909005,http://snomed.info/sct|232393006,http://snomed.info/sct|232394000,http://snomed.info/sct|232395004,http://snomed.info/sct|232397007,http://snomed.info/sct|15981911000119105,http://snomed.info/sct|15981951000119106,http://snomed.info/sct|15981991000119101",
+      "additional_query_urls": [],
+      "raw_response": "Final Answer:\n\nCondition?code=http://snomed.info/sct|40055000,http://snomed.info/sct|35923002,http://snomed.info/sct|60130002,http://snomed.info/sct|73237007,http://snomed.info/sct|38961000,http://snomed.info/sct|88850006,http://snomed.info/sct|427909005,http://snomed.info/sct|232393006,http://snomed.info/sct|232394000,http://snomed.info/sct|232395004,http://snomed.info/sct|232397007,http://snomed.info/sct|15981911000119105,http://snomed.info/sct|15981951000119106,http://snomed.info/sct|15981991000119101",
+      "prompt_text": "I need to identify patients with a documented diagnosis of chronic rhinosinusitis (chronic sinusitis). Search Condition resources for this diagnosis coded in SNOMED CT. Target chronic sinusitis specifically rather than acute or unspecified sinusitis, which represent distinct clinical entities."
+     }
+    },
     "copilot:claude-sonnet-4.6": {
      "1-naive": {
       "precision": 0.0,
@@ -2480,6 +2749,134 @@
       "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|108118",
       "additional_query_urls": [],
       "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|108118",
+      "prompt_text": "I need to identify patients prescribed mometasone, an intranasal corticosteroid used in chronic rhinosinusitis management. Search MedicationRequest resources for mometasone coded in RxNorm. Note that this is a cross-indicated medication \u2014 it is also widely used for allergic rhinitis, asthma, and eczema \u2014 so a medication-only cohort will include patients treated for those other respiratory and dermatologic conditions, not only those with chronic rhinosinusitis."
+     }
+    },
+    "copilot:claude-opus-4.7+mimic": {
+     "1-naive": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 9,
+      "actual_count": 0,
+      "elapsed_sec": 13.6,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|40055000&_include=Condition:subject&_revinclude=MedicationRequest:subject",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|40055000&_include=Condition:subject&_revinclude=MedicationRequest:subject",
+      "prompt_text": "Find patients on chronic sinusitis medications."
+     },
+     "1-broad": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 9,
+      "actual_count": 0,
+      "elapsed_sec": 8.4,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|108118",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|108118",
+      "prompt_text": "Find patients prescribed mometasone \u2014 an intranasal/inhaled corticosteroid used for chronic rhinosinusitis, allergic rhinitis, and asthma."
+     },
+     "1-expert": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 9,
+      "actual_count": 0,
+      "elapsed_sec": 8.3,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6960",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6960",
+      "prompt_text": "I need to identify patients prescribed mometasone, an intranasal corticosteroid used in chronic rhinosinusitis management. Search MedicationRequest resources for mometasone coded in RxNorm. Note that this is a cross-indicated medication \u2014 it is also widely used for allergic rhinitis, asthma, and eczema \u2014 so a medication-only cohort will include patients treated for those other respiratory and dermatologic conditions, not only those with chronic rhinosinusitis."
+     },
+     "2-naive": {
+      "precision": 0.0015,
+      "recall": 0.8889,
+      "f1": 0.0031,
+      "passed": false,
+      "expected_count": 9,
+      "actual_count": 5199,
+      "elapsed_sec": 219.3,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|1797838,http://www.nlm.nih.gov/research/umls/rxnorm|1797840,http://www.nlm.nih.gov/research/umls/rxnorm|1797841,http://www.nlm.nih.gov/research/umls/rxnorm|1797843,http://www.nlm.nih.gov/research/umls/rxnorm|1797863,http://www.nlm.nih.gov/research/umls/rxnorm|1797865,http://www.nlm.nih.gov/research/umls/rxnorm|1797870,http://www.nlm.nih.gov/research/umls/rxnorm|1797890,http://www.nlm.nih.gov/research/umls/rxnorm|1797900,http://www.nlm.nih.gov/research/umls/rxnorm|1797902,http://www.nlm.nih.gov/research/umls/rxnorm|1797904,http://www.nlm.nih.gov/research/umls/rxnorm|1797906,http://www.nlm.nih.gov/research/umls/rxnorm|1797907,http://www.nlm.nih.gov/research/umls/rxnorm|1797909,http://www.nlm.nih.gov/research/umls/rxnorm|1797910,http://www.nlm.nih.gov/research/umls/rxnorm|1797913,http://www.nlm.nih.gov/research/umls/rxnorm|1797915,http://www.nlm.nih.gov/research/umls/rxnorm|1797917,http://www.nlm.nih.gov/research/umls/rxnorm|1797919,http://www.nlm.nih.gov/research/umls/rxnorm|1797920,http://www.nlm.nih.gov/research/umls/rxnorm|1797921,http://www.nlm.nih.gov/research/umls/rxnorm|1797926,http://www.nlm.nih.gov/research/umls/rxnorm|1797929,http://www.nlm.nih.gov/research/umls/rxnorm|1797931,http://www.nlm.nih.gov/research/umls/rxnorm|1797933,http://www.nlm.nih.gov/research/umls/rxnorm|247042,http://www.nlm.nih.gov/research/umls/rxnorm|247691,http://www.nlm.nih.gov/research/umls/rxnorm|562655",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|1797838,http://www.nlm.nih.gov/research/umls/rxnorm|1797840,http://www.nlm.nih.gov/research/umls/rxnorm|1797841,http://www.nlm.nih.gov/research/umls/rxnorm|1797843,http://www.nlm.nih.gov/research/umls/rxnorm|1797863,http://www.nlm.nih.gov/research/umls/rxnorm|1797865,http://www.nlm.nih.gov/research/umls/rxnorm|1797870,http://www.nlm.nih.gov/research/umls/rxnorm|1797890,http://www.nlm.nih.gov/research/umls/rxnorm|1797900,http://www.nlm.nih.gov/research/umls/rxnorm|1797902,http://www.nlm.nih.gov/research/umls/rxnorm|1797904,http://www.nlm.nih.gov/research/umls/rxnorm|1797906,http://www.nlm.nih.gov/research/umls/rxnorm|1797907,http://www.nlm.nih.gov/research/umls/rxnorm|1797909,http://www.nlm.nih.gov/research/umls/rxnorm|1797910,http://www.nlm.nih.gov/research/umls/rxnorm|1797913,http://www.nlm.nih.gov/research/umls/rxnorm|1797915,http://www.nlm.nih.gov/research/umls/rxnorm|1797917,http://www.nlm.nih.gov/research/umls/rxnorm|1797919,http://www.nlm.nih.gov/research/umls/rxnorm|1797920,http://www.nlm.nih.gov/research/umls/rxnorm|1797921,http://www.nlm.nih.gov/research/umls/rxnorm|1797926,http://www.nlm.nih.gov/research/umls/rxnorm|1797929,http://www.nlm.nih.gov/research/umls/rxnorm|1797931,http://www.nlm.nih.gov/research/umls/rxnorm|1797933,http://www.nlm.nih.gov/research/umls/rxnorm|247042,http://www.nlm.nih.gov/research/umls/rxnorm|247691,http://www.nlm.nih.gov/research/umls/rxnorm|562655",
+      "prompt_text": "Find patients on chronic sinusitis medications."
+     },
+     "2-broad": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 9,
+      "actual_count": 9,
+      "elapsed_sec": 45.5,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?medication.code:text=mometasone",
+      "additional_query_urls": [],
+      "raw_response": "FINAL ANSWER:\n\nMedicationRequest?medication.code:text=mometasone",
+      "prompt_text": "Find patients prescribed mometasone \u2014 an intranasal/inhaled corticosteroid used for chronic rhinosinusitis, allergic rhinitis, and asthma."
+     },
+     "2-expert": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 9,
+      "actual_count": 9,
+      "elapsed_sec": 33.4,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|1797870,http://www.nlm.nih.gov/research/umls/rxnorm|108118",
+      "additional_query_urls": [],
+      "raw_response": "FINAL ANSWER:\n\nMedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|1797870,http://www.nlm.nih.gov/research/umls/rxnorm|108118",
+      "prompt_text": "I need to identify patients prescribed mometasone, an intranasal corticosteroid used in chronic rhinosinusitis management. Search MedicationRequest resources for mometasone coded in RxNorm. Note that this is a cross-indicated medication \u2014 it is also widely used for allergic rhinitis, asthma, and eczema \u2014 so a medication-only cohort will include patients treated for those other respiratory and dermatologic conditions, not only those with chronic rhinosinusitis."
+     },
+     "3-naive": {
+      "precision": 0.0015,
+      "recall": 0.8889,
+      "f1": 0.0031,
+      "passed": false,
+      "expected_count": 9,
+      "actual_count": 5199,
+      "elapsed_sec": 166.5,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|1797838,http://www.nlm.nih.gov/research/umls/rxnorm|1797840,http://www.nlm.nih.gov/research/umls/rxnorm|1797841,http://www.nlm.nih.gov/research/umls/rxnorm|1797843,http://www.nlm.nih.gov/research/umls/rxnorm|1797863,http://www.nlm.nih.gov/research/umls/rxnorm|1797865,http://www.nlm.nih.gov/research/umls/rxnorm|1797870,http://www.nlm.nih.gov/research/umls/rxnorm|1797890,http://www.nlm.nih.gov/research/umls/rxnorm|1797900,http://www.nlm.nih.gov/research/umls/rxnorm|1797902,http://www.nlm.nih.gov/research/umls/rxnorm|1797904,http://www.nlm.nih.gov/research/umls/rxnorm|1797906,http://www.nlm.nih.gov/research/umls/rxnorm|1797907,http://www.nlm.nih.gov/research/umls/rxnorm|1797909,http://www.nlm.nih.gov/research/umls/rxnorm|1797910,http://www.nlm.nih.gov/research/umls/rxnorm|1797913,http://www.nlm.nih.gov/research/umls/rxnorm|1797915,http://www.nlm.nih.gov/research/umls/rxnorm|1797917,http://www.nlm.nih.gov/research/umls/rxnorm|1797919,http://www.nlm.nih.gov/research/umls/rxnorm|1797920,http://www.nlm.nih.gov/research/umls/rxnorm|1797921,http://www.nlm.nih.gov/research/umls/rxnorm|1797926,http://www.nlm.nih.gov/research/umls/rxnorm|1797929,http://www.nlm.nih.gov/research/umls/rxnorm|1797931,http://www.nlm.nih.gov/research/umls/rxnorm|1797933,http://www.nlm.nih.gov/research/umls/rxnorm|247042,http://www.nlm.nih.gov/research/umls/rxnorm|247691,http://www.nlm.nih.gov/research/umls/rxnorm|562655",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|1797838,http://www.nlm.nih.gov/research/umls/rxnorm|1797840,http://www.nlm.nih.gov/research/umls/rxnorm|1797841,http://www.nlm.nih.gov/research/umls/rxnorm|1797843,http://www.nlm.nih.gov/research/umls/rxnorm|1797863,http://www.nlm.nih.gov/research/umls/rxnorm|1797865,http://www.nlm.nih.gov/research/umls/rxnorm|1797870,http://www.nlm.nih.gov/research/umls/rxnorm|1797890,http://www.nlm.nih.gov/research/umls/rxnorm|1797900,http://www.nlm.nih.gov/research/umls/rxnorm|1797902,http://www.nlm.nih.gov/research/umls/rxnorm|1797904,http://www.nlm.nih.gov/research/umls/rxnorm|1797906,http://www.nlm.nih.gov/research/umls/rxnorm|1797907,http://www.nlm.nih.gov/research/umls/rxnorm|1797909,http://www.nlm.nih.gov/research/umls/rxnorm|1797910,http://www.nlm.nih.gov/research/umls/rxnorm|1797913,http://www.nlm.nih.gov/research/umls/rxnorm|1797915,http://www.nlm.nih.gov/research/umls/rxnorm|1797917,http://www.nlm.nih.gov/research/umls/rxnorm|1797919,http://www.nlm.nih.gov/research/umls/rxnorm|1797920,http://www.nlm.nih.gov/research/umls/rxnorm|1797921,http://www.nlm.nih.gov/research/umls/rxnorm|1797926,http://www.nlm.nih.gov/research/umls/rxnorm|1797929,http://www.nlm.nih.gov/research/umls/rxnorm|1797931,http://www.nlm.nih.gov/research/umls/rxnorm|1797933,http://www.nlm.nih.gov/research/umls/rxnorm|247042,http://www.nlm.nih.gov/research/umls/rxnorm|247691,http://www.nlm.nih.gov/research/umls/rxnorm|562655",
+      "prompt_text": "Find patients on chronic sinusitis medications."
+     },
+     "3-broad": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 9,
+      "actual_count": 9,
+      "elapsed_sec": 44.3,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|108118,http://www.nlm.nih.gov/research/umls/rxnorm|1797870",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|108118,http://www.nlm.nih.gov/research/umls/rxnorm|1797870",
+      "prompt_text": "Find patients prescribed mometasone \u2014 an intranasal/inhaled corticosteroid used for chronic rhinosinusitis, allergic rhinitis, and asthma."
+     },
+     "3-expert": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 9,
+      "actual_count": 5863,
+      "elapsed_sec": 102.4,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|6960",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|6960",
       "prompt_text": "I need to identify patients prescribed mometasone, an intranasal corticosteroid used in chronic rhinosinusitis management. Search MedicationRequest resources for mometasone coded in RxNorm. Note that this is a cross-indicated medication \u2014 it is also widely used for allergic rhinitis, asthma, and eczema \u2014 so a medication-only cohort will include patients treated for those other respiratory and dermatologic conditions, not only those with chronic rhinosinusitis."
      }
     },

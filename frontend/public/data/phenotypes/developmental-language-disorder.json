@@ -1013,6 +1013,136 @@
       "prompt_text": "I need to identify pediatric patients with a developmental language disorder diagnosis per the PheKB APT-DLD algorithm. Search Condition resources for the three ICD-10-CM inclusion codes specified by that algorithm: expressive language disorder, mixed receptive-expressive language disorder, and other developmental disorders of speech and language \u2014 these map to distinct clinical subtypes (expressive-only, mixed, and the broader residual category used most frequently in practice). Restrict results to pediatric patients. All three codes should be included as a union, since real-world cohorts are distributed across all three subtypes."
      }
     },
+    "copilot:claude-opus-4.7+mimic": {
+     "1-naive": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 3840,
+      "actual_count": 0,
+      "elapsed_sec": 6.8,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|1156421008&patient.birthdate=ge2008-08-31",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|1156421008&patient.birthdate=ge2008-08-31",
+      "prompt_text": "Find children with DLD."
+     },
+     "1-broad": {
+      "precision": 0.8824,
+      "recall": 0.0078,
+      "f1": 0.0155,
+      "passed": false,
+      "expected_count": 3840,
+      "actual_count": 34,
+      "elapsed_sec": 9.2,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|F80.1,http://hl7.org/fhir/sid/icd-10-cm|F80.2,http://hl7.org/fhir/sid/icd-10-cm|F80.8,http://hl7.org/fhir/sid/icd-10-cm|F80.9&patient.birthdate=ge2008-08-31",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|F80.1,http://hl7.org/fhir/sid/icd-10-cm|F80.2,http://hl7.org/fhir/sid/icd-10-cm|F80.8,http://hl7.org/fhir/sid/icd-10-cm|F80.9&patient.birthdate=ge2008-08-31",
+      "prompt_text": "Find pediatric patients diagnosed with developmental language disorder \u2014 including expressive, mixed receptive-expressive, and other developmental disorders of speech and language."
+     },
+     "1-expert": {
+      "precision": 1.0,
+      "recall": 0.0094,
+      "f1": 0.0186,
+      "passed": false,
+      "expected_count": 3840,
+      "actual_count": 36,
+      "elapsed_sec": 8.3,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|F80.1,http://hl7.org/fhir/sid/icd-10-cm|F80.2,http://hl7.org/fhir/sid/icd-10-cm|F80.89&patient.birthdate=ge2008-08-31",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|F80.1,http://hl7.org/fhir/sid/icd-10-cm|F80.2,http://hl7.org/fhir/sid/icd-10-cm|F80.89&patient.birthdate=ge2008-08-31",
+      "prompt_text": "I need to identify pediatric patients with a developmental language disorder diagnosis per the PheKB APT-DLD algorithm. Search Condition resources for the three ICD-10-CM inclusion codes specified by that algorithm: expressive language disorder, mixed receptive-expressive language disorder, and other developmental disorders of speech and language \u2014 these map to distinct clinical subtypes (expressive-only, mixed, and the broader residual category used most frequently in practice). Restrict results to pediatric patients. All three codes should be included as a union, since real-world cohorts are distributed across all three subtypes."
+     },
+     "2-naive": {
+      "precision": 0.8429,
+      "recall": 0.0154,
+      "f1": 0.0302,
+      "passed": false,
+      "expected_count": 3840,
+      "actual_count": 70,
+      "elapsed_sec": 39.6,
+      "queries_generated": 2,
+      "primary_query_url": "Patient?_has:Condition:patient:code=http://hl7.org/fhir/sid/icd-10-cm|F80.0,http://hl7.org/fhir/sid/icd-10-cm|F80.1,http://hl7.org/fhir/sid/icd-10-cm|F80.2,http://hl7.org/fhir/sid/icd-10-cm|F80.4,http://hl7.org/fhir/sid/icd-10-cm|F80.81,http://hl7.org/fhir/sid/icd-10-cm|F80.82,http://hl7.org/fhir/sid/icd-10-cm|F80.89,http://hl7.org/fhir/sid/icd-10-cm|F80.9&birthdate=gt2008-08-31",
+      "additional_query_urls": [
+       "Patient?_has:Condition:patient:code=http://hl7.org/fhir/sid/icd-9-cm|315.31,http://hl7.org/fhir/sid/icd-9-cm|315.32,http://hl7.org/fhir/sid/icd-9-cm|315.34,http://hl7.org/fhir/sid/icd-9-cm|315.39&birthdate=gt2008-08-31"
+      ],
+      "raw_response": "FINAL ANSWER:\n\nPatient?_has:Condition:patient:code=http://hl7.org/fhir/sid/icd-10-cm|F80.0,http://hl7.org/fhir/sid/icd-10-cm|F80.1,http://hl7.org/fhir/sid/icd-10-cm|F80.2,http://hl7.org/fhir/sid/icd-10-cm|F80.4,http://hl7.org/fhir/sid/icd-10-cm|F80.81,http://hl7.org/fhir/sid/icd-10-cm|F80.82,http://hl7.org/fhir/sid/icd-10-cm|F80.89,http://hl7.org/fhir/sid/icd-10-cm|F80.9&birthdate=gt2008-08-31\nPatient?_has:Condition:patient:code=http://hl7.org/fhir/sid/icd-9-cm|315.31,http://hl7.org/fhir/sid/icd-9-cm|315.32,http://hl7.org/fhir/sid/icd-9-cm|315.34,http://hl7.org/fhir/sid/icd-9-cm|315.39&birthdate=gt2008-08-31",
+      "prompt_text": "Find children with DLD."
+     },
+     "2-broad": {
+      "precision": 0.9355,
+      "recall": 0.0151,
+      "f1": 0.0297,
+      "passed": false,
+      "expected_count": 3840,
+      "actual_count": 62,
+      "elapsed_sec": 21.3,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|F80.1,http://hl7.org/fhir/sid/icd-10-cm|F80.2,http://hl7.org/fhir/sid/icd-10-cm|F80.9,http://hl7.org/fhir/sid/icd-10-cm|F80.89,http://hl7.org/fhir/sid/icd-9-cm|315.31,http://hl7.org/fhir/sid/icd-9-cm|315.32,http://hl7.org/fhir/sid/icd-9-cm|315.39",
+      "additional_query_urls": [],
+      "raw_response": "FINAL ANSWER:\n\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|F80.1,http://hl7.org/fhir/sid/icd-10-cm|F80.2,http://hl7.org/fhir/sid/icd-10-cm|F80.9,http://hl7.org/fhir/sid/icd-10-cm|F80.89,http://hl7.org/fhir/sid/icd-9-cm|315.31,http://hl7.org/fhir/sid/icd-9-cm|315.32,http://hl7.org/fhir/sid/icd-9-cm|315.39",
+      "prompt_text": "Find pediatric patients diagnosed with developmental language disorder \u2014 including expressive, mixed receptive-expressive, and other developmental disorders of speech and language."
+     },
+     "2-expert": {
+      "precision": 1.0,
+      "recall": 0.0094,
+      "f1": 0.0186,
+      "passed": false,
+      "expected_count": 3840,
+      "actual_count": 36,
+      "elapsed_sec": 11.1,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|F80.1,http://hl7.org/fhir/sid/icd-10-cm|F80.2,http://hl7.org/fhir/sid/icd-10-cm|F80.89&patient.birthdate=gt2007-08-31",
+      "additional_query_urls": [],
+      "raw_response": "FINAL ANSWER:\n\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|F80.1,http://hl7.org/fhir/sid/icd-10-cm|F80.2,http://hl7.org/fhir/sid/icd-10-cm|F80.89&patient.birthdate=gt2007-08-31",
+      "prompt_text": "I need to identify pediatric patients with a developmental language disorder diagnosis per the PheKB APT-DLD algorithm. Search Condition resources for the three ICD-10-CM inclusion codes specified by that algorithm: expressive language disorder, mixed receptive-expressive language disorder, and other developmental disorders of speech and language \u2014 these map to distinct clinical subtypes (expressive-only, mixed, and the broader residual category used most frequently in practice). Restrict results to pediatric patients. All three codes should be included as a union, since real-world cohorts are distributed across all three subtypes."
+     },
+     "3-naive": {
+      "precision": 0.8824,
+      "recall": 0.0078,
+      "f1": 0.0155,
+      "passed": false,
+      "expected_count": 3840,
+      "actual_count": 34,
+      "elapsed_sec": 28.8,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|F80.1,http://hl7.org/fhir/sid/icd-10-cm|F80.2,http://hl7.org/fhir/sid/icd-10-cm|F80.9&patient.birthdate=gt2008-08-31",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|F80.1,http://hl7.org/fhir/sid/icd-10-cm|F80.2,http://hl7.org/fhir/sid/icd-10-cm|F80.9&patient.birthdate=gt2008-08-31",
+      "prompt_text": "Find children with DLD."
+     },
+     "3-broad": {
+      "precision": 0.8824,
+      "recall": 0.0078,
+      "f1": 0.0155,
+      "passed": false,
+      "expected_count": 3840,
+      "actual_count": 34,
+      "elapsed_sec": 29.1,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|F80.1,http://hl7.org/fhir/sid/icd-10-cm|F80.2,http://hl7.org/fhir/sid/icd-10-cm|F80.8,http://hl7.org/fhir/sid/icd-10-cm|F80.9&patient.birthdate=gt2008-08-31",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|F80.1,http://hl7.org/fhir/sid/icd-10-cm|F80.2,http://hl7.org/fhir/sid/icd-10-cm|F80.8,http://hl7.org/fhir/sid/icd-10-cm|F80.9&patient.birthdate=gt2008-08-31",
+      "prompt_text": "Find pediatric patients diagnosed with developmental language disorder \u2014 including expressive, mixed receptive-expressive, and other developmental disorders of speech and language."
+     },
+     "3-expert": {
+      "precision": 1.0,
+      "recall": 0.0094,
+      "f1": 0.0186,
+      "passed": false,
+      "expected_count": 3840,
+      "actual_count": 36,
+      "elapsed_sec": 12.9,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|F80.1,http://hl7.org/fhir/sid/icd-10-cm|F80.2,http://hl7.org/fhir/sid/icd-10-cm|F80.89&patient.birthdate=gt2008-08-31",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|F80.1,http://hl7.org/fhir/sid/icd-10-cm|F80.2,http://hl7.org/fhir/sid/icd-10-cm|F80.89&patient.birthdate=gt2008-08-31",
+      "prompt_text": "I need to identify pediatric patients with a developmental language disorder diagnosis per the PheKB APT-DLD algorithm. Search Condition resources for the three ICD-10-CM inclusion codes specified by that algorithm: expressive language disorder, mixed receptive-expressive language disorder, and other developmental disorders of speech and language \u2014 these map to distinct clinical subtypes (expressive-only, mixed, and the broader residual category used most frequently in practice). Restrict results to pediatric patients. All three codes should be included as a union, since real-world cohorts are distributed across all three subtypes."
+     }
+    },
     "copilot:claude-sonnet-4.6": {
      "1-naive": {
       "precision": 0.0,

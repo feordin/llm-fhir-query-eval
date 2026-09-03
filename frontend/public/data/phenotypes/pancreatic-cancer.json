@@ -233,6 +233,148 @@
       "prompt_text": "I need a comprehensive pancreatic cancer cohort drawing from two evidence sources. First, search Condition resources for a pancreatic cancer diagnosis; the SNOMED CT coding covers two variants \u2014 malignant neoplasm of pancreas and carcinoma of pancreas \u2014 and both should be included. Second, search Observation resources for markedly elevated CA 19-9 tumor marker levels using the appropriate LOINC code, filtering to values above the threshold that is highly suggestive of malignancy (substantially above the normal upper limit of roughly thirty-seven units per milliliter); this captures patients with a significant tumor-marker elevation who may lack a formal coded diagnosis. Union the patient sets from both queries."
      }
     },
+    "copilot:claude-opus-4.7+mimic": {
+     "1-naive": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 1542,
+      "actual_count": 0,
+      "elapsed_sec": 6.9,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|363418001",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|363418001",
+      "prompt_text": "Find all my pancreatic cancer patients."
+     },
+     "1-broad": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 1542,
+      "actual_count": 0,
+      "elapsed_sec": 11.1,
+      "queries_generated": 4,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|363418001",
+      "additional_query_urls": [
+       "Condition?code=http://snomed.info/sct|372003004",
+       "Condition?code:in=http://hl7.org/fhir/sid/icd-10-cm|C25.0,C25.1,C25.2,C25.3,C25.4,C25.7,C25.8,C25.9",
+       "Observation?code=http://loinc.org|24108-3&value-quantity=gt100|http://unitsofmeasure.org|U/mL"
+      ],
+      "raw_response": "Condition?code=http://snomed.info/sct|363418001\nCondition?code=http://snomed.info/sct|372003004\nCondition?code:in=http://hl7.org/fhir/sid/icd-10-cm|C25.0,C25.1,C25.2,C25.3,C25.4,C25.7,C25.8,C25.9\nObservation?code=http://loinc.org|24108-3&value-quantity=gt100|http://unitsofmeasure.org|U/mL",
+      "prompt_text": "Find all pancreatic cancer patients \u2014 by diagnosis (malignant or carcinoma variants) or by elevated CA 19-9 (>100 U/mL). Run multiple queries and union the patient sets."
+     },
+     "1-expert": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 1542,
+      "actual_count": 0,
+      "elapsed_sec": 8.4,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|363418001,http://snomed.info/sct|372003004",
+      "additional_query_urls": [
+       "Observation?code=http://loinc.org|24108-3&value-quantity=gt1000|http://unitsofmeasure.org|U/mL"
+      ],
+      "raw_response": "Condition?code=http://snomed.info/sct|363418001,http://snomed.info/sct|372003004\nObservation?code=http://loinc.org|24108-3&value-quantity=gt1000|http://unitsofmeasure.org|U/mL",
+      "prompt_text": "I need a comprehensive pancreatic cancer cohort drawing from two evidence sources. First, search Condition resources for a pancreatic cancer diagnosis; the SNOMED CT coding covers two variants \u2014 malignant neoplasm of pancreas and carcinoma of pancreas \u2014 and both should be included. Second, search Observation resources for markedly elevated CA 19-9 tumor marker levels using the appropriate LOINC code, filtering to values above the threshold that is highly suggestive of malignancy (substantially above the normal upper limit of roughly thirty-seven units per milliliter); this captures patients with a significant tumor-marker elevation who may lack a formal coded diagnosis. Union the patient sets from both queries."
+     },
+     "2-naive": {
+      "precision": 1.0,
+      "recall": 0.5558,
+      "f1": 0.7145,
+      "passed": true,
+      "expected_count": 1542,
+      "actual_count": 857,
+      "elapsed_sec": 23.9,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-9-cm|157.0,http://hl7.org/fhir/sid/icd-9-cm|157.1,http://hl7.org/fhir/sid/icd-9-cm|157.2,http://hl7.org/fhir/sid/icd-9-cm|157.3,http://hl7.org/fhir/sid/icd-9-cm|157.4,http://hl7.org/fhir/sid/icd-9-cm|157.8,http://hl7.org/fhir/sid/icd-9-cm|157.9",
+      "additional_query_urls": [],
+      "raw_response": "FINAL ANSWER:\n\nCondition?code=http://hl7.org/fhir/sid/icd-9-cm|157.0,http://hl7.org/fhir/sid/icd-9-cm|157.1,http://hl7.org/fhir/sid/icd-9-cm|157.2,http://hl7.org/fhir/sid/icd-9-cm|157.3,http://hl7.org/fhir/sid/icd-9-cm|157.4,http://hl7.org/fhir/sid/icd-9-cm|157.8,http://hl7.org/fhir/sid/icd-9-cm|157.9",
+      "prompt_text": "Find all my pancreatic cancer patients."
+     },
+     "2-broad": {
+      "precision": 1.0,
+      "recall": 0.6096,
+      "f1": 0.7575,
+      "passed": true,
+      "expected_count": 1542,
+      "actual_count": 940,
+      "elapsed_sec": 37.4,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-9-cm|157.0,http://hl7.org/fhir/sid/icd-9-cm|157.1,http://hl7.org/fhir/sid/icd-9-cm|157.2,http://hl7.org/fhir/sid/icd-9-cm|157.3,http://hl7.org/fhir/sid/icd-9-cm|157.4,http://hl7.org/fhir/sid/icd-9-cm|157.8,http://hl7.org/fhir/sid/icd-9-cm|157.9",
+      "additional_query_urls": [
+       "Observation?code=http://loinc.org|24108-3&value-quantity=gt100"
+      ],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-9-cm|157.0,http://hl7.org/fhir/sid/icd-9-cm|157.1,http://hl7.org/fhir/sid/icd-9-cm|157.2,http://hl7.org/fhir/sid/icd-9-cm|157.3,http://hl7.org/fhir/sid/icd-9-cm|157.4,http://hl7.org/fhir/sid/icd-9-cm|157.8,http://hl7.org/fhir/sid/icd-9-cm|157.9\nObservation?code=http://loinc.org|24108-3&value-quantity=gt100",
+      "prompt_text": "Find all pancreatic cancer patients \u2014 by diagnosis (malignant or carcinoma variants) or by elevated CA 19-9 (>100 U/mL). Run multiple queries and union the patient sets."
+     },
+     "2-expert": {
+      "precision": 1.0,
+      "recall": 0.6096,
+      "f1": 0.7575,
+      "passed": true,
+      "expected_count": 1542,
+      "actual_count": 940,
+      "elapsed_sec": 24.1,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-9-cm|157.0,http://hl7.org/fhir/sid/icd-9-cm|157.1,http://hl7.org/fhir/sid/icd-9-cm|157.2,http://hl7.org/fhir/sid/icd-9-cm|157.3,http://hl7.org/fhir/sid/icd-9-cm|157.4,http://hl7.org/fhir/sid/icd-9-cm|157.8,http://hl7.org/fhir/sid/icd-9-cm|157.9",
+      "additional_query_urls": [
+       "Observation?code=http://loinc.org|24108-3&value-quantity=gt100"
+      ],
+      "raw_response": "FINAL ANSWER:\n\nCondition?code=http://hl7.org/fhir/sid/icd-9-cm|157.0,http://hl7.org/fhir/sid/icd-9-cm|157.1,http://hl7.org/fhir/sid/icd-9-cm|157.2,http://hl7.org/fhir/sid/icd-9-cm|157.3,http://hl7.org/fhir/sid/icd-9-cm|157.4,http://hl7.org/fhir/sid/icd-9-cm|157.8,http://hl7.org/fhir/sid/icd-9-cm|157.9\nObservation?code=http://loinc.org|24108-3&value-quantity=gt100",
+      "prompt_text": "I need a comprehensive pancreatic cancer cohort drawing from two evidence sources. First, search Condition resources for a pancreatic cancer diagnosis; the SNOMED CT coding covers two variants \u2014 malignant neoplasm of pancreas and carcinoma of pancreas \u2014 and both should be included. Second, search Observation resources for markedly elevated CA 19-9 tumor marker levels using the appropriate LOINC code, filtering to values above the threshold that is highly suggestive of malignancy (substantially above the normal upper limit of roughly thirty-seven units per milliliter); this captures patients with a significant tumor-marker elevation who may lack a formal coded diagnosis. Union the patient sets from both queries."
+     },
+     "3-naive": {
+      "precision": 1.0,
+      "recall": 0.9747,
+      "f1": 0.9872,
+      "passed": true,
+      "expected_count": 1542,
+      "actual_count": 1503,
+      "elapsed_sec": 39.8,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-9-cm|157.0,http://hl7.org/fhir/sid/icd-9-cm|157.1,http://hl7.org/fhir/sid/icd-9-cm|157.2,http://hl7.org/fhir/sid/icd-9-cm|157.3,http://hl7.org/fhir/sid/icd-9-cm|157.4,http://hl7.org/fhir/sid/icd-9-cm|157.8,http://hl7.org/fhir/sid/icd-9-cm|157.9,http://hl7.org/fhir/sid/icd-10-cm|C25.0,http://hl7.org/fhir/sid/icd-10-cm|C25.1,http://hl7.org/fhir/sid/icd-10-cm|C25.2,http://hl7.org/fhir/sid/icd-10-cm|C25.3,http://hl7.org/fhir/sid/icd-10-cm|C25.4,http://hl7.org/fhir/sid/icd-10-cm|C25.7,http://hl7.org/fhir/sid/icd-10-cm|C25.8,http://hl7.org/fhir/sid/icd-10-cm|C25.9",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-9-cm|157.0,http://hl7.org/fhir/sid/icd-9-cm|157.1,http://hl7.org/fhir/sid/icd-9-cm|157.2,http://hl7.org/fhir/sid/icd-9-cm|157.3,http://hl7.org/fhir/sid/icd-9-cm|157.4,http://hl7.org/fhir/sid/icd-9-cm|157.8,http://hl7.org/fhir/sid/icd-9-cm|157.9,http://hl7.org/fhir/sid/icd-10-cm|C25.0,http://hl7.org/fhir/sid/icd-10-cm|C25.1,http://hl7.org/fhir/sid/icd-10-cm|C25.2,http://hl7.org/fhir/sid/icd-10-cm|C25.3,http://hl7.org/fhir/sid/icd-10-cm|C25.4,http://hl7.org/fhir/sid/icd-10-cm|C25.7,http://hl7.org/fhir/sid/icd-10-cm|C25.8,http://hl7.org/fhir/sid/icd-10-cm|C25.9",
+      "prompt_text": "Find all my pancreatic cancer patients."
+     },
+     "3-broad": {
+      "precision": 1.0,
+      "recall": 0.6096,
+      "f1": 0.7575,
+      "passed": true,
+      "expected_count": 1542,
+      "actual_count": 940,
+      "elapsed_sec": 32.7,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-9-cm|157.0,http://hl7.org/fhir/sid/icd-9-cm|157.1,http://hl7.org/fhir/sid/icd-9-cm|157.2,http://hl7.org/fhir/sid/icd-9-cm|157.3,http://hl7.org/fhir/sid/icd-9-cm|157.4,http://hl7.org/fhir/sid/icd-9-cm|157.8,http://hl7.org/fhir/sid/icd-9-cm|157.9",
+      "additional_query_urls": [
+       "Observation?code=http://loinc.org|24108-3&value-quantity=gt100"
+      ],
+      "raw_response": "FINAL ANSWER:\n\nCondition?code=http://hl7.org/fhir/sid/icd-9-cm|157.0,http://hl7.org/fhir/sid/icd-9-cm|157.1,http://hl7.org/fhir/sid/icd-9-cm|157.2,http://hl7.org/fhir/sid/icd-9-cm|157.3,http://hl7.org/fhir/sid/icd-9-cm|157.4,http://hl7.org/fhir/sid/icd-9-cm|157.8,http://hl7.org/fhir/sid/icd-9-cm|157.9\nObservation?code=http://loinc.org|24108-3&value-quantity=gt100",
+      "prompt_text": "Find all pancreatic cancer patients \u2014 by diagnosis (malignant or carcinoma variants) or by elevated CA 19-9 (>100 U/mL). Run multiple queries and union the patient sets."
+     },
+     "3-expert": {
+      "precision": 1.0,
+      "recall": 0.9864,
+      "f1": 0.9931,
+      "passed": true,
+      "expected_count": 1542,
+      "actual_count": 1521,
+      "elapsed_sec": 33.1,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-9-cm|157.0,http://hl7.org/fhir/sid/icd-9-cm|157.1,http://hl7.org/fhir/sid/icd-9-cm|157.2,http://hl7.org/fhir/sid/icd-9-cm|157.3,http://hl7.org/fhir/sid/icd-9-cm|157.4,http://hl7.org/fhir/sid/icd-9-cm|157.8,http://hl7.org/fhir/sid/icd-9-cm|157.9,http://hl7.org/fhir/sid/icd-10-cm|C25.0,http://hl7.org/fhir/sid/icd-10-cm|C25.1,http://hl7.org/fhir/sid/icd-10-cm|C25.2,http://hl7.org/fhir/sid/icd-10-cm|C25.3,http://hl7.org/fhir/sid/icd-10-cm|C25.4,http://hl7.org/fhir/sid/icd-10-cm|C25.7,http://hl7.org/fhir/sid/icd-10-cm|C25.8,http://hl7.org/fhir/sid/icd-10-cm|C25.9",
+      "additional_query_urls": [
+       "Observation?code=http://loinc.org|24108-3&value-quantity=gt1000||U/mL"
+      ],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-9-cm|157.0,http://hl7.org/fhir/sid/icd-9-cm|157.1,http://hl7.org/fhir/sid/icd-9-cm|157.2,http://hl7.org/fhir/sid/icd-9-cm|157.3,http://hl7.org/fhir/sid/icd-9-cm|157.4,http://hl7.org/fhir/sid/icd-9-cm|157.8,http://hl7.org/fhir/sid/icd-9-cm|157.9,http://hl7.org/fhir/sid/icd-10-cm|C25.0,http://hl7.org/fhir/sid/icd-10-cm|C25.1,http://hl7.org/fhir/sid/icd-10-cm|C25.2,http://hl7.org/fhir/sid/icd-10-cm|C25.3,http://hl7.org/fhir/sid/icd-10-cm|C25.4,http://hl7.org/fhir/sid/icd-10-cm|C25.7,http://hl7.org/fhir/sid/icd-10-cm|C25.8,http://hl7.org/fhir/sid/icd-10-cm|C25.9\nObservation?code=http://loinc.org|24108-3&value-quantity=gt1000||U/mL",
+      "prompt_text": "I need a comprehensive pancreatic cancer cohort drawing from two evidence sources. First, search Condition resources for a pancreatic cancer diagnosis; the SNOMED CT coding covers two variants \u2014 malignant neoplasm of pancreas and carcinoma of pancreas \u2014 and both should be included. Second, search Observation resources for markedly elevated CA 19-9 tumor marker levels using the appropriate LOINC code, filtering to values above the threshold that is highly suggestive of malignancy (substantially above the normal upper limit of roughly thirty-seven units per milliliter); this captures patients with a significant tumor-marker elevation who may lack a formal coded diagnosis. Union the patient sets from both queries."
+     }
+    },
     "copilot:claude-sonnet-4.6": {
      "1-naive": {
       "precision": 1.0,
@@ -981,6 +1123,136 @@
       "primary_query_url": "Condition?code=http://snomed.info/sct|363418001,http://snomed.info/sct|372142002",
       "additional_query_urls": [],
       "raw_response": "Condition?code=http://snomed.info/sct|363418001,http://snomed.info/sct|372142002",
+      "prompt_text": "I need to identify patients with a documented pancreatic cancer diagnosis. Search Condition resources for pancreatic malignancy coded in SNOMED CT; include both the malignant neoplasm of pancreas and carcinoma of pancreas concepts, as real-world data encodes this diagnosis under either term. Do not broaden to benign or cystic pancreatic lesions."
+     }
+    },
+    "copilot:claude-opus-4.7+mimic": {
+     "1-naive": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 1503,
+      "actual_count": 0,
+      "elapsed_sec": 7.1,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|372003004",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|372003004",
+      "prompt_text": "Find patients with pancreatic cancer."
+     },
+     "1-broad": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 1503,
+      "actual_count": 0,
+      "elapsed_sec": 7.6,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|363418001,http://snomed.info/sct|372003004",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|363418001,http://snomed.info/sct|372003004",
+      "prompt_text": "Find patients diagnosed with pancreatic cancer \u2014 including the broader malignant neoplasm of pancreas concept and the more specific carcinoma of pancreas."
+     },
+     "1-expert": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 1503,
+      "actual_count": 0,
+      "elapsed_sec": 6.3,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|372003004,http://snomed.info/sct|363418001",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|372003004,http://snomed.info/sct|363418001",
+      "prompt_text": "I need to identify patients with a documented pancreatic cancer diagnosis. Search Condition resources for pancreatic malignancy coded in SNOMED CT; include both the malignant neoplasm of pancreas and carcinoma of pancreas concepts, as real-world data encodes this diagnosis under either term. Do not broaden to benign or cystic pancreatic lesions."
+     },
+     "2-naive": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 1503,
+      "actual_count": 1503,
+      "elapsed_sec": 30.5,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-9-cm|157.0,http://hl7.org/fhir/sid/icd-9-cm|157.1,http://hl7.org/fhir/sid/icd-9-cm|157.2,http://hl7.org/fhir/sid/icd-9-cm|157.3,http://hl7.org/fhir/sid/icd-9-cm|157.4,http://hl7.org/fhir/sid/icd-9-cm|157.8,http://hl7.org/fhir/sid/icd-9-cm|157.9",
+      "additional_query_urls": [
+       "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|C25.0,http://hl7.org/fhir/sid/icd-10-cm|C25.1,http://hl7.org/fhir/sid/icd-10-cm|C25.2,http://hl7.org/fhir/sid/icd-10-cm|C25.3,http://hl7.org/fhir/sid/icd-10-cm|C25.4,http://hl7.org/fhir/sid/icd-10-cm|C25.7,http://hl7.org/fhir/sid/icd-10-cm|C25.8,http://hl7.org/fhir/sid/icd-10-cm|C25.9"
+      ],
+      "raw_response": "FINAL ANSWER:\n\nCondition?code=http://hl7.org/fhir/sid/icd-9-cm|157.0,http://hl7.org/fhir/sid/icd-9-cm|157.1,http://hl7.org/fhir/sid/icd-9-cm|157.2,http://hl7.org/fhir/sid/icd-9-cm|157.3,http://hl7.org/fhir/sid/icd-9-cm|157.4,http://hl7.org/fhir/sid/icd-9-cm|157.8,http://hl7.org/fhir/sid/icd-9-cm|157.9\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|C25.0,http://hl7.org/fhir/sid/icd-10-cm|C25.1,http://hl7.org/fhir/sid/icd-10-cm|C25.2,http://hl7.org/fhir/sid/icd-10-cm|C25.3,http://hl7.org/fhir/sid/icd-10-cm|C25.4,http://hl7.org/fhir/sid/icd-10-cm|C25.7,http://hl7.org/fhir/sid/icd-10-cm|C25.8,http://hl7.org/fhir/sid/icd-10-cm|C25.9",
+      "prompt_text": "Find patients with pancreatic cancer."
+     },
+     "2-broad": {
+      "precision": 1.0,
+      "recall": 0.5702,
+      "f1": 0.7263,
+      "passed": true,
+      "expected_count": 1503,
+      "actual_count": 857,
+      "elapsed_sec": 24.8,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-9-cm|157.0,http://hl7.org/fhir/sid/icd-9-cm|157.1,http://hl7.org/fhir/sid/icd-9-cm|157.2,http://hl7.org/fhir/sid/icd-9-cm|157.3,http://hl7.org/fhir/sid/icd-9-cm|157.4,http://hl7.org/fhir/sid/icd-9-cm|157.8,http://hl7.org/fhir/sid/icd-9-cm|157.9",
+      "additional_query_urls": [],
+      "raw_response": "FINAL ANSWER:\n\nCondition?code=http://hl7.org/fhir/sid/icd-9-cm|157.0,http://hl7.org/fhir/sid/icd-9-cm|157.1,http://hl7.org/fhir/sid/icd-9-cm|157.2,http://hl7.org/fhir/sid/icd-9-cm|157.3,http://hl7.org/fhir/sid/icd-9-cm|157.4,http://hl7.org/fhir/sid/icd-9-cm|157.8,http://hl7.org/fhir/sid/icd-9-cm|157.9",
+      "prompt_text": "Find patients diagnosed with pancreatic cancer \u2014 including the broader malignant neoplasm of pancreas concept and the more specific carcinoma of pancreas."
+     },
+     "2-expert": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 1503,
+      "actual_count": 0,
+      "elapsed_sec": 80.8,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|363418001,372003004",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|363418001,372003004",
+      "prompt_text": "I need to identify patients with a documented pancreatic cancer diagnosis. Search Condition resources for pancreatic malignancy coded in SNOMED CT; include both the malignant neoplasm of pancreas and carcinoma of pancreas concepts, as real-world data encodes this diagnosis under either term. Do not broaden to benign or cystic pancreatic lesions."
+     },
+     "3-naive": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 1503,
+      "actual_count": 1503,
+      "elapsed_sec": 30.2,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-9-cm|157.0,http://hl7.org/fhir/sid/icd-9-cm|157.1,http://hl7.org/fhir/sid/icd-9-cm|157.2,http://hl7.org/fhir/sid/icd-9-cm|157.3,http://hl7.org/fhir/sid/icd-9-cm|157.4,http://hl7.org/fhir/sid/icd-9-cm|157.8,http://hl7.org/fhir/sid/icd-9-cm|157.9,http://hl7.org/fhir/sid/icd-10-cm|C25.0,http://hl7.org/fhir/sid/icd-10-cm|C25.1,http://hl7.org/fhir/sid/icd-10-cm|C25.2,http://hl7.org/fhir/sid/icd-10-cm|C25.3,http://hl7.org/fhir/sid/icd-10-cm|C25.4,http://hl7.org/fhir/sid/icd-10-cm|C25.7,http://hl7.org/fhir/sid/icd-10-cm|C25.8,http://hl7.org/fhir/sid/icd-10-cm|C25.9",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-9-cm|157.0,http://hl7.org/fhir/sid/icd-9-cm|157.1,http://hl7.org/fhir/sid/icd-9-cm|157.2,http://hl7.org/fhir/sid/icd-9-cm|157.3,http://hl7.org/fhir/sid/icd-9-cm|157.4,http://hl7.org/fhir/sid/icd-9-cm|157.8,http://hl7.org/fhir/sid/icd-9-cm|157.9,http://hl7.org/fhir/sid/icd-10-cm|C25.0,http://hl7.org/fhir/sid/icd-10-cm|C25.1,http://hl7.org/fhir/sid/icd-10-cm|C25.2,http://hl7.org/fhir/sid/icd-10-cm|C25.3,http://hl7.org/fhir/sid/icd-10-cm|C25.4,http://hl7.org/fhir/sid/icd-10-cm|C25.7,http://hl7.org/fhir/sid/icd-10-cm|C25.8,http://hl7.org/fhir/sid/icd-10-cm|C25.9",
+      "prompt_text": "Find patients with pancreatic cancer."
+     },
+     "3-broad": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 1503,
+      "actual_count": 1503,
+      "elapsed_sec": 44.2,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-9-cm|157.0,http://hl7.org/fhir/sid/icd-9-cm|157.1,http://hl7.org/fhir/sid/icd-9-cm|157.2,http://hl7.org/fhir/sid/icd-9-cm|157.3,http://hl7.org/fhir/sid/icd-9-cm|157.4,http://hl7.org/fhir/sid/icd-9-cm|157.8,http://hl7.org/fhir/sid/icd-9-cm|157.9,http://hl7.org/fhir/sid/icd-10-cm|C25.0,http://hl7.org/fhir/sid/icd-10-cm|C25.1,http://hl7.org/fhir/sid/icd-10-cm|C25.2,http://hl7.org/fhir/sid/icd-10-cm|C25.3,http://hl7.org/fhir/sid/icd-10-cm|C25.4,http://hl7.org/fhir/sid/icd-10-cm|C25.7,http://hl7.org/fhir/sid/icd-10-cm|C25.8,http://hl7.org/fhir/sid/icd-10-cm|C25.9",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-9-cm|157.0,http://hl7.org/fhir/sid/icd-9-cm|157.1,http://hl7.org/fhir/sid/icd-9-cm|157.2,http://hl7.org/fhir/sid/icd-9-cm|157.3,http://hl7.org/fhir/sid/icd-9-cm|157.4,http://hl7.org/fhir/sid/icd-9-cm|157.8,http://hl7.org/fhir/sid/icd-9-cm|157.9,http://hl7.org/fhir/sid/icd-10-cm|C25.0,http://hl7.org/fhir/sid/icd-10-cm|C25.1,http://hl7.org/fhir/sid/icd-10-cm|C25.2,http://hl7.org/fhir/sid/icd-10-cm|C25.3,http://hl7.org/fhir/sid/icd-10-cm|C25.4,http://hl7.org/fhir/sid/icd-10-cm|C25.7,http://hl7.org/fhir/sid/icd-10-cm|C25.8,http://hl7.org/fhir/sid/icd-10-cm|C25.9",
+      "prompt_text": "Find patients diagnosed with pancreatic cancer \u2014 including the broader malignant neoplasm of pancreas concept and the more specific carcinoma of pancreas."
+     },
+     "3-expert": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 1503,
+      "actual_count": 1503,
+      "elapsed_sec": 33.2,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-9-cm|157.0,http://hl7.org/fhir/sid/icd-9-cm|157.1,http://hl7.org/fhir/sid/icd-9-cm|157.2,http://hl7.org/fhir/sid/icd-9-cm|157.3,http://hl7.org/fhir/sid/icd-9-cm|157.4,http://hl7.org/fhir/sid/icd-9-cm|157.8,http://hl7.org/fhir/sid/icd-9-cm|157.9,http://hl7.org/fhir/sid/icd-10-cm|C25.0,http://hl7.org/fhir/sid/icd-10-cm|C25.1,http://hl7.org/fhir/sid/icd-10-cm|C25.2,http://hl7.org/fhir/sid/icd-10-cm|C25.3,http://hl7.org/fhir/sid/icd-10-cm|C25.4,http://hl7.org/fhir/sid/icd-10-cm|C25.7,http://hl7.org/fhir/sid/icd-10-cm|C25.8,http://hl7.org/fhir/sid/icd-10-cm|C25.9",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-9-cm|157.0,http://hl7.org/fhir/sid/icd-9-cm|157.1,http://hl7.org/fhir/sid/icd-9-cm|157.2,http://hl7.org/fhir/sid/icd-9-cm|157.3,http://hl7.org/fhir/sid/icd-9-cm|157.4,http://hl7.org/fhir/sid/icd-9-cm|157.8,http://hl7.org/fhir/sid/icd-9-cm|157.9,http://hl7.org/fhir/sid/icd-10-cm|C25.0,http://hl7.org/fhir/sid/icd-10-cm|C25.1,http://hl7.org/fhir/sid/icd-10-cm|C25.2,http://hl7.org/fhir/sid/icd-10-cm|C25.3,http://hl7.org/fhir/sid/icd-10-cm|C25.4,http://hl7.org/fhir/sid/icd-10-cm|C25.7,http://hl7.org/fhir/sid/icd-10-cm|C25.8,http://hl7.org/fhir/sid/icd-10-cm|C25.9",
       "prompt_text": "I need to identify patients with a documented pancreatic cancer diagnosis. Search Condition resources for pancreatic malignancy coded in SNOMED CT; include both the malignant neoplasm of pancreas and carcinoma of pancreas concepts, as real-world data encodes this diagnosis under either term. Do not broaden to benign or cystic pancreatic lesions."
      }
     },

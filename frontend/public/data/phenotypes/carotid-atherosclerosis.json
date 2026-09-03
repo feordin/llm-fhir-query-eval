@@ -237,6 +237,155 @@
       "prompt_text": "I need to identify all carotid artery atherosclerosis patients by combining evidence across three FHIR resource types. First, query Condition resources for carotid stenosis diagnoses coded in SNOMED CT. Second, query MedicationRequest resources for the antiplatelet agents (aspirin, clopidogrel) and statins (atorvastatin) used for cardiovascular risk reduction in CAAD \u2014 recognizing that these same drug classes are heavily cross-indicated for coronary heart disease and peripheral arterial disease, so the medication path will over-recall. Third, query Procedure resources for carotid revascularization (carotid angioplasty) coded in SNOMED CT. Take the union of patient IDs across all three queries."
      }
     },
+    "copilot:claude-opus-4.7+mimic": {
+     "1-naive": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 2473,
+      "actual_count": 0,
+      "elapsed_sec": 7.2,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|64586002",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|64586002",
+      "prompt_text": "Find all patients with carotid disease."
+     },
+     "1-broad": {
+      "precision": 0.2794,
+      "recall": 0.1698,
+      "f1": 0.2113,
+      "passed": false,
+      "expected_count": 2473,
+      "actual_count": 1503,
+      "elapsed_sec": 18.2,
+      "queries_generated": 5,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|65581007,http://snomed.info/sct|443502000,http://snomed.info/sct|155382007",
+      "additional_query_urls": [
+       "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|I65.21,http://hl7.org/fhir/sid/icd-10-cm|I65.22,http://hl7.org/fhir/sid/icd-10-cm|I65.23,http://hl7.org/fhir/sid/icd-10-cm|I65.29,http://hl7.org/fhir/sid/icd-10-cm|I65.2",
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1191,http://www.nlm.nih.gov/research/umls/rxnorm|32968,http://www.nlm.nih.gov/research/umls/rxnorm|36567,http://www.nlm.nih.gov/research/umls/rxnorm|83367,http://www.nlm.nih.gov/research/umls/rxnorm|6472,http://www.nlm.nih.gov/research/umls/rxnorm|41127,http://www.nlm.nih.gov/research/umls/rxnorm|42463,http://www.nlm.nih.gov/research/umls/rxnorm|301542",
+       "Procedure?code=http://snomed.info/sct|175335007,http://snomed.info/sct|233259003,http://snomed.info/sct|392022008,http://snomed.info/sct|13188006",
+       "Procedure?code=http://www.ama-assn.org/go/cpt|35301,http://www.ama-assn.org/go/cpt|37215,http://www.ama-assn.org/go/cpt|37216,http://www.ama-assn.org/go/cpt|37217,http://www.ama-assn.org/go/cpt|37218"
+      ],
+      "raw_response": "Condition?code=http://snomed.info/sct|65581007,http://snomed.info/sct|443502000,http://snomed.info/sct|155382007\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|I65.21,http://hl7.org/fhir/sid/icd-10-cm|I65.22,http://hl7.org/fhir/sid/icd-10-cm|I65.23,http://hl7.org/fhir/sid/icd-10-cm|I65.29,http://hl7.org/fhir/sid/icd-10-cm|I65.2\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1191,http://www.nlm.nih.gov/research/umls/rxnorm|32968,http://www.nlm.nih.gov/research/umls/rxnorm|36567,http://www.nlm.nih.gov/research/umls/rxnorm|83367,http://www.nlm.nih.gov/research/umls/rxnorm|6472,http://www.nlm.nih.gov/research/umls/rxnorm|41127,http://www.nlm.nih.gov/research/umls/rxnorm|42463,http://www.nlm.nih.gov/research/umls/rxnorm|301542\nProcedure?code=http://snomed.info/sct|175335007,http://snomed.info/sct|233259003,http://snomed.info/sct|392022008,http://snomed.info/sct|13188006\nProcedure?code=http://www.ama-assn.org/go/cpt|35301,http://www.ama-assn.org/go/cpt|37215,http://www.ama-assn.org/go/cpt|37216,http://www.ama-assn.org/go/cpt|37217,http://www.ama-assn.org/go/cpt|37218",
+      "prompt_text": "Find all patients with carotid atherosclerosis \u2014 by diagnosis, antiplatelet/statin meds, or carotid revascularization. Run multiple queries and union the patient sets."
+     },
+     "1-expert": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 2473,
+      "actual_count": 0,
+      "elapsed_sec": 9.2,
+      "queries_generated": 3,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|64586002",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1191,32968,83367",
+       "Procedure?code=http://snomed.info/sct|175366006"
+      ],
+      "raw_response": "Condition?code=http://snomed.info/sct|64586002\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1191,32968,83367\nProcedure?code=http://snomed.info/sct|175366006",
+      "prompt_text": "I need to identify all carotid artery atherosclerosis patients by combining evidence across three FHIR resource types. First, query Condition resources for carotid stenosis diagnoses coded in SNOMED CT. Second, query MedicationRequest resources for the antiplatelet agents (aspirin, clopidogrel) and statins (atorvastatin) used for cardiovascular risk reduction in CAAD \u2014 recognizing that these same drug classes are heavily cross-indicated for coronary heart disease and peripheral arterial disease, so the medication path will over-recall. Third, query Procedure resources for carotid revascularization (carotid angioplasty) coded in SNOMED CT. Take the union of patient IDs across all three queries."
+     },
+     "2-naive": {
+      "precision": 0.6796,
+      "recall": 1.0,
+      "f1": 0.8092,
+      "passed": true,
+      "expected_count": 2473,
+      "actual_count": 3639,
+      "elapsed_sec": 36.1,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|I65.2,http://hl7.org/fhir/sid/icd-10-cm|I65.21,http://hl7.org/fhir/sid/icd-10-cm|I65.22,http://hl7.org/fhir/sid/icd-10-cm|I65.23,http://hl7.org/fhir/sid/icd-10-cm|I65.29",
+      "additional_query_urls": [
+       "Condition?code=http://hl7.org/fhir/sid/icd-9-cm|433.10,http://hl7.org/fhir/sid/icd-9-cm|433.11,http://hl7.org/fhir/sid/icd-9-cm|433.30,http://hl7.org/fhir/sid/icd-9-cm|433.31"
+      ],
+      "raw_response": "FINAL ANSWER:\n\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|I65.2,http://hl7.org/fhir/sid/icd-10-cm|I65.21,http://hl7.org/fhir/sid/icd-10-cm|I65.22,http://hl7.org/fhir/sid/icd-10-cm|I65.23,http://hl7.org/fhir/sid/icd-10-cm|I65.29\nCondition?code=http://hl7.org/fhir/sid/icd-9-cm|433.10,http://hl7.org/fhir/sid/icd-9-cm|433.11,http://hl7.org/fhir/sid/icd-9-cm|433.30,http://hl7.org/fhir/sid/icd-9-cm|433.31",
+      "prompt_text": "Find all patients with carotid disease."
+     },
+     "2-broad": {
+      "precision": 0.677,
+      "recall": 1.0,
+      "f1": 0.8074,
+      "passed": true,
+      "expected_count": 2473,
+      "actual_count": 3653,
+      "elapsed_sec": 72.7,
+      "queries_generated": 3,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|I65.2,http://hl7.org/fhir/sid/icd-10-cm|I65.21,http://hl7.org/fhir/sid/icd-10-cm|I65.22,http://hl7.org/fhir/sid/icd-10-cm|I65.23,http://hl7.org/fhir/sid/icd-10-cm|I65.29",
+      "additional_query_urls": [
+       "Condition?code=http://hl7.org/fhir/sid/icd-9-cm|433.10,http://hl7.org/fhir/sid/icd-9-cm|433.11,http://hl7.org/fhir/sid/icd-9-cm|433.30,http://hl7.org/fhir/sid/icd-9-cm|433.31",
+       "Procedure?code=http://hl7.org/fhir/sid/icd-9-cm|38.12,http://hl7.org/fhir/sid/icd-9-cm|00.61,http://hl7.org/fhir/sid/icd-9-cm|00.63"
+      ],
+      "raw_response": "Final answer:\n\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|I65.2,http://hl7.org/fhir/sid/icd-10-cm|I65.21,http://hl7.org/fhir/sid/icd-10-cm|I65.22,http://hl7.org/fhir/sid/icd-10-cm|I65.23,http://hl7.org/fhir/sid/icd-10-cm|I65.29\nCondition?code=http://hl7.org/fhir/sid/icd-9-cm|433.10,http://hl7.org/fhir/sid/icd-9-cm|433.11,http://hl7.org/fhir/sid/icd-9-cm|433.30,http://hl7.org/fhir/sid/icd-9-cm|433.31\nProcedure?code=http://hl7.org/fhir/sid/icd-9-cm|38.12,http://hl7.org/fhir/sid/icd-9-cm|00.61,http://hl7.org/fhir/sid/icd-9-cm|00.63",
+      "prompt_text": "Find all patients with carotid atherosclerosis \u2014 by diagnosis, antiplatelet/statin meds, or carotid revascularization. Run multiple queries and union the patient sets."
+     },
+     "2-expert": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 2473,
+      "actual_count": 0,
+      "elapsed_sec": 113.2,
+      "queries_generated": 3,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|64586002,http://snomed.info/sct|233964008,http://snomed.info/sct|285191000119103,http://snomed.info/sct|285201000119100,http://snomed.info/sct|787044009,http://snomed.info/sct|9611000119107,http://snomed.info/sct|21000119103,http://snomed.info/sct|436021000124100,http://snomed.info/sct|434891000124102,http://snomed.info/sct|1204156004,http://snomed.info/sct|1204158003,http://snomed.info/sct|99451000119105",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1191,http://www.nlm.nih.gov/research/umls/rxnorm|32968,http://www.nlm.nih.gov/research/umls/rxnorm|83367",
+       "Procedure?code=http://snomed.info/sct|175366005"
+      ],
+      "raw_response": "FINAL ANSWER:\n\nCondition?code=http://snomed.info/sct|64586002,http://snomed.info/sct|233964008,http://snomed.info/sct|285191000119103,http://snomed.info/sct|285201000119100,http://snomed.info/sct|787044009,http://snomed.info/sct|9611000119107,http://snomed.info/sct|21000119103,http://snomed.info/sct|436021000124100,http://snomed.info/sct|434891000124102,http://snomed.info/sct|1204156004,http://snomed.info/sct|1204158003,http://snomed.info/sct|99451000119105\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1191,http://www.nlm.nih.gov/research/umls/rxnorm|32968,http://www.nlm.nih.gov/research/umls/rxnorm|83367\nProcedure?code=http://snomed.info/sct|175366005",
+      "prompt_text": "I need to identify all carotid artery atherosclerosis patients by combining evidence across three FHIR resource types. First, query Condition resources for carotid stenosis diagnoses coded in SNOMED CT. Second, query MedicationRequest resources for the antiplatelet agents (aspirin, clopidogrel) and statins (atorvastatin) used for cardiovascular risk reduction in CAAD \u2014 recognizing that these same drug classes are heavily cross-indicated for coronary heart disease and peripheral arterial disease, so the medication path will over-recall. Third, query Procedure resources for carotid revascularization (carotid angioplasty) coded in SNOMED CT. Take the union of patient IDs across all three queries."
+     },
+     "3-naive": {
+      "precision": 0.6796,
+      "recall": 1.0,
+      "f1": 0.8092,
+      "passed": true,
+      "expected_count": 2473,
+      "actual_count": 3639,
+      "elapsed_sec": 36.1,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|I65.2,http://hl7.org/fhir/sid/icd-10-cm|I65.21,http://hl7.org/fhir/sid/icd-10-cm|I65.22,http://hl7.org/fhir/sid/icd-10-cm|I65.23,http://hl7.org/fhir/sid/icd-10-cm|I65.29,http://hl7.org/fhir/sid/icd-10-cm|I63.2,http://hl7.org/fhir/sid/icd-10-cm|I63.23,http://hl7.org/fhir/sid/icd-10-cm|I63.13,http://hl7.org/fhir/sid/icd-10-cm|I63.03,http://hl7.org/fhir/sid/icd-9-cm|433.1,http://hl7.org/fhir/sid/icd-9-cm|433.10,http://hl7.org/fhir/sid/icd-9-cm|433.11,http://hl7.org/fhir/sid/icd-9-cm|433.30,http://hl7.org/fhir/sid/icd-9-cm|433.31",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|I65.2,http://hl7.org/fhir/sid/icd-10-cm|I65.21,http://hl7.org/fhir/sid/icd-10-cm|I65.22,http://hl7.org/fhir/sid/icd-10-cm|I65.23,http://hl7.org/fhir/sid/icd-10-cm|I65.29,http://hl7.org/fhir/sid/icd-10-cm|I63.2,http://hl7.org/fhir/sid/icd-10-cm|I63.23,http://hl7.org/fhir/sid/icd-10-cm|I63.13,http://hl7.org/fhir/sid/icd-10-cm|I63.03,http://hl7.org/fhir/sid/icd-9-cm|433.1,http://hl7.org/fhir/sid/icd-9-cm|433.10,http://hl7.org/fhir/sid/icd-9-cm|433.11,http://hl7.org/fhir/sid/icd-9-cm|433.30,http://hl7.org/fhir/sid/icd-9-cm|433.31",
+      "prompt_text": "Find all patients with carotid disease."
+     },
+     "3-broad": {
+      "precision": 0.6856,
+      "recall": 1.0,
+      "f1": 0.8135,
+      "passed": true,
+      "expected_count": 2473,
+      "actual_count": 3607,
+      "elapsed_sec": 66.6,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|I65.2,http://hl7.org/fhir/sid/icd-10-cm|I65.21,http://hl7.org/fhir/sid/icd-10-cm|I65.22,http://hl7.org/fhir/sid/icd-10-cm|I65.23,http://hl7.org/fhir/sid/icd-10-cm|I65.29,http://hl7.org/fhir/sid/icd-10-cm|I63.2,http://hl7.org/fhir/sid/icd-10-cm|I63.21,http://hl7.org/fhir/sid/icd-10-cm|I63.22,http://hl7.org/fhir/sid/icd-10-cm|I63.23,http://hl7.org/fhir/sid/icd-9-cm|433.1,http://hl7.org/fhir/sid/icd-9-cm|433.10,http://hl7.org/fhir/sid/icd-9-cm|433.11",
+      "additional_query_urls": [
+       "Procedure?code=http://hl7.org/fhir/sid/icd-9-cm|38.12,http://hl7.org/fhir/sid/icd-9-cm|00.61,http://hl7.org/fhir/sid/icd-9-cm|00.63,http://hl7.org/fhir/sid/icd-10-pcs|03CH0ZZ,http://hl7.org/fhir/sid/icd-10-pcs|03CJ0ZZ,http://hl7.org/fhir/sid/icd-10-pcs|03CK0ZZ"
+      ],
+      "raw_response": "Good \u2014 solid signal. Final union queries:\n\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|I65.2,http://hl7.org/fhir/sid/icd-10-cm|I65.21,http://hl7.org/fhir/sid/icd-10-cm|I65.22,http://hl7.org/fhir/sid/icd-10-cm|I65.23,http://hl7.org/fhir/sid/icd-10-cm|I65.29,http://hl7.org/fhir/sid/icd-10-cm|I63.2,http://hl7.org/fhir/sid/icd-10-cm|I63.21,http://hl7.org/fhir/sid/icd-10-cm|I63.22,http://hl7.org/fhir/sid/icd-10-cm|I63.23,http://hl7.org/fhir/sid/icd-9-cm|433.1,http://hl7.org/fhir/sid/icd-9-cm|433.10,http://hl7.org/fhir/sid/icd-9-cm|433.11\nProcedure?code=http://hl7.org/fhir/sid/icd-9-cm|38.12,http://hl7.org/fhir/sid/icd-9-cm|00.61,http://hl7.org/fhir/sid/icd-9-cm|00.63,http://hl7.org/fhir/sid/icd-10-pcs|03CH0ZZ,http://hl7.org/fhir/sid/icd-10-pcs|03CJ0ZZ,http://hl7.org/fhir/sid/icd-10-pcs|03CK0ZZ",
+      "prompt_text": "Find all patients with carotid atherosclerosis \u2014 by diagnosis, antiplatelet/statin meds, or carotid revascularization. Run multiple queries and union the patient sets."
+     },
+     "3-expert": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 2473,
+      "actual_count": 0,
+      "elapsed_sec": 62.8,
+      "queries_generated": 3,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|64586002,http://snomed.info/sct|233964008,http://snomed.info/sct|285191000119103,http://snomed.info/sct|285201000119100,http://snomed.info/sct|787044009,http://snomed.info/sct|436021000124100,http://snomed.info/sct|434891000124102,http://snomed.info/sct|9611000119107,http://snomed.info/sct|21000119103,http://snomed.info/sct|1204156004,http://snomed.info/sct|1204158003,http://snomed.info/sct|450440061000119108,http://snomed.info/sct|99451000119105",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1191,http://www.nlm.nih.gov/research/umls/rxnorm|32968,http://www.nlm.nih.gov/research/umls/rxnorm|83367",
+       "Procedure?code=http://snomed.info/sct|175366005,http://snomed.info/sct|427197007,http://snomed.info/sct|233258006"
+      ],
+      "raw_response": "Condition?code=http://snomed.info/sct|64586002,http://snomed.info/sct|233964008,http://snomed.info/sct|285191000119103,http://snomed.info/sct|285201000119100,http://snomed.info/sct|787044009,http://snomed.info/sct|436021000124100,http://snomed.info/sct|434891000124102,http://snomed.info/sct|9611000119107,http://snomed.info/sct|21000119103,http://snomed.info/sct|1204156004,http://snomed.info/sct|1204158003,http://snomed.info/sct|450440061000119108,http://snomed.info/sct|99451000119105\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1191,http://www.nlm.nih.gov/research/umls/rxnorm|32968,http://www.nlm.nih.gov/research/umls/rxnorm|83367\nProcedure?code=http://snomed.info/sct|175366005,http://snomed.info/sct|427197007,http://snomed.info/sct|233258006",
+      "prompt_text": "I need to identify all carotid artery atherosclerosis patients by combining evidence across three FHIR resource types. First, query Condition resources for carotid stenosis diagnoses coded in SNOMED CT. Second, query MedicationRequest resources for the antiplatelet agents (aspirin, clopidogrel) and statins (atorvastatin) used for cardiovascular risk reduction in CAAD \u2014 recognizing that these same drug classes are heavily cross-indicated for coronary heart disease and peripheral arterial disease, so the medication path will over-recall. Third, query Procedure resources for carotid revascularization (carotid angioplasty) coded in SNOMED CT. Take the union of patient IDs across all three queries."
+     }
+    },
     "copilot:claude-sonnet-4.6": {
      "1-naive": {
       "precision": 1.0,
@@ -983,6 +1132,134 @@
       "prompt_text": "I need to identify patients with a documented diagnosis of carotid artery stenosis. Search Condition resources for the SNOMED CT concept representing stenosis of the carotid artery. This captures patients with a coded carotid disease entry on their problem list or encounter diagnoses, and should not be broadened to other cerebrovascular or aortic conditions."
      }
     },
+    "copilot:claude-opus-4.7+mimic": {
+     "1-naive": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 2473,
+      "actual_count": 0,
+      "elapsed_sec": 6.6,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|64586002",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|64586002",
+      "prompt_text": "Find patients with carotid stenosis."
+     },
+     "1-broad": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 2473,
+      "actual_count": 0,
+      "elapsed_sec": 7.9,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|64586002,http://snomed.info/sct|443502000,http://snomed.info/sct|698638007",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|64586002,http://snomed.info/sct|443502000,http://snomed.info/sct|698638007",
+      "prompt_text": "Find patients diagnosed with carotid artery stenosis or atherosclerotic narrowing of the carotid arteries \u2014 a major risk factor for stroke."
+     },
+     "1-expert": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 2473,
+      "actual_count": 0,
+      "elapsed_sec": 7.3,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|64586002",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|64586002",
+      "prompt_text": "I need to identify patients with a documented diagnosis of carotid artery stenosis. Search Condition resources for the SNOMED CT concept representing stenosis of the carotid artery. This captures patients with a coded carotid disease entry on their problem list or encounter diagnoses, and should not be broadened to other cerebrovascular or aortic conditions."
+     },
+     "2-naive": {
+      "precision": 0.2794,
+      "recall": 0.1698,
+      "f1": 0.2113,
+      "passed": false,
+      "expected_count": 2473,
+      "actual_count": 1503,
+      "elapsed_sec": 32.3,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|1204156004,http://snomed.info/sct|1204158003,http://snomed.info/sct|21000119103,http://snomed.info/sct|233964008,http://snomed.info/sct|285191000119103,http://snomed.info/sct|285201000119100,http://snomed.info/sct|434891000124102,http://snomed.info/sct|436021000124100,http://snomed.info/sct|450440061000119108,http://snomed.info/sct|64586002,http://snomed.info/sct|787044009,http://snomed.info/sct|93396008,http://snomed.info/sct|9611000119107,http://snomed.info/sct|99451000119105,http://hl7.org/fhir/sid/icd-10-cm|I65.2,http://hl7.org/fhir/sid/icd-10-cm|I65.21,http://hl7.org/fhir/sid/icd-10-cm|I65.22,http://hl7.org/fhir/sid/icd-10-cm|I65.23,http://hl7.org/fhir/sid/icd-10-cm|I65.29",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|1204156004,http://snomed.info/sct|1204158003,http://snomed.info/sct|21000119103,http://snomed.info/sct|233964008,http://snomed.info/sct|285191000119103,http://snomed.info/sct|285201000119100,http://snomed.info/sct|434891000124102,http://snomed.info/sct|436021000124100,http://snomed.info/sct|450440061000119108,http://snomed.info/sct|64586002,http://snomed.info/sct|787044009,http://snomed.info/sct|93396008,http://snomed.info/sct|9611000119107,http://snomed.info/sct|99451000119105,http://hl7.org/fhir/sid/icd-10-cm|I65.2,http://hl7.org/fhir/sid/icd-10-cm|I65.21,http://hl7.org/fhir/sid/icd-10-cm|I65.22,http://hl7.org/fhir/sid/icd-10-cm|I65.23,http://hl7.org/fhir/sid/icd-10-cm|I65.29",
+      "prompt_text": "Find patients with carotid stenosis."
+     },
+     "2-broad": {
+      "precision": 0.2794,
+      "recall": 0.1698,
+      "f1": 0.2113,
+      "passed": false,
+      "expected_count": 2473,
+      "actual_count": 1503,
+      "elapsed_sec": 26.6,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|I65.2,http://hl7.org/fhir/sid/icd-10-cm|I65.21,http://hl7.org/fhir/sid/icd-10-cm|I65.22,http://hl7.org/fhir/sid/icd-10-cm|I65.23,http://hl7.org/fhir/sid/icd-10-cm|I65.29",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|I65.2,http://hl7.org/fhir/sid/icd-10-cm|I65.21,http://hl7.org/fhir/sid/icd-10-cm|I65.22,http://hl7.org/fhir/sid/icd-10-cm|I65.23,http://hl7.org/fhir/sid/icd-10-cm|I65.29",
+      "prompt_text": "Find patients diagnosed with carotid artery stenosis or atherosclerotic narrowing of the carotid arteries \u2014 a major risk factor for stroke."
+     },
+     "2-expert": {
+      "precision": 0.6796,
+      "recall": 1.0,
+      "f1": 0.8092,
+      "passed": true,
+      "expected_count": 2473,
+      "actual_count": 3639,
+      "elapsed_sec": 62.1,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|I65.2,http://hl7.org/fhir/sid/icd-10-cm|I65.21,http://hl7.org/fhir/sid/icd-10-cm|I65.22,http://hl7.org/fhir/sid/icd-10-cm|I65.23,http://hl7.org/fhir/sid/icd-10-cm|I65.29,http://hl7.org/fhir/sid/icd-9-cm|433.10,http://hl7.org/fhir/sid/icd-9-cm|433.11,http://hl7.org/fhir/sid/icd-9-cm|433.30,http://hl7.org/fhir/sid/icd-9-cm|433.31",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|I65.2,http://hl7.org/fhir/sid/icd-10-cm|I65.21,http://hl7.org/fhir/sid/icd-10-cm|I65.22,http://hl7.org/fhir/sid/icd-10-cm|I65.23,http://hl7.org/fhir/sid/icd-10-cm|I65.29,http://hl7.org/fhir/sid/icd-9-cm|433.10,http://hl7.org/fhir/sid/icd-9-cm|433.11,http://hl7.org/fhir/sid/icd-9-cm|433.30,http://hl7.org/fhir/sid/icd-9-cm|433.31",
+      "prompt_text": "I need to identify patients with a documented diagnosis of carotid artery stenosis. Search Condition resources for the SNOMED CT concept representing stenosis of the carotid artery. This captures patients with a coded carotid disease entry on their problem list or encounter diagnoses, and should not be broadened to other cerebrovascular or aortic conditions."
+     },
+     "3-naive": {
+      "precision": 0.2794,
+      "recall": 0.1698,
+      "f1": 0.2113,
+      "passed": false,
+      "expected_count": 2473,
+      "actual_count": 1503,
+      "elapsed_sec": 33.6,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|64586002,http://snomed.info/sct|233964008,http://snomed.info/sct|285191000119103,http://snomed.info/sct|285201000119100,http://snomed.info/sct|787044009,http://snomed.info/sct|9611000119107,http://snomed.info/sct|21000119103,http://snomed.info/sct|436021000124100,http://snomed.info/sct|434891000124102,http://snomed.info/sct|99451000119105,http://snomed.info/sct|93396008,http://snomed.info/sct|1204156004,http://snomed.info/sct|1204158003,http://snomed.info/sct|450440061000119108,http://hl7.org/fhir/sid/icd-10-cm|I65.2,http://hl7.org/fhir/sid/icd-10-cm|I65.21,http://hl7.org/fhir/sid/icd-10-cm|I65.22,http://hl7.org/fhir/sid/icd-10-cm|I65.23,http://hl7.org/fhir/sid/icd-10-cm|I65.29",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|64586002,http://snomed.info/sct|233964008,http://snomed.info/sct|285191000119103,http://snomed.info/sct|285201000119100,http://snomed.info/sct|787044009,http://snomed.info/sct|9611000119107,http://snomed.info/sct|21000119103,http://snomed.info/sct|436021000124100,http://snomed.info/sct|434891000124102,http://snomed.info/sct|99451000119105,http://snomed.info/sct|93396008,http://snomed.info/sct|1204156004,http://snomed.info/sct|1204158003,http://snomed.info/sct|450440061000119108,http://hl7.org/fhir/sid/icd-10-cm|I65.2,http://hl7.org/fhir/sid/icd-10-cm|I65.21,http://hl7.org/fhir/sid/icd-10-cm|I65.22,http://hl7.org/fhir/sid/icd-10-cm|I65.23,http://hl7.org/fhir/sid/icd-10-cm|I65.29",
+      "prompt_text": "Find patients with carotid stenosis."
+     },
+     "3-broad": {
+      "precision": 0.2794,
+      "recall": 0.1698,
+      "f1": 0.2113,
+      "passed": false,
+      "expected_count": 2473,
+      "actual_count": 1503,
+      "elapsed_sec": 31.9,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|64586002,http://snomed.info/sct|233964008,http://snomed.info/sct|285191000119103,http://snomed.info/sct|285201000119100,http://snomed.info/sct|787044009,http://snomed.info/sct|9611000119107,http://snomed.info/sct|21000119103,http://snomed.info/sct|436021000124100,http://snomed.info/sct|434891000124102,http://snomed.info/sct|99451000119105,http://snomed.info/sct|1204156004,http://snomed.info/sct|1204158003,http://snomed.info/sct|450440061000119108,http://snomed.info/sct|93396008,http://hl7.org/fhir/sid/icd-10-cm|I65.2,http://hl7.org/fhir/sid/icd-10-cm|I65.21,http://hl7.org/fhir/sid/icd-10-cm|I65.22,http://hl7.org/fhir/sid/icd-10-cm|I65.23,http://hl7.org/fhir/sid/icd-10-cm|I65.29",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|64586002,http://snomed.info/sct|233964008,http://snomed.info/sct|285191000119103,http://snomed.info/sct|285201000119100,http://snomed.info/sct|787044009,http://snomed.info/sct|9611000119107,http://snomed.info/sct|21000119103,http://snomed.info/sct|436021000124100,http://snomed.info/sct|434891000124102,http://snomed.info/sct|99451000119105,http://snomed.info/sct|1204156004,http://snomed.info/sct|1204158003,http://snomed.info/sct|450440061000119108,http://snomed.info/sct|93396008,http://hl7.org/fhir/sid/icd-10-cm|I65.2,http://hl7.org/fhir/sid/icd-10-cm|I65.21,http://hl7.org/fhir/sid/icd-10-cm|I65.22,http://hl7.org/fhir/sid/icd-10-cm|I65.23,http://hl7.org/fhir/sid/icd-10-cm|I65.29",
+      "prompt_text": "Find patients diagnosed with carotid artery stenosis or atherosclerotic narrowing of the carotid arteries \u2014 a major risk factor for stroke."
+     },
+     "3-expert": {
+      "precision": 0.2794,
+      "recall": 0.1698,
+      "f1": 0.2113,
+      "passed": false,
+      "expected_count": 2473,
+      "actual_count": 1503,
+      "elapsed_sec": 35.0,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|I65.2,http://hl7.org/fhir/sid/icd-10-cm|I65.21,http://hl7.org/fhir/sid/icd-10-cm|I65.22,http://hl7.org/fhir/sid/icd-10-cm|I65.23,http://hl7.org/fhir/sid/icd-10-cm|I65.29",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|I65.2,http://hl7.org/fhir/sid/icd-10-cm|I65.21,http://hl7.org/fhir/sid/icd-10-cm|I65.22,http://hl7.org/fhir/sid/icd-10-cm|I65.23,http://hl7.org/fhir/sid/icd-10-cm|I65.29",
+      "prompt_text": "I need to identify patients with a documented diagnosis of carotid artery stenosis. Search Condition resources for the SNOMED CT concept representing stenosis of the carotid artery. This captures patients with a coded carotid disease entry on their problem list or encounter diagnoses, and should not be broadened to other cerebrovascular or aortic conditions."
+     }
+    },
     "copilot:claude-sonnet-4.6": {
      "1-naive": {
       "precision": 1.0,
@@ -1714,6 +1991,142 @@
        "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|83367"
       ],
       "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1191\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|32968\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|83367",
+      "prompt_text": "Identify patients treated pharmacologically for cardiovascular risk reduction consistent with carotid atherosclerosis via their medication orders. Search MedicationRequest resources for the antiplatelet agents \u2014 aspirin and clopidogrel \u2014 and the statin atorvastatin, all coded in RxNorm. Be aware that these medications are heavily cross-indicated across coronary heart disease, peripheral arterial disease, and carotid artery disease, so a medication-only cohort will substantially over-recall against the broader atherosclerotic vascular population."
+     }
+    },
+    "copilot:claude-opus-4.7+mimic": {
+     "1-naive": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 67239,
+      "actual_count": 0,
+      "elapsed_sec": 15.9,
+      "queries_generated": 3,
+      "primary_query_url": "MedicationRequest?code:in=http://hl7.org/fhir/us/core/ValueSet/us-core-medication-codes&status=active&_has:MedicationRequest:patient:code:in=http://hl7.org/fhir/us/core/ValueSet/us-core-medication-codes",
+      "additional_query_urls": [
+       "MedicationRequest?category=http://terminology.hl7.org/CodeSystem/medicationrequest-category|outpatient&status=active&code=http://www.nlm.nih.gov/research/umls/rxnorm|1191,32968,83367,42463,617314",
+       "MedicationRequest?status=active&code=http://www.nlm.nih.gov/research/umls/rxnorm|36567,42463,83367,301542,153165"
+      ],
+      "raw_response": "MedicationRequest?code:in=http://hl7.org/fhir/us/core/ValueSet/us-core-medication-codes&status=active&_has:MedicationRequest:patient:code:in=http://hl7.org/fhir/us/core/ValueSet/us-core-medication-codes\n\nMedicationRequest?category=http://terminology.hl7.org/CodeSystem/medicationrequest-category|outpatient&status=active&code=http://www.nlm.nih.gov/research/umls/rxnorm|1191,32968,83367,42463,617314\nMedicationRequest?status=active&code=http://www.nlm.nih.gov/research/umls/rxnorm|36567,42463,83367,301542,153165",
+      "prompt_text": "Find patients on antiplatelets and statins."
+     },
+     "1-broad": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 67239,
+      "actual_count": 0,
+      "elapsed_sec": 9.3,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1191,http://www.nlm.nih.gov/research/umls/rxnorm|32968,http://www.nlm.nih.gov/research/umls/rxnorm|83367",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1191,http://www.nlm.nih.gov/research/umls/rxnorm|32968,http://www.nlm.nih.gov/research/umls/rxnorm|83367",
+      "prompt_text": "Find patients prescribed aspirin, clopidogrel, or atorvastatin \u2014 antiplatelet and statin therapy commonly used for atherosclerotic vascular disease prevention."
+     },
+     "1-expert": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 67239,
+      "actual_count": 0,
+      "elapsed_sec": 8.6,
+      "queries_generated": 3,
+      "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1191",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|32968",
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|83367"
+      ],
+      "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1191\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|32968\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|83367",
+      "prompt_text": "Identify patients treated pharmacologically for cardiovascular risk reduction consistent with carotid atherosclerosis via their medication orders. Search MedicationRequest resources for the antiplatelet agents \u2014 aspirin and clopidogrel \u2014 and the statin atorvastatin, all coded in RxNorm. Be aware that these medications are heavily cross-indicated across coronary heart disease, peripheral arterial disease, and carotid artery disease, so a medication-only cohort will substantially over-recall against the broader atherosclerotic vascular population."
+     },
+     "2-naive": {
+      "precision": 0.8722,
+      "recall": 0.0569,
+      "f1": 0.1069,
+      "passed": false,
+      "expected_count": 67239,
+      "actual_count": 4390,
+      "elapsed_sec": 126.5,
+      "queries_generated": 2,
+      "primary_query_url": "MedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|1191,32968,613391,1116632,3521",
+      "additional_query_urls": [
+       "MedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|83367,36567,301542,42463,6472,41127,861634"
+      ],
+      "raw_response": "Both queries return large hits. Final answer:\n\nMedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|1191,32968,613391,1116632,3521\nMedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|83367,36567,301542,42463,6472,41127,861634",
+      "prompt_text": "Find patients on antiplatelets and statins."
+     },
+     "2-broad": {
+      "precision": 1.0,
+      "recall": 0.0343,
+      "f1": 0.0663,
+      "passed": false,
+      "expected_count": 67239,
+      "actual_count": 2304,
+      "elapsed_sec": 93.6,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|1191,32968,83367",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|1191,32968,83367",
+      "prompt_text": "Find patients prescribed aspirin, clopidogrel, or atorvastatin \u2014 antiplatelet and statin therapy commonly used for atherosclerotic vascular disease prevention."
+     },
+     "2-expert": {
+      "precision": 1.0,
+      "recall": 0.0343,
+      "f1": 0.0663,
+      "passed": false,
+      "expected_count": 67239,
+      "actual_count": 2304,
+      "elapsed_sec": 64.3,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|1191,http://www.nlm.nih.gov/research/umls/rxnorm|32968,http://www.nlm.nih.gov/research/umls/rxnorm|83367",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|1191,http://www.nlm.nih.gov/research/umls/rxnorm|32968,http://www.nlm.nih.gov/research/umls/rxnorm|83367",
+      "prompt_text": "Identify patients treated pharmacologically for cardiovascular risk reduction consistent with carotid atherosclerosis via their medication orders. Search MedicationRequest resources for the antiplatelet agents \u2014 aspirin and clopidogrel \u2014 and the statin atorvastatin, all coded in RxNorm. Be aware that these medications are heavily cross-indicated across coronary heart disease, peripheral arterial disease, and carotid artery disease, so a medication-only cohort will substantially over-recall against the broader atherosclerotic vascular population."
+     },
+     "3-naive": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 67239,
+      "actual_count": 0,
+      "elapsed_sec": 140.7,
+      "queries_generated": 1,
+      "primary_query_url": "Patient?_has:MedicationRequest:patient:medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|1191,32968,613391,1116632,10594,3521,73137&_has:MedicationRequest:patient:medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|83367,36567,301542,42463,6472,41127,861634",
+      "additional_query_urls": [],
+      "raw_response": "FINAL ANSWER:\n\nPatient?_has:MedicationRequest:patient:medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|1191,32968,613391,1116632,10594,3521,73137&_has:MedicationRequest:patient:medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|83367,36567,301542,42463,6472,41127,861634",
+      "prompt_text": "Find patients on antiplatelets and statins."
+     },
+     "3-broad": {
+      "precision": 1.0,
+      "recall": 0.0343,
+      "f1": 0.0663,
+      "passed": false,
+      "expected_count": 67239,
+      "actual_count": 2304,
+      "elapsed_sec": 105.9,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|1191,http://www.nlm.nih.gov/research/umls/rxnorm|32968,http://www.nlm.nih.gov/research/umls/rxnorm|83367",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|1191,http://www.nlm.nih.gov/research/umls/rxnorm|32968,http://www.nlm.nih.gov/research/umls/rxnorm|83367",
+      "prompt_text": "Find patients prescribed aspirin, clopidogrel, or atorvastatin \u2014 antiplatelet and statin therapy commonly used for atherosclerotic vascular disease prevention."
+     },
+     "3-expert": {
+      "precision": 1.0,
+      "recall": 0.0343,
+      "f1": 0.0663,
+      "passed": false,
+      "expected_count": 67239,
+      "actual_count": 2304,
+      "elapsed_sec": 44.7,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|1191,http://www.nlm.nih.gov/research/umls/rxnorm|32968,http://www.nlm.nih.gov/research/umls/rxnorm|83367",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|1191,http://www.nlm.nih.gov/research/umls/rxnorm|32968,http://www.nlm.nih.gov/research/umls/rxnorm|83367",
       "prompt_text": "Identify patients treated pharmacologically for cardiovascular risk reduction consistent with carotid atherosclerosis via their medication orders. Search MedicationRequest resources for the antiplatelet agents \u2014 aspirin and clopidogrel \u2014 and the statin atorvastatin, all coded in RxNorm. Be aware that these medications are heavily cross-indicated across coronary heart disease, peripheral arterial disease, and carotid artery disease, so a medication-only cohort will substantially over-recall against the broader atherosclerotic vascular population."
      }
     },

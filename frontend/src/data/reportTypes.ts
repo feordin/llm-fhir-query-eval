@@ -94,3 +94,8 @@ export function isCanonicalModel(spec: string): boolean {
 export function isSkillSpec(spec: string): boolean {
   return spec.includes('fhirskill')
 }
+// Real-data (MIMIC-IV) runs. Exactly '+mimic' — repeat-run specs like
+// '+mimic-r2' are variance probes, not leaderboard rows.
+export function isMimicSpec(spec: string): boolean {
+  return spec.endsWith('+mimic')
+}

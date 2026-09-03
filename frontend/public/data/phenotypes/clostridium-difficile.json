@@ -1042,6 +1042,147 @@
       "prompt_text": "I need to identify Clostridioides difficile infection patients using a union of two resource types. First, search Condition resources for a documented C. difficile infection diagnosis coded in SNOMED CT. Second, search MedicationRequest resources for vancomycin prescriptions (coded in RxNorm), which is a primary treatment for C. diff colitis. Union the patient sets from both queries \u2014 the medication path will over-include because vancomycin is heavily cross-indicated for other serious gram-positive infections including MRSA bacteremia and endocarditis, so patients on vancomycin without a C. diff diagnosis represent that cross-indication population."
      }
     },
+    "copilot:claude-opus-4.7+mimic": {
+     "1-naive": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 2446,
+      "actual_count": 0,
+      "elapsed_sec": 7.1,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|186431008",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|186431008",
+      "prompt_text": "Find all C. diff patients."
+     },
+     "1-broad": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 2446,
+      "actual_count": 0,
+      "elapsed_sec": 8.4,
+      "queries_generated": 3,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|186431008",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1807510",
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1299137"
+      ],
+      "raw_response": "Condition?code=http://snomed.info/sct|186431008\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1807510\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1299137",
+      "prompt_text": "Find all C. difficile patients \u2014 by diagnosis or by vancomycin prescriptions. Run multiple queries and union the patient sets."
+     },
+     "1-expert": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 2446,
+      "actual_count": 0,
+      "elapsed_sec": 7.8,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|186431008",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|11124"
+      ],
+      "raw_response": "Condition?code=http://snomed.info/sct|186431008\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|11124",
+      "prompt_text": "I need to identify Clostridioides difficile infection patients using a union of two resource types. First, search Condition resources for a documented C. difficile infection diagnosis coded in SNOMED CT. Second, search MedicationRequest resources for vancomycin prescriptions (coded in RxNorm), which is a primary treatment for C. diff colitis. Union the patient sets from both queries \u2014 the medication path will over-include because vancomycin is heavily cross-indicated for other serious gram-positive infections including MRSA bacteremia and endocarditis, so patients on vancomycin without a C. diff diagnosis represent that cross-indication population."
+     },
+     "2-naive": {
+      "precision": 0.6095,
+      "recall": 1.0,
+      "f1": 0.7574,
+      "passed": true,
+      "expected_count": 2446,
+      "actual_count": 4013,
+      "elapsed_sec": 26.1,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|A04.7,http://hl7.org/fhir/sid/icd-10-cm|A04.71,http://hl7.org/fhir/sid/icd-10-cm|A04.72,http://hl7.org/fhir/sid/icd-9-cm|008.45",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|A04.7,http://hl7.org/fhir/sid/icd-10-cm|A04.71,http://hl7.org/fhir/sid/icd-10-cm|A04.72,http://hl7.org/fhir/sid/icd-9-cm|008.45",
+      "prompt_text": "Find all C. diff patients."
+     },
+     "2-broad": {
+      "precision": 0.0316,
+      "recall": 0.0904,
+      "f1": 0.0469,
+      "passed": false,
+      "expected_count": 2446,
+      "actual_count": 6988,
+      "elapsed_sec": 50.4,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|186431008,http://hl7.org/fhir/sid/icd-10-cm|A04.7,http://hl7.org/fhir/sid/icd-10-cm|A04.71,http://hl7.org/fhir/sid/icd-10-cm|A04.72",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Vancomycin"
+      ],
+      "raw_response": "Condition?code=http://snomed.info/sct|186431008,http://hl7.org/fhir/sid/icd-10-cm|A04.7,http://hl7.org/fhir/sid/icd-10-cm|A04.71,http://hl7.org/fhir/sid/icd-10-cm|A04.72\nMedicationRequest?code=http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Vancomycin",
+      "prompt_text": "Find all C. difficile patients \u2014 by diagnosis or by vancomycin prescriptions. Run multiple queries and union the patient sets."
+     },
+     "2-expert": {
+      "precision": 0.0316,
+      "recall": 0.0904,
+      "f1": 0.0469,
+      "passed": false,
+      "expected_count": 2446,
+      "actual_count": 6988,
+      "elapsed_sec": 62.6,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|A04.7,http://hl7.org/fhir/sid/icd-10-cm|A04.71,http://hl7.org/fhir/sid/icd-10-cm|A04.72",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Vancomycin"
+      ],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|A04.7,http://hl7.org/fhir/sid/icd-10-cm|A04.71,http://hl7.org/fhir/sid/icd-10-cm|A04.72\nMedicationRequest?code=http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Vancomycin",
+      "prompt_text": "I need to identify Clostridioides difficile infection patients using a union of two resource types. First, search Condition resources for a documented C. difficile infection diagnosis coded in SNOMED CT. Second, search MedicationRequest resources for vancomycin prescriptions (coded in RxNorm), which is a primary treatment for C. diff colitis. Union the patient sets from both queries \u2014 the medication path will over-include because vancomycin is heavily cross-indicated for other serious gram-positive infections including MRSA bacteremia and endocarditis, so patients on vancomycin without a C. diff diagnosis represent that cross-indication population."
+     },
+     "3-naive": {
+      "precision": 0.6095,
+      "recall": 1.0,
+      "f1": 0.7574,
+      "passed": true,
+      "expected_count": 2446,
+      "actual_count": 4013,
+      "elapsed_sec": 31.8,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|186431008,http://snomed.info/sct|423590009,http://snomed.info/sct|5891000119102,http://snomed.info/sct|404907009,http://hl7.org/fhir/sid/icd-10-cm|A04.7,http://hl7.org/fhir/sid/icd-10-cm|A04.71,http://hl7.org/fhir/sid/icd-10-cm|A04.72,http://hl7.org/fhir/sid/icd-9-cm|008.45",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|186431008,http://snomed.info/sct|423590009,http://snomed.info/sct|5891000119102,http://snomed.info/sct|404907009,http://hl7.org/fhir/sid/icd-10-cm|A04.7,http://hl7.org/fhir/sid/icd-10-cm|A04.71,http://hl7.org/fhir/sid/icd-10-cm|A04.72,http://hl7.org/fhir/sid/icd-9-cm|008.45",
+      "prompt_text": "Find all C. diff patients."
+     },
+     "3-broad": {
+      "precision": 0.0503,
+      "recall": 0.0339,
+      "f1": 0.0405,
+      "passed": false,
+      "expected_count": 2446,
+      "actual_count": 1650,
+      "elapsed_sec": 116.9,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|A04.7,http://hl7.org/fhir/sid/icd-10-cm|A04.71,http://hl7.org/fhir/sid/icd-10-cm|A04.72",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|11124,http://www.nlm.nih.gov/research/umls/rxnorm|1807512,http://www.nlm.nih.gov/research/umls/rxnorm|1807515,http://www.nlm.nih.gov/research/umls/rxnorm|1807517,http://www.nlm.nih.gov/research/umls/rxnorm|328783,http://www.nlm.nih.gov/research/umls/rxnorm|328784,http://www.nlm.nih.gov/research/umls/rxnorm|374281,http://www.nlm.nih.gov/research/umls/rxnorm|374282,http://www.nlm.nih.gov/research/umls/rxnorm|375983,http://www.nlm.nih.gov/research/umls/rxnorm|66955,http://www.nlm.nih.gov/research/umls/rxnorm|239209,http://www.nlm.nih.gov/research/umls/rxnorm|313572,http://www.nlm.nih.gov/research/umls/rxnorm|313570,http://www.nlm.nih.gov/research/umls/rxnorm|313571"
+      ],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|A04.7,http://hl7.org/fhir/sid/icd-10-cm|A04.71,http://hl7.org/fhir/sid/icd-10-cm|A04.72\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|11124,http://www.nlm.nih.gov/research/umls/rxnorm|1807512,http://www.nlm.nih.gov/research/umls/rxnorm|1807515,http://www.nlm.nih.gov/research/umls/rxnorm|1807517,http://www.nlm.nih.gov/research/umls/rxnorm|328783,http://www.nlm.nih.gov/research/umls/rxnorm|328784,http://www.nlm.nih.gov/research/umls/rxnorm|374281,http://www.nlm.nih.gov/research/umls/rxnorm|374282,http://www.nlm.nih.gov/research/umls/rxnorm|375983,http://www.nlm.nih.gov/research/umls/rxnorm|66955,http://www.nlm.nih.gov/research/umls/rxnorm|239209,http://www.nlm.nih.gov/research/umls/rxnorm|313572,http://www.nlm.nih.gov/research/umls/rxnorm|313570,http://www.nlm.nih.gov/research/umls/rxnorm|313571",
+      "prompt_text": "Find all C. difficile patients \u2014 by diagnosis or by vancomycin prescriptions. Run multiple queries and union the patient sets."
+     },
+     "3-expert": {
+      "precision": 0.0316,
+      "recall": 0.0904,
+      "f1": 0.0469,
+      "passed": false,
+      "expected_count": 2446,
+      "actual_count": 6988,
+      "elapsed_sec": 73.4,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|A04.7,http://hl7.org/fhir/sid/icd-10-cm|A04.71,http://hl7.org/fhir/sid/icd-10-cm|A04.72",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Vancomycin"
+      ],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|A04.7,http://hl7.org/fhir/sid/icd-10-cm|A04.71,http://hl7.org/fhir/sid/icd-10-cm|A04.72\nMedicationRequest?code=http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Vancomycin",
+      "prompt_text": "I need to identify Clostridioides difficile infection patients using a union of two resource types. First, search Condition resources for a documented C. difficile infection diagnosis coded in SNOMED CT. Second, search MedicationRequest resources for vancomycin prescriptions (coded in RxNorm), which is a primary treatment for C. diff colitis. Union the patient sets from both queries \u2014 the medication path will over-include because vancomycin is heavily cross-indicated for other serious gram-positive infections including MRSA bacteremia and endocarditis, so patients on vancomycin without a C. diff diagnosis represent that cross-indication population."
+     }
+    },
     "copilot:claude-sonnet-4.6": {
      "1-naive": {
       "precision": 1.0,
@@ -1829,6 +1970,134 @@
       "prompt_text": "I need to find patients with a documented Clostridioides difficile infection from their Condition resources. Search for the SNOMED CT concept representing infection caused by C. difficile \u2014 note that the organism was reclassified from Clostridium to Clostridioides, so confirm the code resolves to the current preferred term. This is a hospital-acquired infection phenotype, so cases may appear as encounter diagnoses rather than problem-list entries."
      }
     },
+    "copilot:claude-opus-4.7+mimic": {
+     "1-naive": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 2446,
+      "actual_count": 0,
+      "elapsed_sec": 16.1,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|186431008",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|186431008",
+      "prompt_text": "Find patients with C. diff."
+     },
+     "1-broad": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 2446,
+      "actual_count": 0,
+      "elapsed_sec": 8.6,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|186431008",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|186431008",
+      "prompt_text": "Find patients diagnosed with Clostridioides difficile infection \u2014 a hospital-acquired bacterial colitis often following antibiotic therapy."
+     },
+     "1-expert": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 2446,
+      "actual_count": 0,
+      "elapsed_sec": 9.1,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|186431008",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|186431008",
+      "prompt_text": "I need to find patients with a documented Clostridioides difficile infection from their Condition resources. Search for the SNOMED CT concept representing infection caused by C. difficile \u2014 note that the organism was reclassified from Clostridium to Clostridioides, so confirm the code resolves to the current preferred term. This is a hospital-acquired infection phenotype, so cases may appear as encounter diagnoses rather than problem-list entries."
+     },
+     "2-naive": {
+      "precision": 0.6095,
+      "recall": 1.0,
+      "f1": 0.7574,
+      "passed": true,
+      "expected_count": 2446,
+      "actual_count": 4013,
+      "elapsed_sec": 33.2,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|186431008,http://snomed.info/sct|423590009,http://snomed.info/sct|5891000119102,http://snomed.info/sct|404907009,http://hl7.org/fhir/sid/icd-10-cm|A04.7,http://hl7.org/fhir/sid/icd-10-cm|A04.71,http://hl7.org/fhir/sid/icd-10-cm|A04.72,http://hl7.org/fhir/sid/icd-9-cm|008.45",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|186431008,http://snomed.info/sct|423590009,http://snomed.info/sct|5891000119102,http://snomed.info/sct|404907009,http://hl7.org/fhir/sid/icd-10-cm|A04.7,http://hl7.org/fhir/sid/icd-10-cm|A04.71,http://hl7.org/fhir/sid/icd-10-cm|A04.72,http://hl7.org/fhir/sid/icd-9-cm|008.45",
+      "prompt_text": "Find patients with C. diff."
+     },
+     "2-broad": {
+      "precision": 0.6095,
+      "recall": 1.0,
+      "f1": 0.7574,
+      "passed": true,
+      "expected_count": 2446,
+      "actual_count": 4013,
+      "elapsed_sec": 26.1,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|186431008,http://snomed.info/sct|423590009,http://snomed.info/sct|404907009,http://snomed.info/sct|5891000119102,http://hl7.org/fhir/sid/icd-10-cm|A04.7,http://hl7.org/fhir/sid/icd-10-cm|A04.71,http://hl7.org/fhir/sid/icd-10-cm|A04.72,http://hl7.org/fhir/sid/icd-9-cm|008.45",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|186431008,http://snomed.info/sct|423590009,http://snomed.info/sct|404907009,http://snomed.info/sct|5891000119102,http://hl7.org/fhir/sid/icd-10-cm|A04.7,http://hl7.org/fhir/sid/icd-10-cm|A04.71,http://hl7.org/fhir/sid/icd-10-cm|A04.72,http://hl7.org/fhir/sid/icd-9-cm|008.45",
+      "prompt_text": "Find patients diagnosed with Clostridioides difficile infection \u2014 a hospital-acquired bacterial colitis often following antibiotic therapy."
+     },
+     "2-expert": {
+      "precision": 0.0503,
+      "recall": 0.0339,
+      "f1": 0.0405,
+      "passed": false,
+      "expected_count": 2446,
+      "actual_count": 1650,
+      "elapsed_sec": 30.8,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|A04.7,http://hl7.org/fhir/sid/icd-10-cm|A04.71,http://hl7.org/fhir/sid/icd-10-cm|A04.72",
+      "additional_query_urls": [],
+      "raw_response": "FINAL ANSWER:\n\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|A04.7,http://hl7.org/fhir/sid/icd-10-cm|A04.71,http://hl7.org/fhir/sid/icd-10-cm|A04.72",
+      "prompt_text": "I need to find patients with a documented Clostridioides difficile infection from their Condition resources. Search for the SNOMED CT concept representing infection caused by C. difficile \u2014 note that the organism was reclassified from Clostridium to Clostridioides, so confirm the code resolves to the current preferred term. This is a hospital-acquired infection phenotype, so cases may appear as encounter diagnoses rather than problem-list entries."
+     },
+     "3-naive": {
+      "precision": 0.0503,
+      "recall": 0.0339,
+      "f1": 0.0405,
+      "passed": false,
+      "expected_count": 2446,
+      "actual_count": 1650,
+      "elapsed_sec": 16.8,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|186431008,http://snomed.info/sct|398447004,http://hl7.org/fhir/sid/icd-10-cm|A04.7,http://hl7.org/fhir/sid/icd-10-cm|A04.72,http://hl7.org/fhir/sid/icd-10-cm|A04.71",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|186431008,http://snomed.info/sct|398447004,http://hl7.org/fhir/sid/icd-10-cm|A04.7,http://hl7.org/fhir/sid/icd-10-cm|A04.72,http://hl7.org/fhir/sid/icd-10-cm|A04.71",
+      "prompt_text": "Find patients with C. diff."
+     },
+     "3-broad": {
+      "precision": 0.6095,
+      "recall": 1.0,
+      "f1": 0.7574,
+      "passed": true,
+      "expected_count": 2446,
+      "actual_count": 4013,
+      "elapsed_sec": 35.0,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|186431008,http://snomed.info/sct|389981005,http://snomed.info/sct|423590009,http://snomed.info/sct|5891000119102,http://snomed.info/sct|404907009,http://hl7.org/fhir/sid/icd-10-cm|A04.7,http://hl7.org/fhir/sid/icd-10-cm|A04.71,http://hl7.org/fhir/sid/icd-10-cm|A04.72,http://hl7.org/fhir/sid/icd-9-cm|008.45",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|186431008,http://snomed.info/sct|389981005,http://snomed.info/sct|423590009,http://snomed.info/sct|5891000119102,http://snomed.info/sct|404907009,http://hl7.org/fhir/sid/icd-10-cm|A04.7,http://hl7.org/fhir/sid/icd-10-cm|A04.71,http://hl7.org/fhir/sid/icd-10-cm|A04.72,http://hl7.org/fhir/sid/icd-9-cm|008.45",
+      "prompt_text": "Find patients diagnosed with Clostridioides difficile infection \u2014 a hospital-acquired bacterial colitis often following antibiotic therapy."
+     },
+     "3-expert": {
+      "precision": 0.6095,
+      "recall": 1.0,
+      "f1": 0.7574,
+      "passed": true,
+      "expected_count": 2446,
+      "actual_count": 4013,
+      "elapsed_sec": 37.5,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|186431008,http://snomed.info/sct|423590009,http://snomed.info/sct|5891000119102,http://snomed.info/sct|404907009,http://hl7.org/fhir/sid/icd-10-cm|A04.7,http://hl7.org/fhir/sid/icd-10-cm|A04.71,http://hl7.org/fhir/sid/icd-10-cm|A04.72,http://hl7.org/fhir/sid/icd-9-cm|008.45",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|186431008,http://snomed.info/sct|423590009,http://snomed.info/sct|5891000119102,http://snomed.info/sct|404907009,http://hl7.org/fhir/sid/icd-10-cm|A04.7,http://hl7.org/fhir/sid/icd-10-cm|A04.71,http://hl7.org/fhir/sid/icd-10-cm|A04.72,http://hl7.org/fhir/sid/icd-9-cm|008.45",
+      "prompt_text": "I need to find patients with a documented Clostridioides difficile infection from their Condition resources. Search for the SNOMED CT concept representing infection caused by C. difficile \u2014 note that the organism was reclassified from Clostridium to Clostridioides, so confirm the code resolves to the current preferred term. This is a hospital-acquired infection phenotype, so cases may appear as encounter diagnoses rather than problem-list entries."
+     }
+    },
     "copilot:claude-sonnet-4.6": {
      "1-naive": {
       "precision": 1.0,
@@ -2558,6 +2827,137 @@
       "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|11124",
       "additional_query_urls": [],
       "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|11124",
+      "prompt_text": "Identify patients treated with vancomycin by searching MedicationRequest resources for vancomycin prescriptions coded in RxNorm. This is a medication-proxy path for C. difficile infection, but vancomycin carries substantial cross-indication: it is also a first-line agent for MRSA bacteremia, endocarditis, and other severe gram-positive infections, so this cohort will include patients treated for conditions other than C. diff. A medication-only query therefore represents an upper-bound estimate of the C. diff population."
+     }
+    },
+    "copilot:claude-opus-4.7+mimic": {
+     "1-naive": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 17072,
+      "actual_count": 0,
+      "elapsed_sec": 10.4,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|11124,http://www.nlm.nih.gov/research/umls/rxnorm|1111134,http://www.nlm.nih.gov/research/umls/rxnorm|6922&status=active",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|11124,http://www.nlm.nih.gov/research/umls/rxnorm|1111134,http://www.nlm.nih.gov/research/umls/rxnorm|6922&status=active",
+      "prompt_text": "Find patients on C. diff medications."
+     },
+     "1-broad": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 17072,
+      "actual_count": 0,
+      "elapsed_sec": 7.4,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|11124",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|11124",
+      "prompt_text": "Find patients prescribed vancomycin \u2014 a glycopeptide antibiotic used as first-line treatment for C. difficile colitis (oral) and for serious gram-positive infections like MRSA (IV)."
+     },
+     "1-expert": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 17072,
+      "actual_count": 0,
+      "elapsed_sec": 7.4,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|11124",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|11124",
+      "prompt_text": "Identify patients treated with vancomycin by searching MedicationRequest resources for vancomycin prescriptions coded in RxNorm. This is a medication-proxy path for C. difficile infection, but vancomycin carries substantial cross-indication: it is also a first-line agent for MRSA bacteremia, endocarditis, and other severe gram-positive infections, so this cohort will include patients treated for conditions other than C. diff. A medication-only query therefore represents an upper-bound estimate of the C. diff population."
+     },
+     "2-naive": {
+      "precision": 0.9883,
+      "recall": 0.5265,
+      "f1": 0.687,
+      "passed": false,
+      "expected_count": 17072,
+      "actual_count": 9094,
+      "elapsed_sec": 75.3,
+      "queries_generated": 3,
+      "primary_query_url": "MedicationRequest?medication.code:text=vancomycin",
+      "additional_query_urls": [
+       "MedicationRequest?medication.code:text=fidaxomicin",
+       "MedicationRequest?medication.code:text=metronidazole"
+      ],
+      "raw_response": "FINAL ANSWER:\n\nMedicationRequest?medication.code:text=vancomycin\nMedicationRequest?medication.code:text=fidaxomicin\nMedicationRequest?medication.code:text=metronidazole",
+      "prompt_text": "Find patients on C. diff medications."
+     },
+     "2-broad": {
+      "precision": 0.9729,
+      "recall": 0.2188,
+      "f1": 0.3572,
+      "passed": false,
+      "expected_count": 17072,
+      "actual_count": 3839,
+      "elapsed_sec": 48.7,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?medication.code:text=vancomycin",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?medication.code:text=vancomycin",
+      "prompt_text": "Find patients prescribed vancomycin \u2014 a glycopeptide antibiotic used as first-line treatment for C. difficile colitis (oral) and for serious gram-positive infections like MRSA (IV)."
+     },
+     "2-expert": {
+      "precision": 0.9729,
+      "recall": 0.2188,
+      "f1": 0.3572,
+      "passed": false,
+      "expected_count": 17072,
+      "actual_count": 3839,
+      "elapsed_sec": 44.6,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?medication.code:text=vancomycin",
+      "additional_query_urls": [],
+      "raw_response": "FINAL ANSWER:\n\nMedicationRequest?medication.code:text=vancomycin",
+      "prompt_text": "Identify patients treated with vancomycin by searching MedicationRequest resources for vancomycin prescriptions coded in RxNorm. This is a medication-proxy path for C. difficile infection, but vancomycin carries substantial cross-indication: it is also a first-line agent for MRSA bacteremia, endocarditis, and other severe gram-positive infections, so this cohort will include patients treated for conditions other than C. diff. A medication-only query therefore represents an upper-bound estimate of the C. diff population."
+     },
+     "3-naive": {
+      "precision": 0.3211,
+      "recall": 0.1072,
+      "f1": 0.1607,
+      "passed": false,
+      "expected_count": 17072,
+      "actual_count": 5700,
+      "elapsed_sec": 83.3,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?code=http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Vancomycin",
+      "additional_query_urls": [],
+      "raw_response": "FINAL ANSWER:\n\nMedicationRequest?code=http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Vancomycin Oral Liquid,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Vancomycin Enema,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Fidaxomicin,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|MetroNIDAZOLE",
+      "prompt_text": "Find patients on C. diff medications."
+     },
+     "3-broad": {
+      "precision": 1.0,
+      "recall": 0.2279,
+      "f1": 0.3712,
+      "passed": false,
+      "expected_count": 17072,
+      "actual_count": 3891,
+      "elapsed_sec": 49.8,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|11124",
+      "additional_query_urls": [],
+      "raw_response": "FINAL ANSWER:\n\nMedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|11124",
+      "prompt_text": "Find patients prescribed vancomycin \u2014 a glycopeptide antibiotic used as first-line treatment for C. difficile colitis (oral) and for serious gram-positive infections like MRSA (IV)."
+     },
+     "3-expert": {
+      "precision": 0.3211,
+      "recall": 0.1072,
+      "f1": 0.1607,
+      "passed": false,
+      "expected_count": 17072,
+      "actual_count": 5700,
+      "elapsed_sec": 36.0,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?code=http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Vancomycin",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?code=http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Vancomycin",
       "prompt_text": "Identify patients treated with vancomycin by searching MedicationRequest resources for vancomycin prescriptions coded in RxNorm. This is a medication-proxy path for C. difficile infection, but vancomycin carries substantial cross-indication: it is also a first-line agent for MRSA bacteremia, endocarditis, and other severe gram-positive infections, so this cohort will include patients treated for conditions other than C. diff. A medication-only query therefore represents an upper-bound estimate of the C. diff population."
      }
     },

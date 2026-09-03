@@ -231,6 +231,147 @@
       "prompt_text": "I need to identify all patients with acute kidney injury using both diagnostic and laboratory evidence, taking the union of two independent queries. First, search Condition resources for a documented AKI diagnosis coded in SNOMED CT. Second, search Observation resources for serum creatinine results (coded in LOINC) at or above the threshold associated with AKI \u2014 approximately one and a half milligrams per deciliter or higher. Return the union of patient IDs across both queries, since some patients will have a formal diagnosis without a recorded creatinine threshold result and others will have the laboratory finding without a coded diagnosis."
      }
     },
+    "copilot:claude-opus-4.7+mimic": {
+     "1-naive": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 44960,
+      "actual_count": 0,
+      "elapsed_sec": 7.0,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|14669001",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|14669001",
+      "prompt_text": "Find all my AKI patients."
+     },
+     "1-broad": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 44960,
+      "actual_count": 0,
+      "elapsed_sec": 8.3,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|14669001",
+      "additional_query_urls": [
+       "Observation?code=http://loinc.org|2160-0&value-quantity=ge1.5|http://unitsofmeasure.org|mg/dL"
+      ],
+      "raw_response": "Condition?code=http://snomed.info/sct|14669001\nObservation?code=http://loinc.org|2160-0&value-quantity=ge1.5|http://unitsofmeasure.org|mg/dL",
+      "prompt_text": "Find all AKI patients \u2014 by diagnosis or by elevated creatinine (\u22651.5 mg/dL). Run multiple queries and union the patient sets."
+     },
+     "1-expert": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 44960,
+      "actual_count": 0,
+      "elapsed_sec": 7.5,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|14669001",
+      "additional_query_urls": [
+       "Observation?code=http://loinc.org|2160-0&value-quantity=ge1.5|http://unitsofmeasure.org|mg/dL"
+      ],
+      "raw_response": "Condition?code=http://snomed.info/sct|14669001\nObservation?code=http://loinc.org|2160-0&value-quantity=ge1.5|http://unitsofmeasure.org|mg/dL",
+      "prompt_text": "I need to identify all patients with acute kidney injury using both diagnostic and laboratory evidence, taking the union of two independent queries. First, search Condition resources for a documented AKI diagnosis coded in SNOMED CT. Second, search Observation resources for serum creatinine results (coded in LOINC) at or above the threshold associated with AKI \u2014 approximately one and a half milligrams per deciliter or higher. Return the union of patient IDs across both queries, since some patients will have a formal diagnosis without a recorded creatinine threshold result and others will have the laboratory finding without a coded diagnosis."
+     },
+     "2-naive": {
+      "precision": 1.0,
+      "recall": 0.1344,
+      "f1": 0.237,
+      "passed": false,
+      "expected_count": 44960,
+      "actual_count": 6044,
+      "elapsed_sec": 33.0,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-9-cm|584.5,http://hl7.org/fhir/sid/icd-9-cm|584.6,http://hl7.org/fhir/sid/icd-9-cm|584.7,http://hl7.org/fhir/sid/icd-9-cm|584.8,http://hl7.org/fhir/sid/icd-9-cm|584.9",
+      "additional_query_urls": [],
+      "raw_response": "FINAL ANSWER:\n\nCondition?code=http://hl7.org/fhir/sid/icd-9-cm|584.5,http://hl7.org/fhir/sid/icd-9-cm|584.6,http://hl7.org/fhir/sid/icd-9-cm|584.7,http://hl7.org/fhir/sid/icd-9-cm|584.8,http://hl7.org/fhir/sid/icd-9-cm|584.9",
+      "prompt_text": "Find all my AKI patients."
+     },
+     "2-broad": {
+      "precision": 1.0,
+      "recall": 0.272,
+      "f1": 0.4277,
+      "passed": false,
+      "expected_count": 44960,
+      "actual_count": 12229,
+      "elapsed_sec": 65.9,
+      "queries_generated": 3,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-9-cm|584.5,http://hl7.org/fhir/sid/icd-9-cm|584.6,http://hl7.org/fhir/sid/icd-9-cm|584.7,http://hl7.org/fhir/sid/icd-9-cm|584.8,http://hl7.org/fhir/sid/icd-9-cm|584.9",
+      "additional_query_urls": [
+       "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|N17.0,http://hl7.org/fhir/sid/icd-10-cm|N17.1,http://hl7.org/fhir/sid/icd-10-cm|N17.2,http://hl7.org/fhir/sid/icd-10-cm|N17.8,http://hl7.org/fhir/sid/icd-10-cm|N17.9",
+       "Observation?code=http://loinc.org|2160-0&value-quantity=ge1.5"
+      ],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-9-cm|584.5,http://hl7.org/fhir/sid/icd-9-cm|584.6,http://hl7.org/fhir/sid/icd-9-cm|584.7,http://hl7.org/fhir/sid/icd-9-cm|584.8,http://hl7.org/fhir/sid/icd-9-cm|584.9\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|N17.0,http://hl7.org/fhir/sid/icd-10-cm|N17.1,http://hl7.org/fhir/sid/icd-10-cm|N17.2,http://hl7.org/fhir/sid/icd-10-cm|N17.8,http://hl7.org/fhir/sid/icd-10-cm|N17.9\nObservation?code=http://loinc.org|2160-0&value-quantity=ge1.5",
+      "prompt_text": "Find all AKI patients \u2014 by diagnosis or by elevated creatinine (\u22651.5 mg/dL). Run multiple queries and union the patient sets."
+     },
+     "2-expert": {
+      "precision": 1.0,
+      "recall": 0.1455,
+      "f1": 0.254,
+      "passed": false,
+      "expected_count": 44960,
+      "actual_count": 6542,
+      "elapsed_sec": 54.4,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-9-cm|584.5,http://hl7.org/fhir/sid/icd-9-cm|584.6,http://hl7.org/fhir/sid/icd-9-cm|584.7,http://hl7.org/fhir/sid/icd-9-cm|584.8,http://hl7.org/fhir/sid/icd-9-cm|584.9",
+      "additional_query_urls": [
+       "Observation?code=http://loinc.org|2160-0&value-quantity=ge1.5"
+      ],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-9-cm|584.5,http://hl7.org/fhir/sid/icd-9-cm|584.6,http://hl7.org/fhir/sid/icd-9-cm|584.7,http://hl7.org/fhir/sid/icd-9-cm|584.8,http://hl7.org/fhir/sid/icd-9-cm|584.9\nObservation?code=http://loinc.org|2160-0&value-quantity=ge1.5",
+      "prompt_text": "I need to identify all patients with acute kidney injury using both diagnostic and laboratory evidence, taking the union of two independent queries. First, search Condition resources for a documented AKI diagnosis coded in SNOMED CT. Second, search Observation resources for serum creatinine results (coded in LOINC) at or above the threshold associated with AKI \u2014 approximately one and a half milligrams per deciliter or higher. Return the union of patient IDs across both queries, since some patients will have a formal diagnosis without a recorded creatinine threshold result and others will have the laboratory finding without a coded diagnosis."
+     },
+     "3-naive": {
+      "precision": 1.0,
+      "recall": 0.1346,
+      "f1": 0.2372,
+      "passed": false,
+      "expected_count": 44960,
+      "actual_count": 6051,
+      "elapsed_sec": 43.4,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|14669001,http://snomed.info/sct|58574008,http://snomed.info/sct|723189000,http://snomed.info/sct|236424009,http://snomed.info/sct|35455006,http://snomed.info/sct|140031000119103,http://snomed.info/sct|129561000119108,http://snomed.info/sct|1293200002,http://snomed.info/sct|1293198008,http://snomed.info/sct|236433006,http://snomed.info/sct|722278006,http://snomed.info/sct|722096006,http://snomed.info/sct|726541005,http://snomed.info/sct|236428007,http://snomed.info/sct|1177174007,http://snomed.info/sct|368951000119105,http://snomed.info/sct|733137002,http://snomed.info/sct|733138007,http://snomed.info/sct|733139004,http://snomed.info/sct|870589006,http://snomed.info/sct|438783006,http://snomed.info/sct|423533009,http://snomed.info/sct|430535006,http://hl7.org/fhir/sid/icd-10-cm|N17.0,http://hl7.org/fhir/sid/icd-10-cm|N17.1,http://hl7.org/fhir/sid/icd-10-cm|N17.2,http://hl7.org/fhir/sid/icd-10-cm|N17.8,http://hl7.org/fhir/sid/icd-10-cm|N17.9,http://hl7.org/fhir/sid/icd-9-cm|584.9,http://hl7.org/fhir/sid/icd-9-cm|584.5,http://hl7.org/fhir/sid/icd-9-cm|584.6,http://hl7.org/fhir/sid/icd-9-cm|584.7,http://hl7.org/fhir/sid/icd-9-cm|584.8",
+      "additional_query_urls": [],
+      "raw_response": "Playbook 1 (subtypes) + 8 (multi-system) + 12 (cohort=OR).\n\nFINAL ANSWER:\n\nCondition?code=http://snomed.info/sct|14669001,http://snomed.info/sct|58574008,http://snomed.info/sct|723189000,http://snomed.info/sct|236424009,http://snomed.info/sct|35455006,http://snomed.info/sct|140031000119103,http://snomed.info/sct|129561000119108,http://snomed.info/sct|1293200002,http://snomed.info/sct|1293198008,http://snomed.info/sct|236433006,http://snomed.info/sct|722278006,http://snomed.info/sct|722096006,http://snomed.info/sct|726541005,http://snomed.info/sct|236428007,http://snomed.info/sct|1177174007,http://snomed.info/sct|368951000119105,http://snomed.info/sct|733137002,http://snomed.info/sct|733138007,http://snomed.info/sct|733139004,http://snomed.info/sct|870589006,http://snomed.info/sct|438783006,http://snomed.info/sct|423533009,http://snomed.info/sct|430535006,http://hl7.org/fhir/sid/icd-10-cm|N17.0,http://hl7.org/fhir/sid/icd-10-cm|N17.1,http://hl7.org/fhir/sid/icd-10-cm|N17.2,http://hl7.org/fhir/sid/icd-10-cm|N17.8,http://hl7.org/fhir/sid/icd-10-cm|N17.9,http://hl7.org/fhir/sid/icd-9-cm|584.9,http://hl7.org/fhir/sid/icd-9-cm|584.5,http://hl7.org/fhir/sid/icd-9-cm|584.6,http://hl7.org/fhir/sid/icd-9-cm|584.7,http://hl7.org/fhir/sid/icd-9-cm|584.8",
+      "prompt_text": "Find all my AKI patients."
+     },
+     "3-broad": {
+      "precision": 1.0,
+      "recall": 0.1455,
+      "f1": 0.254,
+      "passed": false,
+      "expected_count": 44960,
+      "actual_count": 6542,
+      "elapsed_sec": 49.6,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-9-cm|584.9,http://hl7.org/fhir/sid/icd-9-cm|584.5,http://hl7.org/fhir/sid/icd-9-cm|584.6,http://hl7.org/fhir/sid/icd-9-cm|584.7,http://hl7.org/fhir/sid/icd-9-cm|584.8",
+      "additional_query_urls": [
+       "Observation?code=http://loinc.org|2160-0&value-quantity=ge1.5"
+      ],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-9-cm|584.9,http://hl7.org/fhir/sid/icd-9-cm|584.5,http://hl7.org/fhir/sid/icd-9-cm|584.6,http://hl7.org/fhir/sid/icd-9-cm|584.7,http://hl7.org/fhir/sid/icd-9-cm|584.8\nObservation?code=http://loinc.org|2160-0&value-quantity=ge1.5",
+      "prompt_text": "Find all AKI patients \u2014 by diagnosis or by elevated creatinine (\u22651.5 mg/dL). Run multiple queries and union the patient sets."
+     },
+     "3-expert": {
+      "precision": 1.0,
+      "recall": 0.1344,
+      "f1": 0.237,
+      "passed": false,
+      "expected_count": 44960,
+      "actual_count": 6044,
+      "elapsed_sec": 71.8,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-9-cm|584.5,http://hl7.org/fhir/sid/icd-9-cm|584.6,http://hl7.org/fhir/sid/icd-9-cm|584.7,http://hl7.org/fhir/sid/icd-9-cm|584.8,http://hl7.org/fhir/sid/icd-9-cm|584.9",
+      "additional_query_urls": [
+       "Observation?code=http://loinc.org|2160-0&value-quantity=ge1.5||mg/dL"
+      ],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-9-cm|584.5,http://hl7.org/fhir/sid/icd-9-cm|584.6,http://hl7.org/fhir/sid/icd-9-cm|584.7,http://hl7.org/fhir/sid/icd-9-cm|584.8,http://hl7.org/fhir/sid/icd-9-cm|584.9\nObservation?code=http://loinc.org|2160-0&value-quantity=ge1.5||mg/dL",
+      "prompt_text": "I need to identify all patients with acute kidney injury using both diagnostic and laboratory evidence, taking the union of two independent queries. First, search Condition resources for a documented AKI diagnosis coded in SNOMED CT. Second, search Observation resources for serum creatinine results (coded in LOINC) at or above the threshold associated with AKI \u2014 approximately one and a half milligrams per deciliter or higher. Return the union of patient IDs across both queries, since some patients will have a formal diagnosis without a recorded creatinine threshold result and others will have the laboratory finding without a coded diagnosis."
+     }
+    },
     "copilot:claude-sonnet-4.6": {
      "1-naive": {
       "precision": 1.0,
@@ -971,6 +1112,136 @@
       "primary_query_url": "Condition?code=http://snomed.info/sct|14669001",
       "additional_query_urls": [],
       "raw_response": "Condition?code=http://snomed.info/sct|14669001",
+      "prompt_text": "I need to find patients with a documented acute kidney injury diagnosis from their clinical records. Search Condition resources for the AKI concept coded in SNOMED CT; this covers the coded diagnosis as recorded on the problem list or as an encounter diagnosis, and does not require any laboratory confirmation."
+     }
+    },
+    "copilot:claude-opus-4.7+mimic": {
+     "1-naive": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 31926,
+      "actual_count": 0,
+      "elapsed_sec": 6.2,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|14669001",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|14669001",
+      "prompt_text": "Find patients with AKI."
+     },
+     "1-broad": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 31926,
+      "actual_count": 0,
+      "elapsed_sec": 6.9,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|14669001",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|14669001",
+      "prompt_text": "Find patients diagnosed with acute kidney injury \u2014 a sudden decrease in renal function reflected in elevated creatinine."
+     },
+     "1-expert": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 31926,
+      "actual_count": 0,
+      "elapsed_sec": 7.0,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|14669001",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|14669001",
+      "prompt_text": "I need to find patients with a documented acute kidney injury diagnosis from their clinical records. Search Condition resources for the AKI concept coded in SNOMED CT; this covers the coded diagnosis as recorded on the problem list or as an encounter diagnosis, and does not require any laboratory confirmation."
+     },
+     "2-naive": {
+      "precision": 1.0,
+      "recall": 0.369,
+      "f1": 0.5391,
+      "passed": false,
+      "expected_count": 31926,
+      "actual_count": 11782,
+      "elapsed_sec": 47.3,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-9-cm|584.5,http://hl7.org/fhir/sid/icd-9-cm|584.6,http://hl7.org/fhir/sid/icd-9-cm|584.7,http://hl7.org/fhir/sid/icd-9-cm|584.8,http://hl7.org/fhir/sid/icd-9-cm|584.9",
+      "additional_query_urls": [
+       "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|N17.0,http://hl7.org/fhir/sid/icd-10-cm|N17.1,http://hl7.org/fhir/sid/icd-10-cm|N17.2,http://hl7.org/fhir/sid/icd-10-cm|N17.8,http://hl7.org/fhir/sid/icd-10-cm|N17.9"
+      ],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-9-cm|584.5,http://hl7.org/fhir/sid/icd-9-cm|584.6,http://hl7.org/fhir/sid/icd-9-cm|584.7,http://hl7.org/fhir/sid/icd-9-cm|584.8,http://hl7.org/fhir/sid/icd-9-cm|584.9\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|N17.0,http://hl7.org/fhir/sid/icd-10-cm|N17.1,http://hl7.org/fhir/sid/icd-10-cm|N17.2,http://hl7.org/fhir/sid/icd-10-cm|N17.8,http://hl7.org/fhir/sid/icd-10-cm|N17.9",
+      "prompt_text": "Find patients with AKI."
+     },
+     "2-broad": {
+      "precision": 1.0,
+      "recall": 0.1895,
+      "f1": 0.3187,
+      "passed": false,
+      "expected_count": 31926,
+      "actual_count": 6051,
+      "elapsed_sec": 34.2,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-9-cm|584.5,http://hl7.org/fhir/sid/icd-9-cm|584.6,http://hl7.org/fhir/sid/icd-9-cm|584.7,http://hl7.org/fhir/sid/icd-9-cm|584.8,http://hl7.org/fhir/sid/icd-9-cm|584.9,http://hl7.org/fhir/sid/icd-10-cm|N17.0,http://hl7.org/fhir/sid/icd-10-cm|N17.1,http://hl7.org/fhir/sid/icd-10-cm|N17.2,http://hl7.org/fhir/sid/icd-10-cm|N17.8,http://hl7.org/fhir/sid/icd-10-cm|N17.9",
+      "additional_query_urls": [],
+      "raw_response": "FINAL ANSWER:\n\nCondition?code=http://hl7.org/fhir/sid/icd-9-cm|584.5,http://hl7.org/fhir/sid/icd-9-cm|584.6,http://hl7.org/fhir/sid/icd-9-cm|584.7,http://hl7.org/fhir/sid/icd-9-cm|584.8,http://hl7.org/fhir/sid/icd-9-cm|584.9,http://hl7.org/fhir/sid/icd-10-cm|N17.0,http://hl7.org/fhir/sid/icd-10-cm|N17.1,http://hl7.org/fhir/sid/icd-10-cm|N17.2,http://hl7.org/fhir/sid/icd-10-cm|N17.8,http://hl7.org/fhir/sid/icd-10-cm|N17.9",
+      "prompt_text": "Find patients diagnosed with acute kidney injury \u2014 a sudden decrease in renal function reflected in elevated creatinine."
+     },
+     "2-expert": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 31926,
+      "actual_count": 0,
+      "elapsed_sec": 19.9,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|14669001",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|14669001",
+      "prompt_text": "I need to find patients with a documented acute kidney injury diagnosis from their clinical records. Search Condition resources for the AKI concept coded in SNOMED CT; this covers the coded diagnosis as recorded on the problem list or as an encounter diagnosis, and does not require any laboratory confirmation."
+     },
+     "3-naive": {
+      "precision": 1.0,
+      "recall": 0.1893,
+      "f1": 0.3184,
+      "passed": false,
+      "expected_count": 31926,
+      "actual_count": 6044,
+      "elapsed_sec": 34.3,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-9-cm|584.5,http://hl7.org/fhir/sid/icd-9-cm|584.6,http://hl7.org/fhir/sid/icd-9-cm|584.7,http://hl7.org/fhir/sid/icd-9-cm|584.8,http://hl7.org/fhir/sid/icd-9-cm|584.9",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-9-cm|584.5,http://hl7.org/fhir/sid/icd-9-cm|584.6,http://hl7.org/fhir/sid/icd-9-cm|584.7,http://hl7.org/fhir/sid/icd-9-cm|584.8,http://hl7.org/fhir/sid/icd-9-cm|584.9",
+      "prompt_text": "Find patients with AKI."
+     },
+     "3-broad": {
+      "precision": 1.0,
+      "recall": 0.1895,
+      "f1": 0.3187,
+      "passed": false,
+      "expected_count": 31926,
+      "actual_count": 6051,
+      "elapsed_sec": 43.3,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-9-cm|584.9,http://hl7.org/fhir/sid/icd-9-cm|584.5,http://hl7.org/fhir/sid/icd-9-cm|584.6,http://hl7.org/fhir/sid/icd-9-cm|584.7,http://hl7.org/fhir/sid/icd-9-cm|584.8,http://hl7.org/fhir/sid/icd-10-cm|N17.0,http://hl7.org/fhir/sid/icd-10-cm|N17.1,http://hl7.org/fhir/sid/icd-10-cm|N17.2,http://hl7.org/fhir/sid/icd-10-cm|N17.8,http://hl7.org/fhir/sid/icd-10-cm|N17.9",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-9-cm|584.9,http://hl7.org/fhir/sid/icd-9-cm|584.5,http://hl7.org/fhir/sid/icd-9-cm|584.6,http://hl7.org/fhir/sid/icd-9-cm|584.7,http://hl7.org/fhir/sid/icd-9-cm|584.8,http://hl7.org/fhir/sid/icd-10-cm|N17.0,http://hl7.org/fhir/sid/icd-10-cm|N17.1,http://hl7.org/fhir/sid/icd-10-cm|N17.2,http://hl7.org/fhir/sid/icd-10-cm|N17.8,http://hl7.org/fhir/sid/icd-10-cm|N17.9",
+      "prompt_text": "Find patients diagnosed with acute kidney injury \u2014 a sudden decrease in renal function reflected in elevated creatinine."
+     },
+     "3-expert": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 31926,
+      "actual_count": 0,
+      "elapsed_sec": 31.5,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|14669001,http://snomed.info/sct|129561000119108,http://snomed.info/sct|1293198008,http://snomed.info/sct|1293200002,http://snomed.info/sct|140031000119103,http://snomed.info/sct|236424009,http://snomed.info/sct|236428007,http://snomed.info/sct|723189000,http://snomed.info/sct|722096006,http://snomed.info/sct|722278006,http://snomed.info/sct|726541005,http://snomed.info/sct|733137002,http://snomed.info/sct|733138007,http://snomed.info/sct|733139004,http://snomed.info/sct|1177174007,http://snomed.info/sct|368951000119105,http://snomed.info/sct|870589006,http://snomed.info/sct|236433006,http://snomed.info/sct|307309005,http://snomed.info/sct|35455006,http://snomed.info/sct|145681000119101,http://snomed.info/sct|36225005,http://snomed.info/sct|438783006,http://snomed.info/sct|430535006,http://snomed.info/sct|423533009",
+      "additional_query_urls": [],
+      "raw_response": "FINAL ANSWER:\n\nCondition?code=http://snomed.info/sct|14669001,http://snomed.info/sct|129561000119108,http://snomed.info/sct|1293198008,http://snomed.info/sct|1293200002,http://snomed.info/sct|140031000119103,http://snomed.info/sct|236424009,http://snomed.info/sct|236428007,http://snomed.info/sct|723189000,http://snomed.info/sct|722096006,http://snomed.info/sct|722278006,http://snomed.info/sct|726541005,http://snomed.info/sct|733137002,http://snomed.info/sct|733138007,http://snomed.info/sct|733139004,http://snomed.info/sct|1177174007,http://snomed.info/sct|368951000119105,http://snomed.info/sct|870589006,http://snomed.info/sct|236433006,http://snomed.info/sct|307309005,http://snomed.info/sct|35455006,http://snomed.info/sct|145681000119101,http://snomed.info/sct|36225005,http://snomed.info/sct|438783006,http://snomed.info/sct|430535006,http://snomed.info/sct|423533009",
       "prompt_text": "I need to find patients with a documented acute kidney injury diagnosis from their clinical records. Search Condition resources for the AKI concept coded in SNOMED CT; this covers the coded diagnosis as recorded on the problem list or as an encounter diagnosis, and does not require any laboratory confirmation."
      }
     },

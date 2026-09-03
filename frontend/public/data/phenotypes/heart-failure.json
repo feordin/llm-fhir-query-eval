@@ -1090,6 +1090,161 @@
       "prompt_text": "I need to identify my complete heart failure patient population for a guideline-directed medical therapy (GDMT) optimization initiative. From clinical experience, I know HF patients are documented in different ways: some have a formal diagnosis code (CHF, HFrEF, HFpEF), some are on classic HF medications (loop diuretics, ARNi, SGLT2 inhibitors, MRAs) without a formal HF diagnosis, and some have a documented reduced ejection fraction on echo.\n\nPlease run multiple FHIR queries to capture the full population:\n1. Patients with any heart failure diagnosis (CHF, HFrEF, HFpEF, or general heart failure)\n2. Patients prescribed HF medications (sacubitril/valsartan, carvedilol, spironolactone, empagliflozin, furosemide)\n3. Patients with echocardiogram ejection fraction measurements below 50 percent\n\nFor each query, return the matching resources. I want the union of all patients found across these three approaches."
      }
     },
+    "copilot:claude-opus-4.7+mimic": {
+     "1-naive": {
+      "precision": 1.0,
+      "recall": 0.2181,
+      "f1": 0.3581,
+      "passed": false,
+      "expected_count": 24234,
+      "actual_count": 5286,
+      "elapsed_sec": 25.1,
+      "queries_generated": 3,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|84114007,http://snomed.info/sct|42343007,http://snomed.info/sct|703272007,http://snomed.info/sct|703273002,http://hl7.org/fhir/sid/icd-10-cm|I50,http://hl7.org/fhir/sid/icd-10-cm|I50.9,http://hl7.org/fhir/sid/icd-10-cm|I50.20,http://hl7.org/fhir/sid/icd-10-cm|I50.22,http://hl7.org/fhir/sid/icd-10-cm|I50.30,http://hl7.org/fhir/sid/icd-10-cm|I50.32,http://hl7.org/fhir/sid/icd-10-cm|I50.42",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1656340,http://www.nlm.nih.gov/research/umls/rxnorm|20352,http://www.nlm.nih.gov/research/umls/rxnorm|9997,http://www.nlm.nih.gov/research/umls/rxnorm|1545653,http://www.nlm.nih.gov/research/umls/rxnorm|4603&status=active",
+       "Observation?code=http://loinc.org|8806-2,http://loinc.org|10230-1,http://loinc.org|18043-0&value-quantity=lt50||%25"
+      ],
+      "raw_response": "Condition?code=http://snomed.info/sct|84114007,http://snomed.info/sct|42343007,http://snomed.info/sct|703272007,http://snomed.info/sct|703273002,http://hl7.org/fhir/sid/icd-10-cm|I50,http://hl7.org/fhir/sid/icd-10-cm|I50.9,http://hl7.org/fhir/sid/icd-10-cm|I50.20,http://hl7.org/fhir/sid/icd-10-cm|I50.22,http://hl7.org/fhir/sid/icd-10-cm|I50.30,http://hl7.org/fhir/sid/icd-10-cm|I50.32,http://hl7.org/fhir/sid/icd-10-cm|I50.42\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1656340,http://www.nlm.nih.gov/research/umls/rxnorm|20352,http://www.nlm.nih.gov/research/umls/rxnorm|9997,http://www.nlm.nih.gov/research/umls/rxnorm|1545653,http://www.nlm.nih.gov/research/umls/rxnorm|4603&status=active\nObservation?code=http://loinc.org|8806-2,http://loinc.org|10230-1,http://loinc.org|18043-0&value-quantity=lt50||%25",
+      "prompt_text": "I need to identify my complete heart failure patient population for a guideline-directed medical therapy (GDMT) optimization initiative. From clinical experience, I know HF patients are documented in different ways: some have a formal diagnosis code (CHF, HFrEF, HFpEF), some are on classic HF medications (loop diuretics, ARNi, SGLT2 inhibitors, MRAs) without a formal HF diagnosis, and some have a documented reduced ejection fraction on echo.\n\nPlease run multiple FHIR queries to capture the full population:\n1. Patients with any heart failure diagnosis (CHF, HFrEF, HFpEF, or general heart failure)\n2. Patients prescribed HF medications (sacubitril/valsartan, carvedilol, spironolactone, empagliflozin, furosemide)\n3. Patients with echocardiogram ejection fraction measurements below 50 percent\n\nFor each query, return the matching resources. I want the union of all patients found across these three approaches."
+     },
+     "1-broad": {
+      "precision": 1.0,
+      "recall": 0.2131,
+      "f1": 0.3513,
+      "passed": false,
+      "expected_count": 24234,
+      "actual_count": 5164,
+      "elapsed_sec": 22.4,
+      "queries_generated": 3,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|84114007,http://snomed.info/sct|42343007,http://snomed.info/sct|417996009,http://snomed.info/sct|703272007,http://hl7.org/fhir/sid/icd-10-cm|I50,http://hl7.org/fhir/sid/icd-10-cm|I50.9,http://hl7.org/fhir/sid/icd-10-cm|I50.20,http://hl7.org/fhir/sid/icd-10-cm|I50.30,http://hl7.org/fhir/sid/icd-10-cm|I50.40",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1656340,http://www.nlm.nih.gov/research/umls/rxnorm|20352,http://www.nlm.nih.gov/research/umls/rxnorm|9997,http://www.nlm.nih.gov/research/umls/rxnorm|1545653,http://www.nlm.nih.gov/research/umls/rxnorm|4603&status=active",
+       "Observation?code=http://loinc.org|8806-2,http://loinc.org|10230-1,http://loinc.org|18043-0&value-quantity=lt50||%25"
+      ],
+      "raw_response": "Condition?code=http://snomed.info/sct|84114007,http://snomed.info/sct|42343007,http://snomed.info/sct|417996009,http://snomed.info/sct|703272007,http://hl7.org/fhir/sid/icd-10-cm|I50,http://hl7.org/fhir/sid/icd-10-cm|I50.9,http://hl7.org/fhir/sid/icd-10-cm|I50.20,http://hl7.org/fhir/sid/icd-10-cm|I50.30,http://hl7.org/fhir/sid/icd-10-cm|I50.40\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1656340,http://www.nlm.nih.gov/research/umls/rxnorm|20352,http://www.nlm.nih.gov/research/umls/rxnorm|9997,http://www.nlm.nih.gov/research/umls/rxnorm|1545653,http://www.nlm.nih.gov/research/umls/rxnorm|4603&status=active\nObservation?code=http://loinc.org|8806-2,http://loinc.org|10230-1,http://loinc.org|18043-0&value-quantity=lt50||%25",
+      "prompt_text": "I need to identify my complete heart failure patient population for a guideline-directed medical therapy (GDMT) optimization initiative. From clinical experience, I know HF patients are documented in different ways: some have a formal diagnosis code (CHF, HFrEF, HFpEF), some are on classic HF medications (loop diuretics, ARNi, SGLT2 inhibitors, MRAs) without a formal HF diagnosis, and some have a documented reduced ejection fraction on echo.\n\nPlease run multiple FHIR queries to capture the full population:\n1. Patients with any heart failure diagnosis (CHF, HFrEF, HFpEF, or general heart failure)\n2. Patients prescribed HF medications (sacubitril/valsartan, carvedilol, spironolactone, empagliflozin, furosemide)\n3. Patients with echocardiogram ejection fraction measurements below 50 percent\n\nFor each query, return the matching resources. I want the union of all patients found across these three approaches."
+     },
+     "1-expert": {
+      "precision": 1.0,
+      "recall": 0.1953,
+      "f1": 0.3268,
+      "passed": false,
+      "expected_count": 24234,
+      "actual_count": 4734,
+      "elapsed_sec": 48.0,
+      "queries_generated": 3,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|84114007,http://snomed.info/sct|42343007,http://snomed.info/sct|703272007,http://snomed.info/sct|417996009,http://hl7.org/fhir/sid/icd-10-cm|I50,http://hl7.org/fhir/sid/icd-10-cm|I50.9,http://hl7.org/fhir/sid/icd-10-cm|I50.20,http://hl7.org/fhir/sid/icd-10-cm|I50.21,http://hl7.org/fhir/sid/icd-10-cm|I50.22,http://hl7.org/fhir/sid/icd-10-cm|I50.23,http://hl7.org/fhir/sid/icd-10-cm|I50.30,http://hl7.org/fhir/sid/icd-10-cm|I50.31,http://hl7.org/fhir/sid/icd-10-cm|I50.32,http://hl7.org/fhir/sid/icd-10-cm|I50.33,http://hl7.org/fhir/sid/icd-10-cm|I50.40,http://hl7.org/fhir/sid/icd-10-cm|I50.41,http://hl7.org/fhir/sid/icd-10-cm|I50.42,http://hl7.org/fhir/sid/icd-10-cm|I50.43&_include=Condition:patient",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1656340,http://www.nlm.nih.gov/research/umls/rxnorm|20352,http://www.nlm.nih.gov/research/umls/rxnorm|9997,http://www.nlm.nih.gov/research/umls/rxnorm|1545653,http://www.nlm.nih.gov/research/umls/rxnorm|4603&status=active&_include=MedicationRequest:patient",
+       "Observation?code=http://loinc.org|8806-2,http://loinc.org|10230-1,http://loinc.org|18043-0&value-quantity=lt50&_include=Observation:patient"
+      ],
+      "raw_response": "Condition?code=http://snomed.info/sct|84114007,http://snomed.info/sct|42343007,http://snomed.info/sct|703272007,http://snomed.info/sct|417996009,http://hl7.org/fhir/sid/icd-10-cm|I50,http://hl7.org/fhir/sid/icd-10-cm|I50.9,http://hl7.org/fhir/sid/icd-10-cm|I50.20,http://hl7.org/fhir/sid/icd-10-cm|I50.21,http://hl7.org/fhir/sid/icd-10-cm|I50.22,http://hl7.org/fhir/sid/icd-10-cm|I50.23,http://hl7.org/fhir/sid/icd-10-cm|I50.30,http://hl7.org/fhir/sid/icd-10-cm|I50.31,http://hl7.org/fhir/sid/icd-10-cm|I50.32,http://hl7.org/fhir/sid/icd-10-cm|I50.33,http://hl7.org/fhir/sid/icd-10-cm|I50.40,http://hl7.org/fhir/sid/icd-10-cm|I50.41,http://hl7.org/fhir/sid/icd-10-cm|I50.42,http://hl7.org/fhir/sid/icd-10-cm|I50.43&_include=Condition:patient\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1656340,http://www.nlm.nih.gov/research/umls/rxnorm|20352,http://www.nlm.nih.gov/research/umls/rxnorm|9997,http://www.nlm.nih.gov/research/umls/rxnorm|1545653,http://www.nlm.nih.gov/research/umls/rxnorm|4603&status=active&_include=MedicationRequest:patient\nObservation?code=http://loinc.org|8806-2,http://loinc.org|10230-1,http://loinc.org|18043-0&value-quantity=lt50&_include=Observation:patient",
+      "prompt_text": "I need to identify my complete heart failure patient population for a guideline-directed medical therapy (GDMT) optimization initiative. From clinical experience, I know HF patients are documented in different ways: some have a formal diagnosis code (CHF, HFrEF, HFpEF), some are on classic HF medications (loop diuretics, ARNi, SGLT2 inhibitors, MRAs) without a formal HF diagnosis, and some have a documented reduced ejection fraction on echo.\n\nPlease run multiple FHIR queries to capture the full population:\n1. Patients with any heart failure diagnosis (CHF, HFrEF, HFpEF, or general heart failure)\n2. Patients prescribed HF medications (sacubitril/valsartan, carvedilol, spironolactone, empagliflozin, furosemide)\n3. Patients with echocardiogram ejection fraction measurements below 50 percent\n\nFor each query, return the matching resources. I want the union of all patients found across these three approaches."
+     },
+     "2-naive": {
+      "precision": 0.5721,
+      "recall": 0.1473,
+      "f1": 0.2342,
+      "passed": false,
+      "expected_count": 24234,
+      "actual_count": 6238,
+      "elapsed_sec": 222.1,
+      "queries_generated": 3,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|I50.1,http://hl7.org/fhir/sid/icd-10-cm|I50.9,http://hl7.org/fhir/sid/icd-10-cm|I50.20,http://hl7.org/fhir/sid/icd-10-cm|I50.21,http://hl7.org/fhir/sid/icd-10-cm|I50.22,http://hl7.org/fhir/sid/icd-10-cm|I50.23,http://hl7.org/fhir/sid/icd-10-cm|I50.30,http://hl7.org/fhir/sid/icd-10-cm|I50.31,http://hl7.org/fhir/sid/icd-10-cm|I50.32,http://hl7.org/fhir/sid/icd-10-cm|I50.33,http://hl7.org/fhir/sid/icd-10-cm|I50.40,http://hl7.org/fhir/sid/icd-10-cm|I50.41,http://hl7.org/fhir/sid/icd-10-cm|I50.42,http://hl7.org/fhir/sid/icd-10-cm|I50.43,http://hl7.org/fhir/sid/icd-10-cm|I50.810,http://hl7.org/fhir/sid/icd-10-cm|I50.811,http://hl7.org/fhir/sid/icd-10-cm|I50.812,http://hl7.org/fhir/sid/icd-10-cm|I50.813,http://hl7.org/fhir/sid/icd-10-cm|I50.814,http://hl7.org/fhir/sid/icd-10-cm|I50.82,http://hl7.org/fhir/sid/icd-10-cm|I50.83,http://hl7.org/fhir/sid/icd-10-cm|I50.84,http://hl7.org/fhir/sid/icd-10-cm|I50.89,http://hl7.org/fhir/sid/icd-9-cm|428.0,http://hl7.org/fhir/sid/icd-9-cm|428.1,http://hl7.org/fhir/sid/icd-9-cm|428.20,http://hl7.org/fhir/sid/icd-9-cm|428.21,http://hl7.org/fhir/sid/icd-9-cm|428.22,http://hl7.org/fhir/sid/icd-9-cm|428.23,http://hl7.org/fhir/sid/icd-9-cm|428.30,http://hl7.org/fhir/sid/icd-9-cm|428.31,http://hl7.org/fhir/sid/icd-9-cm|428.32,http://hl7.org/fhir/sid/icd-9-cm|428.33,http://hl7.org/fhir/sid/icd-9-cm|428.40,http://hl7.org/fhir/sid/icd-9-cm|428.41,http://hl7.org/fhir/sid/icd-9-cm|428.42,http://hl7.org/fhir/sid/icd-9-cm|428.43,http://hl7.org/fhir/sid/icd-9-cm|428.9",
+      "additional_query_urls": [
+       "MedicationRequest?medication.code=http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-ndc|00172438210",
+       "Observation?code=http://loinc.org|10230-1,http://loinc.org|8806-2,http://loinc.org|18043-0,http://loinc.org|79990-4&value-quantity=lt50"
+      ],
+      "raw_response": "FINAL ANSWER:\n\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|I50.1,http://hl7.org/fhir/sid/icd-10-cm|I50.9,http://hl7.org/fhir/sid/icd-10-cm|I50.20,http://hl7.org/fhir/sid/icd-10-cm|I50.21,http://hl7.org/fhir/sid/icd-10-cm|I50.22,http://hl7.org/fhir/sid/icd-10-cm|I50.23,http://hl7.org/fhir/sid/icd-10-cm|I50.30,http://hl7.org/fhir/sid/icd-10-cm|I50.31,http://hl7.org/fhir/sid/icd-10-cm|I50.32,http://hl7.org/fhir/sid/icd-10-cm|I50.33,http://hl7.org/fhir/sid/icd-10-cm|I50.40,http://hl7.org/fhir/sid/icd-10-cm|I50.41,http://hl7.org/fhir/sid/icd-10-cm|I50.42,http://hl7.org/fhir/sid/icd-10-cm|I50.43,http://hl7.org/fhir/sid/icd-10-cm|I50.810,http://hl7.org/fhir/sid/icd-10-cm|I50.811,http://hl7.org/fhir/sid/icd-10-cm|I50.812,http://hl7.org/fhir/sid/icd-10-cm|I50.813,http://hl7.org/fhir/sid/icd-10-cm|I50.814,http://hl7.org/fhir/sid/icd-10-cm|I50.82,http://hl7.org/fhir/sid/icd-10-cm|I50.83,http://hl7.org/fhir/sid/icd-10-cm|I50.84,http://hl7.org/fhir/sid/icd-10-cm|I50.89,http://hl7.org/fhir/sid/icd-9-cm|428.0,http://hl7.org/fhir/sid/icd-9-cm|428.1,http://hl7.org/fhir/sid/icd-9-cm|428.20,http://hl7.org/fhir/sid/icd-9-cm|428.21,http://hl7.org/fhir/sid/icd-9-cm|428.22,http://hl7.org/fhir/sid/icd-9-cm|428.23,http://hl7.org/fhir/sid/icd-9-cm|428.30,http://hl7.org/fhir/sid/icd-9-cm|428.31,http://hl7.org/fhir/sid/icd-9-cm|428.32,http://hl7.org/fhir/sid/icd-9-cm|428.33,http://hl7.org/fhir/sid/icd-9-cm|428.40,http://hl7.org/fhir/sid/icd-9-cm|428.41,http://hl7.org/fhir/sid/icd-9-cm|428.42,http://hl7.org/fhir/sid/icd-9-cm|428.43,http://hl7.org/fhir/sid/icd-9-cm|428.9\nMedicationRequest?medication.code=http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-ndc|00172438210\nObservation?code=http://loinc.org|10230-1,http://loinc.org|8806-2,http://loinc.org|18043-0,http://loinc.org|79990-4&value-quantity=lt50",
+      "prompt_text": "I need to identify my complete heart failure patient population for a guideline-directed medical therapy (GDMT) optimization initiative. From clinical experience, I know HF patients are documented in different ways: some have a formal diagnosis code (CHF, HFrEF, HFpEF), some are on classic HF medications (loop diuretics, ARNi, SGLT2 inhibitors, MRAs) without a formal HF diagnosis, and some have a documented reduced ejection fraction on echo.\n\nPlease run multiple FHIR queries to capture the full population:\n1. Patients with any heart failure diagnosis (CHF, HFrEF, HFpEF, or general heart failure)\n2. Patients prescribed HF medications (sacubitril/valsartan, carvedilol, spironolactone, empagliflozin, furosemide)\n3. Patients with echocardiogram ejection fraction measurements below 50 percent\n\nFor each query, return the matching resources. I want the union of all patients found across these three approaches."
+     },
+     "2-broad": {
+      "precision": 1.0,
+      "recall": 0.1158,
+      "f1": 0.2076,
+      "passed": false,
+      "expected_count": 24234,
+      "actual_count": 2807,
+      "elapsed_sec": 118.4,
+      "queries_generated": 3,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|I50.9,http://hl7.org/fhir/sid/icd-10-cm|I50.1,http://hl7.org/fhir/sid/icd-10-cm|I50.20,http://hl7.org/fhir/sid/icd-10-cm|I50.21,http://hl7.org/fhir/sid/icd-10-cm|I50.22,http://hl7.org/fhir/sid/icd-10-cm|I50.23,http://hl7.org/fhir/sid/icd-10-cm|I50.30,http://hl7.org/fhir/sid/icd-10-cm|I50.31,http://hl7.org/fhir/sid/icd-10-cm|I50.32,http://hl7.org/fhir/sid/icd-10-cm|I50.33,http://hl7.org/fhir/sid/icd-10-cm|I50.40,http://hl7.org/fhir/sid/icd-10-cm|I50.41,http://hl7.org/fhir/sid/icd-10-cm|I50.42,http://hl7.org/fhir/sid/icd-10-cm|I50.43,http://hl7.org/fhir/sid/icd-10-cm|I50.810,http://hl7.org/fhir/sid/icd-10-cm|I50.811,http://hl7.org/fhir/sid/icd-10-cm|I50.812,http://hl7.org/fhir/sid/icd-10-cm|I50.813,http://hl7.org/fhir/sid/icd-10-cm|I50.814,http://hl7.org/fhir/sid/icd-10-cm|I50.82,http://hl7.org/fhir/sid/icd-10-cm|I50.83,http://hl7.org/fhir/sid/icd-10-cm|I50.84,http://hl7.org/fhir/sid/icd-10-cm|I50.89,http://hl7.org/fhir/sid/icd-9-cm|428.0,http://hl7.org/fhir/sid/icd-9-cm|428.1,http://hl7.org/fhir/sid/icd-9-cm|428.20,http://hl7.org/fhir/sid/icd-9-cm|428.21,http://hl7.org/fhir/sid/icd-9-cm|428.22,http://hl7.org/fhir/sid/icd-9-cm|428.23,http://hl7.org/fhir/sid/icd-9-cm|428.30,http://hl7.org/fhir/sid/icd-9-cm|428.31,http://hl7.org/fhir/sid/icd-9-cm|428.32,http://hl7.org/fhir/sid/icd-9-cm|428.33,http://hl7.org/fhir/sid/icd-9-cm|428.40,http://hl7.org/fhir/sid/icd-9-cm|428.41,http://hl7.org/fhir/sid/icd-9-cm|428.42,http://hl7.org/fhir/sid/icd-9-cm|428.43,http://hl7.org/fhir/sid/icd-9-cm|428.9",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1656340,http://www.nlm.nih.gov/research/umls/rxnorm|20352,http://www.nlm.nih.gov/research/umls/rxnorm|9997,http://www.nlm.nih.gov/research/umls/rxnorm|1545653,http://www.nlm.nih.gov/research/umls/rxnorm|4603",
+       "Observation?code=http://loinc.org|10230-1,http://loinc.org|8806-2,http://loinc.org|8807-0,http://loinc.org|18043-0,http://loinc.org|18044-8,http://loinc.org|18045-5,http://loinc.org|77889-4,http://loinc.org|79990-8&value-quantity=lt50"
+      ],
+      "raw_response": "FINAL ANSWER:\n\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|I50.9,http://hl7.org/fhir/sid/icd-10-cm|I50.1,http://hl7.org/fhir/sid/icd-10-cm|I50.20,http://hl7.org/fhir/sid/icd-10-cm|I50.21,http://hl7.org/fhir/sid/icd-10-cm|I50.22,http://hl7.org/fhir/sid/icd-10-cm|I50.23,http://hl7.org/fhir/sid/icd-10-cm|I50.30,http://hl7.org/fhir/sid/icd-10-cm|I50.31,http://hl7.org/fhir/sid/icd-10-cm|I50.32,http://hl7.org/fhir/sid/icd-10-cm|I50.33,http://hl7.org/fhir/sid/icd-10-cm|I50.40,http://hl7.org/fhir/sid/icd-10-cm|I50.41,http://hl7.org/fhir/sid/icd-10-cm|I50.42,http://hl7.org/fhir/sid/icd-10-cm|I50.43,http://hl7.org/fhir/sid/icd-10-cm|I50.810,http://hl7.org/fhir/sid/icd-10-cm|I50.811,http://hl7.org/fhir/sid/icd-10-cm|I50.812,http://hl7.org/fhir/sid/icd-10-cm|I50.813,http://hl7.org/fhir/sid/icd-10-cm|I50.814,http://hl7.org/fhir/sid/icd-10-cm|I50.82,http://hl7.org/fhir/sid/icd-10-cm|I50.83,http://hl7.org/fhir/sid/icd-10-cm|I50.84,http://hl7.org/fhir/sid/icd-10-cm|I50.89,http://hl7.org/fhir/sid/icd-9-cm|428.0,http://hl7.org/fhir/sid/icd-9-cm|428.1,http://hl7.org/fhir/sid/icd-9-cm|428.20,http://hl7.org/fhir/sid/icd-9-cm|428.21,http://hl7.org/fhir/sid/icd-9-cm|428.22,http://hl7.org/fhir/sid/icd-9-cm|428.23,http://hl7.org/fhir/sid/icd-9-cm|428.30,http://hl7.org/fhir/sid/icd-9-cm|428.31,http://hl7.org/fhir/sid/icd-9-cm|428.32,http://hl7.org/fhir/sid/icd-9-cm|428.33,http://hl7.org/fhir/sid/icd-9-cm|428.40,http://hl7.org/fhir/sid/icd-9-cm|428.41,http://hl7.org/fhir/sid/icd-9-cm|428.42,http://hl7.org/fhir/sid/icd-9-cm|428.43,http://hl7.org/fhir/sid/icd-9-cm|428.9\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1656340,http://www.nlm.nih.gov/research/umls/rxnorm|20352,http://www.nlm.nih.gov/research/umls/rxnorm|9997,http://www.nlm.nih.gov/research/umls/rxnorm|1545653,http://www.nlm.nih.gov/research/umls/rxnorm|4603\nObservation?code=http://loinc.org|10230-1,http://loinc.org|8806-2,http://loinc.org|8807-0,http://loinc.org|18043-0,http://loinc.org|18044-8,http://loinc.org|18045-5,http://loinc.org|77889-4,http://loinc.org|79990-8&value-quantity=lt50",
+      "prompt_text": "I need to identify my complete heart failure patient population for a guideline-directed medical therapy (GDMT) optimization initiative. From clinical experience, I know HF patients are documented in different ways: some have a formal diagnosis code (CHF, HFrEF, HFpEF), some are on classic HF medications (loop diuretics, ARNi, SGLT2 inhibitors, MRAs) without a formal HF diagnosis, and some have a documented reduced ejection fraction on echo.\n\nPlease run multiple FHIR queries to capture the full population:\n1. Patients with any heart failure diagnosis (CHF, HFrEF, HFpEF, or general heart failure)\n2. Patients prescribed HF medications (sacubitril/valsartan, carvedilol, spironolactone, empagliflozin, furosemide)\n3. Patients with echocardiogram ejection fraction measurements below 50 percent\n\nFor each query, return the matching resources. I want the union of all patients found across these three approaches."
+     },
+     "2-expert": {
+      "precision": 0.7302,
+      "recall": 0.2203,
+      "f1": 0.3385,
+      "passed": false,
+      "expected_count": 24234,
+      "actual_count": 7312,
+      "elapsed_sec": 160.3,
+      "queries_generated": 3,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|I50.9,http://hl7.org/fhir/sid/icd-10-cm|I50.1,http://hl7.org/fhir/sid/icd-10-cm|I50.20,http://hl7.org/fhir/sid/icd-10-cm|I50.21,http://hl7.org/fhir/sid/icd-10-cm|I50.22,http://hl7.org/fhir/sid/icd-10-cm|I50.23,http://hl7.org/fhir/sid/icd-10-cm|I50.30,http://hl7.org/fhir/sid/icd-10-cm|I50.31,http://hl7.org/fhir/sid/icd-10-cm|I50.32,http://hl7.org/fhir/sid/icd-10-cm|I50.33,http://hl7.org/fhir/sid/icd-10-cm|I50.40,http://hl7.org/fhir/sid/icd-10-cm|I50.41,http://hl7.org/fhir/sid/icd-10-cm|I50.42,http://hl7.org/fhir/sid/icd-10-cm|I50.43,http://hl7.org/fhir/sid/icd-10-cm|I50.810,http://hl7.org/fhir/sid/icd-10-cm|I50.811,http://hl7.org/fhir/sid/icd-10-cm|I50.812,http://hl7.org/fhir/sid/icd-10-cm|I50.813,http://hl7.org/fhir/sid/icd-10-cm|I50.814,http://hl7.org/fhir/sid/icd-10-cm|I50.82,http://hl7.org/fhir/sid/icd-10-cm|I50.83,http://hl7.org/fhir/sid/icd-10-cm|I50.84,http://hl7.org/fhir/sid/icd-10-cm|I50.89,http://hl7.org/fhir/sid/icd-9-cm|428.0,http://hl7.org/fhir/sid/icd-9-cm|428.1,http://hl7.org/fhir/sid/icd-9-cm|428.20,http://hl7.org/fhir/sid/icd-9-cm|428.21,http://hl7.org/fhir/sid/icd-9-cm|428.22,http://hl7.org/fhir/sid/icd-9-cm|428.23,http://hl7.org/fhir/sid/icd-9-cm|428.30,http://hl7.org/fhir/sid/icd-9-cm|428.31,http://hl7.org/fhir/sid/icd-9-cm|428.32,http://hl7.org/fhir/sid/icd-9-cm|428.33,http://hl7.org/fhir/sid/icd-9-cm|428.40,http://hl7.org/fhir/sid/icd-9-cm|428.41,http://hl7.org/fhir/sid/icd-9-cm|428.42,http://hl7.org/fhir/sid/icd-9-cm|428.43,http://hl7.org/fhir/sid/icd-9-cm|428.9",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Furosemide,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Carvedilol,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Spironolactone,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Jardiance,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Entresto",
+       "Observation?code=http://loinc.org|10230-1,http://loinc.org|8806-2,http://loinc.org|8807-0,http://loinc.org|79990-8,http://loinc.org|18043-0&value-quantity=lt50"
+      ],
+      "raw_response": "FINAL ANSWER:\n\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|I50.9,http://hl7.org/fhir/sid/icd-10-cm|I50.1,http://hl7.org/fhir/sid/icd-10-cm|I50.20,http://hl7.org/fhir/sid/icd-10-cm|I50.21,http://hl7.org/fhir/sid/icd-10-cm|I50.22,http://hl7.org/fhir/sid/icd-10-cm|I50.23,http://hl7.org/fhir/sid/icd-10-cm|I50.30,http://hl7.org/fhir/sid/icd-10-cm|I50.31,http://hl7.org/fhir/sid/icd-10-cm|I50.32,http://hl7.org/fhir/sid/icd-10-cm|I50.33,http://hl7.org/fhir/sid/icd-10-cm|I50.40,http://hl7.org/fhir/sid/icd-10-cm|I50.41,http://hl7.org/fhir/sid/icd-10-cm|I50.42,http://hl7.org/fhir/sid/icd-10-cm|I50.43,http://hl7.org/fhir/sid/icd-10-cm|I50.810,http://hl7.org/fhir/sid/icd-10-cm|I50.811,http://hl7.org/fhir/sid/icd-10-cm|I50.812,http://hl7.org/fhir/sid/icd-10-cm|I50.813,http://hl7.org/fhir/sid/icd-10-cm|I50.814,http://hl7.org/fhir/sid/icd-10-cm|I50.82,http://hl7.org/fhir/sid/icd-10-cm|I50.83,http://hl7.org/fhir/sid/icd-10-cm|I50.84,http://hl7.org/fhir/sid/icd-10-cm|I50.89,http://hl7.org/fhir/sid/icd-9-cm|428.0,http://hl7.org/fhir/sid/icd-9-cm|428.1,http://hl7.org/fhir/sid/icd-9-cm|428.20,http://hl7.org/fhir/sid/icd-9-cm|428.21,http://hl7.org/fhir/sid/icd-9-cm|428.22,http://hl7.org/fhir/sid/icd-9-cm|428.23,http://hl7.org/fhir/sid/icd-9-cm|428.30,http://hl7.org/fhir/sid/icd-9-cm|428.31,http://hl7.org/fhir/sid/icd-9-cm|428.32,http://hl7.org/fhir/sid/icd-9-cm|428.33,http://hl7.org/fhir/sid/icd-9-cm|428.40,http://hl7.org/fhir/sid/icd-9-cm|428.41,http://hl7.org/fhir/sid/icd-9-cm|428.42,http://hl7.org/fhir/sid/icd-9-cm|428.43,http://hl7.org/fhir/sid/icd-9-cm|428.9\nMedicationRequest?code=http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Furosemide,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Carvedilol,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Spironolactone,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Jardiance,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Entresto\nObservation?code=http://loinc.org|10230-1,http://loinc.org|8806-2,http://loinc.org|8807-0,http://loinc.org|79990-8,http://loinc.org|18043-0&value-quantity=lt50",
+      "prompt_text": "I need to identify my complete heart failure patient population for a guideline-directed medical therapy (GDMT) optimization initiative. From clinical experience, I know HF patients are documented in different ways: some have a formal diagnosis code (CHF, HFrEF, HFpEF), some are on classic HF medications (loop diuretics, ARNi, SGLT2 inhibitors, MRAs) without a formal HF diagnosis, and some have a documented reduced ejection fraction on echo.\n\nPlease run multiple FHIR queries to capture the full population:\n1. Patients with any heart failure diagnosis (CHF, HFrEF, HFpEF, or general heart failure)\n2. Patients prescribed HF medications (sacubitril/valsartan, carvedilol, spironolactone, empagliflozin, furosemide)\n3. Patients with echocardiogram ejection fraction measurements below 50 percent\n\nFor each query, return the matching resources. I want the union of all patients found across these three approaches."
+     },
+     "3-naive": {
+      "precision": 1.0,
+      "recall": 0.1159,
+      "f1": 0.2077,
+      "passed": false,
+      "expected_count": 24234,
+      "actual_count": 2808,
+      "elapsed_sec": 107.6,
+      "queries_generated": 3,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|I50.1,http://hl7.org/fhir/sid/icd-10-cm|I50.9,http://hl7.org/fhir/sid/icd-10-cm|I50.20,http://hl7.org/fhir/sid/icd-10-cm|I50.21,http://hl7.org/fhir/sid/icd-10-cm|I50.22,http://hl7.org/fhir/sid/icd-10-cm|I50.23,http://hl7.org/fhir/sid/icd-10-cm|I50.30,http://hl7.org/fhir/sid/icd-10-cm|I50.31,http://hl7.org/fhir/sid/icd-10-cm|I50.32,http://hl7.org/fhir/sid/icd-10-cm|I50.33,http://hl7.org/fhir/sid/icd-10-cm|I50.40,http://hl7.org/fhir/sid/icd-10-cm|I50.41,http://hl7.org/fhir/sid/icd-10-cm|I50.42,http://hl7.org/fhir/sid/icd-10-cm|I50.43,http://hl7.org/fhir/sid/icd-10-cm|I50.810,http://hl7.org/fhir/sid/icd-10-cm|I50.811,http://hl7.org/fhir/sid/icd-10-cm|I50.812,http://hl7.org/fhir/sid/icd-10-cm|I50.813,http://hl7.org/fhir/sid/icd-10-cm|I50.82,http://hl7.org/fhir/sid/icd-10-cm|I50.83,http://hl7.org/fhir/sid/icd-10-cm|I50.84,http://hl7.org/fhir/sid/icd-10-cm|I50.89,http://hl7.org/fhir/sid/icd-9-cm|428.0,http://hl7.org/fhir/sid/icd-9-cm|428.1,http://hl7.org/fhir/sid/icd-9-cm|428.20,http://hl7.org/fhir/sid/icd-9-cm|428.21,http://hl7.org/fhir/sid/icd-9-cm|428.22,http://hl7.org/fhir/sid/icd-9-cm|428.23,http://hl7.org/fhir/sid/icd-9-cm|428.30,http://hl7.org/fhir/sid/icd-9-cm|428.31,http://hl7.org/fhir/sid/icd-9-cm|428.32,http://hl7.org/fhir/sid/icd-9-cm|428.33,http://hl7.org/fhir/sid/icd-9-cm|428.40,http://hl7.org/fhir/sid/icd-9-cm|428.41,http://hl7.org/fhir/sid/icd-9-cm|428.42,http://hl7.org/fhir/sid/icd-9-cm|428.43,http://hl7.org/fhir/sid/icd-9-cm|428.9",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1656340,http://www.nlm.nih.gov/research/umls/rxnorm|20352,http://www.nlm.nih.gov/research/umls/rxnorm|9997,http://www.nlm.nih.gov/research/umls/rxnorm|1545653,http://www.nlm.nih.gov/research/umls/rxnorm|4603",
+       "Observation?code=http://loinc.org|10230-1,http://loinc.org|8806-2,http://loinc.org|8807-0,http://loinc.org|18043-0,http://loinc.org|18044-8,http://loinc.org|18045-5,http://loinc.org|77889-4,http://loinc.org|79990-8&value-quantity=lt50||%25"
+      ],
+      "raw_response": "FINAL ANSWER:\n\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|I50.1,http://hl7.org/fhir/sid/icd-10-cm|I50.9,http://hl7.org/fhir/sid/icd-10-cm|I50.20,http://hl7.org/fhir/sid/icd-10-cm|I50.21,http://hl7.org/fhir/sid/icd-10-cm|I50.22,http://hl7.org/fhir/sid/icd-10-cm|I50.23,http://hl7.org/fhir/sid/icd-10-cm|I50.30,http://hl7.org/fhir/sid/icd-10-cm|I50.31,http://hl7.org/fhir/sid/icd-10-cm|I50.32,http://hl7.org/fhir/sid/icd-10-cm|I50.33,http://hl7.org/fhir/sid/icd-10-cm|I50.40,http://hl7.org/fhir/sid/icd-10-cm|I50.41,http://hl7.org/fhir/sid/icd-10-cm|I50.42,http://hl7.org/fhir/sid/icd-10-cm|I50.43,http://hl7.org/fhir/sid/icd-10-cm|I50.810,http://hl7.org/fhir/sid/icd-10-cm|I50.811,http://hl7.org/fhir/sid/icd-10-cm|I50.812,http://hl7.org/fhir/sid/icd-10-cm|I50.813,http://hl7.org/fhir/sid/icd-10-cm|I50.82,http://hl7.org/fhir/sid/icd-10-cm|I50.83,http://hl7.org/fhir/sid/icd-10-cm|I50.84,http://hl7.org/fhir/sid/icd-10-cm|I50.89,http://hl7.org/fhir/sid/icd-9-cm|428.0,http://hl7.org/fhir/sid/icd-9-cm|428.1,http://hl7.org/fhir/sid/icd-9-cm|428.20,http://hl7.org/fhir/sid/icd-9-cm|428.21,http://hl7.org/fhir/sid/icd-9-cm|428.22,http://hl7.org/fhir/sid/icd-9-cm|428.23,http://hl7.org/fhir/sid/icd-9-cm|428.30,http://hl7.org/fhir/sid/icd-9-cm|428.31,http://hl7.org/fhir/sid/icd-9-cm|428.32,http://hl7.org/fhir/sid/icd-9-cm|428.33,http://hl7.org/fhir/sid/icd-9-cm|428.40,http://hl7.org/fhir/sid/icd-9-cm|428.41,http://hl7.org/fhir/sid/icd-9-cm|428.42,http://hl7.org/fhir/sid/icd-9-cm|428.43,http://hl7.org/fhir/sid/icd-9-cm|428.9\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1656340,http://www.nlm.nih.gov/research/umls/rxnorm|20352,http://www.nlm.nih.gov/research/umls/rxnorm|9997,http://www.nlm.nih.gov/research/umls/rxnorm|1545653,http://www.nlm.nih.gov/research/umls/rxnorm|4603\nObservation?code=http://loinc.org|10230-1,http://loinc.org|8806-2,http://loinc.org|8807-0,http://loinc.org|18043-0,http://loinc.org|18044-8,http://loinc.org|18045-5,http://loinc.org|77889-4,http://loinc.org|79990-8&value-quantity=lt50||%25",
+      "prompt_text": "I need to identify my complete heart failure patient population for a guideline-directed medical therapy (GDMT) optimization initiative. From clinical experience, I know HF patients are documented in different ways: some have a formal diagnosis code (CHF, HFrEF, HFpEF), some are on classic HF medications (loop diuretics, ARNi, SGLT2 inhibitors, MRAs) without a formal HF diagnosis, and some have a documented reduced ejection fraction on echo.\n\nPlease run multiple FHIR queries to capture the full population:\n1. Patients with any heart failure diagnosis (CHF, HFrEF, HFpEF, or general heart failure)\n2. Patients prescribed HF medications (sacubitril/valsartan, carvedilol, spironolactone, empagliflozin, furosemide)\n3. Patients with echocardiogram ejection fraction measurements below 50 percent\n\nFor each query, return the matching resources. I want the union of all patients found across these three approaches."
+     },
+     "3-broad": {
+      "precision": 1.0,
+      "recall": 0.1158,
+      "f1": 0.2076,
+      "passed": false,
+      "expected_count": 24234,
+      "actual_count": 2807,
+      "elapsed_sec": 185.3,
+      "queries_generated": 3,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|I50.1,http://hl7.org/fhir/sid/icd-10-cm|I50.20,http://hl7.org/fhir/sid/icd-10-cm|I50.21,http://hl7.org/fhir/sid/icd-10-cm|I50.22,http://hl7.org/fhir/sid/icd-10-cm|I50.23,http://hl7.org/fhir/sid/icd-10-cm|I50.30,http://hl7.org/fhir/sid/icd-10-cm|I50.31,http://hl7.org/fhir/sid/icd-10-cm|I50.32,http://hl7.org/fhir/sid/icd-10-cm|I50.33,http://hl7.org/fhir/sid/icd-10-cm|I50.40,http://hl7.org/fhir/sid/icd-10-cm|I50.41,http://hl7.org/fhir/sid/icd-10-cm|I50.42,http://hl7.org/fhir/sid/icd-10-cm|I50.43,http://hl7.org/fhir/sid/icd-10-cm|I50.810,http://hl7.org/fhir/sid/icd-10-cm|I50.812,http://hl7.org/fhir/sid/icd-10-cm|I50.813,http://hl7.org/fhir/sid/icd-10-cm|I50.814,http://hl7.org/fhir/sid/icd-10-cm|I50.82,http://hl7.org/fhir/sid/icd-10-cm|I50.83,http://hl7.org/fhir/sid/icd-10-cm|I50.84,http://hl7.org/fhir/sid/icd-10-cm|I50.89,http://hl7.org/fhir/sid/icd-10-cm|I50.9,http://hl7.org/fhir/sid/icd-9-cm|428.0,http://hl7.org/fhir/sid/icd-9-cm|428.1,http://hl7.org/fhir/sid/icd-9-cm|428.20,http://hl7.org/fhir/sid/icd-9-cm|428.21,http://hl7.org/fhir/sid/icd-9-cm|428.22,http://hl7.org/fhir/sid/icd-9-cm|428.23,http://hl7.org/fhir/sid/icd-9-cm|428.30,http://hl7.org/fhir/sid/icd-9-cm|428.31,http://hl7.org/fhir/sid/icd-9-cm|428.32,http://hl7.org/fhir/sid/icd-9-cm|428.33,http://hl7.org/fhir/sid/icd-9-cm|428.40,http://hl7.org/fhir/sid/icd-9-cm|428.41,http://hl7.org/fhir/sid/icd-9-cm|428.42,http://hl7.org/fhir/sid/icd-9-cm|428.43,http://hl7.org/fhir/sid/icd-9-cm|428.9",
+      "additional_query_urls": [
+       "MedicationRequest?medication.code=http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-formulary-drug-cd|FUROSEMIDE,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-formulary-drug-cd|CARVEDILOL,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-formulary-drug-cd|SPIRONOLACTONE,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-formulary-drug-cd|EMPAGLIFLOZIN,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-formulary-drug-cd|SACUBITRIL-VALSARTAN",
+       "Observation?code=http://loinc.org|10230-1,http://loinc.org|8806-2,http://loinc.org|18043-0,http://loinc.org|18044-8,http://loinc.org|18045-5,http://loinc.org|79990-8,http://loinc.org|77889-4&value-quantity=lt50||%25"
+      ],
+      "raw_response": "Given server constraints (no code search on MedicationRequest directly; MIMIC uses a proprietary formulary; EF observations not exposed via standard LOINC), I'll emit the three-pronged best-effort queries. The Condition query is verified at 96,768 results.\n\nPlaybook 12 (Cohort = OR), Playbook 8 (multi-system codes for HF diagnoses), Playbook 7 (threshold for EF<50%).\n\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|I50.1,http://hl7.org/fhir/sid/icd-10-cm|I50.20,http://hl7.org/fhir/sid/icd-10-cm|I50.21,http://hl7.org/fhir/sid/icd-10-cm|I50.22,http://hl7.org/fhir/sid/icd-10-cm|I50.23,http://hl7.org/fhir/sid/icd-10-cm|I50.30,http://hl7.org/fhir/sid/icd-10-cm|I50.31,http://hl7.org/fhir/sid/icd-10-cm|I50.32,http://hl7.org/fhir/sid/icd-10-cm|I50.33,http://hl7.org/fhir/sid/icd-10-cm|I50.40,http://hl7.org/fhir/sid/icd-10-cm|I50.41,http://hl7.org/fhir/sid/icd-10-cm|I50.42,http://hl7.org/fhir/sid/icd-10-cm|I50.43,http://hl7.org/fhir/sid/icd-10-cm|I50.810,http://hl7.org/fhir/sid/icd-10-cm|I50.812,http://hl7.org/fhir/sid/icd-10-cm|I50.813,http://hl7.org/fhir/sid/icd-10-cm|I50.814,http://hl7.org/fhir/sid/icd-10-cm|I50.82,http://hl7.org/fhir/sid/icd-10-cm|I50.83,http://hl7.org/fhir/sid/icd-10-cm|I50.84,http://hl7.org/fhir/sid/icd-10-cm|I50.89,http://hl7.org/fhir/sid/icd-10-cm|I50.9,http://hl7.org/fhir/sid/icd-9-cm|428.0,http://hl7.org/fhir/sid/icd-9-cm|428.1,http://hl7.org/fhir/sid/icd-9-cm|428.20,http://hl7.org/fhir/sid/icd-9-cm|428.21,http://hl7.org/fhir/sid/icd-9-cm|428.22,http://hl7.org/fhir/sid/icd-9-cm|428.23,http://hl7.org/fhir/sid/icd-9-cm|428.30,http://hl7.org/fhir/sid/icd-9-cm|428.31,http://hl7.org/fhir/sid/icd-9-cm|428.32,http://hl7.org/fhir/sid/icd-9-cm|428.33,http://hl7.org/fhir/sid/icd-9-cm|428.40,http://hl7.org/fhir/sid/icd-9-cm|428.41,http://hl7.org/fhir/sid/icd-9-cm|428.42,http://hl7.org/fhir/sid/icd-9-cm|428.43,http://hl7.org/fhir/sid/icd-9-cm|428.9\nMedicationRequest?medication.code=http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-formulary-drug-cd|FUROSEMIDE,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-formulary-drug-cd|CARVEDILOL,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-formulary-drug-cd|SPIRONOLACTONE,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-formulary-drug-cd|EMPAGLIFLOZIN,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-formulary-drug-cd|SACUBITRIL-VALSARTAN\nObservation?code=http://loinc.org|10230-1,http://loinc.org|8806-2,http://loinc.org|18043-0,http://loinc.org|18044-8,http://loinc.org|18045-5,http://loinc.org|79990-8,http://loinc.org|77889-4&value-quantity=lt50||%25",
+      "prompt_text": "I need to identify my complete heart failure patient population for a guideline-directed medical therapy (GDMT) optimization initiative. From clinical experience, I know HF patients are documented in different ways: some have a formal diagnosis code (CHF, HFrEF, HFpEF), some are on classic HF medications (loop diuretics, ARNi, SGLT2 inhibitors, MRAs) without a formal HF diagnosis, and some have a documented reduced ejection fraction on echo.\n\nPlease run multiple FHIR queries to capture the full population:\n1. Patients with any heart failure diagnosis (CHF, HFrEF, HFpEF, or general heart failure)\n2. Patients prescribed HF medications (sacubitril/valsartan, carvedilol, spironolactone, empagliflozin, furosemide)\n3. Patients with echocardiogram ejection fraction measurements below 50 percent\n\nFor each query, return the matching resources. I want the union of all patients found across these three approaches."
+     },
+     "3-expert": {
+      "precision": 1.0,
+      "recall": 0.1158,
+      "f1": 0.2076,
+      "passed": false,
+      "expected_count": 24234,
+      "actual_count": 2807,
+      "elapsed_sec": 116.8,
+      "queries_generated": 3,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|I50.1,http://hl7.org/fhir/sid/icd-10-cm|I50.9,http://hl7.org/fhir/sid/icd-10-cm|I50.20,http://hl7.org/fhir/sid/icd-10-cm|I50.21,http://hl7.org/fhir/sid/icd-10-cm|I50.22,http://hl7.org/fhir/sid/icd-10-cm|I50.23,http://hl7.org/fhir/sid/icd-10-cm|I50.30,http://hl7.org/fhir/sid/icd-10-cm|I50.31,http://hl7.org/fhir/sid/icd-10-cm|I50.32,http://hl7.org/fhir/sid/icd-10-cm|I50.33,http://hl7.org/fhir/sid/icd-10-cm|I50.40,http://hl7.org/fhir/sid/icd-10-cm|I50.41,http://hl7.org/fhir/sid/icd-10-cm|I50.42,http://hl7.org/fhir/sid/icd-10-cm|I50.43,http://hl7.org/fhir/sid/icd-10-cm|I50.810,http://hl7.org/fhir/sid/icd-10-cm|I50.811,http://hl7.org/fhir/sid/icd-10-cm|I50.812,http://hl7.org/fhir/sid/icd-10-cm|I50.813,http://hl7.org/fhir/sid/icd-10-cm|I50.814,http://hl7.org/fhir/sid/icd-10-cm|I50.82,http://hl7.org/fhir/sid/icd-10-cm|I50.83,http://hl7.org/fhir/sid/icd-10-cm|I50.84,http://hl7.org/fhir/sid/icd-10-cm|I50.89,http://hl7.org/fhir/sid/icd-9-cm|428.0,http://hl7.org/fhir/sid/icd-9-cm|428.1,http://hl7.org/fhir/sid/icd-9-cm|428.20,http://hl7.org/fhir/sid/icd-9-cm|428.21,http://hl7.org/fhir/sid/icd-9-cm|428.22,http://hl7.org/fhir/sid/icd-9-cm|428.23,http://hl7.org/fhir/sid/icd-9-cm|428.30,http://hl7.org/fhir/sid/icd-9-cm|428.31,http://hl7.org/fhir/sid/icd-9-cm|428.32,http://hl7.org/fhir/sid/icd-9-cm|428.33,http://hl7.org/fhir/sid/icd-9-cm|428.40,http://hl7.org/fhir/sid/icd-9-cm|428.41,http://hl7.org/fhir/sid/icd-9-cm|428.42,http://hl7.org/fhir/sid/icd-9-cm|428.43,http://hl7.org/fhir/sid/icd-9-cm|428.9",
+      "additional_query_urls": [
+       "MedicationRequest?code:text=sacubitril,valsartan,carvedilol,spironolactone,empagliflozin,furosemide",
+       "Observation?code=http://loinc.org|10230-1,http://loinc.org|8806-2,http://loinc.org|8807-0,http://loinc.org|18043-0,http://loinc.org|18044-8,http://loinc.org|18045-5,http://loinc.org|77889-4,http://loinc.org|79990-8&value-quantity=lt50|http://unitsofmeasure.org|%25"
+      ],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|I50.1,http://hl7.org/fhir/sid/icd-10-cm|I50.9,http://hl7.org/fhir/sid/icd-10-cm|I50.20,http://hl7.org/fhir/sid/icd-10-cm|I50.21,http://hl7.org/fhir/sid/icd-10-cm|I50.22,http://hl7.org/fhir/sid/icd-10-cm|I50.23,http://hl7.org/fhir/sid/icd-10-cm|I50.30,http://hl7.org/fhir/sid/icd-10-cm|I50.31,http://hl7.org/fhir/sid/icd-10-cm|I50.32,http://hl7.org/fhir/sid/icd-10-cm|I50.33,http://hl7.org/fhir/sid/icd-10-cm|I50.40,http://hl7.org/fhir/sid/icd-10-cm|I50.41,http://hl7.org/fhir/sid/icd-10-cm|I50.42,http://hl7.org/fhir/sid/icd-10-cm|I50.43,http://hl7.org/fhir/sid/icd-10-cm|I50.810,http://hl7.org/fhir/sid/icd-10-cm|I50.811,http://hl7.org/fhir/sid/icd-10-cm|I50.812,http://hl7.org/fhir/sid/icd-10-cm|I50.813,http://hl7.org/fhir/sid/icd-10-cm|I50.814,http://hl7.org/fhir/sid/icd-10-cm|I50.82,http://hl7.org/fhir/sid/icd-10-cm|I50.83,http://hl7.org/fhir/sid/icd-10-cm|I50.84,http://hl7.org/fhir/sid/icd-10-cm|I50.89,http://hl7.org/fhir/sid/icd-9-cm|428.0,http://hl7.org/fhir/sid/icd-9-cm|428.1,http://hl7.org/fhir/sid/icd-9-cm|428.20,http://hl7.org/fhir/sid/icd-9-cm|428.21,http://hl7.org/fhir/sid/icd-9-cm|428.22,http://hl7.org/fhir/sid/icd-9-cm|428.23,http://hl7.org/fhir/sid/icd-9-cm|428.30,http://hl7.org/fhir/sid/icd-9-cm|428.31,http://hl7.org/fhir/sid/icd-9-cm|428.32,http://hl7.org/fhir/sid/icd-9-cm|428.33,http://hl7.org/fhir/sid/icd-9-cm|428.40,http://hl7.org/fhir/sid/icd-9-cm|428.41,http://hl7.org/fhir/sid/icd-9-cm|428.42,http://hl7.org/fhir/sid/icd-9-cm|428.43,http://hl7.org/fhir/sid/icd-9-cm|428.9\nMedicationRequest?code:text=sacubitril,valsartan,carvedilol,spironolactone,empagliflozin,furosemide\nObservation?code=http://loinc.org|10230-1,http://loinc.org|8806-2,http://loinc.org|8807-0,http://loinc.org|18043-0,http://loinc.org|18044-8,http://loinc.org|18045-5,http://loinc.org|77889-4,http://loinc.org|79990-8&value-quantity=lt50|http://unitsofmeasure.org|%25",
+      "prompt_text": "I need to identify my complete heart failure patient population for a guideline-directed medical therapy (GDMT) optimization initiative. From clinical experience, I know HF patients are documented in different ways: some have a formal diagnosis code (CHF, HFrEF, HFpEF), some are on classic HF medications (loop diuretics, ARNi, SGLT2 inhibitors, MRAs) without a formal HF diagnosis, and some have a documented reduced ejection fraction on echo.\n\nPlease run multiple FHIR queries to capture the full population:\n1. Patients with any heart failure diagnosis (CHF, HFrEF, HFpEF, or general heart failure)\n2. Patients prescribed HF medications (sacubitril/valsartan, carvedilol, spironolactone, empagliflozin, furosemide)\n3. Patients with echocardiogram ejection fraction measurements below 50 percent\n\nFor each query, return the matching resources. I want the union of all patients found across these three approaches."
+     }
+    },
     "copilot:claude-sonnet-4.6": {
      "1-naive": {
       "precision": 1.0,
@@ -1928,6 +2083,140 @@
       "expected_count": 299,
       "actual_count": 299,
       "elapsed_sec": 20.7,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|84114007,http://snomed.info/sct|42343007,http://snomed.info/sct|88805009,http://snomed.info/sct|703272007,http://snomed.info/sct|446221000",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|84114007,http://snomed.info/sct|42343007,http://snomed.info/sct|88805009,http://snomed.info/sct|703272007,http://snomed.info/sct|446221000",
+      "prompt_text": "I need to identify all heart failure patients in our population. Heart failure is documented under multiple related SNOMED codes, distinguished by ejection fraction phenotype: Heart failure (84114007) is the parent concept, Congestive heart failure (42343007) and Chronic congestive heart failure (88805009) are common general codes, and Heart failure with reduced ejection fraction (703272007, HFrEF) and Heart failure with normal ejection fraction (446221000, HFpEF) capture the specific physiologic subtypes. Search Condition resources for all five codes."
+     }
+    },
+    "copilot:claude-opus-4.7+mimic": {
+     "1-naive": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 24234,
+      "actual_count": 0,
+      "elapsed_sec": 7.2,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|84114007",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|84114007",
+      "prompt_text": "Find all patients with heart failure."
+     },
+     "1-broad": {
+      "precision": 1.0,
+      "recall": 0.2174,
+      "f1": 0.3572,
+      "passed": false,
+      "expected_count": 24234,
+      "actual_count": 5269,
+      "elapsed_sec": 37.5,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|84114007,http://snomed.info/sct|42343007,http://snomed.info/sct|48447003,http://snomed.info/sct|417996009,http://snomed.info/sct|703272007,http://snomed.info/sct|441481004,http://hl7.org/fhir/sid/icd-10-cm|I50,http://hl7.org/fhir/sid/icd-10-cm|I50.9,http://hl7.org/fhir/sid/icd-10-cm|I50.20,http://hl7.org/fhir/sid/icd-10-cm|I50.22,http://hl7.org/fhir/sid/icd-10-cm|I50.30,http://hl7.org/fhir/sid/icd-10-cm|I50.32,http://hl7.org/fhir/sid/icd-10-cm|I50.40,http://hl7.org/fhir/sid/icd-10-cm|I50.42",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|84114007,http://snomed.info/sct|42343007,http://snomed.info/sct|48447003,http://snomed.info/sct|417996009,http://snomed.info/sct|703272007,http://snomed.info/sct|441481004,http://hl7.org/fhir/sid/icd-10-cm|I50,http://hl7.org/fhir/sid/icd-10-cm|I50.9,http://hl7.org/fhir/sid/icd-10-cm|I50.20,http://hl7.org/fhir/sid/icd-10-cm|I50.22,http://hl7.org/fhir/sid/icd-10-cm|I50.30,http://hl7.org/fhir/sid/icd-10-cm|I50.32,http://hl7.org/fhir/sid/icd-10-cm|I50.40,http://hl7.org/fhir/sid/icd-10-cm|I50.42",
+      "prompt_text": "Find all patients diagnosed with any form of heart failure \u2014 including congestive heart failure (CHF), chronic heart failure, heart failure with reduced ejection fraction (HFrEF, also called systolic heart failure), and heart failure with preserved ejection fraction (HFpEF, also called diastolic heart failure)."
+     },
+     "1-expert": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 24234,
+      "actual_count": 0,
+      "elapsed_sec": 7.7,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|84114007,http://snomed.info/sct|42343007,http://snomed.info/sct|88805009,http://snomed.info/sct|703272007,http://snomed.info/sct|446221000",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|84114007,http://snomed.info/sct|42343007,http://snomed.info/sct|88805009,http://snomed.info/sct|703272007,http://snomed.info/sct|446221000",
+      "prompt_text": "I need to identify all heart failure patients in our population. Heart failure is documented under multiple related SNOMED codes, distinguished by ejection fraction phenotype: Heart failure (84114007) is the parent concept, Congestive heart failure (42343007) and Chronic congestive heart failure (88805009) are common general codes, and Heart failure with reduced ejection fraction (703272007, HFrEF) and Heart failure with normal ejection fraction (446221000, HFpEF) capture the specific physiologic subtypes. Search Condition resources for all five codes."
+     },
+     "2-naive": {
+      "precision": 1.0,
+      "recall": 0.2748,
+      "f1": 0.4312,
+      "passed": false,
+      "expected_count": 24234,
+      "actual_count": 6660,
+      "elapsed_sec": 72.1,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|I50.9,http://hl7.org/fhir/sid/icd-10-cm|I50.1,http://hl7.org/fhir/sid/icd-10-cm|I50.20,http://hl7.org/fhir/sid/icd-10-cm|I50.21,http://hl7.org/fhir/sid/icd-10-cm|I50.22,http://hl7.org/fhir/sid/icd-10-cm|I50.23,http://hl7.org/fhir/sid/icd-10-cm|I50.30,http://hl7.org/fhir/sid/icd-10-cm|I50.31,http://hl7.org/fhir/sid/icd-10-cm|I50.32,http://hl7.org/fhir/sid/icd-10-cm|I50.33,http://hl7.org/fhir/sid/icd-10-cm|I50.40,http://hl7.org/fhir/sid/icd-10-cm|I50.41,http://hl7.org/fhir/sid/icd-10-cm|I50.42,http://hl7.org/fhir/sid/icd-10-cm|I50.43,http://hl7.org/fhir/sid/icd-10-cm|I50.810,http://hl7.org/fhir/sid/icd-10-cm|I50.811,http://hl7.org/fhir/sid/icd-10-cm|I50.812,http://hl7.org/fhir/sid/icd-10-cm|I50.813,http://hl7.org/fhir/sid/icd-10-cm|I50.814,http://hl7.org/fhir/sid/icd-10-cm|I50.82,http://hl7.org/fhir/sid/icd-10-cm|I50.83,http://hl7.org/fhir/sid/icd-10-cm|I50.84,http://hl7.org/fhir/sid/icd-10-cm|I50.89",
+      "additional_query_urls": [
+       "Condition?code=http://hl7.org/fhir/sid/icd-9-cm|428.0,http://hl7.org/fhir/sid/icd-9-cm|428.1,http://hl7.org/fhir/sid/icd-9-cm|428.20,http://hl7.org/fhir/sid/icd-9-cm|428.21,http://hl7.org/fhir/sid/icd-9-cm|428.22,http://hl7.org/fhir/sid/icd-9-cm|428.23,http://hl7.org/fhir/sid/icd-9-cm|428.30,http://hl7.org/fhir/sid/icd-9-cm|428.31,http://hl7.org/fhir/sid/icd-9-cm|428.32,http://hl7.org/fhir/sid/icd-9-cm|428.33,http://hl7.org/fhir/sid/icd-9-cm|428.40,http://hl7.org/fhir/sid/icd-9-cm|428.41,http://hl7.org/fhir/sid/icd-9-cm|428.42,http://hl7.org/fhir/sid/icd-9-cm|428.43,http://hl7.org/fhir/sid/icd-9-cm|428.9"
+      ],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|I50.9,http://hl7.org/fhir/sid/icd-10-cm|I50.1,http://hl7.org/fhir/sid/icd-10-cm|I50.20,http://hl7.org/fhir/sid/icd-10-cm|I50.21,http://hl7.org/fhir/sid/icd-10-cm|I50.22,http://hl7.org/fhir/sid/icd-10-cm|I50.23,http://hl7.org/fhir/sid/icd-10-cm|I50.30,http://hl7.org/fhir/sid/icd-10-cm|I50.31,http://hl7.org/fhir/sid/icd-10-cm|I50.32,http://hl7.org/fhir/sid/icd-10-cm|I50.33,http://hl7.org/fhir/sid/icd-10-cm|I50.40,http://hl7.org/fhir/sid/icd-10-cm|I50.41,http://hl7.org/fhir/sid/icd-10-cm|I50.42,http://hl7.org/fhir/sid/icd-10-cm|I50.43,http://hl7.org/fhir/sid/icd-10-cm|I50.810,http://hl7.org/fhir/sid/icd-10-cm|I50.811,http://hl7.org/fhir/sid/icd-10-cm|I50.812,http://hl7.org/fhir/sid/icd-10-cm|I50.813,http://hl7.org/fhir/sid/icd-10-cm|I50.814,http://hl7.org/fhir/sid/icd-10-cm|I50.82,http://hl7.org/fhir/sid/icd-10-cm|I50.83,http://hl7.org/fhir/sid/icd-10-cm|I50.84,http://hl7.org/fhir/sid/icd-10-cm|I50.89\nCondition?code=http://hl7.org/fhir/sid/icd-9-cm|428.0,http://hl7.org/fhir/sid/icd-9-cm|428.1,http://hl7.org/fhir/sid/icd-9-cm|428.20,http://hl7.org/fhir/sid/icd-9-cm|428.21,http://hl7.org/fhir/sid/icd-9-cm|428.22,http://hl7.org/fhir/sid/icd-9-cm|428.23,http://hl7.org/fhir/sid/icd-9-cm|428.30,http://hl7.org/fhir/sid/icd-9-cm|428.31,http://hl7.org/fhir/sid/icd-9-cm|428.32,http://hl7.org/fhir/sid/icd-9-cm|428.33,http://hl7.org/fhir/sid/icd-9-cm|428.40,http://hl7.org/fhir/sid/icd-9-cm|428.41,http://hl7.org/fhir/sid/icd-9-cm|428.42,http://hl7.org/fhir/sid/icd-9-cm|428.43,http://hl7.org/fhir/sid/icd-9-cm|428.9",
+      "prompt_text": "Find all patients with heart failure."
+     },
+     "2-broad": {
+      "precision": 1.0,
+      "recall": 0.2748,
+      "f1": 0.4312,
+      "passed": false,
+      "expected_count": 24234,
+      "actual_count": 6660,
+      "elapsed_sec": 67.3,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|I50.9,http://hl7.org/fhir/sid/icd-10-cm|I50.1,http://hl7.org/fhir/sid/icd-10-cm|I50.20,http://hl7.org/fhir/sid/icd-10-cm|I50.21,http://hl7.org/fhir/sid/icd-10-cm|I50.22,http://hl7.org/fhir/sid/icd-10-cm|I50.23,http://hl7.org/fhir/sid/icd-10-cm|I50.30,http://hl7.org/fhir/sid/icd-10-cm|I50.31,http://hl7.org/fhir/sid/icd-10-cm|I50.32,http://hl7.org/fhir/sid/icd-10-cm|I50.33,http://hl7.org/fhir/sid/icd-10-cm|I50.40,http://hl7.org/fhir/sid/icd-10-cm|I50.41,http://hl7.org/fhir/sid/icd-10-cm|I50.42,http://hl7.org/fhir/sid/icd-10-cm|I50.43,http://hl7.org/fhir/sid/icd-10-cm|I50.810,http://hl7.org/fhir/sid/icd-10-cm|I50.811,http://hl7.org/fhir/sid/icd-10-cm|I50.812,http://hl7.org/fhir/sid/icd-10-cm|I50.813,http://hl7.org/fhir/sid/icd-10-cm|I50.814,http://hl7.org/fhir/sid/icd-10-cm|I50.82,http://hl7.org/fhir/sid/icd-10-cm|I50.83,http://hl7.org/fhir/sid/icd-10-cm|I50.84,http://hl7.org/fhir/sid/icd-10-cm|I50.89",
+      "additional_query_urls": [
+       "Condition?code=http://hl7.org/fhir/sid/icd-9-cm|428.0,http://hl7.org/fhir/sid/icd-9-cm|428.1,http://hl7.org/fhir/sid/icd-9-cm|428.20,http://hl7.org/fhir/sid/icd-9-cm|428.21,http://hl7.org/fhir/sid/icd-9-cm|428.22,http://hl7.org/fhir/sid/icd-9-cm|428.23,http://hl7.org/fhir/sid/icd-9-cm|428.30,http://hl7.org/fhir/sid/icd-9-cm|428.31,http://hl7.org/fhir/sid/icd-9-cm|428.32,http://hl7.org/fhir/sid/icd-9-cm|428.33,http://hl7.org/fhir/sid/icd-9-cm|428.40,http://hl7.org/fhir/sid/icd-9-cm|428.41,http://hl7.org/fhir/sid/icd-9-cm|428.42,http://hl7.org/fhir/sid/icd-9-cm|428.43,http://hl7.org/fhir/sid/icd-9-cm|428.9"
+      ],
+      "raw_response": "Final answer:\n\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|I50.9,http://hl7.org/fhir/sid/icd-10-cm|I50.1,http://hl7.org/fhir/sid/icd-10-cm|I50.20,http://hl7.org/fhir/sid/icd-10-cm|I50.21,http://hl7.org/fhir/sid/icd-10-cm|I50.22,http://hl7.org/fhir/sid/icd-10-cm|I50.23,http://hl7.org/fhir/sid/icd-10-cm|I50.30,http://hl7.org/fhir/sid/icd-10-cm|I50.31,http://hl7.org/fhir/sid/icd-10-cm|I50.32,http://hl7.org/fhir/sid/icd-10-cm|I50.33,http://hl7.org/fhir/sid/icd-10-cm|I50.40,http://hl7.org/fhir/sid/icd-10-cm|I50.41,http://hl7.org/fhir/sid/icd-10-cm|I50.42,http://hl7.org/fhir/sid/icd-10-cm|I50.43,http://hl7.org/fhir/sid/icd-10-cm|I50.810,http://hl7.org/fhir/sid/icd-10-cm|I50.811,http://hl7.org/fhir/sid/icd-10-cm|I50.812,http://hl7.org/fhir/sid/icd-10-cm|I50.813,http://hl7.org/fhir/sid/icd-10-cm|I50.814,http://hl7.org/fhir/sid/icd-10-cm|I50.82,http://hl7.org/fhir/sid/icd-10-cm|I50.83,http://hl7.org/fhir/sid/icd-10-cm|I50.84,http://hl7.org/fhir/sid/icd-10-cm|I50.89\nCondition?code=http://hl7.org/fhir/sid/icd-9-cm|428.0,http://hl7.org/fhir/sid/icd-9-cm|428.1,http://hl7.org/fhir/sid/icd-9-cm|428.20,http://hl7.org/fhir/sid/icd-9-cm|428.21,http://hl7.org/fhir/sid/icd-9-cm|428.22,http://hl7.org/fhir/sid/icd-9-cm|428.23,http://hl7.org/fhir/sid/icd-9-cm|428.30,http://hl7.org/fhir/sid/icd-9-cm|428.31,http://hl7.org/fhir/sid/icd-9-cm|428.32,http://hl7.org/fhir/sid/icd-9-cm|428.33,http://hl7.org/fhir/sid/icd-9-cm|428.40,http://hl7.org/fhir/sid/icd-9-cm|428.41,http://hl7.org/fhir/sid/icd-9-cm|428.42,http://hl7.org/fhir/sid/icd-9-cm|428.43,http://hl7.org/fhir/sid/icd-9-cm|428.9",
+      "prompt_text": "Find all patients diagnosed with any form of heart failure \u2014 including congestive heart failure (CHF), chronic heart failure, heart failure with reduced ejection fraction (HFrEF, also called systolic heart failure), and heart failure with preserved ejection fraction (HFpEF, also called diastolic heart failure)."
+     },
+     "2-expert": {
+      "precision": 1.0,
+      "recall": 0.3283,
+      "f1": 0.4944,
+      "passed": false,
+      "expected_count": 24234,
+      "actual_count": 7957,
+      "elapsed_sec": 69.7,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|I50.9,http://hl7.org/fhir/sid/icd-10-cm|I50.2,http://hl7.org/fhir/sid/icd-10-cm|I50.3",
+      "additional_query_urls": [
+       "Condition?code=http://hl7.org/fhir/sid/icd-9-cm|428.0,http://hl7.org/fhir/sid/icd-9-cm|428.9"
+      ],
+      "raw_response": "Final Answer:\n\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|I50.9,http://hl7.org/fhir/sid/icd-10-cm|I50.2,http://hl7.org/fhir/sid/icd-10-cm|I50.3\nCondition?code=http://hl7.org/fhir/sid/icd-9-cm|428.0,http://hl7.org/fhir/sid/icd-9-cm|428.9",
+      "prompt_text": "I need to identify all heart failure patients in our population. Heart failure is documented under multiple related SNOMED codes, distinguished by ejection fraction phenotype: Heart failure (84114007) is the parent concept, Congestive heart failure (42343007) and Chronic congestive heart failure (88805009) are common general codes, and Heart failure with reduced ejection fraction (703272007, HFrEF) and Heart failure with normal ejection fraction (446221000, HFpEF) capture the specific physiologic subtypes. Search Condition resources for all five codes."
+     },
+     "3-naive": {
+      "precision": 1.0,
+      "recall": 0.1158,
+      "f1": 0.2076,
+      "passed": false,
+      "expected_count": 24234,
+      "actual_count": 2807,
+      "elapsed_sec": 79.5,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|I50.1,http://hl7.org/fhir/sid/icd-10-cm|I50.20,http://hl7.org/fhir/sid/icd-10-cm|I50.21,http://hl7.org/fhir/sid/icd-10-cm|I50.22,http://hl7.org/fhir/sid/icd-10-cm|I50.23,http://hl7.org/fhir/sid/icd-10-cm|I50.30,http://hl7.org/fhir/sid/icd-10-cm|I50.31,http://hl7.org/fhir/sid/icd-10-cm|I50.32,http://hl7.org/fhir/sid/icd-10-cm|I50.33,http://hl7.org/fhir/sid/icd-10-cm|I50.40,http://hl7.org/fhir/sid/icd-10-cm|I50.41,http://hl7.org/fhir/sid/icd-10-cm|I50.42,http://hl7.org/fhir/sid/icd-10-cm|I50.43,http://hl7.org/fhir/sid/icd-10-cm|I50.9,http://hl7.org/fhir/sid/icd-10-cm|I50.810,http://hl7.org/fhir/sid/icd-10-cm|I50.811,http://hl7.org/fhir/sid/icd-10-cm|I50.812,http://hl7.org/fhir/sid/icd-10-cm|I50.813,http://hl7.org/fhir/sid/icd-10-cm|I50.814,http://hl7.org/fhir/sid/icd-10-cm|I50.82,http://hl7.org/fhir/sid/icd-10-cm|I50.83,http://hl7.org/fhir/sid/icd-10-cm|I50.84,http://hl7.org/fhir/sid/icd-10-cm|I50.89,http://hl7.org/fhir/sid/icd-9-cm|428.0,http://hl7.org/fhir/sid/icd-9-cm|428.1,http://hl7.org/fhir/sid/icd-9-cm|428.20,http://hl7.org/fhir/sid/icd-9-cm|428.21,http://hl7.org/fhir/sid/icd-9-cm|428.22,http://hl7.org/fhir/sid/icd-9-cm|428.23,http://hl7.org/fhir/sid/icd-9-cm|428.30,http://hl7.org/fhir/sid/icd-9-cm|428.31,http://hl7.org/fhir/sid/icd-9-cm|428.32,http://hl7.org/fhir/sid/icd-9-cm|428.33,http://hl7.org/fhir/sid/icd-9-cm|428.40,http://hl7.org/fhir/sid/icd-9-cm|428.41,http://hl7.org/fhir/sid/icd-9-cm|428.42,http://hl7.org/fhir/sid/icd-9-cm|428.43,http://hl7.org/fhir/sid/icd-9-cm|428.9",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|I50.1,http://hl7.org/fhir/sid/icd-10-cm|I50.20,http://hl7.org/fhir/sid/icd-10-cm|I50.21,http://hl7.org/fhir/sid/icd-10-cm|I50.22,http://hl7.org/fhir/sid/icd-10-cm|I50.23,http://hl7.org/fhir/sid/icd-10-cm|I50.30,http://hl7.org/fhir/sid/icd-10-cm|I50.31,http://hl7.org/fhir/sid/icd-10-cm|I50.32,http://hl7.org/fhir/sid/icd-10-cm|I50.33,http://hl7.org/fhir/sid/icd-10-cm|I50.40,http://hl7.org/fhir/sid/icd-10-cm|I50.41,http://hl7.org/fhir/sid/icd-10-cm|I50.42,http://hl7.org/fhir/sid/icd-10-cm|I50.43,http://hl7.org/fhir/sid/icd-10-cm|I50.9,http://hl7.org/fhir/sid/icd-10-cm|I50.810,http://hl7.org/fhir/sid/icd-10-cm|I50.811,http://hl7.org/fhir/sid/icd-10-cm|I50.812,http://hl7.org/fhir/sid/icd-10-cm|I50.813,http://hl7.org/fhir/sid/icd-10-cm|I50.814,http://hl7.org/fhir/sid/icd-10-cm|I50.82,http://hl7.org/fhir/sid/icd-10-cm|I50.83,http://hl7.org/fhir/sid/icd-10-cm|I50.84,http://hl7.org/fhir/sid/icd-10-cm|I50.89,http://hl7.org/fhir/sid/icd-9-cm|428.0,http://hl7.org/fhir/sid/icd-9-cm|428.1,http://hl7.org/fhir/sid/icd-9-cm|428.20,http://hl7.org/fhir/sid/icd-9-cm|428.21,http://hl7.org/fhir/sid/icd-9-cm|428.22,http://hl7.org/fhir/sid/icd-9-cm|428.23,http://hl7.org/fhir/sid/icd-9-cm|428.30,http://hl7.org/fhir/sid/icd-9-cm|428.31,http://hl7.org/fhir/sid/icd-9-cm|428.32,http://hl7.org/fhir/sid/icd-9-cm|428.33,http://hl7.org/fhir/sid/icd-9-cm|428.40,http://hl7.org/fhir/sid/icd-9-cm|428.41,http://hl7.org/fhir/sid/icd-9-cm|428.42,http://hl7.org/fhir/sid/icd-9-cm|428.43,http://hl7.org/fhir/sid/icd-9-cm|428.9",
+      "prompt_text": "Find all patients with heart failure."
+     },
+     "3-broad": {
+      "precision": 1.0,
+      "recall": 0.1157,
+      "f1": 0.2075,
+      "passed": false,
+      "expected_count": 24234,
+      "actual_count": 2805,
+      "elapsed_sec": 73.5,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|I50.9,http://hl7.org/fhir/sid/icd-10-cm|I50.1,http://hl7.org/fhir/sid/icd-10-cm|I50.20,http://hl7.org/fhir/sid/icd-10-cm|I50.21,http://hl7.org/fhir/sid/icd-10-cm|I50.22,http://hl7.org/fhir/sid/icd-10-cm|I50.23,http://hl7.org/fhir/sid/icd-10-cm|I50.30,http://hl7.org/fhir/sid/icd-10-cm|I50.31,http://hl7.org/fhir/sid/icd-10-cm|I50.32,http://hl7.org/fhir/sid/icd-10-cm|I50.33,http://hl7.org/fhir/sid/icd-10-cm|I50.40,http://hl7.org/fhir/sid/icd-10-cm|I50.41,http://hl7.org/fhir/sid/icd-10-cm|I50.42,http://hl7.org/fhir/sid/icd-10-cm|I50.43,http://hl7.org/fhir/sid/icd-10-cm|I50.810,http://hl7.org/fhir/sid/icd-10-cm|I50.811,http://hl7.org/fhir/sid/icd-10-cm|I50.812,http://hl7.org/fhir/sid/icd-10-cm|I50.813,http://hl7.org/fhir/sid/icd-10-cm|I50.814,http://hl7.org/fhir/sid/icd-10-cm|I50.82,http://hl7.org/fhir/sid/icd-10-cm|I50.83,http://hl7.org/fhir/sid/icd-10-cm|I50.84,http://hl7.org/fhir/sid/icd-10-cm|I50.89,http://hl7.org/fhir/sid/icd-10-cm|I09.81,http://hl7.org/fhir/sid/icd-9-cm|428.0,http://hl7.org/fhir/sid/icd-9-cm|428.1,http://hl7.org/fhir/sid/icd-9-cm|428.20,http://hl7.org/fhir/sid/icd-9-cm|428.21,http://hl7.org/fhir/sid/icd-9-cm|428.22,http://hl7.org/fhir/sid/icd-9-cm|428.23,http://hl7.org/fhir/sid/icd-9-cm|428.30,http://hl7.org/fhir/sid/icd-9-cm|428.31,http://hl7.org/fhir/sid/icd-9-cm|428.32,http://hl7.org/fhir/sid/icd-9-cm|428.33,http://hl7.org/fhir/sid/icd-9-cm|428.40,http://hl7.org/fhir/sid/icd-9-cm|428.41,http://hl7.org/fhir/sid/icd-9-cm|428.42,http://hl7.org/fhir/sid/icd-9-cm|428.43,http://hl7.org/fhir/sid/icd-9-cm|428.9",
+      "additional_query_urls": [],
+      "raw_response": "FINAL ANSWER:\n\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|I50.9,http://hl7.org/fhir/sid/icd-10-cm|I50.1,http://hl7.org/fhir/sid/icd-10-cm|I50.20,http://hl7.org/fhir/sid/icd-10-cm|I50.21,http://hl7.org/fhir/sid/icd-10-cm|I50.22,http://hl7.org/fhir/sid/icd-10-cm|I50.23,http://hl7.org/fhir/sid/icd-10-cm|I50.30,http://hl7.org/fhir/sid/icd-10-cm|I50.31,http://hl7.org/fhir/sid/icd-10-cm|I50.32,http://hl7.org/fhir/sid/icd-10-cm|I50.33,http://hl7.org/fhir/sid/icd-10-cm|I50.40,http://hl7.org/fhir/sid/icd-10-cm|I50.41,http://hl7.org/fhir/sid/icd-10-cm|I50.42,http://hl7.org/fhir/sid/icd-10-cm|I50.43,http://hl7.org/fhir/sid/icd-10-cm|I50.810,http://hl7.org/fhir/sid/icd-10-cm|I50.811,http://hl7.org/fhir/sid/icd-10-cm|I50.812,http://hl7.org/fhir/sid/icd-10-cm|I50.813,http://hl7.org/fhir/sid/icd-10-cm|I50.814,http://hl7.org/fhir/sid/icd-10-cm|I50.82,http://hl7.org/fhir/sid/icd-10-cm|I50.83,http://hl7.org/fhir/sid/icd-10-cm|I50.84,http://hl7.org/fhir/sid/icd-10-cm|I50.89,http://hl7.org/fhir/sid/icd-10-cm|I09.81,http://hl7.org/fhir/sid/icd-9-cm|428.0,http://hl7.org/fhir/sid/icd-9-cm|428.1,http://hl7.org/fhir/sid/icd-9-cm|428.20,http://hl7.org/fhir/sid/icd-9-cm|428.21,http://hl7.org/fhir/sid/icd-9-cm|428.22,http://hl7.org/fhir/sid/icd-9-cm|428.23,http://hl7.org/fhir/sid/icd-9-cm|428.30,http://hl7.org/fhir/sid/icd-9-cm|428.31,http://hl7.org/fhir/sid/icd-9-cm|428.32,http://hl7.org/fhir/sid/icd-9-cm|428.33,http://hl7.org/fhir/sid/icd-9-cm|428.40,http://hl7.org/fhir/sid/icd-9-cm|428.41,http://hl7.org/fhir/sid/icd-9-cm|428.42,http://hl7.org/fhir/sid/icd-9-cm|428.43,http://hl7.org/fhir/sid/icd-9-cm|428.9",
+      "prompt_text": "Find all patients diagnosed with any form of heart failure \u2014 including congestive heart failure (CHF), chronic heart failure, heart failure with reduced ejection fraction (HFrEF, also called systolic heart failure), and heart failure with preserved ejection fraction (HFpEF, also called diastolic heart failure)."
+     },
+     "3-expert": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 24234,
+      "actual_count": 0,
+      "elapsed_sec": 13.9,
       "queries_generated": 1,
       "primary_query_url": "Condition?code=http://snomed.info/sct|84114007,http://snomed.info/sct|42343007,http://snomed.info/sct|88805009,http://snomed.info/sct|703272007,http://snomed.info/sct|446221000",
       "additional_query_urls": [],
@@ -3392,6 +3681,139 @@
       "expected_count": 465,
       "actual_count": 465,
       "elapsed_sec": 29.1,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|4603,http://www.nlm.nih.gov/research/umls/rxnorm|20352,http://www.nlm.nih.gov/research/umls/rxnorm|9997,http://www.nlm.nih.gov/research/umls/rxnorm|1656339,http://www.nlm.nih.gov/research/umls/rxnorm|1545653",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|4603,http://www.nlm.nih.gov/research/umls/rxnorm|20352,http://www.nlm.nih.gov/research/umls/rxnorm|9997,http://www.nlm.nih.gov/research/umls/rxnorm|1656339,http://www.nlm.nih.gov/research/umls/rxnorm|1545653",
+      "prompt_text": "I need MedicationRequest resources for any of the four pillars of HFrEF GDMT plus loop diuretics for congestion. Use these RxNorm ingredient codes: 4603 (furosemide), 20352 (carvedilol), 9997 (spironolactone), 1656339 (sacubitril/valsartan combination), 1545653 (empagliflozin). Combine them in a single comma-separated code search."
+     }
+    },
+    "copilot:claude-opus-4.7+mimic": {
+     "1-naive": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 47271,
+      "actual_count": 0,
+      "elapsed_sec": 10.7,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1656339,http://www.nlm.nih.gov/research/umls/rxnorm|20352,http://www.nlm.nih.gov/research/umls/rxnorm|29046,http://www.nlm.nih.gov/research/umls/rxnorm|4603,http://www.nlm.nih.gov/research/umls/rxnorm|38413,http://www.nlm.nih.gov/research/umls/rxnorm|321064,http://www.nlm.nih.gov/research/umls/rxnorm|18867&status=active",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1656339,http://www.nlm.nih.gov/research/umls/rxnorm|20352,http://www.nlm.nih.gov/research/umls/rxnorm|29046,http://www.nlm.nih.gov/research/umls/rxnorm|4603,http://www.nlm.nih.gov/research/umls/rxnorm|38413,http://www.nlm.nih.gov/research/umls/rxnorm|321064,http://www.nlm.nih.gov/research/umls/rxnorm|18867&status=active",
+      "prompt_text": "Find patients on heart failure medications."
+     },
+     "1-broad": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 47271,
+      "actual_count": 0,
+      "elapsed_sec": 9.6,
+      "queries_generated": 5,
+      "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|4603",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|20352",
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|9997",
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1656340",
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1545653"
+      ],
+      "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|4603\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|20352\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|9997\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1656340\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1545653",
+      "prompt_text": "Find patients prescribed any of the guideline-directed heart failure therapies: loop diuretics (furosemide), beta blockers used for HF (carvedilol), mineralocorticoid receptor antagonists (spironolactone), ARNi (sacubitril/valsartan), or SGLT2 inhibitors (empagliflozin)."
+     },
+     "1-expert": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 47271,
+      "actual_count": 0,
+      "elapsed_sec": 8.2,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|4603,http://www.nlm.nih.gov/research/umls/rxnorm|20352,http://www.nlm.nih.gov/research/umls/rxnorm|9997,http://www.nlm.nih.gov/research/umls/rxnorm|1656339,http://www.nlm.nih.gov/research/umls/rxnorm|1545653",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|4603,http://www.nlm.nih.gov/research/umls/rxnorm|20352,http://www.nlm.nih.gov/research/umls/rxnorm|9997,http://www.nlm.nih.gov/research/umls/rxnorm|1656339,http://www.nlm.nih.gov/research/umls/rxnorm|1545653",
+      "prompt_text": "I need MedicationRequest resources for any of the four pillars of HFrEF GDMT plus loop diuretics for congestion. Use these RxNorm ingredient codes: 4603 (furosemide), 20352 (carvedilol), 9997 (spironolactone), 1656339 (sacubitril/valsartan combination), 1545653 (empagliflozin). Combine them in a single comma-separated code search."
+     },
+     "2-naive": {
+      "precision": 0.9701,
+      "recall": 0.0337,
+      "f1": 0.0651,
+      "passed": false,
+      "expected_count": 47271,
+      "actual_count": 1641,
+      "elapsed_sec": 56.8,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?code=http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Carvedilol,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Metoprolol",
+      "additional_query_urls": [],
+      "raw_response": "FINAL ANSWER:\n\nMedicationRequest?code=http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Carvedilol,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Metoprolol Succinate XL,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Metoprolol Tartrate,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Bisoprolol Fumarate,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Lisinopril,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Enalapril Maleate,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Valsartan,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Losartan Potassium,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Sacubitril-Valsartan,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Spironolactone,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Eplerenone,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Dapagliflozin,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Empagliflozin,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Furosemide,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Torsemide,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Bumetanide,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Digoxin",
+      "prompt_text": "Find patients on heart failure medications."
+     },
+     "2-broad": {
+      "precision": 0.9385,
+      "recall": 0.0955,
+      "f1": 0.1733,
+      "passed": false,
+      "expected_count": 47271,
+      "actual_count": 4810,
+      "elapsed_sec": 60.0,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?code=Furosemide,Carvedilol,Spironolactone,Empagliflozin,Entresto",
+      "additional_query_urls": [],
+      "raw_response": "Final answer:\n\nMedicationRequest?code=Furosemide,Carvedilol,Spironolactone,Empagliflozin,Entresto",
+      "prompt_text": "Find patients prescribed any of the guideline-directed heart failure therapies: loop diuretics (furosemide), beta blockers used for HF (carvedilol), mineralocorticoid receptor antagonists (spironolactone), ARNi (sacubitril/valsartan), or SGLT2 inhibitors (empagliflozin)."
+     },
+     "2-expert": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 47271,
+      "actual_count": 0,
+      "elapsed_sec": 18.0,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|4603,http://www.nlm.nih.gov/research/umls/rxnorm|20352,http://www.nlm.nih.gov/research/umls/rxnorm|9997,http://www.nlm.nih.gov/research/umls/rxnorm|1656339,http://www.nlm.nih.gov/research/umls/rxnorm|1545653",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|4603,http://www.nlm.nih.gov/research/umls/rxnorm|20352,http://www.nlm.nih.gov/research/umls/rxnorm|9997,http://www.nlm.nih.gov/research/umls/rxnorm|1656339,http://www.nlm.nih.gov/research/umls/rxnorm|1545653",
+      "prompt_text": "I need MedicationRequest resources for any of the four pillars of HFrEF GDMT plus loop diuretics for congestion. Use these RxNorm ingredient codes: 4603 (furosemide), 20352 (carvedilol), 9997 (spironolactone), 1656339 (sacubitril/valsartan combination), 1545653 (empagliflozin). Combine them in a single comma-separated code search."
+     },
+     "3-naive": {
+      "precision": 0.9437,
+      "recall": 0.1014,
+      "f1": 0.1831,
+      "passed": false,
+      "expected_count": 47271,
+      "actual_count": 5079,
+      "elapsed_sec": 54.8,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?code=http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Furosemide,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Carvedilol,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Metoprolol,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Metoprolol",
+      "additional_query_urls": [],
+      "raw_response": "FINAL ANSWER:\n\nMedicationRequest?code=http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Furosemide,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Carvedilol,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Metoprolol,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Metoprolol Succinate XL,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Metoprolol Tartrate,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Bisoprolol Fumarate,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Lisinopril,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Enalapril,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Enalapril Maleate,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Captopril,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Ramipril,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Losartan,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Losartan Potassium,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Valsartan,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Sacubitril-Valsartan,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Spironolactone,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Eplerenone,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Digoxin,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Bumetanide,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Torsemide,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Hydralazine,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Isosorbide Dinitrate,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Isosorbide Mononitrate,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Ivabradine,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Empagliflozin,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Dapagliflozin",
+      "prompt_text": "Find patients on heart failure medications."
+     },
+     "3-broad": {
+      "precision": 0.9387,
+      "recall": 0.0955,
+      "f1": 0.1734,
+      "passed": false,
+      "expected_count": 47271,
+      "actual_count": 4810,
+      "elapsed_sec": 63.7,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?code=http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Furosemide,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Carvedilol,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Spironolactone,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Entresto,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Jardiance",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?code=http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Furosemide,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Carvedilol,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Spironolactone,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Entresto,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Jardiance",
+      "prompt_text": "Find patients prescribed any of the guideline-directed heart failure therapies: loop diuretics (furosemide), beta blockers used for HF (carvedilol), mineralocorticoid receptor antagonists (spironolactone), ARNi (sacubitril/valsartan), or SGLT2 inhibitors (empagliflozin)."
+     },
+     "3-expert": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 47271,
+      "actual_count": 0,
+      "elapsed_sec": 19.3,
       "queries_generated": 1,
       "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|4603,http://www.nlm.nih.gov/research/umls/rxnorm|20352,http://www.nlm.nih.gov/research/umls/rxnorm|9997,http://www.nlm.nih.gov/research/umls/rxnorm|1656339,http://www.nlm.nih.gov/research/umls/rxnorm|1545653",
       "additional_query_urls": [],

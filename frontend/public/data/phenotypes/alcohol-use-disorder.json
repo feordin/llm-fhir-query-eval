@@ -234,6 +234,148 @@
       "prompt_text": "I need to identify patients with alcohol use disorder via a multi-resource union covering both documented diagnoses and pharmacologic treatment. Run two searches and union the results: first, search Condition resources for AUD diagnoses coded in SNOMED CT, covering both alcoholism and alcohol dependence as distinct concepts; second, search MedicationRequest resources for naltrexone in RxNorm. The medication path (Path C) captures patients on naltrexone who lack a formal AUD diagnosis \u2014 note that naltrexone is also indicated for opioid use disorder, so the medication-only cohort will include some non-AUD patients."
      }
     },
+    "copilot:claude-opus-4.7+mimic": {
+     "1-naive": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 8177,
+      "actual_count": 0,
+      "elapsed_sec": 7.7,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|7200002",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|7200002",
+      "prompt_text": "Find all AUD patients."
+     },
+     "1-broad": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 8177,
+      "actual_count": 0,
+      "elapsed_sec": 10.5,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|66590003,http://snomed.info/sct|7200002,http://snomed.info/sct|15167005",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|7243"
+      ],
+      "raw_response": "Condition?code=http://snomed.info/sct|66590003,http://snomed.info/sct|7200002,http://snomed.info/sct|15167005\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|7243",
+      "prompt_text": "Find all alcohol use disorder patients \u2014 by diagnosis (alcoholism or alcohol dependence) or by naltrexone prescriptions. Run multiple queries and union the patient sets."
+     },
+     "1-expert": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 8177,
+      "actual_count": 0,
+      "elapsed_sec": 8.3,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|7200002,http://snomed.info/sct|66590003",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|7517"
+      ],
+      "raw_response": "Condition?code=http://snomed.info/sct|7200002,http://snomed.info/sct|66590003\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|7517",
+      "prompt_text": "I need to identify patients with alcohol use disorder via a multi-resource union covering both documented diagnoses and pharmacologic treatment. Run two searches and union the results: first, search Condition resources for AUD diagnoses coded in SNOMED CT, covering both alcoholism and alcohol dependence as distinct concepts; second, search MedicationRequest resources for naltrexone in RxNorm. The medication path (Path C) captures patients on naltrexone who lack a formal AUD diagnosis \u2014 note that naltrexone is also indicated for opioid use disorder, so the medication-only cohort will include some non-AUD patients."
+     },
+     "2-naive": {
+      "precision": 0.4303,
+      "recall": 0.2547,
+      "f1": 0.32,
+      "passed": false,
+      "expected_count": 8177,
+      "actual_count": 4841,
+      "elapsed_sec": 50.4,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|F10.10,http://hl7.org/fhir/sid/icd-10-cm|F10.11,http://hl7.org/fhir/sid/icd-10-cm|F10.120,http://hl7.org/fhir/sid/icd-10-cm|F10.121,http://hl7.org/fhir/sid/icd-10-cm|F10.129,http://hl7.org/fhir/sid/icd-10-cm|F10.14,http://hl7.org/fhir/sid/icd-10-cm|F10.150,http://hl7.org/fhir/sid/icd-10-cm|F10.151,http://hl7.org/fhir/sid/icd-10-cm|F10.159,http://hl7.org/fhir/sid/icd-10-cm|F10.180,http://hl7.org/fhir/sid/icd-10-cm|F10.181,http://hl7.org/fhir/sid/icd-10-cm|F10.182,http://hl7.org/fhir/sid/icd-10-cm|F10.188,http://hl7.org/fhir/sid/icd-10-cm|F10.19,http://hl7.org/fhir/sid/icd-10-cm|F10.20,http://hl7.org/fhir/sid/icd-10-cm|F10.21,http://hl7.org/fhir/sid/icd-10-cm|F10.220,http://hl7.org/fhir/sid/icd-10-cm|F10.221,http://hl7.org/fhir/sid/icd-10-cm|F10.229,http://hl7.org/fhir/sid/icd-10-cm|F10.230,http://hl7.org/fhir/sid/icd-10-cm|F10.231,http://hl7.org/fhir/sid/icd-10-cm|F10.232,http://hl7.org/fhir/sid/icd-10-cm|F10.239,http://hl7.org/fhir/sid/icd-10-cm|F10.24,http://hl7.org/fhir/sid/icd-10-cm|F10.250,http://hl7.org/fhir/sid/icd-10-cm|F10.251,http://hl7.org/fhir/sid/icd-10-cm|F10.259,http://hl7.org/fhir/sid/icd-10-cm|F10.26,http://hl7.org/fhir/sid/icd-10-cm|F10.27,http://hl7.org/fhir/sid/icd-10-cm|F10.280,http://hl7.org/fhir/sid/icd-10-cm|F10.281,http://hl7.org/fhir/sid/icd-10-cm|F10.282,http://hl7.org/fhir/sid/icd-10-cm|F10.288,http://hl7.org/fhir/sid/icd-10-cm|F10.29,http://hl7.org/fhir/sid/icd-10-cm|F10.920,http://hl7.org/fhir/sid/icd-10-cm|F10.921,http://hl7.org/fhir/sid/icd-10-cm|F10.929,http://hl7.org/fhir/sid/icd-10-cm|F10.94,http://hl7.org/fhir/sid/icd-10-cm|F10.950,http://hl7.org/fhir/sid/icd-10-cm|F10.951,http://hl7.org/fhir/sid/icd-10-cm|F10.959,http://hl7.org/fhir/sid/icd-10-cm|F10.96,http://hl7.org/fhir/sid/icd-10-cm|F10.97,http://hl7.org/fhir/sid/icd-10-cm|F10.980,http://hl7.org/fhir/sid/icd-10-cm|F10.982,http://hl7.org/fhir/sid/icd-10-cm|F10.988,http://hl7.org/fhir/sid/icd-10-cm|F10.99",
+      "additional_query_urls": [],
+      "raw_response": "FINAL ANSWER:\n\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|F10.10,http://hl7.org/fhir/sid/icd-10-cm|F10.11,http://hl7.org/fhir/sid/icd-10-cm|F10.120,http://hl7.org/fhir/sid/icd-10-cm|F10.121,http://hl7.org/fhir/sid/icd-10-cm|F10.129,http://hl7.org/fhir/sid/icd-10-cm|F10.14,http://hl7.org/fhir/sid/icd-10-cm|F10.150,http://hl7.org/fhir/sid/icd-10-cm|F10.151,http://hl7.org/fhir/sid/icd-10-cm|F10.159,http://hl7.org/fhir/sid/icd-10-cm|F10.180,http://hl7.org/fhir/sid/icd-10-cm|F10.181,http://hl7.org/fhir/sid/icd-10-cm|F10.182,http://hl7.org/fhir/sid/icd-10-cm|F10.188,http://hl7.org/fhir/sid/icd-10-cm|F10.19,http://hl7.org/fhir/sid/icd-10-cm|F10.20,http://hl7.org/fhir/sid/icd-10-cm|F10.21,http://hl7.org/fhir/sid/icd-10-cm|F10.220,http://hl7.org/fhir/sid/icd-10-cm|F10.221,http://hl7.org/fhir/sid/icd-10-cm|F10.229,http://hl7.org/fhir/sid/icd-10-cm|F10.230,http://hl7.org/fhir/sid/icd-10-cm|F10.231,http://hl7.org/fhir/sid/icd-10-cm|F10.232,http://hl7.org/fhir/sid/icd-10-cm|F10.239,http://hl7.org/fhir/sid/icd-10-cm|F10.24,http://hl7.org/fhir/sid/icd-10-cm|F10.250,http://hl7.org/fhir/sid/icd-10-cm|F10.251,http://hl7.org/fhir/sid/icd-10-cm|F10.259,http://hl7.org/fhir/sid/icd-10-cm|F10.26,http://hl7.org/fhir/sid/icd-10-cm|F10.27,http://hl7.org/fhir/sid/icd-10-cm|F10.280,http://hl7.org/fhir/sid/icd-10-cm|F10.281,http://hl7.org/fhir/sid/icd-10-cm|F10.282,http://hl7.org/fhir/sid/icd-10-cm|F10.288,http://hl7.org/fhir/sid/icd-10-cm|F10.29,http://hl7.org/fhir/sid/icd-10-cm|F10.920,http://hl7.org/fhir/sid/icd-10-cm|F10.921,http://hl7.org/fhir/sid/icd-10-cm|F10.929,http://hl7.org/fhir/sid/icd-10-cm|F10.94,http://hl7.org/fhir/sid/icd-10-cm|F10.950,http://hl7.org/fhir/sid/icd-10-cm|F10.951,http://hl7.org/fhir/sid/icd-10-cm|F10.959,http://hl7.org/fhir/sid/icd-10-cm|F10.96,http://hl7.org/fhir/sid/icd-10-cm|F10.97,http://hl7.org/fhir/sid/icd-10-cm|F10.980,http://hl7.org/fhir/sid/icd-10-cm|F10.982,http://hl7.org/fhir/sid/icd-10-cm|F10.988,http://hl7.org/fhir/sid/icd-10-cm|F10.99",
+      "prompt_text": "Find all AUD patients."
+     },
+     "2-broad": {
+      "precision": 0.3937,
+      "recall": 0.4538,
+      "f1": 0.4217,
+      "passed": false,
+      "expected_count": 8177,
+      "actual_count": 9425,
+      "elapsed_sec": 93.6,
+      "queries_generated": 3,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|F10.1,http://hl7.org/fhir/sid/icd-10-cm|F10.10,http://hl7.org/fhir/sid/icd-10-cm|F10.11,http://hl7.org/fhir/sid/icd-10-cm|F10.12,http://hl7.org/fhir/sid/icd-10-cm|F10.120,http://hl7.org/fhir/sid/icd-10-cm|F10.121,http://hl7.org/fhir/sid/icd-10-cm|F10.129,http://hl7.org/fhir/sid/icd-10-cm|F10.14,http://hl7.org/fhir/sid/icd-10-cm|F10.15,http://hl7.org/fhir/sid/icd-10-cm|F10.150,http://hl7.org/fhir/sid/icd-10-cm|F10.151,http://hl7.org/fhir/sid/icd-10-cm|F10.159,http://hl7.org/fhir/sid/icd-10-cm|F10.18,http://hl7.org/fhir/sid/icd-10-cm|F10.180,http://hl7.org/fhir/sid/icd-10-cm|F10.181,http://hl7.org/fhir/sid/icd-10-cm|F10.182,http://hl7.org/fhir/sid/icd-10-cm|F10.188,http://hl7.org/fhir/sid/icd-10-cm|F10.19,http://hl7.org/fhir/sid/icd-10-cm|F10.2,http://hl7.org/fhir/sid/icd-10-cm|F10.20,http://hl7.org/fhir/sid/icd-10-cm|F10.21,http://hl7.org/fhir/sid/icd-10-cm|F10.22,http://hl7.org/fhir/sid/icd-10-cm|F10.220,http://hl7.org/fhir/sid/icd-10-cm|F10.221,http://hl7.org/fhir/sid/icd-10-cm|F10.229,http://hl7.org/fhir/sid/icd-10-cm|F10.23,http://hl7.org/fhir/sid/icd-10-cm|F10.230,http://hl7.org/fhir/sid/icd-10-cm|F10.231,http://hl7.org/fhir/sid/icd-10-cm|F10.232,http://hl7.org/fhir/sid/icd-10-cm|F10.239,http://hl7.org/fhir/sid/icd-10-cm|F10.24,http://hl7.org/fhir/sid/icd-10-cm|F10.25,http://hl7.org/fhir/sid/icd-10-cm|F10.250,http://hl7.org/fhir/sid/icd-10-cm|F10.251,http://hl7.org/fhir/sid/icd-10-cm|F10.259,http://hl7.org/fhir/sid/icd-10-cm|F10.26,http://hl7.org/fhir/sid/icd-10-cm|F10.27,http://hl7.org/fhir/sid/icd-10-cm|F10.28,http://hl7.org/fhir/sid/icd-10-cm|F10.280,http://hl7.org/fhir/sid/icd-10-cm|F10.281,http://hl7.org/fhir/sid/icd-10-cm|F10.282,http://hl7.org/fhir/sid/icd-10-cm|F10.288,http://hl7.org/fhir/sid/icd-10-cm|F10.29",
+      "additional_query_urls": [
+       "Condition?code=http://hl7.org/fhir/sid/icd-9-cm|303.00,http://hl7.org/fhir/sid/icd-9-cm|303.01,http://hl7.org/fhir/sid/icd-9-cm|303.02,http://hl7.org/fhir/sid/icd-9-cm|303.03,http://hl7.org/fhir/sid/icd-9-cm|303.90,http://hl7.org/fhir/sid/icd-9-cm|303.91,http://hl7.org/fhir/sid/icd-9-cm|303.92,http://hl7.org/fhir/sid/icd-9-cm|303.93,http://hl7.org/fhir/sid/icd-9-cm|305.00,http://hl7.org/fhir/sid/icd-9-cm|305.01,http://hl7.org/fhir/sid/icd-9-cm|305.02,http://hl7.org/fhir/sid/icd-9-cm|305.03",
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|7243"
+      ],
+      "raw_response": "FINAL ANSWER:\n\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|F10.1,http://hl7.org/fhir/sid/icd-10-cm|F10.10,http://hl7.org/fhir/sid/icd-10-cm|F10.11,http://hl7.org/fhir/sid/icd-10-cm|F10.12,http://hl7.org/fhir/sid/icd-10-cm|F10.120,http://hl7.org/fhir/sid/icd-10-cm|F10.121,http://hl7.org/fhir/sid/icd-10-cm|F10.129,http://hl7.org/fhir/sid/icd-10-cm|F10.14,http://hl7.org/fhir/sid/icd-10-cm|F10.15,http://hl7.org/fhir/sid/icd-10-cm|F10.150,http://hl7.org/fhir/sid/icd-10-cm|F10.151,http://hl7.org/fhir/sid/icd-10-cm|F10.159,http://hl7.org/fhir/sid/icd-10-cm|F10.18,http://hl7.org/fhir/sid/icd-10-cm|F10.180,http://hl7.org/fhir/sid/icd-10-cm|F10.181,http://hl7.org/fhir/sid/icd-10-cm|F10.182,http://hl7.org/fhir/sid/icd-10-cm|F10.188,http://hl7.org/fhir/sid/icd-10-cm|F10.19,http://hl7.org/fhir/sid/icd-10-cm|F10.2,http://hl7.org/fhir/sid/icd-10-cm|F10.20,http://hl7.org/fhir/sid/icd-10-cm|F10.21,http://hl7.org/fhir/sid/icd-10-cm|F10.22,http://hl7.org/fhir/sid/icd-10-cm|F10.220,http://hl7.org/fhir/sid/icd-10-cm|F10.221,http://hl7.org/fhir/sid/icd-10-cm|F10.229,http://hl7.org/fhir/sid/icd-10-cm|F10.23,http://hl7.org/fhir/sid/icd-10-cm|F10.230,http://hl7.org/fhir/sid/icd-10-cm|F10.231,http://hl7.org/fhir/sid/icd-10-cm|F10.232,http://hl7.org/fhir/sid/icd-10-cm|F10.239,http://hl7.org/fhir/sid/icd-10-cm|F10.24,http://hl7.org/fhir/sid/icd-10-cm|F10.25,http://hl7.org/fhir/sid/icd-10-cm|F10.250,http://hl7.org/fhir/sid/icd-10-cm|F10.251,http://hl7.org/fhir/sid/icd-10-cm|F10.259,http://hl7.org/fhir/sid/icd-10-cm|F10.26,http://hl7.org/fhir/sid/icd-10-cm|F10.27,http://hl7.org/fhir/sid/icd-10-cm|F10.28,http://hl7.org/fhir/sid/icd-10-cm|F10.280,http://hl7.org/fhir/sid/icd-10-cm|F10.281,http://hl7.org/fhir/sid/icd-10-cm|F10.282,http://hl7.org/fhir/sid/icd-10-cm|F10.288,http://hl7.org/fhir/sid/icd-10-cm|F10.29\nCondition?code=http://hl7.org/fhir/sid/icd-9-cm|303.00,http://hl7.org/fhir/sid/icd-9-cm|303.01,http://hl7.org/fhir/sid/icd-9-cm|303.02,http://hl7.org/fhir/sid/icd-9-cm|303.03,http://hl7.org/fhir/sid/icd-9-cm|303.90,http://hl7.org/fhir/sid/icd-9-cm|303.91,http://hl7.org/fhir/sid/icd-9-cm|303.92,http://hl7.org/fhir/sid/icd-9-cm|303.93,http://hl7.org/fhir/sid/icd-9-cm|305.00,http://hl7.org/fhir/sid/icd-9-cm|305.01,http://hl7.org/fhir/sid/icd-9-cm|305.02,http://hl7.org/fhir/sid/icd-9-cm|305.03\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|7243",
+      "prompt_text": "Find all alcohol use disorder patients \u2014 by diagnosis (alcoholism or alcohol dependence) or by naltrexone prescriptions. Run multiple queries and union the patient sets."
+     },
+     "2-expert": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 8177,
+      "actual_count": 0,
+      "elapsed_sec": 23.9,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|66590003,http://snomed.info/sct|7200002",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|7243"
+      ],
+      "raw_response": "Condition?code=http://snomed.info/sct|66590003,http://snomed.info/sct|7200002\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|7243",
+      "prompt_text": "I need to identify patients with alcohol use disorder via a multi-resource union covering both documented diagnoses and pharmacologic treatment. Run two searches and union the results: first, search Condition resources for AUD diagnoses coded in SNOMED CT, covering both alcoholism and alcohol dependence as distinct concepts; second, search MedicationRequest resources for naltrexone in RxNorm. The medication path (Path C) captures patients on naltrexone who lack a formal AUD diagnosis \u2014 note that naltrexone is also indicated for opioid use disorder, so the medication-only cohort will include some non-AUD patients."
+     },
+     "3-naive": {
+      "precision": 0.4384,
+      "recall": 0.2574,
+      "f1": 0.3244,
+      "passed": false,
+      "expected_count": 8177,
+      "actual_count": 4802,
+      "elapsed_sec": 59.0,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|F10.1,http://hl7.org/fhir/sid/icd-10-cm|F10.10,http://hl7.org/fhir/sid/icd-10-cm|F10.12,http://hl7.org/fhir/sid/icd-10-cm|F10.120,http://hl7.org/fhir/sid/icd-10-cm|F10.121,http://hl7.org/fhir/sid/icd-10-cm|F10.129,http://hl7.org/fhir/sid/icd-10-cm|F10.14,http://hl7.org/fhir/sid/icd-10-cm|F10.15,http://hl7.org/fhir/sid/icd-10-cm|F10.150,http://hl7.org/fhir/sid/icd-10-cm|F10.151,http://hl7.org/fhir/sid/icd-10-cm|F10.159,http://hl7.org/fhir/sid/icd-10-cm|F10.18,http://hl7.org/fhir/sid/icd-10-cm|F10.180,http://hl7.org/fhir/sid/icd-10-cm|F10.181,http://hl7.org/fhir/sid/icd-10-cm|F10.182,http://hl7.org/fhir/sid/icd-10-cm|F10.188,http://hl7.org/fhir/sid/icd-10-cm|F10.19,http://hl7.org/fhir/sid/icd-10-cm|F10.2,http://hl7.org/fhir/sid/icd-10-cm|F10.20,http://hl7.org/fhir/sid/icd-10-cm|F10.21,http://hl7.org/fhir/sid/icd-10-cm|F10.22,http://hl7.org/fhir/sid/icd-10-cm|F10.220,http://hl7.org/fhir/sid/icd-10-cm|F10.221,http://hl7.org/fhir/sid/icd-10-cm|F10.229,http://hl7.org/fhir/sid/icd-10-cm|F10.23,http://hl7.org/fhir/sid/icd-10-cm|F10.230,http://hl7.org/fhir/sid/icd-10-cm|F10.231,http://hl7.org/fhir/sid/icd-10-cm|F10.232,http://hl7.org/fhir/sid/icd-10-cm|F10.239,http://hl7.org/fhir/sid/icd-10-cm|F10.24,http://hl7.org/fhir/sid/icd-10-cm|F10.25,http://hl7.org/fhir/sid/icd-10-cm|F10.250,http://hl7.org/fhir/sid/icd-10-cm|F10.251,http://hl7.org/fhir/sid/icd-10-cm|F10.259,http://hl7.org/fhir/sid/icd-10-cm|F10.26,http://hl7.org/fhir/sid/icd-10-cm|F10.27,http://hl7.org/fhir/sid/icd-10-cm|F10.28,http://hl7.org/fhir/sid/icd-10-cm|F10.280,http://hl7.org/fhir/sid/icd-10-cm|F10.281,http://hl7.org/fhir/sid/icd-10-cm|F10.282,http://hl7.org/fhir/sid/icd-10-cm|F10.288,http://hl7.org/fhir/sid/icd-10-cm|F10.29,http://hl7.org/fhir/sid/icd-10-cm|F10.9,http://hl7.org/fhir/sid/icd-10-cm|F10.92,http://hl7.org/fhir/sid/icd-10-cm|F10.920,http://hl7.org/fhir/sid/icd-10-cm|F10.921,http://hl7.org/fhir/sid/icd-10-cm|F10.929,http://hl7.org/fhir/sid/icd-10-cm|F10.94,http://hl7.org/fhir/sid/icd-10-cm|F10.95,http://hl7.org/fhir/sid/icd-10-cm|F10.950,http://hl7.org/fhir/sid/icd-10-cm|F10.951,http://hl7.org/fhir/sid/icd-10-cm|F10.959,http://hl7.org/fhir/sid/icd-10-cm|F10.96,http://hl7.org/fhir/sid/icd-10-cm|F10.97,http://hl7.org/fhir/sid/icd-10-cm|F10.98,http://hl7.org/fhir/sid/icd-10-cm|F10.980,http://hl7.org/fhir/sid/icd-10-cm|F10.982,http://hl7.org/fhir/sid/icd-10-cm|F10.988,http://hl7.org/fhir/sid/icd-10-cm|F10.99",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|F10.1,http://hl7.org/fhir/sid/icd-10-cm|F10.10,http://hl7.org/fhir/sid/icd-10-cm|F10.12,http://hl7.org/fhir/sid/icd-10-cm|F10.120,http://hl7.org/fhir/sid/icd-10-cm|F10.121,http://hl7.org/fhir/sid/icd-10-cm|F10.129,http://hl7.org/fhir/sid/icd-10-cm|F10.14,http://hl7.org/fhir/sid/icd-10-cm|F10.15,http://hl7.org/fhir/sid/icd-10-cm|F10.150,http://hl7.org/fhir/sid/icd-10-cm|F10.151,http://hl7.org/fhir/sid/icd-10-cm|F10.159,http://hl7.org/fhir/sid/icd-10-cm|F10.18,http://hl7.org/fhir/sid/icd-10-cm|F10.180,http://hl7.org/fhir/sid/icd-10-cm|F10.181,http://hl7.org/fhir/sid/icd-10-cm|F10.182,http://hl7.org/fhir/sid/icd-10-cm|F10.188,http://hl7.org/fhir/sid/icd-10-cm|F10.19,http://hl7.org/fhir/sid/icd-10-cm|F10.2,http://hl7.org/fhir/sid/icd-10-cm|F10.20,http://hl7.org/fhir/sid/icd-10-cm|F10.21,http://hl7.org/fhir/sid/icd-10-cm|F10.22,http://hl7.org/fhir/sid/icd-10-cm|F10.220,http://hl7.org/fhir/sid/icd-10-cm|F10.221,http://hl7.org/fhir/sid/icd-10-cm|F10.229,http://hl7.org/fhir/sid/icd-10-cm|F10.23,http://hl7.org/fhir/sid/icd-10-cm|F10.230,http://hl7.org/fhir/sid/icd-10-cm|F10.231,http://hl7.org/fhir/sid/icd-10-cm|F10.232,http://hl7.org/fhir/sid/icd-10-cm|F10.239,http://hl7.org/fhir/sid/icd-10-cm|F10.24,http://hl7.org/fhir/sid/icd-10-cm|F10.25,http://hl7.org/fhir/sid/icd-10-cm|F10.250,http://hl7.org/fhir/sid/icd-10-cm|F10.251,http://hl7.org/fhir/sid/icd-10-cm|F10.259,http://hl7.org/fhir/sid/icd-10-cm|F10.26,http://hl7.org/fhir/sid/icd-10-cm|F10.27,http://hl7.org/fhir/sid/icd-10-cm|F10.28,http://hl7.org/fhir/sid/icd-10-cm|F10.280,http://hl7.org/fhir/sid/icd-10-cm|F10.281,http://hl7.org/fhir/sid/icd-10-cm|F10.282,http://hl7.org/fhir/sid/icd-10-cm|F10.288,http://hl7.org/fhir/sid/icd-10-cm|F10.29,http://hl7.org/fhir/sid/icd-10-cm|F10.9,http://hl7.org/fhir/sid/icd-10-cm|F10.92,http://hl7.org/fhir/sid/icd-10-cm|F10.920,http://hl7.org/fhir/sid/icd-10-cm|F10.921,http://hl7.org/fhir/sid/icd-10-cm|F10.929,http://hl7.org/fhir/sid/icd-10-cm|F10.94,http://hl7.org/fhir/sid/icd-10-cm|F10.95,http://hl7.org/fhir/sid/icd-10-cm|F10.950,http://hl7.org/fhir/sid/icd-10-cm|F10.951,http://hl7.org/fhir/sid/icd-10-cm|F10.959,http://hl7.org/fhir/sid/icd-10-cm|F10.96,http://hl7.org/fhir/sid/icd-10-cm|F10.97,http://hl7.org/fhir/sid/icd-10-cm|F10.98,http://hl7.org/fhir/sid/icd-10-cm|F10.980,http://hl7.org/fhir/sid/icd-10-cm|F10.982,http://hl7.org/fhir/sid/icd-10-cm|F10.988,http://hl7.org/fhir/sid/icd-10-cm|F10.99",
+      "prompt_text": "Find all AUD patients."
+     },
+     "3-broad": {
+      "precision": 0.4336,
+      "recall": 0.2555,
+      "f1": 0.3215,
+      "passed": false,
+      "expected_count": 8177,
+      "actual_count": 4818,
+      "elapsed_sec": 80.1,
+      "queries_generated": 3,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|F10.1,http://hl7.org/fhir/sid/icd-10-cm|F10.10,http://hl7.org/fhir/sid/icd-10-cm|F10.11,http://hl7.org/fhir/sid/icd-10-cm|F10.12,http://hl7.org/fhir/sid/icd-10-cm|F10.120,http://hl7.org/fhir/sid/icd-10-cm|F10.121,http://hl7.org/fhir/sid/icd-10-cm|F10.129,http://hl7.org/fhir/sid/icd-10-cm|F10.14,http://hl7.org/fhir/sid/icd-10-cm|F10.15,http://hl7.org/fhir/sid/icd-10-cm|F10.150,http://hl7.org/fhir/sid/icd-10-cm|F10.151,http://hl7.org/fhir/sid/icd-10-cm|F10.159,http://hl7.org/fhir/sid/icd-10-cm|F10.18,http://hl7.org/fhir/sid/icd-10-cm|F10.180,http://hl7.org/fhir/sid/icd-10-cm|F10.181,http://hl7.org/fhir/sid/icd-10-cm|F10.182,http://hl7.org/fhir/sid/icd-10-cm|F10.188,http://hl7.org/fhir/sid/icd-10-cm|F10.19,http://hl7.org/fhir/sid/icd-10-cm|F10.2,http://hl7.org/fhir/sid/icd-10-cm|F10.20,http://hl7.org/fhir/sid/icd-10-cm|F10.21,http://hl7.org/fhir/sid/icd-10-cm|F10.22,http://hl7.org/fhir/sid/icd-10-cm|F10.220,http://hl7.org/fhir/sid/icd-10-cm|F10.221,http://hl7.org/fhir/sid/icd-10-cm|F10.229,http://hl7.org/fhir/sid/icd-10-cm|F10.23,http://hl7.org/fhir/sid/icd-10-cm|F10.230,http://hl7.org/fhir/sid/icd-10-cm|F10.231,http://hl7.org/fhir/sid/icd-10-cm|F10.232,http://hl7.org/fhir/sid/icd-10-cm|F10.239,http://hl7.org/fhir/sid/icd-10-cm|F10.24,http://hl7.org/fhir/sid/icd-10-cm|F10.25,http://hl7.org/fhir/sid/icd-10-cm|F10.250,http://hl7.org/fhir/sid/icd-10-cm|F10.251,http://hl7.org/fhir/sid/icd-10-cm|F10.259,http://hl7.org/fhir/sid/icd-10-cm|F10.26,http://hl7.org/fhir/sid/icd-10-cm|F10.27,http://hl7.org/fhir/sid/icd-10-cm|F10.28,http://hl7.org/fhir/sid/icd-10-cm|F10.280,http://hl7.org/fhir/sid/icd-10-cm|F10.281,http://hl7.org/fhir/sid/icd-10-cm|F10.282,http://hl7.org/fhir/sid/icd-10-cm|F10.288,http://hl7.org/fhir/sid/icd-10-cm|F10.29",
+      "additional_query_urls": [
+       "Condition?code=http://snomed.info/sct|7200002,http://snomed.info/sct|191811004,http://snomed.info/sct|191812006,http://snomed.info/sct|191813001,http://snomed.info/sct|15167005,http://snomed.info/sct|284591009,http://snomed.info/sct|268645007",
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1483744,http://www.nlm.nih.gov/research/umls/rxnorm|637213"
+      ],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|F10.1,http://hl7.org/fhir/sid/icd-10-cm|F10.10,http://hl7.org/fhir/sid/icd-10-cm|F10.11,http://hl7.org/fhir/sid/icd-10-cm|F10.12,http://hl7.org/fhir/sid/icd-10-cm|F10.120,http://hl7.org/fhir/sid/icd-10-cm|F10.121,http://hl7.org/fhir/sid/icd-10-cm|F10.129,http://hl7.org/fhir/sid/icd-10-cm|F10.14,http://hl7.org/fhir/sid/icd-10-cm|F10.15,http://hl7.org/fhir/sid/icd-10-cm|F10.150,http://hl7.org/fhir/sid/icd-10-cm|F10.151,http://hl7.org/fhir/sid/icd-10-cm|F10.159,http://hl7.org/fhir/sid/icd-10-cm|F10.18,http://hl7.org/fhir/sid/icd-10-cm|F10.180,http://hl7.org/fhir/sid/icd-10-cm|F10.181,http://hl7.org/fhir/sid/icd-10-cm|F10.182,http://hl7.org/fhir/sid/icd-10-cm|F10.188,http://hl7.org/fhir/sid/icd-10-cm|F10.19,http://hl7.org/fhir/sid/icd-10-cm|F10.2,http://hl7.org/fhir/sid/icd-10-cm|F10.20,http://hl7.org/fhir/sid/icd-10-cm|F10.21,http://hl7.org/fhir/sid/icd-10-cm|F10.22,http://hl7.org/fhir/sid/icd-10-cm|F10.220,http://hl7.org/fhir/sid/icd-10-cm|F10.221,http://hl7.org/fhir/sid/icd-10-cm|F10.229,http://hl7.org/fhir/sid/icd-10-cm|F10.23,http://hl7.org/fhir/sid/icd-10-cm|F10.230,http://hl7.org/fhir/sid/icd-10-cm|F10.231,http://hl7.org/fhir/sid/icd-10-cm|F10.232,http://hl7.org/fhir/sid/icd-10-cm|F10.239,http://hl7.org/fhir/sid/icd-10-cm|F10.24,http://hl7.org/fhir/sid/icd-10-cm|F10.25,http://hl7.org/fhir/sid/icd-10-cm|F10.250,http://hl7.org/fhir/sid/icd-10-cm|F10.251,http://hl7.org/fhir/sid/icd-10-cm|F10.259,http://hl7.org/fhir/sid/icd-10-cm|F10.26,http://hl7.org/fhir/sid/icd-10-cm|F10.27,http://hl7.org/fhir/sid/icd-10-cm|F10.28,http://hl7.org/fhir/sid/icd-10-cm|F10.280,http://hl7.org/fhir/sid/icd-10-cm|F10.281,http://hl7.org/fhir/sid/icd-10-cm|F10.282,http://hl7.org/fhir/sid/icd-10-cm|F10.288,http://hl7.org/fhir/sid/icd-10-cm|F10.29\nCondition?code=http://snomed.info/sct|7200002,http://snomed.info/sct|191811004,http://snomed.info/sct|191812006,http://snomed.info/sct|191813001,http://snomed.info/sct|15167005,http://snomed.info/sct|284591009,http://snomed.info/sct|268645007\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1483744,http://www.nlm.nih.gov/research/umls/rxnorm|637213",
+      "prompt_text": "Find all alcohol use disorder patients \u2014 by diagnosis (alcoholism or alcohol dependence) or by naltrexone prescriptions. Run multiple queries and union the patient sets."
+     },
+     "3-expert": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 8177,
+      "actual_count": 0,
+      "elapsed_sec": 39.7,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|7200002,http://snomed.info/sct|66590003",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|7243"
+      ],
+      "raw_response": "Condition?code=http://snomed.info/sct|7200002,http://snomed.info/sct|66590003\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|7243",
+      "prompt_text": "I need to identify patients with alcohol use disorder via a multi-resource union covering both documented diagnoses and pharmacologic treatment. Run two searches and union the results: first, search Condition resources for AUD diagnoses coded in SNOMED CT, covering both alcoholism and alcohol dependence as distinct concepts; second, search MedicationRequest resources for naltrexone in RxNorm. The medication path (Path C) captures patients on naltrexone who lack a formal AUD diagnosis \u2014 note that naltrexone is also indicated for opioid use disorder, so the medication-only cohort will include some non-AUD patients."
+     }
+    },
     "copilot:claude-sonnet-4.6": {
      "1-naive": {
       "precision": 1.0,
@@ -998,6 +1140,134 @@
       "prompt_text": "I need to find patients with a documented diagnosis of alcohol use disorder from their Condition resources. The phenotype spans two distinct SNOMED CT concepts \u2014 alcoholism and alcohol dependence \u2014 which are coded separately in SNOMED CT; a query that retrieves only one will miss the other. Search Condition resources for both SNOMED concepts in a single multi-valued code parameter."
      }
     },
+    "copilot:claude-opus-4.7+mimic": {
+     "1-naive": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 8177,
+      "actual_count": 0,
+      "elapsed_sec": 15.7,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|66590003",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|66590003",
+      "prompt_text": "Find patients with alcohol use disorder."
+     },
+     "1-broad": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 8177,
+      "actual_count": 0,
+      "elapsed_sec": 9.0,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|66590003,http://snomed.info/sct|7200002,http://snomed.info/sct|15167005",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|66590003,http://snomed.info/sct|7200002,http://snomed.info/sct|15167005",
+      "prompt_text": "Find patients diagnosed with alcohol use disorder \u2014 including alcoholism and alcohol dependence as the major SNOMED variants."
+     },
+     "1-expert": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 8177,
+      "actual_count": 0,
+      "elapsed_sec": 8.6,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|7200002,http://snomed.info/sct|66590003",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|7200002,http://snomed.info/sct|66590003",
+      "prompt_text": "I need to find patients with a documented diagnosis of alcohol use disorder from their Condition resources. The phenotype spans two distinct SNOMED CT concepts \u2014 alcoholism and alcohol dependence \u2014 which are coded separately in SNOMED CT; a query that retrieves only one will miss the other. Search Condition resources for both SNOMED concepts in a single multi-valued code parameter."
+     },
+     "2-naive": {
+      "precision": 0.4384,
+      "recall": 0.2574,
+      "f1": 0.3244,
+      "passed": false,
+      "expected_count": 8177,
+      "actual_count": 4802,
+      "elapsed_sec": 50.4,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|F10.1,http://hl7.org/fhir/sid/icd-10-cm|F10.10,http://hl7.org/fhir/sid/icd-10-cm|F10.12,http://hl7.org/fhir/sid/icd-10-cm|F10.120,http://hl7.org/fhir/sid/icd-10-cm|F10.121,http://hl7.org/fhir/sid/icd-10-cm|F10.129,http://hl7.org/fhir/sid/icd-10-cm|F10.14,http://hl7.org/fhir/sid/icd-10-cm|F10.15,http://hl7.org/fhir/sid/icd-10-cm|F10.150,http://hl7.org/fhir/sid/icd-10-cm|F10.151,http://hl7.org/fhir/sid/icd-10-cm|F10.159,http://hl7.org/fhir/sid/icd-10-cm|F10.18,http://hl7.org/fhir/sid/icd-10-cm|F10.180,http://hl7.org/fhir/sid/icd-10-cm|F10.181,http://hl7.org/fhir/sid/icd-10-cm|F10.182,http://hl7.org/fhir/sid/icd-10-cm|F10.188,http://hl7.org/fhir/sid/icd-10-cm|F10.19,http://hl7.org/fhir/sid/icd-10-cm|F10.2,http://hl7.org/fhir/sid/icd-10-cm|F10.20,http://hl7.org/fhir/sid/icd-10-cm|F10.21,http://hl7.org/fhir/sid/icd-10-cm|F10.22,http://hl7.org/fhir/sid/icd-10-cm|F10.220,http://hl7.org/fhir/sid/icd-10-cm|F10.221,http://hl7.org/fhir/sid/icd-10-cm|F10.229,http://hl7.org/fhir/sid/icd-10-cm|F10.23,http://hl7.org/fhir/sid/icd-10-cm|F10.230,http://hl7.org/fhir/sid/icd-10-cm|F10.231,http://hl7.org/fhir/sid/icd-10-cm|F10.232,http://hl7.org/fhir/sid/icd-10-cm|F10.239,http://hl7.org/fhir/sid/icd-10-cm|F10.24,http://hl7.org/fhir/sid/icd-10-cm|F10.25,http://hl7.org/fhir/sid/icd-10-cm|F10.250,http://hl7.org/fhir/sid/icd-10-cm|F10.251,http://hl7.org/fhir/sid/icd-10-cm|F10.259,http://hl7.org/fhir/sid/icd-10-cm|F10.26,http://hl7.org/fhir/sid/icd-10-cm|F10.27,http://hl7.org/fhir/sid/icd-10-cm|F10.28,http://hl7.org/fhir/sid/icd-10-cm|F10.280,http://hl7.org/fhir/sid/icd-10-cm|F10.281,http://hl7.org/fhir/sid/icd-10-cm|F10.282,http://hl7.org/fhir/sid/icd-10-cm|F10.288,http://hl7.org/fhir/sid/icd-10-cm|F10.29,http://hl7.org/fhir/sid/icd-10-cm|F10.9,http://hl7.org/fhir/sid/icd-10-cm|F10.92,http://hl7.org/fhir/sid/icd-10-cm|F10.920,http://hl7.org/fhir/sid/icd-10-cm|F10.921,http://hl7.org/fhir/sid/icd-10-cm|F10.929,http://hl7.org/fhir/sid/icd-10-cm|F10.94,http://hl7.org/fhir/sid/icd-10-cm|F10.95,http://hl7.org/fhir/sid/icd-10-cm|F10.950,http://hl7.org/fhir/sid/icd-10-cm|F10.951,http://hl7.org/fhir/sid/icd-10-cm|F10.959,http://hl7.org/fhir/sid/icd-10-cm|F10.96,http://hl7.org/fhir/sid/icd-10-cm|F10.97,http://hl7.org/fhir/sid/icd-10-cm|F10.98,http://hl7.org/fhir/sid/icd-10-cm|F10.980,http://hl7.org/fhir/sid/icd-10-cm|F10.982,http://hl7.org/fhir/sid/icd-10-cm|F10.988,http://hl7.org/fhir/sid/icd-10-cm|F10.99",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|F10.1,http://hl7.org/fhir/sid/icd-10-cm|F10.10,http://hl7.org/fhir/sid/icd-10-cm|F10.12,http://hl7.org/fhir/sid/icd-10-cm|F10.120,http://hl7.org/fhir/sid/icd-10-cm|F10.121,http://hl7.org/fhir/sid/icd-10-cm|F10.129,http://hl7.org/fhir/sid/icd-10-cm|F10.14,http://hl7.org/fhir/sid/icd-10-cm|F10.15,http://hl7.org/fhir/sid/icd-10-cm|F10.150,http://hl7.org/fhir/sid/icd-10-cm|F10.151,http://hl7.org/fhir/sid/icd-10-cm|F10.159,http://hl7.org/fhir/sid/icd-10-cm|F10.18,http://hl7.org/fhir/sid/icd-10-cm|F10.180,http://hl7.org/fhir/sid/icd-10-cm|F10.181,http://hl7.org/fhir/sid/icd-10-cm|F10.182,http://hl7.org/fhir/sid/icd-10-cm|F10.188,http://hl7.org/fhir/sid/icd-10-cm|F10.19,http://hl7.org/fhir/sid/icd-10-cm|F10.2,http://hl7.org/fhir/sid/icd-10-cm|F10.20,http://hl7.org/fhir/sid/icd-10-cm|F10.21,http://hl7.org/fhir/sid/icd-10-cm|F10.22,http://hl7.org/fhir/sid/icd-10-cm|F10.220,http://hl7.org/fhir/sid/icd-10-cm|F10.221,http://hl7.org/fhir/sid/icd-10-cm|F10.229,http://hl7.org/fhir/sid/icd-10-cm|F10.23,http://hl7.org/fhir/sid/icd-10-cm|F10.230,http://hl7.org/fhir/sid/icd-10-cm|F10.231,http://hl7.org/fhir/sid/icd-10-cm|F10.232,http://hl7.org/fhir/sid/icd-10-cm|F10.239,http://hl7.org/fhir/sid/icd-10-cm|F10.24,http://hl7.org/fhir/sid/icd-10-cm|F10.25,http://hl7.org/fhir/sid/icd-10-cm|F10.250,http://hl7.org/fhir/sid/icd-10-cm|F10.251,http://hl7.org/fhir/sid/icd-10-cm|F10.259,http://hl7.org/fhir/sid/icd-10-cm|F10.26,http://hl7.org/fhir/sid/icd-10-cm|F10.27,http://hl7.org/fhir/sid/icd-10-cm|F10.28,http://hl7.org/fhir/sid/icd-10-cm|F10.280,http://hl7.org/fhir/sid/icd-10-cm|F10.281,http://hl7.org/fhir/sid/icd-10-cm|F10.282,http://hl7.org/fhir/sid/icd-10-cm|F10.288,http://hl7.org/fhir/sid/icd-10-cm|F10.29,http://hl7.org/fhir/sid/icd-10-cm|F10.9,http://hl7.org/fhir/sid/icd-10-cm|F10.92,http://hl7.org/fhir/sid/icd-10-cm|F10.920,http://hl7.org/fhir/sid/icd-10-cm|F10.921,http://hl7.org/fhir/sid/icd-10-cm|F10.929,http://hl7.org/fhir/sid/icd-10-cm|F10.94,http://hl7.org/fhir/sid/icd-10-cm|F10.95,http://hl7.org/fhir/sid/icd-10-cm|F10.950,http://hl7.org/fhir/sid/icd-10-cm|F10.951,http://hl7.org/fhir/sid/icd-10-cm|F10.959,http://hl7.org/fhir/sid/icd-10-cm|F10.96,http://hl7.org/fhir/sid/icd-10-cm|F10.97,http://hl7.org/fhir/sid/icd-10-cm|F10.98,http://hl7.org/fhir/sid/icd-10-cm|F10.980,http://hl7.org/fhir/sid/icd-10-cm|F10.982,http://hl7.org/fhir/sid/icd-10-cm|F10.988,http://hl7.org/fhir/sid/icd-10-cm|F10.99",
+      "prompt_text": "Find patients with alcohol use disorder."
+     },
+     "2-broad": {
+      "precision": 0.4441,
+      "recall": 0.2616,
+      "f1": 0.3292,
+      "passed": false,
+      "expected_count": 8177,
+      "actual_count": 4817,
+      "elapsed_sec": 51.0,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|F10.1,http://hl7.org/fhir/sid/icd-10-cm|F10.10,http://hl7.org/fhir/sid/icd-10-cm|F10.12,http://hl7.org/fhir/sid/icd-10-cm|F10.120,http://hl7.org/fhir/sid/icd-10-cm|F10.121,http://hl7.org/fhir/sid/icd-10-cm|F10.129,http://hl7.org/fhir/sid/icd-10-cm|F10.14,http://hl7.org/fhir/sid/icd-10-cm|F10.15,http://hl7.org/fhir/sid/icd-10-cm|F10.150,http://hl7.org/fhir/sid/icd-10-cm|F10.151,http://hl7.org/fhir/sid/icd-10-cm|F10.159,http://hl7.org/fhir/sid/icd-10-cm|F10.18,http://hl7.org/fhir/sid/icd-10-cm|F10.180,http://hl7.org/fhir/sid/icd-10-cm|F10.181,http://hl7.org/fhir/sid/icd-10-cm|F10.182,http://hl7.org/fhir/sid/icd-10-cm|F10.188,http://hl7.org/fhir/sid/icd-10-cm|F10.19,http://hl7.org/fhir/sid/icd-10-cm|F10.2,http://hl7.org/fhir/sid/icd-10-cm|F10.20,http://hl7.org/fhir/sid/icd-10-cm|F10.21,http://hl7.org/fhir/sid/icd-10-cm|F10.22,http://hl7.org/fhir/sid/icd-10-cm|F10.220,http://hl7.org/fhir/sid/icd-10-cm|F10.221,http://hl7.org/fhir/sid/icd-10-cm|F10.229,http://hl7.org/fhir/sid/icd-10-cm|F10.23,http://hl7.org/fhir/sid/icd-10-cm|F10.230,http://hl7.org/fhir/sid/icd-10-cm|F10.231,http://hl7.org/fhir/sid/icd-10-cm|F10.232,http://hl7.org/fhir/sid/icd-10-cm|F10.239,http://hl7.org/fhir/sid/icd-10-cm|F10.24,http://hl7.org/fhir/sid/icd-10-cm|F10.25,http://hl7.org/fhir/sid/icd-10-cm|F10.250,http://hl7.org/fhir/sid/icd-10-cm|F10.251,http://hl7.org/fhir/sid/icd-10-cm|F10.259,http://hl7.org/fhir/sid/icd-10-cm|F10.26,http://hl7.org/fhir/sid/icd-10-cm|F10.27,http://hl7.org/fhir/sid/icd-10-cm|F10.28,http://hl7.org/fhir/sid/icd-10-cm|F10.280,http://hl7.org/fhir/sid/icd-10-cm|F10.281,http://hl7.org/fhir/sid/icd-10-cm|F10.282,http://hl7.org/fhir/sid/icd-10-cm|F10.288,http://hl7.org/fhir/sid/icd-10-cm|F10.29",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|F10.1,http://hl7.org/fhir/sid/icd-10-cm|F10.10,http://hl7.org/fhir/sid/icd-10-cm|F10.12,http://hl7.org/fhir/sid/icd-10-cm|F10.120,http://hl7.org/fhir/sid/icd-10-cm|F10.121,http://hl7.org/fhir/sid/icd-10-cm|F10.129,http://hl7.org/fhir/sid/icd-10-cm|F10.14,http://hl7.org/fhir/sid/icd-10-cm|F10.15,http://hl7.org/fhir/sid/icd-10-cm|F10.150,http://hl7.org/fhir/sid/icd-10-cm|F10.151,http://hl7.org/fhir/sid/icd-10-cm|F10.159,http://hl7.org/fhir/sid/icd-10-cm|F10.18,http://hl7.org/fhir/sid/icd-10-cm|F10.180,http://hl7.org/fhir/sid/icd-10-cm|F10.181,http://hl7.org/fhir/sid/icd-10-cm|F10.182,http://hl7.org/fhir/sid/icd-10-cm|F10.188,http://hl7.org/fhir/sid/icd-10-cm|F10.19,http://hl7.org/fhir/sid/icd-10-cm|F10.2,http://hl7.org/fhir/sid/icd-10-cm|F10.20,http://hl7.org/fhir/sid/icd-10-cm|F10.21,http://hl7.org/fhir/sid/icd-10-cm|F10.22,http://hl7.org/fhir/sid/icd-10-cm|F10.220,http://hl7.org/fhir/sid/icd-10-cm|F10.221,http://hl7.org/fhir/sid/icd-10-cm|F10.229,http://hl7.org/fhir/sid/icd-10-cm|F10.23,http://hl7.org/fhir/sid/icd-10-cm|F10.230,http://hl7.org/fhir/sid/icd-10-cm|F10.231,http://hl7.org/fhir/sid/icd-10-cm|F10.232,http://hl7.org/fhir/sid/icd-10-cm|F10.239,http://hl7.org/fhir/sid/icd-10-cm|F10.24,http://hl7.org/fhir/sid/icd-10-cm|F10.25,http://hl7.org/fhir/sid/icd-10-cm|F10.250,http://hl7.org/fhir/sid/icd-10-cm|F10.251,http://hl7.org/fhir/sid/icd-10-cm|F10.259,http://hl7.org/fhir/sid/icd-10-cm|F10.26,http://hl7.org/fhir/sid/icd-10-cm|F10.27,http://hl7.org/fhir/sid/icd-10-cm|F10.28,http://hl7.org/fhir/sid/icd-10-cm|F10.280,http://hl7.org/fhir/sid/icd-10-cm|F10.281,http://hl7.org/fhir/sid/icd-10-cm|F10.282,http://hl7.org/fhir/sid/icd-10-cm|F10.288,http://hl7.org/fhir/sid/icd-10-cm|F10.29",
+      "prompt_text": "Find patients diagnosed with alcohol use disorder \u2014 including alcoholism and alcohol dependence as the major SNOMED variants."
+     },
+     "2-expert": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 8177,
+      "actual_count": 0,
+      "elapsed_sec": 17.6,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|66590003,http://snomed.info/sct|7200002",
+      "additional_query_urls": [],
+      "raw_response": "FINAL ANSWER:\n\nCondition?code=http://snomed.info/sct|66590003,http://snomed.info/sct|7200002",
+      "prompt_text": "I need to find patients with a documented diagnosis of alcohol use disorder from their Condition resources. The phenotype spans two distinct SNOMED CT concepts \u2014 alcoholism and alcohol dependence \u2014 which are coded separately in SNOMED CT; a query that retrieves only one will miss the other. Search Condition resources for both SNOMED concepts in a single multi-valued code parameter."
+     },
+     "3-naive": {
+      "precision": 0.4303,
+      "recall": 0.2547,
+      "f1": 0.32,
+      "passed": false,
+      "expected_count": 8177,
+      "actual_count": 4841,
+      "elapsed_sec": 53.7,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|F10.10,http://hl7.org/fhir/sid/icd-10-cm|F10.11,http://hl7.org/fhir/sid/icd-10-cm|F10.12,http://hl7.org/fhir/sid/icd-10-cm|F10.120,http://hl7.org/fhir/sid/icd-10-cm|F10.121,http://hl7.org/fhir/sid/icd-10-cm|F10.129,http://hl7.org/fhir/sid/icd-10-cm|F10.14,http://hl7.org/fhir/sid/icd-10-cm|F10.150,http://hl7.org/fhir/sid/icd-10-cm|F10.151,http://hl7.org/fhir/sid/icd-10-cm|F10.159,http://hl7.org/fhir/sid/icd-10-cm|F10.180,http://hl7.org/fhir/sid/icd-10-cm|F10.181,http://hl7.org/fhir/sid/icd-10-cm|F10.182,http://hl7.org/fhir/sid/icd-10-cm|F10.188,http://hl7.org/fhir/sid/icd-10-cm|F10.19,http://hl7.org/fhir/sid/icd-10-cm|F10.20,http://hl7.org/fhir/sid/icd-10-cm|F10.21,http://hl7.org/fhir/sid/icd-10-cm|F10.220,http://hl7.org/fhir/sid/icd-10-cm|F10.221,http://hl7.org/fhir/sid/icd-10-cm|F10.229,http://hl7.org/fhir/sid/icd-10-cm|F10.230,http://hl7.org/fhir/sid/icd-10-cm|F10.231,http://hl7.org/fhir/sid/icd-10-cm|F10.232,http://hl7.org/fhir/sid/icd-10-cm|F10.239,http://hl7.org/fhir/sid/icd-10-cm|F10.24,http://hl7.org/fhir/sid/icd-10-cm|F10.250,http://hl7.org/fhir/sid/icd-10-cm|F10.251,http://hl7.org/fhir/sid/icd-10-cm|F10.259,http://hl7.org/fhir/sid/icd-10-cm|F10.26,http://hl7.org/fhir/sid/icd-10-cm|F10.27,http://hl7.org/fhir/sid/icd-10-cm|F10.280,http://hl7.org/fhir/sid/icd-10-cm|F10.281,http://hl7.org/fhir/sid/icd-10-cm|F10.282,http://hl7.org/fhir/sid/icd-10-cm|F10.288,http://hl7.org/fhir/sid/icd-10-cm|F10.29,http://hl7.org/fhir/sid/icd-10-cm|F10.920,http://hl7.org/fhir/sid/icd-10-cm|F10.921,http://hl7.org/fhir/sid/icd-10-cm|F10.929,http://hl7.org/fhir/sid/icd-10-cm|F10.94,http://hl7.org/fhir/sid/icd-10-cm|F10.950,http://hl7.org/fhir/sid/icd-10-cm|F10.951,http://hl7.org/fhir/sid/icd-10-cm|F10.959,http://hl7.org/fhir/sid/icd-10-cm|F10.96,http://hl7.org/fhir/sid/icd-10-cm|F10.97,http://hl7.org/fhir/sid/icd-10-cm|F10.980,http://hl7.org/fhir/sid/icd-10-cm|F10.982,http://hl7.org/fhir/sid/icd-10-cm|F10.988,http://hl7.org/fhir/sid/icd-10-cm|F10.99",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|F10.10,http://hl7.org/fhir/sid/icd-10-cm|F10.11,http://hl7.org/fhir/sid/icd-10-cm|F10.12,http://hl7.org/fhir/sid/icd-10-cm|F10.120,http://hl7.org/fhir/sid/icd-10-cm|F10.121,http://hl7.org/fhir/sid/icd-10-cm|F10.129,http://hl7.org/fhir/sid/icd-10-cm|F10.14,http://hl7.org/fhir/sid/icd-10-cm|F10.150,http://hl7.org/fhir/sid/icd-10-cm|F10.151,http://hl7.org/fhir/sid/icd-10-cm|F10.159,http://hl7.org/fhir/sid/icd-10-cm|F10.180,http://hl7.org/fhir/sid/icd-10-cm|F10.181,http://hl7.org/fhir/sid/icd-10-cm|F10.182,http://hl7.org/fhir/sid/icd-10-cm|F10.188,http://hl7.org/fhir/sid/icd-10-cm|F10.19,http://hl7.org/fhir/sid/icd-10-cm|F10.20,http://hl7.org/fhir/sid/icd-10-cm|F10.21,http://hl7.org/fhir/sid/icd-10-cm|F10.220,http://hl7.org/fhir/sid/icd-10-cm|F10.221,http://hl7.org/fhir/sid/icd-10-cm|F10.229,http://hl7.org/fhir/sid/icd-10-cm|F10.230,http://hl7.org/fhir/sid/icd-10-cm|F10.231,http://hl7.org/fhir/sid/icd-10-cm|F10.232,http://hl7.org/fhir/sid/icd-10-cm|F10.239,http://hl7.org/fhir/sid/icd-10-cm|F10.24,http://hl7.org/fhir/sid/icd-10-cm|F10.250,http://hl7.org/fhir/sid/icd-10-cm|F10.251,http://hl7.org/fhir/sid/icd-10-cm|F10.259,http://hl7.org/fhir/sid/icd-10-cm|F10.26,http://hl7.org/fhir/sid/icd-10-cm|F10.27,http://hl7.org/fhir/sid/icd-10-cm|F10.280,http://hl7.org/fhir/sid/icd-10-cm|F10.281,http://hl7.org/fhir/sid/icd-10-cm|F10.282,http://hl7.org/fhir/sid/icd-10-cm|F10.288,http://hl7.org/fhir/sid/icd-10-cm|F10.29,http://hl7.org/fhir/sid/icd-10-cm|F10.920,http://hl7.org/fhir/sid/icd-10-cm|F10.921,http://hl7.org/fhir/sid/icd-10-cm|F10.929,http://hl7.org/fhir/sid/icd-10-cm|F10.94,http://hl7.org/fhir/sid/icd-10-cm|F10.950,http://hl7.org/fhir/sid/icd-10-cm|F10.951,http://hl7.org/fhir/sid/icd-10-cm|F10.959,http://hl7.org/fhir/sid/icd-10-cm|F10.96,http://hl7.org/fhir/sid/icd-10-cm|F10.97,http://hl7.org/fhir/sid/icd-10-cm|F10.980,http://hl7.org/fhir/sid/icd-10-cm|F10.982,http://hl7.org/fhir/sid/icd-10-cm|F10.988,http://hl7.org/fhir/sid/icd-10-cm|F10.99",
+      "prompt_text": "Find patients with alcohol use disorder."
+     },
+     "3-broad": {
+      "precision": 0.5599,
+      "recall": 0.2982,
+      "f1": 0.3891,
+      "passed": false,
+      "expected_count": 8177,
+      "actual_count": 4354,
+      "elapsed_sec": 33.8,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|F10.10,http://hl7.org/fhir/sid/icd-10-cm|F10.11,http://hl7.org/fhir/sid/icd-10-cm|F10.20,http://hl7.org/fhir/sid/icd-10-cm|F10.21,http://hl7.org/fhir/sid/icd-10-cm|F10.90,http://hl7.org/fhir/sid/icd-10-cm|F10.91",
+      "additional_query_urls": [],
+      "raw_response": "FINAL ANSWER:\n\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|F10.10,http://hl7.org/fhir/sid/icd-10-cm|F10.11,http://hl7.org/fhir/sid/icd-10-cm|F10.20,http://hl7.org/fhir/sid/icd-10-cm|F10.21,http://hl7.org/fhir/sid/icd-10-cm|F10.90,http://hl7.org/fhir/sid/icd-10-cm|F10.91",
+      "prompt_text": "Find patients diagnosed with alcohol use disorder \u2014 including alcoholism and alcohol dependence as the major SNOMED variants."
+     },
+     "3-expert": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 8177,
+      "actual_count": 0,
+      "elapsed_sec": 19.2,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|66590003,http://snomed.info/sct|7200002",
+      "additional_query_urls": [],
+      "raw_response": "FINAL ANSWER:\n\nCondition?code=http://snomed.info/sct|66590003,http://snomed.info/sct|7200002",
+      "prompt_text": "I need to find patients with a documented diagnosis of alcohol use disorder from their Condition resources. The phenotype spans two distinct SNOMED CT concepts \u2014 alcoholism and alcohol dependence \u2014 which are coded separately in SNOMED CT; a query that retrieves only one will miss the other. Search Condition resources for both SNOMED concepts in a single multi-valued code parameter."
+     }
+    },
     "copilot:claude-sonnet-4.6": {
      "1-naive": {
       "precision": 1.0,
@@ -1719,6 +1989,134 @@
       "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|7243",
       "additional_query_urls": [],
       "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|7243",
+      "prompt_text": "I need to find patients who have been prescribed naltrexone, the primary oral pharmacotherapy for alcohol use disorder. Search MedicationRequest resources for naltrexone using its RxNorm concept. Keep in mind that naltrexone is also approved for opioid use disorder, so this medication-only cohort will include patients treated for opioid dependence in addition to those with AUD \u2014 it is a useful but imprecise proxy for the alcohol use disorder population."
+     }
+    },
+    "copilot:claude-opus-4.7+mimic": {
+     "1-naive": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 298,
+      "actual_count": 0,
+      "elapsed_sec": 12.7,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|7517,http://www.nlm.nih.gov/research/umls/rxnorm|36676,http://www.nlm.nih.gov/research/umls/rxnorm|352393&status=active",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|7517,http://www.nlm.nih.gov/research/umls/rxnorm|36676,http://www.nlm.nih.gov/research/umls/rxnorm|352393&status=active",
+      "prompt_text": "Find patients on AUD medications."
+     },
+     "1-broad": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 298,
+      "actual_count": 0,
+      "elapsed_sec": 7.9,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|7243",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|7243",
+      "prompt_text": "Find patients prescribed naltrexone \u2014 an opioid antagonist used for both alcohol use disorder and opioid use disorder maintenance."
+     },
+     "1-expert": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 298,
+      "actual_count": 0,
+      "elapsed_sec": 7.7,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|7243",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|7243",
+      "prompt_text": "I need to find patients who have been prescribed naltrexone, the primary oral pharmacotherapy for alcohol use disorder. Search MedicationRequest resources for naltrexone using its RxNorm concept. Keep in mind that naltrexone is also approved for opioid use disorder, so this medication-only cohort will include patients treated for opioid dependence in addition to those with AUD \u2014 it is a useful but imprecise proxy for the alcohol use disorder population."
+     },
+     "2-naive": {
+      "precision": 0.8817,
+      "recall": 1.0,
+      "f1": 0.9371,
+      "passed": true,
+      "expected_count": 298,
+      "actual_count": 338,
+      "elapsed_sec": 67.8,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|7243,http://www.nlm.nih.gov/research/umls/rxnorm|36130,http://www.nlm.nih.gov/research/umls/rxnorm|3554,http://www.nlm.nih.gov/research/umls/rxnorm|210628,http://www.nlm.nih.gov/research/umls/rxnorm|637216,http://www.nlm.nih.gov/research/umls/rxnorm|1483744",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|7243,http://www.nlm.nih.gov/research/umls/rxnorm|36130,http://www.nlm.nih.gov/research/umls/rxnorm|3554,http://www.nlm.nih.gov/research/umls/rxnorm|210628,http://www.nlm.nih.gov/research/umls/rxnorm|637216,http://www.nlm.nih.gov/research/umls/rxnorm|1483744",
+      "prompt_text": "Find patients on AUD medications."
+     },
+     "2-broad": {
+      "precision": 1.0,
+      "recall": 0.9866,
+      "f1": 0.9932,
+      "passed": true,
+      "expected_count": 298,
+      "actual_count": 294,
+      "elapsed_sec": 31.3,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|637213,http://www.nlm.nih.gov/research/umls/rxnorm|1483744",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|637213,http://www.nlm.nih.gov/research/umls/rxnorm|1483744",
+      "prompt_text": "Find patients prescribed naltrexone \u2014 an opioid antagonist used for both alcohol use disorder and opioid use disorder maintenance."
+     },
+     "2-expert": {
+      "precision": 0.0015,
+      "recall": 0.0268,
+      "f1": 0.0029,
+      "passed": false,
+      "expected_count": 298,
+      "actual_count": 5297,
+      "elapsed_sec": 55.2,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|7242",
+      "additional_query_urls": [],
+      "raw_response": "FINAL ANSWER:\n\nMedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|7242",
+      "prompt_text": "I need to find patients who have been prescribed naltrexone, the primary oral pharmacotherapy for alcohol use disorder. Search MedicationRequest resources for naltrexone using its RxNorm concept. Keep in mind that naltrexone is also approved for opioid use disorder, so this medication-only cohort will include patients treated for opioid dependence in addition to those with AUD \u2014 it is a useful but imprecise proxy for the alcohol use disorder population."
+     },
+     "3-naive": {
+      "precision": 0.3394,
+      "recall": 1.0,
+      "f1": 0.5068,
+      "passed": false,
+      "expected_count": 298,
+      "actual_count": 878,
+      "elapsed_sec": 59.5,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|7243,http://www.nlm.nih.gov/research/umls/rxnorm|36130,http://www.nlm.nih.gov/research/umls/rxnorm|3638",
+      "additional_query_urls": [],
+      "raw_response": "FINAL ANSWER:\n\nMedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|7243,http://www.nlm.nih.gov/research/umls/rxnorm|36130,http://www.nlm.nih.gov/research/umls/rxnorm|3638",
+      "prompt_text": "Find patients on AUD medications."
+     },
+     "3-broad": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 298,
+      "actual_count": 298,
+      "elapsed_sec": 39.4,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|7243,http://www.nlm.nih.gov/research/umls/rxnorm|637213,http://www.nlm.nih.gov/research/umls/rxnorm|637216,http://www.nlm.nih.gov/research/umls/rxnorm|1483744",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|7243,http://www.nlm.nih.gov/research/umls/rxnorm|637213,http://www.nlm.nih.gov/research/umls/rxnorm|637216,http://www.nlm.nih.gov/research/umls/rxnorm|1483744",
+      "prompt_text": "Find patients prescribed naltrexone \u2014 an opioid antagonist used for both alcohol use disorder and opioid use disorder maintenance."
+     },
+     "3-expert": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 298,
+      "actual_count": 298,
+      "elapsed_sec": 26.5,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|7243,http://www.nlm.nih.gov/research/umls/rxnorm|637216,http://www.nlm.nih.gov/research/umls/rxnorm|1483744",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|7243,http://www.nlm.nih.gov/research/umls/rxnorm|637216,http://www.nlm.nih.gov/research/umls/rxnorm|1483744",
       "prompt_text": "I need to find patients who have been prescribed naltrexone, the primary oral pharmacotherapy for alcohol use disorder. Search MedicationRequest resources for naltrexone using its RxNorm concept. Keep in mind that naltrexone is also approved for opioid use disorder, so this medication-only cohort will include patients treated for opioid dependence in addition to those with AUD \u2014 it is a useful but imprecise proxy for the alcohol use disorder population."
      }
     },

@@ -237,6 +237,151 @@
       "prompt_text": "I need to identify all stroke patients using a union across Condition and MedicationRequest resources. Search Condition resources for stroke and cerebrovascular accident diagnoses coded in SNOMED CT \u2014 include both the specific cerebral infarction concept and the broader cerebrovascular accident term. Also search MedicationRequest resources for alteplase (the acute thrombolytic agent, RxNorm coded) and the antiplatelet agents aspirin and clopidogrel used for secondary prevention (both RxNorm coded). Union the patient sets; alteplase is highly stroke-specific, but antiplatelets are heavily cross-indicated across coronary artery disease, peripheral arterial disease, and carotid artery disease, so the medication-only subset will include many non-stroke patients."
      }
     },
+    "copilot:claude-opus-4.7+mimic": {
+     "1-naive": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 3116,
+      "actual_count": 0,
+      "elapsed_sec": 7.4,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|230690007",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|230690007",
+      "prompt_text": "Find all my stroke patients."
+     },
+     "1-broad": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 3116,
+      "actual_count": 0,
+      "elapsed_sec": 10.2,
+      "queries_generated": 3,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|230690007",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|8410",
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1191,http://www.nlm.nih.gov/research/umls/rxnorm|32968,http://www.nlm.nih.gov/research/umls/rxnorm|10594,http://www.nlm.nih.gov/research/umls/rxnorm|108972"
+      ],
+      "raw_response": "Condition?code=http://snomed.info/sct|230690007\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|8410\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1191,http://www.nlm.nih.gov/research/umls/rxnorm|32968,http://www.nlm.nih.gov/research/umls/rxnorm|10594,http://www.nlm.nih.gov/research/umls/rxnorm|108972",
+      "prompt_text": "Find all stroke patients \u2014 by diagnosis, by alteplase (acute thrombolysis), or by antiplatelet medications. Run multiple queries and union the patient sets."
+     },
+     "1-expert": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 3116,
+      "actual_count": 0,
+      "elapsed_sec": 9.3,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|422504002,http://snomed.info/sct|230690007",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|8410,http://www.nlm.nih.gov/research/umls/rxnorm|1191,http://www.nlm.nih.gov/research/umls/rxnorm|32968"
+      ],
+      "raw_response": "Condition?code=http://snomed.info/sct|422504002,http://snomed.info/sct|230690007\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|8410,http://www.nlm.nih.gov/research/umls/rxnorm|1191,http://www.nlm.nih.gov/research/umls/rxnorm|32968",
+      "prompt_text": "I need to identify all stroke patients using a union across Condition and MedicationRequest resources. Search Condition resources for stroke and cerebrovascular accident diagnoses coded in SNOMED CT \u2014 include both the specific cerebral infarction concept and the broader cerebrovascular accident term. Also search MedicationRequest resources for alteplase (the acute thrombolytic agent, RxNorm coded) and the antiplatelet agents aspirin and clopidogrel used for secondary prevention (both RxNorm coded). Union the patient sets; alteplase is highly stroke-specific, but antiplatelets are heavily cross-indicated across coronary artery disease, peripheral arterial disease, and carotid artery disease, so the medication-only subset will include many non-stroke patients."
+     },
+     "2-naive": {
+      "precision": 0.1571,
+      "recall": 0.8636,
+      "f1": 0.2659,
+      "passed": false,
+      "expected_count": 3116,
+      "actual_count": 17124,
+      "elapsed_sec": 219.1,
+      "queries_generated": 2,
+      "primary_query_url": "Patient?_has:Condition:patient:code=http://hl7.org/fhir/sid/icd-10-cm|I60.00,http://hl7.org/fhir/sid/icd-10-cm|I60.01,http://hl7.org/fhir/sid/icd-10-cm|I60.02,http://hl7.org/fhir/sid/icd-10-cm|I60.10,http://hl7.org/fhir/sid/icd-10-cm|I60.11,http://hl7.org/fhir/sid/icd-10-cm|I60.12,http://hl7.org/fhir/sid/icd-10-cm|I60.2,http://hl7.org/fhir/sid/icd-10-cm|I60.30,http://hl7.org/fhir/sid/icd-10-cm|I60.31,http://hl7.org/fhir/sid/icd-10-cm|I60.32,http://hl7.org/fhir/sid/icd-10-cm|I60.4,http://hl7.org/fhir/sid/icd-10-cm|I60.50,http://hl7.org/fhir/sid/icd-10-cm|I60.51,http://hl7.org/fhir/sid/icd-10-cm|I60.52,http://hl7.org/fhir/sid/icd-10-cm|I60.6,http://hl7.org/fhir/sid/icd-10-cm|I60.7,http://hl7.org/fhir/sid/icd-10-cm|I60.8,http://hl7.org/fhir/sid/icd-10-cm|I60.9,http://hl7.org/fhir/sid/icd-10-cm|I61.0,http://hl7.org/fhir/sid/icd-10-cm|I61.1,http://hl7.org/fhir/sid/icd-10-cm|I61.2,http://hl7.org/fhir/sid/icd-10-cm|I61.3,http://hl7.org/fhir/sid/icd-10-cm|I61.4,http://hl7.org/fhir/sid/icd-10-cm|I61.5,http://hl7.org/fhir/sid/icd-10-cm|I61.6,http://hl7.org/fhir/sid/icd-10-cm|I61.8,http://hl7.org/fhir/sid/icd-10-cm|I61.9,http://hl7.org/fhir/sid/icd-10-cm|I63.00,http://hl7.org/fhir/sid/icd-10-cm|I63.10,http://hl7.org/fhir/sid/icd-10-cm|I63.20,http://hl7.org/fhir/sid/icd-10-cm|I63.30,http://hl7.org/fhir/sid/icd-10-cm|I63.40,http://hl7.org/fhir/sid/icd-10-cm|I63.50,http://hl7.org/fhir/sid/icd-10-cm|I63.6,http://hl7.org/fhir/sid/icd-10-cm|I63.8,http://hl7.org/fhir/sid/icd-10-cm|I63.9,http://hl7.org/fhir/sid/icd-10-cm|I64,http://hl7.org/fhir/sid/icd-10-cm|G45.0,http://hl7.org/fhir/sid/icd-10-cm|G45.1,http://hl7.org/fhir/sid/icd-10-cm|G45.2,http://hl7.org/fhir/sid/icd-10-cm|G45.8,http://hl7.org/fhir/sid/icd-10-cm|G45.9,http://hl7.org/fhir/sid/icd-10-cm|Z86.73",
+      "additional_query_urls": [
+       "Patient?_has:Condition:patient:code=http://hl7.org/fhir/sid/icd-9-cm|430,http://hl7.org/fhir/sid/icd-9-cm|431,http://hl7.org/fhir/sid/icd-9-cm|433.01,http://hl7.org/fhir/sid/icd-9-cm|433.11,http://hl7.org/fhir/sid/icd-9-cm|433.21,http://hl7.org/fhir/sid/icd-9-cm|433.31,http://hl7.org/fhir/sid/icd-9-cm|433.81,http://hl7.org/fhir/sid/icd-9-cm|433.91,http://hl7.org/fhir/sid/icd-9-cm|434.01,http://hl7.org/fhir/sid/icd-9-cm|434.11,http://hl7.org/fhir/sid/icd-9-cm|434.91,http://hl7.org/fhir/sid/icd-9-cm|435.0,http://hl7.org/fhir/sid/icd-9-cm|435.1,http://hl7.org/fhir/sid/icd-9-cm|435.3,http://hl7.org/fhir/sid/icd-9-cm|435.8,http://hl7.org/fhir/sid/icd-9-cm|435.9,http://hl7.org/fhir/sid/icd-9-cm|436,http://hl7.org/fhir/sid/icd-9-cm|V12.54"
+      ],
+      "raw_response": "Patient?_has:Condition:patient:code=http://hl7.org/fhir/sid/icd-10-cm|I60.00,http://hl7.org/fhir/sid/icd-10-cm|I60.01,http://hl7.org/fhir/sid/icd-10-cm|I60.02,http://hl7.org/fhir/sid/icd-10-cm|I60.10,http://hl7.org/fhir/sid/icd-10-cm|I60.11,http://hl7.org/fhir/sid/icd-10-cm|I60.12,http://hl7.org/fhir/sid/icd-10-cm|I60.2,http://hl7.org/fhir/sid/icd-10-cm|I60.30,http://hl7.org/fhir/sid/icd-10-cm|I60.31,http://hl7.org/fhir/sid/icd-10-cm|I60.32,http://hl7.org/fhir/sid/icd-10-cm|I60.4,http://hl7.org/fhir/sid/icd-10-cm|I60.50,http://hl7.org/fhir/sid/icd-10-cm|I60.51,http://hl7.org/fhir/sid/icd-10-cm|I60.52,http://hl7.org/fhir/sid/icd-10-cm|I60.6,http://hl7.org/fhir/sid/icd-10-cm|I60.7,http://hl7.org/fhir/sid/icd-10-cm|I60.8,http://hl7.org/fhir/sid/icd-10-cm|I60.9,http://hl7.org/fhir/sid/icd-10-cm|I61.0,http://hl7.org/fhir/sid/icd-10-cm|I61.1,http://hl7.org/fhir/sid/icd-10-cm|I61.2,http://hl7.org/fhir/sid/icd-10-cm|I61.3,http://hl7.org/fhir/sid/icd-10-cm|I61.4,http://hl7.org/fhir/sid/icd-10-cm|I61.5,http://hl7.org/fhir/sid/icd-10-cm|I61.6,http://hl7.org/fhir/sid/icd-10-cm|I61.8,http://hl7.org/fhir/sid/icd-10-cm|I61.9,http://hl7.org/fhir/sid/icd-10-cm|I63.00,http://hl7.org/fhir/sid/icd-10-cm|I63.10,http://hl7.org/fhir/sid/icd-10-cm|I63.20,http://hl7.org/fhir/sid/icd-10-cm|I63.30,http://hl7.org/fhir/sid/icd-10-cm|I63.40,http://hl7.org/fhir/sid/icd-10-cm|I63.50,http://hl7.org/fhir/sid/icd-10-cm|I63.6,http://hl7.org/fhir/sid/icd-10-cm|I63.8,http://hl7.org/fhir/sid/icd-10-cm|I63.9,http://hl7.org/fhir/sid/icd-10-cm|I64,http://hl7.org/fhir/sid/icd-10-cm|G45.0,http://hl7.org/fhir/sid/icd-10-cm|G45.1,http://hl7.org/fhir/sid/icd-10-cm|G45.2,http://hl7.org/fhir/sid/icd-10-cm|G45.8,http://hl7.org/fhir/sid/icd-10-cm|G45.9,http://hl7.org/fhir/sid/icd-10-cm|Z86.73\nPatient?_has:Condition:patient:code=http://hl7.org/fhir/sid/icd-9-cm|430,http://hl7.org/fhir/sid/icd-9-cm|431,http://hl7.org/fhir/sid/icd-9-cm|433.01,http://hl7.org/fhir/sid/icd-9-cm|433.11,http://hl7.org/fhir/sid/icd-9-cm|433.21,http://hl7.org/fhir/sid/icd-9-cm|433.31,http://hl7.org/fhir/sid/icd-9-cm|433.81,http://hl7.org/fhir/sid/icd-9-cm|433.91,http://hl7.org/fhir/sid/icd-9-cm|434.01,http://hl7.org/fhir/sid/icd-9-cm|434.11,http://hl7.org/fhir/sid/icd-9-cm|434.91,http://hl7.org/fhir/sid/icd-9-cm|435.0,http://hl7.org/fhir/sid/icd-9-cm|435.1,http://hl7.org/fhir/sid/icd-9-cm|435.3,http://hl7.org/fhir/sid/icd-9-cm|435.8,http://hl7.org/fhir/sid/icd-9-cm|435.9,http://hl7.org/fhir/sid/icd-9-cm|436,http://hl7.org/fhir/sid/icd-9-cm|V12.54",
+      "prompt_text": "Find all my stroke patients."
+     },
+     "2-broad": {
+      "precision": 0.2642,
+      "recall": 0.8225,
+      "f1": 0.3999,
+      "passed": false,
+      "expected_count": 3116,
+      "actual_count": 9702,
+      "elapsed_sec": 211.4,
+      "queries_generated": 3,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|I60.00,http://hl7.org/fhir/sid/icd-10-cm|I60.9,http://hl7.org/fhir/sid/icd-10-cm|I61.0,http://hl7.org/fhir/sid/icd-10-cm|I61.1,http://hl7.org/fhir/sid/icd-10-cm|I61.9,http://hl7.org/fhir/sid/icd-10-cm|I62.9,http://hl7.org/fhir/sid/icd-10-cm|I63.00,http://hl7.org/fhir/sid/icd-10-cm|I63.02,http://hl7.org/fhir/sid/icd-10-cm|I63.19,http://hl7.org/fhir/sid/icd-10-cm|I63.20,http://hl7.org/fhir/sid/icd-10-cm|I63.30,http://hl7.org/fhir/sid/icd-10-cm|I63.312,http://hl7.org/fhir/sid/icd-10-cm|I63.319,http://hl7.org/fhir/sid/icd-10-cm|I63.40,http://hl7.org/fhir/sid/icd-10-cm|I63.411,http://hl7.org/fhir/sid/icd-10-cm|I63.412,http://hl7.org/fhir/sid/icd-10-cm|I63.419,http://hl7.org/fhir/sid/icd-10-cm|I63.50,http://hl7.org/fhir/sid/icd-10-cm|I63.511,http://hl7.org/fhir/sid/icd-10-cm|I63.512,http://hl7.org/fhir/sid/icd-10-cm|I63.9,http://hl7.org/fhir/sid/icd-10-cm|I64,http://hl7.org/fhir/sid/icd-10-cm|G46.3,http://hl7.org/fhir/sid/icd-10-cm|G46.4",
+      "additional_query_urls": [
+       "Condition?code=http://hl7.org/fhir/sid/icd-9-cm|430,http://hl7.org/fhir/sid/icd-9-cm|431,http://hl7.org/fhir/sid/icd-9-cm|432.9,http://hl7.org/fhir/sid/icd-9-cm|433.01,http://hl7.org/fhir/sid/icd-9-cm|433.11,http://hl7.org/fhir/sid/icd-9-cm|433.21,http://hl7.org/fhir/sid/icd-9-cm|433.31,http://hl7.org/fhir/sid/icd-9-cm|433.81,http://hl7.org/fhir/sid/icd-9-cm|433.91,http://hl7.org/fhir/sid/icd-9-cm|434.00,http://hl7.org/fhir/sid/icd-9-cm|434.01,http://hl7.org/fhir/sid/icd-9-cm|434.10,http://hl7.org/fhir/sid/icd-9-cm|434.11,http://hl7.org/fhir/sid/icd-9-cm|434.90,http://hl7.org/fhir/sid/icd-9-cm|434.91,http://hl7.org/fhir/sid/icd-9-cm|436,http://hl7.org/fhir/sid/icd-9-cm|437.0,http://hl7.org/fhir/sid/icd-9-cm|437.1",
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|8410,http://www.nlm.nih.gov/research/umls/rxnorm|1804799,http://www.nlm.nih.gov/research/umls/rxnorm|1804804,http://www.nlm.nih.gov/research/umls/rxnorm|32968,http://www.nlm.nih.gov/research/umls/rxnorm|309362,http://www.nlm.nih.gov/research/umls/rxnorm|1116635,http://www.nlm.nih.gov/research/umls/rxnorm|1666332,http://www.nlm.nih.gov/research/umls/rxnorm|313406,http://www.nlm.nih.gov/research/umls/rxnorm|243670,http://www.nlm.nih.gov/research/umls/rxnorm|212033,http://www.nlm.nih.gov/research/umls/rxnorm|198466,http://www.nlm.nih.gov/research/umls/rxnorm|259081"
+      ],
+      "raw_response": "FINAL ANSWER:\n\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|I60.00,http://hl7.org/fhir/sid/icd-10-cm|I60.9,http://hl7.org/fhir/sid/icd-10-cm|I61.0,http://hl7.org/fhir/sid/icd-10-cm|I61.1,http://hl7.org/fhir/sid/icd-10-cm|I61.9,http://hl7.org/fhir/sid/icd-10-cm|I62.9,http://hl7.org/fhir/sid/icd-10-cm|I63.00,http://hl7.org/fhir/sid/icd-10-cm|I63.02,http://hl7.org/fhir/sid/icd-10-cm|I63.19,http://hl7.org/fhir/sid/icd-10-cm|I63.20,http://hl7.org/fhir/sid/icd-10-cm|I63.30,http://hl7.org/fhir/sid/icd-10-cm|I63.312,http://hl7.org/fhir/sid/icd-10-cm|I63.319,http://hl7.org/fhir/sid/icd-10-cm|I63.40,http://hl7.org/fhir/sid/icd-10-cm|I63.411,http://hl7.org/fhir/sid/icd-10-cm|I63.412,http://hl7.org/fhir/sid/icd-10-cm|I63.419,http://hl7.org/fhir/sid/icd-10-cm|I63.50,http://hl7.org/fhir/sid/icd-10-cm|I63.511,http://hl7.org/fhir/sid/icd-10-cm|I63.512,http://hl7.org/fhir/sid/icd-10-cm|I63.9,http://hl7.org/fhir/sid/icd-10-cm|I64,http://hl7.org/fhir/sid/icd-10-cm|G46.3,http://hl7.org/fhir/sid/icd-10-cm|G46.4\nCondition?code=http://hl7.org/fhir/sid/icd-9-cm|430,http://hl7.org/fhir/sid/icd-9-cm|431,http://hl7.org/fhir/sid/icd-9-cm|432.9,http://hl7.org/fhir/sid/icd-9-cm|433.01,http://hl7.org/fhir/sid/icd-9-cm|433.11,http://hl7.org/fhir/sid/icd-9-cm|433.21,http://hl7.org/fhir/sid/icd-9-cm|433.31,http://hl7.org/fhir/sid/icd-9-cm|433.81,http://hl7.org/fhir/sid/icd-9-cm|433.91,http://hl7.org/fhir/sid/icd-9-cm|434.00,http://hl7.org/fhir/sid/icd-9-cm|434.01,http://hl7.org/fhir/sid/icd-9-cm|434.10,http://hl7.org/fhir/sid/icd-9-cm|434.11,http://hl7.org/fhir/sid/icd-9-cm|434.90,http://hl7.org/fhir/sid/icd-9-cm|434.91,http://hl7.org/fhir/sid/icd-9-cm|436,http://hl7.org/fhir/sid/icd-9-cm|437.0,http://hl7.org/fhir/sid/icd-9-cm|437.1\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|8410,http://www.nlm.nih.gov/research/umls/rxnorm|1804799,http://www.nlm.nih.gov/research/umls/rxnorm|1804804,http://www.nlm.nih.gov/research/umls/rxnorm|32968,http://www.nlm.nih.gov/research/umls/rxnorm|309362,http://www.nlm.nih.gov/research/umls/rxnorm|1116635,http://www.nlm.nih.gov/research/umls/rxnorm|1666332,http://www.nlm.nih.gov/research/umls/rxnorm|313406,http://www.nlm.nih.gov/research/umls/rxnorm|243670,http://www.nlm.nih.gov/research/umls/rxnorm|212033,http://www.nlm.nih.gov/research/umls/rxnorm|198466,http://www.nlm.nih.gov/research/umls/rxnorm|259081",
+      "prompt_text": "Find all stroke patients \u2014 by diagnosis, by alteplase (acute thrombolysis), or by antiplatelet medications. Run multiple queries and union the patient sets."
+     },
+     "2-expert": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 3116,
+      "actual_count": 0,
+      "elapsed_sec": 50.0,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|422504002,http://snomed.info/sct|230690007",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1191,http://www.nlm.nih.gov/research/umls/rxnorm|32968,http://www.nlm.nih.gov/research/umls/rxnorm|191"
+      ],
+      "raw_response": "Condition?code=http://snomed.info/sct|422504002,http://snomed.info/sct|230690007\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1191,http://www.nlm.nih.gov/research/umls/rxnorm|32968,http://www.nlm.nih.gov/research/umls/rxnorm|191",
+      "prompt_text": "I need to identify all stroke patients using a union across Condition and MedicationRequest resources. Search Condition resources for stroke and cerebrovascular accident diagnoses coded in SNOMED CT \u2014 include both the specific cerebral infarction concept and the broader cerebrovascular accident term. Also search MedicationRequest resources for alteplase (the acute thrombolytic agent, RxNorm coded) and the antiplatelet agents aspirin and clopidogrel used for secondary prevention (both RxNorm coded). Union the patient sets; alteplase is highly stroke-specific, but antiplatelets are heavily cross-indicated across coronary artery disease, peripheral arterial disease, and carotid artery disease, so the medication-only subset will include many non-stroke patients."
+     },
+     "3-naive": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 3116,
+      "actual_count": 0,
+      "elapsed_sec": 86.3,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|G45.0,http://hl7.org/fhir/sid/icd-10-cm|G45.1,http://hl7.org/fhir/sid/icd-10-cm|G45.2,http://hl7.org/fhir/sid/icd-10-cm|G45.8,http://hl7.org/fhir/sid/icd-10-cm|G45.9,http://hl7.org/fhir/sid/icd-10-cm|I60.00,http://hl7.org/fhir/sid/icd-10-cm|I60.01,http://hl7.org/fhir/sid/icd-10-cm|I60.02,http://hl7.org/fhir/sid/icd-10-cm|I60.10,http://hl7.org/fhir/sid/icd-10-cm|I60.11,http://hl7.org/fhir/sid/icd-10-cm|I60.12,http://hl7.org/fhir/sid/icd-10-cm|I60.2,http://hl7.org/fhir/sid/icd-10-cm|I60.30,http://hl7.org/fhir/sid/icd-10-cm|I60.31,http://hl7.org/fhir/sid/icd-10-cm|I60.32,http://hl7.org/fhir/sid/icd-10-cm|I60.4,http://hl7.org/fhir/sid/icd-10-cm|I60.50,http://hl7.org/fhir/sid/icd-10-cm|I60.51,http://hl7.org/fhir/sid/icd-10-cm|I60.52,http://hl7.org/fhir/sid/icd-10-cm|I60.6,http://hl7.org/fhir/sid/icd-10-cm|I60.7,http://hl7.org/fhir/sid/icd-10-cm|I60.8,http://hl7.org/fhir/sid/icd-10-cm|I60.9,http://hl7.org/fhir/sid/icd-10-cm|I61.0,http://hl7.org/fhir/sid/icd-10-cm|I61.1,http://hl7.org/fhir/sid/icd-10-cm|I61.2,http://hl7.org/fhir/sid/icd-10-cm|I61.3,http://hl7.org/fhir/sid/icd-10-cm|I61.4,http://hl7.org/fhir/sid/icd-10-cm|I61.5,http://hl7.org/fhir/sid/icd-10-cm|I61.6,http://hl7.org/fhir/sid/icd-10-cm|I61.8,http://hl7.org/fhir/sid/icd-10-cm|I61.9,http://hl7.org/fhir/sid/icd-10-cm|I62.00,http://hl7.org/fhir/sid/icd-10-cm|I62.01,http://hl7.org/fhir/sid/icd-10-cm|I62.02,http://hl7.org/fhir/sid/icd-10-cm|I62.03,http://hl7.org/fhir/sid/icd-10-cm|I62.1,http://hl7.org/fhir/sid/icd-10-cm|I62.9,http://hl7.org/fhir/sid/icd-10-cm|I63.00,http://hl7.org/fhir/sid/icd-10-cm|I63.011,http://hl7.org/fhir/sid/icd-10-cm|I63.012,http://hl7.org/fhir/sid/icd-10-cm|I63.013,http://hl7.org/fhir/sid/icd-10-cm|I63.019,http://hl7.org/fhir/sid/icd-10-cm|I63.02,http://hl7.org/fhir/sid/icd-10-cm|I63.031,http://hl7.org/fhir/sid/icd-10-cm|I63.032,http://hl7.org/fhir/sid/icd-10-cm|I63.033,http://hl7.org/fhir/sid/icd-10-cm|I63.039,http://hl7.org/fhir/sid/icd-10-cm|I63.09,http://hl7.org/fhir/sid/icd-10-cm|I63.10,http://hl7.org/fhir/sid/icd-10-cm|I63.111,http://hl7.org/fhir/sid/icd-10-cm|I63.112,http://hl7.org/fhir/sid/icd-10-cm|I63.113,http://hl7.org/fhir/sid/icd-10-cm|I63.119,http://hl7.org/fhir/sid/icd-10-cm|I63.12,http://hl7.org/fhir/sid/icd-10-cm|I63.131,http://hl7.org/fhir/sid/icd-10-cm|I63.132,http://hl7.org/fhir/sid/icd-10-cm|I63.133,http://hl7.org/fhir/sid/icd-10-cm|I63.139,http://hl7.org/fhir/sid/icd-10-cm|I63.19,http://hl7.org/fhir/sid/icd-10-cm|I63.20,http://hl7.org/fhir/sid/icd-10-cm|I63.211,http://hl7.org/fhir/sid/icd-10-cm|I63.212,http://hl7.org/fhir/sid/icd-10-cm|I63.213,http://hl7.org/fhir/sid/icd-10-cm|I63.219,http://hl7.org/fhir/sid/icd-10-cm|I63.22,http://hl7.org/fhir/sid/icd-10-cm|I63.231,http://hl7.org/fhir/sid/icd-10-cm|I63.232,http://hl7.org/fhir/sid/icd-10-cm|I63.233,http://hl7.org/fhir/sid/icd-10-cm|I63.239,http://hl7.org/fhir/sid/icd-10-cm|I63.29,http://hl7.org/fhir/sid/icd-10-cm|I63.30,http://hl7.org/fhir/sid/icd-10-cm|I63.311,http://hl7.org/fhir/sid/icd-10-cm|I63.312,http://hl7.org/fhir/sid/icd-10-cm|I63.313,http://hl7.org/fhir/sid/icd-10-cm|I63.319,http://hl7.org/fhir/sid/icd-10-cm|I63.321,http://hl7.org/fhir/sid/icd-10-cm|I63.322,http://hl7.org/fhir/sid/icd-10-cm|I63.323,http://hl7.org/fhir/sid/icd-10-cm|I63.329,http://hl7.org/fhir/sid/icd-10-cm|I63.331,http://hl7.org/fhir/sid/icd-10-cm|I63.332,http://hl7.org/fhir/sid/icd-10-cm|I63.333,http://hl7.org/fhir/sid/icd-10-cm|I63.339,http://hl7.org/fhir/sid/icd-10-cm|I63.341,http://hl7.org/fhir/sid/icd-10-cm|I63.342,http://hl7.org/fhir/sid/icd-10-cm|I63.343,http://hl7.org/fhir/sid/icd-10-cm|I63.349,http://hl7.org/fhir/sid/icd-10-cm|I63.39,http://hl7.org/fhir/sid/icd-10-cm|I63.40,http://hl7.org/fhir/sid/icd-10-cm|I63.411,http://hl7.org/fhir/sid/icd-10-cm|I63.412,http://hl7.org/fhir/sid/icd-10-cm|I63.413,http://hl7.org/fhir/sid/icd-10-cm|I63.419,http://hl7.org/fhir/sid/icd-10-cm|I63.421,http://hl7.org/fhir/sid/icd-10-cm|I63.422,http://hl7.org/fhir/sid/icd-10-cm|I63.423,http://hl7.org/fhir/sid/icd-10-cm|I63.429,http://hl7.org/fhir/sid/icd-10-cm|I63.431,http://hl7.org/fhir/sid/icd-10-cm|I63.432,http://hl7.org/fhir/sid/icd-10-cm|I63.433,http://hl7.org/fhir/sid/icd-10-cm|I63.439,http://hl7.org/fhir/sid/icd-10-cm|I63.441,http://hl7.org/fhir/sid/icd-10-cm|I63.442,http://hl7.org/fhir/sid/icd-10-cm|I63.443,http://hl7.org/fhir/sid/icd-10-cm|I63.449,http://hl7.org/fhir/sid/icd-10-cm|I63.49,http://hl7.org/fhir/sid/icd-10-cm|I63.50,http://hl7.org/fhir/sid/icd-10-cm|I63.511,http://hl7.org/fhir/sid/icd-10-cm|I63.512,http://hl7.org/fhir/sid/icd-10-cm|I63.513,http://hl7.org/fhir/sid/icd-10-cm|I63.519,http://hl7.org/fhir/sid/icd-10-cm|I63.521,http://hl7.org/fhir/sid/icd-10-cm|I63.522,http://hl7.org/fhir/sid/icd-10-cm|I63.523,http://hl7.org/fhir/sid/icd-10-cm|I63.529,http://hl7.org/fhir/sid/icd-10-cm|I63.531,http://hl7.org/fhir/sid/icd-10-cm|I63.532,http://hl7.org/fhir/sid/icd-10-cm|I63.533,http://hl7.org/fhir/sid/icd-10-cm|I63.539,http://hl7.org/fhir/sid/icd-10-cm|I63.541,http://hl7.org/fhir/sid/icd-10-cm|I63.542,http://hl7.org/fhir/sid/icd-10-cm|I63.543,http://hl7.org/fhir/sid/icd-10-cm|I63.549,http://hl7.org/fhir/sid/icd-10-cm|I63.59,http://hl7.org/fhir/sid/icd-10-cm|I63.6,http://hl7.org/fhir/sid/icd-10-cm|I63.81,http://hl7.org/fhir/sid/icd-10-cm|I63.89,http://hl7.org/fhir/sid/icd-10-cm|I63.9,http://hl7.org/fhir/sid/icd-9-cm|430,http://hl7.org/fhir/sid/icd-9-cm|431,http://hl7.org/fhir/sid/icd-9-cm|432.0,http://hl7.org/fhir/sid/icd-9-cm|432.1,http://hl7.org/fhir/sid/icd-9-cm|432.9,http://hl7.org/fhir/sid/icd-9-cm|433.01,http://hl7.org/fhir/sid/icd-9-cm|433.11,http://hl7.org/fhir/sid/icd-9-cm|433.21,http://hl7.org/fhir/sid/icd-9-cm|433.31,http://hl7.org/fhir/sid/icd-9-cm|433.81,http://hl7.org/fhir/sid/icd-9-cm|433.91,http://hl7.org/fhir/sid/icd-9-cm|434.01,http://hl7.org/fhir/sid/icd-9-cm|434.11,http://hl7.org/fhir/sid/icd-9-cm|434.91,http://hl7.org/fhir/sid/icd-9-cm|435.0,http://hl7.org/fhir/sid/icd-9-cm|435.1,http://hl7.org/fhir/sid/icd-9-cm|435.3,http://hl7.org/fhir/sid/icd-9-cm|435.8,http://hl7.org/fhir/sid/icd-9-cm|435.9,http://hl7.org/fhir/sid/icd-9-cm|436",
+      "additional_query_urls": [],
+      "raw_response": "Based on my exploration, MIMIC uses ICD-10-CM (and ICD-9-CM) for conditions. I'll union the comprehensive ischemic stroke/TIA value set + hemorrhagic stroke value set + ICD-9 equivalents.\n\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|G45.0,http://hl7.org/fhir/sid/icd-10-cm|G45.1,http://hl7.org/fhir/sid/icd-10-cm|G45.2,http://hl7.org/fhir/sid/icd-10-cm|G45.8,http://hl7.org/fhir/sid/icd-10-cm|G45.9,http://hl7.org/fhir/sid/icd-10-cm|I60.00,http://hl7.org/fhir/sid/icd-10-cm|I60.01,http://hl7.org/fhir/sid/icd-10-cm|I60.02,http://hl7.org/fhir/sid/icd-10-cm|I60.10,http://hl7.org/fhir/sid/icd-10-cm|I60.11,http://hl7.org/fhir/sid/icd-10-cm|I60.12,http://hl7.org/fhir/sid/icd-10-cm|I60.2,http://hl7.org/fhir/sid/icd-10-cm|I60.30,http://hl7.org/fhir/sid/icd-10-cm|I60.31,http://hl7.org/fhir/sid/icd-10-cm|I60.32,http://hl7.org/fhir/sid/icd-10-cm|I60.4,http://hl7.org/fhir/sid/icd-10-cm|I60.50,http://hl7.org/fhir/sid/icd-10-cm|I60.51,http://hl7.org/fhir/sid/icd-10-cm|I60.52,http://hl7.org/fhir/sid/icd-10-cm|I60.6,http://hl7.org/fhir/sid/icd-10-cm|I60.7,http://hl7.org/fhir/sid/icd-10-cm|I60.8,http://hl7.org/fhir/sid/icd-10-cm|I60.9,http://hl7.org/fhir/sid/icd-10-cm|I61.0,http://hl7.org/fhir/sid/icd-10-cm|I61.1,http://hl7.org/fhir/sid/icd-10-cm|I61.2,http://hl7.org/fhir/sid/icd-10-cm|I61.3,http://hl7.org/fhir/sid/icd-10-cm|I61.4,http://hl7.org/fhir/sid/icd-10-cm|I61.5,http://hl7.org/fhir/sid/icd-10-cm|I61.6,http://hl7.org/fhir/sid/icd-10-cm|I61.8,http://hl7.org/fhir/sid/icd-10-cm|I61.9,http://hl7.org/fhir/sid/icd-10-cm|I62.00,http://hl7.org/fhir/sid/icd-10-cm|I62.01,http://hl7.org/fhir/sid/icd-10-cm|I62.02,http://hl7.org/fhir/sid/icd-10-cm|I62.03,http://hl7.org/fhir/sid/icd-10-cm|I62.1,http://hl7.org/fhir/sid/icd-10-cm|I62.9,http://hl7.org/fhir/sid/icd-10-cm|I63.00,http://hl7.org/fhir/sid/icd-10-cm|I63.011,http://hl7.org/fhir/sid/icd-10-cm|I63.012,http://hl7.org/fhir/sid/icd-10-cm|I63.013,http://hl7.org/fhir/sid/icd-10-cm|I63.019,http://hl7.org/fhir/sid/icd-10-cm|I63.02,http://hl7.org/fhir/sid/icd-10-cm|I63.031,http://hl7.org/fhir/sid/icd-10-cm|I63.032,http://hl7.org/fhir/sid/icd-10-cm|I63.033,http://hl7.org/fhir/sid/icd-10-cm|I63.039,http://hl7.org/fhir/sid/icd-10-cm|I63.09,http://hl7.org/fhir/sid/icd-10-cm|I63.10,http://hl7.org/fhir/sid/icd-10-cm|I63.111,http://hl7.org/fhir/sid/icd-10-cm|I63.112,http://hl7.org/fhir/sid/icd-10-cm|I63.113,http://hl7.org/fhir/sid/icd-10-cm|I63.119,http://hl7.org/fhir/sid/icd-10-cm|I63.12,http://hl7.org/fhir/sid/icd-10-cm|I63.131,http://hl7.org/fhir/sid/icd-10-cm|I63.132,http://hl7.org/fhir/sid/icd-10-cm|I63.133,http://hl7.org/fhir/sid/icd-10-cm|I63.139,http://hl7.org/fhir/sid/icd-10-cm|I63.19,http://hl7.org/fhir/sid/icd-10-cm|I63.20,http://hl7.org/fhir/sid/icd-10-cm|I63.211,http://hl7.org/fhir/sid/icd-10-cm|I63.212,http://hl7.org/fhir/sid/icd-10-cm|I63.213,http://hl7.org/fhir/sid/icd-10-cm|I63.219,http://hl7.org/fhir/sid/icd-10-cm|I63.22,http://hl7.org/fhir/sid/icd-10-cm|I63.231,http://hl7.org/fhir/sid/icd-10-cm|I63.232,http://hl7.org/fhir/sid/icd-10-cm|I63.233,http://hl7.org/fhir/sid/icd-10-cm|I63.239,http://hl7.org/fhir/sid/icd-10-cm|I63.29,http://hl7.org/fhir/sid/icd-10-cm|I63.30,http://hl7.org/fhir/sid/icd-10-cm|I63.311,http://hl7.org/fhir/sid/icd-10-cm|I63.312,http://hl7.org/fhir/sid/icd-10-cm|I63.313,http://hl7.org/fhir/sid/icd-10-cm|I63.319,http://hl7.org/fhir/sid/icd-10-cm|I63.321,http://hl7.org/fhir/sid/icd-10-cm|I63.322,http://hl7.org/fhir/sid/icd-10-cm|I63.323,http://hl7.org/fhir/sid/icd-10-cm|I63.329,http://hl7.org/fhir/sid/icd-10-cm|I63.331,http://hl7.org/fhir/sid/icd-10-cm|I63.332,http://hl7.org/fhir/sid/icd-10-cm|I63.333,http://hl7.org/fhir/sid/icd-10-cm|I63.339,http://hl7.org/fhir/sid/icd-10-cm|I63.341,http://hl7.org/fhir/sid/icd-10-cm|I63.342,http://hl7.org/fhir/sid/icd-10-cm|I63.343,http://hl7.org/fhir/sid/icd-10-cm|I63.349,http://hl7.org/fhir/sid/icd-10-cm|I63.39,http://hl7.org/fhir/sid/icd-10-cm|I63.40,http://hl7.org/fhir/sid/icd-10-cm|I63.411,http://hl7.org/fhir/sid/icd-10-cm|I63.412,http://hl7.org/fhir/sid/icd-10-cm|I63.413,http://hl7.org/fhir/sid/icd-10-cm|I63.419,http://hl7.org/fhir/sid/icd-10-cm|I63.421,http://hl7.org/fhir/sid/icd-10-cm|I63.422,http://hl7.org/fhir/sid/icd-10-cm|I63.423,http://hl7.org/fhir/sid/icd-10-cm|I63.429,http://hl7.org/fhir/sid/icd-10-cm|I63.431,http://hl7.org/fhir/sid/icd-10-cm|I63.432,http://hl7.org/fhir/sid/icd-10-cm|I63.433,http://hl7.org/fhir/sid/icd-10-cm|I63.439,http://hl7.org/fhir/sid/icd-10-cm|I63.441,http://hl7.org/fhir/sid/icd-10-cm|I63.442,http://hl7.org/fhir/sid/icd-10-cm|I63.443,http://hl7.org/fhir/sid/icd-10-cm|I63.449,http://hl7.org/fhir/sid/icd-10-cm|I63.49,http://hl7.org/fhir/sid/icd-10-cm|I63.50,http://hl7.org/fhir/sid/icd-10-cm|I63.511,http://hl7.org/fhir/sid/icd-10-cm|I63.512,http://hl7.org/fhir/sid/icd-10-cm|I63.513,http://hl7.org/fhir/sid/icd-10-cm|I63.519,http://hl7.org/fhir/sid/icd-10-cm|I63.521,http://hl7.org/fhir/sid/icd-10-cm|I63.522,http://hl7.org/fhir/sid/icd-10-cm|I63.523,http://hl7.org/fhir/sid/icd-10-cm|I63.529,http://hl7.org/fhir/sid/icd-10-cm|I63.531,http://hl7.org/fhir/sid/icd-10-cm|I63.532,http://hl7.org/fhir/sid/icd-10-cm|I63.533,http://hl7.org/fhir/sid/icd-10-cm|I63.539,http://hl7.org/fhir/sid/icd-10-cm|I63.541,http://hl7.org/fhir/sid/icd-10-cm|I63.542,http://hl7.org/fhir/sid/icd-10-cm|I63.543,http://hl7.org/fhir/sid/icd-10-cm|I63.549,http://hl7.org/fhir/sid/icd-10-cm|I63.59,http://hl7.org/fhir/sid/icd-10-cm|I63.6,http://hl7.org/fhir/sid/icd-10-cm|I63.81,http://hl7.org/fhir/sid/icd-10-cm|I63.89,http://hl7.org/fhir/sid/icd-10-cm|I63.9,http://hl7.org/fhir/sid/icd-9-cm|430,http://hl7.org/fhir/sid/icd-9-cm|431,http://hl7.org/fhir/sid/icd-9-cm|432.0,http://hl7.org/fhir/sid/icd-9-cm|432.1,http://hl7.org/fhir/sid/icd-9-cm|432.9,http://hl7.org/fhir/sid/icd-9-cm|433.01,http://hl7.org/fhir/sid/icd-9-cm|433.11,http://hl7.org/fhir/sid/icd-9-cm|433.21,http://hl7.org/fhir/sid/icd-9-cm|433.31,http://hl7.org/fhir/sid/icd-9-cm|433.81,http://hl7.org/fhir/sid/icd-9-cm|433.91,http://hl7.org/fhir/sid/icd-9-cm|434.01,http://hl7.org/fhir/sid/icd-9-cm|434.11,http://hl7.org/fhir/sid/icd-9-cm|434.91,http://hl7.org/fhir/sid/icd-9-cm|435.0,http://hl7.org/fhir/sid/icd-9-cm|435.1,http://hl7.org/fhir/sid/icd-9-cm|435.3,http://hl7.org/fhir/sid/icd-9-cm|435.8,http://hl7.org/fhir/sid/icd-9-cm|435.9,http://hl7.org/fhir/sid/icd-9-cm|436",
+      "prompt_text": "Find all my stroke patients."
+     },
+     "3-broad": {
+      "precision": 0.2696,
+      "recall": 0.6438,
+      "f1": 0.3801,
+      "passed": false,
+      "expected_count": 3116,
+      "actual_count": 7440,
+      "elapsed_sec": 152.7,
+      "queries_generated": 3,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|I63.00,http://hl7.org/fhir/sid/icd-10-cm|I63.9,http://hl7.org/fhir/sid/icd-10-cm|I63.50,http://hl7.org/fhir/sid/icd-10-cm|I63.30,http://hl7.org/fhir/sid/icd-10-cm|I63.40,http://hl7.org/fhir/sid/icd-10-cm|I63.10,http://hl7.org/fhir/sid/icd-10-cm|I63.20,http://hl7.org/fhir/sid/icd-10-cm|I63.80,http://hl7.org/fhir/sid/icd-10-cm|I67.89,http://hl7.org/fhir/sid/icd-10-cm|I61.9,http://hl7.org/fhir/sid/icd-10-cm|I62.9,http://hl7.org/fhir/sid/icd-10-cm|I60.9,http://hl7.org/fhir/sid/icd-9-cm|434.91,http://hl7.org/fhir/sid/icd-9-cm|434.11,http://hl7.org/fhir/sid/icd-9-cm|434.01,http://hl7.org/fhir/sid/icd-9-cm|433.11,http://hl7.org/fhir/sid/icd-9-cm|433.01,http://hl7.org/fhir/sid/icd-9-cm|436,http://hl7.org/fhir/sid/icd-9-cm|431,http://hl7.org/fhir/sid/icd-9-cm|430",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|8410",
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|32968,http://www.nlm.nih.gov/research/umls/rxnorm|236991,http://www.nlm.nih.gov/research/umls/rxnorm|1191,http://www.nlm.nih.gov/research/umls/rxnorm|1116632,http://www.nlm.nih.gov/research/umls/rxnorm|613391,http://www.nlm.nih.gov/research/umls/rxnorm|3521"
+      ],
+      "raw_response": "Final Answer:\n\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|I63.00,http://hl7.org/fhir/sid/icd-10-cm|I63.9,http://hl7.org/fhir/sid/icd-10-cm|I63.50,http://hl7.org/fhir/sid/icd-10-cm|I63.30,http://hl7.org/fhir/sid/icd-10-cm|I63.40,http://hl7.org/fhir/sid/icd-10-cm|I63.10,http://hl7.org/fhir/sid/icd-10-cm|I63.20,http://hl7.org/fhir/sid/icd-10-cm|I63.80,http://hl7.org/fhir/sid/icd-10-cm|I67.89,http://hl7.org/fhir/sid/icd-10-cm|I61.9,http://hl7.org/fhir/sid/icd-10-cm|I62.9,http://hl7.org/fhir/sid/icd-10-cm|I60.9,http://hl7.org/fhir/sid/icd-9-cm|434.91,http://hl7.org/fhir/sid/icd-9-cm|434.11,http://hl7.org/fhir/sid/icd-9-cm|434.01,http://hl7.org/fhir/sid/icd-9-cm|433.11,http://hl7.org/fhir/sid/icd-9-cm|433.01,http://hl7.org/fhir/sid/icd-9-cm|436,http://hl7.org/fhir/sid/icd-9-cm|431,http://hl7.org/fhir/sid/icd-9-cm|430\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|8410\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|32968,http://www.nlm.nih.gov/research/umls/rxnorm|236991,http://www.nlm.nih.gov/research/umls/rxnorm|1191,http://www.nlm.nih.gov/research/umls/rxnorm|1116632,http://www.nlm.nih.gov/research/umls/rxnorm|613391,http://www.nlm.nih.gov/research/umls/rxnorm|3521",
+      "prompt_text": "Find all stroke patients \u2014 by diagnosis, by alteplase (acute thrombolysis), or by antiplatelet medications. Run multiple queries and union the patient sets."
+     },
+     "3-expert": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 3116,
+      "actual_count": 0,
+      "elapsed_sec": 79.7,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|422504002,http://snomed.info/sct|230690007",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|8410,http://www.nlm.nih.gov/research/umls/rxnorm|1191,http://www.nlm.nih.gov/research/umls/rxnorm|32968"
+      ],
+      "raw_response": "Condition?code=http://snomed.info/sct|422504002,http://snomed.info/sct|230690007\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|8410,http://www.nlm.nih.gov/research/umls/rxnorm|1191,http://www.nlm.nih.gov/research/umls/rxnorm|32968",
+      "prompt_text": "I need to identify all stroke patients using a union across Condition and MedicationRequest resources. Search Condition resources for stroke and cerebrovascular accident diagnoses coded in SNOMED CT \u2014 include both the specific cerebral infarction concept and the broader cerebrovascular accident term. Also search MedicationRequest resources for alteplase (the acute thrombolytic agent, RxNorm coded) and the antiplatelet agents aspirin and clopidogrel used for secondary prevention (both RxNorm coded). Union the patient sets; alteplase is highly stroke-specific, but antiplatelets are heavily cross-indicated across coronary artery disease, peripheral arterial disease, and carotid artery disease, so the medication-only subset will include many non-stroke patients."
+     }
+    },
     "copilot:claude-sonnet-4.6": {
      "1-naive": {
       "precision": 1.0,
@@ -1029,6 +1174,136 @@
       "prompt_text": "I need to find patients with a documented stroke or cerebrovascular accident diagnosis. Search Condition resources using SNOMED CT codes \u2014 include both the specific cerebral infarction concept and the broader cerebrovascular accident term, as both are used in clinical documentation for this event. Do not restrict to only one variant, since either code may be present depending on the level of clinical specificity recorded."
      }
     },
+    "copilot:claude-opus-4.7+mimic": {
+     "1-naive": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 3116,
+      "actual_count": 0,
+      "elapsed_sec": 7.4,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|230690007",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|230690007",
+      "prompt_text": "Find patients with stroke."
+     },
+     "1-broad": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 3116,
+      "actual_count": 0,
+      "elapsed_sec": 8.2,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|422504002,http://snomed.info/sct|432504007",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|422504002,http://snomed.info/sct|432504007",
+      "prompt_text": "Find patients diagnosed with stroke \u2014 including cerebral infarction (ischemic stroke) and the broader cerebrovascular accident (CVA) concept."
+     },
+     "1-expert": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 3116,
+      "actual_count": 0,
+      "elapsed_sec": 7.9,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|422504002,http://snomed.info/sct|230690007",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|422504002,http://snomed.info/sct|230690007",
+      "prompt_text": "I need to find patients with a documented stroke or cerebrovascular accident diagnosis. Search Condition resources using SNOMED CT codes \u2014 include both the specific cerebral infarction concept and the broader cerebrovascular accident term, as both are used in clinical documentation for this event. Do not restrict to only one variant, since either code may be present depending on the level of clinical specificity recorded."
+     },
+     "2-naive": {
+      "precision": 0.2413,
+      "recall": 0.6691,
+      "f1": 0.3547,
+      "passed": false,
+      "expected_count": 3116,
+      "actual_count": 8642,
+      "elapsed_sec": 106.8,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|I60.00,http://hl7.org/fhir/sid/icd-10-cm|I60.01,http://hl7.org/fhir/sid/icd-10-cm|I60.02,http://hl7.org/fhir/sid/icd-10-cm|I60.10,http://hl7.org/fhir/sid/icd-10-cm|I60.11,http://hl7.org/fhir/sid/icd-10-cm|I60.12,http://hl7.org/fhir/sid/icd-10-cm|I60.2,http://hl7.org/fhir/sid/icd-10-cm|I60.30,http://hl7.org/fhir/sid/icd-10-cm|I60.31,http://hl7.org/fhir/sid/icd-10-cm|I60.32,http://hl7.org/fhir/sid/icd-10-cm|I60.4,http://hl7.org/fhir/sid/icd-10-cm|I60.50,http://hl7.org/fhir/sid/icd-10-cm|I60.51,http://hl7.org/fhir/sid/icd-10-cm|I60.52,http://hl7.org/fhir/sid/icd-10-cm|I60.6,http://hl7.org/fhir/sid/icd-10-cm|I60.7,http://hl7.org/fhir/sid/icd-10-cm|I60.8,http://hl7.org/fhir/sid/icd-10-cm|I60.9,http://hl7.org/fhir/sid/icd-10-cm|I61.0,http://hl7.org/fhir/sid/icd-10-cm|I61.1,http://hl7.org/fhir/sid/icd-10-cm|I61.2,http://hl7.org/fhir/sid/icd-10-cm|I61.3,http://hl7.org/fhir/sid/icd-10-cm|I61.4,http://hl7.org/fhir/sid/icd-10-cm|I61.5,http://hl7.org/fhir/sid/icd-10-cm|I61.6,http://hl7.org/fhir/sid/icd-10-cm|I61.8,http://hl7.org/fhir/sid/icd-10-cm|I61.9,http://hl7.org/fhir/sid/icd-10-cm|I63.00,http://hl7.org/fhir/sid/icd-10-cm|I63.9,http://hl7.org/fhir/sid/icd-10-cm|I64",
+      "additional_query_urls": [
+       "Condition?code=http://hl7.org/fhir/sid/icd-9-cm|430,http://hl7.org/fhir/sid/icd-9-cm|431,http://hl7.org/fhir/sid/icd-9-cm|434.00,http://hl7.org/fhir/sid/icd-9-cm|434.01,http://hl7.org/fhir/sid/icd-9-cm|434.10,http://hl7.org/fhir/sid/icd-9-cm|434.11,http://hl7.org/fhir/sid/icd-9-cm|434.90,http://hl7.org/fhir/sid/icd-9-cm|434.91,http://hl7.org/fhir/sid/icd-9-cm|436"
+      ],
+      "raw_response": "Based on server sample, use ICD-10-CM stroke codes.\n\nFINAL ANSWER:\n\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|I60.00,http://hl7.org/fhir/sid/icd-10-cm|I60.01,http://hl7.org/fhir/sid/icd-10-cm|I60.02,http://hl7.org/fhir/sid/icd-10-cm|I60.10,http://hl7.org/fhir/sid/icd-10-cm|I60.11,http://hl7.org/fhir/sid/icd-10-cm|I60.12,http://hl7.org/fhir/sid/icd-10-cm|I60.2,http://hl7.org/fhir/sid/icd-10-cm|I60.30,http://hl7.org/fhir/sid/icd-10-cm|I60.31,http://hl7.org/fhir/sid/icd-10-cm|I60.32,http://hl7.org/fhir/sid/icd-10-cm|I60.4,http://hl7.org/fhir/sid/icd-10-cm|I60.50,http://hl7.org/fhir/sid/icd-10-cm|I60.51,http://hl7.org/fhir/sid/icd-10-cm|I60.52,http://hl7.org/fhir/sid/icd-10-cm|I60.6,http://hl7.org/fhir/sid/icd-10-cm|I60.7,http://hl7.org/fhir/sid/icd-10-cm|I60.8,http://hl7.org/fhir/sid/icd-10-cm|I60.9,http://hl7.org/fhir/sid/icd-10-cm|I61.0,http://hl7.org/fhir/sid/icd-10-cm|I61.1,http://hl7.org/fhir/sid/icd-10-cm|I61.2,http://hl7.org/fhir/sid/icd-10-cm|I61.3,http://hl7.org/fhir/sid/icd-10-cm|I61.4,http://hl7.org/fhir/sid/icd-10-cm|I61.5,http://hl7.org/fhir/sid/icd-10-cm|I61.6,http://hl7.org/fhir/sid/icd-10-cm|I61.8,http://hl7.org/fhir/sid/icd-10-cm|I61.9,http://hl7.org/fhir/sid/icd-10-cm|I63.00,http://hl7.org/fhir/sid/icd-10-cm|I63.9,http://hl7.org/fhir/sid/icd-10-cm|I64\nCondition?code=http://hl7.org/fhir/sid/icd-9-cm|430,http://hl7.org/fhir/sid/icd-9-cm|431,http://hl7.org/fhir/sid/icd-9-cm|434.00,http://hl7.org/fhir/sid/icd-9-cm|434.01,http://hl7.org/fhir/sid/icd-9-cm|434.10,http://hl7.org/fhir/sid/icd-9-cm|434.11,http://hl7.org/fhir/sid/icd-9-cm|434.90,http://hl7.org/fhir/sid/icd-9-cm|434.91,http://hl7.org/fhir/sid/icd-9-cm|436",
+      "prompt_text": "Find patients with stroke."
+     },
+     "2-broad": {
+      "precision": 0.4652,
+      "recall": 0.9718,
+      "f1": 0.6292,
+      "passed": false,
+      "expected_count": 3116,
+      "actual_count": 6509,
+      "elapsed_sec": 109.5,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|I63.00,http://hl7.org/fhir/sid/icd-10-cm|I63.011,http://hl7.org/fhir/sid/icd-10-cm|I63.012,http://hl7.org/fhir/sid/icd-10-cm|I63.019,http://hl7.org/fhir/sid/icd-10-cm|I63.02,http://hl7.org/fhir/sid/icd-10-cm|I63.031,http://hl7.org/fhir/sid/icd-10-cm|I63.032,http://hl7.org/fhir/sid/icd-10-cm|I63.039,http://hl7.org/fhir/sid/icd-10-cm|I63.09,http://hl7.org/fhir/sid/icd-10-cm|I63.10,http://hl7.org/fhir/sid/icd-10-cm|I63.111,http://hl7.org/fhir/sid/icd-10-cm|I63.112,http://hl7.org/fhir/sid/icd-10-cm|I63.119,http://hl7.org/fhir/sid/icd-10-cm|I63.12,http://hl7.org/fhir/sid/icd-10-cm|I63.131,http://hl7.org/fhir/sid/icd-10-cm|I63.139,http://hl7.org/fhir/sid/icd-10-cm|I63.19,http://hl7.org/fhir/sid/icd-10-cm|I63.20,http://hl7.org/fhir/sid/icd-10-cm|I63.211,http://hl7.org/fhir/sid/icd-10-cm|I63.212,http://hl7.org/fhir/sid/icd-10-cm|I63.219,http://hl7.org/fhir/sid/icd-10-cm|I63.22,http://hl7.org/fhir/sid/icd-10-cm|I63.29,http://hl7.org/fhir/sid/icd-10-cm|I63.30,http://hl7.org/fhir/sid/icd-10-cm|I63.311,http://hl7.org/fhir/sid/icd-10-cm|I63.312,http://hl7.org/fhir/sid/icd-10-cm|I63.319,http://hl7.org/fhir/sid/icd-10-cm|I63.321,http://hl7.org/fhir/sid/icd-10-cm|I63.322,http://hl7.org/fhir/sid/icd-10-cm|I63.329,http://hl7.org/fhir/sid/icd-10-cm|I63.331,http://hl7.org/fhir/sid/icd-10-cm|I63.332,http://hl7.org/fhir/sid/icd-10-cm|I63.339,http://hl7.org/fhir/sid/icd-10-cm|I63.341,http://hl7.org/fhir/sid/icd-10-cm|I63.342,http://hl7.org/fhir/sid/icd-10-cm|I63.349,http://hl7.org/fhir/sid/icd-10-cm|I63.39,http://hl7.org/fhir/sid/icd-10-cm|I63.40,http://hl7.org/fhir/sid/icd-10-cm|I63.411,http://hl7.org/fhir/sid/icd-10-cm|I63.412,http://hl7.org/fhir/sid/icd-10-cm|I63.419,http://hl7.org/fhir/sid/icd-10-cm|I63.421,http://hl7.org/fhir/sid/icd-10-cm|I63.422,http://hl7.org/fhir/sid/icd-10-cm|I63.429,http://hl7.org/fhir/sid/icd-10-cm|I63.431,http://hl7.org/fhir/sid/icd-10-cm|I63.432,http://hl7.org/fhir/sid/icd-10-cm|I63.439,http://hl7.org/fhir/sid/icd-10-cm|I63.441,http://hl7.org/fhir/sid/icd-10-cm|I63.442,http://hl7.org/fhir/sid/icd-10-cm|I63.449,http://hl7.org/fhir/sid/icd-10-cm|I63.49,http://hl7.org/fhir/sid/icd-10-cm|I63.50,http://hl7.org/fhir/sid/icd-10-cm|I63.511,http://hl7.org/fhir/sid/icd-10-cm|I63.512,http://hl7.org/fhir/sid/icd-10-cm|I63.519,http://hl7.org/fhir/sid/icd-10-cm|I63.521,http://hl7.org/fhir/sid/icd-10-cm|I63.522,http://hl7.org/fhir/sid/icd-10-cm|I63.529,http://hl7.org/fhir/sid/icd-10-cm|I63.531,http://hl7.org/fhir/sid/icd-10-cm|I63.532,http://hl7.org/fhir/sid/icd-10-cm|I63.539,http://hl7.org/fhir/sid/icd-10-cm|I63.541,http://hl7.org/fhir/sid/icd-10-cm|I63.542,http://hl7.org/fhir/sid/icd-10-cm|I63.549,http://hl7.org/fhir/sid/icd-10-cm|I63.59,http://hl7.org/fhir/sid/icd-10-cm|I63.6,http://hl7.org/fhir/sid/icd-10-cm|I63.8,http://hl7.org/fhir/sid/icd-10-cm|I63.81,http://hl7.org/fhir/sid/icd-10-cm|I63.89,http://hl7.org/fhir/sid/icd-10-cm|I63.9,http://hl7.org/fhir/sid/icd-10-cm|I64,http://hl7.org/fhir/sid/icd-9-cm|434.00,http://hl7.org/fhir/sid/icd-9-cm|434.01,http://hl7.org/fhir/sid/icd-9-cm|434.10,http://hl7.org/fhir/sid/icd-9-cm|434.11,http://hl7.org/fhir/sid/icd-9-cm|434.90,http://hl7.org/fhir/sid/icd-9-cm|434.91,http://hl7.org/fhir/sid/icd-9-cm|436",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|I63.00,http://hl7.org/fhir/sid/icd-10-cm|I63.011,http://hl7.org/fhir/sid/icd-10-cm|I63.012,http://hl7.org/fhir/sid/icd-10-cm|I63.019,http://hl7.org/fhir/sid/icd-10-cm|I63.02,http://hl7.org/fhir/sid/icd-10-cm|I63.031,http://hl7.org/fhir/sid/icd-10-cm|I63.032,http://hl7.org/fhir/sid/icd-10-cm|I63.039,http://hl7.org/fhir/sid/icd-10-cm|I63.09,http://hl7.org/fhir/sid/icd-10-cm|I63.10,http://hl7.org/fhir/sid/icd-10-cm|I63.111,http://hl7.org/fhir/sid/icd-10-cm|I63.112,http://hl7.org/fhir/sid/icd-10-cm|I63.119,http://hl7.org/fhir/sid/icd-10-cm|I63.12,http://hl7.org/fhir/sid/icd-10-cm|I63.131,http://hl7.org/fhir/sid/icd-10-cm|I63.139,http://hl7.org/fhir/sid/icd-10-cm|I63.19,http://hl7.org/fhir/sid/icd-10-cm|I63.20,http://hl7.org/fhir/sid/icd-10-cm|I63.211,http://hl7.org/fhir/sid/icd-10-cm|I63.212,http://hl7.org/fhir/sid/icd-10-cm|I63.219,http://hl7.org/fhir/sid/icd-10-cm|I63.22,http://hl7.org/fhir/sid/icd-10-cm|I63.29,http://hl7.org/fhir/sid/icd-10-cm|I63.30,http://hl7.org/fhir/sid/icd-10-cm|I63.311,http://hl7.org/fhir/sid/icd-10-cm|I63.312,http://hl7.org/fhir/sid/icd-10-cm|I63.319,http://hl7.org/fhir/sid/icd-10-cm|I63.321,http://hl7.org/fhir/sid/icd-10-cm|I63.322,http://hl7.org/fhir/sid/icd-10-cm|I63.329,http://hl7.org/fhir/sid/icd-10-cm|I63.331,http://hl7.org/fhir/sid/icd-10-cm|I63.332,http://hl7.org/fhir/sid/icd-10-cm|I63.339,http://hl7.org/fhir/sid/icd-10-cm|I63.341,http://hl7.org/fhir/sid/icd-10-cm|I63.342,http://hl7.org/fhir/sid/icd-10-cm|I63.349,http://hl7.org/fhir/sid/icd-10-cm|I63.39,http://hl7.org/fhir/sid/icd-10-cm|I63.40,http://hl7.org/fhir/sid/icd-10-cm|I63.411,http://hl7.org/fhir/sid/icd-10-cm|I63.412,http://hl7.org/fhir/sid/icd-10-cm|I63.419,http://hl7.org/fhir/sid/icd-10-cm|I63.421,http://hl7.org/fhir/sid/icd-10-cm|I63.422,http://hl7.org/fhir/sid/icd-10-cm|I63.429,http://hl7.org/fhir/sid/icd-10-cm|I63.431,http://hl7.org/fhir/sid/icd-10-cm|I63.432,http://hl7.org/fhir/sid/icd-10-cm|I63.439,http://hl7.org/fhir/sid/icd-10-cm|I63.441,http://hl7.org/fhir/sid/icd-10-cm|I63.442,http://hl7.org/fhir/sid/icd-10-cm|I63.449,http://hl7.org/fhir/sid/icd-10-cm|I63.49,http://hl7.org/fhir/sid/icd-10-cm|I63.50,http://hl7.org/fhir/sid/icd-10-cm|I63.511,http://hl7.org/fhir/sid/icd-10-cm|I63.512,http://hl7.org/fhir/sid/icd-10-cm|I63.519,http://hl7.org/fhir/sid/icd-10-cm|I63.521,http://hl7.org/fhir/sid/icd-10-cm|I63.522,http://hl7.org/fhir/sid/icd-10-cm|I63.529,http://hl7.org/fhir/sid/icd-10-cm|I63.531,http://hl7.org/fhir/sid/icd-10-cm|I63.532,http://hl7.org/fhir/sid/icd-10-cm|I63.539,http://hl7.org/fhir/sid/icd-10-cm|I63.541,http://hl7.org/fhir/sid/icd-10-cm|I63.542,http://hl7.org/fhir/sid/icd-10-cm|I63.549,http://hl7.org/fhir/sid/icd-10-cm|I63.59,http://hl7.org/fhir/sid/icd-10-cm|I63.6,http://hl7.org/fhir/sid/icd-10-cm|I63.8,http://hl7.org/fhir/sid/icd-10-cm|I63.81,http://hl7.org/fhir/sid/icd-10-cm|I63.89,http://hl7.org/fhir/sid/icd-10-cm|I63.9,http://hl7.org/fhir/sid/icd-10-cm|I64,http://hl7.org/fhir/sid/icd-9-cm|434.00,http://hl7.org/fhir/sid/icd-9-cm|434.01,http://hl7.org/fhir/sid/icd-9-cm|434.10,http://hl7.org/fhir/sid/icd-9-cm|434.11,http://hl7.org/fhir/sid/icd-9-cm|434.90,http://hl7.org/fhir/sid/icd-9-cm|434.91,http://hl7.org/fhir/sid/icd-9-cm|436",
+      "prompt_text": "Find patients diagnosed with stroke \u2014 including cerebral infarction (ischemic stroke) and the broader cerebrovascular accident (CVA) concept."
+     },
+     "2-expert": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 3116,
+      "actual_count": 0,
+      "elapsed_sec": 30.4,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|230690007,http://snomed.info/sct|422504002",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|230690007,http://snomed.info/sct|422504002",
+      "prompt_text": "I need to find patients with a documented stroke or cerebrovascular accident diagnosis. Search Condition resources using SNOMED CT codes \u2014 include both the specific cerebral infarction concept and the broader cerebrovascular accident term, as both are used in clinical documentation for this event. Do not restrict to only one variant, since either code may be present depending on the level of clinical specificity recorded."
+     },
+     "3-naive": {
+      "precision": 0.2279,
+      "recall": 0.5408,
+      "f1": 0.3207,
+      "passed": false,
+      "expected_count": 3116,
+      "actual_count": 7393,
+      "elapsed_sec": 78.2,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|I60.9,http://hl7.org/fhir/sid/icd-10-cm|I61.0,http://hl7.org/fhir/sid/icd-10-cm|I61.9,http://hl7.org/fhir/sid/icd-10-cm|I62.9,http://hl7.org/fhir/sid/icd-10-cm|I63.00,http://hl7.org/fhir/sid/icd-10-cm|I63.9,http://hl7.org/fhir/sid/icd-10-cm|I64,http://hl7.org/fhir/sid/icd-10-cm|G45.9,http://hl7.org/fhir/sid/icd-9-cm|430,http://hl7.org/fhir/sid/icd-9-cm|431,http://hl7.org/fhir/sid/icd-9-cm|432.9,http://hl7.org/fhir/sid/icd-9-cm|433.01,http://hl7.org/fhir/sid/icd-9-cm|433.11,http://hl7.org/fhir/sid/icd-9-cm|433.21,http://hl7.org/fhir/sid/icd-9-cm|433.31,http://hl7.org/fhir/sid/icd-9-cm|433.81,http://hl7.org/fhir/sid/icd-9-cm|433.91,http://hl7.org/fhir/sid/icd-9-cm|434.00,http://hl7.org/fhir/sid/icd-9-cm|434.01,http://hl7.org/fhir/sid/icd-9-cm|434.10,http://hl7.org/fhir/sid/icd-9-cm|434.11,http://hl7.org/fhir/sid/icd-9-cm|434.90,http://hl7.org/fhir/sid/icd-9-cm|434.91,http://hl7.org/fhir/sid/icd-9-cm|435.9,http://hl7.org/fhir/sid/icd-9-cm|436",
+      "additional_query_urls": [],
+      "raw_response": "Both code systems present. Final answer with broad stroke code set (ischemic + hemorrhagic + TIA, ICD-9 + ICD-10):\n\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|I60.9,http://hl7.org/fhir/sid/icd-10-cm|I61.0,http://hl7.org/fhir/sid/icd-10-cm|I61.9,http://hl7.org/fhir/sid/icd-10-cm|I62.9,http://hl7.org/fhir/sid/icd-10-cm|I63.00,http://hl7.org/fhir/sid/icd-10-cm|I63.9,http://hl7.org/fhir/sid/icd-10-cm|I64,http://hl7.org/fhir/sid/icd-10-cm|G45.9,http://hl7.org/fhir/sid/icd-9-cm|430,http://hl7.org/fhir/sid/icd-9-cm|431,http://hl7.org/fhir/sid/icd-9-cm|432.9,http://hl7.org/fhir/sid/icd-9-cm|433.01,http://hl7.org/fhir/sid/icd-9-cm|433.11,http://hl7.org/fhir/sid/icd-9-cm|433.21,http://hl7.org/fhir/sid/icd-9-cm|433.31,http://hl7.org/fhir/sid/icd-9-cm|433.81,http://hl7.org/fhir/sid/icd-9-cm|433.91,http://hl7.org/fhir/sid/icd-9-cm|434.00,http://hl7.org/fhir/sid/icd-9-cm|434.01,http://hl7.org/fhir/sid/icd-9-cm|434.10,http://hl7.org/fhir/sid/icd-9-cm|434.11,http://hl7.org/fhir/sid/icd-9-cm|434.90,http://hl7.org/fhir/sid/icd-9-cm|434.91,http://hl7.org/fhir/sid/icd-9-cm|435.9,http://hl7.org/fhir/sid/icd-9-cm|436",
+      "prompt_text": "Find patients with stroke."
+     },
+     "3-broad": {
+      "precision": 0.3893,
+      "recall": 0.7407,
+      "f1": 0.5104,
+      "passed": false,
+      "expected_count": 3116,
+      "actual_count": 5928,
+      "elapsed_sec": 87.8,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|I63.00,http://hl7.org/fhir/sid/icd-10-cm|I63.10,http://hl7.org/fhir/sid/icd-10-cm|I63.20,http://hl7.org/fhir/sid/icd-10-cm|I63.30,http://hl7.org/fhir/sid/icd-10-cm|I63.40,http://hl7.org/fhir/sid/icd-10-cm|I63.50,http://hl7.org/fhir/sid/icd-10-cm|I63.6,http://hl7.org/fhir/sid/icd-10-cm|I63.8,http://hl7.org/fhir/sid/icd-10-cm|I63.9,http://hl7.org/fhir/sid/icd-10-cm|I64,http://hl7.org/fhir/sid/icd-9-cm|433.01,http://hl7.org/fhir/sid/icd-9-cm|433.11,http://hl7.org/fhir/sid/icd-9-cm|433.21,http://hl7.org/fhir/sid/icd-9-cm|433.31,http://hl7.org/fhir/sid/icd-9-cm|433.81,http://hl7.org/fhir/sid/icd-9-cm|433.91,http://hl7.org/fhir/sid/icd-9-cm|434.01,http://hl7.org/fhir/sid/icd-9-cm|434.11,http://hl7.org/fhir/sid/icd-9-cm|434.91,http://hl7.org/fhir/sid/icd-9-cm|436",
+      "additional_query_urls": [],
+      "raw_response": "FINAL ANSWER:\n\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|I63.00,http://hl7.org/fhir/sid/icd-10-cm|I63.10,http://hl7.org/fhir/sid/icd-10-cm|I63.20,http://hl7.org/fhir/sid/icd-10-cm|I63.30,http://hl7.org/fhir/sid/icd-10-cm|I63.40,http://hl7.org/fhir/sid/icd-10-cm|I63.50,http://hl7.org/fhir/sid/icd-10-cm|I63.6,http://hl7.org/fhir/sid/icd-10-cm|I63.8,http://hl7.org/fhir/sid/icd-10-cm|I63.9,http://hl7.org/fhir/sid/icd-10-cm|I64,http://hl7.org/fhir/sid/icd-9-cm|433.01,http://hl7.org/fhir/sid/icd-9-cm|433.11,http://hl7.org/fhir/sid/icd-9-cm|433.21,http://hl7.org/fhir/sid/icd-9-cm|433.31,http://hl7.org/fhir/sid/icd-9-cm|433.81,http://hl7.org/fhir/sid/icd-9-cm|433.91,http://hl7.org/fhir/sid/icd-9-cm|434.01,http://hl7.org/fhir/sid/icd-9-cm|434.11,http://hl7.org/fhir/sid/icd-9-cm|434.91,http://hl7.org/fhir/sid/icd-9-cm|436",
+      "prompt_text": "Find patients diagnosed with stroke \u2014 including cerebral infarction (ischemic stroke) and the broader cerebrovascular accident (CVA) concept."
+     },
+     "3-expert": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 3116,
+      "actual_count": 0,
+      "elapsed_sec": 39.0,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|432504007,http://snomed.info/sct|230690007",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|432504007,http://snomed.info/sct|230690007",
+      "prompt_text": "I need to find patients with a documented stroke or cerebrovascular accident diagnosis. Search Condition resources using SNOMED CT codes \u2014 include both the specific cerebral infarction concept and the broader cerebrovascular accident term, as both are used in clinical documentation for this event. Do not restrict to only one variant, since either code may be present depending on the level of clinical specificity recorded."
+     }
+    },
     "copilot:claude-sonnet-4.6": {
      "1-naive": {
       "precision": 1.0,
@@ -1780,6 +2055,137 @@
        "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|32968"
       ],
       "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1804799\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1191\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|32968",
+      "prompt_text": "Identify patients who received stroke-related pharmacotherapy via their medication orders. Search MedicationRequest resources for alteplase, aspirin, and clopidogrel, all coded in RxNorm. Alteplase is the acute thrombolytic used for ischemic stroke and is highly specific to that indication. Aspirin and clopidogrel are antiplatelet agents used for secondary stroke prevention but are heavily cross-indicated with coronary artery disease, peripheral arterial disease, and carotid artery disease \u2014 so a medication-only cohort will include many patients prescribed these drugs for cardiovascular indications other than stroke."
+     }
+    },
+    "copilot:claude-opus-4.7+mimic": {
+     "1-naive": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 61245,
+      "actual_count": 0,
+      "elapsed_sec": 9.1,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|11289,1364430,1114195,1037045,32968,1191&status=active",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|11289,1364430,1114195,1037045,32968,1191&status=active",
+      "prompt_text": "Find patients on stroke meds."
+     },
+     "1-broad": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 61245,
+      "actual_count": 0,
+      "elapsed_sec": 8.5,
+      "queries_generated": 3,
+      "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|8410",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1191",
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|32968"
+      ],
+      "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|8410\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1191\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|32968",
+      "prompt_text": "Find patients prescribed alteplase (tissue plasminogen activator) for acute thrombolysis or antiplatelet medications (aspirin, clopidogrel) for secondary stroke prevention."
+     },
+     "1-expert": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 61245,
+      "actual_count": 0,
+      "elapsed_sec": 8.6,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1804799,http://www.nlm.nih.gov/research/umls/rxnorm|1191,http://www.nlm.nih.gov/research/umls/rxnorm|32968",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1804799,http://www.nlm.nih.gov/research/umls/rxnorm|1191,http://www.nlm.nih.gov/research/umls/rxnorm|32968",
+      "prompt_text": "Identify patients who received stroke-related pharmacotherapy via their medication orders. Search MedicationRequest resources for alteplase, aspirin, and clopidogrel, all coded in RxNorm. Alteplase is the acute thrombolytic used for ischemic stroke and is highly specific to that indication. Aspirin and clopidogrel are antiplatelet agents used for secondary stroke prevention but are heavily cross-indicated with coronary artery disease, peripheral arterial disease, and carotid artery disease \u2014 so a medication-only cohort will include many patients prescribed these drugs for cardiovascular indications other than stroke."
+     },
+     "2-naive": {
+      "precision": 0.7225,
+      "recall": 0.0308,
+      "f1": 0.0591,
+      "passed": false,
+      "expected_count": 61245,
+      "actual_count": 2613,
+      "elapsed_sec": 60.5,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|1364430,http://www.nlm.nih.gov/research/umls/rxnorm|236991,http://www.nlm.nih.gov/research/umls/rxnorm|29046,http://www.nlm.nih.gov/research/umls/rxnorm|32968,http://www.nlm.nih.gov/research/umls/rxnorm|83367",
+      "additional_query_urls": [],
+      "raw_response": "FINAL ANSWER:\n\nMedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|1364430,http://www.nlm.nih.gov/research/umls/rxnorm|236991,http://www.nlm.nih.gov/research/umls/rxnorm|29046,http://www.nlm.nih.gov/research/umls/rxnorm|32968,http://www.nlm.nih.gov/research/umls/rxnorm|83367",
+      "prompt_text": "Find patients on stroke meds."
+     },
+     "2-broad": {
+      "precision": 1.0,
+      "recall": 0.0475,
+      "f1": 0.0907,
+      "passed": false,
+      "expected_count": 61245,
+      "actual_count": 2911,
+      "elapsed_sec": 67.2,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|1191,http://www.nlm.nih.gov/research/umls/rxnorm|32968,http://www.nlm.nih.gov/research/umls/rxnorm|8410",
+      "additional_query_urls": [],
+      "raw_response": "FINAL ANSWER:\n\nMedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|1191,http://www.nlm.nih.gov/research/umls/rxnorm|32968,http://www.nlm.nih.gov/research/umls/rxnorm|8410",
+      "prompt_text": "Find patients prescribed alteplase (tissue plasminogen activator) for acute thrombolysis or antiplatelet medications (aspirin, clopidogrel) for secondary stroke prevention."
+     },
+     "2-expert": {
+      "precision": 1.0,
+      "recall": 0.0475,
+      "f1": 0.0907,
+      "passed": false,
+      "expected_count": 61245,
+      "actual_count": 2911,
+      "elapsed_sec": 71.6,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|1191,http://www.nlm.nih.gov/research/umls/rxnorm|32968,http://www.nlm.nih.gov/research/umls/rxnorm|8410,http://www.nlm.nih.gov/research/umls/rxnorm|1804799,http://www.nlm.nih.gov/research/umls/rxnorm|1804798,http://www.nlm.nih.gov/research/umls/rxnorm|1804804",
+      "additional_query_urls": [],
+      "raw_response": "FINAL ANSWER:\n\nMedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|1191,http://www.nlm.nih.gov/research/umls/rxnorm|32968,http://www.nlm.nih.gov/research/umls/rxnorm|8410,http://www.nlm.nih.gov/research/umls/rxnorm|1804799,http://www.nlm.nih.gov/research/umls/rxnorm|1804798,http://www.nlm.nih.gov/research/umls/rxnorm|1804804",
+      "prompt_text": "Identify patients who received stroke-related pharmacotherapy via their medication orders. Search MedicationRequest resources for alteplase, aspirin, and clopidogrel, all coded in RxNorm. Alteplase is the acute thrombolytic used for ischemic stroke and is highly specific to that indication. Aspirin and clopidogrel are antiplatelet agents used for secondary stroke prevention but are heavily cross-indicated with coronary artery disease, peripheral arterial disease, and carotid artery disease \u2014 so a medication-only cohort will include many patients prescribed these drugs for cardiovascular indications other than stroke."
+     },
+     "3-naive": {
+      "precision": 0.8909,
+      "recall": 0.0271,
+      "f1": 0.0525,
+      "passed": false,
+      "expected_count": 61245,
+      "actual_count": 1861,
+      "elapsed_sec": 58.5,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|1191,32968,11289,1364430,1114195,1037042,1116632,613391,3521,8410",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|1191,32968,11289,1364430,1114195,1037042,1116632,613391,3521,8410",
+      "prompt_text": "Find patients on stroke meds."
+     },
+     "3-broad": {
+      "precision": 1.0,
+      "recall": 0.0475,
+      "f1": 0.0907,
+      "passed": false,
+      "expected_count": 61245,
+      "actual_count": 2911,
+      "elapsed_sec": 64.2,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|8410,1191,32968",
+      "additional_query_urls": [],
+      "raw_response": "FINAL ANSWER:\n\nMedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|8410,1191,32968",
+      "prompt_text": "Find patients prescribed alteplase (tissue plasminogen activator) for acute thrombolysis or antiplatelet medications (aspirin, clopidogrel) for secondary stroke prevention."
+     },
+     "3-expert": {
+      "precision": 1.0,
+      "recall": 0.0475,
+      "f1": 0.0907,
+      "passed": false,
+      "expected_count": 61245,
+      "actual_count": 2911,
+      "elapsed_sec": 63.1,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|1191,32968,8410",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|1191,32968,8410",
       "prompt_text": "Identify patients who received stroke-related pharmacotherapy via their medication orders. Search MedicationRequest resources for alteplase, aspirin, and clopidogrel, all coded in RxNorm. Alteplase is the acute thrombolytic used for ischemic stroke and is highly specific to that indication. Aspirin and clopidogrel are antiplatelet agents used for secondary stroke prevention but are heavily cross-indicated with coronary artery disease, peripheral arterial disease, and carotid artery disease \u2014 so a medication-only cohort will include many patients prescribed these drugs for cardiovascular indications other than stroke."
      }
     },

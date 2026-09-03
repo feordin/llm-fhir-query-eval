@@ -1005,6 +1005,162 @@
       "prompt_text": "I need to identify my complete chronic kidney disease patient population for a quality improvement initiative on CKD care coordination. From clinical experience, I know CKD is substantially undercoded: only about half of patients with biochemical evidence of CKD (reduced eGFR or proteinuria) have a formal CKD diagnosis on their problem list. Documentation patterns:\n1. Some have a formal CKD diagnosis code with stage (Stage 2, 3, 3A, 3B, or 4)\n2. Many have reduced eGFR below 60 mL/min/1.73 m\u00b2 but no CKD diagnosis ever coded\n3. Some have elevated urine albumin-to-creatinine ratio (above 30 mg/g) indicating proteinuria, regardless of eGFR\n\nPlease run multiple FHIR queries to capture the full population:\n1. Patients with any CKD diagnosis (parent CKD or any of stages 2-4)\n2. Patients with reduced eGFR labs (below 60)\n3. Patients with elevated urine albumin-to-creatinine ratio (above 30 mg/g)\n\nFor each query, return the matching resources. I want the union of all patients found across these three approaches."
      }
     },
+    "copilot:claude-opus-4.7+mimic": {
+     "1-naive": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 20109,
+      "actual_count": 0,
+      "elapsed_sec": 12.8,
+      "queries_generated": 3,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|709044004,http://snomed.info/sct|90688005,http://snomed.info/sct|433144002,http://snomed.info/sct|700378005,http://snomed.info/sct|700379002,http://snomed.info/sct|431857002",
+      "additional_query_urls": [
+       "Observation?code=http://loinc.org|48642-3,http://loinc.org|48643-1,http://loinc.org|62238-1,http://loinc.org|33914-3,http://loinc.org|69405-9,http://loinc.org|88293-6,http://loinc.org|98979-8&value-quantity=lt60",
+       "Observation?code=http://loinc.org|9318-7,http://loinc.org|14959-1,http://loinc.org|14958-3&value-quantity=gt30"
+      ],
+      "raw_response": "Condition?code=http://snomed.info/sct|709044004,http://snomed.info/sct|90688005,http://snomed.info/sct|433144002,http://snomed.info/sct|700378005,http://snomed.info/sct|700379002,http://snomed.info/sct|431857002\nObservation?code=http://loinc.org|48642-3,http://loinc.org|48643-1,http://loinc.org|62238-1,http://loinc.org|33914-3,http://loinc.org|69405-9,http://loinc.org|88293-6,http://loinc.org|98979-8&value-quantity=lt60\nObservation?code=http://loinc.org|9318-7,http://loinc.org|14959-1,http://loinc.org|14958-3&value-quantity=gt30",
+      "prompt_text": "I need to identify my complete chronic kidney disease patient population for a quality improvement initiative on CKD care coordination. From clinical experience, I know CKD is substantially undercoded: only about half of patients with biochemical evidence of CKD (reduced eGFR or proteinuria) have a formal CKD diagnosis on their problem list. Documentation patterns:\n1. Some have a formal CKD diagnosis code with stage (Stage 2, 3, 3A, 3B, or 4)\n2. Many have reduced eGFR below 60 mL/min/1.73 m\u00b2 but no CKD diagnosis ever coded\n3. Some have elevated urine albumin-to-creatinine ratio (above 30 mg/g) indicating proteinuria, regardless of eGFR\n\nPlease run multiple FHIR queries to capture the full population:\n1. Patients with any CKD diagnosis (parent CKD or any of stages 2-4)\n2. Patients with reduced eGFR labs (below 60)\n3. Patients with elevated urine albumin-to-creatinine ratio (above 30 mg/g)\n\nFor each query, return the matching resources. I want the union of all patients found across these three approaches."
+     },
+     "1-broad": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 20109,
+      "actual_count": 0,
+      "elapsed_sec": 12.2,
+      "queries_generated": 3,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|709044004,http://snomed.info/sct|90688005,http://snomed.info/sct|433144002,http://snomed.info/sct|700378005,http://snomed.info/sct|431856006,http://snomed.info/sct|431857002,http://snomed.info/sct|714152005",
+      "additional_query_urls": [
+       "Observation?code=http://loinc.org|48642-3,http://loinc.org|48643-1,http://loinc.org|62238-1,http://loinc.org|33914-3,http://loinc.org|98979-8&value-quantity=lt60",
+       "Observation?code=http://loinc.org|9318-7,http://loinc.org|14959-1,http://loinc.org|14958-3&value-quantity=gt30"
+      ],
+      "raw_response": "Condition?code=http://snomed.info/sct|709044004,http://snomed.info/sct|90688005,http://snomed.info/sct|433144002,http://snomed.info/sct|700378005,http://snomed.info/sct|431856006,http://snomed.info/sct|431857002,http://snomed.info/sct|714152005\nObservation?code=http://loinc.org|48642-3,http://loinc.org|48643-1,http://loinc.org|62238-1,http://loinc.org|33914-3,http://loinc.org|98979-8&value-quantity=lt60\nObservation?code=http://loinc.org|9318-7,http://loinc.org|14959-1,http://loinc.org|14958-3&value-quantity=gt30",
+      "prompt_text": "I need to identify my complete chronic kidney disease patient population for a quality improvement initiative on CKD care coordination. From clinical experience, I know CKD is substantially undercoded: only about half of patients with biochemical evidence of CKD (reduced eGFR or proteinuria) have a formal CKD diagnosis on their problem list. Documentation patterns:\n1. Some have a formal CKD diagnosis code with stage (Stage 2, 3, 3A, 3B, or 4)\n2. Many have reduced eGFR below 60 mL/min/1.73 m\u00b2 but no CKD diagnosis ever coded\n3. Some have elevated urine albumin-to-creatinine ratio (above 30 mg/g) indicating proteinuria, regardless of eGFR\n\nPlease run multiple FHIR queries to capture the full population:\n1. Patients with any CKD diagnosis (parent CKD or any of stages 2-4)\n2. Patients with reduced eGFR labs (below 60)\n3. Patients with elevated urine albumin-to-creatinine ratio (above 30 mg/g)\n\nFor each query, return the matching resources. I want the union of all patients found across these three approaches."
+     },
+     "1-expert": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 20109,
+      "actual_count": 0,
+      "elapsed_sec": 11.5,
+      "queries_generated": 3,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|709044004,http://snomed.info/sct|90688005,http://snomed.info/sct|433144002,http://snomed.info/sct|700378005,http://snomed.info/sct|700379002,http://snomed.info/sct|431856006",
+      "additional_query_urls": [
+       "Observation?code=http://loinc.org|48642-3,http://loinc.org|48643-1,http://loinc.org|62238-1,http://loinc.org|69405-9,http://loinc.org|98979-8&value-quantity=lt60",
+       "Observation?code=http://loinc.org|9318-7,http://loinc.org|14959-1,http://loinc.org|14958-3&value-quantity=gt30"
+      ],
+      "raw_response": "Condition?code=http://snomed.info/sct|709044004,http://snomed.info/sct|90688005,http://snomed.info/sct|433144002,http://snomed.info/sct|700378005,http://snomed.info/sct|700379002,http://snomed.info/sct|431856006\nObservation?code=http://loinc.org|48642-3,http://loinc.org|48643-1,http://loinc.org|62238-1,http://loinc.org|69405-9,http://loinc.org|98979-8&value-quantity=lt60\nObservation?code=http://loinc.org|9318-7,http://loinc.org|14959-1,http://loinc.org|14958-3&value-quantity=gt30",
+      "prompt_text": "I need to identify my complete chronic kidney disease patient population for a quality improvement initiative on CKD care coordination. From clinical experience, I know CKD is substantially undercoded: only about half of patients with biochemical evidence of CKD (reduced eGFR or proteinuria) have a formal CKD diagnosis on their problem list. Documentation patterns:\n1. Some have a formal CKD diagnosis code with stage (Stage 2, 3, 3A, 3B, or 4)\n2. Many have reduced eGFR below 60 mL/min/1.73 m\u00b2 but no CKD diagnosis ever coded\n3. Some have elevated urine albumin-to-creatinine ratio (above 30 mg/g) indicating proteinuria, regardless of eGFR\n\nPlease run multiple FHIR queries to capture the full population:\n1. Patients with any CKD diagnosis (parent CKD or any of stages 2-4)\n2. Patients with reduced eGFR labs (below 60)\n3. Patients with elevated urine albumin-to-creatinine ratio (above 30 mg/g)\n\nFor each query, return the matching resources. I want the union of all patients found across these three approaches."
+     },
+     "2-naive": {
+      "precision": 1.0,
+      "recall": 0.4378,
+      "f1": 0.609,
+      "passed": false,
+      "expected_count": 20109,
+      "actual_count": 8803,
+      "elapsed_sec": 76.4,
+      "queries_generated": 4,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|N18.2,http://hl7.org/fhir/sid/icd-10-cm|N18.3,http://hl7.org/fhir/sid/icd-10-cm|N18.30,http://hl7.org/fhir/sid/icd-10-cm|N18.31,http://hl7.org/fhir/sid/icd-10-cm|N18.32,http://hl7.org/fhir/sid/icd-10-cm|N18.4,http://hl7.org/fhir/sid/icd-10-cm|N18.9",
+      "additional_query_urls": [
+       "Condition?code=http://hl7.org/fhir/sid/icd-9-cm|585.2,http://hl7.org/fhir/sid/icd-9-cm|585.3,http://hl7.org/fhir/sid/icd-9-cm|585.4,http://hl7.org/fhir/sid/icd-9-cm|585.9",
+       "Observation?code=http://loinc.org|33914-3,http://loinc.org|48642-3,http://loinc.org|48643-1,http://loinc.org|62238-1,http://loinc.org|69405-9,http://loinc.org|88293-6,http://loinc.org|88294-4,http://loinc.org|98979-8&value-quantity=lt60",
+       "Observation?code=http://loinc.org|9318-7,http://loinc.org|14959-1,http://loinc.org|14958-3,http://loinc.org|32294-1,http://loinc.org|59159-8,http://loinc.org|77253-3&value-quantity=gt30"
+      ],
+      "raw_response": "FINAL ANSWER:\n\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|N18.2,http://hl7.org/fhir/sid/icd-10-cm|N18.3,http://hl7.org/fhir/sid/icd-10-cm|N18.30,http://hl7.org/fhir/sid/icd-10-cm|N18.31,http://hl7.org/fhir/sid/icd-10-cm|N18.32,http://hl7.org/fhir/sid/icd-10-cm|N18.4,http://hl7.org/fhir/sid/icd-10-cm|N18.9\nCondition?code=http://hl7.org/fhir/sid/icd-9-cm|585.2,http://hl7.org/fhir/sid/icd-9-cm|585.3,http://hl7.org/fhir/sid/icd-9-cm|585.4,http://hl7.org/fhir/sid/icd-9-cm|585.9\nObservation?code=http://loinc.org|33914-3,http://loinc.org|48642-3,http://loinc.org|48643-1,http://loinc.org|62238-1,http://loinc.org|69405-9,http://loinc.org|88293-6,http://loinc.org|88294-4,http://loinc.org|98979-8&value-quantity=lt60\nObservation?code=http://loinc.org|9318-7,http://loinc.org|14959-1,http://loinc.org|14958-3,http://loinc.org|32294-1,http://loinc.org|59159-8,http://loinc.org|77253-3&value-quantity=gt30",
+      "prompt_text": "I need to identify my complete chronic kidney disease patient population for a quality improvement initiative on CKD care coordination. From clinical experience, I know CKD is substantially undercoded: only about half of patients with biochemical evidence of CKD (reduced eGFR or proteinuria) have a formal CKD diagnosis on their problem list. Documentation patterns:\n1. Some have a formal CKD diagnosis code with stage (Stage 2, 3, 3A, 3B, or 4)\n2. Many have reduced eGFR below 60 mL/min/1.73 m\u00b2 but no CKD diagnosis ever coded\n3. Some have elevated urine albumin-to-creatinine ratio (above 30 mg/g) indicating proteinuria, regardless of eGFR\n\nPlease run multiple FHIR queries to capture the full population:\n1. Patients with any CKD diagnosis (parent CKD or any of stages 2-4)\n2. Patients with reduced eGFR labs (below 60)\n3. Patients with elevated urine albumin-to-creatinine ratio (above 30 mg/g)\n\nFor each query, return the matching resources. I want the union of all patients found across these three approaches."
+     },
+     "2-broad": {
+      "precision": 1.0,
+      "recall": 0.2558,
+      "f1": 0.4073,
+      "passed": false,
+      "expected_count": 20109,
+      "actual_count": 5143,
+      "elapsed_sec": 74.0,
+      "queries_generated": 3,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|N18.2,http://hl7.org/fhir/sid/icd-10-cm|N18.3,http://hl7.org/fhir/sid/icd-10-cm|N18.30,http://hl7.org/fhir/sid/icd-10-cm|N18.31,http://hl7.org/fhir/sid/icd-10-cm|N18.32,http://hl7.org/fhir/sid/icd-10-cm|N18.4,http://hl7.org/fhir/sid/icd-10-cm|N18.9",
+      "additional_query_urls": [
+       "Observation?code=http://loinc.org|33914-3,http://loinc.org|48642-3,http://loinc.org|48643-1,http://loinc.org|62238-1,http://loinc.org|69405-9,http://loinc.org|88293-6,http://loinc.org|88294-4,http://loinc.org|98979-8&value-quantity=lt60",
+       "Observation?code=http://loinc.org|9318-7,http://loinc.org|14958-3,http://loinc.org|14959-1,http://loinc.org|32294-1,http://loinc.org|59159-4,http://loinc.org|77253-3&value-quantity=gt30"
+      ],
+      "raw_response": "FINAL ANSWER:\n\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|N18.2,http://hl7.org/fhir/sid/icd-10-cm|N18.3,http://hl7.org/fhir/sid/icd-10-cm|N18.30,http://hl7.org/fhir/sid/icd-10-cm|N18.31,http://hl7.org/fhir/sid/icd-10-cm|N18.32,http://hl7.org/fhir/sid/icd-10-cm|N18.4,http://hl7.org/fhir/sid/icd-10-cm|N18.9\nObservation?code=http://loinc.org|33914-3,http://loinc.org|48642-3,http://loinc.org|48643-1,http://loinc.org|62238-1,http://loinc.org|69405-9,http://loinc.org|88293-6,http://loinc.org|88294-4,http://loinc.org|98979-8&value-quantity=lt60\nObservation?code=http://loinc.org|9318-7,http://loinc.org|14958-3,http://loinc.org|14959-1,http://loinc.org|32294-1,http://loinc.org|59159-4,http://loinc.org|77253-3&value-quantity=gt30",
+      "prompt_text": "I need to identify my complete chronic kidney disease patient population for a quality improvement initiative on CKD care coordination. From clinical experience, I know CKD is substantially undercoded: only about half of patients with biochemical evidence of CKD (reduced eGFR or proteinuria) have a formal CKD diagnosis on their problem list. Documentation patterns:\n1. Some have a formal CKD diagnosis code with stage (Stage 2, 3, 3A, 3B, or 4)\n2. Many have reduced eGFR below 60 mL/min/1.73 m\u00b2 but no CKD diagnosis ever coded\n3. Some have elevated urine albumin-to-creatinine ratio (above 30 mg/g) indicating proteinuria, regardless of eGFR\n\nPlease run multiple FHIR queries to capture the full population:\n1. Patients with any CKD diagnosis (parent CKD or any of stages 2-4)\n2. Patients with reduced eGFR labs (below 60)\n3. Patients with elevated urine albumin-to-creatinine ratio (above 30 mg/g)\n\nFor each query, return the matching resources. I want the union of all patients found across these three approaches."
+     },
+     "2-expert": {
+      "precision": 1.0,
+      "recall": 0.2558,
+      "f1": 0.4073,
+      "passed": false,
+      "expected_count": 20109,
+      "actual_count": 5143,
+      "elapsed_sec": 53.5,
+      "queries_generated": 3,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|N18.2,http://hl7.org/fhir/sid/icd-10-cm|N18.3,http://hl7.org/fhir/sid/icd-10-cm|N18.30,http://hl7.org/fhir/sid/icd-10-cm|N18.31,http://hl7.org/fhir/sid/icd-10-cm|N18.32,http://hl7.org/fhir/sid/icd-10-cm|N18.4,http://hl7.org/fhir/sid/icd-10-cm|N18.9",
+      "additional_query_urls": [
+       "Observation?code=http://loinc.org|33914-3,http://loinc.org|48642-3,http://loinc.org|48643-1,http://loinc.org|62238-1,http://loinc.org|88293-6,http://loinc.org|98979-8&value-quantity=lt60",
+       "Observation?code=http://loinc.org|9318-7,http://loinc.org|14958-3,http://loinc.org|14959-1,http://loinc.org|32294-1&value-quantity=gt30"
+      ],
+      "raw_response": "FINAL ANSWER:\n\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|N18.2,http://hl7.org/fhir/sid/icd-10-cm|N18.3,http://hl7.org/fhir/sid/icd-10-cm|N18.30,http://hl7.org/fhir/sid/icd-10-cm|N18.31,http://hl7.org/fhir/sid/icd-10-cm|N18.32,http://hl7.org/fhir/sid/icd-10-cm|N18.4,http://hl7.org/fhir/sid/icd-10-cm|N18.9\nObservation?code=http://loinc.org|33914-3,http://loinc.org|48642-3,http://loinc.org|48643-1,http://loinc.org|62238-1,http://loinc.org|88293-6,http://loinc.org|98979-8&value-quantity=lt60\nObservation?code=http://loinc.org|9318-7,http://loinc.org|14958-3,http://loinc.org|14959-1,http://loinc.org|32294-1&value-quantity=gt30",
+      "prompt_text": "I need to identify my complete chronic kidney disease patient population for a quality improvement initiative on CKD care coordination. From clinical experience, I know CKD is substantially undercoded: only about half of patients with biochemical evidence of CKD (reduced eGFR or proteinuria) have a formal CKD diagnosis on their problem list. Documentation patterns:\n1. Some have a formal CKD diagnosis code with stage (Stage 2, 3, 3A, 3B, or 4)\n2. Many have reduced eGFR below 60 mL/min/1.73 m\u00b2 but no CKD diagnosis ever coded\n3. Some have elevated urine albumin-to-creatinine ratio (above 30 mg/g) indicating proteinuria, regardless of eGFR\n\nPlease run multiple FHIR queries to capture the full population:\n1. Patients with any CKD diagnosis (parent CKD or any of stages 2-4)\n2. Patients with reduced eGFR labs (below 60)\n3. Patients with elevated urine albumin-to-creatinine ratio (above 30 mg/g)\n\nFor each query, return the matching resources. I want the union of all patients found across these three approaches."
+     },
+     "3-naive": {
+      "precision": 1.0,
+      "recall": 0.2558,
+      "f1": 0.4073,
+      "passed": false,
+      "expected_count": 20109,
+      "actual_count": 5143,
+      "elapsed_sec": 76.0,
+      "queries_generated": 3,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|N18.2,http://hl7.org/fhir/sid/icd-10-cm|N18.3,http://hl7.org/fhir/sid/icd-10-cm|N18.30,http://hl7.org/fhir/sid/icd-10-cm|N18.31,http://hl7.org/fhir/sid/icd-10-cm|N18.32,http://hl7.org/fhir/sid/icd-10-cm|N18.4,http://hl7.org/fhir/sid/icd-10-cm|N18.9",
+      "additional_query_urls": [
+       "Observation?code=http://loinc.org|33914-3,http://loinc.org|48642-3,http://loinc.org|48643-3,http://loinc.org|62238-1,http://loinc.org|69405-9,http://loinc.org|88294-4,http://loinc.org|98979-8&value-quantity=lt60|http://unitsofmeasure.org|mL/min/{1.73_m2}",
+       "Observation?code=http://loinc.org|9318-7,http://loinc.org|14959-1,http://loinc.org|14958-3,http://loinc.org|32294-1,http://loinc.org|34366-5,http://loinc.org|77253-3&value-quantity=gt30|http://unitsofmeasure.org|mg/g"
+      ],
+      "raw_response": "Final Answer:\n\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|N18.2,http://hl7.org/fhir/sid/icd-10-cm|N18.3,http://hl7.org/fhir/sid/icd-10-cm|N18.30,http://hl7.org/fhir/sid/icd-10-cm|N18.31,http://hl7.org/fhir/sid/icd-10-cm|N18.32,http://hl7.org/fhir/sid/icd-10-cm|N18.4,http://hl7.org/fhir/sid/icd-10-cm|N18.9\nObservation?code=http://loinc.org|33914-3,http://loinc.org|48642-3,http://loinc.org|48643-3,http://loinc.org|62238-1,http://loinc.org|69405-9,http://loinc.org|88294-4,http://loinc.org|98979-8&value-quantity=lt60|http://unitsofmeasure.org|mL/min/{1.73_m2}\nObservation?code=http://loinc.org|9318-7,http://loinc.org|14959-1,http://loinc.org|14958-3,http://loinc.org|32294-1,http://loinc.org|34366-5,http://loinc.org|77253-3&value-quantity=gt30|http://unitsofmeasure.org|mg/g",
+      "prompt_text": "I need to identify my complete chronic kidney disease patient population for a quality improvement initiative on CKD care coordination. From clinical experience, I know CKD is substantially undercoded: only about half of patients with biochemical evidence of CKD (reduced eGFR or proteinuria) have a formal CKD diagnosis on their problem list. Documentation patterns:\n1. Some have a formal CKD diagnosis code with stage (Stage 2, 3, 3A, 3B, or 4)\n2. Many have reduced eGFR below 60 mL/min/1.73 m\u00b2 but no CKD diagnosis ever coded\n3. Some have elevated urine albumin-to-creatinine ratio (above 30 mg/g) indicating proteinuria, regardless of eGFR\n\nPlease run multiple FHIR queries to capture the full population:\n1. Patients with any CKD diagnosis (parent CKD or any of stages 2-4)\n2. Patients with reduced eGFR labs (below 60)\n3. Patients with elevated urine albumin-to-creatinine ratio (above 30 mg/g)\n\nFor each query, return the matching resources. I want the union of all patients found across these three approaches."
+     },
+     "3-broad": {
+      "precision": 0.9963,
+      "recall": 0.2548,
+      "f1": 0.4058,
+      "passed": false,
+      "expected_count": 20109,
+      "actual_count": 5143,
+      "elapsed_sec": 61.3,
+      "queries_generated": 3,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|N18.9,http://hl7.org/fhir/sid/icd-10-cm|N18.1,http://hl7.org/fhir/sid/icd-10-cm|N18.2,http://hl7.org/fhir/sid/icd-10-cm|N18.3,http://hl7.org/fhir/sid/icd-10-cm|N18.30,http://hl7.org/fhir/sid/icd-10-cm|N18.31,http://hl7.org/fhir/sid/icd-10-cm|N18.32,http://hl7.org/fhir/sid/icd-10-cm|N18.4",
+      "additional_query_urls": [
+       "Observation?code=http://loinc.org|48642-3,http://loinc.org|48643-1,http://loinc.org|62238-1,http://loinc.org|98979-8,http://loinc.org|88294-4,http://loinc.org|77147-7,http://loinc.org|69405-9,http://loinc.org|33914-3&value-quantity=lt60|http://unitsofmeasure.org|mL/min/{1.73_m2}",
+       "Observation?code=http://loinc.org|9318-7,http://loinc.org|14958-3,http://loinc.org|14959-1,http://loinc.org|32294-1&value-quantity=gt30|http://unitsofmeasure.org|mg/g"
+      ],
+      "raw_response": "Final answer:\n\n```\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|N18.9,http://hl7.org/fhir/sid/icd-10-cm|N18.1,http://hl7.org/fhir/sid/icd-10-cm|N18.2,http://hl7.org/fhir/sid/icd-10-cm|N18.3,http://hl7.org/fhir/sid/icd-10-cm|N18.30,http://hl7.org/fhir/sid/icd-10-cm|N18.31,http://hl7.org/fhir/sid/icd-10-cm|N18.32,http://hl7.org/fhir/sid/icd-10-cm|N18.4\nObservation?code=http://loinc.org|48642-3,http://loinc.org|48643-1,http://loinc.org|62238-1,http://loinc.org|98979-8,http://loinc.org|88294-4,http://loinc.org|77147-7,http://loinc.org|69405-9,http://loinc.org|33914-3&value-quantity=lt60|http://unitsofmeasure.org|mL/min/{1.73_m2}\nObservation?code=http://loinc.org|9318-7,http://loinc.org|14958-3,http://loinc.org|14959-1,http://loinc.org|32294-1&value-quantity=gt30|http://unitsofmeasure.org|mg/g\n```",
+      "prompt_text": "I need to identify my complete chronic kidney disease patient population for a quality improvement initiative on CKD care coordination. From clinical experience, I know CKD is substantially undercoded: only about half of patients with biochemical evidence of CKD (reduced eGFR or proteinuria) have a formal CKD diagnosis on their problem list. Documentation patterns:\n1. Some have a formal CKD diagnosis code with stage (Stage 2, 3, 3A, 3B, or 4)\n2. Many have reduced eGFR below 60 mL/min/1.73 m\u00b2 but no CKD diagnosis ever coded\n3. Some have elevated urine albumin-to-creatinine ratio (above 30 mg/g) indicating proteinuria, regardless of eGFR\n\nPlease run multiple FHIR queries to capture the full population:\n1. Patients with any CKD diagnosis (parent CKD or any of stages 2-4)\n2. Patients with reduced eGFR labs (below 60)\n3. Patients with elevated urine albumin-to-creatinine ratio (above 30 mg/g)\n\nFor each query, return the matching resources. I want the union of all patients found across these three approaches."
+     },
+     "3-expert": {
+      "precision": 1.0,
+      "recall": 0.2558,
+      "f1": 0.4073,
+      "passed": false,
+      "expected_count": 20109,
+      "actual_count": 5143,
+      "elapsed_sec": 58.8,
+      "queries_generated": 3,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|N18.2,http://hl7.org/fhir/sid/icd-10-cm|N18.3,http://hl7.org/fhir/sid/icd-10-cm|N18.30,http://hl7.org/fhir/sid/icd-10-cm|N18.31,http://hl7.org/fhir/sid/icd-10-cm|N18.32,http://hl7.org/fhir/sid/icd-10-cm|N18.4,http://hl7.org/fhir/sid/icd-10-cm|N18.9",
+      "additional_query_urls": [
+       "Observation?code=http://loinc.org|33914-3,http://loinc.org|62238-1,http://loinc.org|48642-3,http://loinc.org|48643-1,http://loinc.org|98979-8,http://loinc.org|88294-4,http://loinc.org|77147-7&value-quantity=lt60|http://unitsofmeasure.org|mL/min/{1.73_m2}",
+       "Observation?code=http://loinc.org|9318-7,http://loinc.org|14959-1,http://loinc.org|14958-3,http://loinc.org|32294-1&value-quantity=gt30|http://unitsofmeasure.org|mg/g"
+      ],
+      "raw_response": "FINAL ANSWER:\n\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|N18.2,http://hl7.org/fhir/sid/icd-10-cm|N18.3,http://hl7.org/fhir/sid/icd-10-cm|N18.30,http://hl7.org/fhir/sid/icd-10-cm|N18.31,http://hl7.org/fhir/sid/icd-10-cm|N18.32,http://hl7.org/fhir/sid/icd-10-cm|N18.4,http://hl7.org/fhir/sid/icd-10-cm|N18.9\nObservation?code=http://loinc.org|33914-3,http://loinc.org|62238-1,http://loinc.org|48642-3,http://loinc.org|48643-1,http://loinc.org|98979-8,http://loinc.org|88294-4,http://loinc.org|77147-7&value-quantity=lt60|http://unitsofmeasure.org|mL/min/{1.73_m2}\nObservation?code=http://loinc.org|9318-7,http://loinc.org|14959-1,http://loinc.org|14958-3,http://loinc.org|32294-1&value-quantity=gt30|http://unitsofmeasure.org|mg/g",
+      "prompt_text": "I need to identify my complete chronic kidney disease patient population for a quality improvement initiative on CKD care coordination. From clinical experience, I know CKD is substantially undercoded: only about half of patients with biochemical evidence of CKD (reduced eGFR or proteinuria) have a formal CKD diagnosis on their problem list. Documentation patterns:\n1. Some have a formal CKD diagnosis code with stage (Stage 2, 3, 3A, 3B, or 4)\n2. Many have reduced eGFR below 60 mL/min/1.73 m\u00b2 but no CKD diagnosis ever coded\n3. Some have elevated urine albumin-to-creatinine ratio (above 30 mg/g) indicating proteinuria, regardless of eGFR\n\nPlease run multiple FHIR queries to capture the full population:\n1. Patients with any CKD diagnosis (parent CKD or any of stages 2-4)\n2. Patients with reduced eGFR labs (below 60)\n3. Patients with elevated urine albumin-to-creatinine ratio (above 30 mg/g)\n\nFor each query, return the matching resources. I want the union of all patients found across these three approaches."
+     }
+    },
     "copilot:claude-sonnet-4.6": {
      "1-naive": {
       "precision": 1.0,
@@ -1844,6 +2000,134 @@
       "expected_count": 146,
       "actual_count": 146,
       "elapsed_sec": 14.3,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|709044004,http://snomed.info/sct|431856006,http://snomed.info/sct|433144002,http://snomed.info/sct|700378005,http://snomed.info/sct|431857002",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|709044004,http://snomed.info/sct|431856006,http://snomed.info/sct|433144002,http://snomed.info/sct|700378005,http://snomed.info/sct|431857002",
+      "prompt_text": "I need to identify all CKD patients in our population. CKD is documented under multiple SNOMED codes by KDIGO stage: Chronic kidney disease (709044004) is the parent concept, with stage-specific codes Chronic kidney disease stage 2 (431856006), Chronic kidney disease stage 3 (433144002), Chronic kidney disease stage 3A (700378005), and Chronic kidney disease stage 4 (431857002). Search Condition resources for all five codes. ICD-10 alternates would include N18.2 (stage 2), N18.30/31/32 (stage 3 and substages), N18.4 (stage 4), but Synthea data uses SNOMED only."
+     }
+    },
+    "copilot:claude-opus-4.7+mimic": {
+     "1-naive": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 20109,
+      "actual_count": 0,
+      "elapsed_sec": 6.4,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|709044004",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|709044004",
+      "prompt_text": "Find all patients with chronic kidney disease."
+     },
+     "1-broad": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 20109,
+      "actual_count": 0,
+      "elapsed_sec": 7.7,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|709044004,http://snomed.info/sct|431856006,http://snomed.info/sct|431857002,http://snomed.info/sct|433144002,http://snomed.info/sct|700378005,http://snomed.info/sct|431855005",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|709044004,http://snomed.info/sct|431856006,http://snomed.info/sct|431857002,http://snomed.info/sct|433144002,http://snomed.info/sct|700378005,http://snomed.info/sct|431855005",
+      "prompt_text": "Find all patients diagnosed with any stage of chronic kidney disease (CKD), including the parent CKD concept and the KDIGO stages 2 through 4 (Stage 2 with eGFR 60-89, Stage 3 with eGFR 30-59, with substages 3A and 3B, and Stage 4 with eGFR 15-29)."
+     },
+     "1-expert": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 20109,
+      "actual_count": 0,
+      "elapsed_sec": 7.8,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|709044004,http://snomed.info/sct|431856006,http://snomed.info/sct|433144002,http://snomed.info/sct|700378005,http://snomed.info/sct|431857002",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|709044004,http://snomed.info/sct|431856006,http://snomed.info/sct|433144002,http://snomed.info/sct|700378005,http://snomed.info/sct|431857002",
+      "prompt_text": "I need to identify all CKD patients in our population. CKD is documented under multiple SNOMED codes by KDIGO stage: Chronic kidney disease (709044004) is the parent concept, with stage-specific codes Chronic kidney disease stage 2 (431856006), Chronic kidney disease stage 3 (433144002), Chronic kidney disease stage 3A (700378005), and Chronic kidney disease stage 4 (431857002). Search Condition resources for all five codes. ICD-10 alternates would include N18.2 (stage 2), N18.30/31/32 (stage 3 and substages), N18.4 (stage 4), but Synthea data uses SNOMED only."
+     },
+     "2-naive": {
+      "precision": 0.8993,
+      "recall": 0.203,
+      "f1": 0.3313,
+      "passed": false,
+      "expected_count": 20109,
+      "actual_count": 4540,
+      "elapsed_sec": 32.2,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|N18.1,http://hl7.org/fhir/sid/icd-10-cm|N18.2,http://hl7.org/fhir/sid/icd-10-cm|N18.3,http://hl7.org/fhir/sid/icd-10-cm|N18.30,http://hl7.org/fhir/sid/icd-10-cm|N18.31,http://hl7.org/fhir/sid/icd-10-cm|N18.32,http://hl7.org/fhir/sid/icd-10-cm|N18.4,http://hl7.org/fhir/sid/icd-10-cm|N18.5,http://hl7.org/fhir/sid/icd-10-cm|N18.6,http://hl7.org/fhir/sid/icd-10-cm|N18.9",
+      "additional_query_urls": [],
+      "raw_response": "FINAL ANSWER:\n\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|N18.1,http://hl7.org/fhir/sid/icd-10-cm|N18.2,http://hl7.org/fhir/sid/icd-10-cm|N18.3,http://hl7.org/fhir/sid/icd-10-cm|N18.30,http://hl7.org/fhir/sid/icd-10-cm|N18.31,http://hl7.org/fhir/sid/icd-10-cm|N18.32,http://hl7.org/fhir/sid/icd-10-cm|N18.4,http://hl7.org/fhir/sid/icd-10-cm|N18.5,http://hl7.org/fhir/sid/icd-10-cm|N18.6,http://hl7.org/fhir/sid/icd-10-cm|N18.9",
+      "prompt_text": "Find all patients with chronic kidney disease."
+     },
+     "2-broad": {
+      "precision": 1.0,
+      "recall": 0.2558,
+      "f1": 0.4073,
+      "passed": false,
+      "expected_count": 20109,
+      "actual_count": 5143,
+      "elapsed_sec": 31.6,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|N18.9,http://hl7.org/fhir/sid/icd-10-cm|N18.2,http://hl7.org/fhir/sid/icd-10-cm|N18.3,http://hl7.org/fhir/sid/icd-10-cm|N18.30,http://hl7.org/fhir/sid/icd-10-cm|N18.31,http://hl7.org/fhir/sid/icd-10-cm|N18.32,http://hl7.org/fhir/sid/icd-10-cm|N18.4",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|N18.9,http://hl7.org/fhir/sid/icd-10-cm|N18.2,http://hl7.org/fhir/sid/icd-10-cm|N18.3,http://hl7.org/fhir/sid/icd-10-cm|N18.30,http://hl7.org/fhir/sid/icd-10-cm|N18.31,http://hl7.org/fhir/sid/icd-10-cm|N18.32,http://hl7.org/fhir/sid/icd-10-cm|N18.4",
+      "prompt_text": "Find all patients diagnosed with any stage of chronic kidney disease (CKD), including the parent CKD concept and the KDIGO stages 2 through 4 (Stage 2 with eGFR 60-89, Stage 3 with eGFR 30-59, with substages 3A and 3B, and Stage 4 with eGFR 15-29)."
+     },
+     "2-expert": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 20109,
+      "actual_count": 0,
+      "elapsed_sec": 7.9,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|709044004,http://snomed.info/sct|431856006,http://snomed.info/sct|433144002,http://snomed.info/sct|700378005,http://snomed.info/sct|431857002",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|709044004,http://snomed.info/sct|431856006,http://snomed.info/sct|433144002,http://snomed.info/sct|700378005,http://snomed.info/sct|431857002",
+      "prompt_text": "I need to identify all CKD patients in our population. CKD is documented under multiple SNOMED codes by KDIGO stage: Chronic kidney disease (709044004) is the parent concept, with stage-specific codes Chronic kidney disease stage 2 (431856006), Chronic kidney disease stage 3 (433144002), Chronic kidney disease stage 3A (700378005), and Chronic kidney disease stage 4 (431857002). Search Condition resources for all five codes. ICD-10 alternates would include N18.2 (stage 2), N18.30/31/32 (stage 3 and substages), N18.4 (stage 4), but Synthea data uses SNOMED only."
+     },
+     "3-naive": {
+      "precision": 0.8823,
+      "recall": 0.1615,
+      "f1": 0.273,
+      "passed": false,
+      "expected_count": 20109,
+      "actual_count": 3680,
+      "elapsed_sec": 42.5,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|N18.1,http://hl7.org/fhir/sid/icd-10-cm|N18.2,http://hl7.org/fhir/sid/icd-10-cm|N18.3,http://hl7.org/fhir/sid/icd-10-cm|N18.4,http://hl7.org/fhir/sid/icd-10-cm|N18.5,http://hl7.org/fhir/sid/icd-10-cm|N18.6,http://hl7.org/fhir/sid/icd-10-cm|N18.9,http://hl7.org/fhir/sid/icd-9-cm|585.1,http://hl7.org/fhir/sid/icd-9-cm|585.2,http://hl7.org/fhir/sid/icd-9-cm|585.3,http://hl7.org/fhir/sid/icd-9-cm|585.4,http://hl7.org/fhir/sid/icd-9-cm|585.5,http://hl7.org/fhir/sid/icd-9-cm|585.6,http://hl7.org/fhir/sid/icd-9-cm|585.9",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|N18.1,http://hl7.org/fhir/sid/icd-10-cm|N18.2,http://hl7.org/fhir/sid/icd-10-cm|N18.3,http://hl7.org/fhir/sid/icd-10-cm|N18.4,http://hl7.org/fhir/sid/icd-10-cm|N18.5,http://hl7.org/fhir/sid/icd-10-cm|N18.6,http://hl7.org/fhir/sid/icd-10-cm|N18.9,http://hl7.org/fhir/sid/icd-9-cm|585.1,http://hl7.org/fhir/sid/icd-9-cm|585.2,http://hl7.org/fhir/sid/icd-9-cm|585.3,http://hl7.org/fhir/sid/icd-9-cm|585.4,http://hl7.org/fhir/sid/icd-9-cm|585.5,http://hl7.org/fhir/sid/icd-9-cm|585.6,http://hl7.org/fhir/sid/icd-9-cm|585.9",
+      "prompt_text": "Find all patients with chronic kidney disease."
+     },
+     "3-broad": {
+      "precision": 1.0,
+      "recall": 0.2558,
+      "f1": 0.4073,
+      "passed": false,
+      "expected_count": 20109,
+      "actual_count": 5143,
+      "elapsed_sec": 31.2,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|N18.2,http://hl7.org/fhir/sid/icd-10-cm|N18.3,http://hl7.org/fhir/sid/icd-10-cm|N18.30,http://hl7.org/fhir/sid/icd-10-cm|N18.31,http://hl7.org/fhir/sid/icd-10-cm|N18.32,http://hl7.org/fhir/sid/icd-10-cm|N18.4,http://hl7.org/fhir/sid/icd-10-cm|N18.9",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|N18.2,http://hl7.org/fhir/sid/icd-10-cm|N18.3,http://hl7.org/fhir/sid/icd-10-cm|N18.30,http://hl7.org/fhir/sid/icd-10-cm|N18.31,http://hl7.org/fhir/sid/icd-10-cm|N18.32,http://hl7.org/fhir/sid/icd-10-cm|N18.4,http://hl7.org/fhir/sid/icd-10-cm|N18.9",
+      "prompt_text": "Find all patients diagnosed with any stage of chronic kidney disease (CKD), including the parent CKD concept and the KDIGO stages 2 through 4 (Stage 2 with eGFR 60-89, Stage 3 with eGFR 30-59, with substages 3A and 3B, and Stage 4 with eGFR 15-29)."
+     },
+     "3-expert": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 20109,
+      "actual_count": 0,
+      "elapsed_sec": 7.4,
       "queries_generated": 1,
       "primary_query_url": "Condition?code=http://snomed.info/sct|709044004,http://snomed.info/sct|431856006,http://snomed.info/sct|433144002,http://snomed.info/sct|700378005,http://snomed.info/sct|431857002",
       "additional_query_urls": [],

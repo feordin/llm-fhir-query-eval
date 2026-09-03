@@ -237,6 +237,152 @@
       "prompt_text": "I need to identify all sepsis patients using a three-resource union. First, search Condition resources for sepsis diagnoses across the clinical spectrum \u2014 general sepsis, bacterial sepsis, and septic shock each carry distinct SNOMED CT codes. Second, search MedicationRequest resources for vancomycin and ceftriaxone, the broad-spectrum antibiotics typically initiated empirically for sepsis; note that both agents are heavily cross-indicated for non-sepsis infections, so this path will include non-sepsis patients. Third, search Observation resources for a serum lactate result above the septic-shock threshold of two millimoles per liter, coded in LOINC \u2014 this captures cryptic shock patients who present with organ hypoperfusion without a formal sepsis diagnosis. Union all patient IDs from the three queries."
      }
     },
+    "copilot:claude-opus-4.7+mimic": {
+     "1-naive": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 14601,
+      "actual_count": 0,
+      "elapsed_sec": 7.2,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|91302008",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|91302008",
+      "prompt_text": "Find all sepsis patients."
+     },
+     "1-broad": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 14601,
+      "actual_count": 0,
+      "elapsed_sec": 9.7,
+      "queries_generated": 3,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|91302008,http://snomed.info/sct|10001005,http://snomed.info/sct|76571007",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|11124,http://www.nlm.nih.gov/research/umls/rxnorm|2193",
+       "Observation?code=http://loinc.org|2524-7&value-quantity=gt2|http://unitsofmeasure.org|mmol/L"
+      ],
+      "raw_response": "Condition?code=http://snomed.info/sct|91302008,http://snomed.info/sct|10001005,http://snomed.info/sct|76571007\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|11124,http://www.nlm.nih.gov/research/umls/rxnorm|2193\nObservation?code=http://loinc.org|2524-7&value-quantity=gt2|http://unitsofmeasure.org|mmol/L",
+      "prompt_text": "Find all sepsis patients \u2014 by diagnosis (sepsis, bacterial sepsis, septic shock), broad-spectrum antibiotics (vancomycin, ceftriaxone), or elevated lactate (>2 mmol/L). Run multiple queries and union the patient sets."
+     },
+     "1-expert": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 14601,
+      "actual_count": 0,
+      "elapsed_sec": 9.2,
+      "queries_generated": 3,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|91302008,http://snomed.info/sct|10001005,http://snomed.info/sct|76571007",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|11124,http://www.nlm.nih.gov/research/umls/rxnorm|2193",
+       "Observation?code=http://loinc.org|2524-7&value-quantity=gt2|http://unitsofmeasure.org|mmol/L"
+      ],
+      "raw_response": "Condition?code=http://snomed.info/sct|91302008,http://snomed.info/sct|10001005,http://snomed.info/sct|76571007\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|11124,http://www.nlm.nih.gov/research/umls/rxnorm|2193\nObservation?code=http://loinc.org|2524-7&value-quantity=gt2|http://unitsofmeasure.org|mmol/L",
+      "prompt_text": "I need to identify all sepsis patients using a three-resource union. First, search Condition resources for sepsis diagnoses across the clinical spectrum \u2014 general sepsis, bacterial sepsis, and septic shock each carry distinct SNOMED CT codes. Second, search MedicationRequest resources for vancomycin and ceftriaxone, the broad-spectrum antibiotics typically initiated empirically for sepsis; note that both agents are heavily cross-indicated for non-sepsis infections, so this path will include non-sepsis patients. Third, search Observation resources for a serum lactate result above the septic-shock threshold of two millimoles per liter, coded in LOINC \u2014 this captures cryptic shock patients who present with organ hypoperfusion without a formal sepsis diagnosis. Union all patient IDs from the three queries."
+     },
+     "2-naive": {
+      "precision": 0.7647,
+      "recall": 0.2669,
+      "f1": 0.3957,
+      "passed": false,
+      "expected_count": 14601,
+      "actual_count": 5096,
+      "elapsed_sec": 35.9,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|A40.0,http://hl7.org/fhir/sid/icd-10-cm|A40.1,http://hl7.org/fhir/sid/icd-10-cm|A40.3,http://hl7.org/fhir/sid/icd-10-cm|A40.8,http://hl7.org/fhir/sid/icd-10-cm|A40.9,http://hl7.org/fhir/sid/icd-10-cm|A41.0,http://hl7.org/fhir/sid/icd-10-cm|A41.01,http://hl7.org/fhir/sid/icd-10-cm|A41.02,http://hl7.org/fhir/sid/icd-10-cm|A41.1,http://hl7.org/fhir/sid/icd-10-cm|A41.2,http://hl7.org/fhir/sid/icd-10-cm|A41.3,http://hl7.org/fhir/sid/icd-10-cm|A41.4,http://hl7.org/fhir/sid/icd-10-cm|A41.50,http://hl7.org/fhir/sid/icd-10-cm|A41.51,http://hl7.org/fhir/sid/icd-10-cm|A41.52,http://hl7.org/fhir/sid/icd-10-cm|A41.53,http://hl7.org/fhir/sid/icd-10-cm|A41.54,http://hl7.org/fhir/sid/icd-10-cm|A41.59,http://hl7.org/fhir/sid/icd-10-cm|A41.81,http://hl7.org/fhir/sid/icd-10-cm|A41.89,http://hl7.org/fhir/sid/icd-10-cm|A41.9,http://hl7.org/fhir/sid/icd-10-cm|R65.20,http://hl7.org/fhir/sid/icd-10-cm|R65.21",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|A40.0,http://hl7.org/fhir/sid/icd-10-cm|A40.1,http://hl7.org/fhir/sid/icd-10-cm|A40.3,http://hl7.org/fhir/sid/icd-10-cm|A40.8,http://hl7.org/fhir/sid/icd-10-cm|A40.9,http://hl7.org/fhir/sid/icd-10-cm|A41.0,http://hl7.org/fhir/sid/icd-10-cm|A41.01,http://hl7.org/fhir/sid/icd-10-cm|A41.02,http://hl7.org/fhir/sid/icd-10-cm|A41.1,http://hl7.org/fhir/sid/icd-10-cm|A41.2,http://hl7.org/fhir/sid/icd-10-cm|A41.3,http://hl7.org/fhir/sid/icd-10-cm|A41.4,http://hl7.org/fhir/sid/icd-10-cm|A41.50,http://hl7.org/fhir/sid/icd-10-cm|A41.51,http://hl7.org/fhir/sid/icd-10-cm|A41.52,http://hl7.org/fhir/sid/icd-10-cm|A41.53,http://hl7.org/fhir/sid/icd-10-cm|A41.54,http://hl7.org/fhir/sid/icd-10-cm|A41.59,http://hl7.org/fhir/sid/icd-10-cm|A41.81,http://hl7.org/fhir/sid/icd-10-cm|A41.89,http://hl7.org/fhir/sid/icd-10-cm|A41.9,http://hl7.org/fhir/sid/icd-10-cm|R65.20,http://hl7.org/fhir/sid/icd-10-cm|R65.21",
+      "prompt_text": "Find all sepsis patients."
+     },
+     "2-broad": {
+      "precision": 0.4898,
+      "recall": 0.3226,
+      "f1": 0.389,
+      "passed": false,
+      "expected_count": 14601,
+      "actual_count": 9617,
+      "elapsed_sec": 412.0,
+      "queries_generated": 3,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|A41.9,http://hl7.org/fhir/sid/icd-10-cm|A41.89,http://hl7.org/fhir/sid/icd-10-cm|A41.0,http://hl7.org/fhir/sid/icd-10-cm|A41.01,http://hl7.org/fhir/sid/icd-10-cm|A41.02,http://hl7.org/fhir/sid/icd-10-cm|A41.1,http://hl7.org/fhir/sid/icd-10-cm|A41.2,http://hl7.org/fhir/sid/icd-10-cm|A41.3,http://hl7.org/fhir/sid/icd-10-cm|A41.4,http://hl7.org/fhir/sid/icd-10-cm|A41.50,http://hl7.org/fhir/sid/icd-10-cm|A41.51,http://hl7.org/fhir/sid/icd-10-cm|A41.52,http://hl7.org/fhir/sid/icd-10-cm|A41.53,http://hl7.org/fhir/sid/icd-10-cm|A41.54,http://hl7.org/fhir/sid/icd-10-cm|A41.59,http://hl7.org/fhir/sid/icd-10-cm|A41.81,http://hl7.org/fhir/sid/icd-10-cm|R65.20,http://hl7.org/fhir/sid/icd-10-cm|R65.21,http://hl7.org/fhir/sid/icd-10-cm|A40.0,http://hl7.org/fhir/sid/icd-10-cm|A40.1,http://hl7.org/fhir/sid/icd-10-cm|A40.3,http://hl7.org/fhir/sid/icd-10-cm|A40.8,http://hl7.org/fhir/sid/icd-10-cm|A40.9",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Vancomycin,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|CefTRIAXone",
+       "Observation?code=http://loinc.org|32693-4,http://loinc.org|2524-7,http://loinc.org|2519-7,http://loinc.org|2518-9,http://loinc.org|30242-2,http://loinc.org|19239-3,http://loinc.org|14118-4&value-quantity=gt2"
+      ],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|A41.9,http://hl7.org/fhir/sid/icd-10-cm|A41.89,http://hl7.org/fhir/sid/icd-10-cm|A41.0,http://hl7.org/fhir/sid/icd-10-cm|A41.01,http://hl7.org/fhir/sid/icd-10-cm|A41.02,http://hl7.org/fhir/sid/icd-10-cm|A41.1,http://hl7.org/fhir/sid/icd-10-cm|A41.2,http://hl7.org/fhir/sid/icd-10-cm|A41.3,http://hl7.org/fhir/sid/icd-10-cm|A41.4,http://hl7.org/fhir/sid/icd-10-cm|A41.50,http://hl7.org/fhir/sid/icd-10-cm|A41.51,http://hl7.org/fhir/sid/icd-10-cm|A41.52,http://hl7.org/fhir/sid/icd-10-cm|A41.53,http://hl7.org/fhir/sid/icd-10-cm|A41.54,http://hl7.org/fhir/sid/icd-10-cm|A41.59,http://hl7.org/fhir/sid/icd-10-cm|A41.81,http://hl7.org/fhir/sid/icd-10-cm|R65.20,http://hl7.org/fhir/sid/icd-10-cm|R65.21,http://hl7.org/fhir/sid/icd-10-cm|A40.0,http://hl7.org/fhir/sid/icd-10-cm|A40.1,http://hl7.org/fhir/sid/icd-10-cm|A40.3,http://hl7.org/fhir/sid/icd-10-cm|A40.8,http://hl7.org/fhir/sid/icd-10-cm|A40.9\nMedicationRequest?code=http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Vancomycin,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|CefTRIAXone\nObservation?code=http://loinc.org|32693-4,http://loinc.org|2524-7,http://loinc.org|2519-7,http://loinc.org|2518-9,http://loinc.org|30242-2,http://loinc.org|19239-3,http://loinc.org|14118-4&value-quantity=gt2",
+      "prompt_text": "Find all sepsis patients \u2014 by diagnosis (sepsis, bacterial sepsis, septic shock), broad-spectrum antibiotics (vancomycin, ceftriaxone), or elevated lactate (>2 mmol/L). Run multiple queries and union the patient sets."
+     },
+     "2-expert": {
+      "precision": 0.4898,
+      "recall": 0.3226,
+      "f1": 0.389,
+      "passed": false,
+      "expected_count": 14601,
+      "actual_count": 9617,
+      "elapsed_sec": 483.6,
+      "queries_generated": 3,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|A40.0,http://hl7.org/fhir/sid/icd-10-cm|A40.1,http://hl7.org/fhir/sid/icd-10-cm|A40.3,http://hl7.org/fhir/sid/icd-10-cm|A40.8,http://hl7.org/fhir/sid/icd-10-cm|A40.9,http://hl7.org/fhir/sid/icd-10-cm|A41.01,http://hl7.org/fhir/sid/icd-10-cm|A41.02,http://hl7.org/fhir/sid/icd-10-cm|A41.1,http://hl7.org/fhir/sid/icd-10-cm|A41.2,http://hl7.org/fhir/sid/icd-10-cm|A41.3,http://hl7.org/fhir/sid/icd-10-cm|A41.4,http://hl7.org/fhir/sid/icd-10-cm|A41.50,http://hl7.org/fhir/sid/icd-10-cm|A41.51,http://hl7.org/fhir/sid/icd-10-cm|A41.52,http://hl7.org/fhir/sid/icd-10-cm|A41.53,http://hl7.org/fhir/sid/icd-10-cm|A41.59,http://hl7.org/fhir/sid/icd-10-cm|A41.81,http://hl7.org/fhir/sid/icd-10-cm|A41.89,http://hl7.org/fhir/sid/icd-10-cm|A41.9,http://hl7.org/fhir/sid/icd-10-cm|R65.20,http://hl7.org/fhir/sid/icd-10-cm|R65.21",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Vancomycin,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|CefTRIAXone",
+       "Observation?code=http://loinc.org|2524-7,http://loinc.org|2519-7,http://loinc.org|2518-9,http://loinc.org|32693-4,http://loinc.org|30242-2,http://loinc.org|30241-4,http://loinc.org|14118-4,http://loinc.org|59032-3,http://loinc.org|19239-3,http://loinc.org|19240-1,http://loinc.org|35245-0,http://loinc.org|51829-0&value-quantity=gt2"
+      ],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|A40.0,http://hl7.org/fhir/sid/icd-10-cm|A40.1,http://hl7.org/fhir/sid/icd-10-cm|A40.3,http://hl7.org/fhir/sid/icd-10-cm|A40.8,http://hl7.org/fhir/sid/icd-10-cm|A40.9,http://hl7.org/fhir/sid/icd-10-cm|A41.01,http://hl7.org/fhir/sid/icd-10-cm|A41.02,http://hl7.org/fhir/sid/icd-10-cm|A41.1,http://hl7.org/fhir/sid/icd-10-cm|A41.2,http://hl7.org/fhir/sid/icd-10-cm|A41.3,http://hl7.org/fhir/sid/icd-10-cm|A41.4,http://hl7.org/fhir/sid/icd-10-cm|A41.50,http://hl7.org/fhir/sid/icd-10-cm|A41.51,http://hl7.org/fhir/sid/icd-10-cm|A41.52,http://hl7.org/fhir/sid/icd-10-cm|A41.53,http://hl7.org/fhir/sid/icd-10-cm|A41.59,http://hl7.org/fhir/sid/icd-10-cm|A41.81,http://hl7.org/fhir/sid/icd-10-cm|A41.89,http://hl7.org/fhir/sid/icd-10-cm|A41.9,http://hl7.org/fhir/sid/icd-10-cm|R65.20,http://hl7.org/fhir/sid/icd-10-cm|R65.21\nMedicationRequest?code=http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Vancomycin,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|CefTRIAXone\nObservation?code=http://loinc.org|2524-7,http://loinc.org|2519-7,http://loinc.org|2518-9,http://loinc.org|32693-4,http://loinc.org|30242-2,http://loinc.org|30241-4,http://loinc.org|14118-4,http://loinc.org|59032-3,http://loinc.org|19239-3,http://loinc.org|19240-1,http://loinc.org|35245-0,http://loinc.org|51829-0&value-quantity=gt2",
+      "prompt_text": "I need to identify all sepsis patients using a three-resource union. First, search Condition resources for sepsis diagnoses across the clinical spectrum \u2014 general sepsis, bacterial sepsis, and septic shock each carry distinct SNOMED CT codes. Second, search MedicationRequest resources for vancomycin and ceftriaxone, the broad-spectrum antibiotics typically initiated empirically for sepsis; note that both agents are heavily cross-indicated for non-sepsis infections, so this path will include non-sepsis patients. Third, search Observation resources for a serum lactate result above the septic-shock threshold of two millimoles per liter, coded in LOINC \u2014 this captures cryptic shock patients who present with organ hypoperfusion without a formal sepsis diagnosis. Union all patient IDs from the three queries."
+     },
+     "3-naive": {
+      "precision": 0.7647,
+      "recall": 0.2669,
+      "f1": 0.3957,
+      "passed": false,
+      "expected_count": 14601,
+      "actual_count": 5096,
+      "elapsed_sec": 43.1,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|A41.9,http://hl7.org/fhir/sid/icd-10-cm|A41.89,http://hl7.org/fhir/sid/icd-10-cm|A41.51,http://hl7.org/fhir/sid/icd-10-cm|A41.52,http://hl7.org/fhir/sid/icd-10-cm|A41.50,http://hl7.org/fhir/sid/icd-10-cm|A41.01,http://hl7.org/fhir/sid/icd-10-cm|A41.02,http://hl7.org/fhir/sid/icd-10-cm|A41.1,http://hl7.org/fhir/sid/icd-10-cm|A41.2,http://hl7.org/fhir/sid/icd-10-cm|A41.3,http://hl7.org/fhir/sid/icd-10-cm|A41.4,http://hl7.org/fhir/sid/icd-10-cm|A41.53,http://hl7.org/fhir/sid/icd-10-cm|A41.54,http://hl7.org/fhir/sid/icd-10-cm|A41.59,http://hl7.org/fhir/sid/icd-10-cm|A41.81,http://hl7.org/fhir/sid/icd-10-cm|A40.0,http://hl7.org/fhir/sid/icd-10-cm|A40.1,http://hl7.org/fhir/sid/icd-10-cm|A40.3,http://hl7.org/fhir/sid/icd-10-cm|A40.8,http://hl7.org/fhir/sid/icd-10-cm|A40.9,http://hl7.org/fhir/sid/icd-10-cm|R65.20,http://hl7.org/fhir/sid/icd-10-cm|R65.21,http://hl7.org/fhir/sid/icd-10-cm|P36.9,http://hl7.org/fhir/sid/icd-10-cm|P36.0,http://hl7.org/fhir/sid/icd-10-cm|P36.1,http://hl7.org/fhir/sid/icd-10-cm|P36.2,http://hl7.org/fhir/sid/icd-10-cm|P36.3,http://hl7.org/fhir/sid/icd-10-cm|P36.4,http://hl7.org/fhir/sid/icd-10-cm|P36.5,http://hl7.org/fhir/sid/icd-10-cm|P36.8",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|A41.9,http://hl7.org/fhir/sid/icd-10-cm|A41.89,http://hl7.org/fhir/sid/icd-10-cm|A41.51,http://hl7.org/fhir/sid/icd-10-cm|A41.52,http://hl7.org/fhir/sid/icd-10-cm|A41.50,http://hl7.org/fhir/sid/icd-10-cm|A41.01,http://hl7.org/fhir/sid/icd-10-cm|A41.02,http://hl7.org/fhir/sid/icd-10-cm|A41.1,http://hl7.org/fhir/sid/icd-10-cm|A41.2,http://hl7.org/fhir/sid/icd-10-cm|A41.3,http://hl7.org/fhir/sid/icd-10-cm|A41.4,http://hl7.org/fhir/sid/icd-10-cm|A41.53,http://hl7.org/fhir/sid/icd-10-cm|A41.54,http://hl7.org/fhir/sid/icd-10-cm|A41.59,http://hl7.org/fhir/sid/icd-10-cm|A41.81,http://hl7.org/fhir/sid/icd-10-cm|A40.0,http://hl7.org/fhir/sid/icd-10-cm|A40.1,http://hl7.org/fhir/sid/icd-10-cm|A40.3,http://hl7.org/fhir/sid/icd-10-cm|A40.8,http://hl7.org/fhir/sid/icd-10-cm|A40.9,http://hl7.org/fhir/sid/icd-10-cm|R65.20,http://hl7.org/fhir/sid/icd-10-cm|R65.21,http://hl7.org/fhir/sid/icd-10-cm|P36.9,http://hl7.org/fhir/sid/icd-10-cm|P36.0,http://hl7.org/fhir/sid/icd-10-cm|P36.1,http://hl7.org/fhir/sid/icd-10-cm|P36.2,http://hl7.org/fhir/sid/icd-10-cm|P36.3,http://hl7.org/fhir/sid/icd-10-cm|P36.4,http://hl7.org/fhir/sid/icd-10-cm|P36.5,http://hl7.org/fhir/sid/icd-10-cm|P36.8",
+      "prompt_text": "Find all sepsis patients."
+     },
+     "3-broad": {
+      "precision": 0.7676,
+      "recall": 0.2703,
+      "f1": 0.3998,
+      "passed": false,
+      "expected_count": 14601,
+      "actual_count": 5142,
+      "elapsed_sec": 294.1,
+      "queries_generated": 3,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|A41.9,http://hl7.org/fhir/sid/icd-10-cm|A41.89,http://hl7.org/fhir/sid/icd-10-cm|A41.50,http://hl7.org/fhir/sid/icd-10-cm|A41.51,http://hl7.org/fhir/sid/icd-10-cm|A41.52,http://hl7.org/fhir/sid/icd-10-cm|A41.53,http://hl7.org/fhir/sid/icd-10-cm|A41.54,http://hl7.org/fhir/sid/icd-10-cm|A41.59,http://hl7.org/fhir/sid/icd-10-cm|A41.01,http://hl7.org/fhir/sid/icd-10-cm|A41.02,http://hl7.org/fhir/sid/icd-10-cm|A41.1,http://hl7.org/fhir/sid/icd-10-cm|A41.2,http://hl7.org/fhir/sid/icd-10-cm|A41.3,http://hl7.org/fhir/sid/icd-10-cm|A41.4,http://hl7.org/fhir/sid/icd-10-cm|A41.81,http://hl7.org/fhir/sid/icd-10-cm|R65.20,http://hl7.org/fhir/sid/icd-10-cm|R65.21",
+      "additional_query_urls": [
+       "MedicationRequest?medication.code=http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|vancomycin,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|ceftriaxone",
+       "Observation?code=http://loinc.org|2524-7,http://loinc.org|2519-7,http://loinc.org|2518-9,http://loinc.org|32693-4&value-quantity=gt2||mmol/L"
+      ],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|A41.9,http://hl7.org/fhir/sid/icd-10-cm|A41.89,http://hl7.org/fhir/sid/icd-10-cm|A41.50,http://hl7.org/fhir/sid/icd-10-cm|A41.51,http://hl7.org/fhir/sid/icd-10-cm|A41.52,http://hl7.org/fhir/sid/icd-10-cm|A41.53,http://hl7.org/fhir/sid/icd-10-cm|A41.54,http://hl7.org/fhir/sid/icd-10-cm|A41.59,http://hl7.org/fhir/sid/icd-10-cm|A41.01,http://hl7.org/fhir/sid/icd-10-cm|A41.02,http://hl7.org/fhir/sid/icd-10-cm|A41.1,http://hl7.org/fhir/sid/icd-10-cm|A41.2,http://hl7.org/fhir/sid/icd-10-cm|A41.3,http://hl7.org/fhir/sid/icd-10-cm|A41.4,http://hl7.org/fhir/sid/icd-10-cm|A41.81,http://hl7.org/fhir/sid/icd-10-cm|R65.20,http://hl7.org/fhir/sid/icd-10-cm|R65.21\nMedicationRequest?medication.code=http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|vancomycin,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|ceftriaxone\nObservation?code=http://loinc.org|2524-7,http://loinc.org|2519-7,http://loinc.org|2518-9,http://loinc.org|32693-4&value-quantity=gt2||mmol/L",
+      "prompt_text": "Find all sepsis patients \u2014 by diagnosis (sepsis, bacterial sepsis, septic shock), broad-spectrum antibiotics (vancomycin, ceftriaxone), or elevated lactate (>2 mmol/L). Run multiple queries and union the patient sets."
+     },
+     "3-expert": {
+      "precision": 0.5129,
+      "recall": 0.3342,
+      "f1": 0.4047,
+      "passed": false,
+      "expected_count": 14601,
+      "actual_count": 9514,
+      "elapsed_sec": 99.5,
+      "queries_generated": 3,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|A41.9,http://hl7.org/fhir/sid/icd-10-cm|A41.89,http://hl7.org/fhir/sid/icd-10-cm|A41.01,http://hl7.org/fhir/sid/icd-10-cm|A41.02,http://hl7.org/fhir/sid/icd-10-cm|A41.1,http://hl7.org/fhir/sid/icd-10-cm|A41.2,http://hl7.org/fhir/sid/icd-10-cm|A41.3,http://hl7.org/fhir/sid/icd-10-cm|A41.4,http://hl7.org/fhir/sid/icd-10-cm|A41.50,http://hl7.org/fhir/sid/icd-10-cm|A41.51,http://hl7.org/fhir/sid/icd-10-cm|A41.52,http://hl7.org/fhir/sid/icd-10-cm|A41.53,http://hl7.org/fhir/sid/icd-10-cm|A41.59,http://hl7.org/fhir/sid/icd-10-cm|A41.81,http://hl7.org/fhir/sid/icd-10-cm|R65.20,http://hl7.org/fhir/sid/icd-10-cm|R65.21",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Vancomycin,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Ceftriaxone",
+       "Observation?code=http://loinc.org|2524-7&value-quantity=gt2|http://unitsofmeasure.org|mmol/L"
+      ],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|A41.9,http://hl7.org/fhir/sid/icd-10-cm|A41.89,http://hl7.org/fhir/sid/icd-10-cm|A41.01,http://hl7.org/fhir/sid/icd-10-cm|A41.02,http://hl7.org/fhir/sid/icd-10-cm|A41.1,http://hl7.org/fhir/sid/icd-10-cm|A41.2,http://hl7.org/fhir/sid/icd-10-cm|A41.3,http://hl7.org/fhir/sid/icd-10-cm|A41.4,http://hl7.org/fhir/sid/icd-10-cm|A41.50,http://hl7.org/fhir/sid/icd-10-cm|A41.51,http://hl7.org/fhir/sid/icd-10-cm|A41.52,http://hl7.org/fhir/sid/icd-10-cm|A41.53,http://hl7.org/fhir/sid/icd-10-cm|A41.59,http://hl7.org/fhir/sid/icd-10-cm|A41.81,http://hl7.org/fhir/sid/icd-10-cm|R65.20,http://hl7.org/fhir/sid/icd-10-cm|R65.21\nMedicationRequest?code=http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Vancomycin,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Ceftriaxone\nObservation?code=http://loinc.org|2524-7&value-quantity=gt2|http://unitsofmeasure.org|mmol/L",
+      "prompt_text": "I need to identify all sepsis patients using a three-resource union. First, search Condition resources for sepsis diagnoses across the clinical spectrum \u2014 general sepsis, bacterial sepsis, and septic shock each carry distinct SNOMED CT codes. Second, search MedicationRequest resources for vancomycin and ceftriaxone, the broad-spectrum antibiotics typically initiated empirically for sepsis; note that both agents are heavily cross-indicated for non-sepsis infections, so this path will include non-sepsis patients. Third, search Observation resources for a serum lactate result above the septic-shock threshold of two millimoles per liter, coded in LOINC \u2014 this captures cryptic shock patients who present with organ hypoperfusion without a formal sepsis diagnosis. Union all patient IDs from the three queries."
+     }
+    },
     "copilot:claude-sonnet-4.6": {
      "1-naive": {
       "precision": 1.0,
@@ -1006,6 +1152,134 @@
       "primary_query_url": "Condition?code=http://snomed.info/sct|91302008,http://snomed.info/sct|10001005,http://snomed.info/sct|76571007",
       "additional_query_urls": [],
       "raw_response": "Condition?code=http://snomed.info/sct|91302008,http://snomed.info/sct|10001005,http://snomed.info/sct|76571007",
+      "prompt_text": "I need to find patients with a documented sepsis diagnosis in their Condition resources. Sepsis exists along a severity continuum in SNOMED CT, and the phenotype requires covering all three principal variants: the broader sepsis concept, bacterial sepsis as a more specific subtype, and septic shock representing the most severe hemodynamic form. All three codes must be included to avoid undercounting \u2014 do not restrict to a single variant."
+     }
+    },
+    "copilot:claude-opus-4.7+mimic": {
+     "1-naive": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 14601,
+      "actual_count": 0,
+      "elapsed_sec": 7.2,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|91302008",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|91302008",
+      "prompt_text": "Find patients with sepsis."
+     },
+     "1-broad": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 14601,
+      "actual_count": 0,
+      "elapsed_sec": 8.0,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|91302008,http://snomed.info/sct|10001005,http://snomed.info/sct|76571007",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|91302008,http://snomed.info/sct|10001005,http://snomed.info/sct|76571007",
+      "prompt_text": "Find patients diagnosed with sepsis \u2014 including general sepsis, bacterial sepsis, and septic shock (the most severe form with hemodynamic compromise)."
+     },
+     "1-expert": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 14601,
+      "actual_count": 0,
+      "elapsed_sec": 7.7,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|91302008,http://snomed.info/sct|10001005,http://snomed.info/sct|76571007",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|91302008,http://snomed.info/sct|10001005,http://snomed.info/sct|76571007",
+      "prompt_text": "I need to find patients with a documented sepsis diagnosis in their Condition resources. Sepsis exists along a severity continuum in SNOMED CT, and the phenotype requires covering all three principal variants: the broader sepsis concept, bacterial sepsis as a more specific subtype, and septic shock representing the most severe hemodynamic form. All three codes must be included to avoid undercounting \u2014 do not restrict to a single variant."
+     },
+     "2-naive": {
+      "precision": 0.7647,
+      "recall": 0.2669,
+      "f1": 0.3957,
+      "passed": false,
+      "expected_count": 14601,
+      "actual_count": 5096,
+      "elapsed_sec": 37.7,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|A41.9,http://hl7.org/fhir/sid/icd-10-cm|A41.89,http://hl7.org/fhir/sid/icd-10-cm|A41.0,http://hl7.org/fhir/sid/icd-10-cm|A41.01,http://hl7.org/fhir/sid/icd-10-cm|A41.02,http://hl7.org/fhir/sid/icd-10-cm|A41.1,http://hl7.org/fhir/sid/icd-10-cm|A41.2,http://hl7.org/fhir/sid/icd-10-cm|A41.3,http://hl7.org/fhir/sid/icd-10-cm|A41.4,http://hl7.org/fhir/sid/icd-10-cm|A41.5,http://hl7.org/fhir/sid/icd-10-cm|A41.50,http://hl7.org/fhir/sid/icd-10-cm|A41.51,http://hl7.org/fhir/sid/icd-10-cm|A41.52,http://hl7.org/fhir/sid/icd-10-cm|A41.53,http://hl7.org/fhir/sid/icd-10-cm|A41.54,http://hl7.org/fhir/sid/icd-10-cm|A41.59,http://hl7.org/fhir/sid/icd-10-cm|A41.81,http://hl7.org/fhir/sid/icd-10-cm|A40.0,http://hl7.org/fhir/sid/icd-10-cm|A40.1,http://hl7.org/fhir/sid/icd-10-cm|A40.3,http://hl7.org/fhir/sid/icd-10-cm|A40.8,http://hl7.org/fhir/sid/icd-10-cm|A40.9,http://hl7.org/fhir/sid/icd-10-cm|R65.20,http://hl7.org/fhir/sid/icd-10-cm|R65.21",
+      "additional_query_urls": [],
+      "raw_response": "FINAL ANSWER:\n\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|A41.9,http://hl7.org/fhir/sid/icd-10-cm|A41.89,http://hl7.org/fhir/sid/icd-10-cm|A41.0,http://hl7.org/fhir/sid/icd-10-cm|A41.01,http://hl7.org/fhir/sid/icd-10-cm|A41.02,http://hl7.org/fhir/sid/icd-10-cm|A41.1,http://hl7.org/fhir/sid/icd-10-cm|A41.2,http://hl7.org/fhir/sid/icd-10-cm|A41.3,http://hl7.org/fhir/sid/icd-10-cm|A41.4,http://hl7.org/fhir/sid/icd-10-cm|A41.5,http://hl7.org/fhir/sid/icd-10-cm|A41.50,http://hl7.org/fhir/sid/icd-10-cm|A41.51,http://hl7.org/fhir/sid/icd-10-cm|A41.52,http://hl7.org/fhir/sid/icd-10-cm|A41.53,http://hl7.org/fhir/sid/icd-10-cm|A41.54,http://hl7.org/fhir/sid/icd-10-cm|A41.59,http://hl7.org/fhir/sid/icd-10-cm|A41.81,http://hl7.org/fhir/sid/icd-10-cm|A40.0,http://hl7.org/fhir/sid/icd-10-cm|A40.1,http://hl7.org/fhir/sid/icd-10-cm|A40.3,http://hl7.org/fhir/sid/icd-10-cm|A40.8,http://hl7.org/fhir/sid/icd-10-cm|A40.9,http://hl7.org/fhir/sid/icd-10-cm|R65.20,http://hl7.org/fhir/sid/icd-10-cm|R65.21",
+      "prompt_text": "Find patients with sepsis."
+     },
+     "2-broad": {
+      "precision": 0.7647,
+      "recall": 0.2669,
+      "f1": 0.3957,
+      "passed": false,
+      "expected_count": 14601,
+      "actual_count": 5096,
+      "elapsed_sec": 37.5,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|A40.0,http://hl7.org/fhir/sid/icd-10-cm|A40.1,http://hl7.org/fhir/sid/icd-10-cm|A40.3,http://hl7.org/fhir/sid/icd-10-cm|A40.8,http://hl7.org/fhir/sid/icd-10-cm|A40.9,http://hl7.org/fhir/sid/icd-10-cm|A41.0,http://hl7.org/fhir/sid/icd-10-cm|A41.01,http://hl7.org/fhir/sid/icd-10-cm|A41.02,http://hl7.org/fhir/sid/icd-10-cm|A41.1,http://hl7.org/fhir/sid/icd-10-cm|A41.2,http://hl7.org/fhir/sid/icd-10-cm|A41.3,http://hl7.org/fhir/sid/icd-10-cm|A41.4,http://hl7.org/fhir/sid/icd-10-cm|A41.50,http://hl7.org/fhir/sid/icd-10-cm|A41.51,http://hl7.org/fhir/sid/icd-10-cm|A41.52,http://hl7.org/fhir/sid/icd-10-cm|A41.53,http://hl7.org/fhir/sid/icd-10-cm|A41.54,http://hl7.org/fhir/sid/icd-10-cm|A41.59,http://hl7.org/fhir/sid/icd-10-cm|A41.81,http://hl7.org/fhir/sid/icd-10-cm|A41.89,http://hl7.org/fhir/sid/icd-10-cm|A41.9,http://hl7.org/fhir/sid/icd-10-cm|R65.20,http://hl7.org/fhir/sid/icd-10-cm|R65.21",
+      "additional_query_urls": [],
+      "raw_response": "FINAL ANSWER:\n\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|A40.0,http://hl7.org/fhir/sid/icd-10-cm|A40.1,http://hl7.org/fhir/sid/icd-10-cm|A40.3,http://hl7.org/fhir/sid/icd-10-cm|A40.8,http://hl7.org/fhir/sid/icd-10-cm|A40.9,http://hl7.org/fhir/sid/icd-10-cm|A41.0,http://hl7.org/fhir/sid/icd-10-cm|A41.01,http://hl7.org/fhir/sid/icd-10-cm|A41.02,http://hl7.org/fhir/sid/icd-10-cm|A41.1,http://hl7.org/fhir/sid/icd-10-cm|A41.2,http://hl7.org/fhir/sid/icd-10-cm|A41.3,http://hl7.org/fhir/sid/icd-10-cm|A41.4,http://hl7.org/fhir/sid/icd-10-cm|A41.50,http://hl7.org/fhir/sid/icd-10-cm|A41.51,http://hl7.org/fhir/sid/icd-10-cm|A41.52,http://hl7.org/fhir/sid/icd-10-cm|A41.53,http://hl7.org/fhir/sid/icd-10-cm|A41.54,http://hl7.org/fhir/sid/icd-10-cm|A41.59,http://hl7.org/fhir/sid/icd-10-cm|A41.81,http://hl7.org/fhir/sid/icd-10-cm|A41.89,http://hl7.org/fhir/sid/icd-10-cm|A41.9,http://hl7.org/fhir/sid/icd-10-cm|R65.20,http://hl7.org/fhir/sid/icd-10-cm|R65.21",
+      "prompt_text": "Find patients diagnosed with sepsis \u2014 including general sepsis, bacterial sepsis, and septic shock (the most severe form with hemodynamic compromise)."
+     },
+     "2-expert": {
+      "precision": 0.908,
+      "recall": 0.3767,
+      "f1": 0.5325,
+      "passed": false,
+      "expected_count": 14601,
+      "actual_count": 6057,
+      "elapsed_sec": 38.7,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|A41.9,http://hl7.org/fhir/sid/icd-10-cm|R78.81,http://hl7.org/fhir/sid/icd-10-cm|R65.21",
+      "additional_query_urls": [],
+      "raw_response": "FINAL ANSWER:\n\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|A41.9,http://hl7.org/fhir/sid/icd-10-cm|R78.81,http://hl7.org/fhir/sid/icd-10-cm|R65.21",
+      "prompt_text": "I need to find patients with a documented sepsis diagnosis in their Condition resources. Sepsis exists along a severity continuum in SNOMED CT, and the phenotype requires covering all three principal variants: the broader sepsis concept, bacterial sepsis as a more specific subtype, and septic shock representing the most severe hemodynamic form. All three codes must be included to avoid undercounting \u2014 do not restrict to a single variant."
+     },
+     "3-naive": {
+      "precision": 0.7647,
+      "recall": 0.2669,
+      "f1": 0.3957,
+      "passed": false,
+      "expected_count": 14601,
+      "actual_count": 5096,
+      "elapsed_sec": 39.2,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|A40.0,http://hl7.org/fhir/sid/icd-10-cm|A40.1,http://hl7.org/fhir/sid/icd-10-cm|A40.3,http://hl7.org/fhir/sid/icd-10-cm|A40.8,http://hl7.org/fhir/sid/icd-10-cm|A40.9,http://hl7.org/fhir/sid/icd-10-cm|A41.01,http://hl7.org/fhir/sid/icd-10-cm|A41.02,http://hl7.org/fhir/sid/icd-10-cm|A41.1,http://hl7.org/fhir/sid/icd-10-cm|A41.2,http://hl7.org/fhir/sid/icd-10-cm|A41.3,http://hl7.org/fhir/sid/icd-10-cm|A41.4,http://hl7.org/fhir/sid/icd-10-cm|A41.50,http://hl7.org/fhir/sid/icd-10-cm|A41.51,http://hl7.org/fhir/sid/icd-10-cm|A41.52,http://hl7.org/fhir/sid/icd-10-cm|A41.53,http://hl7.org/fhir/sid/icd-10-cm|A41.54,http://hl7.org/fhir/sid/icd-10-cm|A41.59,http://hl7.org/fhir/sid/icd-10-cm|A41.81,http://hl7.org/fhir/sid/icd-10-cm|A41.89,http://hl7.org/fhir/sid/icd-10-cm|A41.9,http://hl7.org/fhir/sid/icd-10-cm|R65.20,http://hl7.org/fhir/sid/icd-10-cm|R65.21",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|A40.0,http://hl7.org/fhir/sid/icd-10-cm|A40.1,http://hl7.org/fhir/sid/icd-10-cm|A40.3,http://hl7.org/fhir/sid/icd-10-cm|A40.8,http://hl7.org/fhir/sid/icd-10-cm|A40.9,http://hl7.org/fhir/sid/icd-10-cm|A41.01,http://hl7.org/fhir/sid/icd-10-cm|A41.02,http://hl7.org/fhir/sid/icd-10-cm|A41.1,http://hl7.org/fhir/sid/icd-10-cm|A41.2,http://hl7.org/fhir/sid/icd-10-cm|A41.3,http://hl7.org/fhir/sid/icd-10-cm|A41.4,http://hl7.org/fhir/sid/icd-10-cm|A41.50,http://hl7.org/fhir/sid/icd-10-cm|A41.51,http://hl7.org/fhir/sid/icd-10-cm|A41.52,http://hl7.org/fhir/sid/icd-10-cm|A41.53,http://hl7.org/fhir/sid/icd-10-cm|A41.54,http://hl7.org/fhir/sid/icd-10-cm|A41.59,http://hl7.org/fhir/sid/icd-10-cm|A41.81,http://hl7.org/fhir/sid/icd-10-cm|A41.89,http://hl7.org/fhir/sid/icd-10-cm|A41.9,http://hl7.org/fhir/sid/icd-10-cm|R65.20,http://hl7.org/fhir/sid/icd-10-cm|R65.21",
+      "prompt_text": "Find patients with sepsis."
+     },
+     "3-broad": {
+      "precision": 0.7687,
+      "recall": 0.2699,
+      "f1": 0.3995,
+      "passed": false,
+      "expected_count": 14601,
+      "actual_count": 5127,
+      "elapsed_sec": 34.6,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|A41.9,http://hl7.org/fhir/sid/icd-10-cm|A41.89,http://hl7.org/fhir/sid/icd-10-cm|A41.81,http://hl7.org/fhir/sid/icd-10-cm|A41.51,http://hl7.org/fhir/sid/icd-10-cm|A41.52,http://hl7.org/fhir/sid/icd-10-cm|A41.50,http://hl7.org/fhir/sid/icd-10-cm|A41.01,http://hl7.org/fhir/sid/icd-10-cm|A41.02,http://hl7.org/fhir/sid/icd-10-cm|A41.1,http://hl7.org/fhir/sid/icd-10-cm|A41.2,http://hl7.org/fhir/sid/icd-10-cm|A41.3,http://hl7.org/fhir/sid/icd-10-cm|A41.4,http://hl7.org/fhir/sid/icd-10-cm|A40.0,http://hl7.org/fhir/sid/icd-10-cm|A40.1,http://hl7.org/fhir/sid/icd-10-cm|A40.3,http://hl7.org/fhir/sid/icd-10-cm|A40.8,http://hl7.org/fhir/sid/icd-10-cm|A40.9,http://hl7.org/fhir/sid/icd-10-cm|R65.20,http://hl7.org/fhir/sid/icd-10-cm|R65.21",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|A41.9,http://hl7.org/fhir/sid/icd-10-cm|A41.89,http://hl7.org/fhir/sid/icd-10-cm|A41.81,http://hl7.org/fhir/sid/icd-10-cm|A41.51,http://hl7.org/fhir/sid/icd-10-cm|A41.52,http://hl7.org/fhir/sid/icd-10-cm|A41.50,http://hl7.org/fhir/sid/icd-10-cm|A41.01,http://hl7.org/fhir/sid/icd-10-cm|A41.02,http://hl7.org/fhir/sid/icd-10-cm|A41.1,http://hl7.org/fhir/sid/icd-10-cm|A41.2,http://hl7.org/fhir/sid/icd-10-cm|A41.3,http://hl7.org/fhir/sid/icd-10-cm|A41.4,http://hl7.org/fhir/sid/icd-10-cm|A40.0,http://hl7.org/fhir/sid/icd-10-cm|A40.1,http://hl7.org/fhir/sid/icd-10-cm|A40.3,http://hl7.org/fhir/sid/icd-10-cm|A40.8,http://hl7.org/fhir/sid/icd-10-cm|A40.9,http://hl7.org/fhir/sid/icd-10-cm|R65.20,http://hl7.org/fhir/sid/icd-10-cm|R65.21",
+      "prompt_text": "Find patients diagnosed with sepsis \u2014 including general sepsis, bacterial sepsis, and septic shock (the most severe form with hemodynamic compromise)."
+     },
+     "3-expert": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 14601,
+      "actual_count": 0,
+      "elapsed_sec": 18.8,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|91302008,http://snomed.info/sct|10001005,http://snomed.info/sct|76571007",
+      "additional_query_urls": [],
+      "raw_response": "FINAL ANSWER:\n\nCondition?code=http://snomed.info/sct|91302008,http://snomed.info/sct|10001005,http://snomed.info/sct|76571007",
       "prompt_text": "I need to find patients with a documented sepsis diagnosis in their Condition resources. Sepsis exists along a severity continuum in SNOMED CT, and the phenotype requires covering all three principal variants: the broader sepsis concept, bacterial sepsis as a more specific subtype, and septic shock representing the most severe hemodynamic form. All three codes must be included to avoid undercounting \u2014 do not restrict to a single variant."
      }
     },
@@ -2454,6 +2728,158 @@
        "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|2193"
       ],
       "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|11124\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|2193",
+      "prompt_text": "Identify patients receiving broad-spectrum antibiotic therapy consistent with empirical sepsis treatment by querying MedicationRequest resources. The two agents to target are vancomycin and ceftriaxone, both coded in RxNorm. Be aware that this medication path has substantial cross-indication: vancomycin is also used for MRSA skin and bone infections, and ceftriaxone for community-acquired pneumonia, meningitis, and gonorrhea \u2014 so a medication-only cohort will include patients treated for infections other than sepsis."
+     }
+    },
+    "copilot:claude-opus-4.7+mimic": {
+     "1-naive": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 4737,
+      "actual_count": 0,
+      "elapsed_sec": 12.4,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1659149,http://www.nlm.nih.gov/research/umls/rxnorm|1796676,http://www.nlm.nih.gov/research/umls/rxnorm|11124,http://www.nlm.nih.gov/research/umls/rxnorm|11689,http://www.nlm.nih.gov/research/umls/rxnorm|20489,http://www.nlm.nih.gov/research/umls/rxnorm|2193,http://www.nlm.nih.gov/research/umls/rxnorm|18631,http://www.nlm.nih.gov/research/umls/rxnorm|2551,http://www.nlm.nih.gov/research/umls/rxnorm|82122,http://www.nlm.nih.gov/research/umls/rxnorm|10180,http://www.nlm.nih.gov/research/umls/rxnorm|203563&status=active",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1659149,http://www.nlm.nih.gov/research/umls/rxnorm|1796676,http://www.nlm.nih.gov/research/umls/rxnorm|11124,http://www.nlm.nih.gov/research/umls/rxnorm|11689,http://www.nlm.nih.gov/research/umls/rxnorm|20489,http://www.nlm.nih.gov/research/umls/rxnorm|2193,http://www.nlm.nih.gov/research/umls/rxnorm|18631,http://www.nlm.nih.gov/research/umls/rxnorm|2551,http://www.nlm.nih.gov/research/umls/rxnorm|82122,http://www.nlm.nih.gov/research/umls/rxnorm|10180,http://www.nlm.nih.gov/research/umls/rxnorm|203563&status=active",
+      "prompt_text": "Find patients on broad antibiotics."
+     },
+     "1-broad": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 4737,
+      "actual_count": 0,
+      "elapsed_sec": 7.7,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|11124,http://www.nlm.nih.gov/research/umls/rxnorm|2193",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|11124,http://www.nlm.nih.gov/research/umls/rxnorm|2193",
+      "prompt_text": "Find patients prescribed vancomycin or ceftriaxone \u2014 broad-spectrum antibiotics commonly used in sepsis empiric therapy. Both have many other indications."
+     },
+     "1-expert": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 4737,
+      "actual_count": 0,
+      "elapsed_sec": 7.7,
+      "queries_generated": 2,
+      "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|11124",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|2193"
+      ],
+      "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|11124\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|2193",
+      "prompt_text": "Identify patients receiving broad-spectrum antibiotic therapy consistent with empirical sepsis treatment by querying MedicationRequest resources. The two agents to target are vancomycin and ceftriaxone, both coded in RxNorm. Be aware that this medication path has substantial cross-indication: vancomycin is also used for MRSA skin and bone infections, and ceftriaxone for community-acquired pneumonia, meningitis, and gonorrhea \u2014 so a medication-only cohort will include patients treated for infections other than sepsis."
+     },
+     "2-naive": {
+      "precision": 0.0901,
+      "recall": 0.0851,
+      "f1": 0.0875,
+      "passed": false,
+      "expected_count": 4737,
+      "actual_count": 4473,
+      "elapsed_sec": 80.5,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|1040005,http://www.nlm.nih.gov/research/umls/rxnorm|10627,http://www.nlm.nih.gov/research/umls/rxnorm|1272,http://www.nlm.nih.gov/research/umls/rxnorm|1539239,http://www.nlm.nih.gov/research/umls/rxnorm|1540825,http://www.nlm.nih.gov/research/umls/rxnorm|1547611,http://www.nlm.nih.gov/research/umls/rxnorm|1596450,http://www.nlm.nih.gov/research/umls/rxnorm|1597614,http://www.nlm.nih.gov/research/umls/rxnorm|1603840,http://www.nlm.nih.gov/research/umls/rxnorm|190376,http://www.nlm.nih.gov/research/umls/rxnorm|1927663,http://www.nlm.nih.gov/research/umls/rxnorm|1945217,http://www.nlm.nih.gov/research/umls/rxnorm|20481,http://www.nlm.nih.gov/research/umls/rxnorm|2055906,http://www.nlm.nih.gov/research/umls/rxnorm|2059269,http://www.nlm.nih.gov/research/umls/rxnorm|2184141,http://www.nlm.nih.gov/research/umls/rxnorm|2191,http://www.nlm.nih.gov/research/umls/rxnorm|2265702,http://www.nlm.nih.gov/research/umls/rxnorm|2551,http://www.nlm.nih.gov/research/umls/rxnorm|2573160,http://www.nlm.nih.gov/research/umls/rxnorm|2675987,http://www.nlm.nih.gov/research/umls/rxnorm|2691334,http://www.nlm.nih.gov/research/umls/rxnorm|2708,http://www.nlm.nih.gov/research/umls/rxnorm|29561,http://www.nlm.nih.gov/research/umls/rxnorm|384455,http://www.nlm.nih.gov/research/umls/rxnorm|473837,http://www.nlm.nih.gov/research/umls/rxnorm|5690,http://www.nlm.nih.gov/research/umls/rxnorm|627,http://www.nlm.nih.gov/research/umls/rxnorm|641,http://www.nlm.nih.gov/research/umls/rxnorm|74169,http://www.nlm.nih.gov/research/umls/rxnorm|82122,http://www.nlm.nih.gov/research/umls/rxnorm|8536",
+      "additional_query_urls": [],
+      "raw_response": "FINAL ANSWER:\n\nMedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|1040005,http://www.nlm.nih.gov/research/umls/rxnorm|10627,http://www.nlm.nih.gov/research/umls/rxnorm|1272,http://www.nlm.nih.gov/research/umls/rxnorm|1539239,http://www.nlm.nih.gov/research/umls/rxnorm|1540825,http://www.nlm.nih.gov/research/umls/rxnorm|1547611,http://www.nlm.nih.gov/research/umls/rxnorm|1596450,http://www.nlm.nih.gov/research/umls/rxnorm|1597614,http://www.nlm.nih.gov/research/umls/rxnorm|1603840,http://www.nlm.nih.gov/research/umls/rxnorm|190376,http://www.nlm.nih.gov/research/umls/rxnorm|1927663,http://www.nlm.nih.gov/research/umls/rxnorm|1945217,http://www.nlm.nih.gov/research/umls/rxnorm|20481,http://www.nlm.nih.gov/research/umls/rxnorm|2055906,http://www.nlm.nih.gov/research/umls/rxnorm|2059269,http://www.nlm.nih.gov/research/umls/rxnorm|2184141,http://www.nlm.nih.gov/research/umls/rxnorm|2191,http://www.nlm.nih.gov/research/umls/rxnorm|2265702,http://www.nlm.nih.gov/research/umls/rxnorm|2551,http://www.nlm.nih.gov/research/umls/rxnorm|2573160,http://www.nlm.nih.gov/research/umls/rxnorm|2675987,http://www.nlm.nih.gov/research/umls/rxnorm|2691334,http://www.nlm.nih.gov/research/umls/rxnorm|2708,http://www.nlm.nih.gov/research/umls/rxnorm|29561,http://www.nlm.nih.gov/research/umls/rxnorm|384455,http://www.nlm.nih.gov/research/umls/rxnorm|473837,http://www.nlm.nih.gov/research/umls/rxnorm|5690,http://www.nlm.nih.gov/research/umls/rxnorm|627,http://www.nlm.nih.gov/research/umls/rxnorm|641,http://www.nlm.nih.gov/research/umls/rxnorm|74169,http://www.nlm.nih.gov/research/umls/rxnorm|82122,http://www.nlm.nih.gov/research/umls/rxnorm|8536",
+      "prompt_text": "Find patients on broad antibiotics."
+     },
+     "2-broad": {
+      "precision": 0.9238,
+      "recall": 0.8368,
+      "f1": 0.8782,
+      "passed": true,
+      "expected_count": 4737,
+      "actual_count": 4291,
+      "elapsed_sec": 63.5,
+      "queries_generated": 2,
+      "primary_query_url": "MedicationRequest?medication.code:text=vancomycin",
+      "additional_query_urls": [
+       "MedicationRequest?medication.code:text=ceftriaxone"
+      ],
+      "raw_response": "MedicationRequest?medication.code:text=vancomycin\nMedicationRequest?medication.code:text=ceftriaxone",
+      "prompt_text": "Find patients prescribed vancomycin or ceftriaxone \u2014 broad-spectrum antibiotics commonly used in sepsis empiric therapy. Both have many other indications."
+     },
+     "2-expert": {
+      "precision": 1.0,
+      "recall": 0.8687,
+      "f1": 0.9297,
+      "passed": true,
+      "expected_count": 4737,
+      "actual_count": 4115,
+      "elapsed_sec": 59.4,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|11124,http://www.nlm.nih.gov/research/umls/rxnorm|2193",
+      "additional_query_urls": [],
+      "raw_response": "FINAL ANSWER:\n\nMedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|11124,http://www.nlm.nih.gov/research/umls/rxnorm|2193",
+      "prompt_text": "Identify patients receiving broad-spectrum antibiotic therapy consistent with empirical sepsis treatment by querying MedicationRequest resources. The two agents to target are vancomycin and ceftriaxone, both coded in RxNorm. Be aware that this medication path has substantial cross-indication: vancomycin is also used for MRSA skin and bone infections, and ceftriaxone for community-acquired pneumonia, meningitis, and gonorrhea \u2014 so a medication-only cohort will include patients treated for infections other than sepsis."
+     },
+     "3-naive": {
+      "precision": 0.2476,
+      "recall": 0.7781,
+      "f1": 0.3756,
+      "passed": false,
+      "expected_count": 4737,
+      "actual_count": 14888,
+      "elapsed_sec": 117.8,
+      "queries_generated": 16,
+      "primary_query_url": "MedicationRequest?medication.code:text=piperacillin",
+      "additional_query_urls": [
+       "MedicationRequest?medication.code:text=vancomycin",
+       "MedicationRequest?medication.code:text=cefepime",
+       "MedicationRequest?medication.code:text=meropenem",
+       "MedicationRequest?medication.code:text=imipenem",
+       "MedicationRequest?medication.code:text=ceftazidime",
+       "MedicationRequest?medication.code:text=ciprofloxacin",
+       "MedicationRequest?medication.code:text=levofloxacin",
+       "MedicationRequest?medication.code:text=linezolid",
+       "MedicationRequest?medication.code:text=daptomycin",
+       "MedicationRequest?medication.code:text=tobramycin",
+       "MedicationRequest?medication.code:text=gentamicin",
+       "MedicationRequest?medication.code:text=amikacin",
+       "MedicationRequest?medication.code:text=aztreonam",
+       "MedicationRequest?medication.code:text=tigecycline",
+       "MedicationRequest?medication.code:text=colistin"
+      ],
+      "raw_response": "MedicationRequest?medication.code:text=piperacillin\nMedicationRequest?medication.code:text=vancomycin\nMedicationRequest?medication.code:text=cefepime\nMedicationRequest?medication.code:text=meropenem\nMedicationRequest?medication.code:text=imipenem\nMedicationRequest?medication.code:text=ceftazidime\nMedicationRequest?medication.code:text=ciprofloxacin\nMedicationRequest?medication.code:text=levofloxacin\nMedicationRequest?medication.code:text=linezolid\nMedicationRequest?medication.code:text=daptomycin\nMedicationRequest?medication.code:text=tobramycin\nMedicationRequest?medication.code:text=gentamicin\nMedicationRequest?medication.code:text=amikacin\nMedicationRequest?medication.code:text=aztreonam\nMedicationRequest?medication.code:text=tigecycline\nMedicationRequest?medication.code:text=colistin",
+      "prompt_text": "Find patients on broad antibiotics."
+     },
+     "3-broad": {
+      "precision": 0.9238,
+      "recall": 0.8368,
+      "f1": 0.8782,
+      "passed": true,
+      "expected_count": 4737,
+      "actual_count": 4291,
+      "elapsed_sec": 46.4,
+      "queries_generated": 2,
+      "primary_query_url": "MedicationRequest?medication.code:text=vancomycin",
+      "additional_query_urls": [
+       "MedicationRequest?medication.code:text=ceftriaxone"
+      ],
+      "raw_response": "Both queries return valid counts. Final answer:\n\nMedicationRequest?medication.code:text=vancomycin\nMedicationRequest?medication.code:text=ceftriaxone",
+      "prompt_text": "Find patients prescribed vancomycin or ceftriaxone \u2014 broad-spectrum antibiotics commonly used in sepsis empiric therapy. Both have many other indications."
+     },
+     "3-expert": {
+      "precision": 1.0,
+      "recall": 0.9137,
+      "f1": 0.9549,
+      "passed": true,
+      "expected_count": 4737,
+      "actual_count": 4328,
+      "elapsed_sec": 47.7,
+      "queries_generated": 2,
+      "primary_query_url": "MedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|11124",
+      "additional_query_urls": [
+       "MedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|2193"
+      ],
+      "raw_response": "FINAL ANSWER:\n\nMedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|11124\nMedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|2193",
       "prompt_text": "Identify patients receiving broad-spectrum antibiotic therapy consistent with empirical sepsis treatment by querying MedicationRequest resources. The two agents to target are vancomycin and ceftriaxone, both coded in RxNorm. Be aware that this medication path has substantial cross-indication: vancomycin is also used for MRSA skin and bone infections, and ceftriaxone for community-acquired pneumonia, meningitis, and gonorrhea \u2014 so a medication-only cohort will include patients treated for infections other than sepsis."
      }
     },

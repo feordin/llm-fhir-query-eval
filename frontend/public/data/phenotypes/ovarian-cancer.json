@@ -264,6 +264,170 @@
       "prompt_text": "I need to identify my complete ovarian cancer patient population for a quality improvement initiative on chemotherapy adherence and CA-125 surveillance. From clinical experience, ovarian cancer patients are documented in different ways: most have a formal ovarian cancer diagnosis (often histology-specific), most are on chemotherapy (carboplatin, paclitaxel, cisplatin, gemcitabine, or olaparib), most have undergone oophorectomy or hysterectomy, and most have elevated CA-125.\n\nPlease run multiple FHIR queries to capture the full population:\n1. Patients with any ovarian cancer diagnosis\n2. Patients prescribed ovarian cancer chemotherapy\n3. Patients who have undergone oophorectomy or hysterectomy\n4. Patients with elevated CA-125 (>35 U/mL)\n\nFor each query, return the matching resources. I want the union of all patients found. Note: this is a female-only population."
      }
     },
+    "copilot:claude-opus-4.7+mimic": {
+     "1-naive": {
+      "precision": 0.9157,
+      "recall": 0.1704,
+      "f1": 0.2873,
+      "passed": false,
+      "expected_count": 1338,
+      "actual_count": 249,
+      "elapsed_sec": 16.2,
+      "queries_generated": 4,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|363443007,http://hl7.org/fhir/sid/icd-10-cm|C56.9,http://hl7.org/fhir/sid/icd-10-cm|C56.1,http://hl7.org/fhir/sid/icd-10-cm|C56.2&patient.gender=female",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|40048,http://www.nlm.nih.gov/research/umls/rxnorm|56946,http://www.nlm.nih.gov/research/umls/rxnorm|2555,http://www.nlm.nih.gov/research/umls/rxnorm|12574,http://www.nlm.nih.gov/research/umls/rxnorm|1597581&patient.gender=female",
+       "Procedure?code=http://snomed.info/sct|83152002,http://snomed.info/sct|236886002,http://snomed.info/sct|116140006,http://snomed.info/sct|387643005&patient.gender=female",
+       "Observation?code=http://loinc.org|10334-1&value-quantity=gt35|http://unitsofmeasure.org|U/mL&patient.gender=female"
+      ],
+      "raw_response": "Condition?code=http://snomed.info/sct|363443007,http://hl7.org/fhir/sid/icd-10-cm|C56.9,http://hl7.org/fhir/sid/icd-10-cm|C56.1,http://hl7.org/fhir/sid/icd-10-cm|C56.2&patient.gender=female\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|40048,http://www.nlm.nih.gov/research/umls/rxnorm|56946,http://www.nlm.nih.gov/research/umls/rxnorm|2555,http://www.nlm.nih.gov/research/umls/rxnorm|12574,http://www.nlm.nih.gov/research/umls/rxnorm|1597581&patient.gender=female\nProcedure?code=http://snomed.info/sct|83152002,http://snomed.info/sct|236886002,http://snomed.info/sct|116140006,http://snomed.info/sct|387643005&patient.gender=female\nObservation?code=http://loinc.org|10334-1&value-quantity=gt35|http://unitsofmeasure.org|U/mL&patient.gender=female",
+      "prompt_text": "I need to identify my complete ovarian cancer patient population for a quality improvement initiative on chemotherapy adherence and CA-125 surveillance. From clinical experience, ovarian cancer patients are documented in different ways: most have a formal ovarian cancer diagnosis (often histology-specific), most are on chemotherapy (carboplatin, paclitaxel, cisplatin, gemcitabine, or olaparib), most have undergone oophorectomy or hysterectomy, and most have elevated CA-125.\n\nPlease run multiple FHIR queries to capture the full population:\n1. Patients with any ovarian cancer diagnosis\n2. Patients prescribed ovarian cancer chemotherapy\n3. Patients who have undergone oophorectomy or hysterectomy\n4. Patients with elevated CA-125 (>35 U/mL)\n\nFor each query, return the matching resources. I want the union of all patients found. Note: this is a female-only population."
+     },
+     "1-broad": {
+      "precision": 0.9157,
+      "recall": 0.1704,
+      "f1": 0.2873,
+      "passed": false,
+      "expected_count": 1338,
+      "actual_count": 249,
+      "elapsed_sec": 16.1,
+      "queries_generated": 5,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|363443007,http://snomed.info/sct|422967000,http://snomed.info/sct|254878006,http://snomed.info/sct|1701000119104,http://snomed.info/sct|707294009&patient.gender=female",
+      "additional_query_urls": [
+       "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|C56.9,http://hl7.org/fhir/sid/icd-10-cm|C56.1,http://hl7.org/fhir/sid/icd-10-cm|C56.2&patient.gender=female",
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|40048,http://www.nlm.nih.gov/research/umls/rxnorm|56946,http://www.nlm.nih.gov/research/umls/rxnorm|2555,http://www.nlm.nih.gov/research/umls/rxnorm|12574,http://www.nlm.nih.gov/research/umls/rxnorm|1597582&patient.gender=female",
+       "Procedure?code=http://snomed.info/sct|83152002,http://snomed.info/sct|60022001,http://snomed.info/sct|116140006,http://snomed.info/sct|236886002,http://snomed.info/sct|63516001&patient.gender=female",
+       "Observation?code=http://loinc.org|10334-1,http://loinc.org|83088-9&value-quantity=gt35|http://unitsofmeasure.org|U/mL&patient.gender=female"
+      ],
+      "raw_response": "Condition?code=http://snomed.info/sct|363443007,http://snomed.info/sct|422967000,http://snomed.info/sct|254878006,http://snomed.info/sct|1701000119104,http://snomed.info/sct|707294009&patient.gender=female\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|C56.9,http://hl7.org/fhir/sid/icd-10-cm|C56.1,http://hl7.org/fhir/sid/icd-10-cm|C56.2&patient.gender=female\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|40048,http://www.nlm.nih.gov/research/umls/rxnorm|56946,http://www.nlm.nih.gov/research/umls/rxnorm|2555,http://www.nlm.nih.gov/research/umls/rxnorm|12574,http://www.nlm.nih.gov/research/umls/rxnorm|1597582&patient.gender=female\nProcedure?code=http://snomed.info/sct|83152002,http://snomed.info/sct|60022001,http://snomed.info/sct|116140006,http://snomed.info/sct|236886002,http://snomed.info/sct|63516001&patient.gender=female\nObservation?code=http://loinc.org|10334-1,http://loinc.org|83088-9&value-quantity=gt35|http://unitsofmeasure.org|U/mL&patient.gender=female",
+      "prompt_text": "I need to identify my complete ovarian cancer patient population for a quality improvement initiative on chemotherapy adherence and CA-125 surveillance. From clinical experience, ovarian cancer patients are documented in different ways: most have a formal ovarian cancer diagnosis (often histology-specific), most are on chemotherapy (carboplatin, paclitaxel, cisplatin, gemcitabine, or olaparib), most have undergone oophorectomy or hysterectomy, and most have elevated CA-125.\n\nPlease run multiple FHIR queries to capture the full population:\n1. Patients with any ovarian cancer diagnosis\n2. Patients prescribed ovarian cancer chemotherapy\n3. Patients who have undergone oophorectomy or hysterectomy\n4. Patients with elevated CA-125 (>35 U/mL)\n\nFor each query, return the matching resources. I want the union of all patients found. Note: this is a female-only population."
+     },
+     "1-expert": {
+      "precision": 0.9157,
+      "recall": 0.1704,
+      "f1": 0.2873,
+      "passed": false,
+      "expected_count": 1338,
+      "actual_count": 249,
+      "elapsed_sec": 15.3,
+      "queries_generated": 4,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|363443007,http://snomed.info/sct|422775005,http://snomed.info/sct|254869008,http://snomed.info/sct|1701000119104,http://hl7.org/fhir/sid/icd-10-cm|C56,http://hl7.org/fhir/sid/icd-10-cm|C56.1,http://hl7.org/fhir/sid/icd-10-cm|C56.2,http://hl7.org/fhir/sid/icd-10-cm|C56.9",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|40048,http://www.nlm.nih.gov/research/umls/rxnorm|56946,http://www.nlm.nih.gov/research/umls/rxnorm|2555,http://www.nlm.nih.gov/research/umls/rxnorm|12574,http://www.nlm.nih.gov/research/umls/rxnorm|1597582",
+       "Procedure?code=http://snomed.info/sct|83152002,http://snomed.info/sct|68867004,http://snomed.info/sct|236886002,http://snomed.info/sct|116140006,http://snomed.info/sct|287941006",
+       "Observation?code=http://loinc.org|10334-1,http://loinc.org|2039-6&value-quantity=gt35|http://unitsofmeasure.org|U/mL"
+      ],
+      "raw_response": "Condition?code=http://snomed.info/sct|363443007,http://snomed.info/sct|422775005,http://snomed.info/sct|254869008,http://snomed.info/sct|1701000119104,http://hl7.org/fhir/sid/icd-10-cm|C56,http://hl7.org/fhir/sid/icd-10-cm|C56.1,http://hl7.org/fhir/sid/icd-10-cm|C56.2,http://hl7.org/fhir/sid/icd-10-cm|C56.9\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|40048,http://www.nlm.nih.gov/research/umls/rxnorm|56946,http://www.nlm.nih.gov/research/umls/rxnorm|2555,http://www.nlm.nih.gov/research/umls/rxnorm|12574,http://www.nlm.nih.gov/research/umls/rxnorm|1597582\nProcedure?code=http://snomed.info/sct|83152002,http://snomed.info/sct|68867004,http://snomed.info/sct|236886002,http://snomed.info/sct|116140006,http://snomed.info/sct|287941006\nObservation?code=http://loinc.org|10334-1,http://loinc.org|2039-6&value-quantity=gt35|http://unitsofmeasure.org|U/mL",
+      "prompt_text": "I need to identify my complete ovarian cancer patient population for a quality improvement initiative on chemotherapy adherence and CA-125 surveillance. From clinical experience, ovarian cancer patients are documented in different ways: most have a formal ovarian cancer diagnosis (often histology-specific), most are on chemotherapy (carboplatin, paclitaxel, cisplatin, gemcitabine, or olaparib), most have undergone oophorectomy or hysterectomy, and most have elevated CA-125.\n\nPlease run multiple FHIR queries to capture the full population:\n1. Patients with any ovarian cancer diagnosis\n2. Patients prescribed ovarian cancer chemotherapy\n3. Patients who have undergone oophorectomy or hysterectomy\n4. Patients with elevated CA-125 (>35 U/mL)\n\nFor each query, return the matching resources. I want the union of all patients found. Note: this is a female-only population."
+     },
+     "2-naive": {
+      "precision": 0.542,
+      "recall": 0.994,
+      "f1": 0.7015,
+      "passed": true,
+      "expected_count": 1338,
+      "actual_count": 2454,
+      "elapsed_sec": 107.8,
+      "queries_generated": 4,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|C56,http://hl7.org/fhir/sid/icd-10-cm|C56.1,http://hl7.org/fhir/sid/icd-10-cm|C56.2,http://hl7.org/fhir/sid/icd-10-cm|C56.3,http://hl7.org/fhir/sid/icd-10-cm|C56.9,http://hl7.org/fhir/sid/icd-10-cm|Z85.43,http://hl7.org/fhir/sid/icd-9-cm|183.0,http://hl7.org/fhir/sid/icd-9-cm|V10.43",
+      "additional_query_urls": [
+       "Procedure?code=http://hl7.org/fhir/sid/icd-9-cm|65.31,http://hl7.org/fhir/sid/icd-9-cm|65.39,http://hl7.org/fhir/sid/icd-9-cm|65.41,http://hl7.org/fhir/sid/icd-9-cm|65.49,http://hl7.org/fhir/sid/icd-9-cm|65.51,http://hl7.org/fhir/sid/icd-9-cm|65.61,http://hl7.org/fhir/sid/icd-9-cm|68.39,http://hl7.org/fhir/sid/icd-9-cm|68.49,http://hl7.org/fhir/sid/icd-9-cm|68.59,http://hl7.org/fhir/sid/icd-9-cm|68.69,http://hl7.org/fhir/sid/icd-9-cm|68.79,http://hl7.org/fhir/sid/icd-9-cm|68.9",
+       "Observation?code=http://loinc.org|10334-1&value-quantity=gt35",
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|40048,http://www.nlm.nih.gov/research/umls/rxnorm|56946,http://www.nlm.nih.gov/research/umls/rxnorm|2555,http://www.nlm.nih.gov/research/umls/rxnorm|12574,http://www.nlm.nih.gov/research/umls/rxnorm|1597582"
+      ],
+      "raw_response": "FINAL ANSWER:\n\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|C56,http://hl7.org/fhir/sid/icd-10-cm|C56.1,http://hl7.org/fhir/sid/icd-10-cm|C56.2,http://hl7.org/fhir/sid/icd-10-cm|C56.3,http://hl7.org/fhir/sid/icd-10-cm|C56.9,http://hl7.org/fhir/sid/icd-10-cm|Z85.43,http://hl7.org/fhir/sid/icd-9-cm|183.0,http://hl7.org/fhir/sid/icd-9-cm|V10.43\nProcedure?code=http://hl7.org/fhir/sid/icd-9-cm|65.31,http://hl7.org/fhir/sid/icd-9-cm|65.39,http://hl7.org/fhir/sid/icd-9-cm|65.41,http://hl7.org/fhir/sid/icd-9-cm|65.49,http://hl7.org/fhir/sid/icd-9-cm|65.51,http://hl7.org/fhir/sid/icd-9-cm|65.61,http://hl7.org/fhir/sid/icd-9-cm|68.39,http://hl7.org/fhir/sid/icd-9-cm|68.49,http://hl7.org/fhir/sid/icd-9-cm|68.59,http://hl7.org/fhir/sid/icd-9-cm|68.69,http://hl7.org/fhir/sid/icd-9-cm|68.79,http://hl7.org/fhir/sid/icd-9-cm|68.9\nObservation?code=http://loinc.org|10334-1&value-quantity=gt35\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|40048,http://www.nlm.nih.gov/research/umls/rxnorm|56946,http://www.nlm.nih.gov/research/umls/rxnorm|2555,http://www.nlm.nih.gov/research/umls/rxnorm|12574,http://www.nlm.nih.gov/research/umls/rxnorm|1597582",
+      "prompt_text": "I need to identify my complete ovarian cancer patient population for a quality improvement initiative on chemotherapy adherence and CA-125 surveillance. From clinical experience, ovarian cancer patients are documented in different ways: most have a formal ovarian cancer diagnosis (often histology-specific), most are on chemotherapy (carboplatin, paclitaxel, cisplatin, gemcitabine, or olaparib), most have undergone oophorectomy or hysterectomy, and most have elevated CA-125.\n\nPlease run multiple FHIR queries to capture the full population:\n1. Patients with any ovarian cancer diagnosis\n2. Patients prescribed ovarian cancer chemotherapy\n3. Patients who have undergone oophorectomy or hysterectomy\n4. Patients with elevated CA-125 (>35 U/mL)\n\nFor each query, return the matching resources. I want the union of all patients found. Note: this is a female-only population."
+     },
+     "2-broad": {
+      "precision": 0.5693,
+      "recall": 0.994,
+      "f1": 0.724,
+      "passed": true,
+      "expected_count": 1338,
+      "actual_count": 2336,
+      "elapsed_sec": 117.4,
+      "queries_generated": 4,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|C56,http://hl7.org/fhir/sid/icd-10-cm|C56.1,http://hl7.org/fhir/sid/icd-10-cm|C56.2,http://hl7.org/fhir/sid/icd-10-cm|C56.3,http://hl7.org/fhir/sid/icd-10-cm|C56.9,http://hl7.org/fhir/sid/icd-10-cm|Z85.43,http://hl7.org/fhir/sid/icd-9-cm|183.0,http://hl7.org/fhir/sid/icd-9-cm|V10.43",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Carboplatin,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Paclitaxel,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Cisplatin,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Gemcitabine,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Olaparib",
+       "Procedure?code=http://hl7.org/fhir/sid/icd-9-cm|65.31,http://hl7.org/fhir/sid/icd-9-cm|65.39,http://hl7.org/fhir/sid/icd-9-cm|65.41,http://hl7.org/fhir/sid/icd-9-cm|65.49,http://hl7.org/fhir/sid/icd-9-cm|65.51,http://hl7.org/fhir/sid/icd-9-cm|65.61,http://hl7.org/fhir/sid/icd-9-cm|68.49,http://hl7.org/fhir/sid/icd-9-cm|68.59,http://hl7.org/fhir/sid/icd-9-cm|68.69,http://hl7.org/fhir/sid/icd-9-cm|68.79,http://hl7.org/fhir/sid/icd-9-cm|68.9",
+       "Observation?code=http://loinc.org|10334-1&value-quantity=gt35"
+      ],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|C56,http://hl7.org/fhir/sid/icd-10-cm|C56.1,http://hl7.org/fhir/sid/icd-10-cm|C56.2,http://hl7.org/fhir/sid/icd-10-cm|C56.3,http://hl7.org/fhir/sid/icd-10-cm|C56.9,http://hl7.org/fhir/sid/icd-10-cm|Z85.43,http://hl7.org/fhir/sid/icd-9-cm|183.0,http://hl7.org/fhir/sid/icd-9-cm|V10.43\nMedicationRequest?code=http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Carboplatin,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Paclitaxel,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Cisplatin,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Gemcitabine,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Olaparib\nProcedure?code=http://hl7.org/fhir/sid/icd-9-cm|65.31,http://hl7.org/fhir/sid/icd-9-cm|65.39,http://hl7.org/fhir/sid/icd-9-cm|65.41,http://hl7.org/fhir/sid/icd-9-cm|65.49,http://hl7.org/fhir/sid/icd-9-cm|65.51,http://hl7.org/fhir/sid/icd-9-cm|65.61,http://hl7.org/fhir/sid/icd-9-cm|68.49,http://hl7.org/fhir/sid/icd-9-cm|68.59,http://hl7.org/fhir/sid/icd-9-cm|68.69,http://hl7.org/fhir/sid/icd-9-cm|68.79,http://hl7.org/fhir/sid/icd-9-cm|68.9\nObservation?code=http://loinc.org|10334-1&value-quantity=gt35",
+      "prompt_text": "I need to identify my complete ovarian cancer patient population for a quality improvement initiative on chemotherapy adherence and CA-125 surveillance. From clinical experience, ovarian cancer patients are documented in different ways: most have a formal ovarian cancer diagnosis (often histology-specific), most are on chemotherapy (carboplatin, paclitaxel, cisplatin, gemcitabine, or olaparib), most have undergone oophorectomy or hysterectomy, and most have elevated CA-125.\n\nPlease run multiple FHIR queries to capture the full population:\n1. Patients with any ovarian cancer diagnosis\n2. Patients prescribed ovarian cancer chemotherapy\n3. Patients who have undergone oophorectomy or hysterectomy\n4. Patients with elevated CA-125 (>35 U/mL)\n\nFor each query, return the matching resources. I want the union of all patients found. Note: this is a female-only population."
+     },
+     "2-expert": {
+      "precision": 0.4165,
+      "recall": 0.994,
+      "f1": 0.5871,
+      "passed": false,
+      "expected_count": 1338,
+      "actual_count": 3193,
+      "elapsed_sec": 172.2,
+      "queries_generated": 4,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|C56.9,http://hl7.org/fhir/sid/icd-10-cm|C56.1,http://hl7.org/fhir/sid/icd-10-cm|C56.2,http://hl7.org/fhir/sid/icd-10-cm|C56.3,http://hl7.org/fhir/sid/icd-9-cm|183.0",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|CARBOplatin,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|CISplatin,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Gemcitabine,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Olaparib",
+       "Procedure?code=http://hl7.org/fhir/sid/icd-9-cm|65.61,http://hl7.org/fhir/sid/icd-9-cm|65.51,http://hl7.org/fhir/sid/icd-9-cm|65.39,http://hl7.org/fhir/sid/icd-9-cm|65.31,http://hl7.org/fhir/sid/icd-9-cm|65.41,http://hl7.org/fhir/sid/icd-9-cm|65.49,http://hl7.org/fhir/sid/icd-9-cm|65.52,http://hl7.org/fhir/sid/icd-9-cm|65.53,http://hl7.org/fhir/sid/icd-9-cm|65.54,http://hl7.org/fhir/sid/icd-9-cm|65.62,http://hl7.org/fhir/sid/icd-9-cm|65.63,http://hl7.org/fhir/sid/icd-9-cm|65.64,http://hl7.org/fhir/sid/icd-9-cm|68.3,http://hl7.org/fhir/sid/icd-9-cm|68.39,http://hl7.org/fhir/sid/icd-9-cm|68.4,http://hl7.org/fhir/sid/icd-9-cm|68.49,http://hl7.org/fhir/sid/icd-9-cm|68.5,http://hl7.org/fhir/sid/icd-9-cm|68.51,http://hl7.org/fhir/sid/icd-9-cm|68.59,http://hl7.org/fhir/sid/icd-9-cm|68.6,http://hl7.org/fhir/sid/icd-9-cm|68.7,http://hl7.org/fhir/sid/icd-9-cm|68.9,http://hl7.org/fhir/sid/icd-9-cm|68.29,http://hl7.org/fhir/sid/icd-9-cm|68.31,http://hl7.org/fhir/sid/icd-9-cm|68.41,http://hl7.org/fhir/sid/icd-9-cm|68.61,http://hl7.org/fhir/sid/icd-9-cm|68.69,http://hl7.org/fhir/sid/icd-9-cm|68.71,http://hl7.org/fhir/sid/icd-9-cm|68.79",
+       "Observation?code=http://loinc.org|10334-1&value-quantity=gt35"
+      ],
+      "raw_response": "Verified. Final queries:\n\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|C56.9,http://hl7.org/fhir/sid/icd-10-cm|C56.1,http://hl7.org/fhir/sid/icd-10-cm|C56.2,http://hl7.org/fhir/sid/icd-10-cm|C56.3,http://hl7.org/fhir/sid/icd-9-cm|183.0\nMedicationRequest?code=http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|CARBOplatin,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|CISplatin,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Gemcitabine,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Olaparib\nProcedure?code=http://hl7.org/fhir/sid/icd-9-cm|65.61,http://hl7.org/fhir/sid/icd-9-cm|65.51,http://hl7.org/fhir/sid/icd-9-cm|65.39,http://hl7.org/fhir/sid/icd-9-cm|65.31,http://hl7.org/fhir/sid/icd-9-cm|65.41,http://hl7.org/fhir/sid/icd-9-cm|65.49,http://hl7.org/fhir/sid/icd-9-cm|65.52,http://hl7.org/fhir/sid/icd-9-cm|65.53,http://hl7.org/fhir/sid/icd-9-cm|65.54,http://hl7.org/fhir/sid/icd-9-cm|65.62,http://hl7.org/fhir/sid/icd-9-cm|65.63,http://hl7.org/fhir/sid/icd-9-cm|65.64,http://hl7.org/fhir/sid/icd-9-cm|68.3,http://hl7.org/fhir/sid/icd-9-cm|68.39,http://hl7.org/fhir/sid/icd-9-cm|68.4,http://hl7.org/fhir/sid/icd-9-cm|68.49,http://hl7.org/fhir/sid/icd-9-cm|68.5,http://hl7.org/fhir/sid/icd-9-cm|68.51,http://hl7.org/fhir/sid/icd-9-cm|68.59,http://hl7.org/fhir/sid/icd-9-cm|68.6,http://hl7.org/fhir/sid/icd-9-cm|68.7,http://hl7.org/fhir/sid/icd-9-cm|68.9,http://hl7.org/fhir/sid/icd-9-cm|68.29,http://hl7.org/fhir/sid/icd-9-cm|68.31,http://hl7.org/fhir/sid/icd-9-cm|68.41,http://hl7.org/fhir/sid/icd-9-cm|68.61,http://hl7.org/fhir/sid/icd-9-cm|68.69,http://hl7.org/fhir/sid/icd-9-cm|68.71,http://hl7.org/fhir/sid/icd-9-cm|68.79\nObservation?code=http://loinc.org|10334-1&value-quantity=gt35",
+      "prompt_text": "I need to identify my complete ovarian cancer patient population for a quality improvement initiative on chemotherapy adherence and CA-125 surveillance. From clinical experience, ovarian cancer patients are documented in different ways: most have a formal ovarian cancer diagnosis (often histology-specific), most are on chemotherapy (carboplatin, paclitaxel, cisplatin, gemcitabine, or olaparib), most have undergone oophorectomy or hysterectomy, and most have elevated CA-125.\n\nPlease run multiple FHIR queries to capture the full population:\n1. Patients with any ovarian cancer diagnosis\n2. Patients prescribed ovarian cancer chemotherapy\n3. Patients who have undergone oophorectomy or hysterectomy\n4. Patients with elevated CA-125 (>35 U/mL)\n\nFor each query, return the matching resources. I want the union of all patients found. Note: this is a female-only population."
+     },
+     "3-naive": {
+      "precision": 0.5138,
+      "recall": 0.9634,
+      "f1": 0.6701,
+      "passed": false,
+      "expected_count": 1338,
+      "actual_count": 2509,
+      "elapsed_sec": 215.1,
+      "queries_generated": 3,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|C56.1,http://hl7.org/fhir/sid/icd-10-cm|C56.2,http://hl7.org/fhir/sid/icd-10-cm|C56.9,http://hl7.org/fhir/sid/icd-9-cm|183.0&subject.gender=female",
+      "additional_query_urls": [
+       "Procedure?code=http://hl7.org/fhir/sid/icd-9-cm|65.3,http://hl7.org/fhir/sid/icd-9-cm|65.31,http://hl7.org/fhir/sid/icd-9-cm|65.39,http://hl7.org/fhir/sid/icd-9-cm|65.4,http://hl7.org/fhir/sid/icd-9-cm|65.41,http://hl7.org/fhir/sid/icd-9-cm|65.49,http://hl7.org/fhir/sid/icd-9-cm|65.5,http://hl7.org/fhir/sid/icd-9-cm|65.51,http://hl7.org/fhir/sid/icd-9-cm|65.52,http://hl7.org/fhir/sid/icd-9-cm|65.53,http://hl7.org/fhir/sid/icd-9-cm|65.54,http://hl7.org/fhir/sid/icd-9-cm|65.6,http://hl7.org/fhir/sid/icd-9-cm|65.61,http://hl7.org/fhir/sid/icd-9-cm|65.62,http://hl7.org/fhir/sid/icd-9-cm|65.63,http://hl7.org/fhir/sid/icd-9-cm|65.64,http://hl7.org/fhir/sid/icd-9-cm|68.3,http://hl7.org/fhir/sid/icd-9-cm|68.4,http://hl7.org/fhir/sid/icd-9-cm|68.49,http://hl7.org/fhir/sid/icd-9-cm|68.5,http://hl7.org/fhir/sid/icd-9-cm|68.51,http://hl7.org/fhir/sid/icd-9-cm|68.59,http://hl7.org/fhir/sid/icd-9-cm|68.6,http://hl7.org/fhir/sid/icd-9-cm|68.7,http://hl7.org/fhir/sid/icd-9-cm|68.9&subject.gender=female",
+       "Observation?code=http://loinc.org|10334-1&value-quantity=gt35&subject.gender=female"
+      ],
+      "raw_response": "This request matches Playbook 12 (Cohort = OR union across evidence sources) + Playbook 4 (sex filter) + Playbook 7 (threshold) + Playbook 8 (multi-system codes). Note: MedicationRequest arm cannot be executed\u2014this MIMIC server's medications carry only NDC codes on referenced Medication resources and are not searchable by ingredient/RxNorm.\n\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|C56.1,http://hl7.org/fhir/sid/icd-10-cm|C56.2,http://hl7.org/fhir/sid/icd-10-cm|C56.9,http://hl7.org/fhir/sid/icd-9-cm|183.0&subject.gender=female\nProcedure?code=http://hl7.org/fhir/sid/icd-9-cm|65.3,http://hl7.org/fhir/sid/icd-9-cm|65.31,http://hl7.org/fhir/sid/icd-9-cm|65.39,http://hl7.org/fhir/sid/icd-9-cm|65.4,http://hl7.org/fhir/sid/icd-9-cm|65.41,http://hl7.org/fhir/sid/icd-9-cm|65.49,http://hl7.org/fhir/sid/icd-9-cm|65.5,http://hl7.org/fhir/sid/icd-9-cm|65.51,http://hl7.org/fhir/sid/icd-9-cm|65.52,http://hl7.org/fhir/sid/icd-9-cm|65.53,http://hl7.org/fhir/sid/icd-9-cm|65.54,http://hl7.org/fhir/sid/icd-9-cm|65.6,http://hl7.org/fhir/sid/icd-9-cm|65.61,http://hl7.org/fhir/sid/icd-9-cm|65.62,http://hl7.org/fhir/sid/icd-9-cm|65.63,http://hl7.org/fhir/sid/icd-9-cm|65.64,http://hl7.org/fhir/sid/icd-9-cm|68.3,http://hl7.org/fhir/sid/icd-9-cm|68.4,http://hl7.org/fhir/sid/icd-9-cm|68.49,http://hl7.org/fhir/sid/icd-9-cm|68.5,http://hl7.org/fhir/sid/icd-9-cm|68.51,http://hl7.org/fhir/sid/icd-9-cm|68.59,http://hl7.org/fhir/sid/icd-9-cm|68.6,http://hl7.org/fhir/sid/icd-9-cm|68.7,http://hl7.org/fhir/sid/icd-9-cm|68.9&subject.gender=female\nObservation?code=http://loinc.org|10334-1&value-quantity=gt35&subject.gender=female",
+      "prompt_text": "I need to identify my complete ovarian cancer patient population for a quality improvement initiative on chemotherapy adherence and CA-125 surveillance. From clinical experience, ovarian cancer patients are documented in different ways: most have a formal ovarian cancer diagnosis (often histology-specific), most are on chemotherapy (carboplatin, paclitaxel, cisplatin, gemcitabine, or olaparib), most have undergone oophorectomy or hysterectomy, and most have elevated CA-125.\n\nPlease run multiple FHIR queries to capture the full population:\n1. Patients with any ovarian cancer diagnosis\n2. Patients prescribed ovarian cancer chemotherapy\n3. Patients who have undergone oophorectomy or hysterectomy\n4. Patients with elevated CA-125 (>35 U/mL)\n\nFor each query, return the matching resources. I want the union of all patients found. Note: this is a female-only population."
+     },
+     "3-broad": {
+      "precision": 0.4892,
+      "recall": 0.9634,
+      "f1": 0.6489,
+      "passed": false,
+      "expected_count": 1338,
+      "actual_count": 2635,
+      "elapsed_sec": 142.6,
+      "queries_generated": 4,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|C56.1,http://hl7.org/fhir/sid/icd-10-cm|C56.2,http://hl7.org/fhir/sid/icd-10-cm|C56.3,http://hl7.org/fhir/sid/icd-10-cm|C56.9,http://hl7.org/fhir/sid/icd-9-cm|183.0&patient.gender=female",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|CARBOplatin,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|PACLitaxel,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|CISplatin,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Gemcitabine,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Olaparib&patient.gender=female",
+       "Procedure?code=http://hl7.org/fhir/sid/icd-9-cm|65.31,http://hl7.org/fhir/sid/icd-9-cm|65.39,http://hl7.org/fhir/sid/icd-9-cm|65.41,http://hl7.org/fhir/sid/icd-9-cm|65.49,http://hl7.org/fhir/sid/icd-9-cm|65.51,http://hl7.org/fhir/sid/icd-9-cm|65.52,http://hl7.org/fhir/sid/icd-9-cm|65.53,http://hl7.org/fhir/sid/icd-9-cm|65.54,http://hl7.org/fhir/sid/icd-9-cm|65.61,http://hl7.org/fhir/sid/icd-9-cm|65.62,http://hl7.org/fhir/sid/icd-9-cm|65.63,http://hl7.org/fhir/sid/icd-9-cm|65.64,http://hl7.org/fhir/sid/icd-9-cm|68.3,http://hl7.org/fhir/sid/icd-9-cm|68.39,http://hl7.org/fhir/sid/icd-9-cm|68.4,http://hl7.org/fhir/sid/icd-9-cm|68.49,http://hl7.org/fhir/sid/icd-9-cm|68.51,http://hl7.org/fhir/sid/icd-9-cm|68.59,http://hl7.org/fhir/sid/icd-9-cm|68.6,http://hl7.org/fhir/sid/icd-9-cm|68.61,http://hl7.org/fhir/sid/icd-9-cm|68.69,http://hl7.org/fhir/sid/icd-9-cm|68.7,http://hl7.org/fhir/sid/icd-9-cm|68.71,http://hl7.org/fhir/sid/icd-9-cm|68.79,http://hl7.org/fhir/sid/icd-9-cm|68.9&patient.gender=female",
+       "Observation?code=http://loinc.org|10334-1&value-quantity=gt35&patient.gender=female"
+      ],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|C56.1,http://hl7.org/fhir/sid/icd-10-cm|C56.2,http://hl7.org/fhir/sid/icd-10-cm|C56.3,http://hl7.org/fhir/sid/icd-10-cm|C56.9,http://hl7.org/fhir/sid/icd-9-cm|183.0&patient.gender=female\nMedicationRequest?code=http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|CARBOplatin,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|PACLitaxel,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|CISplatin,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Gemcitabine,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Olaparib&patient.gender=female\nProcedure?code=http://hl7.org/fhir/sid/icd-9-cm|65.31,http://hl7.org/fhir/sid/icd-9-cm|65.39,http://hl7.org/fhir/sid/icd-9-cm|65.41,http://hl7.org/fhir/sid/icd-9-cm|65.49,http://hl7.org/fhir/sid/icd-9-cm|65.51,http://hl7.org/fhir/sid/icd-9-cm|65.52,http://hl7.org/fhir/sid/icd-9-cm|65.53,http://hl7.org/fhir/sid/icd-9-cm|65.54,http://hl7.org/fhir/sid/icd-9-cm|65.61,http://hl7.org/fhir/sid/icd-9-cm|65.62,http://hl7.org/fhir/sid/icd-9-cm|65.63,http://hl7.org/fhir/sid/icd-9-cm|65.64,http://hl7.org/fhir/sid/icd-9-cm|68.3,http://hl7.org/fhir/sid/icd-9-cm|68.39,http://hl7.org/fhir/sid/icd-9-cm|68.4,http://hl7.org/fhir/sid/icd-9-cm|68.49,http://hl7.org/fhir/sid/icd-9-cm|68.51,http://hl7.org/fhir/sid/icd-9-cm|68.59,http://hl7.org/fhir/sid/icd-9-cm|68.6,http://hl7.org/fhir/sid/icd-9-cm|68.61,http://hl7.org/fhir/sid/icd-9-cm|68.69,http://hl7.org/fhir/sid/icd-9-cm|68.7,http://hl7.org/fhir/sid/icd-9-cm|68.71,http://hl7.org/fhir/sid/icd-9-cm|68.79,http://hl7.org/fhir/sid/icd-9-cm|68.9&patient.gender=female\nObservation?code=http://loinc.org|10334-1&value-quantity=gt35&patient.gender=female",
+      "prompt_text": "I need to identify my complete ovarian cancer patient population for a quality improvement initiative on chemotherapy adherence and CA-125 surveillance. From clinical experience, ovarian cancer patients are documented in different ways: most have a formal ovarian cancer diagnosis (often histology-specific), most are on chemotherapy (carboplatin, paclitaxel, cisplatin, gemcitabine, or olaparib), most have undergone oophorectomy or hysterectomy, and most have elevated CA-125.\n\nPlease run multiple FHIR queries to capture the full population:\n1. Patients with any ovarian cancer diagnosis\n2. Patients prescribed ovarian cancer chemotherapy\n3. Patients who have undergone oophorectomy or hysterectomy\n4. Patients with elevated CA-125 (>35 U/mL)\n\nFor each query, return the matching resources. I want the union of all patients found. Note: this is a female-only population."
+     },
+     "3-expert": {
+      "precision": 0.4254,
+      "recall": 0.9656,
+      "f1": 0.5906,
+      "passed": false,
+      "expected_count": 1338,
+      "actual_count": 3037,
+      "elapsed_sec": 94.6,
+      "queries_generated": 4,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|C56,http://hl7.org/fhir/sid/icd-10-cm|C56.1,http://hl7.org/fhir/sid/icd-10-cm|C56.2,http://hl7.org/fhir/sid/icd-10-cm|C56.3,http://hl7.org/fhir/sid/icd-10-cm|C56.9,http://hl7.org/fhir/sid/icd-10-cm|C57.00,http://hl7.org/fhir/sid/icd-10-cm|C57.01,http://hl7.org/fhir/sid/icd-10-cm|C57.02,http://hl7.org/fhir/sid/icd-10-cm|Z85.43,http://hl7.org/fhir/sid/icd-9-cm|183.0,http://hl7.org/fhir/sid/icd-9-cm|183.9&patient.gender=female",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|CARBOplatin,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|PACLitaxel,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Cisplatin,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Gemcitabine,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Olaparib&patient.gender=female",
+       "Procedure?code=http://hl7.org/fhir/sid/icd-9-cm|65.31,http://hl7.org/fhir/sid/icd-9-cm|65.39,http://hl7.org/fhir/sid/icd-9-cm|65.41,http://hl7.org/fhir/sid/icd-9-cm|65.49,http://hl7.org/fhir/sid/icd-9-cm|65.51,http://hl7.org/fhir/sid/icd-9-cm|65.52,http://hl7.org/fhir/sid/icd-9-cm|65.53,http://hl7.org/fhir/sid/icd-9-cm|65.54,http://hl7.org/fhir/sid/icd-9-cm|65.61,http://hl7.org/fhir/sid/icd-9-cm|65.62,http://hl7.org/fhir/sid/icd-9-cm|65.63,http://hl7.org/fhir/sid/icd-9-cm|65.64,http://hl7.org/fhir/sid/icd-9-cm|68.31,http://hl7.org/fhir/sid/icd-9-cm|68.39,http://hl7.org/fhir/sid/icd-9-cm|68.41,http://hl7.org/fhir/sid/icd-9-cm|68.49,http://hl7.org/fhir/sid/icd-9-cm|68.51,http://hl7.org/fhir/sid/icd-9-cm|68.59,http://hl7.org/fhir/sid/icd-9-cm|68.61,http://hl7.org/fhir/sid/icd-9-cm|68.69,http://hl7.org/fhir/sid/icd-9-cm|68.71,http://hl7.org/fhir/sid/icd-9-cm|68.79,http://hl7.org/fhir/sid/icd-9-cm|68.9&patient.gender=female",
+       "Observation?code=http://loinc.org|10334-1&value-quantity=gt35&patient.gender=female"
+      ],
+      "raw_response": "FINAL ANSWER:\n\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|C56,http://hl7.org/fhir/sid/icd-10-cm|C56.1,http://hl7.org/fhir/sid/icd-10-cm|C56.2,http://hl7.org/fhir/sid/icd-10-cm|C56.3,http://hl7.org/fhir/sid/icd-10-cm|C56.9,http://hl7.org/fhir/sid/icd-10-cm|C57.00,http://hl7.org/fhir/sid/icd-10-cm|C57.01,http://hl7.org/fhir/sid/icd-10-cm|C57.02,http://hl7.org/fhir/sid/icd-10-cm|Z85.43,http://hl7.org/fhir/sid/icd-9-cm|183.0,http://hl7.org/fhir/sid/icd-9-cm|183.9&patient.gender=female\nMedicationRequest?code=http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|CARBOplatin,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|PACLitaxel,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Cisplatin,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Gemcitabine,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Olaparib&patient.gender=female\nProcedure?code=http://hl7.org/fhir/sid/icd-9-cm|65.31,http://hl7.org/fhir/sid/icd-9-cm|65.39,http://hl7.org/fhir/sid/icd-9-cm|65.41,http://hl7.org/fhir/sid/icd-9-cm|65.49,http://hl7.org/fhir/sid/icd-9-cm|65.51,http://hl7.org/fhir/sid/icd-9-cm|65.52,http://hl7.org/fhir/sid/icd-9-cm|65.53,http://hl7.org/fhir/sid/icd-9-cm|65.54,http://hl7.org/fhir/sid/icd-9-cm|65.61,http://hl7.org/fhir/sid/icd-9-cm|65.62,http://hl7.org/fhir/sid/icd-9-cm|65.63,http://hl7.org/fhir/sid/icd-9-cm|65.64,http://hl7.org/fhir/sid/icd-9-cm|68.31,http://hl7.org/fhir/sid/icd-9-cm|68.39,http://hl7.org/fhir/sid/icd-9-cm|68.41,http://hl7.org/fhir/sid/icd-9-cm|68.49,http://hl7.org/fhir/sid/icd-9-cm|68.51,http://hl7.org/fhir/sid/icd-9-cm|68.59,http://hl7.org/fhir/sid/icd-9-cm|68.61,http://hl7.org/fhir/sid/icd-9-cm|68.69,http://hl7.org/fhir/sid/icd-9-cm|68.71,http://hl7.org/fhir/sid/icd-9-cm|68.79,http://hl7.org/fhir/sid/icd-9-cm|68.9&patient.gender=female\nObservation?code=http://loinc.org|10334-1&value-quantity=gt35&patient.gender=female",
+      "prompt_text": "I need to identify my complete ovarian cancer patient population for a quality improvement initiative on chemotherapy adherence and CA-125 surveillance. From clinical experience, ovarian cancer patients are documented in different ways: most have a formal ovarian cancer diagnosis (often histology-specific), most are on chemotherapy (carboplatin, paclitaxel, cisplatin, gemcitabine, or olaparib), most have undergone oophorectomy or hysterectomy, and most have elevated CA-125.\n\nPlease run multiple FHIR queries to capture the full population:\n1. Patients with any ovarian cancer diagnosis\n2. Patients prescribed ovarian cancer chemotherapy\n3. Patients who have undergone oophorectomy or hysterectomy\n4. Patients with elevated CA-125 (>35 U/mL)\n\nFor each query, return the matching resources. I want the union of all patients found. Note: this is a female-only population."
+     }
+    },
     "copilot:claude-sonnet-4.6": {
      "1-naive": {
       "precision": 1.0,
@@ -1072,6 +1236,134 @@
       "primary_query_url": "Condition?code=http://snomed.info/sct|363443007,http://snomed.info/sct|93934004,http://snomed.info/sct|123843001,http://snomed.info/sct|254850005,http://snomed.info/sct|254852002",
       "additional_query_urls": [],
       "raw_response": "Condition?code=http://snomed.info/sct|363443007,http://snomed.info/sct|93934004,http://snomed.info/sct|123843001,http://snomed.info/sct|254850005,http://snomed.info/sct|254852002",
+      "prompt_text": "I need to identify all ovarian cancer patients. Ovarian cancer is documented under multiple SNOMED codes from the ASCO Epithelial Ovarian Cancer VSAC: Malignant neoplasm of ovary (363443007) is the parent, Primary malignant neoplasm of ovary (93934004), Neoplasm of ovary (123843001) \u2014 broader, Serous papillary cystadenocarcinoma ovary (254850005), and Endometrioid carcinoma ovary (254852002). Search Condition resources for all five codes. Note this phenotype is female-only \u2014 male patients should not appear in expected results."
+     }
+    },
+    "copilot:claude-opus-4.7+mimic": {
+     "1-naive": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 461,
+      "actual_count": 0,
+      "elapsed_sec": 7.1,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|363443007",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|363443007",
+      "prompt_text": "Find all patients with ovarian cancer."
+     },
+     "1-broad": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 461,
+      "actual_count": 0,
+      "elapsed_sec": 8.1,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|363443007,http://snomed.info/sct|93934004,http://snomed.info/sct|126966005,http://snomed.info/sct|80854003,http://snomed.info/sct|65045005",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|363443007,http://snomed.info/sct|93934004,http://snomed.info/sct|126966005,http://snomed.info/sct|80854003,http://snomed.info/sct|65045005",
+      "prompt_text": "Find all patients diagnosed with ovarian cancer \u2014 including the parent malignant neoplasm of ovary, primary malignant neoplasm of ovary, neoplasm of ovary (broader), serous papillary cystadenocarcinoma (most common epithelial subtype), and endometrioid carcinoma of ovary."
+     },
+     "1-expert": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 461,
+      "actual_count": 0,
+      "elapsed_sec": 7.6,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|363443007,http://snomed.info/sct|93934004,http://snomed.info/sct|123843001,http://snomed.info/sct|254850005,http://snomed.info/sct|254852002",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|363443007,http://snomed.info/sct|93934004,http://snomed.info/sct|123843001,http://snomed.info/sct|254850005,http://snomed.info/sct|254852002",
+      "prompt_text": "I need to identify all ovarian cancer patients. Ovarian cancer is documented under multiple SNOMED codes from the ASCO Epithelial Ovarian Cancer VSAC: Malignant neoplasm of ovary (363443007) is the parent, Primary malignant neoplasm of ovary (93934004), Neoplasm of ovary (123843001) \u2014 broader, Serous papillary cystadenocarcinoma ovary (254850005), and Endometrioid carcinoma ovary (254852002). Search Condition resources for all five codes. Note this phenotype is female-only \u2014 male patients should not appear in expected results."
+     },
+     "2-naive": {
+      "precision": 0.8358,
+      "recall": 0.961,
+      "f1": 0.894,
+      "passed": true,
+      "expected_count": 461,
+      "actual_count": 530,
+      "elapsed_sec": 23.6,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|C56,http://hl7.org/fhir/sid/icd-10-cm|C56.1,http://hl7.org/fhir/sid/icd-10-cm|C56.2,http://hl7.org/fhir/sid/icd-10-cm|C56.3,http://hl7.org/fhir/sid/icd-10-cm|C56.9,http://hl7.org/fhir/sid/icd-9-cm|183.0",
+      "additional_query_urls": [],
+      "raw_response": "FINAL ANSWER:\n\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|C56,http://hl7.org/fhir/sid/icd-10-cm|C56.1,http://hl7.org/fhir/sid/icd-10-cm|C56.2,http://hl7.org/fhir/sid/icd-10-cm|C56.3,http://hl7.org/fhir/sid/icd-10-cm|C56.9,http://hl7.org/fhir/sid/icd-9-cm|183.0",
+      "prompt_text": "Find all patients with ovarian cancer."
+     },
+     "2-broad": {
+      "precision": 0.4972,
+      "recall": 0.9718,
+      "f1": 0.6579,
+      "passed": false,
+      "expected_count": 461,
+      "actual_count": 901,
+      "elapsed_sec": 28.3,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|C56.1,http://hl7.org/fhir/sid/icd-10-cm|C56.2,http://hl7.org/fhir/sid/icd-10-cm|C56.9,http://hl7.org/fhir/sid/icd-10-cm|C56,http://hl7.org/fhir/sid/icd-10-cm|D27.0,http://hl7.org/fhir/sid/icd-10-cm|D27.1,http://hl7.org/fhir/sid/icd-10-cm|D27.9,http://hl7.org/fhir/sid/icd-10-cm|D39.1,http://hl7.org/fhir/sid/icd-9-cm|183.0,http://hl7.org/fhir/sid/icd-9-cm|183.9,http://hl7.org/fhir/sid/icd-9-cm|220,http://hl7.org/fhir/sid/icd-9-cm|236.2",
+      "additional_query_urls": [],
+      "raw_response": "Good \u2014 the answer is a union of ovarian neoplasm codes.\n\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|C56.1,http://hl7.org/fhir/sid/icd-10-cm|C56.2,http://hl7.org/fhir/sid/icd-10-cm|C56.9,http://hl7.org/fhir/sid/icd-10-cm|C56,http://hl7.org/fhir/sid/icd-10-cm|D27.0,http://hl7.org/fhir/sid/icd-10-cm|D27.1,http://hl7.org/fhir/sid/icd-10-cm|D27.9,http://hl7.org/fhir/sid/icd-10-cm|D39.1,http://hl7.org/fhir/sid/icd-9-cm|183.0,http://hl7.org/fhir/sid/icd-9-cm|183.9,http://hl7.org/fhir/sid/icd-9-cm|220,http://hl7.org/fhir/sid/icd-9-cm|236.2",
+      "prompt_text": "Find all patients diagnosed with ovarian cancer \u2014 including the parent malignant neoplasm of ovary, primary malignant neoplasm of ovary, neoplasm of ovary (broader), serous papillary cystadenocarcinoma (most common epithelial subtype), and endometrioid carcinoma of ovary."
+     },
+     "2-expert": {
+      "precision": 0.8358,
+      "recall": 0.961,
+      "f1": 0.894,
+      "passed": true,
+      "expected_count": 461,
+      "actual_count": 530,
+      "elapsed_sec": 26.8,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|C56,http://hl7.org/fhir/sid/icd-10-cm|C56.1,http://hl7.org/fhir/sid/icd-10-cm|C56.2,http://hl7.org/fhir/sid/icd-10-cm|C56.9,http://hl7.org/fhir/sid/icd-9-cm|183.0",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|C56,http://hl7.org/fhir/sid/icd-10-cm|C56.1,http://hl7.org/fhir/sid/icd-10-cm|C56.2,http://hl7.org/fhir/sid/icd-10-cm|C56.9,http://hl7.org/fhir/sid/icd-9-cm|183.0",
+      "prompt_text": "I need to identify all ovarian cancer patients. Ovarian cancer is documented under multiple SNOMED codes from the ASCO Epithelial Ovarian Cancer VSAC: Malignant neoplasm of ovary (363443007) is the parent, Primary malignant neoplasm of ovary (93934004), Neoplasm of ovary (123843001) \u2014 broader, Serous papillary cystadenocarcinoma ovary (254850005), and Endometrioid carcinoma ovary (254852002). Search Condition resources for all five codes. Note this phenotype is female-only \u2014 male patients should not appear in expected results."
+     },
+     "3-naive": {
+      "precision": 0.8358,
+      "recall": 0.961,
+      "f1": 0.894,
+      "passed": true,
+      "expected_count": 461,
+      "actual_count": 530,
+      "elapsed_sec": 25.3,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|C56,http://hl7.org/fhir/sid/icd-10-cm|C56.1,http://hl7.org/fhir/sid/icd-10-cm|C56.2,http://hl7.org/fhir/sid/icd-10-cm|C56.3,http://hl7.org/fhir/sid/icd-10-cm|C56.9,http://hl7.org/fhir/sid/icd-9-cm|183.0",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|C56,http://hl7.org/fhir/sid/icd-10-cm|C56.1,http://hl7.org/fhir/sid/icd-10-cm|C56.2,http://hl7.org/fhir/sid/icd-10-cm|C56.3,http://hl7.org/fhir/sid/icd-10-cm|C56.9,http://hl7.org/fhir/sid/icd-9-cm|183.0",
+      "prompt_text": "Find all patients with ovarian cancer."
+     },
+     "3-broad": {
+      "precision": 0.8084,
+      "recall": 0.961,
+      "f1": 0.8781,
+      "passed": true,
+      "expected_count": 461,
+      "actual_count": 548,
+      "elapsed_sec": 59.9,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|C56,http://hl7.org/fhir/sid/icd-10-cm|C56.1,http://hl7.org/fhir/sid/icd-10-cm|C56.2,http://hl7.org/fhir/sid/icd-10-cm|C56.3,http://hl7.org/fhir/sid/icd-10-cm|C56.9,http://hl7.org/fhir/sid/icd-10-cm|D39.1,http://hl7.org/fhir/sid/icd-9-cm|183.0,http://hl7.org/fhir/sid/icd-9-cm|236.2",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|C56,http://hl7.org/fhir/sid/icd-10-cm|C56.1,http://hl7.org/fhir/sid/icd-10-cm|C56.2,http://hl7.org/fhir/sid/icd-10-cm|C56.3,http://hl7.org/fhir/sid/icd-10-cm|C56.9,http://hl7.org/fhir/sid/icd-10-cm|D39.1,http://hl7.org/fhir/sid/icd-9-cm|183.0,http://hl7.org/fhir/sid/icd-9-cm|236.2",
+      "prompt_text": "Find all patients diagnosed with ovarian cancer \u2014 including the parent malignant neoplasm of ovary, primary malignant neoplasm of ovary, neoplasm of ovary (broader), serous papillary cystadenocarcinoma (most common epithelial subtype), and endometrioid carcinoma of ovary."
+     },
+     "3-expert": {
+      "precision": 0.8358,
+      "recall": 0.961,
+      "f1": 0.894,
+      "passed": true,
+      "expected_count": 461,
+      "actual_count": 530,
+      "elapsed_sec": 28.7,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|C56,http://hl7.org/fhir/sid/icd-10-cm|C56.1,http://hl7.org/fhir/sid/icd-10-cm|C56.2,http://hl7.org/fhir/sid/icd-10-cm|C56.9,http://hl7.org/fhir/sid/icd-9-cm|183.0&patient.gender=female",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|C56,http://hl7.org/fhir/sid/icd-10-cm|C56.1,http://hl7.org/fhir/sid/icd-10-cm|C56.2,http://hl7.org/fhir/sid/icd-10-cm|C56.9,http://hl7.org/fhir/sid/icd-9-cm|183.0&patient.gender=female",
       "prompt_text": "I need to identify all ovarian cancer patients. Ovarian cancer is documented under multiple SNOMED codes from the ASCO Epithelial Ovarian Cancer VSAC: Malignant neoplasm of ovary (363443007) is the parent, Primary malignant neoplasm of ovary (93934004), Neoplasm of ovary (123843001) \u2014 broader, Serous papillary cystadenocarcinoma ovary (254850005), and Endometrioid carcinoma ovary (254852002). Search Condition resources for all five codes. Note this phenotype is female-only \u2014 male patients should not appear in expected results."
      }
     },

@@ -231,6 +231,150 @@
       "prompt_text": "I need a comprehensive cervical cancer cohort by combining diagnosis and procedure evidence, restricted to female patients throughout. First, search Condition resources for the malignant neoplasm of cervix uteri diagnosis in SNOMED CT, filtered to female patients. Second, search Procedure resources for hysterectomy in SNOMED CT, also filtered to female patients. Union the two patient sets \u2014 but note that hysterectomy carries high cross-indication from benign gynecologic indications such as uterine fibroids, prolapse, and abnormal bleeding, so the procedure-only subset will include patients without cervical cancer."
      }
     },
+    "copilot:claude-opus-4.7+mimic": {
+     "1-naive": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 155,
+      "actual_count": 0,
+      "elapsed_sec": 7.6,
+      "queries_generated": 1,
+      "primary_query_url": "Patient?gender=female&_has:Condition:patient:code=http://snomed.info/sct|363354003",
+      "additional_query_urls": [],
+      "raw_response": "Patient?gender=female&_has:Condition:patient:code=http://snomed.info/sct|363354003",
+      "prompt_text": "Find female patients with cervical cancer."
+     },
+     "1-broad": {
+      "precision": 1.0,
+      "recall": 0.4194,
+      "f1": 0.5909,
+      "passed": false,
+      "expected_count": 155,
+      "actual_count": 65,
+      "elapsed_sec": 18.4,
+      "queries_generated": 6,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|363354003&subject.gender=female",
+      "additional_query_urls": [
+       "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|C53.9&subject.gender=female",
+       "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|C53.0,http://hl7.org/fhir/sid/icd-10-cm|C53.1,http://hl7.org/fhir/sid/icd-10-cm|C53.8,http://hl7.org/fhir/sid/icd-10-cm|C53.9&subject.gender=female",
+       "Procedure?code=http://snomed.info/sct|116140006&subject.gender=female",
+       "Procedure?code=http://snomed.info/sct|236886002&subject.gender=female",
+       "Procedure?code=http://www.ama-assn.org/go/cpt|58150,http://www.ama-assn.org/go/cpt|58152,http://www.ama-assn.org/go/cpt|58180,http://www.ama-assn.org/go/cpt|58200,http://www.ama-assn.org/go/cpt|58210,http://www.ama-assn.org/go/cpt|58260,http://www.ama-assn.org/go/cpt|58270,http://www.ama-assn.org/go/cpt|58275,http://www.ama-assn.org/go/cpt|58280,http://www.ama-assn.org/go/cpt|58285,http://www.ama-assn.org/go/cpt|58290,http://www.ama-assn.org/go/cpt|58291,http://www.ama-assn.org/go/cpt|58292,http://www.ama-assn.org/go/cpt|58293,http://www.ama-assn.org/go/cpt|58294,http://www.ama-assn.org/go/cpt|58541,http://www.ama-assn.org/go/cpt|58542,http://www.ama-assn.org/go/cpt|58543,http://www.ama-assn.org/go/cpt|58544,http://www.ama-assn.org/go/cpt|58550,http://www.ama-assn.org/go/cpt|58552,http://www.ama-assn.org/go/cpt|58553,http://www.ama-assn.org/go/cpt|58554,http://www.ama-assn.org/go/cpt|58570,http://www.ama-assn.org/go/cpt|58571,http://www.ama-assn.org/go/cpt|58572,http://www.ama-assn.org/go/cpt|58573&subject.gender=female"
+      ],
+      "raw_response": "Condition?code=http://snomed.info/sct|363354003&subject.gender=female\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|C53.9&subject.gender=female\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|C53.0,http://hl7.org/fhir/sid/icd-10-cm|C53.1,http://hl7.org/fhir/sid/icd-10-cm|C53.8,http://hl7.org/fhir/sid/icd-10-cm|C53.9&subject.gender=female\nProcedure?code=http://snomed.info/sct|116140006&subject.gender=female\nProcedure?code=http://snomed.info/sct|236886002&subject.gender=female\nProcedure?code=http://www.ama-assn.org/go/cpt|58150,http://www.ama-assn.org/go/cpt|58152,http://www.ama-assn.org/go/cpt|58180,http://www.ama-assn.org/go/cpt|58200,http://www.ama-assn.org/go/cpt|58210,http://www.ama-assn.org/go/cpt|58260,http://www.ama-assn.org/go/cpt|58270,http://www.ama-assn.org/go/cpt|58275,http://www.ama-assn.org/go/cpt|58280,http://www.ama-assn.org/go/cpt|58285,http://www.ama-assn.org/go/cpt|58290,http://www.ama-assn.org/go/cpt|58291,http://www.ama-assn.org/go/cpt|58292,http://www.ama-assn.org/go/cpt|58293,http://www.ama-assn.org/go/cpt|58294,http://www.ama-assn.org/go/cpt|58541,http://www.ama-assn.org/go/cpt|58542,http://www.ama-assn.org/go/cpt|58543,http://www.ama-assn.org/go/cpt|58544,http://www.ama-assn.org/go/cpt|58550,http://www.ama-assn.org/go/cpt|58552,http://www.ama-assn.org/go/cpt|58553,http://www.ama-assn.org/go/cpt|58554,http://www.ama-assn.org/go/cpt|58570,http://www.ama-assn.org/go/cpt|58571,http://www.ama-assn.org/go/cpt|58572,http://www.ama-assn.org/go/cpt|58573&subject.gender=female",
+      "prompt_text": "Find all female cervical cancer patients \u2014 by diagnosis or by hysterectomy procedure. Run multiple queries and union the patient sets."
+     },
+     "1-expert": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 155,
+      "actual_count": 0,
+      "elapsed_sec": 7.6,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|363354003&subject.gender=female",
+      "additional_query_urls": [
+       "Procedure?code=http://snomed.info/sct|236886002&subject.gender=female"
+      ],
+      "raw_response": "Condition?code=http://snomed.info/sct|363354003&subject.gender=female\nProcedure?code=http://snomed.info/sct|236886002&subject.gender=female",
+      "prompt_text": "I need a comprehensive cervical cancer cohort by combining diagnosis and procedure evidence, restricted to female patients throughout. First, search Condition resources for the malignant neoplasm of cervix uteri diagnosis in SNOMED CT, filtered to female patients. Second, search Procedure resources for hysterectomy in SNOMED CT, also filtered to female patients. Union the two patient sets \u2014 but note that hysterectomy carries high cross-indication from benign gynecologic indications such as uterine fibroids, prolapse, and abnormal bleeding, so the procedure-only subset will include patients without cervical cancer."
+     },
+     "2-naive": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 155,
+      "actual_count": 155,
+      "elapsed_sec": 23.4,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-9-cm|180.0,http://hl7.org/fhir/sid/icd-9-cm|180.1,http://hl7.org/fhir/sid/icd-9-cm|180.8,http://hl7.org/fhir/sid/icd-9-cm|180.9,http://hl7.org/fhir/sid/icd-10-cm|C53,http://hl7.org/fhir/sid/icd-10-cm|C53.0,http://hl7.org/fhir/sid/icd-10-cm|C53.1,http://hl7.org/fhir/sid/icd-10-cm|C53.8,http://hl7.org/fhir/sid/icd-10-cm|C53.9&subject.gender=female",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-9-cm|180.0,http://hl7.org/fhir/sid/icd-9-cm|180.1,http://hl7.org/fhir/sid/icd-9-cm|180.8,http://hl7.org/fhir/sid/icd-9-cm|180.9,http://hl7.org/fhir/sid/icd-10-cm|C53,http://hl7.org/fhir/sid/icd-10-cm|C53.0,http://hl7.org/fhir/sid/icd-10-cm|C53.1,http://hl7.org/fhir/sid/icd-10-cm|C53.8,http://hl7.org/fhir/sid/icd-10-cm|C53.9&subject.gender=female",
+      "prompt_text": "Find female patients with cervical cancer."
+     },
+     "2-broad": {
+      "precision": 1.0,
+      "recall": 0.4194,
+      "f1": 0.5909,
+      "passed": false,
+      "expected_count": 155,
+      "actual_count": 65,
+      "elapsed_sec": 43.6,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|C53.0,http://hl7.org/fhir/sid/icd-10-cm|C53.1,http://hl7.org/fhir/sid/icd-10-cm|C53.8,http://hl7.org/fhir/sid/icd-10-cm|C53.9&subject.gender=female",
+      "additional_query_urls": [
+       "Procedure?code=http://snomed.info/sct|236886002,http://snomed.info/sct|116140006,http://snomed.info/sct|116141005,http://snomed.info/sct|116143008,http://snomed.info/sct|116144002,http://snomed.info/sct|116142003,http://snomed.info/sct|265056007,http://snomed.info/sct|75835007,http://snomed.info/sct|236887006,http://snomed.info/sct|236888001,http://snomed.info/sct|236891001,http://snomed.info/sct|86477000&subject.gender=female"
+      ],
+      "raw_response": "Final Answer:\n\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|C53.0,http://hl7.org/fhir/sid/icd-10-cm|C53.1,http://hl7.org/fhir/sid/icd-10-cm|C53.8,http://hl7.org/fhir/sid/icd-10-cm|C53.9&subject.gender=female\nProcedure?code=http://snomed.info/sct|236886002,http://snomed.info/sct|116140006,http://snomed.info/sct|116141005,http://snomed.info/sct|116143008,http://snomed.info/sct|116144002,http://snomed.info/sct|116142003,http://snomed.info/sct|265056007,http://snomed.info/sct|75835007,http://snomed.info/sct|236887006,http://snomed.info/sct|236888001,http://snomed.info/sct|236891001,http://snomed.info/sct|86477000&subject.gender=female",
+      "prompt_text": "Find all female cervical cancer patients \u2014 by diagnosis or by hysterectomy procedure. Run multiple queries and union the patient sets."
+     },
+     "2-expert": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 155,
+      "actual_count": 0,
+      "elapsed_sec": 80.8,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|363354003&subject.gender=female",
+      "additional_query_urls": [
+       "Procedure?code=http://snomed.info/sct|236886002,http://snomed.info/sct|116140006,http://snomed.info/sct|116141005,http://snomed.info/sct|116142003,http://snomed.info/sct|116143008,http://snomed.info/sct|116144002,http://snomed.info/sct|236887006,http://snomed.info/sct|236888001,http://snomed.info/sct|236891001,http://snomed.info/sct|265056007,http://snomed.info/sct|75835007,http://snomed.info/sct|176795006,http://snomed.info/sct|387643005,http://snomed.info/sct|86477000,http://snomed.info/sct|708877008&subject.gender=female"
+      ],
+      "raw_response": "Condition?code=http://snomed.info/sct|363354003&subject.gender=female\nProcedure?code=http://snomed.info/sct|236886002,http://snomed.info/sct|116140006,http://snomed.info/sct|116141005,http://snomed.info/sct|116142003,http://snomed.info/sct|116143008,http://snomed.info/sct|116144002,http://snomed.info/sct|236887006,http://snomed.info/sct|236888001,http://snomed.info/sct|236891001,http://snomed.info/sct|265056007,http://snomed.info/sct|75835007,http://snomed.info/sct|176795006,http://snomed.info/sct|387643005,http://snomed.info/sct|86477000,http://snomed.info/sct|708877008&subject.gender=female",
+      "prompt_text": "I need a comprehensive cervical cancer cohort by combining diagnosis and procedure evidence, restricted to female patients throughout. First, search Condition resources for the malignant neoplasm of cervix uteri diagnosis in SNOMED CT, filtered to female patients. Second, search Procedure resources for hysterectomy in SNOMED CT, also filtered to female patients. Union the two patient sets \u2014 but note that hysterectomy carries high cross-indication from benign gynecologic indications such as uterine fibroids, prolapse, and abnormal bleeding, so the procedure-only subset will include patients without cervical cancer."
+     },
+     "3-naive": {
+      "precision": 1.0,
+      "recall": 0.6129,
+      "f1": 0.76,
+      "passed": true,
+      "expected_count": 155,
+      "actual_count": 95,
+      "elapsed_sec": 28.5,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-9-cm|180,http://hl7.org/fhir/sid/icd-9-cm|180.0,http://hl7.org/fhir/sid/icd-9-cm|180.1,http://hl7.org/fhir/sid/icd-9-cm|180.8,http://hl7.org/fhir/sid/icd-9-cm|180.9&patient.gender=female",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-9-cm|180,http://hl7.org/fhir/sid/icd-9-cm|180.0,http://hl7.org/fhir/sid/icd-9-cm|180.1,http://hl7.org/fhir/sid/icd-9-cm|180.8,http://hl7.org/fhir/sid/icd-9-cm|180.9&patient.gender=female",
+      "prompt_text": "Find female patients with cervical cancer."
+     },
+     "3-broad": {
+      "precision": 0.0599,
+      "recall": 0.6129,
+      "f1": 0.1091,
+      "passed": false,
+      "expected_count": 155,
+      "actual_count": 1587,
+      "elapsed_sec": 66.5,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-9-cm|180.0,http://hl7.org/fhir/sid/icd-9-cm|180.1,http://hl7.org/fhir/sid/icd-9-cm|180.8,http://hl7.org/fhir/sid/icd-9-cm|180.9&subject.gender=female",
+      "additional_query_urls": [
+       "Procedure?code=http://hl7.org/fhir/sid/icd-9-cm|68.3,http://hl7.org/fhir/sid/icd-9-cm|68.39,http://hl7.org/fhir/sid/icd-9-cm|68.4,http://hl7.org/fhir/sid/icd-9-cm|68.41,http://hl7.org/fhir/sid/icd-9-cm|68.49,http://hl7.org/fhir/sid/icd-9-cm|68.5,http://hl7.org/fhir/sid/icd-9-cm|68.51,http://hl7.org/fhir/sid/icd-9-cm|68.59,http://hl7.org/fhir/sid/icd-9-cm|68.6,http://hl7.org/fhir/sid/icd-9-cm|68.61,http://hl7.org/fhir/sid/icd-9-cm|68.69,http://hl7.org/fhir/sid/icd-9-cm|68.7,http://hl7.org/fhir/sid/icd-9-cm|68.71,http://hl7.org/fhir/sid/icd-9-cm|68.79,http://hl7.org/fhir/sid/icd-9-cm|68.9&subject.gender=female"
+      ],
+      "raw_response": "FINAL ANSWER:\n\nCondition?code=http://hl7.org/fhir/sid/icd-9-cm|180.0,http://hl7.org/fhir/sid/icd-9-cm|180.1,http://hl7.org/fhir/sid/icd-9-cm|180.8,http://hl7.org/fhir/sid/icd-9-cm|180.9&subject.gender=female\nProcedure?code=http://hl7.org/fhir/sid/icd-9-cm|68.3,http://hl7.org/fhir/sid/icd-9-cm|68.39,http://hl7.org/fhir/sid/icd-9-cm|68.4,http://hl7.org/fhir/sid/icd-9-cm|68.41,http://hl7.org/fhir/sid/icd-9-cm|68.49,http://hl7.org/fhir/sid/icd-9-cm|68.5,http://hl7.org/fhir/sid/icd-9-cm|68.51,http://hl7.org/fhir/sid/icd-9-cm|68.59,http://hl7.org/fhir/sid/icd-9-cm|68.6,http://hl7.org/fhir/sid/icd-9-cm|68.61,http://hl7.org/fhir/sid/icd-9-cm|68.69,http://hl7.org/fhir/sid/icd-9-cm|68.7,http://hl7.org/fhir/sid/icd-9-cm|68.71,http://hl7.org/fhir/sid/icd-9-cm|68.79,http://hl7.org/fhir/sid/icd-9-cm|68.9&subject.gender=female",
+      "prompt_text": "Find all female cervical cancer patients \u2014 by diagnosis or by hysterectomy procedure. Run multiple queries and union the patient sets."
+     },
+     "3-expert": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 155,
+      "actual_count": 0,
+      "elapsed_sec": 42.0,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|363354003&patient.gender=female",
+      "additional_query_urls": [
+       "Procedure?code=http://snomed.info/sct|236886002&patient.gender=female"
+      ],
+      "raw_response": "Condition?code=http://snomed.info/sct|363354003&patient.gender=female\nProcedure?code=http://snomed.info/sct|236886002&patient.gender=female",
+      "prompt_text": "I need a comprehensive cervical cancer cohort by combining diagnosis and procedure evidence, restricted to female patients throughout. First, search Condition resources for the malignant neoplasm of cervix uteri diagnosis in SNOMED CT, filtered to female patients. Second, search Procedure resources for hysterectomy in SNOMED CT, also filtered to female patients. Union the two patient sets \u2014 but note that hysterectomy carries high cross-indication from benign gynecologic indications such as uterine fibroids, prolapse, and abnormal bleeding, so the procedure-only subset will include patients without cervical cancer."
+     }
+    },
     "copilot:claude-sonnet-4.6": {
      "1-naive": {
       "precision": 1.0,
@@ -987,6 +1131,134 @@
       "primary_query_url": "Condition?code=http://snomed.info/sct|363354003&subject:Patient.gender=female",
       "additional_query_urls": [],
       "raw_response": "Condition?code=http://snomed.info/sct|363354003&subject:Patient.gender=female",
+      "prompt_text": "I need to identify patients with a cervical cancer diagnosis, restricted to female patients. Search Condition resources for the malignant neoplasm of cervix uteri coded in SNOMED CT, and apply a patient gender filter for female. This is the second female-specific cancer phenotype in the suite after ovarian cancer, and the sex restriction is essential to avoid spurious matches."
+     }
+    },
+    "copilot:claude-opus-4.7+mimic": {
+     "1-naive": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 155,
+      "actual_count": 0,
+      "elapsed_sec": 8.2,
+      "queries_generated": 1,
+      "primary_query_url": "Patient?gender=female&_has:Condition:patient:code=http://snomed.info/sct|363354003",
+      "additional_query_urls": [],
+      "raw_response": "Patient?gender=female&_has:Condition:patient:code=http://snomed.info/sct|363354003",
+      "prompt_text": "Find women with cervical cancer."
+     },
+     "1-broad": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 155,
+      "actual_count": 0,
+      "elapsed_sec": 8.0,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|363354003&subject:Patient.gender=female",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|363354003&subject:Patient.gender=female",
+      "prompt_text": "Find female patients diagnosed with cervical cancer (malignant neoplasm of cervix uteri)."
+     },
+     "1-expert": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 155,
+      "actual_count": 0,
+      "elapsed_sec": 7.5,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|363354003&patient.gender=female",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|363354003&patient.gender=female",
+      "prompt_text": "I need to identify patients with a cervical cancer diagnosis, restricted to female patients. Search Condition resources for the malignant neoplasm of cervix uteri coded in SNOMED CT, and apply a patient gender filter for female. This is the second female-specific cancer phenotype in the suite after ovarian cancer, and the sex restriction is essential to avoid spurious matches."
+     },
+     "2-naive": {
+      "precision": 1.0,
+      "recall": 0.6129,
+      "f1": 0.76,
+      "passed": true,
+      "expected_count": 155,
+      "actual_count": 95,
+      "elapsed_sec": 24.3,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-9-cm|180,http://hl7.org/fhir/sid/icd-9-cm|180.0,http://hl7.org/fhir/sid/icd-9-cm|180.1,http://hl7.org/fhir/sid/icd-9-cm|180.8,http://hl7.org/fhir/sid/icd-9-cm|180.9&subject.gender=female",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-9-cm|180,http://hl7.org/fhir/sid/icd-9-cm|180.0,http://hl7.org/fhir/sid/icd-9-cm|180.1,http://hl7.org/fhir/sid/icd-9-cm|180.8,http://hl7.org/fhir/sid/icd-9-cm|180.9&subject.gender=female",
+      "prompt_text": "Find women with cervical cancer."
+     },
+     "2-broad": {
+      "precision": 1.0,
+      "recall": 0.6129,
+      "f1": 0.76,
+      "passed": true,
+      "expected_count": 155,
+      "actual_count": 95,
+      "elapsed_sec": 16.3,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-9-cm|180.0,http://hl7.org/fhir/sid/icd-9-cm|180.1,http://hl7.org/fhir/sid/icd-9-cm|180.8,http://hl7.org/fhir/sid/icd-9-cm|180.9&subject.gender=female",
+      "additional_query_urls": [],
+      "raw_response": "FINAL ANSWER:\n\nCondition?code=http://hl7.org/fhir/sid/icd-9-cm|180.0,http://hl7.org/fhir/sid/icd-9-cm|180.1,http://hl7.org/fhir/sid/icd-9-cm|180.8,http://hl7.org/fhir/sid/icd-9-cm|180.9&subject.gender=female",
+      "prompt_text": "Find female patients diagnosed with cervical cancer (malignant neoplasm of cervix uteri)."
+     },
+     "2-expert": {
+      "precision": 1.0,
+      "recall": 0.6129,
+      "f1": 0.76,
+      "passed": true,
+      "expected_count": 155,
+      "actual_count": 95,
+      "elapsed_sec": 35.1,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-9-cm|180.0,http://hl7.org/fhir/sid/icd-9-cm|180.1,http://hl7.org/fhir/sid/icd-9-cm|180.8,http://hl7.org/fhir/sid/icd-9-cm|180.9&subject.gender=female",
+      "additional_query_urls": [],
+      "raw_response": "FINAL ANSWER:\n\nCondition?code=http://hl7.org/fhir/sid/icd-9-cm|180.0,http://hl7.org/fhir/sid/icd-9-cm|180.1,http://hl7.org/fhir/sid/icd-9-cm|180.8,http://hl7.org/fhir/sid/icd-9-cm|180.9&subject.gender=female",
+      "prompt_text": "I need to identify patients with a cervical cancer diagnosis, restricted to female patients. Search Condition resources for the malignant neoplasm of cervix uteri coded in SNOMED CT, and apply a patient gender filter for female. This is the second female-specific cancer phenotype in the suite after ovarian cancer, and the sex restriction is essential to avoid spurious matches."
+     },
+     "3-naive": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 155,
+      "actual_count": 155,
+      "elapsed_sec": 41.4,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-9-cm|180,http://hl7.org/fhir/sid/icd-9-cm|180.0,http://hl7.org/fhir/sid/icd-9-cm|180.1,http://hl7.org/fhir/sid/icd-9-cm|180.8,http://hl7.org/fhir/sid/icd-9-cm|180.9,http://hl7.org/fhir/sid/icd-10-cm|C53.0,http://hl7.org/fhir/sid/icd-10-cm|C53.1,http://hl7.org/fhir/sid/icd-10-cm|C53.8,http://hl7.org/fhir/sid/icd-10-cm|C53.9&patient.gender=female",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-9-cm|180,http://hl7.org/fhir/sid/icd-9-cm|180.0,http://hl7.org/fhir/sid/icd-9-cm|180.1,http://hl7.org/fhir/sid/icd-9-cm|180.8,http://hl7.org/fhir/sid/icd-9-cm|180.9,http://hl7.org/fhir/sid/icd-10-cm|C53.0,http://hl7.org/fhir/sid/icd-10-cm|C53.1,http://hl7.org/fhir/sid/icd-10-cm|C53.8,http://hl7.org/fhir/sid/icd-10-cm|C53.9&patient.gender=female",
+      "prompt_text": "Find women with cervical cancer."
+     },
+     "3-broad": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 155,
+      "actual_count": 155,
+      "elapsed_sec": 18.5,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-9-cm|180.0,http://hl7.org/fhir/sid/icd-9-cm|180.1,http://hl7.org/fhir/sid/icd-9-cm|180.8,http://hl7.org/fhir/sid/icd-9-cm|180.9,http://hl7.org/fhir/sid/icd-10-cm|C53.0,http://hl7.org/fhir/sid/icd-10-cm|C53.1,http://hl7.org/fhir/sid/icd-10-cm|C53.8,http://hl7.org/fhir/sid/icd-10-cm|C53.9&patient.gender=female",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-9-cm|180.0,http://hl7.org/fhir/sid/icd-9-cm|180.1,http://hl7.org/fhir/sid/icd-9-cm|180.8,http://hl7.org/fhir/sid/icd-9-cm|180.9,http://hl7.org/fhir/sid/icd-10-cm|C53.0,http://hl7.org/fhir/sid/icd-10-cm|C53.1,http://hl7.org/fhir/sid/icd-10-cm|C53.8,http://hl7.org/fhir/sid/icd-10-cm|C53.9&patient.gender=female",
+      "prompt_text": "Find female patients diagnosed with cervical cancer (malignant neoplasm of cervix uteri)."
+     },
+     "3-expert": {
+      "precision": 1.0,
+      "recall": 0.6129,
+      "f1": 0.76,
+      "passed": true,
+      "expected_count": 155,
+      "actual_count": 95,
+      "elapsed_sec": 24.6,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-9-cm|180.0,http://hl7.org/fhir/sid/icd-9-cm|180.1,http://hl7.org/fhir/sid/icd-9-cm|180.8,http://hl7.org/fhir/sid/icd-9-cm|180.9&patient.gender=female",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-9-cm|180.0,http://hl7.org/fhir/sid/icd-9-cm|180.1,http://hl7.org/fhir/sid/icd-9-cm|180.8,http://hl7.org/fhir/sid/icd-9-cm|180.9&patient.gender=female",
       "prompt_text": "I need to identify patients with a cervical cancer diagnosis, restricted to female patients. Search Condition resources for the malignant neoplasm of cervix uteri coded in SNOMED CT, and apply a patient gender filter for female. This is the second female-specific cancer phenotype in the suite after ovarian cancer, and the sex restriction is essential to avoid spurious matches."
      }
     },

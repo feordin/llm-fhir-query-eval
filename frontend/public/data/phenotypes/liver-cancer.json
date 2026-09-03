@@ -236,6 +236,153 @@
       "prompt_text": "I need to identify all hepatocellular carcinoma patients using a union across Condition and Observation resources. Search Condition resources for HCC diagnosis variants coded in SNOMED CT \u2014 include the primary carcinoma of liver, the broader malignant neoplasm of liver, and the metastatic variant as they may each be coded depending on clinical context. Also search Observation resources for alpha-fetoprotein measured in serum or plasma using the relevant LOINC code, filtering to markedly elevated values consistent with HCC \u2014 at or above one hundred nanograms per milliliter. Union the patient sets to capture both formally diagnosed patients and those flagged only by an elevated AFP without a coded diagnosis."
      }
     },
+    "copilot:claude-opus-4.7+mimic": {
+     "1-naive": {
+      "precision": 0.7202,
+      "recall": 0.1455,
+      "f1": 0.2421,
+      "passed": false,
+      "expected_count": 2990,
+      "actual_count": 604,
+      "elapsed_sec": 10.8,
+      "queries_generated": 3,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|93870000",
+      "additional_query_urls": [
+       "Condition?code=http://snomed.info/sct|109841003",
+       "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|C22.0,C22.1,C22.2,C22.3,C22.4,C22.7,C22.8,C22.9"
+      ],
+      "raw_response": "Condition?code=http://snomed.info/sct|93870000\nCondition?code=http://snomed.info/sct|109841003\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|C22.0,C22.1,C22.2,C22.3,C22.4,C22.7,C22.8,C22.9",
+      "prompt_text": "Find all my liver cancer patients across the chart."
+     },
+     "1-broad": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 2990,
+      "actual_count": 0,
+      "elapsed_sec": 7.9,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|187769009",
+      "additional_query_urls": [
+       "Observation?code=http://loinc.org|1834-1&value-quantity=gt400|http://unitsofmeasure.org|ng/mL"
+      ],
+      "raw_response": "Condition?code=http://snomed.info/sct|187769009\nObservation?code=http://loinc.org|1834-1&value-quantity=gt400|http://unitsofmeasure.org|ng/mL",
+      "prompt_text": "Find all liver cancer patients \u2014 some have a coded HCC diagnosis, others may have only an elevated AFP without a formal diagnosis. Run separate queries for diagnoses and lab results, then return the union."
+     },
+     "1-expert": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 2990,
+      "actual_count": 0,
+      "elapsed_sec": 9.4,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|187769009,http://snomed.info/sct|109841003,http://snomed.info/sct|94381002",
+      "additional_query_urls": [
+       "Observation?code=http://loinc.org|1834-1&value-quantity=ge100|http://unitsofmeasure.org|ng/mL"
+      ],
+      "raw_response": "Condition?code=http://snomed.info/sct|187769009,http://snomed.info/sct|109841003,http://snomed.info/sct|94381002\nObservation?code=http://loinc.org|1834-1&value-quantity=ge100|http://unitsofmeasure.org|ng/mL",
+      "prompt_text": "I need to identify all hepatocellular carcinoma patients using a union across Condition and Observation resources. Search Condition resources for HCC diagnosis variants coded in SNOMED CT \u2014 include the primary carcinoma of liver, the broader malignant neoplasm of liver, and the metastatic variant as they may each be coded depending on clinical context. Also search Observation resources for alpha-fetoprotein measured in serum or plasma using the relevant LOINC code, filtering to markedly elevated values consistent with HCC \u2014 at or above one hundred nanograms per milliliter. Union the patient sets to capture both formally diagnosed patients and those flagged only by an elevated AFP without a coded diagnosis."
+     },
+     "2-naive": {
+      "precision": 0.6734,
+      "recall": 0.9605,
+      "f1": 0.7917,
+      "passed": true,
+      "expected_count": 2990,
+      "actual_count": 4265,
+      "elapsed_sec": 35.4,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|C22.0,http://hl7.org/fhir/sid/icd-10-cm|C22.1,http://hl7.org/fhir/sid/icd-10-cm|C22.2,http://hl7.org/fhir/sid/icd-10-cm|C22.3,http://hl7.org/fhir/sid/icd-10-cm|C22.4,http://hl7.org/fhir/sid/icd-10-cm|C22.7,http://hl7.org/fhir/sid/icd-10-cm|C22.8,http://hl7.org/fhir/sid/icd-10-cm|C22.9,http://hl7.org/fhir/sid/icd-10-cm|C78.7",
+      "additional_query_urls": [
+       "Condition?code=http://hl7.org/fhir/sid/icd-9-cm|155.0,http://hl7.org/fhir/sid/icd-9-cm|155.1,http://hl7.org/fhir/sid/icd-9-cm|155.2,http://hl7.org/fhir/sid/icd-9-cm|197.7"
+      ],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|C22.0,http://hl7.org/fhir/sid/icd-10-cm|C22.1,http://hl7.org/fhir/sid/icd-10-cm|C22.2,http://hl7.org/fhir/sid/icd-10-cm|C22.3,http://hl7.org/fhir/sid/icd-10-cm|C22.4,http://hl7.org/fhir/sid/icd-10-cm|C22.7,http://hl7.org/fhir/sid/icd-10-cm|C22.8,http://hl7.org/fhir/sid/icd-10-cm|C22.9,http://hl7.org/fhir/sid/icd-10-cm|C78.7\nCondition?code=http://hl7.org/fhir/sid/icd-9-cm|155.0,http://hl7.org/fhir/sid/icd-9-cm|155.1,http://hl7.org/fhir/sid/icd-9-cm|155.2,http://hl7.org/fhir/sid/icd-9-cm|197.7",
+      "prompt_text": "Find all my liver cancer patients across the chart."
+     },
+     "2-broad": {
+      "precision": 0.6402,
+      "recall": 0.3963,
+      "f1": 0.4896,
+      "passed": false,
+      "expected_count": 2990,
+      "actual_count": 1851,
+      "elapsed_sec": 45.5,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|C22.0,http://hl7.org/fhir/sid/icd-10-cm|C22.8,http://hl7.org/fhir/sid/icd-9-cm|155.0",
+      "additional_query_urls": [
+       "Observation?code=http://loinc.org|1834-1&value-quantity=gt10"
+      ],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|C22.0,http://hl7.org/fhir/sid/icd-10-cm|C22.8,http://hl7.org/fhir/sid/icd-9-cm|155.0\nObservation?code=http://loinc.org|1834-1&value-quantity=gt10",
+      "prompt_text": "Find all liver cancer patients \u2014 some have a coded HCC diagnosis, others may have only an elevated AFP without a formal diagnosis. Run separate queries for diagnoses and lab results, then return the union."
+     },
+     "2-expert": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 2990,
+      "actual_count": 0,
+      "elapsed_sec": 66.1,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|187769009,http://snomed.info/sct|95214007,http://snomed.info/sct|94381002",
+      "additional_query_urls": [
+       "Observation?code=http://loinc.org|1834-1&value-quantity=ge100|http://unitsofmeasure.org|ng/mL"
+      ],
+      "raw_response": "Condition?code=http://snomed.info/sct|187769009,http://snomed.info/sct|95214007,http://snomed.info/sct|94381002\nObservation?code=http://loinc.org|1834-1&value-quantity=ge100|http://unitsofmeasure.org|ng/mL",
+      "prompt_text": "I need to identify all hepatocellular carcinoma patients using a union across Condition and Observation resources. Search Condition resources for HCC diagnosis variants coded in SNOMED CT \u2014 include the primary carcinoma of liver, the broader malignant neoplasm of liver, and the metastatic variant as they may each be coded depending on clinical context. Also search Observation resources for alpha-fetoprotein measured in serum or plasma using the relevant LOINC code, filtering to markedly elevated values consistent with HCC \u2014 at or above one hundred nanograms per milliliter. Union the patient sets to capture both formally diagnosed patients and those flagged only by an elevated AFP without a coded diagnosis."
+     },
+     "3-naive": {
+      "precision": 0.6572,
+      "recall": 0.9635,
+      "f1": 0.7814,
+      "passed": true,
+      "expected_count": 2990,
+      "actual_count": 4384,
+      "elapsed_sec": 44.0,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|C22.0,http://hl7.org/fhir/sid/icd-10-cm|C22.1,http://hl7.org/fhir/sid/icd-10-cm|C22.2,http://hl7.org/fhir/sid/icd-10-cm|C22.3,http://hl7.org/fhir/sid/icd-10-cm|C22.4,http://hl7.org/fhir/sid/icd-10-cm|C22.7,http://hl7.org/fhir/sid/icd-10-cm|C22.8,http://hl7.org/fhir/sid/icd-10-cm|C22.9,http://hl7.org/fhir/sid/icd-10-cm|C78.7,http://hl7.org/fhir/sid/icd-10-cm|Z85.05",
+      "additional_query_urls": [
+       "Condition?code=http://hl7.org/fhir/sid/icd-9-cm|155.0,http://hl7.org/fhir/sid/icd-9-cm|155.1,http://hl7.org/fhir/sid/icd-9-cm|155.2,http://hl7.org/fhir/sid/icd-9-cm|197.7,http://hl7.org/fhir/sid/icd-9-cm|V10.07"
+      ],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|C22.0,http://hl7.org/fhir/sid/icd-10-cm|C22.1,http://hl7.org/fhir/sid/icd-10-cm|C22.2,http://hl7.org/fhir/sid/icd-10-cm|C22.3,http://hl7.org/fhir/sid/icd-10-cm|C22.4,http://hl7.org/fhir/sid/icd-10-cm|C22.7,http://hl7.org/fhir/sid/icd-10-cm|C22.8,http://hl7.org/fhir/sid/icd-10-cm|C22.9,http://hl7.org/fhir/sid/icd-10-cm|C78.7,http://hl7.org/fhir/sid/icd-10-cm|Z85.05\nCondition?code=http://hl7.org/fhir/sid/icd-9-cm|155.0,http://hl7.org/fhir/sid/icd-9-cm|155.1,http://hl7.org/fhir/sid/icd-9-cm|155.2,http://hl7.org/fhir/sid/icd-9-cm|197.7,http://hl7.org/fhir/sid/icd-9-cm|V10.07",
+      "prompt_text": "Find all my liver cancer patients across the chart."
+     },
+     "3-broad": {
+      "precision": 0.6433,
+      "recall": 0.4017,
+      "f1": 0.4945,
+      "passed": false,
+      "expected_count": 2990,
+      "actual_count": 1867,
+      "elapsed_sec": 40.2,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|C22.0,http://hl7.org/fhir/sid/icd-10-cm|C22.8,http://hl7.org/fhir/sid/icd-10-cm|C22.9,http://hl7.org/fhir/sid/icd-9-cm|155.0,http://hl7.org/fhir/sid/icd-9-cm|155.2",
+      "additional_query_urls": [
+       "Observation?code=http://loinc.org|1834-1&value-quantity=gt10"
+      ],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|C22.0,http://hl7.org/fhir/sid/icd-10-cm|C22.8,http://hl7.org/fhir/sid/icd-10-cm|C22.9,http://hl7.org/fhir/sid/icd-9-cm|155.0,http://hl7.org/fhir/sid/icd-9-cm|155.2\nObservation?code=http://loinc.org|1834-1&value-quantity=gt10",
+      "prompt_text": "Find all liver cancer patients \u2014 some have a coded HCC diagnosis, others may have only an elevated AFP without a formal diagnosis. Run separate queries for diagnoses and lab results, then return the union."
+     },
+     "3-expert": {
+      "precision": 0.7189,
+      "recall": 1.0,
+      "f1": 0.8365,
+      "passed": true,
+      "expected_count": 2990,
+      "actual_count": 4159,
+      "elapsed_sec": 54.3,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|C22.0,http://hl7.org/fhir/sid/icd-10-cm|C22.9,http://hl7.org/fhir/sid/icd-10-cm|C78.7,http://hl7.org/fhir/sid/icd-9-cm|155.0,http://hl7.org/fhir/sid/icd-9-cm|155.2,http://hl7.org/fhir/sid/icd-9-cm|197.7",
+      "additional_query_urls": [
+       "Observation?code=http://loinc.org|1834-1&value-quantity=ge100"
+      ],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|C22.0,http://hl7.org/fhir/sid/icd-10-cm|C22.9,http://hl7.org/fhir/sid/icd-10-cm|C78.7,http://hl7.org/fhir/sid/icd-9-cm|155.0,http://hl7.org/fhir/sid/icd-9-cm|155.2,http://hl7.org/fhir/sid/icd-9-cm|197.7\nObservation?code=http://loinc.org|1834-1&value-quantity=ge100",
+      "prompt_text": "I need to identify all hepatocellular carcinoma patients using a union across Condition and Observation resources. Search Condition resources for HCC diagnosis variants coded in SNOMED CT \u2014 include the primary carcinoma of liver, the broader malignant neoplasm of liver, and the metastatic variant as they may each be coded depending on clinical context. Also search Observation resources for alpha-fetoprotein measured in serum or plasma using the relevant LOINC code, filtering to markedly elevated values consistent with HCC \u2014 at or above one hundred nanograms per milliliter. Union the patient sets to capture both formally diagnosed patients and those flagged only by an elevated AFP without a coded diagnosis."
+     }
+    },
     "copilot:claude-sonnet-4.6": {
      "1-naive": {
       "precision": 1.0,
@@ -992,6 +1139,140 @@
       "primary_query_url": "Condition?code=http://snomed.info/sct|187769009,http://snomed.info/sct|93870000,http://snomed.info/sct|94381002",
       "additional_query_urls": [],
       "raw_response": "Condition?code=http://snomed.info/sct|187769009,http://snomed.info/sct|93870000,http://snomed.info/sct|94381002",
+      "prompt_text": "I need to identify all liver cancer patients. Liver malignancies are coded under multiple SNOMED codes: Primary carcinoma of liver (187769009) is the most specific HCC code, while Malignant neoplasm of liver (93870000) is a broader parent. Metastatic malignant neoplasm to liver (94381002) covers advanced disease. Search Condition resources for these codes."
+     }
+    },
+    "copilot:claude-opus-4.7+mimic": {
+     "1-naive": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 2855,
+      "actual_count": 0,
+      "elapsed_sec": 7.3,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|93870000",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|93870000",
+      "prompt_text": "Find all patients with liver cancer."
+     },
+     "1-broad": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 2855,
+      "actual_count": 0,
+      "elapsed_sec": 7.9,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|187769009,http://snomed.info/sct|93870000,http://snomed.info/sct|94381002",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|187769009,http://snomed.info/sct|93870000,http://snomed.info/sct|94381002",
+      "prompt_text": "Find all patients diagnosed with any form of liver cancer \u2014 including primary hepatocellular carcinoma, the broader 'malignant neoplasm of liver' parent concept, and metastatic malignancies to the liver."
+     },
+     "1-expert": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 2855,
+      "actual_count": 0,
+      "elapsed_sec": 6.8,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|187769009,http://snomed.info/sct|93870000,http://snomed.info/sct|94381002",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|187769009,http://snomed.info/sct|93870000,http://snomed.info/sct|94381002",
+      "prompt_text": "I need to identify all liver cancer patients. Liver malignancies are coded under multiple SNOMED codes: Primary carcinoma of liver (187769009) is the most specific HCC code, while Malignant neoplasm of liver (93870000) is a broader parent. Metastatic malignant neoplasm to liver (94381002) covers advanced disease. Search Condition resources for these codes."
+     },
+     "2-naive": {
+      "precision": 0.6694,
+      "recall": 1.0,
+      "f1": 0.802,
+      "passed": true,
+      "expected_count": 2855,
+      "actual_count": 4265,
+      "elapsed_sec": 35.5,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|C22.0,http://hl7.org/fhir/sid/icd-10-cm|C22.1,http://hl7.org/fhir/sid/icd-10-cm|C22.2,http://hl7.org/fhir/sid/icd-10-cm|C22.3,http://hl7.org/fhir/sid/icd-10-cm|C22.4,http://hl7.org/fhir/sid/icd-10-cm|C22.7,http://hl7.org/fhir/sid/icd-10-cm|C22.8,http://hl7.org/fhir/sid/icd-10-cm|C22.9,http://hl7.org/fhir/sid/icd-10-cm|C78.7",
+      "additional_query_urls": [
+       "Condition?code=http://hl7.org/fhir/sid/icd-9-cm|155.0,http://hl7.org/fhir/sid/icd-9-cm|155.1,http://hl7.org/fhir/sid/icd-9-cm|155.2,http://hl7.org/fhir/sid/icd-9-cm|197.7"
+      ],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|C22.0,http://hl7.org/fhir/sid/icd-10-cm|C22.1,http://hl7.org/fhir/sid/icd-10-cm|C22.2,http://hl7.org/fhir/sid/icd-10-cm|C22.3,http://hl7.org/fhir/sid/icd-10-cm|C22.4,http://hl7.org/fhir/sid/icd-10-cm|C22.7,http://hl7.org/fhir/sid/icd-10-cm|C22.8,http://hl7.org/fhir/sid/icd-10-cm|C22.9,http://hl7.org/fhir/sid/icd-10-cm|C78.7\nCondition?code=http://hl7.org/fhir/sid/icd-9-cm|155.0,http://hl7.org/fhir/sid/icd-9-cm|155.1,http://hl7.org/fhir/sid/icd-9-cm|155.2,http://hl7.org/fhir/sid/icd-9-cm|197.7",
+      "prompt_text": "Find all patients with liver cancer."
+     },
+     "2-broad": {
+      "precision": 0.6694,
+      "recall": 1.0,
+      "f1": 0.802,
+      "passed": true,
+      "expected_count": 2855,
+      "actual_count": 4265,
+      "elapsed_sec": 33.4,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|C22.0,http://hl7.org/fhir/sid/icd-10-cm|C22.1,http://hl7.org/fhir/sid/icd-10-cm|C22.2,http://hl7.org/fhir/sid/icd-10-cm|C22.3,http://hl7.org/fhir/sid/icd-10-cm|C22.4,http://hl7.org/fhir/sid/icd-10-cm|C22.7,http://hl7.org/fhir/sid/icd-10-cm|C22.8,http://hl7.org/fhir/sid/icd-10-cm|C22.9,http://hl7.org/fhir/sid/icd-10-cm|C78.7",
+      "additional_query_urls": [
+       "Condition?code=http://hl7.org/fhir/sid/icd-9-cm|155.0,http://hl7.org/fhir/sid/icd-9-cm|155.1,http://hl7.org/fhir/sid/icd-9-cm|155.2,http://hl7.org/fhir/sid/icd-9-cm|197.7"
+      ],
+      "raw_response": "FINAL ANSWER:\n\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|C22.0,http://hl7.org/fhir/sid/icd-10-cm|C22.1,http://hl7.org/fhir/sid/icd-10-cm|C22.2,http://hl7.org/fhir/sid/icd-10-cm|C22.3,http://hl7.org/fhir/sid/icd-10-cm|C22.4,http://hl7.org/fhir/sid/icd-10-cm|C22.7,http://hl7.org/fhir/sid/icd-10-cm|C22.8,http://hl7.org/fhir/sid/icd-10-cm|C22.9,http://hl7.org/fhir/sid/icd-10-cm|C78.7\nCondition?code=http://hl7.org/fhir/sid/icd-9-cm|155.0,http://hl7.org/fhir/sid/icd-9-cm|155.1,http://hl7.org/fhir/sid/icd-9-cm|155.2,http://hl7.org/fhir/sid/icd-9-cm|197.7",
+      "prompt_text": "Find all patients diagnosed with any form of liver cancer \u2014 including primary hepatocellular carcinoma, the broader 'malignant neoplasm of liver' parent concept, and metastatic malignancies to the liver."
+     },
+     "2-expert": {
+      "precision": 0.6694,
+      "recall": 1.0,
+      "f1": 0.802,
+      "passed": true,
+      "expected_count": 2855,
+      "actual_count": 4265,
+      "elapsed_sec": 35.4,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|C22.0,http://hl7.org/fhir/sid/icd-10-cm|C22.1,http://hl7.org/fhir/sid/icd-10-cm|C22.2,http://hl7.org/fhir/sid/icd-10-cm|C22.3,http://hl7.org/fhir/sid/icd-10-cm|C22.4,http://hl7.org/fhir/sid/icd-10-cm|C22.7,http://hl7.org/fhir/sid/icd-10-cm|C22.8,http://hl7.org/fhir/sid/icd-10-cm|C22.9,http://hl7.org/fhir/sid/icd-10-cm|C78.7",
+      "additional_query_urls": [
+       "Condition?code=http://hl7.org/fhir/sid/icd-9-cm|155.0,http://hl7.org/fhir/sid/icd-9-cm|155.1,http://hl7.org/fhir/sid/icd-9-cm|155.2,http://hl7.org/fhir/sid/icd-9-cm|197.7"
+      ],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|C22.0,http://hl7.org/fhir/sid/icd-10-cm|C22.1,http://hl7.org/fhir/sid/icd-10-cm|C22.2,http://hl7.org/fhir/sid/icd-10-cm|C22.3,http://hl7.org/fhir/sid/icd-10-cm|C22.4,http://hl7.org/fhir/sid/icd-10-cm|C22.7,http://hl7.org/fhir/sid/icd-10-cm|C22.8,http://hl7.org/fhir/sid/icd-10-cm|C22.9,http://hl7.org/fhir/sid/icd-10-cm|C78.7\nCondition?code=http://hl7.org/fhir/sid/icd-9-cm|155.0,http://hl7.org/fhir/sid/icd-9-cm|155.1,http://hl7.org/fhir/sid/icd-9-cm|155.2,http://hl7.org/fhir/sid/icd-9-cm|197.7",
+      "prompt_text": "I need to identify all liver cancer patients. Liver malignancies are coded under multiple SNOMED codes: Primary carcinoma of liver (187769009) is the most specific HCC code, while Malignant neoplasm of liver (93870000) is a broader parent. Metastatic malignant neoplasm to liver (94381002) covers advanced disease. Search Condition resources for these codes."
+     },
+     "3-naive": {
+      "precision": 0.2827,
+      "recall": 0.1807,
+      "f1": 0.2205,
+      "passed": false,
+      "expected_count": 2855,
+      "actual_count": 1825,
+      "elapsed_sec": 32.9,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|C22.0,http://hl7.org/fhir/sid/icd-10-cm|C22.1,http://hl7.org/fhir/sid/icd-10-cm|C22.2,http://hl7.org/fhir/sid/icd-10-cm|C22.3,http://hl7.org/fhir/sid/icd-10-cm|C22.4,http://hl7.org/fhir/sid/icd-10-cm|C22.7,http://hl7.org/fhir/sid/icd-10-cm|C22.8,http://hl7.org/fhir/sid/icd-10-cm|C22.9,http://hl7.org/fhir/sid/icd-10-cm|C78.7",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|C22.0,http://hl7.org/fhir/sid/icd-10-cm|C22.1,http://hl7.org/fhir/sid/icd-10-cm|C22.2,http://hl7.org/fhir/sid/icd-10-cm|C22.3,http://hl7.org/fhir/sid/icd-10-cm|C22.4,http://hl7.org/fhir/sid/icd-10-cm|C22.7,http://hl7.org/fhir/sid/icd-10-cm|C22.8,http://hl7.org/fhir/sid/icd-10-cm|C22.9,http://hl7.org/fhir/sid/icd-10-cm|C78.7",
+      "prompt_text": "Find all patients with liver cancer."
+     },
+     "3-broad": {
+      "precision": 0.6694,
+      "recall": 1.0,
+      "f1": 0.802,
+      "passed": true,
+      "expected_count": 2855,
+      "actual_count": 4265,
+      "elapsed_sec": 35.3,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|C22.0,http://hl7.org/fhir/sid/icd-10-cm|C22.1,http://hl7.org/fhir/sid/icd-10-cm|C22.2,http://hl7.org/fhir/sid/icd-10-cm|C22.3,http://hl7.org/fhir/sid/icd-10-cm|C22.4,http://hl7.org/fhir/sid/icd-10-cm|C22.7,http://hl7.org/fhir/sid/icd-10-cm|C22.8,http://hl7.org/fhir/sid/icd-10-cm|C22.9,http://hl7.org/fhir/sid/icd-10-cm|C78.7,http://hl7.org/fhir/sid/icd-9-cm|155.0,http://hl7.org/fhir/sid/icd-9-cm|155.1,http://hl7.org/fhir/sid/icd-9-cm|155.2,http://hl7.org/fhir/sid/icd-9-cm|197.7",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|C22.0,http://hl7.org/fhir/sid/icd-10-cm|C22.1,http://hl7.org/fhir/sid/icd-10-cm|C22.2,http://hl7.org/fhir/sid/icd-10-cm|C22.3,http://hl7.org/fhir/sid/icd-10-cm|C22.4,http://hl7.org/fhir/sid/icd-10-cm|C22.7,http://hl7.org/fhir/sid/icd-10-cm|C22.8,http://hl7.org/fhir/sid/icd-10-cm|C22.9,http://hl7.org/fhir/sid/icd-10-cm|C78.7,http://hl7.org/fhir/sid/icd-9-cm|155.0,http://hl7.org/fhir/sid/icd-9-cm|155.1,http://hl7.org/fhir/sid/icd-9-cm|155.2,http://hl7.org/fhir/sid/icd-9-cm|197.7",
+      "prompt_text": "Find all patients diagnosed with any form of liver cancer \u2014 including primary hepatocellular carcinoma, the broader 'malignant neoplasm of liver' parent concept, and metastatic malignancies to the liver."
+     },
+     "3-expert": {
+      "precision": 0.7086,
+      "recall": 1.0,
+      "f1": 0.8295,
+      "passed": true,
+      "expected_count": 2855,
+      "actual_count": 4029,
+      "elapsed_sec": 41.6,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|C22.0,http://hl7.org/fhir/sid/icd-10-cm|C22.9,http://hl7.org/fhir/sid/icd-10-cm|C78.7,http://hl7.org/fhir/sid/icd-9-cm|155.0,http://hl7.org/fhir/sid/icd-9-cm|155.2,http://hl7.org/fhir/sid/icd-9-cm|197.7",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|C22.0,http://hl7.org/fhir/sid/icd-10-cm|C22.9,http://hl7.org/fhir/sid/icd-10-cm|C78.7,http://hl7.org/fhir/sid/icd-9-cm|155.0,http://hl7.org/fhir/sid/icd-9-cm|155.2,http://hl7.org/fhir/sid/icd-9-cm|197.7",
       "prompt_text": "I need to identify all liver cancer patients. Liver malignancies are coded under multiple SNOMED codes: Primary carcinoma of liver (187769009) is the most specific HCC code, while Malignant neoplasm of liver (93870000) is a broader parent. Metastatic malignant neoplasm to liver (94381002) covers advanced disease. Search Condition resources for these codes."
      }
     },

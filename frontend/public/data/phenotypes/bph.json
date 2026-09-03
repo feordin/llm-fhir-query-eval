@@ -238,6 +238,151 @@
       "prompt_text": "I need to identify all BPH patients using a multi-resource union restricted to males aged 40 and older. Run three queries, each filtered to male patients with a birth date consistent with age 40 or above: (1) Condition resources for a benign prostatic hyperplasia diagnosis coded in SNOMED CT; (2) MedicationRequest resources for the alpha-blockers and 5-alpha-reductase inhibitors used to manage BPH \u2014 tamsulosin, terazosin, and finasteride, all coded in RxNorm (some patients receive empirical alpha-blocker therapy without a coded BPH diagnosis, making this a true cross-indication path); (3) Procedure resources for transurethral resection of the prostate (TURP) coded in SNOMED CT. Apply sex and birth-date chained search parameters to all three queries, then union the distinct patient IDs."
      }
     },
+    "copilot:claude-opus-4.7+mimic": {
+     "1-naive": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 8975,
+      "actual_count": 0,
+      "elapsed_sec": 6.5,
+      "queries_generated": 1,
+      "primary_query_url": "Patient?gender=male&_has:Condition:patient:code=http://snomed.info/sct|266569009",
+      "additional_query_urls": [],
+      "raw_response": "Patient?gender=male&_has:Condition:patient:code=http://snomed.info/sct|266569009",
+      "prompt_text": "Find all male patients with BPH."
+     },
+     "1-broad": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 8975,
+      "actual_count": 0,
+      "elapsed_sec": 15.2,
+      "queries_generated": 3,
+      "primary_query_url": "Patient?gender=male&birthdate=le1986-08-31&_has:Condition:patient:code=http://snomed.info/sct|266569009,http://hl7.org/fhir/sid/icd-10-cm|N40.0,http://hl7.org/fhir/sid/icd-10-cm|N40.1",
+      "additional_query_urls": [
+       "Patient?gender=male&birthdate=le1986-08-31&_has:MedicationRequest:patient:code=http://www.nlm.nih.gov/research/umls/rxnorm|77492,http://www.nlm.nih.gov/research/umls/rxnorm|17767,http://www.nlm.nih.gov/research/umls/rxnorm|3443,http://www.nlm.nih.gov/research/umls/rxnorm|37798,http://www.nlm.nih.gov/research/umls/rxnorm|332981,http://www.nlm.nih.gov/research/umls/rxnorm|4426,http://www.nlm.nih.gov/research/umls/rxnorm|72610",
+       "Patient?gender=male&birthdate=le1986-08-31&_has:Procedure:patient:code=http://snomed.info/sct|236263004,http://www.ama-assn.org/go/cpt|52601"
+      ],
+      "raw_response": "```\nPatient?gender=male&birthdate=le1986-08-31&_has:Condition:patient:code=http://snomed.info/sct|266569009,http://hl7.org/fhir/sid/icd-10-cm|N40.0,http://hl7.org/fhir/sid/icd-10-cm|N40.1\nPatient?gender=male&birthdate=le1986-08-31&_has:MedicationRequest:patient:code=http://www.nlm.nih.gov/research/umls/rxnorm|77492,http://www.nlm.nih.gov/research/umls/rxnorm|17767,http://www.nlm.nih.gov/research/umls/rxnorm|3443,http://www.nlm.nih.gov/research/umls/rxnorm|37798,http://www.nlm.nih.gov/research/umls/rxnorm|332981,http://www.nlm.nih.gov/research/umls/rxnorm|4426,http://www.nlm.nih.gov/research/umls/rxnorm|72610\nPatient?gender=male&birthdate=le1986-08-31&_has:Procedure:patient:code=http://snomed.info/sct|236263004,http://www.ama-assn.org/go/cpt|52601\n```",
+      "prompt_text": "Find all male patients age 40+ with BPH \u2014 by diagnosis, BPH-class medications (alpha-blockers, 5-ARI), or TURP surgery. Run multiple queries and union the patients."
+     },
+     "1-expert": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 8975,
+      "actual_count": 0,
+      "elapsed_sec": 10.9,
+      "queries_generated": 3,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|266569009&patient.gender=male&patient.birthdate=le1986-08-31",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|314419,http://www.nlm.nih.gov/research/umls/rxnorm|37798,http://www.nlm.nih.gov/research/umls/rxnorm|5487&subject.gender=male&subject.birthdate=le1986-08-31",
+       "Procedure?code=http://snomed.info/sct|90199006&subject.gender=male&subject.birthdate=le1986-08-31"
+      ],
+      "raw_response": "Condition?code=http://snomed.info/sct|266569009&patient.gender=male&patient.birthdate=le1986-08-31\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|314419,http://www.nlm.nih.gov/research/umls/rxnorm|37798,http://www.nlm.nih.gov/research/umls/rxnorm|5487&subject.gender=male&subject.birthdate=le1986-08-31\nProcedure?code=http://snomed.info/sct|90199006&subject.gender=male&subject.birthdate=le1986-08-31",
+      "prompt_text": "I need to identify all BPH patients using a multi-resource union restricted to males aged 40 and older. Run three queries, each filtered to male patients with a birth date consistent with age 40 or above: (1) Condition resources for a benign prostatic hyperplasia diagnosis coded in SNOMED CT; (2) MedicationRequest resources for the alpha-blockers and 5-alpha-reductase inhibitors used to manage BPH \u2014 tamsulosin, terazosin, and finasteride, all coded in RxNorm (some patients receive empirical alpha-blocker therapy without a coded BPH diagnosis, making this a true cross-indication path); (3) Procedure resources for transurethral resection of the prostate (TURP) coded in SNOMED CT. Apply sex and birth-date chained search parameters to all three queries, then union the distinct patient IDs."
+     },
+     "2-naive": {
+      "precision": 0.8057,
+      "recall": 0.4568,
+      "f1": 0.583,
+      "passed": false,
+      "expected_count": 8975,
+      "actual_count": 5089,
+      "elapsed_sec": 53.2,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|N40.0,http://hl7.org/fhir/sid/icd-10-cm|N40.1,http://hl7.org/fhir/sid/icd-10-cm|N40.2,http://hl7.org/fhir/sid/icd-10-cm|N40.3,http://hl7.org/fhir/sid/icd-9-cm|600.00,http://hl7.org/fhir/sid/icd-9-cm|600.01,http://hl7.org/fhir/sid/icd-9-cm|600.20,http://hl7.org/fhir/sid/icd-9-cm|600.21,http://hl7.org/fhir/sid/icd-9-cm|600.90,http://hl7.org/fhir/sid/icd-9-cm|600.91&subject.gender=male",
+      "additional_query_urls": [],
+      "raw_response": "FINAL ANSWER:\n\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|N40.0,http://hl7.org/fhir/sid/icd-10-cm|N40.1,http://hl7.org/fhir/sid/icd-10-cm|N40.2,http://hl7.org/fhir/sid/icd-10-cm|N40.3,http://hl7.org/fhir/sid/icd-9-cm|600.00,http://hl7.org/fhir/sid/icd-9-cm|600.01,http://hl7.org/fhir/sid/icd-9-cm|600.20,http://hl7.org/fhir/sid/icd-9-cm|600.21,http://hl7.org/fhir/sid/icd-9-cm|600.90,http://hl7.org/fhir/sid/icd-9-cm|600.91&subject.gender=male",
+      "prompt_text": "Find all male patients with BPH."
+     },
+     "2-broad": {
+      "precision": 0.8016,
+      "recall": 0.8991,
+      "f1": 0.8475,
+      "passed": true,
+      "expected_count": 8975,
+      "actual_count": 10066,
+      "elapsed_sec": 192.4,
+      "queries_generated": 2,
+      "primary_query_url": "Patient?gender=male&_has:Condition:patient:code=http://hl7.org/fhir/sid/icd-10-cm|N40.0,http://hl7.org/fhir/sid/icd-10-cm|N40.1,http://hl7.org/fhir/sid/icd-10-cm|N40.2,http://hl7.org/fhir/sid/icd-10-cm|N40.3,http://hl7.org/fhir/sid/icd-9-cm|600.00,http://hl7.org/fhir/sid/icd-9-cm|600.01,http://hl7.org/fhir/sid/icd-9-cm|600.20,http://hl7.org/fhir/sid/icd-9-cm|600.21,http://hl7.org/fhir/sid/icd-9-cm|600.90,http://hl7.org/fhir/sid/icd-9-cm|600.91",
+      "additional_query_urls": [
+       "Patient?gender=male&_has:Procedure:patient:code=http://hl7.org/fhir/sid/icd-9-cm|60.29,http://hl7.org/fhir/sid/icd-9-cm|60.21,http://hl7.org/fhir/sid/icd-9-cm|60.2,http://hl7.org/fhir/sid/icd-9-cm|60.96,http://hl7.org/fhir/sid/icd-9-cm|60.97"
+      ],
+      "raw_response": "Final answer:\n\nPatient?gender=male&_has:Condition:patient:code=http://hl7.org/fhir/sid/icd-10-cm|N40.0,http://hl7.org/fhir/sid/icd-10-cm|N40.1,http://hl7.org/fhir/sid/icd-10-cm|N40.2,http://hl7.org/fhir/sid/icd-10-cm|N40.3,http://hl7.org/fhir/sid/icd-9-cm|600.00,http://hl7.org/fhir/sid/icd-9-cm|600.01,http://hl7.org/fhir/sid/icd-9-cm|600.20,http://hl7.org/fhir/sid/icd-9-cm|600.21,http://hl7.org/fhir/sid/icd-9-cm|600.90,http://hl7.org/fhir/sid/icd-9-cm|600.91\nPatient?gender=male&_has:Procedure:patient:code=http://hl7.org/fhir/sid/icd-9-cm|60.29,http://hl7.org/fhir/sid/icd-9-cm|60.21,http://hl7.org/fhir/sid/icd-9-cm|60.2,http://hl7.org/fhir/sid/icd-9-cm|60.96,http://hl7.org/fhir/sid/icd-9-cm|60.97",
+      "prompt_text": "Find all male patients age 40+ with BPH \u2014 by diagnosis, BPH-class medications (alpha-blockers, 5-ARI), or TURP surgery. Run multiple queries and union the patients."
+     },
+     "2-expert": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 8975,
+      "actual_count": 0,
+      "elapsed_sec": 46.6,
+      "queries_generated": 3,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|266569009&subject:Patient.gender=male&subject:Patient.birthdate=le1986-08-31",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|77492,http://www.nlm.nih.gov/research/umls/rxnorm|37798,http://www.nlm.nih.gov/research/umls/rxnorm|25025&subject:Patient.gender=male&subject:Patient.birthdate=le1986-08-31",
+       "Procedure?code=http://snomed.info/sct|90199006&subject:Patient.gender=male&subject:Patient.birthdate=le1986-08-31"
+      ],
+      "raw_response": "Condition?code=http://snomed.info/sct|266569009&subject:Patient.gender=male&subject:Patient.birthdate=le1986-08-31\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|77492,http://www.nlm.nih.gov/research/umls/rxnorm|37798,http://www.nlm.nih.gov/research/umls/rxnorm|25025&subject:Patient.gender=male&subject:Patient.birthdate=le1986-08-31\nProcedure?code=http://snomed.info/sct|90199006&subject:Patient.gender=male&subject:Patient.birthdate=le1986-08-31",
+      "prompt_text": "I need to identify all BPH patients using a multi-resource union restricted to males aged 40 and older. Run three queries, each filtered to male patients with a birth date consistent with age 40 or above: (1) Condition resources for a benign prostatic hyperplasia diagnosis coded in SNOMED CT; (2) MedicationRequest resources for the alpha-blockers and 5-alpha-reductase inhibitors used to manage BPH \u2014 tamsulosin, terazosin, and finasteride, all coded in RxNorm (some patients receive empirical alpha-blocker therapy without a coded BPH diagnosis, making this a true cross-indication path); (3) Procedure resources for transurethral resection of the prostate (TURP) coded in SNOMED CT. Apply sex and birth-date chained search parameters to all three queries, then union the distinct patient IDs."
+     },
+     "3-naive": {
+      "precision": 0.8057,
+      "recall": 0.4568,
+      "f1": 0.583,
+      "passed": false,
+      "expected_count": 8975,
+      "actual_count": 5089,
+      "elapsed_sec": 65.1,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|N40.0,http://hl7.org/fhir/sid/icd-10-cm|N40.1,http://hl7.org/fhir/sid/icd-10-cm|N40.2,http://hl7.org/fhir/sid/icd-10-cm|N40.3,http://hl7.org/fhir/sid/icd-9-cm|600.00,http://hl7.org/fhir/sid/icd-9-cm|600.01,http://hl7.org/fhir/sid/icd-9-cm|600.20,http://hl7.org/fhir/sid/icd-9-cm|600.21,http://hl7.org/fhir/sid/icd-9-cm|600.90,http://hl7.org/fhir/sid/icd-9-cm|600.91&patient.gender=male",
+      "additional_query_urls": [],
+      "raw_response": "FINAL ANSWER:\n\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|N40.0,http://hl7.org/fhir/sid/icd-10-cm|N40.1,http://hl7.org/fhir/sid/icd-10-cm|N40.2,http://hl7.org/fhir/sid/icd-10-cm|N40.3,http://hl7.org/fhir/sid/icd-9-cm|600.00,http://hl7.org/fhir/sid/icd-9-cm|600.01,http://hl7.org/fhir/sid/icd-9-cm|600.20,http://hl7.org/fhir/sid/icd-9-cm|600.21,http://hl7.org/fhir/sid/icd-9-cm|600.90,http://hl7.org/fhir/sid/icd-9-cm|600.91&patient.gender=male",
+      "prompt_text": "Find all male patients with BPH."
+     },
+     "3-broad": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 8975,
+      "actual_count": 0,
+      "elapsed_sec": 75.5,
+      "queries_generated": 3,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|N40.0,http://hl7.org/fhir/sid/icd-10-cm|N40.1,http://hl7.org/fhir/sid/icd-10-cm|N40.2,http://hl7.org/fhir/sid/icd-10-cm|N40.3,http://hl7.org/fhir/sid/icd-9-cm|600.00,http://hl7.org/fhir/sid/icd-9-cm|600.01,http://hl7.org/fhir/sid/icd-9-cm|600.20,http://hl7.org/fhir/sid/icd-9-cm|600.21,http://hl7.org/fhir/sid/icd-9-cm|600.90,http://hl7.org/fhir/sid/icd-9-cm|600.91&patient.gender=male&patient.birthdate=lt1986-08-31",
+      "additional_query_urls": [
+       "Procedure?code=http://hl7.org/fhir/sid/icd-9-cm|60.29,http://hl7.org/fhir/sid/icd-9-cm|60.21,http://hl7.org/fhir/sid/icd-9-cm|60.2&patient.gender=male&patient.birthdate=lt1986-08-31",
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|77492,http://www.nlm.nih.gov/research/umls/rxnorm|4159,http://www.nlm.nih.gov/research/umls/rxnorm|262111,http://www.nlm.nih.gov/research/umls/rxnorm|4139,http://www.nlm.nih.gov/research/umls/rxnorm|3355,http://www.nlm.nih.gov/research/umls/rxnorm|37798,http://www.nlm.nih.gov/research/umls/rxnorm|583138&patient.gender=male&patient.birthdate=lt1986-08-31"
+      ],
+      "raw_response": "Based on evidence: MIMIC-style server; Conditions use ICD-10-CM/ICD-9-CM; Procedures use ICD-9-CM. BPH dx codes N40.x + 600.x are strong. TURP = ICD-9 60.2x. Med codes on this server aren't surfacing under RxNorm, but including them is harmless for the union.\n\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|N40.0,http://hl7.org/fhir/sid/icd-10-cm|N40.1,http://hl7.org/fhir/sid/icd-10-cm|N40.2,http://hl7.org/fhir/sid/icd-10-cm|N40.3,http://hl7.org/fhir/sid/icd-9-cm|600.00,http://hl7.org/fhir/sid/icd-9-cm|600.01,http://hl7.org/fhir/sid/icd-9-cm|600.20,http://hl7.org/fhir/sid/icd-9-cm|600.21,http://hl7.org/fhir/sid/icd-9-cm|600.90,http://hl7.org/fhir/sid/icd-9-cm|600.91&patient.gender=male&patient.birthdate=lt1986-08-31\nProcedure?code=http://hl7.org/fhir/sid/icd-9-cm|60.29,http://hl7.org/fhir/sid/icd-9-cm|60.21,http://hl7.org/fhir/sid/icd-9-cm|60.2&patient.gender=male&patient.birthdate=lt1986-08-31\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|77492,http://www.nlm.nih.gov/research/umls/rxnorm|4159,http://www.nlm.nih.gov/research/umls/rxnorm|262111,http://www.nlm.nih.gov/research/umls/rxnorm|4139,http://www.nlm.nih.gov/research/umls/rxnorm|3355,http://www.nlm.nih.gov/research/umls/rxnorm|37798,http://www.nlm.nih.gov/research/umls/rxnorm|583138&patient.gender=male&patient.birthdate=lt1986-08-31",
+      "prompt_text": "Find all male patients age 40+ with BPH \u2014 by diagnosis, BPH-class medications (alpha-blockers, 5-ARI), or TURP surgery. Run multiple queries and union the patients."
+     },
+     "3-expert": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 8975,
+      "actual_count": 0,
+      "elapsed_sec": 37.0,
+      "queries_generated": 3,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|266569009&patient.gender=male&patient.birthdate=le1986-08-31",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|77492,http://www.nlm.nih.gov/research/umls/rxnorm|37798,http://www.nlm.nih.gov/research/umls/rxnorm|5124&patient.gender=male&patient.birthdate=le1986-08-31",
+       "Procedure?code=http://snomed.info/sct|90199006&patient.gender=male&patient.birthdate=le1986-08-31"
+      ],
+      "raw_response": "Codes verified. Delivering the queries as specified (male, born on/before 1986-08-31 for age \u226540).\n\nCondition?code=http://snomed.info/sct|266569009&patient.gender=male&patient.birthdate=le1986-08-31\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|77492,http://www.nlm.nih.gov/research/umls/rxnorm|37798,http://www.nlm.nih.gov/research/umls/rxnorm|5124&patient.gender=male&patient.birthdate=le1986-08-31\nProcedure?code=http://snomed.info/sct|90199006&patient.gender=male&patient.birthdate=le1986-08-31",
+      "prompt_text": "I need to identify all BPH patients using a multi-resource union restricted to males aged 40 and older. Run three queries, each filtered to male patients with a birth date consistent with age 40 or above: (1) Condition resources for a benign prostatic hyperplasia diagnosis coded in SNOMED CT; (2) MedicationRequest resources for the alpha-blockers and 5-alpha-reductase inhibitors used to manage BPH \u2014 tamsulosin, terazosin, and finasteride, all coded in RxNorm (some patients receive empirical alpha-blocker therapy without a coded BPH diagnosis, making this a true cross-indication path); (3) Procedure resources for transurethral resection of the prostate (TURP) coded in SNOMED CT. Apply sex and birth-date chained search parameters to all three queries, then union the distinct patient IDs."
+     }
+    },
     "copilot:claude-sonnet-4.6": {
      "1-naive": {
       "precision": 1.0,
@@ -1030,6 +1175,134 @@
       "prompt_text": "I need to find male patients aged 40 and older with a documented benign prostatic hyperplasia diagnosis. Search Condition resources for the SNOMED CT code for benign prostatic hyperplasia, then apply chained patient filters for sex equal to male and a birth date on or before the date corresponding to 40 years prior to today \u2014 FHIR does not support a direct patient.age parameter, so the age constraint must be expressed as a patient.birthdate upper bound. Do not broaden to prostate cancer or other prostate conditions, which are clinically and code-distinctly different."
      }
     },
+    "copilot:claude-opus-4.7+mimic": {
+     "1-naive": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 8975,
+      "actual_count": 0,
+      "elapsed_sec": 9.1,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|266569009&subject.gender=male",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|266569009&subject.gender=male",
+      "prompt_text": "Find men with BPH."
+     },
+     "1-broad": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 8975,
+      "actual_count": 0,
+      "elapsed_sec": 10.7,
+      "queries_generated": 1,
+      "primary_query_url": "Patient?gender=male&birthdate=le1986-08-31&_has:Condition:patient:code=http://snomed.info/sct|266569009",
+      "additional_query_urls": [],
+      "raw_response": "Patient?gender=male&birthdate=le1986-08-31&_has:Condition:patient:code=http://snomed.info/sct|266569009",
+      "prompt_text": "Find male patients age 40 and older with a diagnosis of benign prostatic hyperplasia (BPH) \u2014 also known as prostate enlargement. This is a non-malignant condition distinct from prostate cancer."
+     },
+     "1-expert": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 8975,
+      "actual_count": 0,
+      "elapsed_sec": 9.0,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|266569009&patient.gender=male&patient.birthdate=le1986-08-31",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|266569009&patient.gender=male&patient.birthdate=le1986-08-31",
+      "prompt_text": "I need to find male patients aged 40 and older with a documented benign prostatic hyperplasia diagnosis. Search Condition resources for the SNOMED CT code for benign prostatic hyperplasia, then apply chained patient filters for sex equal to male and a birth date on or before the date corresponding to 40 years prior to today \u2014 FHIR does not support a direct patient.age parameter, so the age constraint must be expressed as a patient.birthdate upper bound. Do not broaden to prostate cancer or other prostate conditions, which are clinically and code-distinctly different."
+     },
+     "2-naive": {
+      "precision": 0.8057,
+      "recall": 0.4568,
+      "f1": 0.583,
+      "passed": false,
+      "expected_count": 8975,
+      "actual_count": 5089,
+      "elapsed_sec": 75.3,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|N40.0,http://hl7.org/fhir/sid/icd-10-cm|N40.1,http://hl7.org/fhir/sid/icd-10-cm|N40.2,http://hl7.org/fhir/sid/icd-10-cm|N40.3,http://hl7.org/fhir/sid/icd-9-cm|600.00,http://hl7.org/fhir/sid/icd-9-cm|600.01,http://hl7.org/fhir/sid/icd-9-cm|600.20,http://hl7.org/fhir/sid/icd-9-cm|600.21,http://hl7.org/fhir/sid/icd-9-cm|600.90,http://hl7.org/fhir/sid/icd-9-cm|600.91&subject:Patient.gender=male",
+      "additional_query_urls": [],
+      "raw_response": "FINAL ANSWER:\n\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|N40.0,http://hl7.org/fhir/sid/icd-10-cm|N40.1,http://hl7.org/fhir/sid/icd-10-cm|N40.2,http://hl7.org/fhir/sid/icd-10-cm|N40.3,http://hl7.org/fhir/sid/icd-9-cm|600.00,http://hl7.org/fhir/sid/icd-9-cm|600.01,http://hl7.org/fhir/sid/icd-9-cm|600.20,http://hl7.org/fhir/sid/icd-9-cm|600.21,http://hl7.org/fhir/sid/icd-9-cm|600.90,http://hl7.org/fhir/sid/icd-9-cm|600.91&subject:Patient.gender=male",
+      "prompt_text": "Find men with BPH."
+     },
+     "2-broad": {
+      "precision": 0.8046,
+      "recall": 0.8965,
+      "f1": 0.8481,
+      "passed": true,
+      "expected_count": 8975,
+      "actual_count": 10000,
+      "elapsed_sec": 90.8,
+      "queries_generated": 1,
+      "primary_query_url": "Patient?gender=male&_has:Condition:patient:code=http://hl7.org/fhir/sid/icd-10-cm|N40.0,http://hl7.org/fhir/sid/icd-10-cm|N40.1,http://hl7.org/fhir/sid/icd-10-cm|N40.2,http://hl7.org/fhir/sid/icd-10-cm|N40.3,http://hl7.org/fhir/sid/icd-9-cm|600.00,http://hl7.org/fhir/sid/icd-9-cm|600.01,http://hl7.org/fhir/sid/icd-9-cm|600.20,http://hl7.org/fhir/sid/icd-9-cm|600.21,http://hl7.org/fhir/sid/icd-9-cm|600.90,http://hl7.org/fhir/sid/icd-9-cm|600.91",
+      "additional_query_urls": [],
+      "raw_response": "Patient birthdate is largely unpopulated on this server (only 62 patients have any birthdate). BPH virtually only occurs in older males, so the diagnosis itself functions as the age filter.\n\nPatient?gender=male&_has:Condition:patient:code=http://hl7.org/fhir/sid/icd-10-cm|N40.0,http://hl7.org/fhir/sid/icd-10-cm|N40.1,http://hl7.org/fhir/sid/icd-10-cm|N40.2,http://hl7.org/fhir/sid/icd-10-cm|N40.3,http://hl7.org/fhir/sid/icd-9-cm|600.00,http://hl7.org/fhir/sid/icd-9-cm|600.01,http://hl7.org/fhir/sid/icd-9-cm|600.20,http://hl7.org/fhir/sid/icd-9-cm|600.21,http://hl7.org/fhir/sid/icd-9-cm|600.90,http://hl7.org/fhir/sid/icd-9-cm|600.91",
+      "prompt_text": "Find male patients age 40 and older with a diagnosis of benign prostatic hyperplasia (BPH) \u2014 also known as prostate enlargement. This is a non-malignant condition distinct from prostate cancer."
+     },
+     "2-expert": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 8975,
+      "actual_count": 0,
+      "elapsed_sec": 98.3,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|N40.0,http://hl7.org/fhir/sid/icd-10-cm|N40.1,http://hl7.org/fhir/sid/icd-10-cm|N40.2,http://hl7.org/fhir/sid/icd-10-cm|N40.3,http://hl7.org/fhir/sid/icd-9-cm|600.00,http://hl7.org/fhir/sid/icd-9-cm|600.01,http://hl7.org/fhir/sid/icd-9-cm|600.20,http://hl7.org/fhir/sid/icd-9-cm|600.21,http://hl7.org/fhir/sid/icd-9-cm|600.90,http://hl7.org/fhir/sid/icd-9-cm|600.91&patient.gender=male&patient.birthdate=le1986-08-31",
+      "additional_query_urls": [],
+      "raw_response": "FINAL ANSWER:\n\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|N40.0,http://hl7.org/fhir/sid/icd-10-cm|N40.1,http://hl7.org/fhir/sid/icd-10-cm|N40.2,http://hl7.org/fhir/sid/icd-10-cm|N40.3,http://hl7.org/fhir/sid/icd-9-cm|600.00,http://hl7.org/fhir/sid/icd-9-cm|600.01,http://hl7.org/fhir/sid/icd-9-cm|600.20,http://hl7.org/fhir/sid/icd-9-cm|600.21,http://hl7.org/fhir/sid/icd-9-cm|600.90,http://hl7.org/fhir/sid/icd-9-cm|600.91&patient.gender=male&patient.birthdate=le1986-08-31",
+      "prompt_text": "I need to find male patients aged 40 and older with a documented benign prostatic hyperplasia diagnosis. Search Condition resources for the SNOMED CT code for benign prostatic hyperplasia, then apply chained patient filters for sex equal to male and a birth date on or before the date corresponding to 40 years prior to today \u2014 FHIR does not support a direct patient.age parameter, so the age constraint must be expressed as a patient.birthdate upper bound. Do not broaden to prostate cancer or other prostate conditions, which are clinically and code-distinctly different."
+     },
+     "3-naive": {
+      "precision": 0.8057,
+      "recall": 0.4568,
+      "f1": 0.583,
+      "passed": false,
+      "expected_count": 8975,
+      "actual_count": 5089,
+      "elapsed_sec": 60.6,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|N40.0,http://hl7.org/fhir/sid/icd-10-cm|N40.1,http://hl7.org/fhir/sid/icd-10-cm|N40.2,http://hl7.org/fhir/sid/icd-10-cm|N40.3,http://hl7.org/fhir/sid/icd-9-cm|600.00,http://hl7.org/fhir/sid/icd-9-cm|600.01,http://hl7.org/fhir/sid/icd-9-cm|600.20,http://hl7.org/fhir/sid/icd-9-cm|600.21,http://hl7.org/fhir/sid/icd-9-cm|600.90,http://hl7.org/fhir/sid/icd-9-cm|600.91&patient.gender=male",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|N40.0,http://hl7.org/fhir/sid/icd-10-cm|N40.1,http://hl7.org/fhir/sid/icd-10-cm|N40.2,http://hl7.org/fhir/sid/icd-10-cm|N40.3,http://hl7.org/fhir/sid/icd-9-cm|600.00,http://hl7.org/fhir/sid/icd-9-cm|600.01,http://hl7.org/fhir/sid/icd-9-cm|600.20,http://hl7.org/fhir/sid/icd-9-cm|600.21,http://hl7.org/fhir/sid/icd-9-cm|600.90,http://hl7.org/fhir/sid/icd-9-cm|600.91&patient.gender=male",
+      "prompt_text": "Find men with BPH."
+     },
+     "3-broad": {
+      "precision": 0.8057,
+      "recall": 0.4568,
+      "f1": 0.583,
+      "passed": false,
+      "expected_count": 8975,
+      "actual_count": 5089,
+      "elapsed_sec": 87.5,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|N40.0,http://hl7.org/fhir/sid/icd-10-cm|N40.1,http://hl7.org/fhir/sid/icd-10-cm|N40.2,http://hl7.org/fhir/sid/icd-10-cm|N40.3,http://hl7.org/fhir/sid/icd-9-cm|600.00,http://hl7.org/fhir/sid/icd-9-cm|600.01,http://hl7.org/fhir/sid/icd-9-cm|600.20,http://hl7.org/fhir/sid/icd-9-cm|600.21,http://hl7.org/fhir/sid/icd-9-cm|600.90,http://hl7.org/fhir/sid/icd-9-cm|600.91&patient.gender=male",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|N40.0,http://hl7.org/fhir/sid/icd-10-cm|N40.1,http://hl7.org/fhir/sid/icd-10-cm|N40.2,http://hl7.org/fhir/sid/icd-10-cm|N40.3,http://hl7.org/fhir/sid/icd-9-cm|600.00,http://hl7.org/fhir/sid/icd-9-cm|600.01,http://hl7.org/fhir/sid/icd-9-cm|600.20,http://hl7.org/fhir/sid/icd-9-cm|600.21,http://hl7.org/fhir/sid/icd-9-cm|600.90,http://hl7.org/fhir/sid/icd-9-cm|600.91&patient.gender=male",
+      "prompt_text": "Find male patients age 40 and older with a diagnosis of benign prostatic hyperplasia (BPH) \u2014 also known as prostate enlargement. This is a non-malignant condition distinct from prostate cancer."
+     },
+     "3-expert": {
+      "precision": 0.7968,
+      "recall": 0.5155,
+      "f1": 0.626,
+      "passed": false,
+      "expected_count": 8975,
+      "actual_count": 5807,
+      "elapsed_sec": 86.0,
+      "queries_generated": 1,
+      "primary_query_url": "Patient?gender=male&birthDate=le1986-08-31&_has:Condition:patient:code=http://hl7.org/fhir/sid/icd-10-cm|N40.0,http://hl7.org/fhir/sid/icd-10-cm|N40.1,http://hl7.org/fhir/sid/icd-10-cm|N40.2,http://hl7.org/fhir/sid/icd-10-cm|N40.3",
+      "additional_query_urls": [],
+      "raw_response": "Patient?gender=male&birthDate=le1986-08-31&_has:Condition:patient:code=http://hl7.org/fhir/sid/icd-10-cm|N40.0,http://hl7.org/fhir/sid/icd-10-cm|N40.1,http://hl7.org/fhir/sid/icd-10-cm|N40.2,http://hl7.org/fhir/sid/icd-10-cm|N40.3",
+      "prompt_text": "I need to find male patients aged 40 and older with a documented benign prostatic hyperplasia diagnosis. Search Condition resources for the SNOMED CT code for benign prostatic hyperplasia, then apply chained patient filters for sex equal to male and a birth date on or before the date corresponding to 40 years prior to today \u2014 FHIR does not support a direct patient.age parameter, so the age constraint must be expressed as a patient.birthdate upper bound. Do not broaden to prostate cancer or other prostate conditions, which are clinically and code-distinctly different."
+     }
+    },
     "copilot:claude-sonnet-4.6": {
      "1-naive": {
       "precision": 1.0,
@@ -1751,6 +2024,144 @@
       "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|77492,http://www.nlm.nih.gov/research/umls/rxnorm|25025,http://www.nlm.nih.gov/research/umls/rxnorm|37798",
       "additional_query_urls": [],
       "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|77492,http://www.nlm.nih.gov/research/umls/rxnorm|25025,http://www.nlm.nih.gov/research/umls/rxnorm|37798",
+      "prompt_text": "I need MedicationRequest resources for BPH-class drugs. RxNorm ingredient codes: tamsulosin (77492), finasteride (25025), terazosin (37798). Search MedicationRequest with these codes."
+     }
+    },
+    "copilot:claude-opus-4.7+mimic": {
+     "1-naive": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 15841,
+      "actual_count": 0,
+      "elapsed_sec": 15.0,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|77492,http://www.nlm.nih.gov/research/umls/rxnorm|38396,http://www.nlm.nih.gov/research/umls/rxnorm|72610,http://www.nlm.nih.gov/research/umls/rxnorm|17767,http://www.nlm.nih.gov/research/umls/rxnorm|473101,http://www.nlm.nih.gov/research/umls/rxnorm|3616,http://www.nlm.nih.gov/research/umls/rxnorm|37798,http://www.nlm.nih.gov/research/umls/rxnorm|8629&status=active",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|77492,http://www.nlm.nih.gov/research/umls/rxnorm|38396,http://www.nlm.nih.gov/research/umls/rxnorm|72610,http://www.nlm.nih.gov/research/umls/rxnorm|17767,http://www.nlm.nih.gov/research/umls/rxnorm|473101,http://www.nlm.nih.gov/research/umls/rxnorm|3616,http://www.nlm.nih.gov/research/umls/rxnorm|37798,http://www.nlm.nih.gov/research/umls/rxnorm|8629&status=active",
+      "prompt_text": "Find patients on BPH meds."
+     },
+     "1-broad": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 15841,
+      "actual_count": 0,
+      "elapsed_sec": 9.4,
+      "queries_generated": 3,
+      "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|71124",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|37798",
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|4459"
+      ],
+      "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|71124\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|37798\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|4459",
+      "prompt_text": "Find patients prescribed medications used to treat benign prostatic hyperplasia \u2014 including alpha-1-adrenergic blockers like tamsulosin and terazosin, and 5-alpha-reductase inhibitors like finasteride."
+     },
+     "1-expert": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 15841,
+      "actual_count": 0,
+      "elapsed_sec": 8.1,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|77492,http://www.nlm.nih.gov/research/umls/rxnorm|25025,http://www.nlm.nih.gov/research/umls/rxnorm|37798",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|77492,http://www.nlm.nih.gov/research/umls/rxnorm|25025,http://www.nlm.nih.gov/research/umls/rxnorm|37798",
+      "prompt_text": "I need MedicationRequest resources for BPH-class drugs. RxNorm ingredient codes: tamsulosin (77492), finasteride (25025), terazosin (37798). Search MedicationRequest with these codes."
+     },
+     "2-naive": {
+      "precision": 0.8593,
+      "recall": 0.5505,
+      "f1": 0.6711,
+      "passed": false,
+      "expected_count": 15841,
+      "actual_count": 10148,
+      "elapsed_sec": 103.4,
+      "queries_generated": 7,
+      "primary_query_url": "MedicationRequest?medication.code:text=tamsulosin",
+      "additional_query_urls": [
+       "MedicationRequest?medication.code:text=finasteride",
+       "MedicationRequest?medication.code:text=doxazosin",
+       "MedicationRequest?medication.code:text=terazosin",
+       "MedicationRequest?medication.code:text=alfuzosin",
+       "MedicationRequest?medication.code:text=dutasteride",
+       "MedicationRequest?medication.code:text=silodosin"
+      ],
+      "raw_response": "FINAL ANSWER:\n\nMedicationRequest?medication.code:text=tamsulosin\nMedicationRequest?medication.code:text=finasteride\nMedicationRequest?medication.code:text=doxazosin\nMedicationRequest?medication.code:text=terazosin\nMedicationRequest?medication.code:text=alfuzosin\nMedicationRequest?medication.code:text=dutasteride\nMedicationRequest?medication.code:text=silodosin",
+      "prompt_text": "Find patients on BPH meds."
+     },
+     "2-broad": {
+      "precision": 0.9801,
+      "recall": 0.286,
+      "f1": 0.4428,
+      "passed": false,
+      "expected_count": 15841,
+      "actual_count": 4622,
+      "elapsed_sec": 59.9,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|77492,http://www.nlm.nih.gov/research/umls/rxnorm|37798,http://www.nlm.nih.gov/research/umls/rxnorm|4508,http://www.nlm.nih.gov/research/umls/rxnorm|224905,http://www.nlm.nih.gov/research/umls/rxnorm|749,http://www.nlm.nih.gov/research/umls/rxnorm|3355",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|77492,http://www.nlm.nih.gov/research/umls/rxnorm|37798,http://www.nlm.nih.gov/research/umls/rxnorm|4508,http://www.nlm.nih.gov/research/umls/rxnorm|224905,http://www.nlm.nih.gov/research/umls/rxnorm|749,http://www.nlm.nih.gov/research/umls/rxnorm|3355",
+      "prompt_text": "Find patients prescribed medications used to treat benign prostatic hyperplasia \u2014 including alpha-1-adrenergic blockers like tamsulosin and terazosin, and 5-alpha-reductase inhibitors like finasteride."
+     },
+     "2-expert": {
+      "precision": 1.0,
+      "recall": 0.2353,
+      "f1": 0.3809,
+      "passed": false,
+      "expected_count": 15841,
+      "actual_count": 3727,
+      "elapsed_sec": 43.9,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|77492,http://www.nlm.nih.gov/research/umls/rxnorm|25025,http://www.nlm.nih.gov/research/umls/rxnorm|37798",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|77492,http://www.nlm.nih.gov/research/umls/rxnorm|25025,http://www.nlm.nih.gov/research/umls/rxnorm|37798",
+      "prompt_text": "I need MedicationRequest resources for BPH-class drugs. RxNorm ingredient codes: tamsulosin (77492), finasteride (25025), terazosin (37798). Search MedicationRequest with these codes."
+     },
+     "3-naive": {
+      "precision": 0.5567,
+      "recall": 0.1063,
+      "f1": 0.1785,
+      "passed": false,
+      "expected_count": 15841,
+      "actual_count": 3025,
+      "elapsed_sec": 87.2,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|77492,http://www.nlm.nih.gov/research/umls/rxnorm|4159,http://www.nlm.nih.gov/research/umls/rxnorm|72610,http://www.nlm.nih.gov/research/umls/rxnorm|519,http://www.nlm.nih.gov/research/umls/rxnorm|861634,http://www.nlm.nih.gov/research/umls/rxnorm|37798,http://www.nlm.nih.gov/research/umls/rxnorm|3443",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|77492,http://www.nlm.nih.gov/research/umls/rxnorm|4159,http://www.nlm.nih.gov/research/umls/rxnorm|72610,http://www.nlm.nih.gov/research/umls/rxnorm|519,http://www.nlm.nih.gov/research/umls/rxnorm|861634,http://www.nlm.nih.gov/research/umls/rxnorm|37798,http://www.nlm.nih.gov/research/umls/rxnorm|3443",
+      "prompt_text": "Find patients on BPH meds."
+     },
+     "3-broad": {
+      "precision": 0.9395,
+      "recall": 0.2129,
+      "f1": 0.3471,
+      "passed": false,
+      "expected_count": 15841,
+      "actual_count": 3589,
+      "elapsed_sec": 71.5,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|77492,http://www.nlm.nih.gov/research/umls/rxnorm|37798,http://www.nlm.nih.gov/research/umls/rxnorm|25025,http://www.nlm.nih.gov/research/umls/rxnorm|49276",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|77492,http://www.nlm.nih.gov/research/umls/rxnorm|37798,http://www.nlm.nih.gov/research/umls/rxnorm|25025,http://www.nlm.nih.gov/research/umls/rxnorm|49276",
+      "prompt_text": "Find patients prescribed medications used to treat benign prostatic hyperplasia \u2014 including alpha-1-adrenergic blockers like tamsulosin and terazosin, and 5-alpha-reductase inhibitors like finasteride."
+     },
+     "3-expert": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 15841,
+      "actual_count": 0,
+      "elapsed_sec": 26.2,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|77492,http://www.nlm.nih.gov/research/umls/rxnorm|25025,http://www.nlm.nih.gov/research/umls/rxnorm|37798",
+      "additional_query_urls": [],
+      "raw_response": "Regardless of server data, per instructions I emit the query URL with the specified codes:\n\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|77492,http://www.nlm.nih.gov/research/umls/rxnorm|25025,http://www.nlm.nih.gov/research/umls/rxnorm|37798",
       "prompt_text": "I need MedicationRequest resources for BPH-class drugs. RxNorm ingredient codes: tamsulosin (77492), finasteride (25025), terazosin (37798). Search MedicationRequest with these codes."
      }
     },

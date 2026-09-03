@@ -233,6 +233,148 @@
       "prompt_text": "I need to identify patients with steroid-induced avascular necrosis (osteonecrosis) using a multi-resource union that covers both confirmed cases and the at-risk population on chronic steroids. Run two searches and union the results: first, search Condition resources for the SNOMED CT concept for osteonecrosis caused by a drug; second, search MedicationRequest resources for prednisone using its RxNorm code. The prednisone path (Path C) reflects the much larger population of patients on chronic corticosteroids who have not developed AVN \u2014 prednisone is prescribed across hundreds of conditions including rheumatoid arthritis, asthma, inflammatory bowel disease, and organ transplantation, so the medication cohort will vastly over-capture relative to true AVN cases."
      }
     },
+    "copilot:claude-opus-4.7+mimic": {
+     "1-naive": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 102,
+      "actual_count": 0,
+      "elapsed_sec": 7.5,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|76107001",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|76107001",
+      "prompt_text": "Find all AVN patients."
+     },
+     "1-broad": {
+      "precision": 0.4286,
+      "recall": 0.0294,
+      "f1": 0.055,
+      "passed": false,
+      "expected_count": 102,
+      "actual_count": 7,
+      "elapsed_sec": 9.3,
+      "queries_generated": 3,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|1287143003",
+      "additional_query_urls": [
+       "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|M87.10,M87.130,M87.140,M87.150,M87.160,M87.170,M87.180",
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|8640"
+      ],
+      "raw_response": "Condition?code=http://snomed.info/sct|1287143003\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|M87.10,M87.130,M87.140,M87.150,M87.160,M87.170,M87.180\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|8640",
+      "prompt_text": "Find all drug-induced AVN patients or those at risk \u2014 by diagnosis or by prednisone prescriptions. Run multiple queries and union the patient sets."
+     },
+     "1-expert": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 102,
+      "actual_count": 0,
+      "elapsed_sec": 8.0,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|240201005",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|8640"
+      ],
+      "raw_response": "Condition?code=http://snomed.info/sct|240201005\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|8640",
+      "prompt_text": "I need to identify patients with steroid-induced avascular necrosis (osteonecrosis) using a multi-resource union that covers both confirmed cases and the at-risk population on chronic steroids. Run two searches and union the results: first, search Condition resources for the SNOMED CT concept for osteonecrosis caused by a drug; second, search MedicationRequest resources for prednisone using its RxNorm code. The prednisone path (Path C) reflects the much larger population of patients on chronic corticosteroids who have not developed AVN \u2014 prednisone is prescribed across hundreds of conditions including rheumatoid arthritis, asthma, inflammatory bowel disease, and organ transplantation, so the medication cohort will vastly over-capture relative to true AVN cases."
+     },
+     "2-naive": {
+      "precision": 0.0699,
+      "recall": 0.098,
+      "f1": 0.0816,
+      "passed": false,
+      "expected_count": 102,
+      "actual_count": 143,
+      "elapsed_sec": 28.8,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code:text=osteonecrosis",
+      "additional_query_urls": [],
+      "raw_response": "FINAL ANSWER:\n\nCondition?code:text=osteonecrosis",
+      "prompt_text": "Find all AVN patients."
+     },
+     "2-broad": {
+      "precision": 0.2778,
+      "recall": 0.049,
+      "f1": 0.0833,
+      "passed": false,
+      "expected_count": 102,
+      "actual_count": 18,
+      "elapsed_sec": 88.9,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|M87.10,http://hl7.org/fhir/sid/icd-10-cm|M87.150,http://hl7.org/fhir/sid/icd-10-cm|M87.151,http://hl7.org/fhir/sid/icd-10-cm|M87.152,http://hl7.org/fhir/sid/icd-10-cm|M87.153,http://hl7.org/fhir/sid/icd-10-cm|M87.154,http://hl7.org/fhir/sid/icd-10-cm|M87.155,http://hl7.org/fhir/sid/icd-10-cm|M87.156,http://hl7.org/fhir/sid/icd-10-cm|M87.18,http://hl7.org/fhir/sid/icd-10-cm|M87.19",
+      "additional_query_urls": [
+       "MedicationRequest?medication.code=http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Prednisone"
+      ],
+      "raw_response": "FINAL ANSWER:\n\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|M87.10,http://hl7.org/fhir/sid/icd-10-cm|M87.150,http://hl7.org/fhir/sid/icd-10-cm|M87.151,http://hl7.org/fhir/sid/icd-10-cm|M87.152,http://hl7.org/fhir/sid/icd-10-cm|M87.153,http://hl7.org/fhir/sid/icd-10-cm|M87.154,http://hl7.org/fhir/sid/icd-10-cm|M87.155,http://hl7.org/fhir/sid/icd-10-cm|M87.156,http://hl7.org/fhir/sid/icd-10-cm|M87.18,http://hl7.org/fhir/sid/icd-10-cm|M87.19\nMedicationRequest?medication.code=http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Prednisone",
+      "prompt_text": "Find all drug-induced AVN patients or those at risk \u2014 by diagnosis or by prednisone prescriptions. Run multiple queries and union the patient sets."
+     },
+     "2-expert": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 102,
+      "actual_count": 0,
+      "elapsed_sec": 64.7,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|1074571000119104",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|8640"
+      ],
+      "raw_response": "FINAL ANSWER:\n\nCondition?code=http://snomed.info/sct|1074571000119104\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|8640",
+      "prompt_text": "I need to identify patients with steroid-induced avascular necrosis (osteonecrosis) using a multi-resource union that covers both confirmed cases and the at-risk population on chronic steroids. Run two searches and union the results: first, search Condition resources for the SNOMED CT concept for osteonecrosis caused by a drug; second, search MedicationRequest resources for prednisone using its RxNorm code. The prednisone path (Path C) reflects the much larger population of patients on chronic corticosteroids who have not developed AVN \u2014 prednisone is prescribed across hundreds of conditions including rheumatoid arthritis, asthma, inflammatory bowel disease, and organ transplantation, so the medication cohort will vastly over-capture relative to true AVN cases."
+     },
+     "3-naive": {
+      "precision": 0.0699,
+      "recall": 0.098,
+      "f1": 0.0816,
+      "passed": false,
+      "expected_count": 102,
+      "actual_count": 143,
+      "elapsed_sec": 42.3,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code:text=osteonecrosis",
+      "additional_query_urls": [],
+      "raw_response": "FINAL ANSWER:\n\nCondition?code:text=osteonecrosis",
+      "prompt_text": "Find all AVN patients."
+     },
+     "3-broad": {
+      "precision": 0.2494,
+      "recall": 1.0,
+      "f1": 0.3992,
+      "passed": false,
+      "expected_count": 102,
+      "actual_count": 409,
+      "elapsed_sec": 114.5,
+      "queries_generated": 3,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|M87.10,http://hl7.org/fhir/sid/icd-10-cm|M87.11,http://hl7.org/fhir/sid/icd-10-cm|M87.12,http://hl7.org/fhir/sid/icd-10-cm|M87.13,http://hl7.org/fhir/sid/icd-10-cm|M87.14,http://hl7.org/fhir/sid/icd-10-cm|M87.15,http://hl7.org/fhir/sid/icd-10-cm|M87.150,http://hl7.org/fhir/sid/icd-10-cm|M87.16,http://hl7.org/fhir/sid/icd-10-cm|M87.17,http://hl7.org/fhir/sid/icd-10-cm|M87.18,http://hl7.org/fhir/sid/icd-10-cm|M87.19",
+      "additional_query_urls": [
+       "Condition?code=http://hl7.org/fhir/sid/icd-9-cm|733.40,http://hl7.org/fhir/sid/icd-9-cm|733.41,http://hl7.org/fhir/sid/icd-9-cm|733.42,http://hl7.org/fhir/sid/icd-9-cm|733.43,http://hl7.org/fhir/sid/icd-9-cm|733.44,http://hl7.org/fhir/sid/icd-9-cm|733.45,http://hl7.org/fhir/sid/icd-9-cm|733.49",
+       "MedicationRequest?medication.code=http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Prednisone,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|PredniSONE"
+      ],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|M87.10,http://hl7.org/fhir/sid/icd-10-cm|M87.11,http://hl7.org/fhir/sid/icd-10-cm|M87.12,http://hl7.org/fhir/sid/icd-10-cm|M87.13,http://hl7.org/fhir/sid/icd-10-cm|M87.14,http://hl7.org/fhir/sid/icd-10-cm|M87.15,http://hl7.org/fhir/sid/icd-10-cm|M87.150,http://hl7.org/fhir/sid/icd-10-cm|M87.16,http://hl7.org/fhir/sid/icd-10-cm|M87.17,http://hl7.org/fhir/sid/icd-10-cm|M87.18,http://hl7.org/fhir/sid/icd-10-cm|M87.19\nCondition?code=http://hl7.org/fhir/sid/icd-9-cm|733.40,http://hl7.org/fhir/sid/icd-9-cm|733.41,http://hl7.org/fhir/sid/icd-9-cm|733.42,http://hl7.org/fhir/sid/icd-9-cm|733.43,http://hl7.org/fhir/sid/icd-9-cm|733.44,http://hl7.org/fhir/sid/icd-9-cm|733.45,http://hl7.org/fhir/sid/icd-9-cm|733.49\nMedicationRequest?medication.code=http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Prednisone,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|PredniSONE",
+      "prompt_text": "Find all drug-induced AVN patients or those at risk \u2014 by diagnosis or by prednisone prescriptions. Run multiple queries and union the patient sets."
+     },
+     "3-expert": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 102,
+      "actual_count": 0,
+      "elapsed_sec": 51.6,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|240161005",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|8640"
+      ],
+      "raw_response": "Condition?code=http://snomed.info/sct|240161005\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|8640",
+      "prompt_text": "I need to identify patients with steroid-induced avascular necrosis (osteonecrosis) using a multi-resource union that covers both confirmed cases and the at-risk population on chronic steroids. Run two searches and union the results: first, search Condition resources for the SNOMED CT concept for osteonecrosis caused by a drug; second, search MedicationRequest resources for prednisone using its RxNorm code. The prednisone path (Path C) reflects the much larger population of patients on chronic corticosteroids who have not developed AVN \u2014 prednisone is prescribed across hundreds of conditions including rheumatoid arthritis, asthma, inflammatory bowel disease, and organ transplantation, so the medication cohort will vastly over-capture relative to true AVN cases."
+     }
+    },
     "copilot:claude-sonnet-4.6": {
      "1-naive": {
       "precision": 0.0,
@@ -1012,6 +1154,134 @@
       "prompt_text": "I need to find patients with a documented diagnosis of drug-induced osteonecrosis (avascular necrosis caused by a medication) from their Condition resources. Search Condition for the SNOMED CT concept for osteonecrosis caused by a drug \u2014 this is the post-coordinated iatrogenic bone disease concept, distinct from idiopathic or traumatic osteonecrosis. This is a relatively rare diagnosis even among chronic steroid users, so the dx cohort will be substantially smaller than the population on prednisone."
      }
     },
+    "copilot:claude-opus-4.7+mimic": {
+     "1-naive": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 102,
+      "actual_count": 0,
+      "elapsed_sec": 14.3,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|449282007",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|449282007",
+      "prompt_text": "Find patients with drug-induced osteonecrosis."
+     },
+     "1-broad": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 102,
+      "actual_count": 0,
+      "elapsed_sec": 7.5,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|240206009",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|240206009",
+      "prompt_text": "Find patients diagnosed with osteonecrosis caused by drug \u2014 also called avascular necrosis (AVN), most commonly induced by chronic corticosteroid therapy."
+     },
+     "1-expert": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 102,
+      "actual_count": 0,
+      "elapsed_sec": 7.8,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|240134008",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|240134008",
+      "prompt_text": "I need to find patients with a documented diagnosis of drug-induced osteonecrosis (avascular necrosis caused by a medication) from their Condition resources. Search Condition for the SNOMED CT concept for osteonecrosis caused by a drug \u2014 this is the post-coordinated iatrogenic bone disease concept, distinct from idiopathic or traumatic osteonecrosis. This is a relatively rare diagnosis even among chronic steroid users, so the dx cohort will be substantially smaller than the population on prednisone."
+     },
+     "2-naive": {
+      "precision": 1.0,
+      "recall": 0.0294,
+      "f1": 0.0571,
+      "passed": false,
+      "expected_count": 102,
+      "actual_count": 3,
+      "elapsed_sec": 30.8,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|M87.10,http://hl7.org/fhir/sid/icd-10-cm|M87.11,http://hl7.org/fhir/sid/icd-10-cm|M87.12,http://hl7.org/fhir/sid/icd-10-cm|M87.13,http://hl7.org/fhir/sid/icd-10-cm|M87.14,http://hl7.org/fhir/sid/icd-10-cm|M87.15,http://hl7.org/fhir/sid/icd-10-cm|M87.16,http://hl7.org/fhir/sid/icd-10-cm|M87.18,http://hl7.org/fhir/sid/icd-10-cm|M87.19",
+      "additional_query_urls": [],
+      "raw_response": "FINAL ANSWER:\n\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|M87.10,http://hl7.org/fhir/sid/icd-10-cm|M87.11,http://hl7.org/fhir/sid/icd-10-cm|M87.12,http://hl7.org/fhir/sid/icd-10-cm|M87.13,http://hl7.org/fhir/sid/icd-10-cm|M87.14,http://hl7.org/fhir/sid/icd-10-cm|M87.15,http://hl7.org/fhir/sid/icd-10-cm|M87.16,http://hl7.org/fhir/sid/icd-10-cm|M87.18,http://hl7.org/fhir/sid/icd-10-cm|M87.19",
+      "prompt_text": "Find patients with drug-induced osteonecrosis."
+     },
+     "2-broad": {
+      "precision": 0.2381,
+      "recall": 0.049,
+      "f1": 0.0813,
+      "passed": false,
+      "expected_count": 102,
+      "actual_count": 21,
+      "elapsed_sec": 31.9,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|M87.10,M87.11,M87.12,M87.130,M87.131,M87.132,M87.14,M87.150,M87.151,M87.152,M87.160,M87.161,M87.162,M87.170,M87.171,M87.172,M87.180,M87.181,M87.182,M87.19",
+      "additional_query_urls": [],
+      "raw_response": "FINAL ANSWER:\n\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|M87.10,M87.11,M87.12,M87.130,M87.131,M87.132,M87.14,M87.150,M87.151,M87.152,M87.160,M87.161,M87.162,M87.170,M87.171,M87.172,M87.180,M87.181,M87.182,M87.19",
+      "prompt_text": "Find patients diagnosed with osteonecrosis caused by drug \u2014 also called avascular necrosis (AVN), most commonly induced by chronic corticosteroid therapy."
+     },
+     "2-expert": {
+      "precision": 0.0699,
+      "recall": 0.098,
+      "f1": 0.0816,
+      "passed": false,
+      "expected_count": 102,
+      "actual_count": 143,
+      "elapsed_sec": 50.1,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code:text=osteonecrosis",
+      "additional_query_urls": [],
+      "raw_response": "FINAL ANSWER:\n\nCondition?code:text=osteonecrosis due to drugs",
+      "prompt_text": "I need to find patients with a documented diagnosis of drug-induced osteonecrosis (avascular necrosis caused by a medication) from their Condition resources. Search Condition for the SNOMED CT concept for osteonecrosis caused by a drug \u2014 this is the post-coordinated iatrogenic bone disease concept, distinct from idiopathic or traumatic osteonecrosis. This is a relatively rare diagnosis even among chronic steroid users, so the dx cohort will be substantially smaller than the population on prednisone."
+     },
+     "3-naive": {
+      "precision": 0.4286,
+      "recall": 0.0294,
+      "f1": 0.055,
+      "passed": false,
+      "expected_count": 102,
+      "actual_count": 7,
+      "elapsed_sec": 31.7,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|315801000119108,http://snomed.info/sct|699687003,http://hl7.org/fhir/sid/icd-10-cm|M87.180,http://hl7.org/fhir/sid/icd-10-cm|M87.10,http://hl7.org/fhir/sid/icd-10-cm|M87.130,http://hl7.org/fhir/sid/icd-10-cm|M87.150",
+      "additional_query_urls": [],
+      "raw_response": "FINAL ANSWER:\n\nCondition?code=http://snomed.info/sct|315801000119108,http://snomed.info/sct|699687003,http://hl7.org/fhir/sid/icd-10-cm|M87.180,http://hl7.org/fhir/sid/icd-10-cm|M87.10,http://hl7.org/fhir/sid/icd-10-cm|M87.130,http://hl7.org/fhir/sid/icd-10-cm|M87.150",
+      "prompt_text": "Find patients with drug-induced osteonecrosis."
+     },
+     "3-broad": {
+      "precision": 0.2381,
+      "recall": 0.049,
+      "f1": 0.0813,
+      "passed": false,
+      "expected_count": 102,
+      "actual_count": 21,
+      "elapsed_sec": 41.6,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|M87.10,http://hl7.org/fhir/sid/icd-10-cm|M87.11,http://hl7.org/fhir/sid/icd-10-cm|M87.150,http://hl7.org/fhir/sid/icd-10-cm|M87.151,http://hl7.org/fhir/sid/icd-10-cm|M87.152,http://hl7.org/fhir/sid/icd-10-cm|M87.130,http://hl7.org/fhir/sid/icd-10-cm|M87.131,http://hl7.org/fhir/sid/icd-10-cm|M87.132,http://hl7.org/fhir/sid/icd-10-cm|M87.140,http://hl7.org/fhir/sid/icd-10-cm|M87.141,http://hl7.org/fhir/sid/icd-10-cm|M87.142,http://hl7.org/fhir/sid/icd-10-cm|M87.160,http://hl7.org/fhir/sid/icd-10-cm|M87.161,http://hl7.org/fhir/sid/icd-10-cm|M87.162,http://hl7.org/fhir/sid/icd-10-cm|M87.170,http://hl7.org/fhir/sid/icd-10-cm|M87.171,http://hl7.org/fhir/sid/icd-10-cm|M87.172,http://hl7.org/fhir/sid/icd-10-cm|M87.180,http://hl7.org/fhir/sid/icd-10-cm|M87.19",
+      "additional_query_urls": [],
+      "raw_response": "FINAL ANSWER:\n\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|M87.10,http://hl7.org/fhir/sid/icd-10-cm|M87.11,http://hl7.org/fhir/sid/icd-10-cm|M87.150,http://hl7.org/fhir/sid/icd-10-cm|M87.151,http://hl7.org/fhir/sid/icd-10-cm|M87.152,http://hl7.org/fhir/sid/icd-10-cm|M87.130,http://hl7.org/fhir/sid/icd-10-cm|M87.131,http://hl7.org/fhir/sid/icd-10-cm|M87.132,http://hl7.org/fhir/sid/icd-10-cm|M87.140,http://hl7.org/fhir/sid/icd-10-cm|M87.141,http://hl7.org/fhir/sid/icd-10-cm|M87.142,http://hl7.org/fhir/sid/icd-10-cm|M87.160,http://hl7.org/fhir/sid/icd-10-cm|M87.161,http://hl7.org/fhir/sid/icd-10-cm|M87.162,http://hl7.org/fhir/sid/icd-10-cm|M87.170,http://hl7.org/fhir/sid/icd-10-cm|M87.171,http://hl7.org/fhir/sid/icd-10-cm|M87.172,http://hl7.org/fhir/sid/icd-10-cm|M87.180,http://hl7.org/fhir/sid/icd-10-cm|M87.19",
+      "prompt_text": "Find patients diagnosed with osteonecrosis caused by drug \u2014 also called avascular necrosis (AVN), most commonly induced by chronic corticosteroid therapy."
+     },
+     "3-expert": {
+      "precision": 0.0699,
+      "recall": 0.098,
+      "f1": 0.0816,
+      "passed": false,
+      "expected_count": 102,
+      "actual_count": 143,
+      "elapsed_sec": 43.5,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code:text=osteonecrosis",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code:text=osteonecrosis due to drugs",
+      "prompt_text": "I need to find patients with a documented diagnosis of drug-induced osteonecrosis (avascular necrosis caused by a medication) from their Condition resources. Search Condition for the SNOMED CT concept for osteonecrosis caused by a drug \u2014 this is the post-coordinated iatrogenic bone disease concept, distinct from idiopathic or traumatic osteonecrosis. This is a relatively rare diagnosis even among chronic steroid users, so the dx cohort will be substantially smaller than the population on prednisone."
+     }
+    },
     "copilot:claude-sonnet-4.6": {
      "1-naive": {
       "precision": 0.0,
@@ -1748,6 +2018,124 @@
       "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|8640",
       "additional_query_urls": [],
       "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|8640",
+      "prompt_text": "I need to find patients with medication orders for prednisone, the corticosteroid causally implicated in steroid-induced avascular necrosis. Search MedicationRequest resources for prednisone using its RxNorm code. This is an extremely high-cross-indication search \u2014 prednisone is prescribed for rheumatoid arthritis, asthma, IBD, autoimmune disorders, organ transplantation, and many other conditions, and the overwhelming majority of prednisone users never develop AVN. The medication-only cohort models the at-risk population for complication surveillance rather than confirmed AVN cases."
+     }
+    },
+    "copilot:claude-opus-4.7+mimic": {
+     "1-naive": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 15833,
+      "actual_count": 0,
+      "elapsed_sec": 9.7,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?code:in=http://hl7.org/fhir/ValueSet/atc|J05A",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?code:in=http://hl7.org/fhir/ValueSet/atc|J05A",
+      "prompt_text": "Find patients on AVN medications."
+     },
+     "1-broad": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 15833,
+      "actual_count": 0,
+      "elapsed_sec": 7.9,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|8640",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|8640",
+      "prompt_text": "Find patients prescribed prednisone \u2014 chronic corticosteroid use is the leading drug cause of avascular necrosis but prednisone has many other indications."
+     },
+     "1-expert": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 15833,
+      "actual_count": 0,
+      "elapsed_sec": 7.5,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|8640",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|8640",
+      "prompt_text": "I need to find patients with medication orders for prednisone, the corticosteroid causally implicated in steroid-induced avascular necrosis. Search MedicationRequest resources for prednisone using its RxNorm code. This is an extremely high-cross-indication search \u2014 prednisone is prescribed for rheumatoid arthritis, asthma, IBD, autoimmune disorders, organ transplantation, and many other conditions, and the overwhelming majority of prednisone users never develop AVN. The medication-only cohort models the at-risk population for complication surveillance rather than confirmed AVN cases."
+     },
+     "2-naive": {
+      "elapsed_sec": 49.1,
+      "error": "Could not parse FHIR query from LLM response: \"AVN medications\" is ambiguous. Could you clarify which meaning you intend?\n\n1. **AV Nodal blocking agents** (rate-control drugs used in atrial fibrillati"
+     },
+     "2-broad": {
+      "precision": 1.0,
+      "recall": 0.1336,
+      "f1": 0.2358,
+      "passed": false,
+      "expected_count": 15833,
+      "actual_count": 2116,
+      "elapsed_sec": 47.2,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?medication.code:text=prednisone",
+      "additional_query_urls": [],
+      "raw_response": "FINAL ANSWER:\n\nMedicationRequest?medication.code:text=prednisone",
+      "prompt_text": "Find patients prescribed prednisone \u2014 chronic corticosteroid use is the leading drug cause of avascular necrosis but prednisone has many other indications."
+     },
+     "2-expert": {
+      "precision": 1.0,
+      "recall": 0.1336,
+      "f1": 0.2358,
+      "passed": false,
+      "expected_count": 15833,
+      "actual_count": 2116,
+      "elapsed_sec": 44.2,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|8640",
+      "additional_query_urls": [],
+      "raw_response": "FINAL ANSWER:\n\nMedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|8640",
+      "prompt_text": "I need to find patients with medication orders for prednisone, the corticosteroid causally implicated in steroid-induced avascular necrosis. Search MedicationRequest resources for prednisone using its RxNorm code. This is an extremely high-cross-indication search \u2014 prednisone is prescribed for rheumatoid arthritis, asthma, IBD, autoimmune disorders, organ transplantation, and many other conditions, and the overwhelming majority of prednisone users never develop AVN. The medication-only cohort models the at-risk population for complication surveillance rather than confirmed AVN cases."
+     },
+     "3-naive": {
+      "precision": 0.3315,
+      "recall": 0.038,
+      "f1": 0.0681,
+      "passed": false,
+      "expected_count": 15833,
+      "actual_count": 1813,
+      "elapsed_sec": 41.4,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|46041,http://www.nlm.nih.gov/research/umls/rxnorm|203152,http://www.nlm.nih.gov/research/umls/rxnorm|77655,http://www.nlm.nih.gov/research/umls/rxnorm|11473,http://www.nlm.nih.gov/research/umls/rxnorm|115264,http://www.nlm.nih.gov/research/umls/rxnorm|55685,http://www.nlm.nih.gov/research/umls/rxnorm|42682,http://www.nlm.nih.gov/research/umls/rxnorm|993449",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|46041,http://www.nlm.nih.gov/research/umls/rxnorm|203152,http://www.nlm.nih.gov/research/umls/rxnorm|77655,http://www.nlm.nih.gov/research/umls/rxnorm|11473,http://www.nlm.nih.gov/research/umls/rxnorm|115264,http://www.nlm.nih.gov/research/umls/rxnorm|55685,http://www.nlm.nih.gov/research/umls/rxnorm|42682,http://www.nlm.nih.gov/research/umls/rxnorm|993449",
+      "prompt_text": "Find patients on AVN medications."
+     },
+     "3-broad": {
+      "precision": 0.8629,
+      "recall": 0.175,
+      "f1": 0.2909,
+      "passed": false,
+      "expected_count": 15833,
+      "actual_count": 3210,
+      "elapsed_sec": 29.7,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?code=http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|PredniSONE,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Prednisone",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?code=http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|PredniSONE,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Prednisone",
+      "prompt_text": "Find patients prescribed prednisone \u2014 chronic corticosteroid use is the leading drug cause of avascular necrosis but prednisone has many other indications."
+     },
+     "3-expert": {
+      "precision": 1.0,
+      "recall": 0.1336,
+      "f1": 0.2358,
+      "passed": false,
+      "expected_count": 15833,
+      "actual_count": 2116,
+      "elapsed_sec": 43.1,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|8640",
+      "additional_query_urls": [],
+      "raw_response": "FINAL ANSWER:\n\nMedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|8640",
       "prompt_text": "I need to find patients with medication orders for prednisone, the corticosteroid causally implicated in steroid-induced avascular necrosis. Search MedicationRequest resources for prednisone using its RxNorm code. This is an extremely high-cross-indication search \u2014 prednisone is prescribed for rheumatoid arthritis, asthma, IBD, autoimmune disorders, organ transplantation, and many other conditions, and the overwhelming majority of prednisone users never develop AVN. The medication-only cohort models the at-risk population for complication surveillance rather than confirmed AVN cases."
      }
     },

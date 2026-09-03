@@ -988,6 +988,154 @@
       "prompt_text": "I need to identify my complete depression patient population for a quality improvement initiative on PHQ-9 screening. From clinical experience, I know depression patients are documented in different ways: some have a formal diagnosis code (MDD, recurrent depression, dysthymia), and a substantial number are on antidepressants \u2014 particularly SSRIs \u2014 without a depression diagnosis ever being formally coded. Many SSRI prescriptions are written empirically for symptoms (low mood, anxiety, insomnia) without a definitive diagnosis.\n\nPlease run multiple FHIR queries to capture the full population:\n1. Patients with any depression diagnosis (MDD, recurrent depression, dysthymia, or unspecified depressive disorder)\n2. Patients prescribed antidepressants (SSRIs, SNRIs, atypicals)\n\nFor each query, return the matching resources. I want the union of all patients found across both approaches."
      }
     },
+    "copilot:claude-opus-4.7+mimic": {
+     "1-naive": {
+      "precision": 1.0,
+      "recall": 0.1527,
+      "f1": 0.265,
+      "passed": false,
+      "expected_count": 37597,
+      "actual_count": 5742,
+      "elapsed_sec": 43.5,
+      "queries_generated": 3,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|F32.0,http://hl7.org/fhir/sid/icd-10-cm|F32.1,http://hl7.org/fhir/sid/icd-10-cm|F32.2,http://hl7.org/fhir/sid/icd-10-cm|F32.3,http://hl7.org/fhir/sid/icd-10-cm|F32.4,http://hl7.org/fhir/sid/icd-10-cm|F32.5,http://hl7.org/fhir/sid/icd-10-cm|F32.9,http://hl7.org/fhir/sid/icd-10-cm|F33.0,http://hl7.org/fhir/sid/icd-10-cm|F33.1,http://hl7.org/fhir/sid/icd-10-cm|F33.2,http://hl7.org/fhir/sid/icd-10-cm|F33.3,http://hl7.org/fhir/sid/icd-10-cm|F33.40,http://hl7.org/fhir/sid/icd-10-cm|F33.41,http://hl7.org/fhir/sid/icd-10-cm|F33.42,http://hl7.org/fhir/sid/icd-10-cm|F33.9,http://hl7.org/fhir/sid/icd-10-cm|F34.1,http://hl7.org/fhir/sid/icd-10-cm|F34.81,http://hl7.org/fhir/sid/icd-10-cm|F34.89,http://hl7.org/fhir/sid/icd-10-cm|F34.9&_include=Condition:patient",
+      "additional_query_urls": [
+       "Condition?code=http://snomed.info/sct|370143000,http://snomed.info/sct|66344007,http://snomed.info/sct|35489007,http://snomed.info/sct|78667006,http://snomed.info/sct|35742006,http://snomed.info/sct|36923009&_include=Condition:patient",
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|321988,http://www.nlm.nih.gov/research/umls/rxnorm|312938,http://www.nlm.nih.gov/research/umls/rxnorm|315221,http://www.nlm.nih.gov/research/umls/rxnorm|32937,http://www.nlm.nih.gov/research/umls/rxnorm|36437,http://www.nlm.nih.gov/research/umls/rxnorm|58827,http://www.nlm.nih.gov/research/umls/rxnorm|321918,http://www.nlm.nih.gov/research/umls/rxnorm|72625,http://www.nlm.nih.gov/research/umls/rxnorm|39786,http://www.nlm.nih.gov/research/umls/rxnorm|68180,http://www.nlm.nih.gov/research/umls/rxnorm|10737,http://www.nlm.nih.gov/research/umls/rxnorm|301542,http://www.nlm.nih.gov/research/umls/rxnorm|38400,http://www.nlm.nih.gov/research/umls/rxnorm|15996,http://www.nlm.nih.gov/research/umls/rxnorm|41493,http://www.nlm.nih.gov/research/umls/rxnorm|2556,http://www.nlm.nih.gov/research/umls/rxnorm|4493,http://www.nlm.nih.gov/research/umls/rxnorm|3247&_include=MedicationRequest:patient"
+      ],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|F32.0,http://hl7.org/fhir/sid/icd-10-cm|F32.1,http://hl7.org/fhir/sid/icd-10-cm|F32.2,http://hl7.org/fhir/sid/icd-10-cm|F32.3,http://hl7.org/fhir/sid/icd-10-cm|F32.4,http://hl7.org/fhir/sid/icd-10-cm|F32.5,http://hl7.org/fhir/sid/icd-10-cm|F32.9,http://hl7.org/fhir/sid/icd-10-cm|F33.0,http://hl7.org/fhir/sid/icd-10-cm|F33.1,http://hl7.org/fhir/sid/icd-10-cm|F33.2,http://hl7.org/fhir/sid/icd-10-cm|F33.3,http://hl7.org/fhir/sid/icd-10-cm|F33.40,http://hl7.org/fhir/sid/icd-10-cm|F33.41,http://hl7.org/fhir/sid/icd-10-cm|F33.42,http://hl7.org/fhir/sid/icd-10-cm|F33.9,http://hl7.org/fhir/sid/icd-10-cm|F34.1,http://hl7.org/fhir/sid/icd-10-cm|F34.81,http://hl7.org/fhir/sid/icd-10-cm|F34.89,http://hl7.org/fhir/sid/icd-10-cm|F34.9&_include=Condition:patient\nCondition?code=http://snomed.info/sct|370143000,http://snomed.info/sct|66344007,http://snomed.info/sct|35489007,http://snomed.info/sct|78667006,http://snomed.info/sct|35742006,http://snomed.info/sct|36923009&_include=Condition:patient\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|321988,http://www.nlm.nih.gov/research/umls/rxnorm|312938,http://www.nlm.nih.gov/research/umls/rxnorm|315221,http://www.nlm.nih.gov/research/umls/rxnorm|32937,http://www.nlm.nih.gov/research/umls/rxnorm|36437,http://www.nlm.nih.gov/research/umls/rxnorm|58827,http://www.nlm.nih.gov/research/umls/rxnorm|321918,http://www.nlm.nih.gov/research/umls/rxnorm|72625,http://www.nlm.nih.gov/research/umls/rxnorm|39786,http://www.nlm.nih.gov/research/umls/rxnorm|68180,http://www.nlm.nih.gov/research/umls/rxnorm|10737,http://www.nlm.nih.gov/research/umls/rxnorm|301542,http://www.nlm.nih.gov/research/umls/rxnorm|38400,http://www.nlm.nih.gov/research/umls/rxnorm|15996,http://www.nlm.nih.gov/research/umls/rxnorm|41493,http://www.nlm.nih.gov/research/umls/rxnorm|2556,http://www.nlm.nih.gov/research/umls/rxnorm|4493,http://www.nlm.nih.gov/research/umls/rxnorm|3247&_include=MedicationRequest:patient",
+      "prompt_text": "I need to identify my complete depression patient population for a quality improvement initiative on PHQ-9 screening. From clinical experience, I know depression patients are documented in different ways: some have a formal diagnosis code (MDD, recurrent depression, dysthymia), and a substantial number are on antidepressants \u2014 particularly SSRIs \u2014 without a depression diagnosis ever being formally coded. Many SSRI prescriptions are written empirically for symptoms (low mood, anxiety, insomnia) without a definitive diagnosis.\n\nPlease run multiple FHIR queries to capture the full population:\n1. Patients with any depression diagnosis (MDD, recurrent depression, dysthymia, or unspecified depressive disorder)\n2. Patients prescribed antidepressants (SSRIs, SNRIs, atypicals)\n\nFor each query, return the matching resources. I want the union of all patients found across both approaches."
+     },
+     "1-broad": {
+      "precision": 1.0,
+      "recall": 0.1527,
+      "f1": 0.265,
+      "passed": false,
+      "expected_count": 37597,
+      "actual_count": 5742,
+      "elapsed_sec": 32.3,
+      "queries_generated": 3,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|F32.0,http://hl7.org/fhir/sid/icd-10-cm|F32.1,http://hl7.org/fhir/sid/icd-10-cm|F32.2,http://hl7.org/fhir/sid/icd-10-cm|F32.3,http://hl7.org/fhir/sid/icd-10-cm|F32.4,http://hl7.org/fhir/sid/icd-10-cm|F32.5,http://hl7.org/fhir/sid/icd-10-cm|F32.9,http://hl7.org/fhir/sid/icd-10-cm|F32.A,http://hl7.org/fhir/sid/icd-10-cm|F33.0,http://hl7.org/fhir/sid/icd-10-cm|F33.1,http://hl7.org/fhir/sid/icd-10-cm|F33.2,http://hl7.org/fhir/sid/icd-10-cm|F33.3,http://hl7.org/fhir/sid/icd-10-cm|F33.40,http://hl7.org/fhir/sid/icd-10-cm|F33.41,http://hl7.org/fhir/sid/icd-10-cm|F33.42,http://hl7.org/fhir/sid/icd-10-cm|F33.9,http://hl7.org/fhir/sid/icd-10-cm|F34.1&_include=Condition:subject",
+      "additional_query_urls": [
+       "Condition?code=http://snomed.info/sct|370143000,http://snomed.info/sct|35489007,http://snomed.info/sct|66344007,http://snomed.info/sct|78667006,http://snomed.info/sct|36923009,http://snomed.info/sct|310495003&_include=Condition:subject",
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|321988,http://www.nlm.nih.gov/research/umls/rxnorm|312938,http://www.nlm.nih.gov/research/umls/rxnorm|2556,http://www.nlm.nih.gov/research/umls/rxnorm|32937,http://www.nlm.nih.gov/research/umls/rxnorm|36437,http://www.nlm.nih.gov/research/umls/rxnorm|58827,http://www.nlm.nih.gov/research/umls/rxnorm|72625,http://www.nlm.nih.gov/research/umls/rxnorm|221078,http://www.nlm.nih.gov/research/umls/rxnorm|39786,http://www.nlm.nih.gov/research/umls/rxnorm|38400,http://www.nlm.nih.gov/research/umls/rxnorm|42355,http://www.nlm.nih.gov/research/umls/rxnorm|3247,http://www.nlm.nih.gov/research/umls/rxnorm|15996,http://www.nlm.nih.gov/research/umls/rxnorm|643302&_include=MedicationRequest:subject"
+      ],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|F32.0,http://hl7.org/fhir/sid/icd-10-cm|F32.1,http://hl7.org/fhir/sid/icd-10-cm|F32.2,http://hl7.org/fhir/sid/icd-10-cm|F32.3,http://hl7.org/fhir/sid/icd-10-cm|F32.4,http://hl7.org/fhir/sid/icd-10-cm|F32.5,http://hl7.org/fhir/sid/icd-10-cm|F32.9,http://hl7.org/fhir/sid/icd-10-cm|F32.A,http://hl7.org/fhir/sid/icd-10-cm|F33.0,http://hl7.org/fhir/sid/icd-10-cm|F33.1,http://hl7.org/fhir/sid/icd-10-cm|F33.2,http://hl7.org/fhir/sid/icd-10-cm|F33.3,http://hl7.org/fhir/sid/icd-10-cm|F33.40,http://hl7.org/fhir/sid/icd-10-cm|F33.41,http://hl7.org/fhir/sid/icd-10-cm|F33.42,http://hl7.org/fhir/sid/icd-10-cm|F33.9,http://hl7.org/fhir/sid/icd-10-cm|F34.1&_include=Condition:subject\nCondition?code=http://snomed.info/sct|370143000,http://snomed.info/sct|35489007,http://snomed.info/sct|66344007,http://snomed.info/sct|78667006,http://snomed.info/sct|36923009,http://snomed.info/sct|310495003&_include=Condition:subject\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|321988,http://www.nlm.nih.gov/research/umls/rxnorm|312938,http://www.nlm.nih.gov/research/umls/rxnorm|2556,http://www.nlm.nih.gov/research/umls/rxnorm|32937,http://www.nlm.nih.gov/research/umls/rxnorm|36437,http://www.nlm.nih.gov/research/umls/rxnorm|58827,http://www.nlm.nih.gov/research/umls/rxnorm|72625,http://www.nlm.nih.gov/research/umls/rxnorm|221078,http://www.nlm.nih.gov/research/umls/rxnorm|39786,http://www.nlm.nih.gov/research/umls/rxnorm|38400,http://www.nlm.nih.gov/research/umls/rxnorm|42355,http://www.nlm.nih.gov/research/umls/rxnorm|3247,http://www.nlm.nih.gov/research/umls/rxnorm|15996,http://www.nlm.nih.gov/research/umls/rxnorm|643302&_include=MedicationRequest:subject",
+      "prompt_text": "I need to identify my complete depression patient population for a quality improvement initiative on PHQ-9 screening. From clinical experience, I know depression patients are documented in different ways: some have a formal diagnosis code (MDD, recurrent depression, dysthymia), and a substantial number are on antidepressants \u2014 particularly SSRIs \u2014 without a depression diagnosis ever being formally coded. Many SSRI prescriptions are written empirically for symptoms (low mood, anxiety, insomnia) without a definitive diagnosis.\n\nPlease run multiple FHIR queries to capture the full population:\n1. Patients with any depression diagnosis (MDD, recurrent depression, dysthymia, or unspecified depressive disorder)\n2. Patients prescribed antidepressants (SSRIs, SNRIs, atypicals)\n\nFor each query, return the matching resources. I want the union of all patients found across both approaches."
+     },
+     "1-expert": {
+      "precision": 1.0,
+      "recall": 0.153,
+      "f1": 0.2654,
+      "passed": false,
+      "expected_count": 37597,
+      "actual_count": 5753,
+      "elapsed_sec": 31.1,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|370143000,http://snomed.info/sct|66344007,http://snomed.info/sct|78667006,http://snomed.info/sct|35489007,http://snomed.info/sct|310495003,http://hl7.org/fhir/sid/icd-10-cm|F32.9,http://hl7.org/fhir/sid/icd-10-cm|F33.0,http://hl7.org/fhir/sid/icd-10-cm|F33.1,http://hl7.org/fhir/sid/icd-10-cm|F33.2,http://hl7.org/fhir/sid/icd-10-cm|F33.3,http://hl7.org/fhir/sid/icd-10-cm|F33.9,http://hl7.org/fhir/sid/icd-10-cm|F34.1,http://hl7.org/fhir/sid/icd-10-cm|F32.A&_include=Condition:patient",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|321988,http://www.nlm.nih.gov/research/umls/rxnorm|312961,http://www.nlm.nih.gov/research/umls/rxnorm|32937,http://www.nlm.nih.gov/research/umls/rxnorm|58827,http://www.nlm.nih.gov/research/umls/rxnorm|36437,http://www.nlm.nih.gov/research/umls/rxnorm|2556,http://www.nlm.nih.gov/research/umls/rxnorm|39786,http://www.nlm.nih.gov/research/umls/rxnorm|72625,http://www.nlm.nih.gov/research/umls/rxnorm|15996,http://www.nlm.nih.gov/research/umls/rxnorm|3247,http://www.nlm.nih.gov/research/umls/rxnorm|41493,http://www.nlm.nih.gov/research/umls/rxnorm|68091,http://www.nlm.nih.gov/research/umls/rxnorm|704&status=active&_include=MedicationRequest:patient"
+      ],
+      "raw_response": "Condition?code=http://snomed.info/sct|370143000,http://snomed.info/sct|66344007,http://snomed.info/sct|78667006,http://snomed.info/sct|35489007,http://snomed.info/sct|310495003,http://hl7.org/fhir/sid/icd-10-cm|F32.9,http://hl7.org/fhir/sid/icd-10-cm|F33.0,http://hl7.org/fhir/sid/icd-10-cm|F33.1,http://hl7.org/fhir/sid/icd-10-cm|F33.2,http://hl7.org/fhir/sid/icd-10-cm|F33.3,http://hl7.org/fhir/sid/icd-10-cm|F33.9,http://hl7.org/fhir/sid/icd-10-cm|F34.1,http://hl7.org/fhir/sid/icd-10-cm|F32.A&_include=Condition:patient\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|321988,http://www.nlm.nih.gov/research/umls/rxnorm|312961,http://www.nlm.nih.gov/research/umls/rxnorm|32937,http://www.nlm.nih.gov/research/umls/rxnorm|58827,http://www.nlm.nih.gov/research/umls/rxnorm|36437,http://www.nlm.nih.gov/research/umls/rxnorm|2556,http://www.nlm.nih.gov/research/umls/rxnorm|39786,http://www.nlm.nih.gov/research/umls/rxnorm|72625,http://www.nlm.nih.gov/research/umls/rxnorm|15996,http://www.nlm.nih.gov/research/umls/rxnorm|3247,http://www.nlm.nih.gov/research/umls/rxnorm|41493,http://www.nlm.nih.gov/research/umls/rxnorm|68091,http://www.nlm.nih.gov/research/umls/rxnorm|704&status=active&_include=MedicationRequest:patient",
+      "prompt_text": "I need to identify my complete depression patient population for a quality improvement initiative on PHQ-9 screening. From clinical experience, I know depression patients are documented in different ways: some have a formal diagnosis code (MDD, recurrent depression, dysthymia), and a substantial number are on antidepressants \u2014 particularly SSRIs \u2014 without a depression diagnosis ever being formally coded. Many SSRI prescriptions are written empirically for symptoms (low mood, anxiety, insomnia) without a definitive diagnosis.\n\nPlease run multiple FHIR queries to capture the full population:\n1. Patients with any depression diagnosis (MDD, recurrent depression, dysthymia, or unspecified depressive disorder)\n2. Patients prescribed antidepressants (SSRIs, SNRIs, atypicals)\n\nFor each query, return the matching resources. I want the union of all patients found across both approaches."
+     },
+     "2-naive": {
+      "precision": 0.996,
+      "recall": 0.1536,
+      "f1": 0.2662,
+      "passed": false,
+      "expected_count": 37597,
+      "actual_count": 5799,
+      "elapsed_sec": 96.6,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|F32.0,http://hl7.org/fhir/sid/icd-10-cm|F32.1,http://hl7.org/fhir/sid/icd-10-cm|F32.2,http://hl7.org/fhir/sid/icd-10-cm|F32.3,http://hl7.org/fhir/sid/icd-10-cm|F32.4,http://hl7.org/fhir/sid/icd-10-cm|F32.5,http://hl7.org/fhir/sid/icd-10-cm|F32.89,http://hl7.org/fhir/sid/icd-10-cm|F32.9,http://hl7.org/fhir/sid/icd-10-cm|F33.0,http://hl7.org/fhir/sid/icd-10-cm|F33.1,http://hl7.org/fhir/sid/icd-10-cm|F33.2,http://hl7.org/fhir/sid/icd-10-cm|F33.3,http://hl7.org/fhir/sid/icd-10-cm|F33.40,http://hl7.org/fhir/sid/icd-10-cm|F33.41,http://hl7.org/fhir/sid/icd-10-cm|F33.42,http://hl7.org/fhir/sid/icd-10-cm|F33.9,http://hl7.org/fhir/sid/icd-10-cm|F34.1",
+      "additional_query_urls": [
+       "MedicationRequest?medication.code=http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|fluoxetine,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|sertraline,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|citalopram,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|escitalopram,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|paroxetine,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|fluvoxamine,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|venlafaxine,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|desvenlafaxine,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|duloxetine,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|bupropion,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|mirtazapine,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|trazodone,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|nefazodone,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|vilazodone,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|vortioxetine,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|amitriptyline,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|nortriptyline,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|imipramine,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|desipramine,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|doxepin,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|clomipramine,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|phenelzine,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|tranylcypromine,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|isocarboxazid,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|selegiline"
+      ],
+      "raw_response": "Final answer:\n\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|F32.0,http://hl7.org/fhir/sid/icd-10-cm|F32.1,http://hl7.org/fhir/sid/icd-10-cm|F32.2,http://hl7.org/fhir/sid/icd-10-cm|F32.3,http://hl7.org/fhir/sid/icd-10-cm|F32.4,http://hl7.org/fhir/sid/icd-10-cm|F32.5,http://hl7.org/fhir/sid/icd-10-cm|F32.89,http://hl7.org/fhir/sid/icd-10-cm|F32.9,http://hl7.org/fhir/sid/icd-10-cm|F33.0,http://hl7.org/fhir/sid/icd-10-cm|F33.1,http://hl7.org/fhir/sid/icd-10-cm|F33.2,http://hl7.org/fhir/sid/icd-10-cm|F33.3,http://hl7.org/fhir/sid/icd-10-cm|F33.40,http://hl7.org/fhir/sid/icd-10-cm|F33.41,http://hl7.org/fhir/sid/icd-10-cm|F33.42,http://hl7.org/fhir/sid/icd-10-cm|F33.9,http://hl7.org/fhir/sid/icd-10-cm|F34.1\nMedicationRequest?medication.code=http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|fluoxetine,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|sertraline,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|citalopram,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|escitalopram,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|paroxetine,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|fluvoxamine,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|venlafaxine,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|desvenlafaxine,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|duloxetine,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|bupropion,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|mirtazapine,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|trazodone,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|nefazodone,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|vilazodone,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|vortioxetine,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|amitriptyline,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|nortriptyline,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|imipramine,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|desipramine,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|doxepin,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|clomipramine,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|phenelzine,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|tranylcypromine,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|isocarboxazid,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|selegiline",
+      "prompt_text": "I need to identify my complete depression patient population for a quality improvement initiative on PHQ-9 screening. From clinical experience, I know depression patients are documented in different ways: some have a formal diagnosis code (MDD, recurrent depression, dysthymia), and a substantial number are on antidepressants \u2014 particularly SSRIs \u2014 without a depression diagnosis ever being formally coded. Many SSRI prescriptions are written empirically for symptoms (low mood, anxiety, insomnia) without a definitive diagnosis.\n\nPlease run multiple FHIR queries to capture the full population:\n1. Patients with any depression diagnosis (MDD, recurrent depression, dysthymia, or unspecified depressive disorder)\n2. Patients prescribed antidepressants (SSRIs, SNRIs, atypicals)\n\nFor each query, return the matching resources. I want the union of all patients found across both approaches."
+     },
+     "2-broad": {
+      "precision": 0.8054,
+      "recall": 0.2409,
+      "f1": 0.3709,
+      "passed": false,
+      "expected_count": 37597,
+      "actual_count": 11246,
+      "elapsed_sec": 79.5,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|F32.0,http://hl7.org/fhir/sid/icd-10-cm|F32.1,http://hl7.org/fhir/sid/icd-10-cm|F32.2,http://hl7.org/fhir/sid/icd-10-cm|F32.3,http://hl7.org/fhir/sid/icd-10-cm|F32.4,http://hl7.org/fhir/sid/icd-10-cm|F32.5,http://hl7.org/fhir/sid/icd-10-cm|F32.9,http://hl7.org/fhir/sid/icd-10-cm|F32.89,http://hl7.org/fhir/sid/icd-10-cm|F32.A,http://hl7.org/fhir/sid/icd-10-cm|F33.0,http://hl7.org/fhir/sid/icd-10-cm|F33.1,http://hl7.org/fhir/sid/icd-10-cm|F33.2,http://hl7.org/fhir/sid/icd-10-cm|F33.3,http://hl7.org/fhir/sid/icd-10-cm|F33.40,http://hl7.org/fhir/sid/icd-10-cm|F33.41,http://hl7.org/fhir/sid/icd-10-cm|F33.42,http://hl7.org/fhir/sid/icd-10-cm|F33.8,http://hl7.org/fhir/sid/icd-10-cm|F33.9,http://hl7.org/fhir/sid/icd-10-cm|F34.1",
+      "additional_query_urls": [
+       "MedicationRequest?code=Sertraline,Fluoxetine,Citalopram,Escitalopram,Paroxetine,Fluvoxamine,Venlafaxine,Duloxetine,Desvenlafaxine,Bupropion,Mirtazapine,Trazodone,Vilazodone,Vortioxetine,Nefazodone,Amitriptyline,Nortriptyline,Doxepin"
+      ],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|F32.0,http://hl7.org/fhir/sid/icd-10-cm|F32.1,http://hl7.org/fhir/sid/icd-10-cm|F32.2,http://hl7.org/fhir/sid/icd-10-cm|F32.3,http://hl7.org/fhir/sid/icd-10-cm|F32.4,http://hl7.org/fhir/sid/icd-10-cm|F32.5,http://hl7.org/fhir/sid/icd-10-cm|F32.9,http://hl7.org/fhir/sid/icd-10-cm|F32.89,http://hl7.org/fhir/sid/icd-10-cm|F32.A,http://hl7.org/fhir/sid/icd-10-cm|F33.0,http://hl7.org/fhir/sid/icd-10-cm|F33.1,http://hl7.org/fhir/sid/icd-10-cm|F33.2,http://hl7.org/fhir/sid/icd-10-cm|F33.3,http://hl7.org/fhir/sid/icd-10-cm|F33.40,http://hl7.org/fhir/sid/icd-10-cm|F33.41,http://hl7.org/fhir/sid/icd-10-cm|F33.42,http://hl7.org/fhir/sid/icd-10-cm|F33.8,http://hl7.org/fhir/sid/icd-10-cm|F33.9,http://hl7.org/fhir/sid/icd-10-cm|F34.1\nMedicationRequest?code=Sertraline,Fluoxetine,Citalopram,Escitalopram,Paroxetine,Fluvoxamine,Venlafaxine,Duloxetine,Desvenlafaxine,Bupropion,Mirtazapine,Trazodone,Vilazodone,Vortioxetine,Nefazodone,Amitriptyline,Nortriptyline,Doxepin",
+      "prompt_text": "I need to identify my complete depression patient population for a quality improvement initiative on PHQ-9 screening. From clinical experience, I know depression patients are documented in different ways: some have a formal diagnosis code (MDD, recurrent depression, dysthymia), and a substantial number are on antidepressants \u2014 particularly SSRIs \u2014 without a depression diagnosis ever being formally coded. Many SSRI prescriptions are written empirically for symptoms (low mood, anxiety, insomnia) without a definitive diagnosis.\n\nPlease run multiple FHIR queries to capture the full population:\n1. Patients with any depression diagnosis (MDD, recurrent depression, dysthymia, or unspecified depressive disorder)\n2. Patients prescribed antidepressants (SSRIs, SNRIs, atypicals)\n\nFor each query, return the matching resources. I want the union of all patients found across both approaches."
+     },
+     "2-expert": {
+      "precision": 0.8276,
+      "recall": 0.237,
+      "f1": 0.3685,
+      "passed": false,
+      "expected_count": 37597,
+      "actual_count": 10766,
+      "elapsed_sec": 65.7,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|F32.0,http://hl7.org/fhir/sid/icd-10-cm|F32.1,http://hl7.org/fhir/sid/icd-10-cm|F32.2,http://hl7.org/fhir/sid/icd-10-cm|F32.3,http://hl7.org/fhir/sid/icd-10-cm|F32.4,http://hl7.org/fhir/sid/icd-10-cm|F32.5,http://hl7.org/fhir/sid/icd-10-cm|F32.9,http://hl7.org/fhir/sid/icd-10-cm|F33.0,http://hl7.org/fhir/sid/icd-10-cm|F33.1,http://hl7.org/fhir/sid/icd-10-cm|F33.2,http://hl7.org/fhir/sid/icd-10-cm|F33.3,http://hl7.org/fhir/sid/icd-10-cm|F33.40,http://hl7.org/fhir/sid/icd-10-cm|F33.41,http://hl7.org/fhir/sid/icd-10-cm|F33.42,http://hl7.org/fhir/sid/icd-10-cm|F33.9,http://hl7.org/fhir/sid/icd-10-cm|F34.1",
+      "additional_query_urls": [
+       "MedicationRequest?code=Sertraline,Fluoxetine,Citalopram,Escitalopram,Paroxetine,Fluvoxamine,Venlafaxine,Duloxetine,Desvenlafaxine,Levomilnacipran,Bupropion,Mirtazapine,Trazodone,Vilazodone,Vortioxetine,Nefazodone"
+      ],
+      "raw_response": "FINAL ANSWER:\n\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|F32.0,http://hl7.org/fhir/sid/icd-10-cm|F32.1,http://hl7.org/fhir/sid/icd-10-cm|F32.2,http://hl7.org/fhir/sid/icd-10-cm|F32.3,http://hl7.org/fhir/sid/icd-10-cm|F32.4,http://hl7.org/fhir/sid/icd-10-cm|F32.5,http://hl7.org/fhir/sid/icd-10-cm|F32.9,http://hl7.org/fhir/sid/icd-10-cm|F33.0,http://hl7.org/fhir/sid/icd-10-cm|F33.1,http://hl7.org/fhir/sid/icd-10-cm|F33.2,http://hl7.org/fhir/sid/icd-10-cm|F33.3,http://hl7.org/fhir/sid/icd-10-cm|F33.40,http://hl7.org/fhir/sid/icd-10-cm|F33.41,http://hl7.org/fhir/sid/icd-10-cm|F33.42,http://hl7.org/fhir/sid/icd-10-cm|F33.9,http://hl7.org/fhir/sid/icd-10-cm|F34.1\nMedicationRequest?code=Sertraline,Fluoxetine,Citalopram,Escitalopram,Paroxetine,Fluvoxamine,Venlafaxine,Duloxetine,Desvenlafaxine,Levomilnacipran,Bupropion,Mirtazapine,Trazodone,Vilazodone,Vortioxetine,Nefazodone",
+      "prompt_text": "I need to identify my complete depression patient population for a quality improvement initiative on PHQ-9 screening. From clinical experience, I know depression patients are documented in different ways: some have a formal diagnosis code (MDD, recurrent depression, dysthymia), and a substantial number are on antidepressants \u2014 particularly SSRIs \u2014 without a depression diagnosis ever being formally coded. Many SSRI prescriptions are written empirically for symptoms (low mood, anxiety, insomnia) without a definitive diagnosis.\n\nPlease run multiple FHIR queries to capture the full population:\n1. Patients with any depression diagnosis (MDD, recurrent depression, dysthymia, or unspecified depressive disorder)\n2. Patients prescribed antidepressants (SSRIs, SNRIs, atypicals)\n\nFor each query, return the matching resources. I want the union of all patients found across both approaches."
+     },
+     "3-naive": {
+      "precision": 0.9967,
+      "recall": 0.1515,
+      "f1": 0.2631,
+      "passed": false,
+      "expected_count": 37597,
+      "actual_count": 5716,
+      "elapsed_sec": 121.0,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-diagnosis-icd10|F320,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-diagnosis-icd10|F321,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-diagnosis-icd10|F322,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-diagnosis-icd10|F323,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-diagnosis-icd10|F324,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-diagnosis-icd10|F325,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-diagnosis-icd10|F328,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-diagnosis-icd10|F329,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-diagnosis-icd10|F3281,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-diagnosis-icd10|F3289,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-diagnosis-icd10|F330,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-diagnosis-icd10|F331,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-diagnosis-icd10|F332,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-diagnosis-icd10|F333,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-diagnosis-icd10|F3340,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-diagnosis-icd10|F3341,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-diagnosis-icd10|F3342,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-diagnosis-icd10|F338,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-diagnosis-icd10|F339,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-diagnosis-icd10|F3390,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-diagnosis-icd10|F341,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-diagnosis-icd10|F4321",
+      "additional_query_urls": [
+       "MedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|312940,http://www.nlm.nih.gov/research/umls/rxnorm|312938,http://www.nlm.nih.gov/research/umls/rxnorm|312941,http://www.nlm.nih.gov/research/umls/rxnorm|251201,http://www.nlm.nih.gov/research/umls/rxnorm|410584,http://www.nlm.nih.gov/research/umls/rxnorm|861064,http://www.nlm.nih.gov/research/umls/rxnorm|321988,http://www.nlm.nih.gov/research/umls/rxnorm|314111,http://www.nlm.nih.gov/research/umls/rxnorm|315221,http://www.nlm.nih.gov/research/umls/rxnorm|312961,http://www.nlm.nih.gov/research/umls/rxnorm|857297,http://www.nlm.nih.gov/research/umls/rxnorm|723,http://www.nlm.nih.gov/research/umls/rxnorm|32937,http://www.nlm.nih.gov/research/umls/rxnorm|221078,http://www.nlm.nih.gov/research/umls/rxnorm|2556,http://www.nlm.nih.gov/research/umls/rxnorm|72625,http://www.nlm.nih.gov/research/umls/rxnorm|15996,http://www.nlm.nih.gov/research/umls/rxnorm|58827,http://www.nlm.nih.gov/research/umls/rxnorm|39786,http://www.nlm.nih.gov/research/umls/rxnorm|321484,http://www.nlm.nih.gov/research/umls/rxnorm|89013"
+      ],
+      "raw_response": "Based on my investigation:\n- The server uses the mimic-diagnosis-icd10 CodeSystem for Conditions (ICD-10 without dots).\n- MedicationRequest.medication is a reference; drug filtering requires the chained `medication.code` parameter with NDC.\n\nFINAL ANSWER:\n\nCondition?code=http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-diagnosis-icd10|F320,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-diagnosis-icd10|F321,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-diagnosis-icd10|F322,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-diagnosis-icd10|F323,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-diagnosis-icd10|F324,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-diagnosis-icd10|F325,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-diagnosis-icd10|F328,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-diagnosis-icd10|F329,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-diagnosis-icd10|F3281,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-diagnosis-icd10|F3289,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-diagnosis-icd10|F330,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-diagnosis-icd10|F331,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-diagnosis-icd10|F332,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-diagnosis-icd10|F333,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-diagnosis-icd10|F3340,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-diagnosis-icd10|F3341,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-diagnosis-icd10|F3342,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-diagnosis-icd10|F338,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-diagnosis-icd10|F339,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-diagnosis-icd10|F3390,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-diagnosis-icd10|F341,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-diagnosis-icd10|F4321\nMedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|312940,http://www.nlm.nih.gov/research/umls/rxnorm|312938,http://www.nlm.nih.gov/research/umls/rxnorm|312941,http://www.nlm.nih.gov/research/umls/rxnorm|251201,http://www.nlm.nih.gov/research/umls/rxnorm|410584,http://www.nlm.nih.gov/research/umls/rxnorm|861064,http://www.nlm.nih.gov/research/umls/rxnorm|321988,http://www.nlm.nih.gov/research/umls/rxnorm|314111,http://www.nlm.nih.gov/research/umls/rxnorm|315221,http://www.nlm.nih.gov/research/umls/rxnorm|312961,http://www.nlm.nih.gov/research/umls/rxnorm|857297,http://www.nlm.nih.gov/research/umls/rxnorm|723,http://www.nlm.nih.gov/research/umls/rxnorm|32937,http://www.nlm.nih.gov/research/umls/rxnorm|221078,http://www.nlm.nih.gov/research/umls/rxnorm|2556,http://www.nlm.nih.gov/research/umls/rxnorm|72625,http://www.nlm.nih.gov/research/umls/rxnorm|15996,http://www.nlm.nih.gov/research/umls/rxnorm|58827,http://www.nlm.nih.gov/research/umls/rxnorm|39786,http://www.nlm.nih.gov/research/umls/rxnorm|321484,http://www.nlm.nih.gov/research/umls/rxnorm|89013",
+      "prompt_text": "I need to identify my complete depression patient population for a quality improvement initiative on PHQ-9 screening. From clinical experience, I know depression patients are documented in different ways: some have a formal diagnosis code (MDD, recurrent depression, dysthymia), and a substantial number are on antidepressants \u2014 particularly SSRIs \u2014 without a depression diagnosis ever being formally coded. Many SSRI prescriptions are written empirically for symptoms (low mood, anxiety, insomnia) without a definitive diagnosis.\n\nPlease run multiple FHIR queries to capture the full population:\n1. Patients with any depression diagnosis (MDD, recurrent depression, dysthymia, or unspecified depressive disorder)\n2. Patients prescribed antidepressants (SSRIs, SNRIs, atypicals)\n\nFor each query, return the matching resources. I want the union of all patients found across both approaches."
+     },
+     "3-broad": {
+      "precision": 1.0,
+      "recall": 0.1527,
+      "f1": 0.2649,
+      "passed": false,
+      "expected_count": 37597,
+      "actual_count": 5740,
+      "elapsed_sec": 132.5,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|F32.0,http://hl7.org/fhir/sid/icd-10-cm|F32.1,http://hl7.org/fhir/sid/icd-10-cm|F32.2,http://hl7.org/fhir/sid/icd-10-cm|F32.3,http://hl7.org/fhir/sid/icd-10-cm|F32.4,http://hl7.org/fhir/sid/icd-10-cm|F32.5,http://hl7.org/fhir/sid/icd-10-cm|F32.81,http://hl7.org/fhir/sid/icd-10-cm|F32.89,http://hl7.org/fhir/sid/icd-10-cm|F32.9,http://hl7.org/fhir/sid/icd-10-cm|F32.A,http://hl7.org/fhir/sid/icd-10-cm|F33.0,http://hl7.org/fhir/sid/icd-10-cm|F33.1,http://hl7.org/fhir/sid/icd-10-cm|F33.2,http://hl7.org/fhir/sid/icd-10-cm|F33.3,http://hl7.org/fhir/sid/icd-10-cm|F33.40,http://hl7.org/fhir/sid/icd-10-cm|F33.41,http://hl7.org/fhir/sid/icd-10-cm|F33.42,http://hl7.org/fhir/sid/icd-10-cm|F33.8,http://hl7.org/fhir/sid/icd-10-cm|F33.9,http://hl7.org/fhir/sid/icd-10-cm|F34.1",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|312938,http://www.nlm.nih.gov/research/umls/rxnorm|312940,http://www.nlm.nih.gov/research/umls/rxnorm|312941,http://www.nlm.nih.gov/research/umls/rxnorm|251201,http://www.nlm.nih.gov/research/umls/rxnorm|310384,http://www.nlm.nih.gov/research/umls/rxnorm|310385,http://www.nlm.nih.gov/research/umls/rxnorm|313989,http://www.nlm.nih.gov/research/umls/rxnorm|313990,http://www.nlm.nih.gov/research/umls/rxnorm|248642,http://www.nlm.nih.gov/research/umls/rxnorm|1190110,http://www.nlm.nih.gov/research/umls/rxnorm|200371,http://www.nlm.nih.gov/research/umls/rxnorm|283672,http://www.nlm.nih.gov/research/umls/rxnorm|309314,http://www.nlm.nih.gov/research/umls/rxnorm|321988,http://www.nlm.nih.gov/research/umls/rxnorm|2725159,http://www.nlm.nih.gov/research/umls/rxnorm|1738483,http://www.nlm.nih.gov/research/umls/rxnorm|1738495,http://www.nlm.nih.gov/research/umls/rxnorm|1738503,http://www.nlm.nih.gov/research/umls/rxnorm|1738511,http://www.nlm.nih.gov/research/umls/rxnorm|1738803,http://www.nlm.nih.gov/research/umls/rxnorm|1738805,http://www.nlm.nih.gov/research/umls/rxnorm|1738807,http://www.nlm.nih.gov/research/umls/rxnorm|42355,http://www.nlm.nih.gov/research/umls/rxnorm|313580,http://www.nlm.nih.gov/research/umls/rxnorm|313581,http://www.nlm.nih.gov/research/umls/rxnorm|313582,http://www.nlm.nih.gov/research/umls/rxnorm|313583,http://www.nlm.nih.gov/research/umls/rxnorm|313584,http://www.nlm.nih.gov/research/umls/rxnorm|313585,http://www.nlm.nih.gov/research/umls/rxnorm|313586,http://www.nlm.nih.gov/research/umls/rxnorm|314277,http://www.nlm.nih.gov/research/umls/rxnorm|2605950,http://www.nlm.nih.gov/research/umls/rxnorm|72625,http://www.nlm.nih.gov/research/umls/rxnorm|2200168,http://www.nlm.nih.gov/research/umls/rxnorm|2200175,http://www.nlm.nih.gov/research/umls/rxnorm|2200178,http://www.nlm.nih.gov/research/umls/rxnorm|2200181,http://www.nlm.nih.gov/research/umls/rxnorm|1607617,http://www.nlm.nih.gov/research/umls/rxnorm|1874553,http://www.nlm.nih.gov/research/umls/rxnorm|1874559,http://www.nlm.nih.gov/research/umls/rxnorm|1433217,http://www.nlm.nih.gov/research/umls/rxnorm|1433227,http://www.nlm.nih.gov/research/umls/rxnorm|1433233,http://www.nlm.nih.gov/research/umls/rxnorm|1433239,http://www.nlm.nih.gov/research/umls/rxnorm|42347,http://www.nlm.nih.gov/research/umls/rxnorm|1232585,http://www.nlm.nih.gov/research/umls/rxnorm|311725,http://www.nlm.nih.gov/research/umls/rxnorm|311726,http://www.nlm.nih.gov/research/umls/rxnorm|314111,http://www.nlm.nih.gov/research/umls/rxnorm|283406,http://www.nlm.nih.gov/research/umls/rxnorm|283407,http://www.nlm.nih.gov/research/umls/rxnorm|283485,http://www.nlm.nih.gov/research/umls/rxnorm|10737,http://www.nlm.nih.gov/research/umls/rxnorm|1086772,http://www.nlm.nih.gov/research/umls/rxnorm|1086778,http://www.nlm.nih.gov/research/umls/rxnorm|1086784,http://www.nlm.nih.gov/research/umls/rxnorm|1439808,http://www.nlm.nih.gov/research/umls/rxnorm|1439810,http://www.nlm.nih.gov/research/umls/rxnorm|1439812,http://www.nlm.nih.gov/research/umls/rxnorm|1098649,http://www.nlm.nih.gov/research/umls/rxnorm|1098666,http://www.nlm.nih.gov/research/umls/rxnorm|1098670,http://www.nlm.nih.gov/research/umls/rxnorm|1098674,http://www.nlm.nih.gov/research/umls/rxnorm|1098678"
+      ],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|F32.0,http://hl7.org/fhir/sid/icd-10-cm|F32.1,http://hl7.org/fhir/sid/icd-10-cm|F32.2,http://hl7.org/fhir/sid/icd-10-cm|F32.3,http://hl7.org/fhir/sid/icd-10-cm|F32.4,http://hl7.org/fhir/sid/icd-10-cm|F32.5,http://hl7.org/fhir/sid/icd-10-cm|F32.81,http://hl7.org/fhir/sid/icd-10-cm|F32.89,http://hl7.org/fhir/sid/icd-10-cm|F32.9,http://hl7.org/fhir/sid/icd-10-cm|F32.A,http://hl7.org/fhir/sid/icd-10-cm|F33.0,http://hl7.org/fhir/sid/icd-10-cm|F33.1,http://hl7.org/fhir/sid/icd-10-cm|F33.2,http://hl7.org/fhir/sid/icd-10-cm|F33.3,http://hl7.org/fhir/sid/icd-10-cm|F33.40,http://hl7.org/fhir/sid/icd-10-cm|F33.41,http://hl7.org/fhir/sid/icd-10-cm|F33.42,http://hl7.org/fhir/sid/icd-10-cm|F33.8,http://hl7.org/fhir/sid/icd-10-cm|F33.9,http://hl7.org/fhir/sid/icd-10-cm|F34.1\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|312938,http://www.nlm.nih.gov/research/umls/rxnorm|312940,http://www.nlm.nih.gov/research/umls/rxnorm|312941,http://www.nlm.nih.gov/research/umls/rxnorm|251201,http://www.nlm.nih.gov/research/umls/rxnorm|310384,http://www.nlm.nih.gov/research/umls/rxnorm|310385,http://www.nlm.nih.gov/research/umls/rxnorm|313989,http://www.nlm.nih.gov/research/umls/rxnorm|313990,http://www.nlm.nih.gov/research/umls/rxnorm|248642,http://www.nlm.nih.gov/research/umls/rxnorm|1190110,http://www.nlm.nih.gov/research/umls/rxnorm|200371,http://www.nlm.nih.gov/research/umls/rxnorm|283672,http://www.nlm.nih.gov/research/umls/rxnorm|309314,http://www.nlm.nih.gov/research/umls/rxnorm|321988,http://www.nlm.nih.gov/research/umls/rxnorm|2725159,http://www.nlm.nih.gov/research/umls/rxnorm|1738483,http://www.nlm.nih.gov/research/umls/rxnorm|1738495,http://www.nlm.nih.gov/research/umls/rxnorm|1738503,http://www.nlm.nih.gov/research/umls/rxnorm|1738511,http://www.nlm.nih.gov/research/umls/rxnorm|1738803,http://www.nlm.nih.gov/research/umls/rxnorm|1738805,http://www.nlm.nih.gov/research/umls/rxnorm|1738807,http://www.nlm.nih.gov/research/umls/rxnorm|42355,http://www.nlm.nih.gov/research/umls/rxnorm|313580,http://www.nlm.nih.gov/research/umls/rxnorm|313581,http://www.nlm.nih.gov/research/umls/rxnorm|313582,http://www.nlm.nih.gov/research/umls/rxnorm|313583,http://www.nlm.nih.gov/research/umls/rxnorm|313584,http://www.nlm.nih.gov/research/umls/rxnorm|313585,http://www.nlm.nih.gov/research/umls/rxnorm|313586,http://www.nlm.nih.gov/research/umls/rxnorm|314277,http://www.nlm.nih.gov/research/umls/rxnorm|2605950,http://www.nlm.nih.gov/research/umls/rxnorm|72625,http://www.nlm.nih.gov/research/umls/rxnorm|2200168,http://www.nlm.nih.gov/research/umls/rxnorm|2200175,http://www.nlm.nih.gov/research/umls/rxnorm|2200178,http://www.nlm.nih.gov/research/umls/rxnorm|2200181,http://www.nlm.nih.gov/research/umls/rxnorm|1607617,http://www.nlm.nih.gov/research/umls/rxnorm|1874553,http://www.nlm.nih.gov/research/umls/rxnorm|1874559,http://www.nlm.nih.gov/research/umls/rxnorm|1433217,http://www.nlm.nih.gov/research/umls/rxnorm|1433227,http://www.nlm.nih.gov/research/umls/rxnorm|1433233,http://www.nlm.nih.gov/research/umls/rxnorm|1433239,http://www.nlm.nih.gov/research/umls/rxnorm|42347,http://www.nlm.nih.gov/research/umls/rxnorm|1232585,http://www.nlm.nih.gov/research/umls/rxnorm|311725,http://www.nlm.nih.gov/research/umls/rxnorm|311726,http://www.nlm.nih.gov/research/umls/rxnorm|314111,http://www.nlm.nih.gov/research/umls/rxnorm|283406,http://www.nlm.nih.gov/research/umls/rxnorm|283407,http://www.nlm.nih.gov/research/umls/rxnorm|283485,http://www.nlm.nih.gov/research/umls/rxnorm|10737,http://www.nlm.nih.gov/research/umls/rxnorm|1086772,http://www.nlm.nih.gov/research/umls/rxnorm|1086778,http://www.nlm.nih.gov/research/umls/rxnorm|1086784,http://www.nlm.nih.gov/research/umls/rxnorm|1439808,http://www.nlm.nih.gov/research/umls/rxnorm|1439810,http://www.nlm.nih.gov/research/umls/rxnorm|1439812,http://www.nlm.nih.gov/research/umls/rxnorm|1098649,http://www.nlm.nih.gov/research/umls/rxnorm|1098666,http://www.nlm.nih.gov/research/umls/rxnorm|1098670,http://www.nlm.nih.gov/research/umls/rxnorm|1098674,http://www.nlm.nih.gov/research/umls/rxnorm|1098678",
+      "prompt_text": "I need to identify my complete depression patient population for a quality improvement initiative on PHQ-9 screening. From clinical experience, I know depression patients are documented in different ways: some have a formal diagnosis code (MDD, recurrent depression, dysthymia), and a substantial number are on antidepressants \u2014 particularly SSRIs \u2014 without a depression diagnosis ever being formally coded. Many SSRI prescriptions are written empirically for symptoms (low mood, anxiety, insomnia) without a definitive diagnosis.\n\nPlease run multiple FHIR queries to capture the full population:\n1. Patients with any depression diagnosis (MDD, recurrent depression, dysthymia, or unspecified depressive disorder)\n2. Patients prescribed antidepressants (SSRIs, SNRIs, atypicals)\n\nFor each query, return the matching resources. I want the union of all patients found across both approaches."
+     },
+     "3-expert": {
+      "precision": 0.8276,
+      "recall": 0.2369,
+      "f1": 0.3683,
+      "passed": false,
+      "expected_count": 37597,
+      "actual_count": 10761,
+      "elapsed_sec": 73.1,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|F32.0,http://hl7.org/fhir/sid/icd-10-cm|F32.1,http://hl7.org/fhir/sid/icd-10-cm|F32.2,http://hl7.org/fhir/sid/icd-10-cm|F32.3,http://hl7.org/fhir/sid/icd-10-cm|F32.9,http://hl7.org/fhir/sid/icd-10-cm|F33.0,http://hl7.org/fhir/sid/icd-10-cm|F33.1,http://hl7.org/fhir/sid/icd-10-cm|F33.2,http://hl7.org/fhir/sid/icd-10-cm|F33.3,http://hl7.org/fhir/sid/icd-10-cm|F33.9,http://hl7.org/fhir/sid/icd-10-cm|F34.1",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Sertraline,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Fluoxetine,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Citalopram,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Escitalopram,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Paroxetine,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Venlafaxine,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Duloxetine,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Bupropion,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Mirtazapine,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Trazodone"
+      ],
+      "raw_response": "FINAL ANSWER:\n\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|F32.0,http://hl7.org/fhir/sid/icd-10-cm|F32.1,http://hl7.org/fhir/sid/icd-10-cm|F32.2,http://hl7.org/fhir/sid/icd-10-cm|F32.3,http://hl7.org/fhir/sid/icd-10-cm|F32.9,http://hl7.org/fhir/sid/icd-10-cm|F33.0,http://hl7.org/fhir/sid/icd-10-cm|F33.1,http://hl7.org/fhir/sid/icd-10-cm|F33.2,http://hl7.org/fhir/sid/icd-10-cm|F33.3,http://hl7.org/fhir/sid/icd-10-cm|F33.9,http://hl7.org/fhir/sid/icd-10-cm|F34.1\nMedicationRequest?code=http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Sertraline,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Fluoxetine,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Citalopram,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Escitalopram,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Paroxetine,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Venlafaxine,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Duloxetine,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Bupropion,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Mirtazapine,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Trazodone",
+      "prompt_text": "I need to identify my complete depression patient population for a quality improvement initiative on PHQ-9 screening. From clinical experience, I know depression patients are documented in different ways: some have a formal diagnosis code (MDD, recurrent depression, dysthymia), and a substantial number are on antidepressants \u2014 particularly SSRIs \u2014 without a depression diagnosis ever being formally coded. Many SSRI prescriptions are written empirically for symptoms (low mood, anxiety, insomnia) without a definitive diagnosis.\n\nPlease run multiple FHIR queries to capture the full population:\n1. Patients with any depression diagnosis (MDD, recurrent depression, dysthymia, or unspecified depressive disorder)\n2. Patients prescribed antidepressants (SSRIs, SNRIs, atypicals)\n\nFor each query, return the matching resources. I want the union of all patients found across both approaches."
+     }
+    },
     "copilot:claude-sonnet-4.6": {
      "1-naive": {
       "precision": 0.7567,
@@ -1829,6 +1977,134 @@
       "prompt_text": "I need to identify all depression patients in our population. Depression is documented under multiple related SNOMED codes: Major depressive disorder (370143000) is the most common, with subtypes Major depression single episode (36923009) and Recurrent major depression (66344007). Dysthymia (78667006) represents persistent low-grade depression. The parent concept Depressive disorder (35489007) is sometimes used for less specific documentation. Search Condition resources for all five codes."
      }
     },
+    "copilot:claude-opus-4.7+mimic": {
+     "1-naive": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 37597,
+      "actual_count": 0,
+      "elapsed_sec": 7.4,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|35489007",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|35489007",
+      "prompt_text": "Find all patients with depression."
+     },
+     "1-broad": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 37597,
+      "actual_count": 0,
+      "elapsed_sec": 8.1,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|370143000,http://snomed.info/sct|66344007,http://snomed.info/sct|78667006,http://snomed.info/sct|35489007,http://snomed.info/sct|35748005",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|370143000,http://snomed.info/sct|66344007,http://snomed.info/sct|78667006,http://snomed.info/sct|35489007,http://snomed.info/sct|35748005",
+      "prompt_text": "Find all patients diagnosed with any form of depression \u2014 including major depressive disorder (both single-episode and recurrent variants), dysthymia (persistent depressive disorder), and other depressive disorders."
+     },
+     "1-expert": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 37597,
+      "actual_count": 0,
+      "elapsed_sec": 7.1,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|370143000,http://snomed.info/sct|36923009,http://snomed.info/sct|66344007,http://snomed.info/sct|78667006,http://snomed.info/sct|35489007",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|370143000,http://snomed.info/sct|36923009,http://snomed.info/sct|66344007,http://snomed.info/sct|78667006,http://snomed.info/sct|35489007",
+      "prompt_text": "I need to identify all depression patients in our population. Depression is documented under multiple related SNOMED codes: Major depressive disorder (370143000) is the most common, with subtypes Major depression single episode (36923009) and Recurrent major depression (66344007). Dysthymia (78667006) represents persistent low-grade depression. The parent concept Depressive disorder (35489007) is sometimes used for less specific documentation. Search Condition resources for all five codes."
+     },
+     "2-naive": {
+      "precision": 1.0,
+      "recall": 0.1527,
+      "f1": 0.2649,
+      "passed": false,
+      "expected_count": 37597,
+      "actual_count": 5741,
+      "elapsed_sec": 43.5,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|F32.0,http://hl7.org/fhir/sid/icd-10-cm|F32.1,http://hl7.org/fhir/sid/icd-10-cm|F32.2,http://hl7.org/fhir/sid/icd-10-cm|F32.3,http://hl7.org/fhir/sid/icd-10-cm|F32.4,http://hl7.org/fhir/sid/icd-10-cm|F32.5,http://hl7.org/fhir/sid/icd-10-cm|F32.9,http://hl7.org/fhir/sid/icd-10-cm|F33.0,http://hl7.org/fhir/sid/icd-10-cm|F33.1,http://hl7.org/fhir/sid/icd-10-cm|F33.2,http://hl7.org/fhir/sid/icd-10-cm|F33.3,http://hl7.org/fhir/sid/icd-10-cm|F33.41,http://hl7.org/fhir/sid/icd-10-cm|F33.42,http://hl7.org/fhir/sid/icd-10-cm|F33.9,http://hl7.org/fhir/sid/icd-10-cm|F34.1",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|F32.0,http://hl7.org/fhir/sid/icd-10-cm|F32.1,http://hl7.org/fhir/sid/icd-10-cm|F32.2,http://hl7.org/fhir/sid/icd-10-cm|F32.3,http://hl7.org/fhir/sid/icd-10-cm|F32.4,http://hl7.org/fhir/sid/icd-10-cm|F32.5,http://hl7.org/fhir/sid/icd-10-cm|F32.9,http://hl7.org/fhir/sid/icd-10-cm|F33.0,http://hl7.org/fhir/sid/icd-10-cm|F33.1,http://hl7.org/fhir/sid/icd-10-cm|F33.2,http://hl7.org/fhir/sid/icd-10-cm|F33.3,http://hl7.org/fhir/sid/icd-10-cm|F33.41,http://hl7.org/fhir/sid/icd-10-cm|F33.42,http://hl7.org/fhir/sid/icd-10-cm|F33.9,http://hl7.org/fhir/sid/icd-10-cm|F34.1",
+      "prompt_text": "Find all patients with depression."
+     },
+     "2-broad": {
+      "precision": 1.0,
+      "recall": 0.1338,
+      "f1": 0.236,
+      "passed": false,
+      "expected_count": 37597,
+      "actual_count": 5031,
+      "elapsed_sec": 69.0,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|F32.0,http://hl7.org/fhir/sid/icd-10-cm|F32.1,http://hl7.org/fhir/sid/icd-10-cm|F32.2,http://hl7.org/fhir/sid/icd-10-cm|F32.3,http://hl7.org/fhir/sid/icd-10-cm|F32.4,http://hl7.org/fhir/sid/icd-10-cm|F32.5,http://hl7.org/fhir/sid/icd-10-cm|F32.9,http://hl7.org/fhir/sid/icd-10-cm|F32.89,http://hl7.org/fhir/sid/icd-10-cm|F32.A,http://hl7.org/fhir/sid/icd-10-cm|F33.0,http://hl7.org/fhir/sid/icd-10-cm|F33.1,http://hl7.org/fhir/sid/icd-10-cm|F33.2,http://hl7.org/fhir/sid/icd-10-cm|F33.3,http://hl7.org/fhir/sid/icd-10-cm|F33.40,http://hl7.org/fhir/sid/icd-10-cm|F33.41,http://hl7.org/fhir/sid/icd-10-cm|F33.42,http://hl7.org/fhir/sid/icd-10-cm|F33.8,http://hl7.org/fhir/sid/icd-10-cm|F33.9,http://hl7.org/fhir/sid/icd-10-cm|F34.1,http://hl7.org/fhir/sid/icd-10-cm|F34.8,http://hl7.org/fhir/sid/icd-10-cm|F34.81,http://hl7.org/fhir/sid/icd-10-cm|F34.89,http://hl7.org/fhir/sid/icd-10-cm|F34.9,http://hl7.org/fhir/sid/icd-9-cm|296.20,http://hl7.org/fhir/sid/icd-9-cm|296.21,http://hl7.org/fhir/sid/icd-9-cm|296.22,http://hl7.org/fhir/sid/icd-9-cm|296.23,http://hl7.org/fhir/sid/icd-9-cm|296.24,http://hl7.org/fhir/sid/icd-9-cm|296.25,http://hl7.org/fhir/sid/icd-9-cm|296.26,http://hl7.org/fhir/sid/icd-9-cm|296.30,http://hl7.org/fhir/sid/icd-9-cm|296.31,http://hl7.org/fhir/sid/icd-9-cm|296.32,http://hl7.org/fhir/sid/icd-9-cm|296.33,http://hl7.org/fhir/sid/icd-9-cm|296.34,http://hl7.org/fhir/sid/icd-9-cm|296.35,http://hl7.org/fhir/sid/icd-9-cm|296.36,http://hl7.org/fhir/sid/icd-9-cm|300.4,http://hl7.org/fhir/sid/icd-9-cm|311",
+      "additional_query_urls": [],
+      "raw_response": "FINAL ANSWER:\n\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|F32.0,http://hl7.org/fhir/sid/icd-10-cm|F32.1,http://hl7.org/fhir/sid/icd-10-cm|F32.2,http://hl7.org/fhir/sid/icd-10-cm|F32.3,http://hl7.org/fhir/sid/icd-10-cm|F32.4,http://hl7.org/fhir/sid/icd-10-cm|F32.5,http://hl7.org/fhir/sid/icd-10-cm|F32.9,http://hl7.org/fhir/sid/icd-10-cm|F32.89,http://hl7.org/fhir/sid/icd-10-cm|F32.A,http://hl7.org/fhir/sid/icd-10-cm|F33.0,http://hl7.org/fhir/sid/icd-10-cm|F33.1,http://hl7.org/fhir/sid/icd-10-cm|F33.2,http://hl7.org/fhir/sid/icd-10-cm|F33.3,http://hl7.org/fhir/sid/icd-10-cm|F33.40,http://hl7.org/fhir/sid/icd-10-cm|F33.41,http://hl7.org/fhir/sid/icd-10-cm|F33.42,http://hl7.org/fhir/sid/icd-10-cm|F33.8,http://hl7.org/fhir/sid/icd-10-cm|F33.9,http://hl7.org/fhir/sid/icd-10-cm|F34.1,http://hl7.org/fhir/sid/icd-10-cm|F34.8,http://hl7.org/fhir/sid/icd-10-cm|F34.81,http://hl7.org/fhir/sid/icd-10-cm|F34.89,http://hl7.org/fhir/sid/icd-10-cm|F34.9,http://hl7.org/fhir/sid/icd-9-cm|296.20,http://hl7.org/fhir/sid/icd-9-cm|296.21,http://hl7.org/fhir/sid/icd-9-cm|296.22,http://hl7.org/fhir/sid/icd-9-cm|296.23,http://hl7.org/fhir/sid/icd-9-cm|296.24,http://hl7.org/fhir/sid/icd-9-cm|296.25,http://hl7.org/fhir/sid/icd-9-cm|296.26,http://hl7.org/fhir/sid/icd-9-cm|296.30,http://hl7.org/fhir/sid/icd-9-cm|296.31,http://hl7.org/fhir/sid/icd-9-cm|296.32,http://hl7.org/fhir/sid/icd-9-cm|296.33,http://hl7.org/fhir/sid/icd-9-cm|296.34,http://hl7.org/fhir/sid/icd-9-cm|296.35,http://hl7.org/fhir/sid/icd-9-cm|296.36,http://hl7.org/fhir/sid/icd-9-cm|300.4,http://hl7.org/fhir/sid/icd-9-cm|311",
+      "prompt_text": "Find all patients diagnosed with any form of depression \u2014 including major depressive disorder (both single-episode and recurrent variants), dysthymia (persistent depressive disorder), and other depressive disorders."
+     },
+     "2-expert": {
+      "precision": 1.0,
+      "recall": 0.1527,
+      "f1": 0.265,
+      "passed": false,
+      "expected_count": 37597,
+      "actual_count": 5742,
+      "elapsed_sec": 47.0,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|F32.0,http://hl7.org/fhir/sid/icd-10-cm|F32.1,http://hl7.org/fhir/sid/icd-10-cm|F32.2,http://hl7.org/fhir/sid/icd-10-cm|F32.3,http://hl7.org/fhir/sid/icd-10-cm|F32.4,http://hl7.org/fhir/sid/icd-10-cm|F32.5,http://hl7.org/fhir/sid/icd-10-cm|F32.9,http://hl7.org/fhir/sid/icd-10-cm|F32.A,http://hl7.org/fhir/sid/icd-10-cm|F33.0,http://hl7.org/fhir/sid/icd-10-cm|F33.1,http://hl7.org/fhir/sid/icd-10-cm|F33.2,http://hl7.org/fhir/sid/icd-10-cm|F33.3,http://hl7.org/fhir/sid/icd-10-cm|F33.40,http://hl7.org/fhir/sid/icd-10-cm|F33.41,http://hl7.org/fhir/sid/icd-10-cm|F33.42,http://hl7.org/fhir/sid/icd-10-cm|F33.9,http://hl7.org/fhir/sid/icd-10-cm|F34.1",
+      "additional_query_urls": [],
+      "raw_response": "FINAL ANSWER:\n\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|F32.0,http://hl7.org/fhir/sid/icd-10-cm|F32.1,http://hl7.org/fhir/sid/icd-10-cm|F32.2,http://hl7.org/fhir/sid/icd-10-cm|F32.3,http://hl7.org/fhir/sid/icd-10-cm|F32.4,http://hl7.org/fhir/sid/icd-10-cm|F32.5,http://hl7.org/fhir/sid/icd-10-cm|F32.9,http://hl7.org/fhir/sid/icd-10-cm|F32.A,http://hl7.org/fhir/sid/icd-10-cm|F33.0,http://hl7.org/fhir/sid/icd-10-cm|F33.1,http://hl7.org/fhir/sid/icd-10-cm|F33.2,http://hl7.org/fhir/sid/icd-10-cm|F33.3,http://hl7.org/fhir/sid/icd-10-cm|F33.40,http://hl7.org/fhir/sid/icd-10-cm|F33.41,http://hl7.org/fhir/sid/icd-10-cm|F33.42,http://hl7.org/fhir/sid/icd-10-cm|F33.9,http://hl7.org/fhir/sid/icd-10-cm|F34.1",
+      "prompt_text": "I need to identify all depression patients in our population. Depression is documented under multiple related SNOMED codes: Major depressive disorder (370143000) is the most common, with subtypes Major depression single episode (36923009) and Recurrent major depression (66344007). Dysthymia (78667006) represents persistent low-grade depression. The parent concept Depressive disorder (35489007) is sometimes used for less specific documentation. Search Condition resources for all five codes."
+     },
+     "3-naive": {
+      "precision": 1.0,
+      "recall": 0.1528,
+      "f1": 0.265,
+      "passed": false,
+      "expected_count": 37597,
+      "actual_count": 5743,
+      "elapsed_sec": 52.9,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|F32.0,http://hl7.org/fhir/sid/icd-10-cm|F32.1,http://hl7.org/fhir/sid/icd-10-cm|F32.2,http://hl7.org/fhir/sid/icd-10-cm|F32.3,http://hl7.org/fhir/sid/icd-10-cm|F32.4,http://hl7.org/fhir/sid/icd-10-cm|F32.5,http://hl7.org/fhir/sid/icd-10-cm|F32.8,http://hl7.org/fhir/sid/icd-10-cm|F32.9,http://hl7.org/fhir/sid/icd-10-cm|F32.A,http://hl7.org/fhir/sid/icd-10-cm|F33.0,http://hl7.org/fhir/sid/icd-10-cm|F33.1,http://hl7.org/fhir/sid/icd-10-cm|F33.2,http://hl7.org/fhir/sid/icd-10-cm|F33.3,http://hl7.org/fhir/sid/icd-10-cm|F33.40,http://hl7.org/fhir/sid/icd-10-cm|F33.41,http://hl7.org/fhir/sid/icd-10-cm|F33.42,http://hl7.org/fhir/sid/icd-10-cm|F33.8,http://hl7.org/fhir/sid/icd-10-cm|F33.9,http://hl7.org/fhir/sid/icd-10-cm|F34.1",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|F32.0,http://hl7.org/fhir/sid/icd-10-cm|F32.1,http://hl7.org/fhir/sid/icd-10-cm|F32.2,http://hl7.org/fhir/sid/icd-10-cm|F32.3,http://hl7.org/fhir/sid/icd-10-cm|F32.4,http://hl7.org/fhir/sid/icd-10-cm|F32.5,http://hl7.org/fhir/sid/icd-10-cm|F32.8,http://hl7.org/fhir/sid/icd-10-cm|F32.9,http://hl7.org/fhir/sid/icd-10-cm|F32.A,http://hl7.org/fhir/sid/icd-10-cm|F33.0,http://hl7.org/fhir/sid/icd-10-cm|F33.1,http://hl7.org/fhir/sid/icd-10-cm|F33.2,http://hl7.org/fhir/sid/icd-10-cm|F33.3,http://hl7.org/fhir/sid/icd-10-cm|F33.40,http://hl7.org/fhir/sid/icd-10-cm|F33.41,http://hl7.org/fhir/sid/icd-10-cm|F33.42,http://hl7.org/fhir/sid/icd-10-cm|F33.8,http://hl7.org/fhir/sid/icd-10-cm|F33.9,http://hl7.org/fhir/sid/icd-10-cm|F34.1",
+      "prompt_text": "Find all patients with depression."
+     },
+     "3-broad": {
+      "precision": 0.9841,
+      "recall": 0.1478,
+      "f1": 0.257,
+      "passed": false,
+      "expected_count": 37597,
+      "actual_count": 5646,
+      "elapsed_sec": 51.9,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|F32.0,http://hl7.org/fhir/sid/icd-10-cm|F32.1,http://hl7.org/fhir/sid/icd-10-cm|F32.2,http://hl7.org/fhir/sid/icd-10-cm|F32.3,http://hl7.org/fhir/sid/icd-10-cm|F32.4,http://hl7.org/fhir/sid/icd-10-cm|F32.5,http://hl7.org/fhir/sid/icd-10-cm|F32.9,http://hl7.org/fhir/sid/icd-10-cm|F32.A,http://hl7.org/fhir/sid/icd-10-cm|F32.81,http://hl7.org/fhir/sid/icd-10-cm|F32.89,http://hl7.org/fhir/sid/icd-10-cm|F33.0,http://hl7.org/fhir/sid/icd-10-cm|F33.1,http://hl7.org/fhir/sid/icd-10-cm|F33.2,http://hl7.org/fhir/sid/icd-10-cm|F33.3,http://hl7.org/fhir/sid/icd-10-cm|F33.40,http://hl7.org/fhir/sid/icd-10-cm|F33.41,http://hl7.org/fhir/sid/icd-10-cm|F33.42,http://hl7.org/fhir/sid/icd-10-cm|F33.8,http://hl7.org/fhir/sid/icd-10-cm|F33.9,http://hl7.org/fhir/sid/icd-10-cm|F34.1,http://hl7.org/fhir/sid/icd-10-cm|F34.8,http://hl7.org/fhir/sid/icd-10-cm|F34.81,http://hl7.org/fhir/sid/icd-10-cm|F34.89,http://hl7.org/fhir/sid/icd-10-cm|F34.9,http://hl7.org/fhir/sid/icd-10-cm|F39",
+      "additional_query_urls": [],
+      "raw_response": "FINAL ANSWER:\n\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|F32.0,http://hl7.org/fhir/sid/icd-10-cm|F32.1,http://hl7.org/fhir/sid/icd-10-cm|F32.2,http://hl7.org/fhir/sid/icd-10-cm|F32.3,http://hl7.org/fhir/sid/icd-10-cm|F32.4,http://hl7.org/fhir/sid/icd-10-cm|F32.5,http://hl7.org/fhir/sid/icd-10-cm|F32.9,http://hl7.org/fhir/sid/icd-10-cm|F32.A,http://hl7.org/fhir/sid/icd-10-cm|F32.81,http://hl7.org/fhir/sid/icd-10-cm|F32.89,http://hl7.org/fhir/sid/icd-10-cm|F33.0,http://hl7.org/fhir/sid/icd-10-cm|F33.1,http://hl7.org/fhir/sid/icd-10-cm|F33.2,http://hl7.org/fhir/sid/icd-10-cm|F33.3,http://hl7.org/fhir/sid/icd-10-cm|F33.40,http://hl7.org/fhir/sid/icd-10-cm|F33.41,http://hl7.org/fhir/sid/icd-10-cm|F33.42,http://hl7.org/fhir/sid/icd-10-cm|F33.8,http://hl7.org/fhir/sid/icd-10-cm|F33.9,http://hl7.org/fhir/sid/icd-10-cm|F34.1,http://hl7.org/fhir/sid/icd-10-cm|F34.8,http://hl7.org/fhir/sid/icd-10-cm|F34.81,http://hl7.org/fhir/sid/icd-10-cm|F34.89,http://hl7.org/fhir/sid/icd-10-cm|F34.9,http://hl7.org/fhir/sid/icd-10-cm|F39",
+      "prompt_text": "Find all patients diagnosed with any form of depression \u2014 including major depressive disorder (both single-episode and recurrent variants), dysthymia (persistent depressive disorder), and other depressive disorders."
+     },
+     "3-expert": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 37597,
+      "actual_count": 0,
+      "elapsed_sec": 8.5,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|370143000,http://snomed.info/sct|36923009,http://snomed.info/sct|66344007,http://snomed.info/sct|78667006,http://snomed.info/sct|35489007",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|370143000,http://snomed.info/sct|36923009,http://snomed.info/sct|66344007,http://snomed.info/sct|78667006,http://snomed.info/sct|35489007",
+      "prompt_text": "I need to identify all depression patients in our population. Depression is documented under multiple related SNOMED codes: Major depressive disorder (370143000) is the most common, with subtypes Major depression single episode (36923009) and Recurrent major depression (66344007). Dysthymia (78667006) represents persistent low-grade depression. The parent concept Depressive disorder (35489007) is sometimes used for less specific documentation. Search Condition resources for all five codes."
+     }
+    },
     "copilot:claude-sonnet-4.6": {
      "1-naive": {
       "precision": 1.0,
@@ -2578,6 +2854,134 @@
       "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|312938,http://www.nlm.nih.gov/research/umls/rxnorm|310385,http://www.nlm.nih.gov/research/umls/rxnorm|351250,http://www.nlm.nih.gov/research/umls/rxnorm|200371,http://www.nlm.nih.gov/research/umls/rxnorm|313580,http://www.nlm.nih.gov/research/umls/rxnorm|993537",
       "additional_query_urls": [],
       "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|312938,http://www.nlm.nih.gov/research/umls/rxnorm|310385,http://www.nlm.nih.gov/research/umls/rxnorm|351250,http://www.nlm.nih.gov/research/umls/rxnorm|200371,http://www.nlm.nih.gov/research/umls/rxnorm|313580,http://www.nlm.nih.gov/research/umls/rxnorm|993537",
+      "prompt_text": "I need to find all patients on antidepressant therapy. Synthea generates these at the SCD level \u2014 search MedicationRequest for these RxNorm codes: 312938 (Sertraline 100 MG), 310385 (Fluoxetine 20 MG cap), 351250 (Escitalopram 20 MG), 200371 (Citalopram 20 MG), 313580 (Venlafaxine 100 MG), and 993537 (Bupropion HCl 200 MG ER [Wellbutrin]). Note that querying ingredient codes will not match SCD-coded prescriptions in HAPI FHIR \u2014 you must query the specific SCD codes."
+     }
+    },
+    "copilot:claude-opus-4.7+mimic": {
+     "1-naive": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 31876,
+      "actual_count": 0,
+      "elapsed_sec": 9.2,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?code:in=http://hl7.org/fhir/ValueSet/medication-as-list-codes|antidepressants&status=active",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?code:in=http://hl7.org/fhir/ValueSet/medication-as-list-codes|antidepressants&status=active",
+      "prompt_text": "Find patients on antidepressants."
+     },
+     "1-broad": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 31876,
+      "actual_count": 0,
+      "elapsed_sec": 10.6,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|36437,http://www.nlm.nih.gov/research/umls/rxnorm|4493,http://www.nlm.nih.gov/research/umls/rxnorm|321988,http://www.nlm.nih.gov/research/umls/rxnorm|2556,http://www.nlm.nih.gov/research/umls/rxnorm|32937,http://www.nlm.nih.gov/research/umls/rxnorm|39786,http://www.nlm.nih.gov/research/umls/rxnorm|72625,http://www.nlm.nih.gov/research/umls/rxnorm|42347",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|36437,http://www.nlm.nih.gov/research/umls/rxnorm|4493,http://www.nlm.nih.gov/research/umls/rxnorm|321988,http://www.nlm.nih.gov/research/umls/rxnorm|2556,http://www.nlm.nih.gov/research/umls/rxnorm|32937,http://www.nlm.nih.gov/research/umls/rxnorm|39786,http://www.nlm.nih.gov/research/umls/rxnorm|72625,http://www.nlm.nih.gov/research/umls/rxnorm|42347",
+      "prompt_text": "Find patients prescribed antidepressant medications. The most common classes are SSRIs (sertraline/Zoloft, fluoxetine/Prozac, escitalopram/Lexapro, citalopram/Celexa, paroxetine/Paxil), SNRIs (venlafaxine/Effexor, duloxetine/Cymbalta), and atypicals like bupropion (Wellbutrin)."
+     },
+     "1-expert": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 31876,
+      "actual_count": 0,
+      "elapsed_sec": 9.3,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|312938,http://www.nlm.nih.gov/research/umls/rxnorm|310385,http://www.nlm.nih.gov/research/umls/rxnorm|351250,http://www.nlm.nih.gov/research/umls/rxnorm|200371,http://www.nlm.nih.gov/research/umls/rxnorm|313580,http://www.nlm.nih.gov/research/umls/rxnorm|993537",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|312938,http://www.nlm.nih.gov/research/umls/rxnorm|310385,http://www.nlm.nih.gov/research/umls/rxnorm|351250,http://www.nlm.nih.gov/research/umls/rxnorm|200371,http://www.nlm.nih.gov/research/umls/rxnorm|313580,http://www.nlm.nih.gov/research/umls/rxnorm|993537",
+      "prompt_text": "I need to find all patients on antidepressant therapy. Synthea generates these at the SCD level \u2014 search MedicationRequest for these RxNorm codes: 312938 (Sertraline 100 MG), 310385 (Fluoxetine 20 MG cap), 351250 (Escitalopram 20 MG), 200371 (Citalopram 20 MG), 313580 (Venlafaxine 100 MG), and 993537 (Bupropion HCl 200 MG ER [Wellbutrin]). Note that querying ingredient codes will not match SCD-coded prescriptions in HAPI FHIR \u2014 you must query the specific SCD codes."
+     },
+     "2-naive": {
+      "precision": 0.8165,
+      "recall": 0.0885,
+      "f1": 0.1597,
+      "passed": false,
+      "expected_count": 31876,
+      "actual_count": 3455,
+      "elapsed_sec": 83.2,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|1000048,1000054,1000058,1000064,1000070,1000076,1000097,104837,1086772,1086778,1086784,1098649,1098666,1098670,1098674,1098678,1099288,1099292,1099296,1099300,1099304,1099316,1190110,1232585,1430122,1433217,1433227,1433233,1433239,1433249,1439808,1439810,1439812,1607617,1738483,1738495,1738503,1738511,1738515,1738519,1738523,1738803,1738805,1738807,1801289,1874553,1874559,197363,197364,197365,197366,198045,198046,198047,200371,2200168,2200175,2200178,2200181,248642,251201,2532159,2532163,2591786,2605950,2636817,2725159,283406,283407,283485,283672,309313,309314,310384,310385,310386,311725,311726,312036,312242,312347,312938,312940,312941,313447,313496,313498,313499,313580,313581,313582,313583,313584,313585,313586,313989,313990,313995,314111,314277",
+      "additional_query_urls": [],
+      "raw_response": "FINAL ANSWER:\n\nMedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|1000048,1000054,1000058,1000064,1000070,1000076,1000097,104837,1086772,1086778,1086784,1098649,1098666,1098670,1098674,1098678,1099288,1099292,1099296,1099300,1099304,1099316,1190110,1232585,1430122,1433217,1433227,1433233,1433239,1433249,1439808,1439810,1439812,1607617,1738483,1738495,1738503,1738511,1738515,1738519,1738523,1738803,1738805,1738807,1801289,1874553,1874559,197363,197364,197365,197366,198045,198046,198047,200371,2200168,2200175,2200178,2200181,248642,251201,2532159,2532163,2591786,2605950,2636817,2725159,283406,283407,283485,283672,309313,309314,310384,310385,310386,311725,311726,312036,312242,312347,312938,312940,312941,313447,313496,313498,313499,313580,313581,313582,313583,313584,313585,313586,313989,313990,313995,314111,314277",
+      "prompt_text": "Find patients on antidepressants."
+     },
+     "2-broad": {
+      "precision": 0.5503,
+      "recall": 0.0476,
+      "f1": 0.0876,
+      "passed": false,
+      "expected_count": 31876,
+      "actual_count": 2755,
+      "elapsed_sec": 88.4,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|36437,http://www.nlm.nih.gov/research/umls/rxnorm|4493,http://www.nlm.nih.gov/research/umls/rxnorm|321988,http://www.nlm.nih.gov/research/umls/rxnorm|2556,http://www.nlm.nih.gov/research/umls/rxnorm|32937,http://www.nlm.nih.gov/research/umls/rxnorm|39786,http://www.nlm.nih.gov/research/umls/rxnorm|72625,http://www.nlm.nih.gov/research/umls/rxnorm|42347,http://www.nlm.nih.gov/research/umls/rxnorm|15996,http://www.nlm.nih.gov/research/umls/rxnorm|10737,http://www.nlm.nih.gov/research/umls/rxnorm|704,http://www.nlm.nih.gov/research/umls/rxnorm|7531,http://www.nlm.nih.gov/research/umls/rxnorm|3638,http://www.nlm.nih.gov/research/umls/rxnorm|722031",
+      "additional_query_urls": [],
+      "raw_response": "FINAL ANSWER:\n\nMedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|36437,http://www.nlm.nih.gov/research/umls/rxnorm|4493,http://www.nlm.nih.gov/research/umls/rxnorm|321988,http://www.nlm.nih.gov/research/umls/rxnorm|2556,http://www.nlm.nih.gov/research/umls/rxnorm|32937,http://www.nlm.nih.gov/research/umls/rxnorm|39786,http://www.nlm.nih.gov/research/umls/rxnorm|72625,http://www.nlm.nih.gov/research/umls/rxnorm|42347,http://www.nlm.nih.gov/research/umls/rxnorm|15996,http://www.nlm.nih.gov/research/umls/rxnorm|10737,http://www.nlm.nih.gov/research/umls/rxnorm|704,http://www.nlm.nih.gov/research/umls/rxnorm|7531,http://www.nlm.nih.gov/research/umls/rxnorm|3638,http://www.nlm.nih.gov/research/umls/rxnorm|722031",
+      "prompt_text": "Find patients prescribed antidepressant medications. The most common classes are SSRIs (sertraline/Zoloft, fluoxetine/Prozac, escitalopram/Lexapro, citalopram/Celexa, paroxetine/Paxil), SNRIs (venlafaxine/Effexor, duloxetine/Cymbalta), and atypicals like bupropion (Wellbutrin)."
+     },
+     "2-expert": {
+      "precision": 1.0,
+      "recall": 0.1257,
+      "f1": 0.2233,
+      "passed": false,
+      "expected_count": 31876,
+      "actual_count": 4007,
+      "elapsed_sec": 43.1,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|312938,http://www.nlm.nih.gov/research/umls/rxnorm|310385,http://www.nlm.nih.gov/research/umls/rxnorm|351250,http://www.nlm.nih.gov/research/umls/rxnorm|200371,http://www.nlm.nih.gov/research/umls/rxnorm|313580,http://www.nlm.nih.gov/research/umls/rxnorm|993537",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|312938,http://www.nlm.nih.gov/research/umls/rxnorm|310385,http://www.nlm.nih.gov/research/umls/rxnorm|351250,http://www.nlm.nih.gov/research/umls/rxnorm|200371,http://www.nlm.nih.gov/research/umls/rxnorm|313580,http://www.nlm.nih.gov/research/umls/rxnorm|993537",
+      "prompt_text": "I need to find all patients on antidepressant therapy. Synthea generates these at the SCD level \u2014 search MedicationRequest for these RxNorm codes: 312938 (Sertraline 100 MG), 310385 (Fluoxetine 20 MG cap), 351250 (Escitalopram 20 MG), 200371 (Citalopram 20 MG), 313580 (Venlafaxine 100 MG), and 993537 (Bupropion HCl 200 MG ER [Wellbutrin]). Note that querying ingredient codes will not match SCD-coded prescriptions in HAPI FHIR \u2014 you must query the specific SCD codes."
+     },
+     "3-naive": {
+      "precision": 0.5483,
+      "recall": 0.0472,
+      "f1": 0.0868,
+      "passed": false,
+      "expected_count": 31876,
+      "actual_count": 2741,
+      "elapsed_sec": 221.9,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|36437,http://www.nlm.nih.gov/research/umls/rxnorm|4493,http://www.nlm.nih.gov/research/umls/rxnorm|2556,http://www.nlm.nih.gov/research/umls/rxnorm|321988,http://www.nlm.nih.gov/research/umls/rxnorm|32937,http://www.nlm.nih.gov/research/umls/rxnorm|39786,http://www.nlm.nih.gov/research/umls/rxnorm|72625,http://www.nlm.nih.gov/research/umls/rxnorm|623848,http://www.nlm.nih.gov/research/umls/rxnorm|42347,http://www.nlm.nih.gov/research/umls/rxnorm|15996,http://www.nlm.nih.gov/research/umls/rxnorm|10737,http://www.nlm.nih.gov/research/umls/rxnorm|7396,http://www.nlm.nih.gov/research/umls/rxnorm|1086769,http://www.nlm.nih.gov/research/umls/rxnorm|1439806,http://www.nlm.nih.gov/research/umls/rxnorm|704,http://www.nlm.nih.gov/research/umls/rxnorm|7531,http://www.nlm.nih.gov/research/umls/rxnorm|3638,http://www.nlm.nih.gov/research/umls/rxnorm|3247,http://www.nlm.nih.gov/research/umls/rxnorm|5691,http://www.nlm.nih.gov/research/umls/rxnorm|2597,http://www.nlm.nih.gov/research/umls/rxnorm|828,http://www.nlm.nih.gov/research/umls/rxnorm|8886,http://www.nlm.nih.gov/research/umls/rxnorm|8123,http://www.nlm.nih.gov/research/umls/rxnorm|10834,http://www.nlm.nih.gov/research/umls/rxnorm|6011,http://www.nlm.nih.gov/research/umls/rxnorm|1433212",
+      "additional_query_urls": [],
+      "raw_response": "Chain search works. Building the ingredient-level union query.\n\nFINAL ANSWER:\n\nMedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|36437,http://www.nlm.nih.gov/research/umls/rxnorm|4493,http://www.nlm.nih.gov/research/umls/rxnorm|2556,http://www.nlm.nih.gov/research/umls/rxnorm|321988,http://www.nlm.nih.gov/research/umls/rxnorm|32937,http://www.nlm.nih.gov/research/umls/rxnorm|39786,http://www.nlm.nih.gov/research/umls/rxnorm|72625,http://www.nlm.nih.gov/research/umls/rxnorm|623848,http://www.nlm.nih.gov/research/umls/rxnorm|42347,http://www.nlm.nih.gov/research/umls/rxnorm|15996,http://www.nlm.nih.gov/research/umls/rxnorm|10737,http://www.nlm.nih.gov/research/umls/rxnorm|7396,http://www.nlm.nih.gov/research/umls/rxnorm|1086769,http://www.nlm.nih.gov/research/umls/rxnorm|1439806,http://www.nlm.nih.gov/research/umls/rxnorm|704,http://www.nlm.nih.gov/research/umls/rxnorm|7531,http://www.nlm.nih.gov/research/umls/rxnorm|3638,http://www.nlm.nih.gov/research/umls/rxnorm|3247,http://www.nlm.nih.gov/research/umls/rxnorm|5691,http://www.nlm.nih.gov/research/umls/rxnorm|2597,http://www.nlm.nih.gov/research/umls/rxnorm|828,http://www.nlm.nih.gov/research/umls/rxnorm|8886,http://www.nlm.nih.gov/research/umls/rxnorm|8123,http://www.nlm.nih.gov/research/umls/rxnorm|10834,http://www.nlm.nih.gov/research/umls/rxnorm|6011,http://www.nlm.nih.gov/research/umls/rxnorm|1433212",
+      "prompt_text": "Find patients on antidepressants."
+     },
+     "3-broad": {
+      "precision": 0.8928,
+      "recall": 0.093,
+      "f1": 0.1684,
+      "passed": false,
+      "expected_count": 31876,
+      "actual_count": 3320,
+      "elapsed_sec": 121.5,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|251201,312938,312940,312941,1190110,248642,2532159,2532163,310384,310385,310386,313989,313990,313995,349332,351249,351250,351285,2725159,200371,283672,309313,309314,2591786,1430122,1738483,1738495,1738503,1738511,1738515,1738519,1738523,1738803,1738805,1738807,312242,313580,313581,313582,313583,313584,313585,313586,314277,2605950,596926,596930,596934,616402,2200168,2200175,2200178,2200181,993503,993518,993536,993541,993550,993557,993567,993681,993687,993691,1232585,1801289",
+      "additional_query_urls": [],
+      "raw_response": "FINAL ANSWER:\n\nMedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|251201,312938,312940,312941,1190110,248642,2532159,2532163,310384,310385,310386,313989,313990,313995,349332,351249,351250,351285,2725159,200371,283672,309313,309314,2591786,1430122,1738483,1738495,1738503,1738511,1738515,1738519,1738523,1738803,1738805,1738807,312242,313580,313581,313582,313583,313584,313585,313586,314277,2605950,596926,596930,596934,616402,2200168,2200175,2200178,2200181,993503,993518,993536,993541,993550,993557,993567,993681,993687,993691,1232585,1801289",
+      "prompt_text": "Find patients prescribed antidepressant medications. The most common classes are SSRIs (sertraline/Zoloft, fluoxetine/Prozac, escitalopram/Lexapro, citalopram/Celexa, paroxetine/Paxil), SNRIs (venlafaxine/Effexor, duloxetine/Cymbalta), and atypicals like bupropion (Wellbutrin)."
+     },
+     "3-expert": {
+      "precision": 1.0,
+      "recall": 0.1257,
+      "f1": 0.2233,
+      "passed": false,
+      "expected_count": 31876,
+      "actual_count": 4007,
+      "elapsed_sec": 42.7,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|312938,http://www.nlm.nih.gov/research/umls/rxnorm|310385,http://www.nlm.nih.gov/research/umls/rxnorm|351250,http://www.nlm.nih.gov/research/umls/rxnorm|200371,http://www.nlm.nih.gov/research/umls/rxnorm|313580,http://www.nlm.nih.gov/research/umls/rxnorm|993537",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|312938,http://www.nlm.nih.gov/research/umls/rxnorm|310385,http://www.nlm.nih.gov/research/umls/rxnorm|351250,http://www.nlm.nih.gov/research/umls/rxnorm|200371,http://www.nlm.nih.gov/research/umls/rxnorm|313580,http://www.nlm.nih.gov/research/umls/rxnorm|993537",
       "prompt_text": "I need to find all patients on antidepressant therapy. Synthea generates these at the SCD level \u2014 search MedicationRequest for these RxNorm codes: 312938 (Sertraline 100 MG), 310385 (Fluoxetine 20 MG cap), 351250 (Escitalopram 20 MG), 200371 (Citalopram 20 MG), 313580 (Venlafaxine 100 MG), and 993537 (Bupropion HCl 200 MG ER [Wellbutrin]). Note that querying ingredient codes will not match SCD-coded prescriptions in HAPI FHIR \u2014 you must query the specific SCD codes."
      }
     },

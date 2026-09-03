@@ -1061,6 +1061,158 @@
       "prompt_text": "I need to identify my complete dementia patient population for a quality improvement initiative on caregiver support resources. From the PheKB phenotype definition, the algorithm identifies dementia patients via either dementia diagnosis codes (across many subtypes \u2014 Alzheimer's, vascular, Lewy body, frontotemporal, etc.) OR via prescriptions for dementia-specific medications (cholinesterase inhibitors and memantine). Some of my patients have one but not the other.\n\nPlease run multiple FHIR queries to capture the full population:\n1. Patients with any dementia diagnosis (across all subtypes)\n2. Patients prescribed dementia medications (donepezil, galantamine, memantine, or combination products)\n\nFor each query, return the matching resources. I want the union of all patients found across both approaches."
      }
     },
+    "copilot:claude-opus-4.7+mimic": {
+     "1-naive": {
+      "precision": 0.9075,
+      "recall": 0.3951,
+      "f1": 0.5505,
+      "passed": false,
+      "expected_count": 10355,
+      "actual_count": 4508,
+      "elapsed_sec": 73.1,
+      "queries_generated": 3,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|26929004,http://snomed.info/sct|230270009,http://snomed.info/sct|416780008,http://snomed.info/sct|429998004,http://snomed.info/sct|312991009,http://snomed.info/sct|722977000,http://snomed.info/sct|230283005,http://snomed.info/sct|281004,http://snomed.info/sct|12348006&_include=Condition:patient",
+      "additional_query_urls": [
+       "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|F01.50,http://hl7.org/fhir/sid/icd-10-cm|F01.51,http://hl7.org/fhir/sid/icd-10-cm|F02.80,http://hl7.org/fhir/sid/icd-10-cm|F02.81,http://hl7.org/fhir/sid/icd-10-cm|F03.90,http://hl7.org/fhir/sid/icd-10-cm|F03.91,http://hl7.org/fhir/sid/icd-10-cm|G30.0,http://hl7.org/fhir/sid/icd-10-cm|G30.1,http://hl7.org/fhir/sid/icd-10-cm|G30.8,http://hl7.org/fhir/sid/icd-10-cm|G30.9,http://hl7.org/fhir/sid/icd-10-cm|G31.83,http://hl7.org/fhir/sid/icd-10-cm|G31.09,http://hl7.org/fhir/sid/icd-10-cm|G31.01&_include=Condition:patient",
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|997220,http://www.nlm.nih.gov/research/umls/rxnorm|4637,http://www.nlm.nih.gov/research/umls/rxnorm|183379,http://www.nlm.nih.gov/research/umls/rxnorm|6719,http://www.nlm.nih.gov/research/umls/rxnorm|39999,http://www.nlm.nih.gov/research/umls/rxnorm|861252&_include=MedicationRequest:patient"
+      ],
+      "raw_response": "Condition?code=http://snomed.info/sct|26929004,http://snomed.info/sct|230270009,http://snomed.info/sct|416780008,http://snomed.info/sct|429998004,http://snomed.info/sct|312991009,http://snomed.info/sct|722977000,http://snomed.info/sct|230283005,http://snomed.info/sct|281004,http://snomed.info/sct|12348006&_include=Condition:patient\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|F01.50,http://hl7.org/fhir/sid/icd-10-cm|F01.51,http://hl7.org/fhir/sid/icd-10-cm|F02.80,http://hl7.org/fhir/sid/icd-10-cm|F02.81,http://hl7.org/fhir/sid/icd-10-cm|F03.90,http://hl7.org/fhir/sid/icd-10-cm|F03.91,http://hl7.org/fhir/sid/icd-10-cm|G30.0,http://hl7.org/fhir/sid/icd-10-cm|G30.1,http://hl7.org/fhir/sid/icd-10-cm|G30.8,http://hl7.org/fhir/sid/icd-10-cm|G30.9,http://hl7.org/fhir/sid/icd-10-cm|G31.83,http://hl7.org/fhir/sid/icd-10-cm|G31.09,http://hl7.org/fhir/sid/icd-10-cm|G31.01&_include=Condition:patient\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|997220,http://www.nlm.nih.gov/research/umls/rxnorm|4637,http://www.nlm.nih.gov/research/umls/rxnorm|183379,http://www.nlm.nih.gov/research/umls/rxnorm|6719,http://www.nlm.nih.gov/research/umls/rxnorm|39999,http://www.nlm.nih.gov/research/umls/rxnorm|861252&_include=MedicationRequest:patient",
+      "prompt_text": "I need to identify my complete dementia patient population for a quality improvement initiative on caregiver support resources. From the PheKB phenotype definition, the algorithm identifies dementia patients via either dementia diagnosis codes (across many subtypes \u2014 Alzheimer's, vascular, Lewy body, frontotemporal, etc.) OR via prescriptions for dementia-specific medications (cholinesterase inhibitors and memantine). Some of my patients have one but not the other.\n\nPlease run multiple FHIR queries to capture the full population:\n1. Patients with any dementia diagnosis (across all subtypes)\n2. Patients prescribed dementia medications (donepezil, galantamine, memantine, or combination products)\n\nFor each query, return the matching resources. I want the union of all patients found across both approaches."
+     },
+     "1-broad": {
+      "precision": 0.9075,
+      "recall": 0.3951,
+      "f1": 0.5505,
+      "passed": false,
+      "expected_count": 10355,
+      "actual_count": 4508,
+      "elapsed_sec": 62.2,
+      "queries_generated": 3,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|F01.50,http://hl7.org/fhir/sid/icd-10-cm|F01.51,http://hl7.org/fhir/sid/icd-10-cm|F02.80,http://hl7.org/fhir/sid/icd-10-cm|F02.81,http://hl7.org/fhir/sid/icd-10-cm|F03.90,http://hl7.org/fhir/sid/icd-10-cm|F03.91,http://hl7.org/fhir/sid/icd-10-cm|G30.0,http://hl7.org/fhir/sid/icd-10-cm|G30.1,http://hl7.org/fhir/sid/icd-10-cm|G30.8,http://hl7.org/fhir/sid/icd-10-cm|G30.9,http://hl7.org/fhir/sid/icd-10-cm|G31.01,http://hl7.org/fhir/sid/icd-10-cm|G31.09,http://hl7.org/fhir/sid/icd-10-cm|G31.83&_include=Condition:patient",
+      "additional_query_urls": [
+       "Condition?code=http://snomed.info/sct|26929004,http://snomed.info/sct|429998004,http://snomed.info/sct|230270009,http://snomed.info/sct|312991009,http://snomed.info/sct|191461002,http://snomed.info/sct|13092008,http://snomed.info/sct|278856008,http://snomed.info/sct|230268000,http://snomed.info/sct|52448006&_include=Condition:patient",
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|997220,http://www.nlm.nih.gov/research/umls/rxnorm|135447,http://www.nlm.nih.gov/research/umls/rxnorm|4637,http://www.nlm.nih.gov/research/umls/rxnorm|6719,http://www.nlm.nih.gov/research/umls/rxnorm|183379&_include=MedicationRequest:patient"
+      ],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|F01.50,http://hl7.org/fhir/sid/icd-10-cm|F01.51,http://hl7.org/fhir/sid/icd-10-cm|F02.80,http://hl7.org/fhir/sid/icd-10-cm|F02.81,http://hl7.org/fhir/sid/icd-10-cm|F03.90,http://hl7.org/fhir/sid/icd-10-cm|F03.91,http://hl7.org/fhir/sid/icd-10-cm|G30.0,http://hl7.org/fhir/sid/icd-10-cm|G30.1,http://hl7.org/fhir/sid/icd-10-cm|G30.8,http://hl7.org/fhir/sid/icd-10-cm|G30.9,http://hl7.org/fhir/sid/icd-10-cm|G31.01,http://hl7.org/fhir/sid/icd-10-cm|G31.09,http://hl7.org/fhir/sid/icd-10-cm|G31.83&_include=Condition:patient\nCondition?code=http://snomed.info/sct|26929004,http://snomed.info/sct|429998004,http://snomed.info/sct|230270009,http://snomed.info/sct|312991009,http://snomed.info/sct|191461002,http://snomed.info/sct|13092008,http://snomed.info/sct|278856008,http://snomed.info/sct|230268000,http://snomed.info/sct|52448006&_include=Condition:patient\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|997220,http://www.nlm.nih.gov/research/umls/rxnorm|135447,http://www.nlm.nih.gov/research/umls/rxnorm|4637,http://www.nlm.nih.gov/research/umls/rxnorm|6719,http://www.nlm.nih.gov/research/umls/rxnorm|183379&_include=MedicationRequest:patient",
+      "prompt_text": "I need to identify my complete dementia patient population for a quality improvement initiative on caregiver support resources. From the PheKB phenotype definition, the algorithm identifies dementia patients via either dementia diagnosis codes (across many subtypes \u2014 Alzheimer's, vascular, Lewy body, frontotemporal, etc.) OR via prescriptions for dementia-specific medications (cholinesterase inhibitors and memantine). Some of my patients have one but not the other.\n\nPlease run multiple FHIR queries to capture the full population:\n1. Patients with any dementia diagnosis (across all subtypes)\n2. Patients prescribed dementia medications (donepezil, galantamine, memantine, or combination products)\n\nFor each query, return the matching resources. I want the union of all patients found across both approaches."
+     },
+     "1-expert": {
+      "precision": 0.9075,
+      "recall": 0.3951,
+      "f1": 0.5505,
+      "passed": false,
+      "expected_count": 10355,
+      "actual_count": 4508,
+      "elapsed_sec": 60.7,
+      "queries_generated": 3,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|26929004,http://snomed.info/sct|46651001,http://snomed.info/sct|416780008,http://snomed.info/sct|230270009,http://snomed.info/sct|312991009,http://snomed.info/sct|429998004,http://snomed.info/sct|230283005,http://snomed.info/sct|278856002,http://snomed.info/sct|191531004,http://snomed.info/sct|12348006,http://snomed.info/sct|56267009,http://snomed.info/sct|722977000&_include=Condition:patient",
+      "additional_query_urls": [
+       "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|F00,http://hl7.org/fhir/sid/icd-10-cm|F00.0,http://hl7.org/fhir/sid/icd-10-cm|F00.1,http://hl7.org/fhir/sid/icd-10-cm|F00.2,http://hl7.org/fhir/sid/icd-10-cm|F00.9,http://hl7.org/fhir/sid/icd-10-cm|F01,http://hl7.org/fhir/sid/icd-10-cm|F01.50,http://hl7.org/fhir/sid/icd-10-cm|F01.51,http://hl7.org/fhir/sid/icd-10-cm|F02,http://hl7.org/fhir/sid/icd-10-cm|F02.80,http://hl7.org/fhir/sid/icd-10-cm|F02.81,http://hl7.org/fhir/sid/icd-10-cm|F03,http://hl7.org/fhir/sid/icd-10-cm|F03.90,http://hl7.org/fhir/sid/icd-10-cm|F03.91,http://hl7.org/fhir/sid/icd-10-cm|G30,http://hl7.org/fhir/sid/icd-10-cm|G30.0,http://hl7.org/fhir/sid/icd-10-cm|G30.1,http://hl7.org/fhir/sid/icd-10-cm|G30.8,http://hl7.org/fhir/sid/icd-10-cm|G30.9,http://hl7.org/fhir/sid/icd-10-cm|G31.09,http://hl7.org/fhir/sid/icd-10-cm|G31.83&_include=Condition:patient",
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|997220,http://www.nlm.nih.gov/research/umls/rxnorm|135447,http://www.nlm.nih.gov/research/umls/rxnorm|183379,http://www.nlm.nih.gov/research/umls/rxnorm|6719,http://www.nlm.nih.gov/research/umls/rxnorm|4637,http://www.nlm.nih.gov/research/umls/rxnorm|1100184&_include=MedicationRequest:patient"
+      ],
+      "raw_response": "Condition?code=http://snomed.info/sct|26929004,http://snomed.info/sct|46651001,http://snomed.info/sct|416780008,http://snomed.info/sct|230270009,http://snomed.info/sct|312991009,http://snomed.info/sct|429998004,http://snomed.info/sct|230283005,http://snomed.info/sct|278856002,http://snomed.info/sct|191531004,http://snomed.info/sct|12348006,http://snomed.info/sct|56267009,http://snomed.info/sct|722977000&_include=Condition:patient\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|F00,http://hl7.org/fhir/sid/icd-10-cm|F00.0,http://hl7.org/fhir/sid/icd-10-cm|F00.1,http://hl7.org/fhir/sid/icd-10-cm|F00.2,http://hl7.org/fhir/sid/icd-10-cm|F00.9,http://hl7.org/fhir/sid/icd-10-cm|F01,http://hl7.org/fhir/sid/icd-10-cm|F01.50,http://hl7.org/fhir/sid/icd-10-cm|F01.51,http://hl7.org/fhir/sid/icd-10-cm|F02,http://hl7.org/fhir/sid/icd-10-cm|F02.80,http://hl7.org/fhir/sid/icd-10-cm|F02.81,http://hl7.org/fhir/sid/icd-10-cm|F03,http://hl7.org/fhir/sid/icd-10-cm|F03.90,http://hl7.org/fhir/sid/icd-10-cm|F03.91,http://hl7.org/fhir/sid/icd-10-cm|G30,http://hl7.org/fhir/sid/icd-10-cm|G30.0,http://hl7.org/fhir/sid/icd-10-cm|G30.1,http://hl7.org/fhir/sid/icd-10-cm|G30.8,http://hl7.org/fhir/sid/icd-10-cm|G30.9,http://hl7.org/fhir/sid/icd-10-cm|G31.09,http://hl7.org/fhir/sid/icd-10-cm|G31.83&_include=Condition:patient\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|997220,http://www.nlm.nih.gov/research/umls/rxnorm|135447,http://www.nlm.nih.gov/research/umls/rxnorm|183379,http://www.nlm.nih.gov/research/umls/rxnorm|6719,http://www.nlm.nih.gov/research/umls/rxnorm|4637,http://www.nlm.nih.gov/research/umls/rxnorm|1100184&_include=MedicationRequest:patient",
+      "prompt_text": "I need to identify my complete dementia patient population for a quality improvement initiative on caregiver support resources. From the PheKB phenotype definition, the algorithm identifies dementia patients via either dementia diagnosis codes (across many subtypes \u2014 Alzheimer's, vascular, Lewy body, frontotemporal, etc.) OR via prescriptions for dementia-specific medications (cholinesterase inhibitors and memantine). Some of my patients have one but not the other.\n\nPlease run multiple FHIR queries to capture the full population:\n1. Patients with any dementia diagnosis (across all subtypes)\n2. Patients prescribed dementia medications (donepezil, galantamine, memantine, or combination products)\n\nFor each query, return the matching resources. I want the union of all patients found across both approaches."
+     },
+     "2-naive": {
+      "precision": 0.9567,
+      "recall": 0.4054,
+      "f1": 0.5695,
+      "passed": false,
+      "expected_count": 10355,
+      "actual_count": 4388,
+      "elapsed_sec": 204.4,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|F01.50,http://hl7.org/fhir/sid/icd-10-cm|F01.51,http://hl7.org/fhir/sid/icd-10-cm|F02.80,http://hl7.org/fhir/sid/icd-10-cm|F02.81,http://hl7.org/fhir/sid/icd-10-cm|F03.90,http://hl7.org/fhir/sid/icd-10-cm|F03.91,http://hl7.org/fhir/sid/icd-10-cm|G30.0,http://hl7.org/fhir/sid/icd-10-cm|G30.1,http://hl7.org/fhir/sid/icd-10-cm|G30.8,http://hl7.org/fhir/sid/icd-10-cm|G30.9,http://hl7.org/fhir/sid/icd-10-cm|G31.01,http://hl7.org/fhir/sid/icd-10-cm|G31.09,http://hl7.org/fhir/sid/icd-10-cm|G31.83,http://hl7.org/fhir/sid/icd-10-cm|F10.27,http://hl7.org/fhir/sid/icd-10-cm|F10.97,http://hl7.org/fhir/sid/icd-9-cm|290.0,http://hl7.org/fhir/sid/icd-9-cm|290.10,http://hl7.org/fhir/sid/icd-9-cm|290.11,http://hl7.org/fhir/sid/icd-9-cm|290.12,http://hl7.org/fhir/sid/icd-9-cm|290.13,http://hl7.org/fhir/sid/icd-9-cm|290.20,http://hl7.org/fhir/sid/icd-9-cm|290.21,http://hl7.org/fhir/sid/icd-9-cm|290.3,http://hl7.org/fhir/sid/icd-9-cm|290.40,http://hl7.org/fhir/sid/icd-9-cm|290.41,http://hl7.org/fhir/sid/icd-9-cm|290.42,http://hl7.org/fhir/sid/icd-9-cm|290.43,http://hl7.org/fhir/sid/icd-9-cm|294.10,http://hl7.org/fhir/sid/icd-9-cm|294.11,http://hl7.org/fhir/sid/icd-9-cm|294.20,http://hl7.org/fhir/sid/icd-9-cm|294.21,http://hl7.org/fhir/sid/icd-9-cm|294.8,http://hl7.org/fhir/sid/icd-9-cm|331.0,http://hl7.org/fhir/sid/icd-9-cm|331.11,http://hl7.org/fhir/sid/icd-9-cm|331.19,http://hl7.org/fhir/sid/icd-9-cm|331.82,http://hl7.org/fhir/sid/icd-9-cm|331.2",
+      "additional_query_urls": [
+       "MedicationRequest?medication.code=http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|donepezil,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|galantamine,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|memantine,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|rivastigmine"
+      ],
+      "raw_response": "Both queries return results. Final answer:\n\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|F01.50,http://hl7.org/fhir/sid/icd-10-cm|F01.51,http://hl7.org/fhir/sid/icd-10-cm|F02.80,http://hl7.org/fhir/sid/icd-10-cm|F02.81,http://hl7.org/fhir/sid/icd-10-cm|F03.90,http://hl7.org/fhir/sid/icd-10-cm|F03.91,http://hl7.org/fhir/sid/icd-10-cm|G30.0,http://hl7.org/fhir/sid/icd-10-cm|G30.1,http://hl7.org/fhir/sid/icd-10-cm|G30.8,http://hl7.org/fhir/sid/icd-10-cm|G30.9,http://hl7.org/fhir/sid/icd-10-cm|G31.01,http://hl7.org/fhir/sid/icd-10-cm|G31.09,http://hl7.org/fhir/sid/icd-10-cm|G31.83,http://hl7.org/fhir/sid/icd-10-cm|F10.27,http://hl7.org/fhir/sid/icd-10-cm|F10.97,http://hl7.org/fhir/sid/icd-9-cm|290.0,http://hl7.org/fhir/sid/icd-9-cm|290.10,http://hl7.org/fhir/sid/icd-9-cm|290.11,http://hl7.org/fhir/sid/icd-9-cm|290.12,http://hl7.org/fhir/sid/icd-9-cm|290.13,http://hl7.org/fhir/sid/icd-9-cm|290.20,http://hl7.org/fhir/sid/icd-9-cm|290.21,http://hl7.org/fhir/sid/icd-9-cm|290.3,http://hl7.org/fhir/sid/icd-9-cm|290.40,http://hl7.org/fhir/sid/icd-9-cm|290.41,http://hl7.org/fhir/sid/icd-9-cm|290.42,http://hl7.org/fhir/sid/icd-9-cm|290.43,http://hl7.org/fhir/sid/icd-9-cm|294.10,http://hl7.org/fhir/sid/icd-9-cm|294.11,http://hl7.org/fhir/sid/icd-9-cm|294.20,http://hl7.org/fhir/sid/icd-9-cm|294.21,http://hl7.org/fhir/sid/icd-9-cm|294.8,http://hl7.org/fhir/sid/icd-9-cm|331.0,http://hl7.org/fhir/sid/icd-9-cm|331.11,http://hl7.org/fhir/sid/icd-9-cm|331.19,http://hl7.org/fhir/sid/icd-9-cm|331.82,http://hl7.org/fhir/sid/icd-9-cm|331.2\nMedicationRequest?medication.code=http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|donepezil,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|galantamine,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|memantine,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|rivastigmine",
+      "prompt_text": "I need to identify my complete dementia patient population for a quality improvement initiative on caregiver support resources. From the PheKB phenotype definition, the algorithm identifies dementia patients via either dementia diagnosis codes (across many subtypes \u2014 Alzheimer's, vascular, Lewy body, frontotemporal, etc.) OR via prescriptions for dementia-specific medications (cholinesterase inhibitors and memantine). Some of my patients have one but not the other.\n\nPlease run multiple FHIR queries to capture the full population:\n1. Patients with any dementia diagnosis (across all subtypes)\n2. Patients prescribed dementia medications (donepezil, galantamine, memantine, or combination products)\n\nFor each query, return the matching resources. I want the union of all patients found across both approaches."
+     },
+     "2-broad": {
+      "precision": 0.9368,
+      "recall": 0.7696,
+      "f1": 0.845,
+      "passed": true,
+      "expected_count": 10355,
+      "actual_count": 8507,
+      "elapsed_sec": 245.5,
+      "queries_generated": 3,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|F01.50,http://hl7.org/fhir/sid/icd-10-cm|F01.51,http://hl7.org/fhir/sid/icd-10-cm|F02.80,http://hl7.org/fhir/sid/icd-10-cm|F02.81,http://hl7.org/fhir/sid/icd-10-cm|F03.90,http://hl7.org/fhir/sid/icd-10-cm|F03.91,http://hl7.org/fhir/sid/icd-10-cm|G30.0,http://hl7.org/fhir/sid/icd-10-cm|G30.1,http://hl7.org/fhir/sid/icd-10-cm|G30.8,http://hl7.org/fhir/sid/icd-10-cm|G30.9,http://hl7.org/fhir/sid/icd-10-cm|G31.01,http://hl7.org/fhir/sid/icd-10-cm|G31.09,http://hl7.org/fhir/sid/icd-10-cm|G31.83",
+      "additional_query_urls": [
+       "Condition?code=http://hl7.org/fhir/sid/icd-9-cm|290.0,http://hl7.org/fhir/sid/icd-9-cm|290.10,http://hl7.org/fhir/sid/icd-9-cm|290.11,http://hl7.org/fhir/sid/icd-9-cm|290.12,http://hl7.org/fhir/sid/icd-9-cm|290.13,http://hl7.org/fhir/sid/icd-9-cm|290.20,http://hl7.org/fhir/sid/icd-9-cm|290.21,http://hl7.org/fhir/sid/icd-9-cm|290.3,http://hl7.org/fhir/sid/icd-9-cm|290.40,http://hl7.org/fhir/sid/icd-9-cm|290.41,http://hl7.org/fhir/sid/icd-9-cm|290.42,http://hl7.org/fhir/sid/icd-9-cm|290.43,http://hl7.org/fhir/sid/icd-9-cm|294.10,http://hl7.org/fhir/sid/icd-9-cm|294.11,http://hl7.org/fhir/sid/icd-9-cm|294.20,http://hl7.org/fhir/sid/icd-9-cm|294.21,http://hl7.org/fhir/sid/icd-9-cm|294.8,http://hl7.org/fhir/sid/icd-9-cm|331.0,http://hl7.org/fhir/sid/icd-9-cm|331.11,http://hl7.org/fhir/sid/icd-9-cm|331.19,http://hl7.org/fhir/sid/icd-9-cm|331.82",
+       "MedicationRequest?code=http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Donepezil,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Memantine,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Galantamine,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Rivastigmine,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Aricept,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Namenda,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Exelon,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Razadyne"
+      ],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|F01.50,http://hl7.org/fhir/sid/icd-10-cm|F01.51,http://hl7.org/fhir/sid/icd-10-cm|F02.80,http://hl7.org/fhir/sid/icd-10-cm|F02.81,http://hl7.org/fhir/sid/icd-10-cm|F03.90,http://hl7.org/fhir/sid/icd-10-cm|F03.91,http://hl7.org/fhir/sid/icd-10-cm|G30.0,http://hl7.org/fhir/sid/icd-10-cm|G30.1,http://hl7.org/fhir/sid/icd-10-cm|G30.8,http://hl7.org/fhir/sid/icd-10-cm|G30.9,http://hl7.org/fhir/sid/icd-10-cm|G31.01,http://hl7.org/fhir/sid/icd-10-cm|G31.09,http://hl7.org/fhir/sid/icd-10-cm|G31.83\nCondition?code=http://hl7.org/fhir/sid/icd-9-cm|290.0,http://hl7.org/fhir/sid/icd-9-cm|290.10,http://hl7.org/fhir/sid/icd-9-cm|290.11,http://hl7.org/fhir/sid/icd-9-cm|290.12,http://hl7.org/fhir/sid/icd-9-cm|290.13,http://hl7.org/fhir/sid/icd-9-cm|290.20,http://hl7.org/fhir/sid/icd-9-cm|290.21,http://hl7.org/fhir/sid/icd-9-cm|290.3,http://hl7.org/fhir/sid/icd-9-cm|290.40,http://hl7.org/fhir/sid/icd-9-cm|290.41,http://hl7.org/fhir/sid/icd-9-cm|290.42,http://hl7.org/fhir/sid/icd-9-cm|290.43,http://hl7.org/fhir/sid/icd-9-cm|294.10,http://hl7.org/fhir/sid/icd-9-cm|294.11,http://hl7.org/fhir/sid/icd-9-cm|294.20,http://hl7.org/fhir/sid/icd-9-cm|294.21,http://hl7.org/fhir/sid/icd-9-cm|294.8,http://hl7.org/fhir/sid/icd-9-cm|331.0,http://hl7.org/fhir/sid/icd-9-cm|331.11,http://hl7.org/fhir/sid/icd-9-cm|331.19,http://hl7.org/fhir/sid/icd-9-cm|331.82\nMedicationRequest?code=http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Donepezil,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Memantine,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Galantamine,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Rivastigmine,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Aricept,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Namenda,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Exelon,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Razadyne",
+      "prompt_text": "I need to identify my complete dementia patient population for a quality improvement initiative on caregiver support resources. From the PheKB phenotype definition, the algorithm identifies dementia patients via either dementia diagnosis codes (across many subtypes \u2014 Alzheimer's, vascular, Lewy body, frontotemporal, etc.) OR via prescriptions for dementia-specific medications (cholinesterase inhibitors and memantine). Some of my patients have one but not the other.\n\nPlease run multiple FHIR queries to capture the full population:\n1. Patients with any dementia diagnosis (across all subtypes)\n2. Patients prescribed dementia medications (donepezil, galantamine, memantine, or combination products)\n\nFor each query, return the matching resources. I want the union of all patients found across both approaches."
+     },
+     "2-expert": {
+      "precision": 0.9434,
+      "recall": 0.736,
+      "f1": 0.8269,
+      "passed": true,
+      "expected_count": 10355,
+      "actual_count": 8078,
+      "elapsed_sec": 173.1,
+      "queries_generated": 3,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|G30.0,http://hl7.org/fhir/sid/icd-10-cm|G30.1,http://hl7.org/fhir/sid/icd-10-cm|G30.8,http://hl7.org/fhir/sid/icd-10-cm|G30.9,http://hl7.org/fhir/sid/icd-10-cm|F01.50,http://hl7.org/fhir/sid/icd-10-cm|F01.51,http://hl7.org/fhir/sid/icd-10-cm|F02.80,http://hl7.org/fhir/sid/icd-10-cm|F02.81,http://hl7.org/fhir/sid/icd-10-cm|F03.90,http://hl7.org/fhir/sid/icd-10-cm|F03.91,http://hl7.org/fhir/sid/icd-10-cm|G31.01,http://hl7.org/fhir/sid/icd-10-cm|G31.09,http://hl7.org/fhir/sid/icd-10-cm|G31.83",
+      "additional_query_urls": [
+       "Condition?code=http://hl7.org/fhir/sid/icd-9-cm|290.0,http://hl7.org/fhir/sid/icd-9-cm|290.10,http://hl7.org/fhir/sid/icd-9-cm|290.11,http://hl7.org/fhir/sid/icd-9-cm|290.12,http://hl7.org/fhir/sid/icd-9-cm|290.13,http://hl7.org/fhir/sid/icd-9-cm|290.20,http://hl7.org/fhir/sid/icd-9-cm|290.21,http://hl7.org/fhir/sid/icd-9-cm|290.3,http://hl7.org/fhir/sid/icd-9-cm|290.40,http://hl7.org/fhir/sid/icd-9-cm|290.41,http://hl7.org/fhir/sid/icd-9-cm|290.42,http://hl7.org/fhir/sid/icd-9-cm|290.43,http://hl7.org/fhir/sid/icd-9-cm|294.10,http://hl7.org/fhir/sid/icd-9-cm|294.11,http://hl7.org/fhir/sid/icd-9-cm|294.20,http://hl7.org/fhir/sid/icd-9-cm|294.21,http://hl7.org/fhir/sid/icd-9-cm|331.0,http://hl7.org/fhir/sid/icd-9-cm|331.11,http://hl7.org/fhir/sid/icd-9-cm|331.19,http://hl7.org/fhir/sid/icd-9-cm|331.82",
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|135447,http://www.nlm.nih.gov/research/umls/rxnorm|4637,http://www.nlm.nih.gov/research/umls/rxnorm|6719,http://www.nlm.nih.gov/research/umls/rxnorm|183379,http://www.nlm.nih.gov/research/umls/rxnorm|1100184"
+      ],
+      "raw_response": "Condition ICD-10: 9,637 matches. ICD-9: 13,371. MedicationRequest RxNorm: 0 (server doesn't code meds via RxNorm), included for completeness per PheKB definition.\n\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|G30.0,http://hl7.org/fhir/sid/icd-10-cm|G30.1,http://hl7.org/fhir/sid/icd-10-cm|G30.8,http://hl7.org/fhir/sid/icd-10-cm|G30.9,http://hl7.org/fhir/sid/icd-10-cm|F01.50,http://hl7.org/fhir/sid/icd-10-cm|F01.51,http://hl7.org/fhir/sid/icd-10-cm|F02.80,http://hl7.org/fhir/sid/icd-10-cm|F02.81,http://hl7.org/fhir/sid/icd-10-cm|F03.90,http://hl7.org/fhir/sid/icd-10-cm|F03.91,http://hl7.org/fhir/sid/icd-10-cm|G31.01,http://hl7.org/fhir/sid/icd-10-cm|G31.09,http://hl7.org/fhir/sid/icd-10-cm|G31.83\nCondition?code=http://hl7.org/fhir/sid/icd-9-cm|290.0,http://hl7.org/fhir/sid/icd-9-cm|290.10,http://hl7.org/fhir/sid/icd-9-cm|290.11,http://hl7.org/fhir/sid/icd-9-cm|290.12,http://hl7.org/fhir/sid/icd-9-cm|290.13,http://hl7.org/fhir/sid/icd-9-cm|290.20,http://hl7.org/fhir/sid/icd-9-cm|290.21,http://hl7.org/fhir/sid/icd-9-cm|290.3,http://hl7.org/fhir/sid/icd-9-cm|290.40,http://hl7.org/fhir/sid/icd-9-cm|290.41,http://hl7.org/fhir/sid/icd-9-cm|290.42,http://hl7.org/fhir/sid/icd-9-cm|290.43,http://hl7.org/fhir/sid/icd-9-cm|294.10,http://hl7.org/fhir/sid/icd-9-cm|294.11,http://hl7.org/fhir/sid/icd-9-cm|294.20,http://hl7.org/fhir/sid/icd-9-cm|294.21,http://hl7.org/fhir/sid/icd-9-cm|331.0,http://hl7.org/fhir/sid/icd-9-cm|331.11,http://hl7.org/fhir/sid/icd-9-cm|331.19,http://hl7.org/fhir/sid/icd-9-cm|331.82\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|135447,http://www.nlm.nih.gov/research/umls/rxnorm|4637,http://www.nlm.nih.gov/research/umls/rxnorm|6719,http://www.nlm.nih.gov/research/umls/rxnorm|183379,http://www.nlm.nih.gov/research/umls/rxnorm|1100184",
+      "prompt_text": "I need to identify my complete dementia patient population for a quality improvement initiative on caregiver support resources. From the PheKB phenotype definition, the algorithm identifies dementia patients via either dementia diagnosis codes (across many subtypes \u2014 Alzheimer's, vascular, Lewy body, frontotemporal, etc.) OR via prescriptions for dementia-specific medications (cholinesterase inhibitors and memantine). Some of my patients have one but not the other.\n\nPlease run multiple FHIR queries to capture the full population:\n1. Patients with any dementia diagnosis (across all subtypes)\n2. Patients prescribed dementia medications (donepezil, galantamine, memantine, or combination products)\n\nFor each query, return the matching resources. I want the union of all patients found across both approaches."
+     },
+     "3-naive": {
+      "precision": 0.9577,
+      "recall": 0.4049,
+      "f1": 0.5692,
+      "passed": false,
+      "expected_count": 10355,
+      "actual_count": 4378,
+      "elapsed_sec": 132.5,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|G30.0,http://hl7.org/fhir/sid/icd-10-cm|G30.1,http://hl7.org/fhir/sid/icd-10-cm|G30.8,http://hl7.org/fhir/sid/icd-10-cm|G30.9,http://hl7.org/fhir/sid/icd-10-cm|F01.50,http://hl7.org/fhir/sid/icd-10-cm|F01.51,http://hl7.org/fhir/sid/icd-10-cm|F02.80,http://hl7.org/fhir/sid/icd-10-cm|F02.81,http://hl7.org/fhir/sid/icd-10-cm|F03.90,http://hl7.org/fhir/sid/icd-10-cm|F03.91,http://hl7.org/fhir/sid/icd-10-cm|G31.83,http://hl7.org/fhir/sid/icd-10-cm|G31.09,http://hl7.org/fhir/sid/icd-10-cm|G31.01,http://hl7.org/fhir/sid/icd-9-cm|290.0,http://hl7.org/fhir/sid/icd-9-cm|290.10,http://hl7.org/fhir/sid/icd-9-cm|290.11,http://hl7.org/fhir/sid/icd-9-cm|290.12,http://hl7.org/fhir/sid/icd-9-cm|290.13,http://hl7.org/fhir/sid/icd-9-cm|290.20,http://hl7.org/fhir/sid/icd-9-cm|290.21,http://hl7.org/fhir/sid/icd-9-cm|290.3,http://hl7.org/fhir/sid/icd-9-cm|290.40,http://hl7.org/fhir/sid/icd-9-cm|290.41,http://hl7.org/fhir/sid/icd-9-cm|290.42,http://hl7.org/fhir/sid/icd-9-cm|290.43,http://hl7.org/fhir/sid/icd-9-cm|294.10,http://hl7.org/fhir/sid/icd-9-cm|294.11,http://hl7.org/fhir/sid/icd-9-cm|294.20,http://hl7.org/fhir/sid/icd-9-cm|294.21,http://hl7.org/fhir/sid/icd-9-cm|294.8,http://hl7.org/fhir/sid/icd-9-cm|331.0,http://hl7.org/fhir/sid/icd-9-cm|331.11,http://hl7.org/fhir/sid/icd-9-cm|331.19,http://hl7.org/fhir/sid/icd-9-cm|331.82",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|135447,http://www.nlm.nih.gov/research/umls/rxnorm|4637,http://www.nlm.nih.gov/research/umls/rxnorm|183379,http://www.nlm.nih.gov/research/umls/rxnorm|6719,http://www.nlm.nih.gov/research/umls/rxnorm|998168,http://www.nlm.nih.gov/research/umls/rxnorm|997220"
+      ],
+      "raw_response": "FINAL ANSWER:\n\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|G30.0,http://hl7.org/fhir/sid/icd-10-cm|G30.1,http://hl7.org/fhir/sid/icd-10-cm|G30.8,http://hl7.org/fhir/sid/icd-10-cm|G30.9,http://hl7.org/fhir/sid/icd-10-cm|F01.50,http://hl7.org/fhir/sid/icd-10-cm|F01.51,http://hl7.org/fhir/sid/icd-10-cm|F02.80,http://hl7.org/fhir/sid/icd-10-cm|F02.81,http://hl7.org/fhir/sid/icd-10-cm|F03.90,http://hl7.org/fhir/sid/icd-10-cm|F03.91,http://hl7.org/fhir/sid/icd-10-cm|G31.83,http://hl7.org/fhir/sid/icd-10-cm|G31.09,http://hl7.org/fhir/sid/icd-10-cm|G31.01,http://hl7.org/fhir/sid/icd-9-cm|290.0,http://hl7.org/fhir/sid/icd-9-cm|290.10,http://hl7.org/fhir/sid/icd-9-cm|290.11,http://hl7.org/fhir/sid/icd-9-cm|290.12,http://hl7.org/fhir/sid/icd-9-cm|290.13,http://hl7.org/fhir/sid/icd-9-cm|290.20,http://hl7.org/fhir/sid/icd-9-cm|290.21,http://hl7.org/fhir/sid/icd-9-cm|290.3,http://hl7.org/fhir/sid/icd-9-cm|290.40,http://hl7.org/fhir/sid/icd-9-cm|290.41,http://hl7.org/fhir/sid/icd-9-cm|290.42,http://hl7.org/fhir/sid/icd-9-cm|290.43,http://hl7.org/fhir/sid/icd-9-cm|294.10,http://hl7.org/fhir/sid/icd-9-cm|294.11,http://hl7.org/fhir/sid/icd-9-cm|294.20,http://hl7.org/fhir/sid/icd-9-cm|294.21,http://hl7.org/fhir/sid/icd-9-cm|294.8,http://hl7.org/fhir/sid/icd-9-cm|331.0,http://hl7.org/fhir/sid/icd-9-cm|331.11,http://hl7.org/fhir/sid/icd-9-cm|331.19,http://hl7.org/fhir/sid/icd-9-cm|331.82\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|135447,http://www.nlm.nih.gov/research/umls/rxnorm|4637,http://www.nlm.nih.gov/research/umls/rxnorm|183379,http://www.nlm.nih.gov/research/umls/rxnorm|6719,http://www.nlm.nih.gov/research/umls/rxnorm|998168,http://www.nlm.nih.gov/research/umls/rxnorm|997220",
+      "prompt_text": "I need to identify my complete dementia patient population for a quality improvement initiative on caregiver support resources. From the PheKB phenotype definition, the algorithm identifies dementia patients via either dementia diagnosis codes (across many subtypes \u2014 Alzheimer's, vascular, Lewy body, frontotemporal, etc.) OR via prescriptions for dementia-specific medications (cholinesterase inhibitors and memantine). Some of my patients have one but not the other.\n\nPlease run multiple FHIR queries to capture the full population:\n1. Patients with any dementia diagnosis (across all subtypes)\n2. Patients prescribed dementia medications (donepezil, galantamine, memantine, or combination products)\n\nFor each query, return the matching resources. I want the union of all patients found across both approaches."
+     },
+     "3-broad": {
+      "precision": 0.9513,
+      "recall": 0.3961,
+      "f1": 0.5594,
+      "passed": false,
+      "expected_count": 10355,
+      "actual_count": 4312,
+      "elapsed_sec": 190.0,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|F03.90,http://hl7.org/fhir/sid/icd-10-cm|F03.91,http://hl7.org/fhir/sid/icd-10-cm|G30.0,http://hl7.org/fhir/sid/icd-10-cm|G30.1,http://hl7.org/fhir/sid/icd-10-cm|G30.8,http://hl7.org/fhir/sid/icd-10-cm|G30.9,http://hl7.org/fhir/sid/icd-10-cm|G31.83,http://hl7.org/fhir/sid/icd-10-cm|G31.09,http://hl7.org/fhir/sid/icd-10-cm|F01.50,http://hl7.org/fhir/sid/icd-10-cm|F01.51,http://hl7.org/fhir/sid/icd-10-cm|F02.80,http://hl7.org/fhir/sid/icd-10-cm|F02.81,http://hl7.org/fhir/sid/icd-9-cm|290.0,http://hl7.org/fhir/sid/icd-9-cm|290.10,http://hl7.org/fhir/sid/icd-9-cm|290.11,http://hl7.org/fhir/sid/icd-9-cm|290.12,http://hl7.org/fhir/sid/icd-9-cm|290.13,http://hl7.org/fhir/sid/icd-9-cm|290.20,http://hl7.org/fhir/sid/icd-9-cm|290.21,http://hl7.org/fhir/sid/icd-9-cm|290.3,http://hl7.org/fhir/sid/icd-9-cm|290.40,http://hl7.org/fhir/sid/icd-9-cm|290.41,http://hl7.org/fhir/sid/icd-9-cm|290.42,http://hl7.org/fhir/sid/icd-9-cm|290.43,http://hl7.org/fhir/sid/icd-9-cm|294.10,http://hl7.org/fhir/sid/icd-9-cm|294.11,http://hl7.org/fhir/sid/icd-9-cm|294.20,http://hl7.org/fhir/sid/icd-9-cm|294.21,http://hl7.org/fhir/sid/icd-9-cm|331.0,http://hl7.org/fhir/sid/icd-9-cm|331.11,http://hl7.org/fhir/sid/icd-9-cm|331.19,http://hl7.org/fhir/sid/icd-9-cm|331.82",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|135447,http://www.nlm.nih.gov/research/umls/rxnorm|4637,http://www.nlm.nih.gov/research/umls/rxnorm|183379,http://www.nlm.nih.gov/research/umls/rxnorm|6719,http://www.nlm.nih.gov/research/umls/rxnorm|1100184,http://www.nlm.nih.gov/research/umls/rxnorm|1092432"
+      ],
+      "raw_response": "Based on my analysis (Playbook 12 \u2014 Cohort = OR of Condition dementia dx + MedicationRequest dementia meds; Playbook 8 \u2014 multi-system codes ICD-10 + ICD-9), here are the queries. The Condition query is verified at 22,990 hits on the server.\n\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|F03.90,http://hl7.org/fhir/sid/icd-10-cm|F03.91,http://hl7.org/fhir/sid/icd-10-cm|G30.0,http://hl7.org/fhir/sid/icd-10-cm|G30.1,http://hl7.org/fhir/sid/icd-10-cm|G30.8,http://hl7.org/fhir/sid/icd-10-cm|G30.9,http://hl7.org/fhir/sid/icd-10-cm|G31.83,http://hl7.org/fhir/sid/icd-10-cm|G31.09,http://hl7.org/fhir/sid/icd-10-cm|F01.50,http://hl7.org/fhir/sid/icd-10-cm|F01.51,http://hl7.org/fhir/sid/icd-10-cm|F02.80,http://hl7.org/fhir/sid/icd-10-cm|F02.81,http://hl7.org/fhir/sid/icd-9-cm|290.0,http://hl7.org/fhir/sid/icd-9-cm|290.10,http://hl7.org/fhir/sid/icd-9-cm|290.11,http://hl7.org/fhir/sid/icd-9-cm|290.12,http://hl7.org/fhir/sid/icd-9-cm|290.13,http://hl7.org/fhir/sid/icd-9-cm|290.20,http://hl7.org/fhir/sid/icd-9-cm|290.21,http://hl7.org/fhir/sid/icd-9-cm|290.3,http://hl7.org/fhir/sid/icd-9-cm|290.40,http://hl7.org/fhir/sid/icd-9-cm|290.41,http://hl7.org/fhir/sid/icd-9-cm|290.42,http://hl7.org/fhir/sid/icd-9-cm|290.43,http://hl7.org/fhir/sid/icd-9-cm|294.10,http://hl7.org/fhir/sid/icd-9-cm|294.11,http://hl7.org/fhir/sid/icd-9-cm|294.20,http://hl7.org/fhir/sid/icd-9-cm|294.21,http://hl7.org/fhir/sid/icd-9-cm|331.0,http://hl7.org/fhir/sid/icd-9-cm|331.11,http://hl7.org/fhir/sid/icd-9-cm|331.19,http://hl7.org/fhir/sid/icd-9-cm|331.82\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|135447,http://www.nlm.nih.gov/research/umls/rxnorm|4637,http://www.nlm.nih.gov/research/umls/rxnorm|183379,http://www.nlm.nih.gov/research/umls/rxnorm|6719,http://www.nlm.nih.gov/research/umls/rxnorm|1100184,http://www.nlm.nih.gov/research/umls/rxnorm|1092432",
+      "prompt_text": "I need to identify my complete dementia patient population for a quality improvement initiative on caregiver support resources. From the PheKB phenotype definition, the algorithm identifies dementia patients via either dementia diagnosis codes (across many subtypes \u2014 Alzheimer's, vascular, Lewy body, frontotemporal, etc.) OR via prescriptions for dementia-specific medications (cholinesterase inhibitors and memantine). Some of my patients have one but not the other.\n\nPlease run multiple FHIR queries to capture the full population:\n1. Patients with any dementia diagnosis (across all subtypes)\n2. Patients prescribed dementia medications (donepezil, galantamine, memantine, or combination products)\n\nFor each query, return the matching resources. I want the union of all patients found across both approaches."
+     },
+     "3-expert": {
+      "precision": 0.9463,
+      "recall": 0.7669,
+      "f1": 0.8472,
+      "passed": true,
+      "expected_count": 10355,
+      "actual_count": 8392,
+      "elapsed_sec": 203.8,
+      "queries_generated": 3,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|F01.50,http://hl7.org/fhir/sid/icd-10-cm|F01.51,http://hl7.org/fhir/sid/icd-10-cm|F02.80,http://hl7.org/fhir/sid/icd-10-cm|F02.81,http://hl7.org/fhir/sid/icd-10-cm|F03.90,http://hl7.org/fhir/sid/icd-10-cm|F03.91,http://hl7.org/fhir/sid/icd-10-cm|G30.0,http://hl7.org/fhir/sid/icd-10-cm|G30.1,http://hl7.org/fhir/sid/icd-10-cm|G30.8,http://hl7.org/fhir/sid/icd-10-cm|G30.9,http://hl7.org/fhir/sid/icd-10-cm|G31.01,http://hl7.org/fhir/sid/icd-10-cm|G31.09,http://hl7.org/fhir/sid/icd-10-cm|G31.83",
+      "additional_query_urls": [
+       "Condition?code=http://hl7.org/fhir/sid/icd-9-cm|290.0,http://hl7.org/fhir/sid/icd-9-cm|290.10,http://hl7.org/fhir/sid/icd-9-cm|290.11,http://hl7.org/fhir/sid/icd-9-cm|290.12,http://hl7.org/fhir/sid/icd-9-cm|290.13,http://hl7.org/fhir/sid/icd-9-cm|290.20,http://hl7.org/fhir/sid/icd-9-cm|290.21,http://hl7.org/fhir/sid/icd-9-cm|290.3,http://hl7.org/fhir/sid/icd-9-cm|290.40,http://hl7.org/fhir/sid/icd-9-cm|290.41,http://hl7.org/fhir/sid/icd-9-cm|290.42,http://hl7.org/fhir/sid/icd-9-cm|290.43,http://hl7.org/fhir/sid/icd-9-cm|294.10,http://hl7.org/fhir/sid/icd-9-cm|294.11,http://hl7.org/fhir/sid/icd-9-cm|294.20,http://hl7.org/fhir/sid/icd-9-cm|294.21,http://hl7.org/fhir/sid/icd-9-cm|294.8,http://hl7.org/fhir/sid/icd-9-cm|331.0,http://hl7.org/fhir/sid/icd-9-cm|331.11,http://hl7.org/fhir/sid/icd-9-cm|331.19,http://hl7.org/fhir/sid/icd-9-cm|331.82",
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|135447,http://www.nlm.nih.gov/research/umls/rxnorm|4637,http://www.nlm.nih.gov/research/umls/rxnorm|183379,http://www.nlm.nih.gov/research/umls/rxnorm|6719,http://www.nlm.nih.gov/research/umls/rxnorm|998220"
+      ],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|F01.50,http://hl7.org/fhir/sid/icd-10-cm|F01.51,http://hl7.org/fhir/sid/icd-10-cm|F02.80,http://hl7.org/fhir/sid/icd-10-cm|F02.81,http://hl7.org/fhir/sid/icd-10-cm|F03.90,http://hl7.org/fhir/sid/icd-10-cm|F03.91,http://hl7.org/fhir/sid/icd-10-cm|G30.0,http://hl7.org/fhir/sid/icd-10-cm|G30.1,http://hl7.org/fhir/sid/icd-10-cm|G30.8,http://hl7.org/fhir/sid/icd-10-cm|G30.9,http://hl7.org/fhir/sid/icd-10-cm|G31.01,http://hl7.org/fhir/sid/icd-10-cm|G31.09,http://hl7.org/fhir/sid/icd-10-cm|G31.83\nCondition?code=http://hl7.org/fhir/sid/icd-9-cm|290.0,http://hl7.org/fhir/sid/icd-9-cm|290.10,http://hl7.org/fhir/sid/icd-9-cm|290.11,http://hl7.org/fhir/sid/icd-9-cm|290.12,http://hl7.org/fhir/sid/icd-9-cm|290.13,http://hl7.org/fhir/sid/icd-9-cm|290.20,http://hl7.org/fhir/sid/icd-9-cm|290.21,http://hl7.org/fhir/sid/icd-9-cm|290.3,http://hl7.org/fhir/sid/icd-9-cm|290.40,http://hl7.org/fhir/sid/icd-9-cm|290.41,http://hl7.org/fhir/sid/icd-9-cm|290.42,http://hl7.org/fhir/sid/icd-9-cm|290.43,http://hl7.org/fhir/sid/icd-9-cm|294.10,http://hl7.org/fhir/sid/icd-9-cm|294.11,http://hl7.org/fhir/sid/icd-9-cm|294.20,http://hl7.org/fhir/sid/icd-9-cm|294.21,http://hl7.org/fhir/sid/icd-9-cm|294.8,http://hl7.org/fhir/sid/icd-9-cm|331.0,http://hl7.org/fhir/sid/icd-9-cm|331.11,http://hl7.org/fhir/sid/icd-9-cm|331.19,http://hl7.org/fhir/sid/icd-9-cm|331.82\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|135447,http://www.nlm.nih.gov/research/umls/rxnorm|4637,http://www.nlm.nih.gov/research/umls/rxnorm|183379,http://www.nlm.nih.gov/research/umls/rxnorm|6719,http://www.nlm.nih.gov/research/umls/rxnorm|998220",
+      "prompt_text": "I need to identify my complete dementia patient population for a quality improvement initiative on caregiver support resources. From the PheKB phenotype definition, the algorithm identifies dementia patients via either dementia diagnosis codes (across many subtypes \u2014 Alzheimer's, vascular, Lewy body, frontotemporal, etc.) OR via prescriptions for dementia-specific medications (cholinesterase inhibitors and memantine). Some of my patients have one but not the other.\n\nPlease run multiple FHIR queries to capture the full population:\n1. Patients with any dementia diagnosis (across all subtypes)\n2. Patients prescribed dementia medications (donepezil, galantamine, memantine, or combination products)\n\nFor each query, return the matching resources. I want the union of all patients found across both approaches."
+     }
+    },
     "copilot:claude-sonnet-4.6": {
      "1-naive": {
       "precision": 1.0,
@@ -1880,6 +2032,138 @@
       "prompt_text": "I need to identify all dementia patients in our population. Dementia encompasses multiple subtypes, each with distinct SNOMED codes: Alzheimer's disease (26929004, the most common form), Vascular dementia (429998004), Late onset dementia due to Lewy body disease (312991009), Frontotemporal dementia (230270009), and the parent concept Dementia (52448006). The parent SNOMED concept may subsume subtypes on servers supporting the :below modifier, but explicitly querying all subtype codes is more reliable across servers. Search Condition resources for all five codes."
      }
     },
+    "copilot:claude-opus-4.7+mimic": {
+     "1-naive": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 10355,
+      "actual_count": 0,
+      "elapsed_sec": 7.4,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|52448006",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|52448006",
+      "prompt_text": "Find all patients with dementia."
+     },
+     "1-broad": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 10355,
+      "actual_count": 0,
+      "elapsed_sec": 8.3,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|52448006,http://snomed.info/sct|26929004,http://snomed.info/sct|429998004,http://snomed.info/sct|80098002,http://snomed.info/sct|278856006",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|52448006,http://snomed.info/sct|26929004,http://snomed.info/sct|429998004,http://snomed.info/sct|80098002,http://snomed.info/sct|278856006",
+      "prompt_text": "Find all patients diagnosed with any form of dementia, including Alzheimer's disease, vascular dementia, Lewy body dementia, and frontotemporal dementia (Pick's disease)."
+     },
+     "1-expert": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 10355,
+      "actual_count": 0,
+      "elapsed_sec": 7.8,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|26929004,http://snomed.info/sct|429998004,http://snomed.info/sct|312991009,http://snomed.info/sct|230270009,http://snomed.info/sct|52448006",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|26929004,http://snomed.info/sct|429998004,http://snomed.info/sct|312991009,http://snomed.info/sct|230270009,http://snomed.info/sct|52448006",
+      "prompt_text": "I need to identify all dementia patients in our population. Dementia encompasses multiple subtypes, each with distinct SNOMED codes: Alzheimer's disease (26929004, the most common form), Vascular dementia (429998004), Late onset dementia due to Lewy body disease (312991009), Frontotemporal dementia (230270009), and the parent concept Dementia (52448006). The parent SNOMED concept may subsume subtypes on servers supporting the :below modifier, but explicitly querying all subtype codes is more reliable across servers. Search Condition resources for all five codes."
+     },
+     "2-naive": {
+      "precision": 0.9462,
+      "recall": 0.7667,
+      "f1": 0.8471,
+      "passed": true,
+      "expected_count": 10355,
+      "actual_count": 8390,
+      "elapsed_sec": 127.3,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|F01.50,http://hl7.org/fhir/sid/icd-10-cm|F01.51,http://hl7.org/fhir/sid/icd-10-cm|F02.80,http://hl7.org/fhir/sid/icd-10-cm|F02.81,http://hl7.org/fhir/sid/icd-10-cm|F03.90,http://hl7.org/fhir/sid/icd-10-cm|F03.91,http://hl7.org/fhir/sid/icd-10-cm|G30.0,http://hl7.org/fhir/sid/icd-10-cm|G30.1,http://hl7.org/fhir/sid/icd-10-cm|G30.8,http://hl7.org/fhir/sid/icd-10-cm|G30.9,http://hl7.org/fhir/sid/icd-10-cm|G31.83",
+      "additional_query_urls": [
+       "Condition?code=http://hl7.org/fhir/sid/icd-9-cm|290.0,http://hl7.org/fhir/sid/icd-9-cm|290.10,http://hl7.org/fhir/sid/icd-9-cm|290.11,http://hl7.org/fhir/sid/icd-9-cm|290.12,http://hl7.org/fhir/sid/icd-9-cm|290.13,http://hl7.org/fhir/sid/icd-9-cm|290.20,http://hl7.org/fhir/sid/icd-9-cm|290.21,http://hl7.org/fhir/sid/icd-9-cm|290.3,http://hl7.org/fhir/sid/icd-9-cm|290.40,http://hl7.org/fhir/sid/icd-9-cm|290.41,http://hl7.org/fhir/sid/icd-9-cm|290.42,http://hl7.org/fhir/sid/icd-9-cm|290.43,http://hl7.org/fhir/sid/icd-9-cm|294.10,http://hl7.org/fhir/sid/icd-9-cm|294.11,http://hl7.org/fhir/sid/icd-9-cm|294.20,http://hl7.org/fhir/sid/icd-9-cm|294.21,http://hl7.org/fhir/sid/icd-9-cm|294.8,http://hl7.org/fhir/sid/icd-9-cm|331.0,http://hl7.org/fhir/sid/icd-9-cm|331.11,http://hl7.org/fhir/sid/icd-9-cm|331.19,http://hl7.org/fhir/sid/icd-9-cm|331.82"
+      ],
+      "raw_response": "FINAL ANSWER:\n\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|F01.50,http://hl7.org/fhir/sid/icd-10-cm|F01.51,http://hl7.org/fhir/sid/icd-10-cm|F02.80,http://hl7.org/fhir/sid/icd-10-cm|F02.81,http://hl7.org/fhir/sid/icd-10-cm|F03.90,http://hl7.org/fhir/sid/icd-10-cm|F03.91,http://hl7.org/fhir/sid/icd-10-cm|G30.0,http://hl7.org/fhir/sid/icd-10-cm|G30.1,http://hl7.org/fhir/sid/icd-10-cm|G30.8,http://hl7.org/fhir/sid/icd-10-cm|G30.9,http://hl7.org/fhir/sid/icd-10-cm|G31.83\nCondition?code=http://hl7.org/fhir/sid/icd-9-cm|290.0,http://hl7.org/fhir/sid/icd-9-cm|290.10,http://hl7.org/fhir/sid/icd-9-cm|290.11,http://hl7.org/fhir/sid/icd-9-cm|290.12,http://hl7.org/fhir/sid/icd-9-cm|290.13,http://hl7.org/fhir/sid/icd-9-cm|290.20,http://hl7.org/fhir/sid/icd-9-cm|290.21,http://hl7.org/fhir/sid/icd-9-cm|290.3,http://hl7.org/fhir/sid/icd-9-cm|290.40,http://hl7.org/fhir/sid/icd-9-cm|290.41,http://hl7.org/fhir/sid/icd-9-cm|290.42,http://hl7.org/fhir/sid/icd-9-cm|290.43,http://hl7.org/fhir/sid/icd-9-cm|294.10,http://hl7.org/fhir/sid/icd-9-cm|294.11,http://hl7.org/fhir/sid/icd-9-cm|294.20,http://hl7.org/fhir/sid/icd-9-cm|294.21,http://hl7.org/fhir/sid/icd-9-cm|294.8,http://hl7.org/fhir/sid/icd-9-cm|331.0,http://hl7.org/fhir/sid/icd-9-cm|331.11,http://hl7.org/fhir/sid/icd-9-cm|331.19,http://hl7.org/fhir/sid/icd-9-cm|331.82",
+      "prompt_text": "Find all patients with dementia."
+     },
+     "2-broad": {
+      "precision": 0.9463,
+      "recall": 0.7669,
+      "f1": 0.8472,
+      "passed": true,
+      "expected_count": 10355,
+      "actual_count": 8392,
+      "elapsed_sec": 125.7,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|F01.50,http://hl7.org/fhir/sid/icd-10-cm|F01.51,http://hl7.org/fhir/sid/icd-10-cm|F01.511,http://hl7.org/fhir/sid/icd-10-cm|F01.518,http://hl7.org/fhir/sid/icd-10-cm|F01.52,http://hl7.org/fhir/sid/icd-10-cm|F01.53,http://hl7.org/fhir/sid/icd-10-cm|F01.54,http://hl7.org/fhir/sid/icd-10-cm|F02.80,http://hl7.org/fhir/sid/icd-10-cm|F02.81,http://hl7.org/fhir/sid/icd-10-cm|F02.811,http://hl7.org/fhir/sid/icd-10-cm|F02.818,http://hl7.org/fhir/sid/icd-10-cm|F02.82,http://hl7.org/fhir/sid/icd-10-cm|F02.83,http://hl7.org/fhir/sid/icd-10-cm|F02.84,http://hl7.org/fhir/sid/icd-10-cm|F03.90,http://hl7.org/fhir/sid/icd-10-cm|F03.91,http://hl7.org/fhir/sid/icd-10-cm|F03.911,http://hl7.org/fhir/sid/icd-10-cm|F03.918,http://hl7.org/fhir/sid/icd-10-cm|F03.92,http://hl7.org/fhir/sid/icd-10-cm|F03.93,http://hl7.org/fhir/sid/icd-10-cm|F03.94,http://hl7.org/fhir/sid/icd-10-cm|G30.0,http://hl7.org/fhir/sid/icd-10-cm|G30.1,http://hl7.org/fhir/sid/icd-10-cm|G30.8,http://hl7.org/fhir/sid/icd-10-cm|G30.9,http://hl7.org/fhir/sid/icd-10-cm|G31.01,http://hl7.org/fhir/sid/icd-10-cm|G31.09,http://hl7.org/fhir/sid/icd-10-cm|G31.83",
+      "additional_query_urls": [
+       "Condition?code=http://hl7.org/fhir/sid/icd-9-cm|290.0,http://hl7.org/fhir/sid/icd-9-cm|290.10,http://hl7.org/fhir/sid/icd-9-cm|290.11,http://hl7.org/fhir/sid/icd-9-cm|290.12,http://hl7.org/fhir/sid/icd-9-cm|290.13,http://hl7.org/fhir/sid/icd-9-cm|290.20,http://hl7.org/fhir/sid/icd-9-cm|290.21,http://hl7.org/fhir/sid/icd-9-cm|290.3,http://hl7.org/fhir/sid/icd-9-cm|290.40,http://hl7.org/fhir/sid/icd-9-cm|290.41,http://hl7.org/fhir/sid/icd-9-cm|290.42,http://hl7.org/fhir/sid/icd-9-cm|290.43,http://hl7.org/fhir/sid/icd-9-cm|294.10,http://hl7.org/fhir/sid/icd-9-cm|294.11,http://hl7.org/fhir/sid/icd-9-cm|294.20,http://hl7.org/fhir/sid/icd-9-cm|294.21,http://hl7.org/fhir/sid/icd-9-cm|294.8,http://hl7.org/fhir/sid/icd-9-cm|331.0,http://hl7.org/fhir/sid/icd-9-cm|331.11,http://hl7.org/fhir/sid/icd-9-cm|331.19,http://hl7.org/fhir/sid/icd-9-cm|331.82"
+      ],
+      "raw_response": "FINAL ANSWER:\n\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|F01.50,http://hl7.org/fhir/sid/icd-10-cm|F01.51,http://hl7.org/fhir/sid/icd-10-cm|F01.511,http://hl7.org/fhir/sid/icd-10-cm|F01.518,http://hl7.org/fhir/sid/icd-10-cm|F01.52,http://hl7.org/fhir/sid/icd-10-cm|F01.53,http://hl7.org/fhir/sid/icd-10-cm|F01.54,http://hl7.org/fhir/sid/icd-10-cm|F02.80,http://hl7.org/fhir/sid/icd-10-cm|F02.81,http://hl7.org/fhir/sid/icd-10-cm|F02.811,http://hl7.org/fhir/sid/icd-10-cm|F02.818,http://hl7.org/fhir/sid/icd-10-cm|F02.82,http://hl7.org/fhir/sid/icd-10-cm|F02.83,http://hl7.org/fhir/sid/icd-10-cm|F02.84,http://hl7.org/fhir/sid/icd-10-cm|F03.90,http://hl7.org/fhir/sid/icd-10-cm|F03.91,http://hl7.org/fhir/sid/icd-10-cm|F03.911,http://hl7.org/fhir/sid/icd-10-cm|F03.918,http://hl7.org/fhir/sid/icd-10-cm|F03.92,http://hl7.org/fhir/sid/icd-10-cm|F03.93,http://hl7.org/fhir/sid/icd-10-cm|F03.94,http://hl7.org/fhir/sid/icd-10-cm|G30.0,http://hl7.org/fhir/sid/icd-10-cm|G30.1,http://hl7.org/fhir/sid/icd-10-cm|G30.8,http://hl7.org/fhir/sid/icd-10-cm|G30.9,http://hl7.org/fhir/sid/icd-10-cm|G31.01,http://hl7.org/fhir/sid/icd-10-cm|G31.09,http://hl7.org/fhir/sid/icd-10-cm|G31.83\nCondition?code=http://hl7.org/fhir/sid/icd-9-cm|290.0,http://hl7.org/fhir/sid/icd-9-cm|290.10,http://hl7.org/fhir/sid/icd-9-cm|290.11,http://hl7.org/fhir/sid/icd-9-cm|290.12,http://hl7.org/fhir/sid/icd-9-cm|290.13,http://hl7.org/fhir/sid/icd-9-cm|290.20,http://hl7.org/fhir/sid/icd-9-cm|290.21,http://hl7.org/fhir/sid/icd-9-cm|290.3,http://hl7.org/fhir/sid/icd-9-cm|290.40,http://hl7.org/fhir/sid/icd-9-cm|290.41,http://hl7.org/fhir/sid/icd-9-cm|290.42,http://hl7.org/fhir/sid/icd-9-cm|290.43,http://hl7.org/fhir/sid/icd-9-cm|294.10,http://hl7.org/fhir/sid/icd-9-cm|294.11,http://hl7.org/fhir/sid/icd-9-cm|294.20,http://hl7.org/fhir/sid/icd-9-cm|294.21,http://hl7.org/fhir/sid/icd-9-cm|294.8,http://hl7.org/fhir/sid/icd-9-cm|331.0,http://hl7.org/fhir/sid/icd-9-cm|331.11,http://hl7.org/fhir/sid/icd-9-cm|331.19,http://hl7.org/fhir/sid/icd-9-cm|331.82",
+      "prompt_text": "Find all patients diagnosed with any form of dementia, including Alzheimer's disease, vascular dementia, Lewy body dementia, and frontotemporal dementia (Pick's disease)."
+     },
+     "2-expert": {
+      "precision": 1.0,
+      "recall": 0.3873,
+      "f1": 0.5583,
+      "passed": false,
+      "expected_count": 10355,
+      "actual_count": 4010,
+      "elapsed_sec": 57.4,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|G30.9,http://hl7.org/fhir/sid/icd-10-cm|F01.50,http://hl7.org/fhir/sid/icd-10-cm|G31.83,http://hl7.org/fhir/sid/icd-10-cm|G31.0,http://hl7.org/fhir/sid/icd-10-cm|F03.90",
+      "additional_query_urls": [],
+      "raw_response": "FINAL ANSWER:\n\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|G30.9,http://hl7.org/fhir/sid/icd-10-cm|F01.50,http://hl7.org/fhir/sid/icd-10-cm|G31.83,http://hl7.org/fhir/sid/icd-10-cm|G31.0,http://hl7.org/fhir/sid/icd-10-cm|F03.90",
+      "prompt_text": "I need to identify all dementia patients in our population. Dementia encompasses multiple subtypes, each with distinct SNOMED codes: Alzheimer's disease (26929004, the most common form), Vascular dementia (429998004), Late onset dementia due to Lewy body disease (312991009), Frontotemporal dementia (230270009), and the parent concept Dementia (52448006). The parent SNOMED concept may subsume subtypes on servers supporting the :below modifier, but explicitly querying all subtype codes is more reliable across servers. Search Condition resources for all five codes."
+     },
+     "3-naive": {
+      "precision": 0.9571,
+      "recall": 0.4048,
+      "f1": 0.569,
+      "passed": false,
+      "expected_count": 10355,
+      "actual_count": 4380,
+      "elapsed_sec": 91.2,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|F01.50,http://hl7.org/fhir/sid/icd-10-cm|F01.51,http://hl7.org/fhir/sid/icd-10-cm|F02.80,http://hl7.org/fhir/sid/icd-10-cm|F02.81,http://hl7.org/fhir/sid/icd-10-cm|F03.90,http://hl7.org/fhir/sid/icd-10-cm|F03.91,http://hl7.org/fhir/sid/icd-10-cm|F10.27,http://hl7.org/fhir/sid/icd-10-cm|F10.97,http://hl7.org/fhir/sid/icd-10-cm|G30.0,http://hl7.org/fhir/sid/icd-10-cm|G30.1,http://hl7.org/fhir/sid/icd-10-cm|G30.8,http://hl7.org/fhir/sid/icd-10-cm|G30.9,http://hl7.org/fhir/sid/icd-10-cm|G31.01,http://hl7.org/fhir/sid/icd-10-cm|G31.09,http://hl7.org/fhir/sid/icd-10-cm|G31.83,http://hl7.org/fhir/sid/icd-9-cm|290.0,http://hl7.org/fhir/sid/icd-9-cm|290.10,http://hl7.org/fhir/sid/icd-9-cm|290.11,http://hl7.org/fhir/sid/icd-9-cm|290.12,http://hl7.org/fhir/sid/icd-9-cm|290.13,http://hl7.org/fhir/sid/icd-9-cm|290.20,http://hl7.org/fhir/sid/icd-9-cm|290.21,http://hl7.org/fhir/sid/icd-9-cm|290.3,http://hl7.org/fhir/sid/icd-9-cm|290.40,http://hl7.org/fhir/sid/icd-9-cm|290.41,http://hl7.org/fhir/sid/icd-9-cm|290.42,http://hl7.org/fhir/sid/icd-9-cm|290.43,http://hl7.org/fhir/sid/icd-9-cm|294.10,http://hl7.org/fhir/sid/icd-9-cm|294.11,http://hl7.org/fhir/sid/icd-9-cm|294.20,http://hl7.org/fhir/sid/icd-9-cm|294.21,http://hl7.org/fhir/sid/icd-9-cm|294.8,http://hl7.org/fhir/sid/icd-9-cm|331.0,http://hl7.org/fhir/sid/icd-9-cm|331.11,http://hl7.org/fhir/sid/icd-9-cm|331.19,http://hl7.org/fhir/sid/icd-9-cm|331.82",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|F01.50,http://hl7.org/fhir/sid/icd-10-cm|F01.51,http://hl7.org/fhir/sid/icd-10-cm|F02.80,http://hl7.org/fhir/sid/icd-10-cm|F02.81,http://hl7.org/fhir/sid/icd-10-cm|F03.90,http://hl7.org/fhir/sid/icd-10-cm|F03.91,http://hl7.org/fhir/sid/icd-10-cm|F10.27,http://hl7.org/fhir/sid/icd-10-cm|F10.97,http://hl7.org/fhir/sid/icd-10-cm|G30.0,http://hl7.org/fhir/sid/icd-10-cm|G30.1,http://hl7.org/fhir/sid/icd-10-cm|G30.8,http://hl7.org/fhir/sid/icd-10-cm|G30.9,http://hl7.org/fhir/sid/icd-10-cm|G31.01,http://hl7.org/fhir/sid/icd-10-cm|G31.09,http://hl7.org/fhir/sid/icd-10-cm|G31.83,http://hl7.org/fhir/sid/icd-9-cm|290.0,http://hl7.org/fhir/sid/icd-9-cm|290.10,http://hl7.org/fhir/sid/icd-9-cm|290.11,http://hl7.org/fhir/sid/icd-9-cm|290.12,http://hl7.org/fhir/sid/icd-9-cm|290.13,http://hl7.org/fhir/sid/icd-9-cm|290.20,http://hl7.org/fhir/sid/icd-9-cm|290.21,http://hl7.org/fhir/sid/icd-9-cm|290.3,http://hl7.org/fhir/sid/icd-9-cm|290.40,http://hl7.org/fhir/sid/icd-9-cm|290.41,http://hl7.org/fhir/sid/icd-9-cm|290.42,http://hl7.org/fhir/sid/icd-9-cm|290.43,http://hl7.org/fhir/sid/icd-9-cm|294.10,http://hl7.org/fhir/sid/icd-9-cm|294.11,http://hl7.org/fhir/sid/icd-9-cm|294.20,http://hl7.org/fhir/sid/icd-9-cm|294.21,http://hl7.org/fhir/sid/icd-9-cm|294.8,http://hl7.org/fhir/sid/icd-9-cm|331.0,http://hl7.org/fhir/sid/icd-9-cm|331.11,http://hl7.org/fhir/sid/icd-9-cm|331.19,http://hl7.org/fhir/sid/icd-9-cm|331.82",
+      "prompt_text": "Find all patients with dementia."
+     },
+     "3-broad": {
+      "precision": 0.9577,
+      "recall": 0.4049,
+      "f1": 0.5692,
+      "passed": false,
+      "expected_count": 10355,
+      "actual_count": 4378,
+      "elapsed_sec": 83.9,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|F01.50,http://hl7.org/fhir/sid/icd-10-cm|F01.51,http://hl7.org/fhir/sid/icd-10-cm|F02.80,http://hl7.org/fhir/sid/icd-10-cm|F02.81,http://hl7.org/fhir/sid/icd-10-cm|F03.90,http://hl7.org/fhir/sid/icd-10-cm|F03.91,http://hl7.org/fhir/sid/icd-10-cm|G30.0,http://hl7.org/fhir/sid/icd-10-cm|G30.1,http://hl7.org/fhir/sid/icd-10-cm|G30.8,http://hl7.org/fhir/sid/icd-10-cm|G30.9,http://hl7.org/fhir/sid/icd-10-cm|G31.01,http://hl7.org/fhir/sid/icd-10-cm|G31.09,http://hl7.org/fhir/sid/icd-10-cm|G31.83,http://hl7.org/fhir/sid/icd-9-cm|290.0,http://hl7.org/fhir/sid/icd-9-cm|290.10,http://hl7.org/fhir/sid/icd-9-cm|290.11,http://hl7.org/fhir/sid/icd-9-cm|290.12,http://hl7.org/fhir/sid/icd-9-cm|290.13,http://hl7.org/fhir/sid/icd-9-cm|290.20,http://hl7.org/fhir/sid/icd-9-cm|290.21,http://hl7.org/fhir/sid/icd-9-cm|290.3,http://hl7.org/fhir/sid/icd-9-cm|290.40,http://hl7.org/fhir/sid/icd-9-cm|290.41,http://hl7.org/fhir/sid/icd-9-cm|290.42,http://hl7.org/fhir/sid/icd-9-cm|290.43,http://hl7.org/fhir/sid/icd-9-cm|294.10,http://hl7.org/fhir/sid/icd-9-cm|294.11,http://hl7.org/fhir/sid/icd-9-cm|294.20,http://hl7.org/fhir/sid/icd-9-cm|294.21,http://hl7.org/fhir/sid/icd-9-cm|294.8,http://hl7.org/fhir/sid/icd-9-cm|331.0,http://hl7.org/fhir/sid/icd-9-cm|331.11,http://hl7.org/fhir/sid/icd-9-cm|331.19,http://hl7.org/fhir/sid/icd-9-cm|331.82",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|F01.50,http://hl7.org/fhir/sid/icd-10-cm|F01.51,http://hl7.org/fhir/sid/icd-10-cm|F02.80,http://hl7.org/fhir/sid/icd-10-cm|F02.81,http://hl7.org/fhir/sid/icd-10-cm|F03.90,http://hl7.org/fhir/sid/icd-10-cm|F03.91,http://hl7.org/fhir/sid/icd-10-cm|G30.0,http://hl7.org/fhir/sid/icd-10-cm|G30.1,http://hl7.org/fhir/sid/icd-10-cm|G30.8,http://hl7.org/fhir/sid/icd-10-cm|G30.9,http://hl7.org/fhir/sid/icd-10-cm|G31.01,http://hl7.org/fhir/sid/icd-10-cm|G31.09,http://hl7.org/fhir/sid/icd-10-cm|G31.83,http://hl7.org/fhir/sid/icd-9-cm|290.0,http://hl7.org/fhir/sid/icd-9-cm|290.10,http://hl7.org/fhir/sid/icd-9-cm|290.11,http://hl7.org/fhir/sid/icd-9-cm|290.12,http://hl7.org/fhir/sid/icd-9-cm|290.13,http://hl7.org/fhir/sid/icd-9-cm|290.20,http://hl7.org/fhir/sid/icd-9-cm|290.21,http://hl7.org/fhir/sid/icd-9-cm|290.3,http://hl7.org/fhir/sid/icd-9-cm|290.40,http://hl7.org/fhir/sid/icd-9-cm|290.41,http://hl7.org/fhir/sid/icd-9-cm|290.42,http://hl7.org/fhir/sid/icd-9-cm|290.43,http://hl7.org/fhir/sid/icd-9-cm|294.10,http://hl7.org/fhir/sid/icd-9-cm|294.11,http://hl7.org/fhir/sid/icd-9-cm|294.20,http://hl7.org/fhir/sid/icd-9-cm|294.21,http://hl7.org/fhir/sid/icd-9-cm|294.8,http://hl7.org/fhir/sid/icd-9-cm|331.0,http://hl7.org/fhir/sid/icd-9-cm|331.11,http://hl7.org/fhir/sid/icd-9-cm|331.19,http://hl7.org/fhir/sid/icd-9-cm|331.82",
+      "prompt_text": "Find all patients diagnosed with any form of dementia, including Alzheimer's disease, vascular dementia, Lewy body dementia, and frontotemporal dementia (Pick's disease)."
+     },
+     "3-expert": {
+      "precision": 0.986,
+      "recall": 0.4488,
+      "f1": 0.6168,
+      "passed": false,
+      "expected_count": 10355,
+      "actual_count": 4713,
+      "elapsed_sec": 91.1,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|F03.90,http://hl7.org/fhir/sid/icd-10-cm|G30.9,http://hl7.org/fhir/sid/icd-10-cm|G30.0,http://hl7.org/fhir/sid/icd-10-cm|G30.1,http://hl7.org/fhir/sid/icd-10-cm|G30.8,http://hl7.org/fhir/sid/icd-10-cm|F01.50,http://hl7.org/fhir/sid/icd-10-cm|F01.51,http://hl7.org/fhir/sid/icd-10-cm|G31.83,http://hl7.org/fhir/sid/icd-10-cm|G31.0,http://hl7.org/fhir/sid/icd-10-cm|G31.09,http://hl7.org/fhir/sid/icd-9-cm|290.0,http://hl7.org/fhir/sid/icd-9-cm|290.10,http://hl7.org/fhir/sid/icd-9-cm|290.11,http://hl7.org/fhir/sid/icd-9-cm|290.12,http://hl7.org/fhir/sid/icd-9-cm|290.13,http://hl7.org/fhir/sid/icd-9-cm|290.20,http://hl7.org/fhir/sid/icd-9-cm|290.21,http://hl7.org/fhir/sid/icd-9-cm|290.3,http://hl7.org/fhir/sid/icd-9-cm|290.40,http://hl7.org/fhir/sid/icd-9-cm|290.41,http://hl7.org/fhir/sid/icd-9-cm|290.42,http://hl7.org/fhir/sid/icd-9-cm|290.43,http://hl7.org/fhir/sid/icd-9-cm|294.10,http://hl7.org/fhir/sid/icd-9-cm|294.11,http://hl7.org/fhir/sid/icd-9-cm|294.20,http://hl7.org/fhir/sid/icd-9-cm|294.21,http://hl7.org/fhir/sid/icd-9-cm|294.8,http://hl7.org/fhir/sid/icd-9-cm|331.0,http://hl7.org/fhir/sid/icd-9-cm|331.19,http://hl7.org/fhir/sid/icd-9-cm|331.82",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|F03.90,http://hl7.org/fhir/sid/icd-10-cm|G30.9,http://hl7.org/fhir/sid/icd-10-cm|G30.0,http://hl7.org/fhir/sid/icd-10-cm|G30.1,http://hl7.org/fhir/sid/icd-10-cm|G30.8,http://hl7.org/fhir/sid/icd-10-cm|F01.50,http://hl7.org/fhir/sid/icd-10-cm|F01.51,http://hl7.org/fhir/sid/icd-10-cm|G31.83,http://hl7.org/fhir/sid/icd-10-cm|G31.0,http://hl7.org/fhir/sid/icd-10-cm|G31.09,http://hl7.org/fhir/sid/icd-9-cm|290.0,http://hl7.org/fhir/sid/icd-9-cm|290.10,http://hl7.org/fhir/sid/icd-9-cm|290.11,http://hl7.org/fhir/sid/icd-9-cm|290.12,http://hl7.org/fhir/sid/icd-9-cm|290.13,http://hl7.org/fhir/sid/icd-9-cm|290.20,http://hl7.org/fhir/sid/icd-9-cm|290.21,http://hl7.org/fhir/sid/icd-9-cm|290.3,http://hl7.org/fhir/sid/icd-9-cm|290.40,http://hl7.org/fhir/sid/icd-9-cm|290.41,http://hl7.org/fhir/sid/icd-9-cm|290.42,http://hl7.org/fhir/sid/icd-9-cm|290.43,http://hl7.org/fhir/sid/icd-9-cm|294.10,http://hl7.org/fhir/sid/icd-9-cm|294.11,http://hl7.org/fhir/sid/icd-9-cm|294.20,http://hl7.org/fhir/sid/icd-9-cm|294.21,http://hl7.org/fhir/sid/icd-9-cm|294.8,http://hl7.org/fhir/sid/icd-9-cm|331.0,http://hl7.org/fhir/sid/icd-9-cm|331.19,http://hl7.org/fhir/sid/icd-9-cm|331.82",
+      "prompt_text": "I need to identify all dementia patients in our population. Dementia encompasses multiple subtypes, each with distinct SNOMED codes: Alzheimer's disease (26929004, the most common form), Vascular dementia (429998004), Late onset dementia due to Lewy body disease (312991009), Frontotemporal dementia (230270009), and the parent concept Dementia (52448006). The parent SNOMED concept may subsume subtypes on servers supporting the :below modifier, but explicitly querying all subtype codes is more reliable across servers. Search Condition resources for all five codes."
+     }
+    },
     "copilot:claude-sonnet-4.6": {
      "1-naive": {
       "precision": 1.0,
@@ -2604,6 +2888,137 @@
       "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|997223,1100184,310436,996740,1599803",
       "additional_query_urls": [],
       "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|997223,1100184,310436,996740,1599803",
+      "prompt_text": "I need to find all patients on chronic dementia therapy. Synthea generates these at the SCD level \u2014 search MedicationRequest for these RxNorm codes: 997223 (Donepezil 10 MG), 1100184 (Donepezil 23 MG), 310436 (Galantamine 4 MG), 996740 (Memantine HCl 2 MG/ML solution), and 1599803 (Donepezil 10 MG / Memantine 28 MG ER combo). Note that querying ingredient codes will not match SCD-coded prescriptions in HAPI FHIR \u2014 you must query the specific SCD codes."
+     }
+    },
+    "copilot:claude-opus-4.7+mimic": {
+     "1-naive": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 30651,
+      "actual_count": 0,
+      "elapsed_sec": 13.4,
+      "queries_generated": 3,
+      "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|997220,997223,997226,997229,997232,997233,997236,997239,997241,997242,997245,997247,997249,997252,997255,997258,997261,997264,997267,997269,997272,997275,997278,997281,997284,997287,997290,997293,997296,997299,997302,997305,997308,997311,997314,997317,997320,997323,997326,997329,997332,997335,997338,997341,997344,997347,997350,997353,997356,997359,997362,997365,997368,997371,997374,997377,997380,997383,997386,997389,997392,997395,997398,997401,997404,997407,997410,997413,997416,997419,997422,997425,997428,997431,997434,997437,997440,997443,997446,997449,997452,997455,997458,997461,997464,997467,997470,997473,997476,997479,997482,997485,997488,997491,997494,997497,997500,997503,997506,997509,997512,997515,997518,997521,197807,197808,197809,997220",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|312835,312836,860695,860697,861621,861623,861625,861627,996570,996572,996574,996576,996578,996580,996582,996584,996586,996588",
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|997220,196503,135447,6719,32968&status=active"
+      ],
+      "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|997220,997223,997226,997229,997232,997233,997236,997239,997241,997242,997245,997247,997249,997252,997255,997258,997261,997264,997267,997269,997272,997275,997278,997281,997284,997287,997290,997293,997296,997299,997302,997305,997308,997311,997314,997317,997320,997323,997326,997329,997332,997335,997338,997341,997344,997347,997350,997353,997356,997359,997362,997365,997368,997371,997374,997377,997380,997383,997386,997389,997392,997395,997398,997401,997404,997407,997410,997413,997416,997419,997422,997425,997428,997431,997434,997437,997440,997443,997446,997449,997452,997455,997458,997461,997464,997467,997470,997473,997476,997479,997482,997485,997488,997491,997494,997497,997500,997503,997506,997509,997512,997515,997518,997521,197807,197808,197809,997220\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|312835,312836,860695,860697,861621,861623,861625,861627,996570,996572,996574,996576,996578,996580,996582,996584,996586,996588\n\nActually, let me provide a cleaner query using the most common dementia medications (donepezil, rivastigmine, galantamine, memantine):\n\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|997220,196503,135447,6719,32968&status=active",
+      "prompt_text": "Find patients on dementia medications."
+     },
+     "1-broad": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 30651,
+      "actual_count": 0,
+      "elapsed_sec": 9.1,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|997220,http://www.nlm.nih.gov/research/umls/rxnorm|4637,http://www.nlm.nih.gov/research/umls/rxnorm|183379,http://www.nlm.nih.gov/research/umls/rxnorm|6719,http://www.nlm.nih.gov/research/umls/rxnorm|1100184,http://www.nlm.nih.gov/research/umls/rxnorm|1594660",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|997220,http://www.nlm.nih.gov/research/umls/rxnorm|4637,http://www.nlm.nih.gov/research/umls/rxnorm|183379,http://www.nlm.nih.gov/research/umls/rxnorm|6719,http://www.nlm.nih.gov/research/umls/rxnorm|1100184,http://www.nlm.nih.gov/research/umls/rxnorm|1594660",
+      "prompt_text": "Find patients prescribed cognitive enhancer medications used to treat dementia. The two main drug classes are cholinesterase inhibitors (donepezil/Aricept, galantamine/Razadyne, rivastigmine/Exelon) and NMDA receptor antagonists (memantine/Namenda). There are also combination products like Namzaric (donepezil + memantine)."
+     },
+     "1-expert": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 30651,
+      "actual_count": 0,
+      "elapsed_sec": 7.5,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|997223,1100184,310436,996740,1599803",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|997223,1100184,310436,996740,1599803",
+      "prompt_text": "I need to find all patients on chronic dementia therapy. Synthea generates these at the SCD level \u2014 search MedicationRequest for these RxNorm codes: 997223 (Donepezil 10 MG), 1100184 (Donepezil 23 MG), 310436 (Galantamine 4 MG), 996740 (Memantine HCl 2 MG/ML solution), and 1599803 (Donepezil 10 MG / Memantine 28 MG ER combo). Note that querying ingredient codes will not match SCD-coded prescriptions in HAPI FHIR \u2014 you must query the specific SCD codes."
+     },
+     "2-naive": {
+      "precision": 0.9876,
+      "recall": 0.0703,
+      "f1": 0.1313,
+      "passed": false,
+      "expected_count": 30651,
+      "actual_count": 2182,
+      "elapsed_sec": 66.2,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|1100184,http://www.nlm.nih.gov/research/umls/rxnorm|1308569,http://www.nlm.nih.gov/research/umls/rxnorm|1599803,http://www.nlm.nih.gov/research/umls/rxnorm|1599805,http://www.nlm.nih.gov/research/umls/rxnorm|1805420,http://www.nlm.nih.gov/research/umls/rxnorm|1805425,http://www.nlm.nih.gov/research/umls/rxnorm|1858970,http://www.nlm.nih.gov/research/umls/rxnorm|310436,http://www.nlm.nih.gov/research/umls/rxnorm|310437,http://www.nlm.nih.gov/research/umls/rxnorm|312835,http://www.nlm.nih.gov/research/umls/rxnorm|312836,http://www.nlm.nih.gov/research/umls/rxnorm|314214,http://www.nlm.nih.gov/research/umls/rxnorm|314215,http://www.nlm.nih.gov/research/umls/rxnorm|579148,http://www.nlm.nih.gov/research/umls/rxnorm|725021,http://www.nlm.nih.gov/research/umls/rxnorm|725023,http://www.nlm.nih.gov/research/umls/rxnorm|860695,http://www.nlm.nih.gov/research/umls/rxnorm|860707,http://www.nlm.nih.gov/research/umls/rxnorm|860715,http://www.nlm.nih.gov/research/umls/rxnorm|860901,http://www.nlm.nih.gov/research/umls/rxnorm|996561,http://www.nlm.nih.gov/research/umls/rxnorm|996571,http://www.nlm.nih.gov/research/umls/rxnorm|996572,http://www.nlm.nih.gov/research/umls/rxnorm|996594,http://www.nlm.nih.gov/research/umls/rxnorm|996603,http://www.nlm.nih.gov/research/umls/rxnorm|996609,http://www.nlm.nih.gov/research/umls/rxnorm|996615,http://www.nlm.nih.gov/research/umls/rxnorm|996624,http://www.nlm.nih.gov/research/umls/rxnorm|996740,http://www.nlm.nih.gov/research/umls/rxnorm|997220,http://www.nlm.nih.gov/research/umls/rxnorm|997223,http://www.nlm.nih.gov/research/umls/rxnorm|997226,http://www.nlm.nih.gov/research/umls/rxnorm|997229",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|1100184,http://www.nlm.nih.gov/research/umls/rxnorm|1308569,http://www.nlm.nih.gov/research/umls/rxnorm|1599803,http://www.nlm.nih.gov/research/umls/rxnorm|1599805,http://www.nlm.nih.gov/research/umls/rxnorm|1805420,http://www.nlm.nih.gov/research/umls/rxnorm|1805425,http://www.nlm.nih.gov/research/umls/rxnorm|1858970,http://www.nlm.nih.gov/research/umls/rxnorm|310436,http://www.nlm.nih.gov/research/umls/rxnorm|310437,http://www.nlm.nih.gov/research/umls/rxnorm|312835,http://www.nlm.nih.gov/research/umls/rxnorm|312836,http://www.nlm.nih.gov/research/umls/rxnorm|314214,http://www.nlm.nih.gov/research/umls/rxnorm|314215,http://www.nlm.nih.gov/research/umls/rxnorm|579148,http://www.nlm.nih.gov/research/umls/rxnorm|725021,http://www.nlm.nih.gov/research/umls/rxnorm|725023,http://www.nlm.nih.gov/research/umls/rxnorm|860695,http://www.nlm.nih.gov/research/umls/rxnorm|860707,http://www.nlm.nih.gov/research/umls/rxnorm|860715,http://www.nlm.nih.gov/research/umls/rxnorm|860901,http://www.nlm.nih.gov/research/umls/rxnorm|996561,http://www.nlm.nih.gov/research/umls/rxnorm|996571,http://www.nlm.nih.gov/research/umls/rxnorm|996572,http://www.nlm.nih.gov/research/umls/rxnorm|996594,http://www.nlm.nih.gov/research/umls/rxnorm|996603,http://www.nlm.nih.gov/research/umls/rxnorm|996609,http://www.nlm.nih.gov/research/umls/rxnorm|996615,http://www.nlm.nih.gov/research/umls/rxnorm|996624,http://www.nlm.nih.gov/research/umls/rxnorm|996740,http://www.nlm.nih.gov/research/umls/rxnorm|997220,http://www.nlm.nih.gov/research/umls/rxnorm|997223,http://www.nlm.nih.gov/research/umls/rxnorm|997226,http://www.nlm.nih.gov/research/umls/rxnorm|997229",
+      "prompt_text": "Find patients on dementia medications."
+     },
+     "2-broad": {
+      "precision": 0.9876,
+      "recall": 0.0703,
+      "f1": 0.1313,
+      "passed": false,
+      "expected_count": 30651,
+      "actual_count": 2182,
+      "elapsed_sec": 70.7,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|1100184,http://www.nlm.nih.gov/research/umls/rxnorm|1308569,http://www.nlm.nih.gov/research/umls/rxnorm|1599803,http://www.nlm.nih.gov/research/umls/rxnorm|1599805,http://www.nlm.nih.gov/research/umls/rxnorm|1805420,http://www.nlm.nih.gov/research/umls/rxnorm|1805425,http://www.nlm.nih.gov/research/umls/rxnorm|1858970,http://www.nlm.nih.gov/research/umls/rxnorm|310436,http://www.nlm.nih.gov/research/umls/rxnorm|310437,http://www.nlm.nih.gov/research/umls/rxnorm|312835,http://www.nlm.nih.gov/research/umls/rxnorm|312836,http://www.nlm.nih.gov/research/umls/rxnorm|314214,http://www.nlm.nih.gov/research/umls/rxnorm|314215,http://www.nlm.nih.gov/research/umls/rxnorm|579148,http://www.nlm.nih.gov/research/umls/rxnorm|725021,http://www.nlm.nih.gov/research/umls/rxnorm|725023,http://www.nlm.nih.gov/research/umls/rxnorm|860695,http://www.nlm.nih.gov/research/umls/rxnorm|860707,http://www.nlm.nih.gov/research/umls/rxnorm|860715,http://www.nlm.nih.gov/research/umls/rxnorm|860901,http://www.nlm.nih.gov/research/umls/rxnorm|996561,http://www.nlm.nih.gov/research/umls/rxnorm|996571,http://www.nlm.nih.gov/research/umls/rxnorm|996572,http://www.nlm.nih.gov/research/umls/rxnorm|996594,http://www.nlm.nih.gov/research/umls/rxnorm|996603,http://www.nlm.nih.gov/research/umls/rxnorm|996609,http://www.nlm.nih.gov/research/umls/rxnorm|996615,http://www.nlm.nih.gov/research/umls/rxnorm|996624,http://www.nlm.nih.gov/research/umls/rxnorm|996740,http://www.nlm.nih.gov/research/umls/rxnorm|997220,http://www.nlm.nih.gov/research/umls/rxnorm|997223,http://www.nlm.nih.gov/research/umls/rxnorm|997226,http://www.nlm.nih.gov/research/umls/rxnorm|997229",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|1100184,http://www.nlm.nih.gov/research/umls/rxnorm|1308569,http://www.nlm.nih.gov/research/umls/rxnorm|1599803,http://www.nlm.nih.gov/research/umls/rxnorm|1599805,http://www.nlm.nih.gov/research/umls/rxnorm|1805420,http://www.nlm.nih.gov/research/umls/rxnorm|1805425,http://www.nlm.nih.gov/research/umls/rxnorm|1858970,http://www.nlm.nih.gov/research/umls/rxnorm|310436,http://www.nlm.nih.gov/research/umls/rxnorm|310437,http://www.nlm.nih.gov/research/umls/rxnorm|312835,http://www.nlm.nih.gov/research/umls/rxnorm|312836,http://www.nlm.nih.gov/research/umls/rxnorm|314214,http://www.nlm.nih.gov/research/umls/rxnorm|314215,http://www.nlm.nih.gov/research/umls/rxnorm|579148,http://www.nlm.nih.gov/research/umls/rxnorm|725021,http://www.nlm.nih.gov/research/umls/rxnorm|725023,http://www.nlm.nih.gov/research/umls/rxnorm|860695,http://www.nlm.nih.gov/research/umls/rxnorm|860707,http://www.nlm.nih.gov/research/umls/rxnorm|860715,http://www.nlm.nih.gov/research/umls/rxnorm|860901,http://www.nlm.nih.gov/research/umls/rxnorm|996561,http://www.nlm.nih.gov/research/umls/rxnorm|996571,http://www.nlm.nih.gov/research/umls/rxnorm|996572,http://www.nlm.nih.gov/research/umls/rxnorm|996594,http://www.nlm.nih.gov/research/umls/rxnorm|996603,http://www.nlm.nih.gov/research/umls/rxnorm|996609,http://www.nlm.nih.gov/research/umls/rxnorm|996615,http://www.nlm.nih.gov/research/umls/rxnorm|996624,http://www.nlm.nih.gov/research/umls/rxnorm|996740,http://www.nlm.nih.gov/research/umls/rxnorm|997220,http://www.nlm.nih.gov/research/umls/rxnorm|997223,http://www.nlm.nih.gov/research/umls/rxnorm|997226,http://www.nlm.nih.gov/research/umls/rxnorm|997229",
+      "prompt_text": "Find patients prescribed cognitive enhancer medications used to treat dementia. The two main drug classes are cholinesterase inhibitors (donepezil/Aricept, galantamine/Razadyne, rivastigmine/Exelon) and NMDA receptor antagonists (memantine/Namenda). There are also combination products like Namzaric (donepezil + memantine)."
+     },
+     "2-expert": {
+      "precision": 1.0,
+      "recall": 0.0389,
+      "f1": 0.0749,
+      "passed": false,
+      "expected_count": 30651,
+      "actual_count": 1193,
+      "elapsed_sec": 40.6,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|997223,http://www.nlm.nih.gov/research/umls/rxnorm|1100184,http://www.nlm.nih.gov/research/umls/rxnorm|310436,http://www.nlm.nih.gov/research/umls/rxnorm|996740,http://www.nlm.nih.gov/research/umls/rxnorm|1599803",
+      "additional_query_urls": [],
+      "raw_response": "FINAL ANSWER:\n\nMedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|997223,http://www.nlm.nih.gov/research/umls/rxnorm|1100184,http://www.nlm.nih.gov/research/umls/rxnorm|310436,http://www.nlm.nih.gov/research/umls/rxnorm|996740,http://www.nlm.nih.gov/research/umls/rxnorm|1599803",
+      "prompt_text": "I need to find all patients on chronic dementia therapy. Synthea generates these at the SCD level \u2014 search MedicationRequest for these RxNorm codes: 997223 (Donepezil 10 MG), 1100184 (Donepezil 23 MG), 310436 (Galantamine 4 MG), 996740 (Memantine HCl 2 MG/ML solution), and 1599803 (Donepezil 10 MG / Memantine 28 MG ER combo). Note that querying ingredient codes will not match SCD-coded prescriptions in HAPI FHIR \u2014 you must query the specific SCD codes."
+     },
+     "3-naive": {
+      "precision": 0.9876,
+      "recall": 0.0703,
+      "f1": 0.1313,
+      "passed": false,
+      "expected_count": 30651,
+      "actual_count": 2182,
+      "elapsed_sec": 54.0,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|1100184,http://www.nlm.nih.gov/research/umls/rxnorm|1308569,http://www.nlm.nih.gov/research/umls/rxnorm|1599803,http://www.nlm.nih.gov/research/umls/rxnorm|1599805,http://www.nlm.nih.gov/research/umls/rxnorm|1805420,http://www.nlm.nih.gov/research/umls/rxnorm|1805425,http://www.nlm.nih.gov/research/umls/rxnorm|310436,http://www.nlm.nih.gov/research/umls/rxnorm|310437,http://www.nlm.nih.gov/research/umls/rxnorm|312835,http://www.nlm.nih.gov/research/umls/rxnorm|312836,http://www.nlm.nih.gov/research/umls/rxnorm|314214,http://www.nlm.nih.gov/research/umls/rxnorm|314215,http://www.nlm.nih.gov/research/umls/rxnorm|579148,http://www.nlm.nih.gov/research/umls/rxnorm|725021,http://www.nlm.nih.gov/research/umls/rxnorm|725023,http://www.nlm.nih.gov/research/umls/rxnorm|860695,http://www.nlm.nih.gov/research/umls/rxnorm|860707,http://www.nlm.nih.gov/research/umls/rxnorm|860715,http://www.nlm.nih.gov/research/umls/rxnorm|860901,http://www.nlm.nih.gov/research/umls/rxnorm|996561,http://www.nlm.nih.gov/research/umls/rxnorm|996571,http://www.nlm.nih.gov/research/umls/rxnorm|996594,http://www.nlm.nih.gov/research/umls/rxnorm|996603,http://www.nlm.nih.gov/research/umls/rxnorm|996609,http://www.nlm.nih.gov/research/umls/rxnorm|996615,http://www.nlm.nih.gov/research/umls/rxnorm|996740,http://www.nlm.nih.gov/research/umls/rxnorm|997220,http://www.nlm.nih.gov/research/umls/rxnorm|997223,http://www.nlm.nih.gov/research/umls/rxnorm|997226,http://www.nlm.nih.gov/research/umls/rxnorm|997229",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest.medication is a reference; chain via `medication.code`.\n\nMedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|1100184,http://www.nlm.nih.gov/research/umls/rxnorm|1308569,http://www.nlm.nih.gov/research/umls/rxnorm|1599803,http://www.nlm.nih.gov/research/umls/rxnorm|1599805,http://www.nlm.nih.gov/research/umls/rxnorm|1805420,http://www.nlm.nih.gov/research/umls/rxnorm|1805425,http://www.nlm.nih.gov/research/umls/rxnorm|310436,http://www.nlm.nih.gov/research/umls/rxnorm|310437,http://www.nlm.nih.gov/research/umls/rxnorm|312835,http://www.nlm.nih.gov/research/umls/rxnorm|312836,http://www.nlm.nih.gov/research/umls/rxnorm|314214,http://www.nlm.nih.gov/research/umls/rxnorm|314215,http://www.nlm.nih.gov/research/umls/rxnorm|579148,http://www.nlm.nih.gov/research/umls/rxnorm|725021,http://www.nlm.nih.gov/research/umls/rxnorm|725023,http://www.nlm.nih.gov/research/umls/rxnorm|860695,http://www.nlm.nih.gov/research/umls/rxnorm|860707,http://www.nlm.nih.gov/research/umls/rxnorm|860715,http://www.nlm.nih.gov/research/umls/rxnorm|860901,http://www.nlm.nih.gov/research/umls/rxnorm|996561,http://www.nlm.nih.gov/research/umls/rxnorm|996571,http://www.nlm.nih.gov/research/umls/rxnorm|996594,http://www.nlm.nih.gov/research/umls/rxnorm|996603,http://www.nlm.nih.gov/research/umls/rxnorm|996609,http://www.nlm.nih.gov/research/umls/rxnorm|996615,http://www.nlm.nih.gov/research/umls/rxnorm|996740,http://www.nlm.nih.gov/research/umls/rxnorm|997220,http://www.nlm.nih.gov/research/umls/rxnorm|997223,http://www.nlm.nih.gov/research/umls/rxnorm|997226,http://www.nlm.nih.gov/research/umls/rxnorm|997229",
+      "prompt_text": "Find patients on dementia medications."
+     },
+     "3-broad": {
+      "precision": 0.9876,
+      "recall": 0.0703,
+      "f1": 0.1313,
+      "passed": false,
+      "expected_count": 30651,
+      "actual_count": 2182,
+      "elapsed_sec": 63.6,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|1100184,1308569,1599803,1599805,1805420,1805425,1858970,310436,310437,312835,312836,314214,314215,579148,725021,725023,860695,860707,860715,860901,996561,996571,996572,996594,996603,996609,996615,996624,996740,997220,997223,997226,997229",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|1100184,1308569,1599803,1599805,1805420,1805425,1858970,310436,310437,312835,312836,314214,314215,579148,725021,725023,860695,860707,860715,860901,996561,996571,996572,996594,996603,996609,996615,996624,996740,997220,997223,997226,997229",
+      "prompt_text": "Find patients prescribed cognitive enhancer medications used to treat dementia. The two main drug classes are cholinesterase inhibitors (donepezil/Aricept, galantamine/Razadyne, rivastigmine/Exelon) and NMDA receptor antagonists (memantine/Namenda). There are also combination products like Namzaric (donepezil + memantine)."
+     },
+     "3-expert": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 30651,
+      "actual_count": 0,
+      "elapsed_sec": 9.1,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|997223,http://www.nlm.nih.gov/research/umls/rxnorm|1100184,http://www.nlm.nih.gov/research/umls/rxnorm|310436,http://www.nlm.nih.gov/research/umls/rxnorm|996740,http://www.nlm.nih.gov/research/umls/rxnorm|1599803",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|997223,http://www.nlm.nih.gov/research/umls/rxnorm|1100184,http://www.nlm.nih.gov/research/umls/rxnorm|310436,http://www.nlm.nih.gov/research/umls/rxnorm|996740,http://www.nlm.nih.gov/research/umls/rxnorm|1599803",
       "prompt_text": "I need to find all patients on chronic dementia therapy. Synthea generates these at the SCD level \u2014 search MedicationRequest for these RxNorm codes: 997223 (Donepezil 10 MG), 1100184 (Donepezil 23 MG), 310436 (Galantamine 4 MG), 996740 (Memantine HCl 2 MG/ML solution), and 1599803 (Donepezil 10 MG / Memantine 28 MG ER combo). Note that querying ingredient codes will not match SCD-coded prescriptions in HAPI FHIR \u2014 you must query the specific SCD codes."
      }
     },

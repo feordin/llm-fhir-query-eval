@@ -1100,6 +1100,159 @@
       "prompt_text": "I need to identify HCC patients with a full staging workup, following the PheKB liver cancer staging algorithm. Run queries across three resource types and union the patient sets: search Condition resources for hepatocellular carcinoma coded in SNOMED CT; search Procedure resources for CT of the abdomen coded in SNOMED CT, which is the required imaging component of the staging workup; and search Observation resources for alpha-fetoprotein using the relevant LOINC code, which serves as the primary HCC tumor marker. The full algorithm also involves albumin, bilirubin, and INR labs as staging components, so a comprehensive workup query should consider those Observation types as well."
      }
     },
+    "copilot:claude-opus-4.7+mimic": {
+     "1-naive": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 400,
+      "actual_count": 400,
+      "elapsed_sec": 10.6,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|187769009,http://hl7.org/fhir/sid/icd-10-cm|C22.0",
+      "additional_query_urls": [
+       "Observation?code=http://loinc.org|21908-9,http://loinc.org|21902-2"
+      ],
+      "raw_response": "Condition?code=http://snomed.info/sct|187769009,http://hl7.org/fhir/sid/icd-10-cm|C22.0\nObservation?code=http://loinc.org|21908-9,http://loinc.org|21902-2",
+      "prompt_text": "Find HCC staging patients."
+     },
+     "1-broad": {
+      "precision": 0.0372,
+      "recall": 0.345,
+      "f1": 0.0671,
+      "passed": false,
+      "expected_count": 400,
+      "actual_count": 3712,
+      "elapsed_sec": 50.1,
+      "queries_generated": 5,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|109841003",
+      "additional_query_urls": [
+       "Observation?code=http://loinc.org|1834-1",
+       "Observation?code=http://loinc.org|54598-8,http://loinc.org|1751-7",
+       "Observation?code=http://loinc.org|1975-2",
+       "Observation?code=http://loinc.org|6301-6"
+      ],
+      "raw_response": "Condition?code=http://snomed.info/sct|109841003\nObservation?code=http://loinc.org|1834-1\nObservation?code=http://loinc.org|54598-8,http://loinc.org|1751-7\nObservation?code=http://loinc.org|1975-2\nObservation?code=http://loinc.org|6301-6\nImagingStudy?bodysite=http://snomed.info/sct|818983003&modality=http://dicom.nema.org/resources/ontology/DCM|CT",
+      "prompt_text": "Find hepatocellular carcinoma (HCC) patients with comprehensive staging workup \u2014 CT abdomen imaging plus AFP, albumin, bilirubin, and INR labs (per AJCC/BCLC/CLIP staging systems)."
+     },
+     "1-expert": {
+      "precision": 0.0372,
+      "recall": 0.345,
+      "f1": 0.0671,
+      "passed": false,
+      "expected_count": 400,
+      "actual_count": 3712,
+      "elapsed_sec": 38.2,
+      "queries_generated": 6,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|109841003",
+      "additional_query_urls": [
+       "Procedure?code=http://snomed.info/sct|169070004",
+       "Observation?code=http://loinc.org|1834-1",
+       "Observation?code=http://loinc.org|1751-7",
+       "Observation?code=http://loinc.org|1975-2",
+       "Observation?code=http://loinc.org|6301-6"
+      ],
+      "raw_response": "Condition?code=http://snomed.info/sct|109841003\nProcedure?code=http://snomed.info/sct|169070004\nObservation?code=http://loinc.org|1834-1\nObservation?code=http://loinc.org|1751-7\nObservation?code=http://loinc.org|1975-2\nObservation?code=http://loinc.org|6301-6",
+      "prompt_text": "I need to identify HCC patients with a full staging workup, following the PheKB liver cancer staging algorithm. Run queries across three resource types and union the patient sets: search Condition resources for hepatocellular carcinoma coded in SNOMED CT; search Procedure resources for CT of the abdomen coded in SNOMED CT, which is the required imaging component of the staging workup; and search Observation resources for alpha-fetoprotein using the relevant LOINC code, which serves as the primary HCC tumor marker. The full algorithm also involves albumin, bilirubin, and INR labs as staging components, so a comprehensive workup query should consider those Observation types as well."
+     },
+     "2-naive": {
+      "precision": 0.9479,
+      "recall": 1.0,
+      "f1": 0.9732,
+      "passed": true,
+      "expected_count": 400,
+      "actual_count": 422,
+      "elapsed_sec": 19.9,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|109841003,http://snomed.info/sct|187769009,http://snomed.info/sct|253018005,http://snomed.info/sct|274902006,http://snomed.info/sct|95214007,http://hl7.org/fhir/sid/icd-10-cm|C22.0,http://hl7.org/fhir/sid/icd-10-cm|C22.8",
+      "additional_query_urls": [],
+      "raw_response": "FINAL ANSWER:\n\nCondition?code=http://snomed.info/sct|109841003,http://snomed.info/sct|187769009,http://snomed.info/sct|253018005,http://snomed.info/sct|274902006,http://snomed.info/sct|95214007,http://hl7.org/fhir/sid/icd-10-cm|C22.0,http://hl7.org/fhir/sid/icd-10-cm|C22.8",
+      "prompt_text": "Find HCC staging patients."
+     },
+     "2-broad": {
+      "precision": 0.0756,
+      "recall": 1.0,
+      "f1": 0.1406,
+      "passed": false,
+      "expected_count": 400,
+      "actual_count": 5290,
+      "elapsed_sec": 188.3,
+      "queries_generated": 6,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|C22.0,http://hl7.org/fhir/sid/icd-9-cm|155.0",
+      "additional_query_urls": [
+       "Procedure?code=http://hl7.org/fhir/sid/icd-9-cm|88.01",
+       "Observation?code=http://loinc.org|1834-1",
+       "Observation?code=http://loinc.org|1751-7",
+       "Observation?code=http://loinc.org|1975-2",
+       "Observation?code=http://loinc.org|6301-6"
+      ],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|C22.0,http://hl7.org/fhir/sid/icd-9-cm|155.0\nProcedure?code=http://hl7.org/fhir/sid/icd-9-cm|88.01\nObservation?code=http://loinc.org|1834-1\nObservation?code=http://loinc.org|1751-7\nObservation?code=http://loinc.org|1975-2\nObservation?code=http://loinc.org|6301-6",
+      "prompt_text": "Find hepatocellular carcinoma (HCC) patients with comprehensive staging workup \u2014 CT abdomen imaging plus AFP, albumin, bilirubin, and INR labs (per AJCC/BCLC/CLIP staging systems)."
+     },
+     "2-expert": {
+      "precision": 0.1572,
+      "recall": 1.0,
+      "f1": 0.2716,
+      "passed": false,
+      "expected_count": 400,
+      "actual_count": 2545,
+      "elapsed_sec": 81.6,
+      "queries_generated": 3,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|C22.0",
+      "additional_query_urls": [
+       "Procedure?code=http://hl7.org/fhir/sid/icd-9-cm|88.01",
+       "Observation?code=http://loinc.org|1834-1,http://loinc.org|1751-7,http://loinc.org|1975-2,http://loinc.org|6301-6"
+      ],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|C22.0\nProcedure?code=http://hl7.org/fhir/sid/icd-9-cm|88.01\nObservation?code=http://loinc.org|1834-1,http://loinc.org|1751-7,http://loinc.org|1975-2,http://loinc.org|6301-6",
+      "prompt_text": "I need to identify HCC patients with a full staging workup, following the PheKB liver cancer staging algorithm. Run queries across three resource types and union the patient sets: search Condition resources for hepatocellular carcinoma coded in SNOMED CT; search Procedure resources for CT of the abdomen coded in SNOMED CT, which is the required imaging component of the staging workup; and search Observation resources for alpha-fetoprotein using the relevant LOINC code, which serves as the primary HCC tumor marker. The full algorithm also involves albumin, bilirubin, and INR labs as staging components, so a comprehensive workup query should consider those Observation types as well."
+     },
+     "3-naive": {
+      "precision": 0.3857,
+      "recall": 1.0,
+      "f1": 0.5567,
+      "passed": false,
+      "expected_count": 400,
+      "actual_count": 1037,
+      "elapsed_sec": 30.9,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|109841003,http://snomed.info/sct|187769009,http://snomed.info/sct|253018005,http://snomed.info/sct|274902006,http://snomed.info/sct|95214007,http://hl7.org/fhir/sid/icd-10-cm|C22.0,http://hl7.org/fhir/sid/icd-10-cm|C22.8,http://hl7.org/fhir/sid/icd-9-cm|155.0",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|109841003,http://snomed.info/sct|187769009,http://snomed.info/sct|253018005,http://snomed.info/sct|274902006,http://snomed.info/sct|95214007,http://hl7.org/fhir/sid/icd-10-cm|C22.0,http://hl7.org/fhir/sid/icd-10-cm|C22.8,http://hl7.org/fhir/sid/icd-9-cm|155.0",
+      "prompt_text": "Find HCC staging patients."
+     },
+     "3-broad": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 400,
+      "actual_count": 0,
+      "elapsed_sec": 126.8,
+      "queries_generated": 1,
+      "primary_query_url": "Patient?_has:Condition:patient:code=http://snomed.info/sct|109841001,http://hl7.org/fhir/sid/icd-10-cm|C22.0&_has:Observation:patient:code=http://loinc.org|1834-1,http://loinc.org|1751-7,http://loinc.org|1975-2,http://loinc.org|6301-6&_has:Procedure:patient:code=http://hl7.org/fhir/sid/icd-9-cm|88.01",
+      "additional_query_urls": [],
+      "raw_response": "FINAL ANSWER:\n\nPatient?_has:Condition:patient:code=http://snomed.info/sct|109841001,http://hl7.org/fhir/sid/icd-10-cm|C22.0&_has:Observation:patient:code=http://loinc.org|1834-1,http://loinc.org|1751-7,http://loinc.org|1975-2,http://loinc.org|6301-6&_has:Procedure:patient:code=http://hl7.org/fhir/sid/icd-9-cm|88.01",
+      "prompt_text": "Find hepatocellular carcinoma (HCC) patients with comprehensive staging workup \u2014 CT abdomen imaging plus AFP, albumin, bilirubin, and INR labs (per AJCC/BCLC/CLIP staging systems)."
+     },
+     "3-expert": {
+      "precision": 0.0049,
+      "recall": 0.015,
+      "f1": 0.0074,
+      "passed": false,
+      "expected_count": 400,
+      "actual_count": 1223,
+      "elapsed_sec": 75.4,
+      "queries_generated": 3,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|187769009,25370001,109841003",
+      "additional_query_urls": [
+       "Procedure?code=http://snomed.info/sct|419394006,432370003,169069000,1148701004,16457501000119102,726553009,721042009",
+       "Observation?code=http://loinc.org|1834-1,19170-3,1751-7,1975-2,6301-6,34714-6"
+      ],
+      "raw_response": "Condition?code=http://snomed.info/sct|187769009,25370001,109841003\nProcedure?code=http://snomed.info/sct|419394006,432370003,169069000,1148701004,16457501000119102,726553009,721042009\nObservation?code=http://loinc.org|1834-1,19170-3,1751-7,1975-2,6301-6,34714-6",
+      "prompt_text": "I need to identify HCC patients with a full staging workup, following the PheKB liver cancer staging algorithm. Run queries across three resource types and union the patient sets: search Condition resources for hepatocellular carcinoma coded in SNOMED CT; search Procedure resources for CT of the abdomen coded in SNOMED CT, which is the required imaging component of the staging workup; and search Observation resources for alpha-fetoprotein using the relevant LOINC code, which serves as the primary HCC tumor marker. The full algorithm also involves albumin, bilirubin, and INR labs as staging components, so a comprehensive workup query should consider those Observation types as well."
+     }
+    },
     "copilot:claude-sonnet-4.6": {
      "1-naive": {
       "precision": 0.0,

@@ -230,6 +230,148 @@
       "prompt_text": "I need to identify Parkinson's disease patients using a union across two resource types. First, search Condition resources for a documented Parkinson's disease diagnosis coded in SNOMED CT. Second, search MedicationRequest resources for levodopa prescriptions (coded in RxNorm), the cornerstone pharmacotherapy for Parkinson's disease. Union the patient sets from both queries \u2014 the medication path will include some patients without a formal PD diagnosis, such as those with atypical parkinsonism syndromes or restless legs syndrome in whom levodopa is used off-label, and these represent the cross-indication population in Path C."
      }
     },
+    "copilot:claude-opus-4.7+mimic": {
+     "1-naive": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 2115,
+      "actual_count": 0,
+      "elapsed_sec": 6.9,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|49049000",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|49049000",
+      "prompt_text": "Find all Parkinson's patients."
+     },
+     "1-broad": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 2115,
+      "actual_count": 0,
+      "elapsed_sec": 10.3,
+      "queries_generated": 4,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|49049000",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6375",
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|142442",
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|000000"
+      ],
+      "raw_response": "Condition?code=http://snomed.info/sct|49049000\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6375\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|142442\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|000000",
+      "prompt_text": "Find all Parkinson's disease patients \u2014 by diagnosis or by levodopa prescriptions. Run multiple queries and union the patient sets."
+     },
+     "1-expert": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 2115,
+      "actual_count": 0,
+      "elapsed_sec": 8.4,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|49049000",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6375"
+      ],
+      "raw_response": "Condition?code=http://snomed.info/sct|49049000\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6375",
+      "prompt_text": "I need to identify Parkinson's disease patients using a union across two resource types. First, search Condition resources for a documented Parkinson's disease diagnosis coded in SNOMED CT. Second, search MedicationRequest resources for levodopa prescriptions (coded in RxNorm), the cornerstone pharmacotherapy for Parkinson's disease. Union the patient sets from both queries \u2014 the medication path will include some patients without a formal PD diagnosis, such as those with atypical parkinsonism syndromes or restless legs syndrome in whom levodopa is used off-label, and these represent the cross-indication population in Path C."
+     },
+     "2-naive": {
+      "precision": 1.0,
+      "recall": 0.9853,
+      "f1": 0.9926,
+      "passed": true,
+      "expected_count": 2115,
+      "actual_count": 2084,
+      "elapsed_sec": 43.9,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|G20,http://hl7.org/fhir/sid/icd-10-cm|G20.A1,http://hl7.org/fhir/sid/icd-10-cm|G20.A2,http://hl7.org/fhir/sid/icd-10-cm|G20.B1,http://hl7.org/fhir/sid/icd-10-cm|G20.B2,http://hl7.org/fhir/sid/icd-9-cm|332.0",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|G20,http://hl7.org/fhir/sid/icd-10-cm|G20.A1,http://hl7.org/fhir/sid/icd-10-cm|G20.A2,http://hl7.org/fhir/sid/icd-10-cm|G20.B1,http://hl7.org/fhir/sid/icd-10-cm|G20.B2,http://hl7.org/fhir/sid/icd-9-cm|332.0",
+      "prompt_text": "Find all Parkinson's patients."
+     },
+     "2-broad": {
+      "precision": 1.0,
+      "recall": 0.9853,
+      "f1": 0.9926,
+      "passed": true,
+      "expected_count": 2115,
+      "actual_count": 2084,
+      "elapsed_sec": 101.2,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|G20,http://hl7.org/fhir/sid/icd-10-cm|G20.A1,http://hl7.org/fhir/sid/icd-10-cm|G20.A2,http://hl7.org/fhir/sid/icd-10-cm|G20.B1,http://hl7.org/fhir/sid/icd-10-cm|G20.B2,http://hl7.org/fhir/sid/icd-9-cm|332.0",
+      "additional_query_urls": [
+       "MedicationRequest?code:text=levodopa"
+      ],
+      "raw_response": "FINAL ANSWER:\n\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|G20,http://hl7.org/fhir/sid/icd-10-cm|G20.A1,http://hl7.org/fhir/sid/icd-10-cm|G20.A2,http://hl7.org/fhir/sid/icd-10-cm|G20.B1,http://hl7.org/fhir/sid/icd-10-cm|G20.B2,http://hl7.org/fhir/sid/icd-9-cm|332.0\nMedicationRequest?code:text=levodopa",
+      "prompt_text": "Find all Parkinson's disease patients \u2014 by diagnosis or by levodopa prescriptions. Run multiple queries and union the patient sets."
+     },
+     "2-expert": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 2115,
+      "actual_count": 0,
+      "elapsed_sec": 129.7,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|49049000,http://snomed.info/sct|101421000119107,http://snomed.info/sct|103871000119109,http://snomed.info/sct|1156822001,http://snomed.info/sct|1259080009,http://snomed.info/sct|15755701000119105,http://snomed.info/sct|230291001,http://snomed.info/sct|425390006,http://snomed.info/sct|438513002,http://snomed.info/sct|715345007,http://snomed.info/sct|716662004,http://snomed.info/sct|718685006,http://snomed.info/sct|719717006,http://snomed.info/sct|724761004",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|197872,http://www.nlm.nih.gov/research/umls/rxnorm|2107616,http://www.nlm.nih.gov/research/umls/rxnorm|2107621,http://www.nlm.nih.gov/research/umls/rxnorm|197443,http://www.nlm.nih.gov/research/umls/rxnorm|197444,http://www.nlm.nih.gov/research/umls/rxnorm|197445,http://www.nlm.nih.gov/research/umls/rxnorm|250432,http://www.nlm.nih.gov/research/umls/rxnorm|308988,http://www.nlm.nih.gov/research/umls/rxnorm|308989,http://www.nlm.nih.gov/research/umls/rxnorm|476399,http://www.nlm.nih.gov/research/umls/rxnorm|476515,http://www.nlm.nih.gov/research/umls/rxnorm|483090,http://www.nlm.nih.gov/research/umls/rxnorm|724598,http://www.nlm.nih.gov/research/umls/rxnorm|724602,http://www.nlm.nih.gov/research/umls/rxnorm|724606,http://www.nlm.nih.gov/research/umls/rxnorm|1599846,http://www.nlm.nih.gov/research/umls/rxnorm|1599852,http://www.nlm.nih.gov/research/umls/rxnorm|1600773,http://www.nlm.nih.gov/research/umls/rxnorm|1600774,http://www.nlm.nih.gov/research/umls/rxnorm|1600775,http://www.nlm.nih.gov/research/umls/rxnorm|1600776,http://www.nlm.nih.gov/research/umls/rxnorm|1600914,http://www.nlm.nih.gov/research/umls/rxnorm|1600915,http://www.nlm.nih.gov/research/umls/rxnorm|1600916,http://www.nlm.nih.gov/research/umls/rxnorm|1600917,http://www.nlm.nih.gov/research/umls/rxnorm|2586032,http://www.nlm.nih.gov/research/umls/rxnorm|2690259,http://www.nlm.nih.gov/research/umls/rxnorm|2690265,http://www.nlm.nih.gov/research/umls/rxnorm|2690279,http://www.nlm.nih.gov/research/umls/rxnorm|2690281,http://www.nlm.nih.gov/research/umls/rxnorm|2690284,http://www.nlm.nih.gov/research/umls/rxnorm|2690286,http://www.nlm.nih.gov/research/umls/rxnorm|2690290,http://www.nlm.nih.gov/research/umls/rxnorm|2690292,http://www.nlm.nih.gov/research/umls/rxnorm|2695782,http://www.nlm.nih.gov/research/umls/rxnorm|2695789"
+      ],
+      "raw_response": "Final answer:\n\nCondition?code=http://snomed.info/sct|49049000,http://snomed.info/sct|101421000119107,http://snomed.info/sct|103871000119109,http://snomed.info/sct|1156822001,http://snomed.info/sct|1259080009,http://snomed.info/sct|15755701000119105,http://snomed.info/sct|230291001,http://snomed.info/sct|425390006,http://snomed.info/sct|438513002,http://snomed.info/sct|715345007,http://snomed.info/sct|716662004,http://snomed.info/sct|718685006,http://snomed.info/sct|719717006,http://snomed.info/sct|724761004\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|197872,http://www.nlm.nih.gov/research/umls/rxnorm|2107616,http://www.nlm.nih.gov/research/umls/rxnorm|2107621,http://www.nlm.nih.gov/research/umls/rxnorm|197443,http://www.nlm.nih.gov/research/umls/rxnorm|197444,http://www.nlm.nih.gov/research/umls/rxnorm|197445,http://www.nlm.nih.gov/research/umls/rxnorm|250432,http://www.nlm.nih.gov/research/umls/rxnorm|308988,http://www.nlm.nih.gov/research/umls/rxnorm|308989,http://www.nlm.nih.gov/research/umls/rxnorm|476399,http://www.nlm.nih.gov/research/umls/rxnorm|476515,http://www.nlm.nih.gov/research/umls/rxnorm|483090,http://www.nlm.nih.gov/research/umls/rxnorm|724598,http://www.nlm.nih.gov/research/umls/rxnorm|724602,http://www.nlm.nih.gov/research/umls/rxnorm|724606,http://www.nlm.nih.gov/research/umls/rxnorm|1599846,http://www.nlm.nih.gov/research/umls/rxnorm|1599852,http://www.nlm.nih.gov/research/umls/rxnorm|1600773,http://www.nlm.nih.gov/research/umls/rxnorm|1600774,http://www.nlm.nih.gov/research/umls/rxnorm|1600775,http://www.nlm.nih.gov/research/umls/rxnorm|1600776,http://www.nlm.nih.gov/research/umls/rxnorm|1600914,http://www.nlm.nih.gov/research/umls/rxnorm|1600915,http://www.nlm.nih.gov/research/umls/rxnorm|1600916,http://www.nlm.nih.gov/research/umls/rxnorm|1600917,http://www.nlm.nih.gov/research/umls/rxnorm|2586032,http://www.nlm.nih.gov/research/umls/rxnorm|2690259,http://www.nlm.nih.gov/research/umls/rxnorm|2690265,http://www.nlm.nih.gov/research/umls/rxnorm|2690279,http://www.nlm.nih.gov/research/umls/rxnorm|2690281,http://www.nlm.nih.gov/research/umls/rxnorm|2690284,http://www.nlm.nih.gov/research/umls/rxnorm|2690286,http://www.nlm.nih.gov/research/umls/rxnorm|2690290,http://www.nlm.nih.gov/research/umls/rxnorm|2690292,http://www.nlm.nih.gov/research/umls/rxnorm|2695782,http://www.nlm.nih.gov/research/umls/rxnorm|2695789",
+      "prompt_text": "I need to identify Parkinson's disease patients using a union across two resource types. First, search Condition resources for a documented Parkinson's disease diagnosis coded in SNOMED CT. Second, search MedicationRequest resources for levodopa prescriptions (coded in RxNorm), the cornerstone pharmacotherapy for Parkinson's disease. Union the patient sets from both queries \u2014 the medication path will include some patients without a formal PD diagnosis, such as those with atypical parkinsonism syndromes or restless legs syndrome in whom levodopa is used off-label, and these represent the cross-indication population in Path C."
+     },
+     "3-naive": {
+      "precision": 1.0,
+      "recall": 0.4818,
+      "f1": 0.6503,
+      "passed": false,
+      "expected_count": 2115,
+      "actual_count": 1019,
+      "elapsed_sec": 35.9,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|101421000119107,http://snomed.info/sct|103871000119109,http://snomed.info/sct|1156822001,http://snomed.info/sct|1259080009,http://snomed.info/sct|15755701000119105,http://snomed.info/sct|230291001,http://snomed.info/sct|425390006,http://snomed.info/sct|438513002,http://snomed.info/sct|49049000,http://snomed.info/sct|715345007,http://snomed.info/sct|716662004,http://snomed.info/sct|718685006,http://snomed.info/sct|719717006,http://snomed.info/sct|724761004,http://hl7.org/fhir/sid/icd-10-cm|G20,http://hl7.org/fhir/sid/icd-10-cm|G20.A1,http://hl7.org/fhir/sid/icd-10-cm|G20.A2,http://hl7.org/fhir/sid/icd-10-cm|G20.B1,http://hl7.org/fhir/sid/icd-10-cm|G20.B2",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|101421000119107,http://snomed.info/sct|103871000119109,http://snomed.info/sct|1156822001,http://snomed.info/sct|1259080009,http://snomed.info/sct|15755701000119105,http://snomed.info/sct|230291001,http://snomed.info/sct|425390006,http://snomed.info/sct|438513002,http://snomed.info/sct|49049000,http://snomed.info/sct|715345007,http://snomed.info/sct|716662004,http://snomed.info/sct|718685006,http://snomed.info/sct|719717006,http://snomed.info/sct|724761004,http://hl7.org/fhir/sid/icd-10-cm|G20,http://hl7.org/fhir/sid/icd-10-cm|G20.A1,http://hl7.org/fhir/sid/icd-10-cm|G20.A2,http://hl7.org/fhir/sid/icd-10-cm|G20.B1,http://hl7.org/fhir/sid/icd-10-cm|G20.B2",
+      "prompt_text": "Find all Parkinson's patients."
+     },
+     "3-broad": {
+      "precision": 1.0,
+      "recall": 0.9853,
+      "f1": 0.9926,
+      "passed": true,
+      "expected_count": 2115,
+      "actual_count": 2084,
+      "elapsed_sec": 156.5,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|G20,http://hl7.org/fhir/sid/icd-9-cm|332.0",
+      "additional_query_urls": [
+       "MedicationStatement?code=http://www.nlm.nih.gov/research/umls/rxnorm|6375,http://www.nlm.nih.gov/research/umls/rxnorm|32968,http://www.nlm.nih.gov/research/umls/rxnorm|82675,http://www.nlm.nih.gov/research/umls/rxnorm|1719286"
+      ],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|G20,http://hl7.org/fhir/sid/icd-9-cm|332.0\nMedicationStatement?code=http://www.nlm.nih.gov/research/umls/rxnorm|6375,http://www.nlm.nih.gov/research/umls/rxnorm|32968,http://www.nlm.nih.gov/research/umls/rxnorm|82675,http://www.nlm.nih.gov/research/umls/rxnorm|1719286",
+      "prompt_text": "Find all Parkinson's disease patients \u2014 by diagnosis or by levodopa prescriptions. Run multiple queries and union the patient sets."
+     },
+     "3-expert": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 2115,
+      "actual_count": 0,
+      "elapsed_sec": 59.8,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|49049000,http://snomed.info/sct|724761004,http://snomed.info/sct|230291001,http://snomed.info/sct|715345007,http://snomed.info/sct|716662004,http://snomed.info/sct|1156822001,http://snomed.info/sct|425390006,http://snomed.info/sct|101421000119107,http://snomed.info/sct|438513002,http://snomed.info/sct|1259080009,http://snomed.info/sct|718685006,http://snomed.info/sct|719717006,http://snomed.info/sct|103871000119109,http://snomed.info/sct|15755701000119105",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|197872,http://www.nlm.nih.gov/research/umls/rxnorm|2107616,http://www.nlm.nih.gov/research/umls/rxnorm|2107621,http://www.nlm.nih.gov/research/umls/rxnorm|197443,http://www.nlm.nih.gov/research/umls/rxnorm|197444,http://www.nlm.nih.gov/research/umls/rxnorm|197445,http://www.nlm.nih.gov/research/umls/rxnorm|250432,http://www.nlm.nih.gov/research/umls/rxnorm|308988,http://www.nlm.nih.gov/research/umls/rxnorm|308989,http://www.nlm.nih.gov/research/umls/rxnorm|476399,http://www.nlm.nih.gov/research/umls/rxnorm|476515,http://www.nlm.nih.gov/research/umls/rxnorm|483090,http://www.nlm.nih.gov/research/umls/rxnorm|724598,http://www.nlm.nih.gov/research/umls/rxnorm|724602,http://www.nlm.nih.gov/research/umls/rxnorm|724606,http://www.nlm.nih.gov/research/umls/rxnorm|1599846,http://www.nlm.nih.gov/research/umls/rxnorm|1600773,http://www.nlm.nih.gov/research/umls/rxnorm|1600775,http://www.nlm.nih.gov/research/umls/rxnorm|1600914,http://www.nlm.nih.gov/research/umls/rxnorm|1600916,http://www.nlm.nih.gov/research/umls/rxnorm|2586032,http://www.nlm.nih.gov/research/umls/rxnorm|2690259,http://www.nlm.nih.gov/research/umls/rxnorm|2690279,http://www.nlm.nih.gov/research/umls/rxnorm|2690284,http://www.nlm.nih.gov/research/umls/rxnorm|2690290"
+      ],
+      "raw_response": "Condition?code=http://snomed.info/sct|49049000,http://snomed.info/sct|724761004,http://snomed.info/sct|230291001,http://snomed.info/sct|715345007,http://snomed.info/sct|716662004,http://snomed.info/sct|1156822001,http://snomed.info/sct|425390006,http://snomed.info/sct|101421000119107,http://snomed.info/sct|438513002,http://snomed.info/sct|1259080009,http://snomed.info/sct|718685006,http://snomed.info/sct|719717006,http://snomed.info/sct|103871000119109,http://snomed.info/sct|15755701000119105\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|197872,http://www.nlm.nih.gov/research/umls/rxnorm|2107616,http://www.nlm.nih.gov/research/umls/rxnorm|2107621,http://www.nlm.nih.gov/research/umls/rxnorm|197443,http://www.nlm.nih.gov/research/umls/rxnorm|197444,http://www.nlm.nih.gov/research/umls/rxnorm|197445,http://www.nlm.nih.gov/research/umls/rxnorm|250432,http://www.nlm.nih.gov/research/umls/rxnorm|308988,http://www.nlm.nih.gov/research/umls/rxnorm|308989,http://www.nlm.nih.gov/research/umls/rxnorm|476399,http://www.nlm.nih.gov/research/umls/rxnorm|476515,http://www.nlm.nih.gov/research/umls/rxnorm|483090,http://www.nlm.nih.gov/research/umls/rxnorm|724598,http://www.nlm.nih.gov/research/umls/rxnorm|724602,http://www.nlm.nih.gov/research/umls/rxnorm|724606,http://www.nlm.nih.gov/research/umls/rxnorm|1599846,http://www.nlm.nih.gov/research/umls/rxnorm|1600773,http://www.nlm.nih.gov/research/umls/rxnorm|1600775,http://www.nlm.nih.gov/research/umls/rxnorm|1600914,http://www.nlm.nih.gov/research/umls/rxnorm|1600916,http://www.nlm.nih.gov/research/umls/rxnorm|2586032,http://www.nlm.nih.gov/research/umls/rxnorm|2690259,http://www.nlm.nih.gov/research/umls/rxnorm|2690279,http://www.nlm.nih.gov/research/umls/rxnorm|2690284,http://www.nlm.nih.gov/research/umls/rxnorm|2690290",
+      "prompt_text": "I need to identify Parkinson's disease patients using a union across two resource types. First, search Condition resources for a documented Parkinson's disease diagnosis coded in SNOMED CT. Second, search MedicationRequest resources for levodopa prescriptions (coded in RxNorm), the cornerstone pharmacotherapy for Parkinson's disease. Union the patient sets from both queries \u2014 the medication path will include some patients without a formal PD diagnosis, such as those with atypical parkinsonism syndromes or restless legs syndrome in whom levodopa is used off-label, and these represent the cross-indication population in Path C."
+     }
+    },
     "copilot:claude-sonnet-4.6": {
      "1-naive": {
       "precision": 1.0,
@@ -977,6 +1119,134 @@
       "prompt_text": "I need to find patients with a documented Parkinson's disease diagnosis by searching Condition resources for the SNOMED CT concept for Parkinson's disease. This is the first movement disorder phenotype in the suite; be careful not to broaden to parkinsonism (secondary or drug-induced parkinsonism) or atypical parkinsonian syndromes such as progressive supranuclear palsy, which are clinically and taxonomically distinct from idiopathic Parkinson's disease."
      }
     },
+    "copilot:claude-opus-4.7+mimic": {
+     "1-naive": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 2115,
+      "actual_count": 0,
+      "elapsed_sec": 7.5,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|49049000",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|49049000",
+      "prompt_text": "Find patients with Parkinson's disease."
+     },
+     "1-broad": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 2115,
+      "actual_count": 0,
+      "elapsed_sec": 7.4,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|49049000",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|49049000",
+      "prompt_text": "Find patients diagnosed with Parkinson's disease \u2014 a chronic neurodegenerative movement disorder."
+     },
+     "1-expert": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 2115,
+      "actual_count": 0,
+      "elapsed_sec": 7.0,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|49049000",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|49049000",
+      "prompt_text": "I need to find patients with a documented Parkinson's disease diagnosis by searching Condition resources for the SNOMED CT concept for Parkinson's disease. This is the first movement disorder phenotype in the suite; be careful not to broaden to parkinsonism (secondary or drug-induced parkinsonism) or atypical parkinsonian syndromes such as progressive supranuclear palsy, which are clinically and taxonomically distinct from idiopathic Parkinson's disease."
+     },
+     "2-naive": {
+      "precision": 1.0,
+      "recall": 0.9853,
+      "f1": 0.9926,
+      "passed": true,
+      "expected_count": 2115,
+      "actual_count": 2084,
+      "elapsed_sec": 50.9,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|G20,http://hl7.org/fhir/sid/icd-9-cm|332.0",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|G20,http://hl7.org/fhir/sid/icd-9-cm|332.0",
+      "prompt_text": "Find patients with Parkinson's disease."
+     },
+     "2-broad": {
+      "precision": 1.0,
+      "recall": 0.9853,
+      "f1": 0.9926,
+      "passed": true,
+      "expected_count": 2115,
+      "actual_count": 2084,
+      "elapsed_sec": 47.8,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|G20,http://hl7.org/fhir/sid/icd-10-cm|G20.A1,http://hl7.org/fhir/sid/icd-10-cm|G20.A2,http://hl7.org/fhir/sid/icd-10-cm|G20.B1,http://hl7.org/fhir/sid/icd-10-cm|G20.B2,http://hl7.org/fhir/sid/icd-9-cm|332.0",
+      "additional_query_urls": [],
+      "raw_response": "FINAL ANSWER:\n\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|G20,http://hl7.org/fhir/sid/icd-10-cm|G20.A1,http://hl7.org/fhir/sid/icd-10-cm|G20.A2,http://hl7.org/fhir/sid/icd-10-cm|G20.B1,http://hl7.org/fhir/sid/icd-10-cm|G20.B2,http://hl7.org/fhir/sid/icd-9-cm|332.0",
+      "prompt_text": "Find patients diagnosed with Parkinson's disease \u2014 a chronic neurodegenerative movement disorder."
+     },
+     "2-expert": {
+      "precision": 1.0,
+      "recall": 0.9853,
+      "f1": 0.9926,
+      "passed": true,
+      "expected_count": 2115,
+      "actual_count": 2084,
+      "elapsed_sec": 42.2,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|G20,http://hl7.org/fhir/sid/icd-9-cm|332.0",
+      "additional_query_urls": [],
+      "raw_response": "FINAL ANSWER:\n\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|G20,http://hl7.org/fhir/sid/icd-9-cm|332.0",
+      "prompt_text": "I need to find patients with a documented Parkinson's disease diagnosis by searching Condition resources for the SNOMED CT concept for Parkinson's disease. This is the first movement disorder phenotype in the suite; be careful not to broaden to parkinsonism (secondary or drug-induced parkinsonism) or atypical parkinsonian syndromes such as progressive supranuclear palsy, which are clinically and taxonomically distinct from idiopathic Parkinson's disease."
+     },
+     "3-naive": {
+      "precision": 1.0,
+      "recall": 0.9853,
+      "f1": 0.9926,
+      "passed": true,
+      "expected_count": 2115,
+      "actual_count": 2084,
+      "elapsed_sec": 43.5,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|G20,http://hl7.org/fhir/sid/icd-9-cm|332.0",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|G20,http://hl7.org/fhir/sid/icd-9-cm|332.0",
+      "prompt_text": "Find patients with Parkinson's disease."
+     },
+     "3-broad": {
+      "precision": 1.0,
+      "recall": 0.9853,
+      "f1": 0.9926,
+      "passed": true,
+      "expected_count": 2115,
+      "actual_count": 2084,
+      "elapsed_sec": 45.0,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|G20,http://hl7.org/fhir/sid/icd-9-cm|332.0",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|G20,http://hl7.org/fhir/sid/icd-9-cm|332.0",
+      "prompt_text": "Find patients diagnosed with Parkinson's disease \u2014 a chronic neurodegenerative movement disorder."
+     },
+     "3-expert": {
+      "precision": 1.0,
+      "recall": 0.9853,
+      "f1": 0.9926,
+      "passed": true,
+      "expected_count": 2115,
+      "actual_count": 2084,
+      "elapsed_sec": 52.8,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|G20,http://hl7.org/fhir/sid/icd-9-cm|332.0",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|G20,http://hl7.org/fhir/sid/icd-9-cm|332.0",
+      "prompt_text": "I need to find patients with a documented Parkinson's disease diagnosis by searching Condition resources for the SNOMED CT concept for Parkinson's disease. This is the first movement disorder phenotype in the suite; be careful not to broaden to parkinsonism (secondary or drug-induced parkinsonism) or atypical parkinsonian syndromes such as progressive supranuclear palsy, which are clinically and taxonomically distinct from idiopathic Parkinson's disease."
+     }
+    },
     "copilot:claude-sonnet-4.6": {
      "1-naive": {
       "precision": 1.0,
@@ -1691,6 +1961,134 @@
       "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6375",
       "additional_query_urls": [],
       "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6375",
+      "prompt_text": "Identify patients on levodopa therapy by searching MedicationRequest resources for levodopa prescriptions coded in RxNorm. Levodopa is the cornerstone treatment for Parkinson's disease and is highly disease-specific relative to most neurological medications; however, it is occasionally used for restless legs syndrome or atypical parkinsonism, so a levodopa-only cohort will include a small proportion of non-PD patients representing the cross-indication population."
+     }
+    },
+    "copilot:claude-opus-4.7+mimic": {
+     "1-naive": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 1640,
+      "actual_count": 0,
+      "elapsed_sec": 10.8,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|10154,http://www.nlm.nih.gov/research/umls/rxnorm|3616,http://www.nlm.nih.gov/research/umls/rxnorm|32410,http://www.nlm.nih.gov/research/umls/rxnorm|42351,http://www.nlm.nih.gov/research/umls/rxnorm|36567,http://www.nlm.nih.gov/research/umls/rxnorm|8600,http://www.nlm.nih.gov/research/umls/rxnorm|8202,http://www.nlm.nih.gov/research/umls/rxnorm|10071,http://www.nlm.nih.gov/research/umls/rxnorm|68180,http://www.nlm.nih.gov/research/umls/rxnorm|72057,http://www.nlm.nih.gov/research/umls/rxnorm|89013&status=active",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|10154,http://www.nlm.nih.gov/research/umls/rxnorm|3616,http://www.nlm.nih.gov/research/umls/rxnorm|32410,http://www.nlm.nih.gov/research/umls/rxnorm|42351,http://www.nlm.nih.gov/research/umls/rxnorm|36567,http://www.nlm.nih.gov/research/umls/rxnorm|8600,http://www.nlm.nih.gov/research/umls/rxnorm|8202,http://www.nlm.nih.gov/research/umls/rxnorm|10071,http://www.nlm.nih.gov/research/umls/rxnorm|68180,http://www.nlm.nih.gov/research/umls/rxnorm|72057,http://www.nlm.nih.gov/research/umls/rxnorm|89013&status=active",
+      "prompt_text": "Find patients on Parkinson's medications."
+     },
+     "1-broad": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 1640,
+      "actual_count": 0,
+      "elapsed_sec": 8.2,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6375",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6375",
+      "prompt_text": "Find patients prescribed levodopa \u2014 the foundational dopamine precursor therapy for Parkinson's disease."
+     },
+     "1-expert": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 1640,
+      "actual_count": 0,
+      "elapsed_sec": 8.2,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6375",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6375",
+      "prompt_text": "Identify patients on levodopa therapy by searching MedicationRequest resources for levodopa prescriptions coded in RxNorm. Levodopa is the cornerstone treatment for Parkinson's disease and is highly disease-specific relative to most neurological medications; however, it is occasionally used for restless legs syndrome or atypical parkinsonism, so a levodopa-only cohort will include a small proportion of non-PD patients representing the cross-indication population."
+     },
+     "2-naive": {
+      "precision": 0.3381,
+      "recall": 0.0726,
+      "f1": 0.1195,
+      "passed": false,
+      "expected_count": 1640,
+      "actual_count": 352,
+      "elapsed_sec": 118.1,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?code=http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Sinemet,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|pramipexole,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Pramipexole,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Ropinirole,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Amantadine,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Rasagiline,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Entacapone,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Benztropine",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?code=http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Sinemet,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|pramipexole,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Pramipexole,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Ropinirole,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Amantadine,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Rasagiline,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Entacapone,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Benztropine Mesylate,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Trihexyphenidyl",
+      "prompt_text": "Find patients on Parkinson's medications."
+     },
+     "2-broad": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 1640,
+      "actual_count": 1640,
+      "elapsed_sec": 55.0,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?medication.code:text=levodopa",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?medication.code:text=levodopa",
+      "prompt_text": "Find patients prescribed levodopa \u2014 the foundational dopamine precursor therapy for Parkinson's disease."
+     },
+     "2-expert": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 1640,
+      "actual_count": 1640,
+      "elapsed_sec": 68.3,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|197872,http://www.nlm.nih.gov/research/umls/rxnorm|2107616,http://www.nlm.nih.gov/research/umls/rxnorm|2107621,http://www.nlm.nih.gov/research/umls/rxnorm|1599846,http://www.nlm.nih.gov/research/umls/rxnorm|197443,http://www.nlm.nih.gov/research/umls/rxnorm|197444,http://www.nlm.nih.gov/research/umls/rxnorm|197445,http://www.nlm.nih.gov/research/umls/rxnorm|250432,http://www.nlm.nih.gov/research/umls/rxnorm|308988,http://www.nlm.nih.gov/research/umls/rxnorm|308989,http://www.nlm.nih.gov/research/umls/rxnorm|476399,http://www.nlm.nih.gov/research/umls/rxnorm|476515,http://www.nlm.nih.gov/research/umls/rxnorm|483090,http://www.nlm.nih.gov/research/umls/rxnorm|724598,http://www.nlm.nih.gov/research/umls/rxnorm|724602,http://www.nlm.nih.gov/research/umls/rxnorm|724606",
+      "additional_query_urls": [],
+      "raw_response": "FINAL ANSWER:\n\nMedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|197872,http://www.nlm.nih.gov/research/umls/rxnorm|2107616,http://www.nlm.nih.gov/research/umls/rxnorm|2107621,http://www.nlm.nih.gov/research/umls/rxnorm|1599846,http://www.nlm.nih.gov/research/umls/rxnorm|197443,http://www.nlm.nih.gov/research/umls/rxnorm|197444,http://www.nlm.nih.gov/research/umls/rxnorm|197445,http://www.nlm.nih.gov/research/umls/rxnorm|250432,http://www.nlm.nih.gov/research/umls/rxnorm|308988,http://www.nlm.nih.gov/research/umls/rxnorm|308989,http://www.nlm.nih.gov/research/umls/rxnorm|476399,http://www.nlm.nih.gov/research/umls/rxnorm|476515,http://www.nlm.nih.gov/research/umls/rxnorm|483090,http://www.nlm.nih.gov/research/umls/rxnorm|724598,http://www.nlm.nih.gov/research/umls/rxnorm|724602,http://www.nlm.nih.gov/research/umls/rxnorm|724606",
+      "prompt_text": "Identify patients on levodopa therapy by searching MedicationRequest resources for levodopa prescriptions coded in RxNorm. Levodopa is the cornerstone treatment for Parkinson's disease and is highly disease-specific relative to most neurological medications; however, it is occasionally used for restless legs syndrome or atypical parkinsonism, so a levodopa-only cohort will include a small proportion of non-PD patients representing the cross-indication population."
+     },
+     "3-naive": {
+      "precision": 0.346,
+      "recall": 0.072,
+      "f1": 0.1191,
+      "passed": false,
+      "expected_count": 1640,
+      "actual_count": 341,
+      "elapsed_sec": 85.6,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?code=Ropinirole,Pramipexole,Amantadine,Entacapone,Rasagiline,Sinemet,carbidopa-levodopa,Carbidopa-Levodopa",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?code=Ropinirole,Pramipexole,Amantadine,Entacapone,Rasagiline,Sinemet,carbidopa-levodopa,Carbidopa-Levodopa (10-100),Carbidopa-Levodopa (25-100),Carbidopa-Levodopa (25-250),Carbidopa-Levodopa CR (25-100),Carbidopa-Levodopa CR (50-200)",
+      "prompt_text": "Find patients on Parkinson's medications."
+     },
+     "3-broad": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 1640,
+      "actual_count": 1640,
+      "elapsed_sec": 59.6,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|197443,http://www.nlm.nih.gov/research/umls/rxnorm|197444,http://www.nlm.nih.gov/research/umls/rxnorm|197445,http://www.nlm.nih.gov/research/umls/rxnorm|308988,http://www.nlm.nih.gov/research/umls/rxnorm|308989,http://www.nlm.nih.gov/research/umls/rxnorm|197872,http://www.nlm.nih.gov/research/umls/rxnorm|250432,http://www.nlm.nih.gov/research/umls/rxnorm|476399,http://www.nlm.nih.gov/research/umls/rxnorm|476515,http://www.nlm.nih.gov/research/umls/rxnorm|483090,http://www.nlm.nih.gov/research/umls/rxnorm|724598,http://www.nlm.nih.gov/research/umls/rxnorm|724602,http://www.nlm.nih.gov/research/umls/rxnorm|724606",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|197443,http://www.nlm.nih.gov/research/umls/rxnorm|197444,http://www.nlm.nih.gov/research/umls/rxnorm|197445,http://www.nlm.nih.gov/research/umls/rxnorm|308988,http://www.nlm.nih.gov/research/umls/rxnorm|308989,http://www.nlm.nih.gov/research/umls/rxnorm|197872,http://www.nlm.nih.gov/research/umls/rxnorm|250432,http://www.nlm.nih.gov/research/umls/rxnorm|476399,http://www.nlm.nih.gov/research/umls/rxnorm|476515,http://www.nlm.nih.gov/research/umls/rxnorm|483090,http://www.nlm.nih.gov/research/umls/rxnorm|724598,http://www.nlm.nih.gov/research/umls/rxnorm|724602,http://www.nlm.nih.gov/research/umls/rxnorm|724606",
+      "prompt_text": "Find patients prescribed levodopa \u2014 the foundational dopamine precursor therapy for Parkinson's disease."
+     },
+     "3-expert": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 1640,
+      "actual_count": 1640,
+      "elapsed_sec": 43.8,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?medication.code:text=levodopa",
+      "additional_query_urls": [],
+      "raw_response": "FINAL ANSWER:\n\nMedicationRequest?medication.code:text=levodopa",
       "prompt_text": "Identify patients on levodopa therapy by searching MedicationRequest resources for levodopa prescriptions coded in RxNorm. Levodopa is the cornerstone treatment for Parkinson's disease and is highly disease-specific relative to most neurological medications; however, it is occasionally used for restless legs syndrome or atypical parkinsonism, so a levodopa-only cohort will include a small proportion of non-PD patients representing the cross-indication population."
      }
     },

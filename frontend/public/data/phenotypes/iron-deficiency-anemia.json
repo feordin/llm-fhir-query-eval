@@ -241,6 +241,155 @@
       "prompt_text": "I need a comprehensive cohort of iron deficiency anemia patients by combining evidence from three resource types. First, search Condition resources for both the specific iron deficiency anemia diagnosis and the broader anemia diagnosis in SNOMED CT. Second, search MedicationRequest resources for ferrous sulfate, the canonical oral iron supplement prescribed for IDA, coded in RxNorm. Third, search Observation resources for hemoglobin measurements in blood (coded in LOINC) where the result falls below the conventional anemia threshold \u2014 roughly below 12 g/dL \u2014 to capture patients with laboratory-confirmed low hemoglobin who may not yet carry a formal diagnosis (Path D). Union the patient sets from all three queries for the complete cohort."
      }
     },
+    "copilot:claude-opus-4.7+mimic": {
+     "1-naive": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 128252,
+      "actual_count": 0,
+      "elapsed_sec": 7.3,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code:below=http://snomed.info/sct|271737000",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code:below=http://snomed.info/sct|271737000",
+      "prompt_text": "Find all anemia patients."
+     },
+     "1-broad": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 128252,
+      "actual_count": 0,
+      "elapsed_sec": 27.1,
+      "queries_generated": 4,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|35240004",
+      "additional_query_urls": [
+       "Condition?code=http://snomed.info/sct|271737000",
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|325274",
+       "Observation?code=http://loinc.org|718-7&value-quantity=lt12|http://unitsofmeasure.org|g/dL"
+      ],
+      "raw_response": "Condition?code=http://snomed.info/sct|35240004\nCondition?code=http://snomed.info/sct|271737000\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|325274\nObservation?code=http://loinc.org|718-7&value-quantity=lt12|http://unitsofmeasure.org|g/dL",
+      "prompt_text": "Find all anemia patients \u2014 by diagnosis (IDA or broader anemia), iron supplementation, or low hemoglobin (<12 g/dL). Run multiple queries and union the patient sets."
+     },
+     "1-expert": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 128252,
+      "actual_count": 0,
+      "elapsed_sec": 25.5,
+      "queries_generated": 3,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|87522002,http://snomed.info/sct|271737000",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|315311",
+       "Observation?code=http://loinc.org|718-7&value-quantity=lt12|http://unitsofmeasure.org|g/dL"
+      ],
+      "raw_response": "Condition?code=http://snomed.info/sct|87522002,http://snomed.info/sct|271737000\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|315311\nObservation?code=http://loinc.org|718-7&value-quantity=lt12|http://unitsofmeasure.org|g/dL",
+      "prompt_text": "I need a comprehensive cohort of iron deficiency anemia patients by combining evidence from three resource types. First, search Condition resources for both the specific iron deficiency anemia diagnosis and the broader anemia diagnosis in SNOMED CT. Second, search MedicationRequest resources for ferrous sulfate, the canonical oral iron supplement prescribed for IDA, coded in RxNorm. Third, search Observation resources for hemoglobin measurements in blood (coded in LOINC) where the result falls below the conventional anemia threshold \u2014 roughly below 12 g/dL \u2014 to capture patients with laboratory-confirmed low hemoglobin who may not yet carry a formal diagnosis (Path D). Union the patient sets from all three queries for the complete cohort."
+     },
+     "2-naive": {
+      "precision": 0.9979,
+      "recall": 0.0444,
+      "f1": 0.085,
+      "passed": false,
+      "expected_count": 128252,
+      "actual_count": 5702,
+      "elapsed_sec": 36.9,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code:text=anemia",
+      "additional_query_urls": [],
+      "raw_response": "FINAL ANSWER:\n\nCondition?code:text=anemia",
+      "prompt_text": "Find all anemia patients."
+     },
+     "2-broad": {
+      "precision": 1.0,
+      "recall": 0.1005,
+      "f1": 0.1826,
+      "passed": false,
+      "expected_count": 128252,
+      "actual_count": 12883,
+      "elapsed_sec": 96.8,
+      "queries_generated": 3,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|D50.9,http://hl7.org/fhir/sid/icd-10-cm|D50.0,http://hl7.org/fhir/sid/icd-10-cm|D50.1,http://hl7.org/fhir/sid/icd-10-cm|D50.8,http://hl7.org/fhir/sid/icd-10-cm|D64.9",
+      "additional_query_urls": [
+       "Condition?code=http://hl7.org/fhir/sid/icd-9-cm|280.9,http://hl7.org/fhir/sid/icd-9-cm|285.9,http://hl7.org/fhir/sid/icd-9-cm|280.0,http://hl7.org/fhir/sid/icd-9-cm|280.1,http://hl7.org/fhir/sid/icd-9-cm|280.8",
+       "Observation?code=http://loinc.org|718-7&value-quantity=lt12"
+      ],
+      "raw_response": "FINAL ANSWER:\n\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|D50.9,http://hl7.org/fhir/sid/icd-10-cm|D50.0,http://hl7.org/fhir/sid/icd-10-cm|D50.1,http://hl7.org/fhir/sid/icd-10-cm|D50.8,http://hl7.org/fhir/sid/icd-10-cm|D64.9\nCondition?code=http://hl7.org/fhir/sid/icd-9-cm|280.9,http://hl7.org/fhir/sid/icd-9-cm|285.9,http://hl7.org/fhir/sid/icd-9-cm|280.0,http://hl7.org/fhir/sid/icd-9-cm|280.1,http://hl7.org/fhir/sid/icd-9-cm|280.8\nObservation?code=http://loinc.org|718-7&value-quantity=lt12",
+      "prompt_text": "Find all anemia patients \u2014 by diagnosis (IDA or broader anemia), iron supplementation, or low hemoglobin (<12 g/dL). Run multiple queries and union the patient sets."
+     },
+     "2-expert": {
+      "precision": 1.0,
+      "recall": 0.0564,
+      "f1": 0.1068,
+      "passed": false,
+      "expected_count": 128252,
+      "actual_count": 7238,
+      "elapsed_sec": 82.6,
+      "queries_generated": 3,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|D50.0,http://hl7.org/fhir/sid/icd-10-cm|D50.1,http://hl7.org/fhir/sid/icd-10-cm|D50.8,http://hl7.org/fhir/sid/icd-10-cm|D50.9,http://hl7.org/fhir/sid/icd-10-cm|D64.9",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Ferrous",
+       "Observation?code=http://loinc.org|718-7&value-quantity=lt12"
+      ],
+      "raw_response": "FINAL ANSWER:\n\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|D50.0,http://hl7.org/fhir/sid/icd-10-cm|D50.1,http://hl7.org/fhir/sid/icd-10-cm|D50.8,http://hl7.org/fhir/sid/icd-10-cm|D50.9,http://hl7.org/fhir/sid/icd-10-cm|D64.9\nMedicationRequest?code=http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Ferrous Sulfate\nObservation?code=http://loinc.org|718-7&value-quantity=lt12",
+      "prompt_text": "I need a comprehensive cohort of iron deficiency anemia patients by combining evidence from three resource types. First, search Condition resources for both the specific iron deficiency anemia diagnosis and the broader anemia diagnosis in SNOMED CT. Second, search MedicationRequest resources for ferrous sulfate, the canonical oral iron supplement prescribed for IDA, coded in RxNorm. Third, search Observation resources for hemoglobin measurements in blood (coded in LOINC) where the result falls below the conventional anemia threshold \u2014 roughly below 12 g/dL \u2014 to capture patients with laboratory-confirmed low hemoglobin who may not yet carry a formal diagnosis (Path D). Union the patient sets from all three queries for the complete cohort."
+     },
+     "3-naive": {
+      "precision": 0.9915,
+      "recall": 0.0762,
+      "f1": 0.1416,
+      "passed": false,
+      "expected_count": 128252,
+      "actual_count": 9862,
+      "elapsed_sec": 113.4,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|D50.0,http://hl7.org/fhir/sid/icd-10-cm|D50.1,http://hl7.org/fhir/sid/icd-10-cm|D50.8,http://hl7.org/fhir/sid/icd-10-cm|D50.9,http://hl7.org/fhir/sid/icd-10-cm|D51.0,http://hl7.org/fhir/sid/icd-10-cm|D51.1,http://hl7.org/fhir/sid/icd-10-cm|D51.2,http://hl7.org/fhir/sid/icd-10-cm|D51.3,http://hl7.org/fhir/sid/icd-10-cm|D51.8,http://hl7.org/fhir/sid/icd-10-cm|D51.9,http://hl7.org/fhir/sid/icd-10-cm|D52.0,http://hl7.org/fhir/sid/icd-10-cm|D52.1,http://hl7.org/fhir/sid/icd-10-cm|D52.8,http://hl7.org/fhir/sid/icd-10-cm|D52.9,http://hl7.org/fhir/sid/icd-10-cm|D53.0,http://hl7.org/fhir/sid/icd-10-cm|D53.1,http://hl7.org/fhir/sid/icd-10-cm|D53.2,http://hl7.org/fhir/sid/icd-10-cm|D53.8,http://hl7.org/fhir/sid/icd-10-cm|D53.9,http://hl7.org/fhir/sid/icd-10-cm|D55.0,http://hl7.org/fhir/sid/icd-10-cm|D55.1,http://hl7.org/fhir/sid/icd-10-cm|D55.2,http://hl7.org/fhir/sid/icd-10-cm|D55.3,http://hl7.org/fhir/sid/icd-10-cm|D55.8,http://hl7.org/fhir/sid/icd-10-cm|D55.9,http://hl7.org/fhir/sid/icd-10-cm|D56.0,http://hl7.org/fhir/sid/icd-10-cm|D56.1,http://hl7.org/fhir/sid/icd-10-cm|D56.3,http://hl7.org/fhir/sid/icd-10-cm|D56.4,http://hl7.org/fhir/sid/icd-10-cm|D56.5,http://hl7.org/fhir/sid/icd-10-cm|D56.8,http://hl7.org/fhir/sid/icd-10-cm|D56.9,http://hl7.org/fhir/sid/icd-10-cm|D57.1,http://hl7.org/fhir/sid/icd-10-cm|D57.20,http://hl7.org/fhir/sid/icd-10-cm|D57.3,http://hl7.org/fhir/sid/icd-10-cm|D57.40,http://hl7.org/fhir/sid/icd-10-cm|D57.80,http://hl7.org/fhir/sid/icd-10-cm|D58.0,http://hl7.org/fhir/sid/icd-10-cm|D58.1,http://hl7.org/fhir/sid/icd-10-cm|D58.2,http://hl7.org/fhir/sid/icd-10-cm|D58.8,http://hl7.org/fhir/sid/icd-10-cm|D58.9,http://hl7.org/fhir/sid/icd-10-cm|D59.0,http://hl7.org/fhir/sid/icd-10-cm|D59.1,http://hl7.org/fhir/sid/icd-10-cm|D59.2,http://hl7.org/fhir/sid/icd-10-cm|D59.3,http://hl7.org/fhir/sid/icd-10-cm|D59.4,http://hl7.org/fhir/sid/icd-10-cm|D59.5,http://hl7.org/fhir/sid/icd-10-cm|D59.6,http://hl7.org/fhir/sid/icd-10-cm|D59.8,http://hl7.org/fhir/sid/icd-10-cm|D59.9,http://hl7.org/fhir/sid/icd-10-cm|D60.0,http://hl7.org/fhir/sid/icd-10-cm|D60.1,http://hl7.org/fhir/sid/icd-10-cm|D60.8,http://hl7.org/fhir/sid/icd-10-cm|D60.9,http://hl7.org/fhir/sid/icd-10-cm|D61.01,http://hl7.org/fhir/sid/icd-10-cm|D61.09,http://hl7.org/fhir/sid/icd-10-cm|D61.1,http://hl7.org/fhir/sid/icd-10-cm|D61.2,http://hl7.org/fhir/sid/icd-10-cm|D61.3,http://hl7.org/fhir/sid/icd-10-cm|D61.810,http://hl7.org/fhir/sid/icd-10-cm|D61.811,http://hl7.org/fhir/sid/icd-10-cm|D61.818,http://hl7.org/fhir/sid/icd-10-cm|D61.82,http://hl7.org/fhir/sid/icd-10-cm|D61.89,http://hl7.org/fhir/sid/icd-10-cm|D61.9,http://hl7.org/fhir/sid/icd-10-cm|D62,http://hl7.org/fhir/sid/icd-10-cm|D63.0,http://hl7.org/fhir/sid/icd-10-cm|D63.1,http://hl7.org/fhir/sid/icd-10-cm|D63.8,http://hl7.org/fhir/sid/icd-10-cm|D64.0,http://hl7.org/fhir/sid/icd-10-cm|D64.1,http://hl7.org/fhir/sid/icd-10-cm|D64.2,http://hl7.org/fhir/sid/icd-10-cm|D64.3,http://hl7.org/fhir/sid/icd-10-cm|D64.4,http://hl7.org/fhir/sid/icd-10-cm|D64.81,http://hl7.org/fhir/sid/icd-10-cm|D64.89,http://hl7.org/fhir/sid/icd-10-cm|D64.9",
+      "additional_query_urls": [
+       "Condition?code=http://hl7.org/fhir/sid/icd-9-cm|280.0,http://hl7.org/fhir/sid/icd-9-cm|280.1,http://hl7.org/fhir/sid/icd-9-cm|280.8,http://hl7.org/fhir/sid/icd-9-cm|280.9,http://hl7.org/fhir/sid/icd-9-cm|281.0,http://hl7.org/fhir/sid/icd-9-cm|281.1,http://hl7.org/fhir/sid/icd-9-cm|281.2,http://hl7.org/fhir/sid/icd-9-cm|281.3,http://hl7.org/fhir/sid/icd-9-cm|281.4,http://hl7.org/fhir/sid/icd-9-cm|281.8,http://hl7.org/fhir/sid/icd-9-cm|281.9,http://hl7.org/fhir/sid/icd-9-cm|282.0,http://hl7.org/fhir/sid/icd-9-cm|282.1,http://hl7.org/fhir/sid/icd-9-cm|282.2,http://hl7.org/fhir/sid/icd-9-cm|282.3,http://hl7.org/fhir/sid/icd-9-cm|282.40,http://hl7.org/fhir/sid/icd-9-cm|282.41,http://hl7.org/fhir/sid/icd-9-cm|282.42,http://hl7.org/fhir/sid/icd-9-cm|282.43,http://hl7.org/fhir/sid/icd-9-cm|282.44,http://hl7.org/fhir/sid/icd-9-cm|282.45,http://hl7.org/fhir/sid/icd-9-cm|282.46,http://hl7.org/fhir/sid/icd-9-cm|282.47,http://hl7.org/fhir/sid/icd-9-cm|282.49,http://hl7.org/fhir/sid/icd-9-cm|282.5,http://hl7.org/fhir/sid/icd-9-cm|282.60,http://hl7.org/fhir/sid/icd-9-cm|282.61,http://hl7.org/fhir/sid/icd-9-cm|282.62,http://hl7.org/fhir/sid/icd-9-cm|282.63,http://hl7.org/fhir/sid/icd-9-cm|282.64,http://hl7.org/fhir/sid/icd-9-cm|282.68,http://hl7.org/fhir/sid/icd-9-cm|282.69,http://hl7.org/fhir/sid/icd-9-cm|282.7,http://hl7.org/fhir/sid/icd-9-cm|282.8,http://hl7.org/fhir/sid/icd-9-cm|282.9,http://hl7.org/fhir/sid/icd-9-cm|283.0,http://hl7.org/fhir/sid/icd-9-cm|283.10,http://hl7.org/fhir/sid/icd-9-cm|283.11,http://hl7.org/fhir/sid/icd-9-cm|283.19,http://hl7.org/fhir/sid/icd-9-cm|283.2,http://hl7.org/fhir/sid/icd-9-cm|283.9,http://hl7.org/fhir/sid/icd-9-cm|284.01,http://hl7.org/fhir/sid/icd-9-cm|284.09,http://hl7.org/fhir/sid/icd-9-cm|284.1,http://hl7.org/fhir/sid/icd-9-cm|284.2,http://hl7.org/fhir/sid/icd-9-cm|284.81,http://hl7.org/fhir/sid/icd-9-cm|284.89,http://hl7.org/fhir/sid/icd-9-cm|284.9,http://hl7.org/fhir/sid/icd-9-cm|285.0,http://hl7.org/fhir/sid/icd-9-cm|285.1,http://hl7.org/fhir/sid/icd-9-cm|285.21,http://hl7.org/fhir/sid/icd-9-cm|285.22,http://hl7.org/fhir/sid/icd-9-cm|285.29,http://hl7.org/fhir/sid/icd-9-cm|285.3,http://hl7.org/fhir/sid/icd-9-cm|285.8,http://hl7.org/fhir/sid/icd-9-cm|285.9"
+      ],
+      "raw_response": "Both queries return substantial counts. Final answer:\n\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|D50.0,http://hl7.org/fhir/sid/icd-10-cm|D50.1,http://hl7.org/fhir/sid/icd-10-cm|D50.8,http://hl7.org/fhir/sid/icd-10-cm|D50.9,http://hl7.org/fhir/sid/icd-10-cm|D51.0,http://hl7.org/fhir/sid/icd-10-cm|D51.1,http://hl7.org/fhir/sid/icd-10-cm|D51.2,http://hl7.org/fhir/sid/icd-10-cm|D51.3,http://hl7.org/fhir/sid/icd-10-cm|D51.8,http://hl7.org/fhir/sid/icd-10-cm|D51.9,http://hl7.org/fhir/sid/icd-10-cm|D52.0,http://hl7.org/fhir/sid/icd-10-cm|D52.1,http://hl7.org/fhir/sid/icd-10-cm|D52.8,http://hl7.org/fhir/sid/icd-10-cm|D52.9,http://hl7.org/fhir/sid/icd-10-cm|D53.0,http://hl7.org/fhir/sid/icd-10-cm|D53.1,http://hl7.org/fhir/sid/icd-10-cm|D53.2,http://hl7.org/fhir/sid/icd-10-cm|D53.8,http://hl7.org/fhir/sid/icd-10-cm|D53.9,http://hl7.org/fhir/sid/icd-10-cm|D55.0,http://hl7.org/fhir/sid/icd-10-cm|D55.1,http://hl7.org/fhir/sid/icd-10-cm|D55.2,http://hl7.org/fhir/sid/icd-10-cm|D55.3,http://hl7.org/fhir/sid/icd-10-cm|D55.8,http://hl7.org/fhir/sid/icd-10-cm|D55.9,http://hl7.org/fhir/sid/icd-10-cm|D56.0,http://hl7.org/fhir/sid/icd-10-cm|D56.1,http://hl7.org/fhir/sid/icd-10-cm|D56.3,http://hl7.org/fhir/sid/icd-10-cm|D56.4,http://hl7.org/fhir/sid/icd-10-cm|D56.5,http://hl7.org/fhir/sid/icd-10-cm|D56.8,http://hl7.org/fhir/sid/icd-10-cm|D56.9,http://hl7.org/fhir/sid/icd-10-cm|D57.1,http://hl7.org/fhir/sid/icd-10-cm|D57.20,http://hl7.org/fhir/sid/icd-10-cm|D57.3,http://hl7.org/fhir/sid/icd-10-cm|D57.40,http://hl7.org/fhir/sid/icd-10-cm|D57.80,http://hl7.org/fhir/sid/icd-10-cm|D58.0,http://hl7.org/fhir/sid/icd-10-cm|D58.1,http://hl7.org/fhir/sid/icd-10-cm|D58.2,http://hl7.org/fhir/sid/icd-10-cm|D58.8,http://hl7.org/fhir/sid/icd-10-cm|D58.9,http://hl7.org/fhir/sid/icd-10-cm|D59.0,http://hl7.org/fhir/sid/icd-10-cm|D59.1,http://hl7.org/fhir/sid/icd-10-cm|D59.2,http://hl7.org/fhir/sid/icd-10-cm|D59.3,http://hl7.org/fhir/sid/icd-10-cm|D59.4,http://hl7.org/fhir/sid/icd-10-cm|D59.5,http://hl7.org/fhir/sid/icd-10-cm|D59.6,http://hl7.org/fhir/sid/icd-10-cm|D59.8,http://hl7.org/fhir/sid/icd-10-cm|D59.9,http://hl7.org/fhir/sid/icd-10-cm|D60.0,http://hl7.org/fhir/sid/icd-10-cm|D60.1,http://hl7.org/fhir/sid/icd-10-cm|D60.8,http://hl7.org/fhir/sid/icd-10-cm|D60.9,http://hl7.org/fhir/sid/icd-10-cm|D61.01,http://hl7.org/fhir/sid/icd-10-cm|D61.09,http://hl7.org/fhir/sid/icd-10-cm|D61.1,http://hl7.org/fhir/sid/icd-10-cm|D61.2,http://hl7.org/fhir/sid/icd-10-cm|D61.3,http://hl7.org/fhir/sid/icd-10-cm|D61.810,http://hl7.org/fhir/sid/icd-10-cm|D61.811,http://hl7.org/fhir/sid/icd-10-cm|D61.818,http://hl7.org/fhir/sid/icd-10-cm|D61.82,http://hl7.org/fhir/sid/icd-10-cm|D61.89,http://hl7.org/fhir/sid/icd-10-cm|D61.9,http://hl7.org/fhir/sid/icd-10-cm|D62,http://hl7.org/fhir/sid/icd-10-cm|D63.0,http://hl7.org/fhir/sid/icd-10-cm|D63.1,http://hl7.org/fhir/sid/icd-10-cm|D63.8,http://hl7.org/fhir/sid/icd-10-cm|D64.0,http://hl7.org/fhir/sid/icd-10-cm|D64.1,http://hl7.org/fhir/sid/icd-10-cm|D64.2,http://hl7.org/fhir/sid/icd-10-cm|D64.3,http://hl7.org/fhir/sid/icd-10-cm|D64.4,http://hl7.org/fhir/sid/icd-10-cm|D64.81,http://hl7.org/fhir/sid/icd-10-cm|D64.89,http://hl7.org/fhir/sid/icd-10-cm|D64.9\nCondition?code=http://hl7.org/fhir/sid/icd-9-cm|280.0,http://hl7.org/fhir/sid/icd-9-cm|280.1,http://hl7.org/fhir/sid/icd-9-cm|280.8,http://hl7.org/fhir/sid/icd-9-cm|280.9,http://hl7.org/fhir/sid/icd-9-cm|281.0,http://hl7.org/fhir/sid/icd-9-cm|281.1,http://hl7.org/fhir/sid/icd-9-cm|281.2,http://hl7.org/fhir/sid/icd-9-cm|281.3,http://hl7.org/fhir/sid/icd-9-cm|281.4,http://hl7.org/fhir/sid/icd-9-cm|281.8,http://hl7.org/fhir/sid/icd-9-cm|281.9,http://hl7.org/fhir/sid/icd-9-cm|282.0,http://hl7.org/fhir/sid/icd-9-cm|282.1,http://hl7.org/fhir/sid/icd-9-cm|282.2,http://hl7.org/fhir/sid/icd-9-cm|282.3,http://hl7.org/fhir/sid/icd-9-cm|282.40,http://hl7.org/fhir/sid/icd-9-cm|282.41,http://hl7.org/fhir/sid/icd-9-cm|282.42,http://hl7.org/fhir/sid/icd-9-cm|282.43,http://hl7.org/fhir/sid/icd-9-cm|282.44,http://hl7.org/fhir/sid/icd-9-cm|282.45,http://hl7.org/fhir/sid/icd-9-cm|282.46,http://hl7.org/fhir/sid/icd-9-cm|282.47,http://hl7.org/fhir/sid/icd-9-cm|282.49,http://hl7.org/fhir/sid/icd-9-cm|282.5,http://hl7.org/fhir/sid/icd-9-cm|282.60,http://hl7.org/fhir/sid/icd-9-cm|282.61,http://hl7.org/fhir/sid/icd-9-cm|282.62,http://hl7.org/fhir/sid/icd-9-cm|282.63,http://hl7.org/fhir/sid/icd-9-cm|282.64,http://hl7.org/fhir/sid/icd-9-cm|282.68,http://hl7.org/fhir/sid/icd-9-cm|282.69,http://hl7.org/fhir/sid/icd-9-cm|282.7,http://hl7.org/fhir/sid/icd-9-cm|282.8,http://hl7.org/fhir/sid/icd-9-cm|282.9,http://hl7.org/fhir/sid/icd-9-cm|283.0,http://hl7.org/fhir/sid/icd-9-cm|283.10,http://hl7.org/fhir/sid/icd-9-cm|283.11,http://hl7.org/fhir/sid/icd-9-cm|283.19,http://hl7.org/fhir/sid/icd-9-cm|283.2,http://hl7.org/fhir/sid/icd-9-cm|283.9,http://hl7.org/fhir/sid/icd-9-cm|284.01,http://hl7.org/fhir/sid/icd-9-cm|284.09,http://hl7.org/fhir/sid/icd-9-cm|284.1,http://hl7.org/fhir/sid/icd-9-cm|284.2,http://hl7.org/fhir/sid/icd-9-cm|284.81,http://hl7.org/fhir/sid/icd-9-cm|284.89,http://hl7.org/fhir/sid/icd-9-cm|284.9,http://hl7.org/fhir/sid/icd-9-cm|285.0,http://hl7.org/fhir/sid/icd-9-cm|285.1,http://hl7.org/fhir/sid/icd-9-cm|285.21,http://hl7.org/fhir/sid/icd-9-cm|285.22,http://hl7.org/fhir/sid/icd-9-cm|285.29,http://hl7.org/fhir/sid/icd-9-cm|285.3,http://hl7.org/fhir/sid/icd-9-cm|285.8,http://hl7.org/fhir/sid/icd-9-cm|285.9",
+      "prompt_text": "Find all anemia patients."
+     },
+     "3-broad": {
+      "precision": 1.0,
+      "recall": 0.0515,
+      "f1": 0.0979,
+      "passed": false,
+      "expected_count": 128252,
+      "actual_count": 6603,
+      "elapsed_sec": 64.8,
+      "queries_generated": 3,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|D50.0,http://hl7.org/fhir/sid/icd-10-cm|D50.1,http://hl7.org/fhir/sid/icd-10-cm|D50.8,http://hl7.org/fhir/sid/icd-10-cm|D50.9,http://hl7.org/fhir/sid/icd-10-cm|D64.9,http://hl7.org/fhir/sid/icd-9-cm|280.9,http://hl7.org/fhir/sid/icd-9-cm|280.0,http://hl7.org/fhir/sid/icd-9-cm|280.1,http://hl7.org/fhir/sid/icd-9-cm|280.8,http://hl7.org/fhir/sid/icd-9-cm|285.9",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Ferrous",
+       "Observation?code=http://loinc.org|718-7&value-quantity=lt12"
+      ],
+      "raw_response": "FINAL ANSWER:\n\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|D50.0,http://hl7.org/fhir/sid/icd-10-cm|D50.1,http://hl7.org/fhir/sid/icd-10-cm|D50.8,http://hl7.org/fhir/sid/icd-10-cm|D50.9,http://hl7.org/fhir/sid/icd-10-cm|D64.9,http://hl7.org/fhir/sid/icd-9-cm|280.9,http://hl7.org/fhir/sid/icd-9-cm|280.0,http://hl7.org/fhir/sid/icd-9-cm|280.1,http://hl7.org/fhir/sid/icd-9-cm|280.8,http://hl7.org/fhir/sid/icd-9-cm|285.9\nMedicationRequest?code=http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Ferrous Sulfate\nObservation?code=http://loinc.org|718-7&value-quantity=lt12",
+      "prompt_text": "Find all anemia patients \u2014 by diagnosis (IDA or broader anemia), iron supplementation, or low hemoglobin (<12 g/dL). Run multiple queries and union the patient sets."
+     },
+     "3-expert": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 128252,
+      "actual_count": 0,
+      "elapsed_sec": 54.9,
+      "queries_generated": 3,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|87522002,http://snomed.info/sct|271737000",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|4337",
+       "Observation?code=http://loinc.org|718-7&value-quantity=lt12|http://unitsofmeasure.org|g/dL"
+      ],
+      "raw_response": "Condition?code=http://snomed.info/sct|87522002,http://snomed.info/sct|271737000\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|4337\nObservation?code=http://loinc.org|718-7&value-quantity=lt12|http://unitsofmeasure.org|g/dL",
+      "prompt_text": "I need a comprehensive cohort of iron deficiency anemia patients by combining evidence from three resource types. First, search Condition resources for both the specific iron deficiency anemia diagnosis and the broader anemia diagnosis in SNOMED CT. Second, search MedicationRequest resources for ferrous sulfate, the canonical oral iron supplement prescribed for IDA, coded in RxNorm. Third, search Observation resources for hemoglobin measurements in blood (coded in LOINC) where the result falls below the conventional anemia threshold \u2014 roughly below 12 g/dL \u2014 to capture patients with laboratory-confirmed low hemoglobin who may not yet carry a formal diagnosis (Path D). Union the patient sets from all three queries for the complete cohort."
+     }
+    },
     "copilot:claude-sonnet-4.6": {
      "1-naive": {
       "precision": 1.0,
@@ -1019,6 +1168,134 @@
       "primary_query_url": "Condition?code=http://snomed.info/sct|87522002,http://snomed.info/sct|271737000",
       "additional_query_urls": [],
       "raw_response": "Condition?code=http://snomed.info/sct|87522002,http://snomed.info/sct|271737000",
+      "prompt_text": "I need to find patients with iron deficiency anemia from their documented diagnoses. Search Condition resources using SNOMED CT codes covering both the specific iron deficiency anemia concept and the broader anemia concept, since both are used in clinical documentation for this population. Do not restrict to ICD-10 only \u2014 the SNOMED representation is the primary coding here."
+     }
+    },
+    "copilot:claude-opus-4.7+mimic": {
+     "1-naive": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 33684,
+      "actual_count": 0,
+      "elapsed_sec": 7.0,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|271737000",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|271737000",
+      "prompt_text": "Find patients with anemia."
+     },
+     "1-broad": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 33684,
+      "actual_count": 0,
+      "elapsed_sec": 7.5,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|87522002,http://snomed.info/sct|271737000",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|87522002,http://snomed.info/sct|271737000",
+      "prompt_text": "Find patients diagnosed with iron deficiency anemia or the broader anemia concept."
+     },
+     "1-expert": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 33684,
+      "actual_count": 0,
+      "elapsed_sec": 7.3,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|87522002,http://snomed.info/sct|271737000",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|87522002,http://snomed.info/sct|271737000",
+      "prompt_text": "I need to find patients with iron deficiency anemia from their documented diagnoses. Search Condition resources using SNOMED CT codes covering both the specific iron deficiency anemia concept and the broader anemia concept, since both are used in clinical documentation for this population. Do not restrict to ICD-10 only \u2014 the SNOMED representation is the primary coding here."
+     },
+     "2-naive": {
+      "precision": 0.8427,
+      "recall": 0.1426,
+      "f1": 0.244,
+      "passed": false,
+      "expected_count": 33684,
+      "actual_count": 5702,
+      "elapsed_sec": 33.8,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code:text=anemia",
+      "additional_query_urls": [],
+      "raw_response": "FINAL ANSWER:\n\nCondition?code:text=anemia",
+      "prompt_text": "Find patients with anemia."
+     },
+     "2-broad": {
+      "precision": 0.8427,
+      "recall": 0.1426,
+      "f1": 0.244,
+      "passed": false,
+      "expected_count": 33684,
+      "actual_count": 5702,
+      "elapsed_sec": 38.0,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code:text=anemia",
+      "additional_query_urls": [],
+      "raw_response": "FINAL ANSWER:\n\nCondition?code:text=anemia",
+      "prompt_text": "Find patients diagnosed with iron deficiency anemia or the broader anemia concept."
+     },
+     "2-expert": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 33684,
+      "actual_count": 0,
+      "elapsed_sec": 31.6,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|87522002,http://snomed.info/sct|271737000",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|87522002,http://snomed.info/sct|271737000",
+      "prompt_text": "I need to find patients with iron deficiency anemia from their documented diagnoses. Search Condition resources using SNOMED CT codes covering both the specific iron deficiency anemia concept and the broader anemia concept, since both are used in clinical documentation for this population. Do not restrict to ICD-10 only \u2014 the SNOMED representation is the primary coding here."
+     },
+     "3-naive": {
+      "precision": 0.6685,
+      "recall": 0.1125,
+      "f1": 0.1925,
+      "passed": false,
+      "expected_count": 33684,
+      "actual_count": 5666,
+      "elapsed_sec": 42.0,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|D50.0,http://hl7.org/fhir/sid/icd-10-cm|D50.8,http://hl7.org/fhir/sid/icd-10-cm|D50.9,http://hl7.org/fhir/sid/icd-10-cm|D51.0,http://hl7.org/fhir/sid/icd-10-cm|D51.9,http://hl7.org/fhir/sid/icd-10-cm|D52.9,http://hl7.org/fhir/sid/icd-10-cm|D53.9,http://hl7.org/fhir/sid/icd-10-cm|D55.0,http://hl7.org/fhir/sid/icd-10-cm|D56.1,http://hl7.org/fhir/sid/icd-10-cm|D56.9,http://hl7.org/fhir/sid/icd-10-cm|D57.1,http://hl7.org/fhir/sid/icd-10-cm|D58.9,http://hl7.org/fhir/sid/icd-10-cm|D59.9,http://hl7.org/fhir/sid/icd-10-cm|D61.9,http://hl7.org/fhir/sid/icd-10-cm|D62,http://hl7.org/fhir/sid/icd-10-cm|D63.0,http://hl7.org/fhir/sid/icd-10-cm|D63.1,http://hl7.org/fhir/sid/icd-10-cm|D63.8,http://hl7.org/fhir/sid/icd-10-cm|D64.9",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|D50.0,http://hl7.org/fhir/sid/icd-10-cm|D50.8,http://hl7.org/fhir/sid/icd-10-cm|D50.9,http://hl7.org/fhir/sid/icd-10-cm|D51.0,http://hl7.org/fhir/sid/icd-10-cm|D51.9,http://hl7.org/fhir/sid/icd-10-cm|D52.9,http://hl7.org/fhir/sid/icd-10-cm|D53.9,http://hl7.org/fhir/sid/icd-10-cm|D55.0,http://hl7.org/fhir/sid/icd-10-cm|D56.1,http://hl7.org/fhir/sid/icd-10-cm|D56.9,http://hl7.org/fhir/sid/icd-10-cm|D57.1,http://hl7.org/fhir/sid/icd-10-cm|D58.9,http://hl7.org/fhir/sid/icd-10-cm|D59.9,http://hl7.org/fhir/sid/icd-10-cm|D61.9,http://hl7.org/fhir/sid/icd-10-cm|D62,http://hl7.org/fhir/sid/icd-10-cm|D63.0,http://hl7.org/fhir/sid/icd-10-cm|D63.1,http://hl7.org/fhir/sid/icd-10-cm|D63.8,http://hl7.org/fhir/sid/icd-10-cm|D64.9",
+      "prompt_text": "Find patients with anemia."
+     },
+     "3-broad": {
+      "precision": 1.0,
+      "recall": 0.1815,
+      "f1": 0.3073,
+      "passed": false,
+      "expected_count": 33684,
+      "actual_count": 6114,
+      "elapsed_sec": 35.1,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|D50.0,http://hl7.org/fhir/sid/icd-10-cm|D50.1,http://hl7.org/fhir/sid/icd-10-cm|D50.8,http://hl7.org/fhir/sid/icd-10-cm|D50.9,http://hl7.org/fhir/sid/icd-10-cm|D64.9,http://hl7.org/fhir/sid/icd-9-cm|280.0,http://hl7.org/fhir/sid/icd-9-cm|280.1,http://hl7.org/fhir/sid/icd-9-cm|280.8,http://hl7.org/fhir/sid/icd-9-cm|280.9,http://hl7.org/fhir/sid/icd-9-cm|285.9",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|D50.0,http://hl7.org/fhir/sid/icd-10-cm|D50.1,http://hl7.org/fhir/sid/icd-10-cm|D50.8,http://hl7.org/fhir/sid/icd-10-cm|D50.9,http://hl7.org/fhir/sid/icd-10-cm|D64.9,http://hl7.org/fhir/sid/icd-9-cm|280.0,http://hl7.org/fhir/sid/icd-9-cm|280.1,http://hl7.org/fhir/sid/icd-9-cm|280.8,http://hl7.org/fhir/sid/icd-9-cm|280.9,http://hl7.org/fhir/sid/icd-9-cm|285.9",
+      "prompt_text": "Find patients diagnosed with iron deficiency anemia or the broader anemia concept."
+     },
+     "3-expert": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 33684,
+      "actual_count": 0,
+      "elapsed_sec": 14.9,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|87522002,http://snomed.info/sct|271737000",
+      "additional_query_urls": [],
+      "raw_response": "Final answer:\n\nCondition?code=http://snomed.info/sct|87522002,http://snomed.info/sct|271737000",
       "prompt_text": "I need to find patients with iron deficiency anemia from their documented diagnoses. Search Condition resources using SNOMED CT codes covering both the specific iron deficiency anemia concept and the broader anemia concept, since both are used in clinical documentation for this population. Do not restrict to ICD-10 only \u2014 the SNOMED representation is the primary coding here."
      }
     },
@@ -2465,6 +2742,136 @@
       "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|down",
       "additional_query_urls": [],
       "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|down",
+      "prompt_text": "Identify patients being treated for iron deficiency anemia through their iron supplementation orders. Search MedicationRequest resources for ferrous sulfate, the standard oral iron replacement therapy, coded in RxNorm. This is a medication-evidence path: it captures patients actively being treated but does not require a confirmed IDA diagnosis, so a small number of patients may be on iron supplementation for other indications."
+     }
+    },
+    "copilot:claude-opus-4.7+mimic": {
+     "1-naive": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 5352,
+      "actual_count": 0,
+      "elapsed_sec": 8.7,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|325274,http://www.nlm.nih.gov/research/umls/rxnorm|202778,http://www.nlm.nih.gov/research/umls/rxnorm|4441,http://www.nlm.nih.gov/research/umls/rxnorm|9863&status=active",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|325274,http://www.nlm.nih.gov/research/umls/rxnorm|202778,http://www.nlm.nih.gov/research/umls/rxnorm|4441,http://www.nlm.nih.gov/research/umls/rxnorm|9863&status=active",
+      "prompt_text": "Find patients on iron supplements."
+     },
+     "1-broad": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 5352,
+      "actual_count": 0,
+      "elapsed_sec": 7.8,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|4463",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|4463",
+      "prompt_text": "Find patients prescribed ferrous sulfate \u2014 the standard oral iron supplement for treating iron deficiency anemia."
+     },
+     "1-expert": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 5352,
+      "actual_count": 0,
+      "elapsed_sec": 7.8,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|4511",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|4511",
+      "prompt_text": "Identify patients being treated for iron deficiency anemia through their iron supplementation orders. Search MedicationRequest resources for ferrous sulfate, the standard oral iron replacement therapy, coded in RxNorm. This is a medication-evidence path: it captures patients actively being treated but does not require a confirmed IDA diagnosis, so a small number of patients may be on iron supplementation for other indications."
+     },
+     "2-naive": {
+      "precision": 0.719,
+      "recall": 0.6926,
+      "f1": 0.7056,
+      "passed": true,
+      "expected_count": 5352,
+      "actual_count": 5156,
+      "elapsed_sec": 94.1,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|24947,http://www.nlm.nih.gov/research/umls/rxnorm|24941,http://www.nlm.nih.gov/research/umls/rxnorm|5992,http://www.nlm.nih.gov/research/umls/rxnorm|5521,http://www.nlm.nih.gov/research/umls/rxnorm|24942,http://www.nlm.nih.gov/research/umls/rxnorm|32805,http://www.nlm.nih.gov/research/umls/rxnorm|4066,http://www.nlm.nih.gov/research/umls/rxnorm|40021,http://www.nlm.nih.gov/research/umls/rxnorm|68112,http://www.nlm.nih.gov/research/umls/rxnorm|731737",
+      "additional_query_urls": [],
+      "raw_response": "FINAL ANSWER:\n\nMedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|24947,http://www.nlm.nih.gov/research/umls/rxnorm|24941,http://www.nlm.nih.gov/research/umls/rxnorm|5992,http://www.nlm.nih.gov/research/umls/rxnorm|5521,http://www.nlm.nih.gov/research/umls/rxnorm|24942,http://www.nlm.nih.gov/research/umls/rxnorm|32805,http://www.nlm.nih.gov/research/umls/rxnorm|4066,http://www.nlm.nih.gov/research/umls/rxnorm|40021,http://www.nlm.nih.gov/research/umls/rxnorm|68112,http://www.nlm.nih.gov/research/umls/rxnorm|731737",
+      "prompt_text": "Find patients on iron supplements."
+     },
+     "2-broad": {
+      "precision": 0.4245,
+      "recall": 0.3914,
+      "f1": 0.4073,
+      "passed": false,
+      "expected_count": 5352,
+      "actual_count": 4935,
+      "elapsed_sec": 54.4,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|24947,210050,310325",
+      "additional_query_urls": [],
+      "raw_response": "FINAL ANSWER:\n\nMedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|24947,210050,310325",
+      "prompt_text": "Find patients prescribed ferrous sulfate \u2014 the standard oral iron supplement for treating iron deficiency anemia."
+     },
+     "2-expert": {
+      "precision": 0.4245,
+      "recall": 0.3914,
+      "f1": 0.4073,
+      "passed": false,
+      "expected_count": 5352,
+      "actual_count": 4935,
+      "elapsed_sec": 54.4,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|24947,210050,310325,310323",
+      "additional_query_urls": [],
+      "raw_response": "FINAL ANSWER:\n\nMedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|24947,210050,310325,310323",
+      "prompt_text": "Identify patients being treated for iron deficiency anemia through their iron supplementation orders. Search MedicationRequest resources for ferrous sulfate, the standard oral iron replacement therapy, coded in RxNorm. This is a medication-evidence path: it captures patients actively being treated but does not require a confirmed IDA diagnosis, so a small number of patients may be on iron supplementation for other indications."
+     },
+     "3-naive": {
+      "precision": 0.4004,
+      "recall": 0.3647,
+      "f1": 0.3817,
+      "passed": false,
+      "expected_count": 5352,
+      "actual_count": 4875,
+      "elapsed_sec": 53.0,
+      "queries_generated": 2,
+      "primary_query_url": "MedicationRequest?medication.code:text=iron",
+      "additional_query_urls": [
+       "MedicationRequest?medication.code:text=ferrous"
+      ],
+      "raw_response": "MedicationRequest?medication.code:text=iron\nMedicationRequest?medication.code:text=ferrous",
+      "prompt_text": "Find patients on iron supplements."
+     },
+     "3-broad": {
+      "precision": 0.0541,
+      "recall": 0.0026,
+      "f1": 0.005,
+      "passed": false,
+      "expected_count": 5352,
+      "actual_count": 259,
+      "elapsed_sec": 35.3,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|4083",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|4083",
+      "prompt_text": "Find patients prescribed ferrous sulfate \u2014 the standard oral iron supplement for treating iron deficiency anemia."
+     },
+     "3-expert": {
+      "precision": 0.0541,
+      "recall": 0.0026,
+      "f1": 0.005,
+      "passed": false,
+      "expected_count": 5352,
+      "actual_count": 259,
+      "elapsed_sec": 32.7,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|4083",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|4083",
       "prompt_text": "Identify patients being treated for iron deficiency anemia through their iron supplementation orders. Search MedicationRequest resources for ferrous sulfate, the standard oral iron replacement therapy, coded in RxNorm. This is a medication-evidence path: it captures patients actively being treated but does not require a confirmed IDA diagnosis, so a small number of patients may be on iron supplementation for other indications."
      }
     },

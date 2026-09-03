@@ -237,6 +237,152 @@
       "prompt_text": "I need a comprehensive osteoporosis cohort drawing from three complementary evidence sources, and the full picture requires unioning results across all three. First, search Condition resources for a documented osteoporosis diagnosis, coded in SNOMED CT. Second, search MedicationRequest resources for bisphosphonate prescriptions \u2014 risedronate (oral) and zoledronic acid (intravenous) are the agents to target, coded in RxNorm. Third, search Observation resources for DEXA bone density T-scores that fall at or below the WHO threshold for osteoporosis (in the osteoporotic range, numerically less than or equal to negative two-point-five), using the appropriate LOINC code for DXA T-score; this path captures patients with radiologically confirmed bone loss who may not yet carry a formal diagnosis. Union the patient sets from all three queries."
      }
     },
+    "copilot:claude-opus-4.7+mimic": {
+     "1-naive": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 8524,
+      "actual_count": 0,
+      "elapsed_sec": 7.3,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|64859006",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|64859006",
+      "prompt_text": "Find all my osteoporosis patients."
+     },
+     "1-broad": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 8524,
+      "actual_count": 0,
+      "elapsed_sec": 10.8,
+      "queries_generated": 3,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|64859006",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1546356,http://www.nlm.nih.gov/research/umls/rxnorm|202702,http://www.nlm.nih.gov/research/umls/rxnorm|77655,http://www.nlm.nih.gov/research/umls/rxnorm|72208,http://www.nlm.nih.gov/research/umls/rxnorm|60606",
+       "Observation?code=http://loinc.org|38265-5&value-quantity=le-2.5"
+      ],
+      "raw_response": "Condition?code=http://snomed.info/sct|64859006\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1546356,http://www.nlm.nih.gov/research/umls/rxnorm|202702,http://www.nlm.nih.gov/research/umls/rxnorm|77655,http://www.nlm.nih.gov/research/umls/rxnorm|72208,http://www.nlm.nih.gov/research/umls/rxnorm|60606\nObservation?code=http://loinc.org|38265-5&value-quantity=le-2.5",
+      "prompt_text": "Find all osteoporosis patients \u2014 by diagnosis, bisphosphonate medications, or low DEXA T-score (\u2264 -2.5). Run multiple queries and union the patient sets."
+     },
+     "1-expert": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 8524,
+      "actual_count": 0,
+      "elapsed_sec": 7.7,
+      "queries_generated": 3,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|64859006",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|35636,http://www.nlm.nih.gov/research/umls/rxnorm|77655",
+       "Observation?code=http://loinc.org|38265-5&value-quantity=le-2.5"
+      ],
+      "raw_response": "Condition?code=http://snomed.info/sct|64859006\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|35636,http://www.nlm.nih.gov/research/umls/rxnorm|77655\nObservation?code=http://loinc.org|38265-5&value-quantity=le-2.5",
+      "prompt_text": "I need a comprehensive osteoporosis cohort drawing from three complementary evidence sources, and the full picture requires unioning results across all three. First, search Condition resources for a documented osteoporosis diagnosis, coded in SNOMED CT. Second, search MedicationRequest resources for bisphosphonate prescriptions \u2014 risedronate (oral) and zoledronic acid (intravenous) are the agents to target, coded in RxNorm. Third, search Observation resources for DEXA bone density T-scores that fall at or below the WHO threshold for osteoporosis (in the osteoporotic range, numerically less than or equal to negative two-point-five), using the appropriate LOINC code for DXA T-score; this path captures patients with radiologically confirmed bone loss who may not yet carry a formal diagnosis. Union the patient sets from all three queries."
+     },
+     "2-naive": {
+      "precision": 0.9953,
+      "recall": 0.5912,
+      "f1": 0.7417,
+      "passed": true,
+      "expected_count": 8524,
+      "actual_count": 5063,
+      "elapsed_sec": 35.9,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|M81.0,http://hl7.org/fhir/sid/icd-10-cm|M81.6,http://hl7.org/fhir/sid/icd-10-cm|M81.8,http://hl7.org/fhir/sid/icd-9-cm|733.00,http://hl7.org/fhir/sid/icd-9-cm|733.01,http://hl7.org/fhir/sid/icd-9-cm|733.02,http://hl7.org/fhir/sid/icd-9-cm|733.03,http://hl7.org/fhir/sid/icd-9-cm|733.09",
+      "additional_query_urls": [],
+      "raw_response": "FINAL ANSWER:\n\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|M81.0,http://hl7.org/fhir/sid/icd-10-cm|M81.6,http://hl7.org/fhir/sid/icd-10-cm|M81.8,http://hl7.org/fhir/sid/icd-9-cm|733.00,http://hl7.org/fhir/sid/icd-9-cm|733.01,http://hl7.org/fhir/sid/icd-9-cm|733.02,http://hl7.org/fhir/sid/icd-9-cm|733.03,http://hl7.org/fhir/sid/icd-9-cm|733.09",
+      "prompt_text": "Find all my osteoporosis patients."
+     },
+     "2-broad": {
+      "precision": 0.8289,
+      "recall": 0.7823,
+      "f1": 0.8049,
+      "passed": true,
+      "expected_count": 8524,
+      "actual_count": 8044,
+      "elapsed_sec": 100.2,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-9-cm|733.00,http://hl7.org/fhir/sid/icd-9-cm|733.01,http://hl7.org/fhir/sid/icd-9-cm|733.02,http://hl7.org/fhir/sid/icd-9-cm|733.03,http://hl7.org/fhir/sid/icd-9-cm|733.09,http://hl7.org/fhir/sid/icd-9-cm|733.90",
+      "additional_query_urls": [
+       "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|M81.0,http://hl7.org/fhir/sid/icd-10-cm|M81.6,http://hl7.org/fhir/sid/icd-10-cm|M81.8"
+      ],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-9-cm|733.00,http://hl7.org/fhir/sid/icd-9-cm|733.01,http://hl7.org/fhir/sid/icd-9-cm|733.02,http://hl7.org/fhir/sid/icd-9-cm|733.03,http://hl7.org/fhir/sid/icd-9-cm|733.09,http://hl7.org/fhir/sid/icd-9-cm|733.90\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|M81.0,http://hl7.org/fhir/sid/icd-10-cm|M81.6,http://hl7.org/fhir/sid/icd-10-cm|M81.8",
+      "prompt_text": "Find all osteoporosis patients \u2014 by diagnosis, bisphosphonate medications, or low DEXA T-score (\u2264 -2.5). Run multiple queries and union the patient sets."
+     },
+     "2-expert": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 8524,
+      "actual_count": 0,
+      "elapsed_sec": 86.4,
+      "queries_generated": 3,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|64859006,http://snomed.info/sct|102447009,http://snomed.info/sct|32369003,http://snomed.info/sct|18040001,http://snomed.info/sct|276661002,http://snomed.info/sct|203438009,http://snomed.info/sct|14651005,http://snomed.info/sct|390833005,http://snomed.info/sct|240157009,http://snomed.info/sct|203429007",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1114086,http://www.nlm.nih.gov/research/umls/rxnorm|1650142",
+       "Observation?code=http://loinc.org|38267-1&value-quantity=le-2.5"
+      ],
+      "raw_response": "FINAL ANSWER:\n\nCondition?code=http://snomed.info/sct|64859006,http://snomed.info/sct|102447009,http://snomed.info/sct|32369003,http://snomed.info/sct|18040001,http://snomed.info/sct|276661002,http://snomed.info/sct|203438009,http://snomed.info/sct|14651005,http://snomed.info/sct|390833005,http://snomed.info/sct|240157009,http://snomed.info/sct|203429007\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1114086,http://www.nlm.nih.gov/research/umls/rxnorm|1650142\nObservation?code=http://loinc.org|38267-1&value-quantity=le-2.5",
+      "prompt_text": "I need a comprehensive osteoporosis cohort drawing from three complementary evidence sources, and the full picture requires unioning results across all three. First, search Condition resources for a documented osteoporosis diagnosis, coded in SNOMED CT. Second, search MedicationRequest resources for bisphosphonate prescriptions \u2014 risedronate (oral) and zoledronic acid (intravenous) are the agents to target, coded in RxNorm. Third, search Observation resources for DEXA bone density T-scores that fall at or below the WHO threshold for osteoporosis (in the osteoporotic range, numerically less than or equal to negative two-point-five), using the appropriate LOINC code for DXA T-score; this path captures patients with radiologically confirmed bone loss who may not yet carry a formal diagnosis. Union the patient sets from all three queries."
+     },
+     "3-naive": {
+      "precision": 0.9947,
+      "recall": 0.5906,
+      "f1": 0.7411,
+      "passed": true,
+      "expected_count": 8524,
+      "actual_count": 5061,
+      "elapsed_sec": 35.4,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|M80.00XA,http://hl7.org/fhir/sid/icd-10-cm|M81.0,http://hl7.org/fhir/sid/icd-10-cm|M81.6,http://hl7.org/fhir/sid/icd-10-cm|M81.8,http://hl7.org/fhir/sid/icd-9-cm|733.00,http://hl7.org/fhir/sid/icd-9-cm|733.01,http://hl7.org/fhir/sid/icd-9-cm|733.02,http://hl7.org/fhir/sid/icd-9-cm|733.03,http://hl7.org/fhir/sid/icd-9-cm|733.09",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|M80.00XA,http://hl7.org/fhir/sid/icd-10-cm|M81.0,http://hl7.org/fhir/sid/icd-10-cm|M81.6,http://hl7.org/fhir/sid/icd-10-cm|M81.8,http://hl7.org/fhir/sid/icd-9-cm|733.00,http://hl7.org/fhir/sid/icd-9-cm|733.01,http://hl7.org/fhir/sid/icd-9-cm|733.02,http://hl7.org/fhir/sid/icd-9-cm|733.03,http://hl7.org/fhir/sid/icd-9-cm|733.09",
+      "prompt_text": "Find all my osteoporosis patients."
+     },
+     "3-broad": {
+      "precision": 0.9964,
+      "recall": 0.7881,
+      "f1": 0.8801,
+      "passed": true,
+      "expected_count": 8524,
+      "actual_count": 6742,
+      "elapsed_sec": 79.1,
+      "queries_generated": 4,
+      "primary_query_url": "Condition?code:text=osteoporosis",
+      "additional_query_urls": [
+       "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|M81.0,http://hl7.org/fhir/sid/icd-10-cm|M81.6,http://hl7.org/fhir/sid/icd-10-cm|M81.8,http://hl7.org/fhir/sid/icd-9-cm|733.00,http://hl7.org/fhir/sid/icd-9-cm|733.01,http://hl7.org/fhir/sid/icd-9-cm|733.02,http://hl7.org/fhir/sid/icd-9-cm|733.03,http://hl7.org/fhir/sid/icd-9-cm|733.09",
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|46041,http://www.nlm.nih.gov/research/umls/rxnorm|203152,http://www.nlm.nih.gov/research/umls/rxnorm|55685,http://www.nlm.nih.gov/research/umls/rxnorm|77655,http://www.nlm.nih.gov/research/umls/rxnorm|115264,http://www.nlm.nih.gov/research/umls/rxnorm|11473,http://www.nlm.nih.gov/research/umls/rxnorm|42682,http://www.nlm.nih.gov/research/umls/rxnorm|993449",
+       "Observation?code=http://loinc.org|38267-1,http://loinc.org|80948-3,http://loinc.org|38265-5&value-quantity=le-2.5"
+      ],
+      "raw_response": "FINAL ANSWER:\n\nCondition?code:text=osteoporosis\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|M81.0,http://hl7.org/fhir/sid/icd-10-cm|M81.6,http://hl7.org/fhir/sid/icd-10-cm|M81.8,http://hl7.org/fhir/sid/icd-9-cm|733.00,http://hl7.org/fhir/sid/icd-9-cm|733.01,http://hl7.org/fhir/sid/icd-9-cm|733.02,http://hl7.org/fhir/sid/icd-9-cm|733.03,http://hl7.org/fhir/sid/icd-9-cm|733.09\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|46041,http://www.nlm.nih.gov/research/umls/rxnorm|203152,http://www.nlm.nih.gov/research/umls/rxnorm|55685,http://www.nlm.nih.gov/research/umls/rxnorm|77655,http://www.nlm.nih.gov/research/umls/rxnorm|115264,http://www.nlm.nih.gov/research/umls/rxnorm|11473,http://www.nlm.nih.gov/research/umls/rxnorm|42682,http://www.nlm.nih.gov/research/umls/rxnorm|993449\nObservation?code=http://loinc.org|38267-1,http://loinc.org|80948-3,http://loinc.org|38265-5&value-quantity=le-2.5",
+      "prompt_text": "Find all osteoporosis patients \u2014 by diagnosis, bisphosphonate medications, or low DEXA T-score (\u2264 -2.5). Run multiple queries and union the patient sets."
+     },
+     "3-expert": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 8524,
+      "actual_count": 0,
+      "elapsed_sec": 58.7,
+      "queries_generated": 3,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|64859006,http://snomed.info/sct|102447009,http://snomed.info/sct|18040001,http://snomed.info/sct|276661002,http://snomed.info/sct|32369003,http://snomed.info/sct|3345002,http://snomed.info/sct|203429007,http://snomed.info/sct|240155001,http://snomed.info/sct|240157009,http://snomed.info/sct|14651005,http://snomed.info/sct|390833005,http://snomed.info/sct|53174001,http://snomed.info/sct|203438009,http://snomed.info/sct|15743005,http://snomed.info/sct|203433000,http://snomed.info/sct|735617003,http://snomed.info/sct|735618008",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|75207,http://www.nlm.nih.gov/research/umls/rxnorm|77655",
+       "Observation?code=http://loinc.org|38265-5&value-quantity=le-2.5"
+      ],
+      "raw_response": "Condition?code=http://snomed.info/sct|64859006,http://snomed.info/sct|102447009,http://snomed.info/sct|18040001,http://snomed.info/sct|276661002,http://snomed.info/sct|32369003,http://snomed.info/sct|3345002,http://snomed.info/sct|203429007,http://snomed.info/sct|240155001,http://snomed.info/sct|240157009,http://snomed.info/sct|14651005,http://snomed.info/sct|390833005,http://snomed.info/sct|53174001,http://snomed.info/sct|203438009,http://snomed.info/sct|15743005,http://snomed.info/sct|203433000,http://snomed.info/sct|735617003,http://snomed.info/sct|735618008\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|75207,http://www.nlm.nih.gov/research/umls/rxnorm|77655\nObservation?code=http://loinc.org|38265-5&value-quantity=le-2.5",
+      "prompt_text": "I need a comprehensive osteoporosis cohort drawing from three complementary evidence sources, and the full picture requires unioning results across all three. First, search Condition resources for a documented osteoporosis diagnosis, coded in SNOMED CT. Second, search MedicationRequest resources for bisphosphonate prescriptions \u2014 risedronate (oral) and zoledronic acid (intravenous) are the agents to target, coded in RxNorm. Third, search Observation resources for DEXA bone density T-scores that fall at or below the WHO threshold for osteoporosis (in the osteoporotic range, numerically less than or equal to negative two-point-five), using the appropriate LOINC code for DXA T-score; this path captures patients with radiologically confirmed bone loss who may not yet carry a formal diagnosis. Union the patient sets from all three queries."
+     }
+    },
     "copilot:claude-sonnet-4.6": {
      "1-naive": {
       "precision": 1.0,
@@ -1040,6 +1186,134 @@
       "primary_query_url": "Condition?code=http://snomed.info/sct|64859006",
       "additional_query_urls": [],
       "raw_response": "Condition?code=http://snomed.info/sct|64859006",
+      "prompt_text": "I need to identify patients with a documented osteoporosis diagnosis. Search Condition resources for osteoporosis, coded in SNOMED CT. Do not broaden to osteopenia or other metabolic bone conditions \u2014 the target is established osteoporosis specifically."
+     }
+    },
+    "copilot:claude-opus-4.7+mimic": {
+     "1-naive": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 8524,
+      "actual_count": 0,
+      "elapsed_sec": 7.3,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|64859006",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|64859006",
+      "prompt_text": "Find patients with osteoporosis."
+     },
+     "1-broad": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 8524,
+      "actual_count": 0,
+      "elapsed_sec": 7.2,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|64859006",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|64859006",
+      "prompt_text": "Find patients diagnosed with osteoporosis \u2014 a metabolic bone disease characterized by low bone mass and increased fracture risk."
+     },
+     "1-expert": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 8524,
+      "actual_count": 0,
+      "elapsed_sec": 7.3,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|64859006",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|64859006",
+      "prompt_text": "I need to identify patients with a documented osteoporosis diagnosis. Search Condition resources for osteoporosis, coded in SNOMED CT. Do not broaden to osteopenia or other metabolic bone conditions \u2014 the target is established osteoporosis specifically."
+     },
+     "2-naive": {
+      "precision": 0.9953,
+      "recall": 0.5912,
+      "f1": 0.7417,
+      "passed": true,
+      "expected_count": 8524,
+      "actual_count": 5063,
+      "elapsed_sec": 35.7,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|M81.0,http://hl7.org/fhir/sid/icd-10-cm|M81.6,http://hl7.org/fhir/sid/icd-10-cm|M81.8,http://hl7.org/fhir/sid/icd-9-cm|733.00,http://hl7.org/fhir/sid/icd-9-cm|733.01,http://hl7.org/fhir/sid/icd-9-cm|733.02,http://hl7.org/fhir/sid/icd-9-cm|733.03,http://hl7.org/fhir/sid/icd-9-cm|733.09",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|M81.0,http://hl7.org/fhir/sid/icd-10-cm|M81.6,http://hl7.org/fhir/sid/icd-10-cm|M81.8,http://hl7.org/fhir/sid/icd-9-cm|733.00,http://hl7.org/fhir/sid/icd-9-cm|733.01,http://hl7.org/fhir/sid/icd-9-cm|733.02,http://hl7.org/fhir/sid/icd-9-cm|733.03,http://hl7.org/fhir/sid/icd-9-cm|733.09",
+      "prompt_text": "Find patients with osteoporosis."
+     },
+     "2-broad": {
+      "precision": 0.9955,
+      "recall": 0.5912,
+      "f1": 0.7418,
+      "passed": true,
+      "expected_count": 8524,
+      "actual_count": 5062,
+      "elapsed_sec": 28.0,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|M81.0,http://hl7.org/fhir/sid/icd-10-cm|M81.8,http://hl7.org/fhir/sid/icd-9-cm|733.00,http://hl7.org/fhir/sid/icd-9-cm|733.01,http://hl7.org/fhir/sid/icd-9-cm|733.02,http://hl7.org/fhir/sid/icd-9-cm|733.03,http://hl7.org/fhir/sid/icd-9-cm|733.09",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|M81.0,http://hl7.org/fhir/sid/icd-10-cm|M81.8,http://hl7.org/fhir/sid/icd-9-cm|733.00,http://hl7.org/fhir/sid/icd-9-cm|733.01,http://hl7.org/fhir/sid/icd-9-cm|733.02,http://hl7.org/fhir/sid/icd-9-cm|733.03,http://hl7.org/fhir/sid/icd-9-cm|733.09",
+      "prompt_text": "Find patients diagnosed with osteoporosis \u2014 a metabolic bone disease characterized by low bone mass and increased fracture risk."
+     },
+     "2-expert": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 8524,
+      "actual_count": 0,
+      "elapsed_sec": 30.6,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|64859006,http://snomed.info/sct|78970004,http://snomed.info/sct|240155002,http://snomed.info/sct|203434006,http://snomed.info/sct|21000000018,http://snomed.info/sct|432441000124102,http://snomed.info/sct|72590009",
+      "additional_query_urls": [],
+      "raw_response": "FINAL ANSWER:\n\nCondition?code=http://snomed.info/sct|64859006,http://snomed.info/sct|78970004,http://snomed.info/sct|240155002,http://snomed.info/sct|203434006,http://snomed.info/sct|21000000018,http://snomed.info/sct|432441000124102,http://snomed.info/sct|72590009",
+      "prompt_text": "I need to identify patients with a documented osteoporosis diagnosis. Search Condition resources for osteoporosis, coded in SNOMED CT. Do not broaden to osteopenia or other metabolic bone conditions \u2014 the target is established osteoporosis specifically."
+     },
+     "3-naive": {
+      "precision": 1.0,
+      "recall": 0.5946,
+      "f1": 0.7457,
+      "passed": true,
+      "expected_count": 8524,
+      "actual_count": 5068,
+      "elapsed_sec": 35.4,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|M81.0,http://hl7.org/fhir/sid/icd-9-cm|733.00,http://hl7.org/fhir/sid/icd-9-cm|733.01,http://hl7.org/fhir/sid/icd-9-cm|733.02,http://hl7.org/fhir/sid/icd-9-cm|733.03,http://hl7.org/fhir/sid/icd-9-cm|733.09",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|M81.0,http://hl7.org/fhir/sid/icd-9-cm|733.00,http://hl7.org/fhir/sid/icd-9-cm|733.01,http://hl7.org/fhir/sid/icd-9-cm|733.02,http://hl7.org/fhir/sid/icd-9-cm|733.03,http://hl7.org/fhir/sid/icd-9-cm|733.09",
+      "prompt_text": "Find patients with osteoporosis."
+     },
+     "3-broad": {
+      "precision": 0.9953,
+      "recall": 0.5912,
+      "f1": 0.7417,
+      "passed": true,
+      "expected_count": 8524,
+      "actual_count": 5063,
+      "elapsed_sec": 36.3,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|M81.0,http://hl7.org/fhir/sid/icd-10-cm|M81.6,http://hl7.org/fhir/sid/icd-10-cm|M81.8,http://hl7.org/fhir/sid/icd-9-cm|733.00,http://hl7.org/fhir/sid/icd-9-cm|733.01,http://hl7.org/fhir/sid/icd-9-cm|733.02,http://hl7.org/fhir/sid/icd-9-cm|733.03,http://hl7.org/fhir/sid/icd-9-cm|733.09",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|M81.0,http://hl7.org/fhir/sid/icd-10-cm|M81.6,http://hl7.org/fhir/sid/icd-10-cm|M81.8,http://hl7.org/fhir/sid/icd-9-cm|733.00,http://hl7.org/fhir/sid/icd-9-cm|733.01,http://hl7.org/fhir/sid/icd-9-cm|733.02,http://hl7.org/fhir/sid/icd-9-cm|733.03,http://hl7.org/fhir/sid/icd-9-cm|733.09",
+      "prompt_text": "Find patients diagnosed with osteoporosis \u2014 a metabolic bone disease characterized by low bone mass and increased fracture risk."
+     },
+     "3-expert": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 8524,
+      "actual_count": 0,
+      "elapsed_sec": 28.2,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|64859006,http://snomed.info/sct|102447009,http://snomed.info/sct|18040001,http://snomed.info/sct|203438009,http://snomed.info/sct|276661002,http://snomed.info/sct|390833005,http://snomed.info/sct|14651005,http://snomed.info/sct|32369003,http://snomed.info/sct|3345002,http://snomed.info/sct|15743005,http://snomed.info/sct|53174001,http://snomed.info/sct|240157009,http://snomed.info/sct|240155001,http://snomed.info/sct|203429007,http://snomed.info/sct|735617003,http://snomed.info/sct|735618008,http://snomed.info/sct|739301006,http://snomed.info/sct|240159007,http://snomed.info/sct|240158004,http://snomed.info/sct|281387004,http://snomed.info/sct|240162005,http://snomed.info/sct|268028001,http://snomed.info/sct|203433000,http://snomed.info/sct|203434006",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|64859006,http://snomed.info/sct|102447009,http://snomed.info/sct|18040001,http://snomed.info/sct|203438009,http://snomed.info/sct|276661002,http://snomed.info/sct|390833005,http://snomed.info/sct|14651005,http://snomed.info/sct|32369003,http://snomed.info/sct|3345002,http://snomed.info/sct|15743005,http://snomed.info/sct|53174001,http://snomed.info/sct|240157009,http://snomed.info/sct|240155001,http://snomed.info/sct|203429007,http://snomed.info/sct|735617003,http://snomed.info/sct|735618008,http://snomed.info/sct|739301006,http://snomed.info/sct|240159007,http://snomed.info/sct|240158004,http://snomed.info/sct|281387004,http://snomed.info/sct|240162005,http://snomed.info/sct|268028001,http://snomed.info/sct|203433000,http://snomed.info/sct|203434006",
       "prompt_text": "I need to identify patients with a documented osteoporosis diagnosis. Search Condition resources for osteoporosis, coded in SNOMED CT. Do not broaden to osteopenia or other metabolic bone conditions \u2014 the target is established osteoporosis specifically."
      }
     },
@@ -2523,6 +2797,138 @@
        "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|77655"
       ],
       "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|35636\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|77655",
+      "prompt_text": "I need to identify patients treated pharmacologically for osteoporosis via bisphosphonate prescriptions. Search MedicationRequest resources for the two bisphosphonates used in this phenotype: risedronate (an oral agent) and zoledronic acid (an intravenous agent), both coded in RxNorm. This captures the treated population regardless of whether a formal osteoporosis diagnosis is recorded."
+     }
+    },
+    "copilot:claude-opus-4.7+mimic": {
+     "1-naive": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 63,
+      "actual_count": 0,
+      "elapsed_sec": 9.4,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|253182,http://www.nlm.nih.gov/research/umls/rxnorm|1546358,http://www.nlm.nih.gov/research/umls/rxnorm|77655,http://www.nlm.nih.gov/research/umls/rxnorm|136611,http://www.nlm.nih.gov/research/umls/rxnorm|38396",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|253182,http://www.nlm.nih.gov/research/umls/rxnorm|1546358,http://www.nlm.nih.gov/research/umls/rxnorm|77655,http://www.nlm.nih.gov/research/umls/rxnorm|136611,http://www.nlm.nih.gov/research/umls/rxnorm|38396",
+      "prompt_text": "Find patients on bisphosphonates."
+     },
+     "1-broad": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 63,
+      "actual_count": 0,
+      "elapsed_sec": 8.8,
+      "queries_generated": 2,
+      "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1524",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|77655"
+      ],
+      "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1524\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|77655",
+      "prompt_text": "Find patients prescribed bisphosphonate medications used to treat osteoporosis \u2014 including oral risedronate and intravenous zoledronic acid."
+     },
+     "1-expert": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 63,
+      "actual_count": 0,
+      "elapsed_sec": 8.8,
+      "queries_generated": 2,
+      "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|35636",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|77655"
+      ],
+      "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|35636\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|77655",
+      "prompt_text": "I need to identify patients treated pharmacologically for osteoporosis via bisphosphonate prescriptions. Search MedicationRequest resources for the two bisphosphonates used in this phenotype: risedronate (an oral agent) and zoledronic acid (an intravenous agent), both coded in RxNorm. This captures the treated population regardless of whether a formal osteoporosis diagnosis is recorded."
+     },
+     "2-naive": {
+      "precision": 0.0044,
+      "recall": 0.127,
+      "f1": 0.0085,
+      "passed": false,
+      "expected_count": 63,
+      "actual_count": 1830,
+      "elapsed_sec": 65.4,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|46041,http://www.nlm.nih.gov/research/umls/rxnorm|203152,http://www.nlm.nih.gov/research/umls/rxnorm|77655,http://www.nlm.nih.gov/research/umls/rxnorm|11473,http://www.nlm.nih.gov/research/umls/rxnorm|55685,http://www.nlm.nih.gov/research/umls/rxnorm|115264,http://www.nlm.nih.gov/research/umls/rxnorm|42682,http://www.nlm.nih.gov/research/umls/rxnorm|11476,http://www.nlm.nih.gov/research/umls/rxnorm|3350,http://www.nlm.nih.gov/research/umls/rxnorm|32915,http://www.nlm.nih.gov/research/umls/rxnorm|993449,http://www.nlm.nih.gov/research/umls/rxnorm|1921069,http://www.nlm.nih.gov/research/umls/rxnorm|2123126",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|46041,http://www.nlm.nih.gov/research/umls/rxnorm|203152,http://www.nlm.nih.gov/research/umls/rxnorm|77655,http://www.nlm.nih.gov/research/umls/rxnorm|11473,http://www.nlm.nih.gov/research/umls/rxnorm|55685,http://www.nlm.nih.gov/research/umls/rxnorm|115264,http://www.nlm.nih.gov/research/umls/rxnorm|42682,http://www.nlm.nih.gov/research/umls/rxnorm|11476,http://www.nlm.nih.gov/research/umls/rxnorm|3350,http://www.nlm.nih.gov/research/umls/rxnorm|32915,http://www.nlm.nih.gov/research/umls/rxnorm|993449,http://www.nlm.nih.gov/research/umls/rxnorm|1921069,http://www.nlm.nih.gov/research/umls/rxnorm|2123126",
+      "prompt_text": "Find patients on bisphosphonates."
+     },
+     "2-broad": {
+      "precision": 0.0044,
+      "recall": 0.127,
+      "f1": 0.0086,
+      "passed": false,
+      "expected_count": 63,
+      "actual_count": 1806,
+      "elapsed_sec": 70.8,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|46041,http://www.nlm.nih.gov/research/umls/rxnorm|55685,http://www.nlm.nih.gov/research/umls/rxnorm|115264,http://www.nlm.nih.gov/research/umls/rxnorm|77655,http://www.nlm.nih.gov/research/umls/rxnorm|11473,http://www.nlm.nih.gov/research/umls/rxnorm|42682,http://www.nlm.nih.gov/research/umls/rxnorm|203152,http://www.nlm.nih.gov/research/umls/rxnorm|1865680,http://www.nlm.nih.gov/research/umls/rxnorm|1659716,http://www.nlm.nih.gov/research/umls/rxnorm|1165298,http://www.nlm.nih.gov/research/umls/rxnorm|904396,http://www.nlm.nih.gov/research/umls/rxnorm|904419",
+      "additional_query_urls": [],
+      "raw_response": "FINAL ANSWER:\n\nMedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|46041,http://www.nlm.nih.gov/research/umls/rxnorm|55685,http://www.nlm.nih.gov/research/umls/rxnorm|115264,http://www.nlm.nih.gov/research/umls/rxnorm|77655,http://www.nlm.nih.gov/research/umls/rxnorm|11473,http://www.nlm.nih.gov/research/umls/rxnorm|42682,http://www.nlm.nih.gov/research/umls/rxnorm|203152,http://www.nlm.nih.gov/research/umls/rxnorm|1865680,http://www.nlm.nih.gov/research/umls/rxnorm|1659716,http://www.nlm.nih.gov/research/umls/rxnorm|1165298,http://www.nlm.nih.gov/research/umls/rxnorm|904396,http://www.nlm.nih.gov/research/umls/rxnorm|904419",
+      "prompt_text": "Find patients prescribed bisphosphonate medications used to treat osteoporosis \u2014 including oral risedronate and intravenous zoledronic acid."
+     },
+     "2-expert": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 63,
+      "actual_count": 0,
+      "elapsed_sec": 160.1,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1020064,http://www.nlm.nih.gov/research/umls/rxnorm|1020065,http://www.nlm.nih.gov/research/umls/rxnorm|1020066,http://www.nlm.nih.gov/research/umls/rxnorm|905023,http://www.nlm.nih.gov/research/umls/rxnorm|905024,http://www.nlm.nih.gov/research/umls/rxnorm|905025,http://www.nlm.nih.gov/research/umls/rxnorm|905026,http://www.nlm.nih.gov/research/umls/rxnorm|905027,http://www.nlm.nih.gov/research/umls/rxnorm|905028,http://www.nlm.nih.gov/research/umls/rxnorm|905029,http://www.nlm.nih.gov/research/umls/rxnorm|905030,http://www.nlm.nih.gov/research/umls/rxnorm|905031,http://www.nlm.nih.gov/research/umls/rxnorm|905032,http://www.nlm.nih.gov/research/umls/rxnorm|905033,http://www.nlm.nih.gov/research/umls/rxnorm|905034,http://www.nlm.nih.gov/research/umls/rxnorm|905040,http://www.nlm.nih.gov/research/umls/rxnorm|905041,http://www.nlm.nih.gov/research/umls/rxnorm|905042,http://www.nlm.nih.gov/research/umls/rxnorm|905043,http://www.nlm.nih.gov/research/umls/rxnorm|905082,http://www.nlm.nih.gov/research/umls/rxnorm|905083,http://www.nlm.nih.gov/research/umls/rxnorm|905092,http://www.nlm.nih.gov/research/umls/rxnorm|905093,http://www.nlm.nih.gov/research/umls/rxnorm|905100,http://www.nlm.nih.gov/research/umls/rxnorm|905101,http://www.nlm.nih.gov/research/umls/rxnorm|77655,http://www.nlm.nih.gov/research/umls/rxnorm|1114084,http://www.nlm.nih.gov/research/umls/rxnorm|1114085,http://www.nlm.nih.gov/research/umls/rxnorm|1156253,http://www.nlm.nih.gov/research/umls/rxnorm|1546014,http://www.nlm.nih.gov/research/umls/rxnorm|1865663,http://www.nlm.nih.gov/research/umls/rxnorm|1865664,http://www.nlm.nih.gov/research/umls/rxnorm|1865665,http://www.nlm.nih.gov/research/umls/rxnorm|1865680,http://www.nlm.nih.gov/research/umls/rxnorm|351114,http://www.nlm.nih.gov/research/umls/rxnorm|358826,http://www.nlm.nih.gov/research/umls/rxnorm|705823,http://www.nlm.nih.gov/research/umls/rxnorm|705824,http://www.nlm.nih.gov/research/umls/rxnorm|705873,http://www.nlm.nih.gov/research/umls/rxnorm|705875",
+      "additional_query_urls": [],
+      "raw_response": "FINAL ANSWER:\n\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1020064,http://www.nlm.nih.gov/research/umls/rxnorm|1020065,http://www.nlm.nih.gov/research/umls/rxnorm|1020066,http://www.nlm.nih.gov/research/umls/rxnorm|905023,http://www.nlm.nih.gov/research/umls/rxnorm|905024,http://www.nlm.nih.gov/research/umls/rxnorm|905025,http://www.nlm.nih.gov/research/umls/rxnorm|905026,http://www.nlm.nih.gov/research/umls/rxnorm|905027,http://www.nlm.nih.gov/research/umls/rxnorm|905028,http://www.nlm.nih.gov/research/umls/rxnorm|905029,http://www.nlm.nih.gov/research/umls/rxnorm|905030,http://www.nlm.nih.gov/research/umls/rxnorm|905031,http://www.nlm.nih.gov/research/umls/rxnorm|905032,http://www.nlm.nih.gov/research/umls/rxnorm|905033,http://www.nlm.nih.gov/research/umls/rxnorm|905034,http://www.nlm.nih.gov/research/umls/rxnorm|905040,http://www.nlm.nih.gov/research/umls/rxnorm|905041,http://www.nlm.nih.gov/research/umls/rxnorm|905042,http://www.nlm.nih.gov/research/umls/rxnorm|905043,http://www.nlm.nih.gov/research/umls/rxnorm|905082,http://www.nlm.nih.gov/research/umls/rxnorm|905083,http://www.nlm.nih.gov/research/umls/rxnorm|905092,http://www.nlm.nih.gov/research/umls/rxnorm|905093,http://www.nlm.nih.gov/research/umls/rxnorm|905100,http://www.nlm.nih.gov/research/umls/rxnorm|905101,http://www.nlm.nih.gov/research/umls/rxnorm|77655,http://www.nlm.nih.gov/research/umls/rxnorm|1114084,http://www.nlm.nih.gov/research/umls/rxnorm|1114085,http://www.nlm.nih.gov/research/umls/rxnorm|1156253,http://www.nlm.nih.gov/research/umls/rxnorm|1546014,http://www.nlm.nih.gov/research/umls/rxnorm|1865663,http://www.nlm.nih.gov/research/umls/rxnorm|1865664,http://www.nlm.nih.gov/research/umls/rxnorm|1865665,http://www.nlm.nih.gov/research/umls/rxnorm|1865680,http://www.nlm.nih.gov/research/umls/rxnorm|351114,http://www.nlm.nih.gov/research/umls/rxnorm|358826,http://www.nlm.nih.gov/research/umls/rxnorm|705823,http://www.nlm.nih.gov/research/umls/rxnorm|705824,http://www.nlm.nih.gov/research/umls/rxnorm|705873,http://www.nlm.nih.gov/research/umls/rxnorm|705875",
+      "prompt_text": "I need to identify patients treated pharmacologically for osteoporosis via bisphosphonate prescriptions. Search MedicationRequest resources for the two bisphosphonates used in this phenotype: risedronate (an oral agent) and zoledronic acid (an intravenous agent), both coded in RxNorm. This captures the treated population regardless of whether a formal osteoporosis diagnosis is recorded."
+     },
+     "3-naive": {
+      "precision": 0.0044,
+      "recall": 0.127,
+      "f1": 0.0086,
+      "passed": false,
+      "expected_count": 63,
+      "actual_count": 1806,
+      "elapsed_sec": 61.6,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|46041,http://www.nlm.nih.gov/research/umls/rxnorm|203152,http://www.nlm.nih.gov/research/umls/rxnorm|55685,http://www.nlm.nih.gov/research/umls/rxnorm|77655,http://www.nlm.nih.gov/research/umls/rxnorm|115264,http://www.nlm.nih.gov/research/umls/rxnorm|11473,http://www.nlm.nih.gov/research/umls/rxnorm|11476,http://www.nlm.nih.gov/research/umls/rxnorm|42682,http://www.nlm.nih.gov/research/umls/rxnorm|3350",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|46041,http://www.nlm.nih.gov/research/umls/rxnorm|203152,http://www.nlm.nih.gov/research/umls/rxnorm|55685,http://www.nlm.nih.gov/research/umls/rxnorm|77655,http://www.nlm.nih.gov/research/umls/rxnorm|115264,http://www.nlm.nih.gov/research/umls/rxnorm|11473,http://www.nlm.nih.gov/research/umls/rxnorm|11476,http://www.nlm.nih.gov/research/umls/rxnorm|42682,http://www.nlm.nih.gov/research/umls/rxnorm|3350",
+      "prompt_text": "Find patients on bisphosphonates."
+     },
+     "3-broad": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 63,
+      "actual_count": 63,
+      "elapsed_sec": 64.9,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|73056,http://www.nlm.nih.gov/research/umls/rxnorm|77655",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|73056,http://www.nlm.nih.gov/research/umls/rxnorm|77655",
+      "prompt_text": "Find patients prescribed bisphosphonate medications used to treat osteoporosis \u2014 including oral risedronate and intravenous zoledronic acid."
+     },
+     "3-expert": {
+      "precision": 1.0,
+      "recall": 0.0159,
+      "f1": 0.0312,
+      "passed": false,
+      "expected_count": 63,
+      "actual_count": 1,
+      "elapsed_sec": 64.8,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|55685,http://www.nlm.nih.gov/research/umls/rxnorm|77655",
+      "additional_query_urls": [],
+      "raw_response": "FINAL ANSWER:\n\nMedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|55685,http://www.nlm.nih.gov/research/umls/rxnorm|77655",
       "prompt_text": "I need to identify patients treated pharmacologically for osteoporosis via bisphosphonate prescriptions. Search MedicationRequest resources for the two bisphosphonates used in this phenotype: risedronate (an oral agent) and zoledronic acid (an intravenous agent), both coded in RxNorm. This captures the treated population regardless of whether a formal osteoporosis diagnosis is recorded."
      }
     },

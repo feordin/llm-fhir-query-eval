@@ -233,6 +233,148 @@
       "prompt_text": "I need to identify all patients with an abdominal aortic aneurysm using two complementary resources. First, search Condition resources for AAA diagnoses \u2014 using SNOMED CT, and cover both the intact and ruptured forms since the ruptured variant carries a distinct code and must not be dropped. Second, search Procedure resources for AAA repair, covering both open surgical repair (with graft) and endovascular repair, each coded separately in SNOMED CT. Take the union of patient IDs across both queries; a patient appearing in either Condition or Procedure should be included in the final cohort."
      }
     },
+    "copilot:claude-opus-4.7+mimic": {
+     "1-naive": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 2233,
+      "actual_count": 0,
+      "elapsed_sec": 7.1,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|233985008",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|233985008",
+      "prompt_text": "Find all my AAA patients."
+     },
+     "1-broad": {
+      "precision": 1.0,
+      "recall": 0.4541,
+      "f1": 0.6246,
+      "passed": false,
+      "expected_count": 2233,
+      "actual_count": 1014,
+      "elapsed_sec": 14.9,
+      "queries_generated": 4,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|233985008,http://snomed.info/sct|24012001,http://snomed.info/sct|426948001,http://snomed.info/sct|41637005",
+      "additional_query_urls": [
+       "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|I71.3,http://hl7.org/fhir/sid/icd-10-cm|I71.4",
+       "Procedure?code=http://snomed.info/sct|56585003,http://snomed.info/sct|287904002,http://snomed.info/sct|443703003",
+       "Procedure?code=http://www.ama-assn.org/go/cpt|34830,http://www.ama-assn.org/go/cpt|34831,http://www.ama-assn.org/go/cpt|34832,http://www.ama-assn.org/go/cpt|35081,http://www.ama-assn.org/go/cpt|35082,http://www.ama-assn.org/go/cpt|34701,http://www.ama-assn.org/go/cpt|34702,http://www.ama-assn.org/go/cpt|34703,http://www.ama-assn.org/go/cpt|34704,http://www.ama-assn.org/go/cpt|34705,http://www.ama-assn.org/go/cpt|34706"
+      ],
+      "raw_response": "Condition?code=http://snomed.info/sct|233985008,http://snomed.info/sct|24012001,http://snomed.info/sct|426948001,http://snomed.info/sct|41637005\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|I71.3,http://hl7.org/fhir/sid/icd-10-cm|I71.4\nProcedure?code=http://snomed.info/sct|56585003,http://snomed.info/sct|287904002,http://snomed.info/sct|443703003\nProcedure?code=http://www.ama-assn.org/go/cpt|34830,http://www.ama-assn.org/go/cpt|34831,http://www.ama-assn.org/go/cpt|34832,http://www.ama-assn.org/go/cpt|35081,http://www.ama-assn.org/go/cpt|35082,http://www.ama-assn.org/go/cpt|34701,http://www.ama-assn.org/go/cpt|34702,http://www.ama-assn.org/go/cpt|34703,http://www.ama-assn.org/go/cpt|34704,http://www.ama-assn.org/go/cpt|34705,http://www.ama-assn.org/go/cpt|34706",
+      "prompt_text": "Find all AAA patients \u2014 by diagnosis (including ruptured) or by repair procedure (open or endovascular). Run multiple queries and union the patient sets."
+     },
+     "1-expert": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 2233,
+      "actual_count": 0,
+      "elapsed_sec": 8.3,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|233985008,http://snomed.info/sct|65216001",
+      "additional_query_urls": [
+       "Procedure?code=http://snomed.info/sct|35726001,http://snomed.info/sct|175322009"
+      ],
+      "raw_response": "Condition?code=http://snomed.info/sct|233985008,http://snomed.info/sct|65216001\nProcedure?code=http://snomed.info/sct|35726001,http://snomed.info/sct|175322009",
+      "prompt_text": "I need to identify all patients with an abdominal aortic aneurysm using two complementary resources. First, search Condition resources for AAA diagnoses \u2014 using SNOMED CT, and cover both the intact and ruptured forms since the ruptured variant carries a distinct code and must not be dropped. Second, search Procedure resources for AAA repair, covering both open surgical repair (with graft) and endovascular repair, each coded separately in SNOMED CT. Take the union of patient IDs across both queries; a patient appearing in either Condition or Procedure should be included in the final cohort."
+     },
+     "2-naive": {
+      "precision": 0.2113,
+      "recall": 0.0184,
+      "f1": 0.0338,
+      "passed": false,
+      "expected_count": 2233,
+      "actual_count": 194,
+      "elapsed_sec": 24.1,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|I71.02,http://hl7.org/fhir/sid/icd-10-cm|I71.03,http://hl7.org/fhir/sid/icd-10-cm|I71.8,http://hl7.org/fhir/sid/icd-10-cm|I71.9",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|I71.02,http://hl7.org/fhir/sid/icd-10-cm|I71.03,http://hl7.org/fhir/sid/icd-10-cm|I71.8,http://hl7.org/fhir/sid/icd-10-cm|I71.9",
+      "prompt_text": "Find all my AAA patients."
+     },
+     "2-broad": {
+      "precision": 0.9277,
+      "recall": 1.0,
+      "f1": 0.9625,
+      "passed": true,
+      "expected_count": 2233,
+      "actual_count": 2407,
+      "elapsed_sec": 42.7,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|I71.3,http://hl7.org/fhir/sid/icd-10-cm|I71.4,http://hl7.org/fhir/sid/icd-10-cm|I71.5,http://hl7.org/fhir/sid/icd-10-cm|I71.6,http://hl7.org/fhir/sid/icd-9-cm|441.3,http://hl7.org/fhir/sid/icd-9-cm|441.4,http://hl7.org/fhir/sid/icd-9-cm|441.6,http://hl7.org/fhir/sid/icd-9-cm|441.7",
+      "additional_query_urls": [
+       "Procedure?code=http://hl7.org/fhir/sid/icd-9-cm|38.44,http://hl7.org/fhir/sid/icd-9-cm|39.71,http://hl7.org/fhir/sid/icd-9-cm|39.25"
+      ],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|I71.3,http://hl7.org/fhir/sid/icd-10-cm|I71.4,http://hl7.org/fhir/sid/icd-10-cm|I71.5,http://hl7.org/fhir/sid/icd-10-cm|I71.6,http://hl7.org/fhir/sid/icd-9-cm|441.3,http://hl7.org/fhir/sid/icd-9-cm|441.4,http://hl7.org/fhir/sid/icd-9-cm|441.6,http://hl7.org/fhir/sid/icd-9-cm|441.7\nProcedure?code=http://hl7.org/fhir/sid/icd-9-cm|38.44,http://hl7.org/fhir/sid/icd-9-cm|39.71,http://hl7.org/fhir/sid/icd-9-cm|39.25",
+      "prompt_text": "Find all AAA patients \u2014 by diagnosis (including ruptured) or by repair procedure (open or endovascular). Run multiple queries and union the patient sets."
+     },
+     "2-expert": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 2233,
+      "actual_count": 0,
+      "elapsed_sec": 175.0,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|233985008,http://snomed.info/sct|75878002,http://snomed.info/sct|14336007",
+      "additional_query_urls": [
+       "Procedure?code=http://snomed.info/sct|79553004,http://snomed.info/sct|444588006"
+      ],
+      "raw_response": "Condition?code=http://snomed.info/sct|233985008,http://snomed.info/sct|75878002,http://snomed.info/sct|14336007\nProcedure?code=http://snomed.info/sct|79553004,http://snomed.info/sct|444588006",
+      "prompt_text": "I need to identify all patients with an abdominal aortic aneurysm using two complementary resources. First, search Condition resources for AAA diagnoses \u2014 using SNOMED CT, and cover both the intact and ruptured forms since the ruptured variant carries a distinct code and must not be dropped. Second, search Procedure resources for AAA repair, covering both open surgical repair (with graft) and endovascular repair, each coded separately in SNOMED CT. Take the union of patient IDs across both queries; a patient appearing in either Condition or Procedure should be included in the final cohort."
+     },
+     "3-naive": {
+      "precision": 0.8914,
+      "recall": 0.4559,
+      "f1": 0.6033,
+      "passed": false,
+      "expected_count": 2233,
+      "actual_count": 1142,
+      "elapsed_sec": 36.2,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|233985008,http://snomed.info/sct|75878002,http://snomed.info/sct|14336007,http://snomed.info/sct|444569004,http://snomed.info/sct|195268001,http://snomed.info/sct|314186008,http://snomed.info/sct|315295003,http://snomed.info/sct|425771001,http://snomed.info/sct|715364001,http://snomed.info/sct|314185007,http://snomed.info/sct|426270006,http://snomed.info/sct|314184006,http://snomed.info/sct|408666009,http://snomed.info/sct|735576008,http://snomed.info/sct|871536000,http://hl7.org/fhir/sid/icd-10-cm|I71.3,http://hl7.org/fhir/sid/icd-10-cm|I71.4,http://hl7.org/fhir/sid/icd-10-cm|I71.8,http://hl7.org/fhir/sid/icd-10-cm|I71.9,http://hl7.org/fhir/sid/icd-10-cm|I71.02",
+      "additional_query_urls": [],
+      "raw_response": "FINAL ANSWER:\n\nCondition?code=http://snomed.info/sct|233985008,http://snomed.info/sct|75878002,http://snomed.info/sct|14336007,http://snomed.info/sct|444569004,http://snomed.info/sct|195268001,http://snomed.info/sct|314186008,http://snomed.info/sct|315295003,http://snomed.info/sct|425771001,http://snomed.info/sct|715364001,http://snomed.info/sct|314185007,http://snomed.info/sct|426270006,http://snomed.info/sct|314184006,http://snomed.info/sct|408666009,http://snomed.info/sct|735576008,http://snomed.info/sct|871536000,http://hl7.org/fhir/sid/icd-10-cm|I71.3,http://hl7.org/fhir/sid/icd-10-cm|I71.4,http://hl7.org/fhir/sid/icd-10-cm|I71.8,http://hl7.org/fhir/sid/icd-10-cm|I71.9,http://hl7.org/fhir/sid/icd-10-cm|I71.02",
+      "prompt_text": "Find all my AAA patients."
+     },
+     "3-broad": {
+      "precision": 0.9794,
+      "recall": 1.0,
+      "f1": 0.9896,
+      "passed": true,
+      "expected_count": 2233,
+      "actual_count": 2280,
+      "elapsed_sec": 52.3,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|I71.4,http://hl7.org/fhir/sid/icd-10-cm|I71.3,http://hl7.org/fhir/sid/icd-9-cm|441.4,http://hl7.org/fhir/sid/icd-9-cm|441.3",
+      "additional_query_urls": [
+       "Procedure?code=http://hl7.org/fhir/sid/icd-9-cm|38.44,http://hl7.org/fhir/sid/icd-9-cm|39.71"
+      ],
+      "raw_response": "FINAL ANSWER:\n\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|I71.4,http://hl7.org/fhir/sid/icd-10-cm|I71.3,http://hl7.org/fhir/sid/icd-9-cm|441.4,http://hl7.org/fhir/sid/icd-9-cm|441.3\nProcedure?code=http://hl7.org/fhir/sid/icd-9-cm|38.44,http://hl7.org/fhir/sid/icd-9-cm|39.71",
+      "prompt_text": "Find all AAA patients \u2014 by diagnosis (including ruptured) or by repair procedure (open or endovascular). Run multiple queries and union the patient sets."
+     },
+     "3-expert": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 2233,
+      "actual_count": 0,
+      "elapsed_sec": 174.9,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|233985008,http://snomed.info/sct|75878002,http://snomed.info/sct|14336007",
+      "additional_query_urls": [
+       "Procedure?code=http://snomed.info/sct|174915006,http://snomed.info/sct|265452007"
+      ],
+      "raw_response": "Based on my investigation:\n- **Conditions (SNOMED CT)**: 233985008 (AAA), 75878002 (AAA without rupture), 14336007 (Ruptured AAA) \u2014 validated via VSAC value set 2.16.840.1.113762.1.4.1047.16\n- **Procedures (SNOMED CT)**: 174915006 (Open repair of AAA with graft), 265452007 (Endovascular repair of AAA)\n\nFINAL ANSWER:\n\nCondition?code=http://snomed.info/sct|233985008,http://snomed.info/sct|75878002,http://snomed.info/sct|14336007\nProcedure?code=http://snomed.info/sct|174915006,http://snomed.info/sct|265452007",
+      "prompt_text": "I need to identify all patients with an abdominal aortic aneurysm using two complementary resources. First, search Condition resources for AAA diagnoses \u2014 using SNOMED CT, and cover both the intact and ruptured forms since the ruptured variant carries a distinct code and must not be dropped. Second, search Procedure resources for AAA repair, covering both open surgical repair (with graft) and endovascular repair, each coded separately in SNOMED CT. Take the union of patient IDs across both queries; a patient appearing in either Condition or Procedure should be included in the final cohort."
+     }
+    },
     "copilot:claude-sonnet-4.6": {
      "1-naive": {
       "precision": 1.0,
@@ -1009,6 +1151,134 @@
       "primary_query_url": "Condition?code=http://snomed.info/sct|233985008,http://snomed.info/sct|432119003,http://hl7.org/fhir/sid/icd-10-cm|I71.4,http://hl7.org/fhir/sid/icd-10-cm|I71.3",
       "additional_query_urls": [],
       "raw_response": "Condition?code=http://snomed.info/sct|233985008,http://snomed.info/sct|432119003,http://hl7.org/fhir/sid/icd-10-cm|I71.4,http://hl7.org/fhir/sid/icd-10-cm|I71.3",
+      "prompt_text": "I need to identify patients with an abdominal aortic aneurysm from their documented diagnoses. Look at Condition resources (problem list or encounter diagnoses). The diagnosis may be coded in SNOMED CT or ICD-10-CM, so a robust search should cover both. Include both intact and ruptured abdominal aortic aneurysm \u2014 the ruptured form has a distinct code \u2014 and don't broaden to thoracic or unspecified aortic aneurysms, which are clinically distinct."
+     }
+    },
+    "copilot:claude-opus-4.7+mimic": {
+     "1-naive": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 2233,
+      "actual_count": 0,
+      "elapsed_sec": 16.7,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|233985008",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|233985008",
+      "prompt_text": "Find patients with AAA."
+     },
+     "1-broad": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 2233,
+      "actual_count": 0,
+      "elapsed_sec": 8.2,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|233985008,http://snomed.info/sct|84151002,http://snomed.info/sct|72923006,http://snomed.info/sct|17531000119105",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|233985008,http://snomed.info/sct|84151002,http://snomed.info/sct|72923006,http://snomed.info/sct|17531000119105",
+      "prompt_text": "Find patients diagnosed with abdominal aortic aneurysm, including both unruptured and ruptured cases."
+     },
+     "1-expert": {
+      "precision": 1.0,
+      "recall": 0.4541,
+      "f1": 0.6246,
+      "passed": false,
+      "expected_count": 2233,
+      "actual_count": 1014,
+      "elapsed_sec": 24.5,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|233985008,http://snomed.info/sct|40275004,http://hl7.org/fhir/sid/icd-10-cm|I71.3,http://hl7.org/fhir/sid/icd-10-cm|I71.4",
+      "additional_query_urls": [],
+      "raw_response": "```\nCondition?code=http://snomed.info/sct|233985008,http://snomed.info/sct|40275004,http://hl7.org/fhir/sid/icd-10-cm|I71.3,http://hl7.org/fhir/sid/icd-10-cm|I71.4\n```\n\nCodes covered:\n- SNOMED CT 233985008 \u2014 Abdominal aortic aneurysm (without rupture)\n- SNOMED CT 40275004 \u2014 Ruptured abdominal aortic aneurysm\n- ICD-10-CM I71.4 \u2014 Abdominal aortic aneurysm, without rupture\n- ICD-10-CM I71.3 \u2014 Abdominal aortic aneurysm, ruptured\n\nThis intentionally excludes thoracic (I71.1/I71.2), thoracoabdominal (I71.5/I71.6), and unspecified-site aortic aneurysm (I71.8/I71.9) codes.",
+      "prompt_text": "I need to identify patients with an abdominal aortic aneurysm from their documented diagnoses. Look at Condition resources (problem list or encounter diagnoses). The diagnosis may be coded in SNOMED CT or ICD-10-CM, so a robust search should cover both. Include both intact and ruptured abdominal aortic aneurysm \u2014 the ruptured form has a distinct code \u2014 and don't broaden to thoracic or unspecified aortic aneurysms, which are clinically distinct."
+     },
+     "2-naive": {
+      "precision": 0.9359,
+      "recall": 1.0,
+      "f1": 0.9669,
+      "passed": true,
+      "expected_count": 2233,
+      "actual_count": 2386,
+      "elapsed_sec": 32.6,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|I71.02,http://hl7.org/fhir/sid/icd-10-cm|I71.03,http://hl7.org/fhir/sid/icd-10-cm|I71.8,http://hl7.org/fhir/sid/icd-10-cm|I71.9,http://hl7.org/fhir/sid/icd-10-cm|I71.3,http://hl7.org/fhir/sid/icd-10-cm|I71.4,http://hl7.org/fhir/sid/icd-9-cm|441.3,http://hl7.org/fhir/sid/icd-9-cm|441.4",
+      "additional_query_urls": [],
+      "raw_response": "FINAL ANSWER:\n\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|I71.02,http://hl7.org/fhir/sid/icd-10-cm|I71.03,http://hl7.org/fhir/sid/icd-10-cm|I71.8,http://hl7.org/fhir/sid/icd-10-cm|I71.9,http://hl7.org/fhir/sid/icd-10-cm|I71.3,http://hl7.org/fhir/sid/icd-10-cm|I71.4,http://hl7.org/fhir/sid/icd-9-cm|441.3,http://hl7.org/fhir/sid/icd-9-cm|441.4",
+      "prompt_text": "Find patients with AAA."
+     },
+     "2-broad": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 2233,
+      "actual_count": 2233,
+      "elapsed_sec": 32.6,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|I71.3,http://hl7.org/fhir/sid/icd-10-cm|I71.4,http://hl7.org/fhir/sid/icd-9-cm|441.3,http://hl7.org/fhir/sid/icd-9-cm|441.4",
+      "additional_query_urls": [],
+      "raw_response": "FINAL ANSWER:\n\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|I71.3,http://hl7.org/fhir/sid/icd-10-cm|I71.4,http://hl7.org/fhir/sid/icd-9-cm|441.3,http://hl7.org/fhir/sid/icd-9-cm|441.4",
+      "prompt_text": "Find patients diagnosed with abdominal aortic aneurysm, including both unruptured and ruptured cases."
+     },
+     "2-expert": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 2233,
+      "actual_count": 2233,
+      "elapsed_sec": 31.3,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|I71.3,http://hl7.org/fhir/sid/icd-10-cm|I71.4,http://hl7.org/fhir/sid/icd-9-cm|441.3,http://hl7.org/fhir/sid/icd-9-cm|441.4",
+      "additional_query_urls": [],
+      "raw_response": "FINAL ANSWER:\n\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|I71.3,http://hl7.org/fhir/sid/icd-10-cm|I71.4,http://hl7.org/fhir/sid/icd-9-cm|441.3,http://hl7.org/fhir/sid/icd-9-cm|441.4",
+      "prompt_text": "I need to identify patients with an abdominal aortic aneurysm from their documented diagnoses. Look at Condition resources (problem list or encounter diagnoses). The diagnosis may be coded in SNOMED CT or ICD-10-CM, so a robust search should cover both. Include both intact and ruptured abdominal aortic aneurysm \u2014 the ruptured form has a distinct code \u2014 and don't broaden to thoracic or unspecified aortic aneurysms, which are clinically distinct."
+     },
+     "3-naive": {
+      "precision": 1.0,
+      "recall": 0.4541,
+      "f1": 0.6246,
+      "passed": false,
+      "expected_count": 2233,
+      "actual_count": 1014,
+      "elapsed_sec": 23.6,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|233985008,http://snomed.info/sct|14336007,http://snomed.info/sct|195268001,http://snomed.info/sct|75878002,http://snomed.info/sct|444569004,http://snomed.info/sct|425771001,http://snomed.info/sct|715364001,http://hl7.org/fhir/sid/icd-10-cm|I71.3,http://hl7.org/fhir/sid/icd-10-cm|I71.4",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|233985008,http://snomed.info/sct|14336007,http://snomed.info/sct|195268001,http://snomed.info/sct|75878002,http://snomed.info/sct|444569004,http://snomed.info/sct|425771001,http://snomed.info/sct|715364001,http://hl7.org/fhir/sid/icd-10-cm|I71.3,http://hl7.org/fhir/sid/icd-10-cm|I71.4",
+      "prompt_text": "Find patients with AAA."
+     },
+     "3-broad": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 2233,
+      "actual_count": 2233,
+      "elapsed_sec": 31.0,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|I71.3,http://hl7.org/fhir/sid/icd-10-cm|I71.4,http://hl7.org/fhir/sid/icd-9-cm|441.3,http://hl7.org/fhir/sid/icd-9-cm|441.4",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|I71.3,http://hl7.org/fhir/sid/icd-10-cm|I71.4,http://hl7.org/fhir/sid/icd-9-cm|441.3,http://hl7.org/fhir/sid/icd-9-cm|441.4",
+      "prompt_text": "Find patients diagnosed with abdominal aortic aneurysm, including both unruptured and ruptured cases."
+     },
+     "3-expert": {
+      "precision": 1.0,
+      "recall": 0.4541,
+      "f1": 0.6246,
+      "passed": false,
+      "expected_count": 2233,
+      "actual_count": 1014,
+      "elapsed_sec": 31.1,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|233985008,http://snomed.info/sct|75878002,http://snomed.info/sct|14336007,http://hl7.org/fhir/sid/icd-10-cm|I71.3,http://hl7.org/fhir/sid/icd-10-cm|I71.4",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|233985008,http://snomed.info/sct|75878002,http://snomed.info/sct|14336007,http://hl7.org/fhir/sid/icd-10-cm|I71.3,http://hl7.org/fhir/sid/icd-10-cm|I71.4",
       "prompt_text": "I need to identify patients with an abdominal aortic aneurysm from their documented diagnoses. Look at Condition resources (problem list or encounter diagnoses). The diagnosis may be coded in SNOMED CT or ICD-10-CM, so a robust search should cover both. Include both intact and ruptured abdominal aortic aneurysm \u2014 the ruptured form has a distinct code \u2014 and don't broaden to thoracic or unspecified aortic aneurysms, which are clinically distinct."
      }
     },

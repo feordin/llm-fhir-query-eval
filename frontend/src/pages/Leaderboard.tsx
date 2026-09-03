@@ -4,7 +4,7 @@ import {
 } from 'recharts'
 import { fetchLeaderboard } from '../data/reportClient'
 import {
-  TIERS, VARIANTS, shortModel, isCanonicalModel, isSkillSpec,
+  TIERS, VARIANTS, shortModel, isCanonicalModel, isSkillSpec, isMimicSpec,
   type Leaderboard as LB, type LeaderboardRow,
 } from '../data/reportTypes'
 
@@ -165,6 +165,53 @@ function SkillBaseline({ data }: { data: LB }) {
   )
 }
 
+// ---- Real data: full MIMIC-IV vs synthetic (Opus) --------------------------
+function MimicPanel({ data }: { data: LB }) {
+  const mimic = getRow(data, m => isMimicSpec(m) && m.includes('opus'))
+  const synth = getRow(data, m => m === 'copilot:claude-opus-4.7')
+  if (!mimic) return null
+  const rows = [
+    { label: 'Synthetic (388 test cases, all variants)', r: synth },
+    { label: 'MIMIC-IV real data (299,712 patients · dx+comprehensive+meds)', r: mimic },
+  ].filter(x => x.r)
+  return (
+    <div style={{ marginTop: 32 }}>
+      <h2>Real data: full MIMIC-IV
+        <span className="badge badge-multi"> Opus · 105 phenotypes · patient-set F1 vs data-derived gold</span></h2>
+      <p className="subtitle">The same benchmark run against <strong>real de-identified EHR data</strong> (MIMIC-IV-on-FHIR,
+        299,712 patients). Real data carries <strong>no SNOMED</strong> and fully-granular ICD codes, so closed-book
+        collapses (87% of T1 cells return zero patients) while agentic tools recover a large fraction (+0.46).
+        Two scale findings: recall is capped by <strong>code-tail coverage</strong> (R≈0.70 for 1k–10k-patient
+        cohorts, ≈0.28 above 10k), and the <strong>expert prompt inverts</strong> (its code hints assume vocabularies
+        the data doesn't carry). On the medication path — NDC behind <code>medicationReference</code>, needing a
+        chained ingredient-level RxNorm query — closed-book scores <strong>exactly zero</strong> while the agent
+        recovers F1≈0.43. Bases differ — synthetic is the 388-test-case mean; MIMIC is dx+comprehensive+meds
+        cells vs offline-recomputed gold — so compare the <em>shape</em>, not decimals.</p>
+      <div className="table-container">
+        <table className="score-table">
+          <thead><tr><th className="col-name">Data</th>
+            {TIERS.map(t => <th key={t} className="col-score">{TIER_LABEL[t]}</th>)}
+            <th className="col-score">T2 by prompt (n/b/e)</th></tr></thead>
+          <tbody>
+            {rows.map(({ label, r }) => (
+              <tr key={label}>
+                <td className="cell-name">{label}</td>
+                {TIERS.map(t => (
+                  <td key={t} className="score-cell" style={{ background: heat(r!.tiers[t]?.f1) }}>
+                    {fmt(r!.tiers[t]?.f1)}</td>
+                ))}
+                <td className="score-cell">
+                  {VARIANTS.map(v => fmt(r!.tiers['2']?.by_prompt?.[v])).join(' / ')}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  )
+}
+
 export default function Leaderboard() {
   const { data, isLoading, error } = useQuery({ queryKey: ['leaderboard'], queryFn: fetchLeaderboard })
   if (isLoading) return <div className="loading">Loading leaderboard…</div>
@@ -207,6 +254,8 @@ export default function Leaderboard() {
       </div>
 
       <BestAchievable rows={full} />
+
+      <MimicPanel data={data} />
 
       <SkillBaseline data={data} />
 

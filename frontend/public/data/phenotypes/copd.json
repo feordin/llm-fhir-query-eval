@@ -231,6 +231,149 @@
       "prompt_text": "I need to identify all COPD patients using a two-resource union. First, search Condition resources for COPD and pulmonary emphysema diagnoses in SNOMED CT \u2014 these are the two principal diagnostic variants for this phenotype. Second, search MedicationRequest resources for inhaled bronchodilators used in COPD management, specifically the short-acting agent albuterol and the long-acting agent salmeterol, both coded in RxNorm. Note that both bronchodilators are heavily cross-indicated with asthma, so the medication path will include asthma patients without a COPD diagnosis. Union all patient IDs from both queries."
      }
     },
+    "copilot:claude-opus-4.7+mimic": {
+     "1-naive": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 8328,
+      "actual_count": 0,
+      "elapsed_sec": 7.5,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|13645005",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|13645005",
+      "prompt_text": "Find all COPD patients."
+     },
+     "1-broad": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 8328,
+      "actual_count": 0,
+      "elapsed_sec": 8.7,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|13645005,http://snomed.info/sct|87433001",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|435,http://www.nlm.nih.gov/research/umls/rxnorm|36117"
+      ],
+      "raw_response": "Condition?code=http://snomed.info/sct|13645005,http://snomed.info/sct|87433001\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|435,http://www.nlm.nih.gov/research/umls/rxnorm|36117",
+      "prompt_text": "Find all COPD patients \u2014 by diagnosis (COPD or emphysema) or by inhaled bronchodilator prescriptions (albuterol, salmeterol). Run multiple queries and union the patient sets."
+     },
+     "1-expert": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 8328,
+      "actual_count": 0,
+      "elapsed_sec": 8.4,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|13645005,http://snomed.info/sct|87433001",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|435,http://www.nlm.nih.gov/research/umls/rxnorm|36117"
+      ],
+      "raw_response": "Condition?code=http://snomed.info/sct|13645005,http://snomed.info/sct|87433001\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|435,http://www.nlm.nih.gov/research/umls/rxnorm|36117",
+      "prompt_text": "I need to identify all COPD patients using a two-resource union. First, search Condition resources for COPD and pulmonary emphysema diagnoses in SNOMED CT \u2014 these are the two principal diagnostic variants for this phenotype. Second, search MedicationRequest resources for inhaled bronchodilators used in COPD management, specifically the short-acting agent albuterol and the long-acting agent salmeterol, both coded in RxNorm. Note that both bronchodilators are heavily cross-indicated with asthma, so the medication path will include asthma patients without a COPD diagnosis. Union all patient IDs from both queries."
+     },
+     "2-naive": {
+      "precision": 0.6825,
+      "recall": 0.5445,
+      "f1": 0.6058,
+      "passed": false,
+      "expected_count": 8328,
+      "actual_count": 6645,
+      "elapsed_sec": 38.7,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|J44.0,http://hl7.org/fhir/sid/icd-10-cm|J44.1,http://hl7.org/fhir/sid/icd-10-cm|J44.9",
+      "additional_query_urls": [
+       "Condition?code=http://hl7.org/fhir/sid/icd-9-cm|491.20,http://hl7.org/fhir/sid/icd-9-cm|491.21,http://hl7.org/fhir/sid/icd-9-cm|491.22"
+      ],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|J44.0,http://hl7.org/fhir/sid/icd-10-cm|J44.1,http://hl7.org/fhir/sid/icd-10-cm|J44.9\nCondition?code=http://hl7.org/fhir/sid/icd-9-cm|491.20,http://hl7.org/fhir/sid/icd-9-cm|491.21,http://hl7.org/fhir/sid/icd-9-cm|491.22",
+      "prompt_text": "Find all COPD patients."
+     },
+     "2-broad": {
+      "precision": 0.5663,
+      "recall": 0.5909,
+      "f1": 0.5783,
+      "passed": false,
+      "expected_count": 8328,
+      "actual_count": 8690,
+      "elapsed_sec": 71.3,
+      "queries_generated": 3,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|J44.0,http://hl7.org/fhir/sid/icd-10-cm|J44.1,http://hl7.org/fhir/sid/icd-10-cm|J44.9,http://hl7.org/fhir/sid/icd-10-cm|J43.0,http://hl7.org/fhir/sid/icd-10-cm|J43.1,http://hl7.org/fhir/sid/icd-10-cm|J43.2,http://hl7.org/fhir/sid/icd-10-cm|J43.8,http://hl7.org/fhir/sid/icd-10-cm|J43.9",
+      "additional_query_urls": [
+       "Condition?code=http://hl7.org/fhir/sid/icd-9-cm|496,http://hl7.org/fhir/sid/icd-9-cm|492.0,http://hl7.org/fhir/sid/icd-9-cm|492.8,http://hl7.org/fhir/sid/icd-9-cm|491.20,http://hl7.org/fhir/sid/icd-9-cm|491.21,http://hl7.org/fhir/sid/icd-9-cm|491.22",
+       "MedicationRequest?code=http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Albuterol"
+      ],
+      "raw_response": "FINAL ANSWER:\n\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|J44.0,http://hl7.org/fhir/sid/icd-10-cm|J44.1,http://hl7.org/fhir/sid/icd-10-cm|J44.9,http://hl7.org/fhir/sid/icd-10-cm|J43.0,http://hl7.org/fhir/sid/icd-10-cm|J43.1,http://hl7.org/fhir/sid/icd-10-cm|J43.2,http://hl7.org/fhir/sid/icd-10-cm|J43.8,http://hl7.org/fhir/sid/icd-10-cm|J43.9\nCondition?code=http://hl7.org/fhir/sid/icd-9-cm|496,http://hl7.org/fhir/sid/icd-9-cm|492.0,http://hl7.org/fhir/sid/icd-9-cm|492.8,http://hl7.org/fhir/sid/icd-9-cm|491.20,http://hl7.org/fhir/sid/icd-9-cm|491.21,http://hl7.org/fhir/sid/icd-9-cm|491.22\nMedicationRequest?code=http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Albuterol 0.083% Neb Soln,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Albuterol Inhaler,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Albuterol-Ipratropium,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Ipratropium-Albuterol Neb,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Salmeterol Xinafoate Diskus,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Fluticasone-Salmeterol Diskus (100/50),http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Fluticasone-Salmeterol Diskus (250/50),http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Fluticasone-Salmeterol Diskus (500/50)",
+      "prompt_text": "Find all COPD patients \u2014 by diagnosis (COPD or emphysema) or by inhaled bronchodilator prescriptions (albuterol, salmeterol). Run multiple queries and union the patient sets."
+     },
+     "2-expert": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 8328,
+      "actual_count": 0,
+      "elapsed_sec": 59.8,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|13645005,http://snomed.info/sct|87433001",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|435,http://www.nlm.nih.gov/research/umls/rxnorm|36117"
+      ],
+      "raw_response": "Condition?code=http://snomed.info/sct|13645005,http://snomed.info/sct|87433001\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|435,http://www.nlm.nih.gov/research/umls/rxnorm|36117",
+      "prompt_text": "I need to identify all COPD patients using a two-resource union. First, search Condition resources for COPD and pulmonary emphysema diagnoses in SNOMED CT \u2014 these are the two principal diagnostic variants for this phenotype. Second, search MedicationRequest resources for inhaled bronchodilators used in COPD management, specifically the short-acting agent albuterol and the long-acting agent salmeterol, both coded in RxNorm. Note that both bronchodilators are heavily cross-indicated with asthma, so the medication path will include asthma patients without a COPD diagnosis. Union all patient IDs from both queries."
+     },
+     "3-naive": {
+      "precision": 0.7372,
+      "recall": 0.4227,
+      "f1": 0.5373,
+      "passed": false,
+      "expected_count": 8328,
+      "actual_count": 4775,
+      "elapsed_sec": 37.7,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|J44.0,http://hl7.org/fhir/sid/icd-10-cm|J44.1,http://hl7.org/fhir/sid/icd-10-cm|J44.9,http://hl7.org/fhir/sid/icd-9-cm|491.20,http://hl7.org/fhir/sid/icd-9-cm|491.21,http://hl7.org/fhir/sid/icd-9-cm|491.22",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|J44.0,http://hl7.org/fhir/sid/icd-10-cm|J44.1,http://hl7.org/fhir/sid/icd-10-cm|J44.9,http://hl7.org/fhir/sid/icd-9-cm|491.20,http://hl7.org/fhir/sid/icd-9-cm|491.21,http://hl7.org/fhir/sid/icd-9-cm|491.22",
+      "prompt_text": "Find all COPD patients."
+     },
+     "3-broad": {
+      "precision": 0.8922,
+      "recall": 0.5097,
+      "f1": 0.6488,
+      "passed": false,
+      "expected_count": 8328,
+      "actual_count": 4758,
+      "elapsed_sec": 78.9,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|J44.0,http://hl7.org/fhir/sid/icd-10-cm|J44.1,http://hl7.org/fhir/sid/icd-10-cm|J44.9,http://hl7.org/fhir/sid/icd-10-cm|J43.0,http://hl7.org/fhir/sid/icd-10-cm|J43.1,http://hl7.org/fhir/sid/icd-10-cm|J43.2,http://hl7.org/fhir/sid/icd-10-cm|J43.8,http://hl7.org/fhir/sid/icd-10-cm|J43.9",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Albuterol,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Albuterol"
+      ],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|J44.0,http://hl7.org/fhir/sid/icd-10-cm|J44.1,http://hl7.org/fhir/sid/icd-10-cm|J44.9,http://hl7.org/fhir/sid/icd-10-cm|J43.0,http://hl7.org/fhir/sid/icd-10-cm|J43.1,http://hl7.org/fhir/sid/icd-10-cm|J43.2,http://hl7.org/fhir/sid/icd-10-cm|J43.8,http://hl7.org/fhir/sid/icd-10-cm|J43.9\nMedicationRequest?code=http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Albuterol,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Albuterol Inhaler,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Albuterol 0.083% Neb Soln,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Albuterol Neb Soln,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Albuterol MDI,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Ipratropium-Albuterol Neb,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Salmeterol Xinafoate Diskus,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Fluticasone-Salmeterol Diskus (100/50),http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Fluticasone-Salmeterol Diskus (250/50),http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Fluticasone-Salmeterol Diskus (500/50)",
+      "prompt_text": "Find all COPD patients \u2014 by diagnosis (COPD or emphysema) or by inhaled bronchodilator prescriptions (albuterol, salmeterol). Run multiple queries and union the patient sets."
+     },
+     "3-expert": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 8328,
+      "actual_count": 0,
+      "elapsed_sec": 29.2,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|13645005,http://snomed.info/sct|87433001",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|435,http://www.nlm.nih.gov/research/umls/rxnorm|36117"
+      ],
+      "raw_response": "Condition?code=http://snomed.info/sct|13645005,http://snomed.info/sct|87433001\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|435,http://www.nlm.nih.gov/research/umls/rxnorm|36117",
+      "prompt_text": "I need to identify all COPD patients using a two-resource union. First, search Condition resources for COPD and pulmonary emphysema diagnoses in SNOMED CT \u2014 these are the two principal diagnostic variants for this phenotype. Second, search MedicationRequest resources for inhaled bronchodilators used in COPD management, specifically the short-acting agent albuterol and the long-acting agent salmeterol, both coded in RxNorm. Note that both bronchodilators are heavily cross-indicated with asthma, so the medication path will include asthma patients without a COPD diagnosis. Union all patient IDs from both queries."
+     }
+    },
     "copilot:claude-sonnet-4.6": {
      "1-naive": {
       "precision": 1.0,
@@ -981,6 +1124,138 @@
       "prompt_text": "I need to find patients with a documented chronic obstructive pulmonary disease diagnosis by searching Condition resources. The phenotype covers two clinically related SNOMED CT concepts that should both be included: chronic obstructive pulmonary disease as the primary umbrella term, and pulmonary emphysema as a distinct structural subtype that is commonly co-coded. Do not broaden to asthma or other obstructive lung disease codes, which are clinically and codewise distinct from COPD and emphysema."
      }
     },
+    "copilot:claude-opus-4.7+mimic": {
+     "1-naive": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 8328,
+      "actual_count": 0,
+      "elapsed_sec": 7.5,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|13645005",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|13645005",
+      "prompt_text": "Find patients with COPD."
+     },
+     "1-broad": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 8328,
+      "actual_count": 0,
+      "elapsed_sec": 7.8,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|13645005,http://snomed.info/sct|87433001",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|13645005,http://snomed.info/sct|87433001",
+      "prompt_text": "Find patients diagnosed with chronic obstructive pulmonary disease (COPD) \u2014 including emphysema as a major COPD subtype."
+     },
+     "1-expert": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 8328,
+      "actual_count": 0,
+      "elapsed_sec": 7.6,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|13645005,http://snomed.info/sct|87433001",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|13645005,http://snomed.info/sct|87433001",
+      "prompt_text": "I need to find patients with a documented chronic obstructive pulmonary disease diagnosis by searching Condition resources. The phenotype covers two clinically related SNOMED CT concepts that should both be included: chronic obstructive pulmonary disease as the primary umbrella term, and pulmonary emphysema as a distinct structural subtype that is commonly co-coded. Do not broaden to asthma or other obstructive lung disease codes, which are clinically and codewise distinct from COPD and emphysema."
+     },
+     "2-naive": {
+      "precision": 0.7372,
+      "recall": 0.4227,
+      "f1": 0.5373,
+      "passed": false,
+      "expected_count": 8328,
+      "actual_count": 4775,
+      "elapsed_sec": 35.5,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|J44.0,http://hl7.org/fhir/sid/icd-10-cm|J44.1,http://hl7.org/fhir/sid/icd-10-cm|J44.9,http://hl7.org/fhir/sid/icd-9-cm|491.20,http://hl7.org/fhir/sid/icd-9-cm|491.21,http://hl7.org/fhir/sid/icd-9-cm|491.22",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|J44.0,http://hl7.org/fhir/sid/icd-10-cm|J44.1,http://hl7.org/fhir/sid/icd-10-cm|J44.9,http://hl7.org/fhir/sid/icd-9-cm|491.20,http://hl7.org/fhir/sid/icd-9-cm|491.21,http://hl7.org/fhir/sid/icd-9-cm|491.22",
+      "prompt_text": "Find patients with COPD."
+     },
+     "2-broad": {
+      "precision": 0.5668,
+      "recall": 0.5908,
+      "f1": 0.5785,
+      "passed": false,
+      "expected_count": 8328,
+      "actual_count": 8681,
+      "elapsed_sec": 50.3,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|J44.0,http://hl7.org/fhir/sid/icd-10-cm|J44.1,http://hl7.org/fhir/sid/icd-10-cm|J44.9,http://hl7.org/fhir/sid/icd-10-cm|J43.0,http://hl7.org/fhir/sid/icd-10-cm|J43.1,http://hl7.org/fhir/sid/icd-10-cm|J43.2,http://hl7.org/fhir/sid/icd-10-cm|J43.8,http://hl7.org/fhir/sid/icd-10-cm|J43.9",
+      "additional_query_urls": [
+       "Condition?code=http://hl7.org/fhir/sid/icd-9-cm|496,http://hl7.org/fhir/sid/icd-9-cm|491.20,http://hl7.org/fhir/sid/icd-9-cm|491.21,http://hl7.org/fhir/sid/icd-9-cm|491.22,http://hl7.org/fhir/sid/icd-9-cm|492.0,http://hl7.org/fhir/sid/icd-9-cm|492.8"
+      ],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|J44.0,http://hl7.org/fhir/sid/icd-10-cm|J44.1,http://hl7.org/fhir/sid/icd-10-cm|J44.9,http://hl7.org/fhir/sid/icd-10-cm|J43.0,http://hl7.org/fhir/sid/icd-10-cm|J43.1,http://hl7.org/fhir/sid/icd-10-cm|J43.2,http://hl7.org/fhir/sid/icd-10-cm|J43.8,http://hl7.org/fhir/sid/icd-10-cm|J43.9\nCondition?code=http://hl7.org/fhir/sid/icd-9-cm|496,http://hl7.org/fhir/sid/icd-9-cm|491.20,http://hl7.org/fhir/sid/icd-9-cm|491.21,http://hl7.org/fhir/sid/icd-9-cm|491.22,http://hl7.org/fhir/sid/icd-9-cm|492.0,http://hl7.org/fhir/sid/icd-9-cm|492.8",
+      "prompt_text": "Find patients diagnosed with chronic obstructive pulmonary disease (COPD) \u2014 including emphysema as a major COPD subtype."
+     },
+     "2-expert": {
+      "precision": 0.5668,
+      "recall": 0.5908,
+      "f1": 0.5785,
+      "passed": false,
+      "expected_count": 8328,
+      "actual_count": 8681,
+      "elapsed_sec": 48.9,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|J44.0,http://hl7.org/fhir/sid/icd-10-cm|J44.1,http://hl7.org/fhir/sid/icd-10-cm|J44.9,http://hl7.org/fhir/sid/icd-10-cm|J43.0,http://hl7.org/fhir/sid/icd-10-cm|J43.1,http://hl7.org/fhir/sid/icd-10-cm|J43.2,http://hl7.org/fhir/sid/icd-10-cm|J43.8,http://hl7.org/fhir/sid/icd-10-cm|J43.9",
+      "additional_query_urls": [
+       "Condition?code=http://hl7.org/fhir/sid/icd-9-cm|496,http://hl7.org/fhir/sid/icd-9-cm|491.20,http://hl7.org/fhir/sid/icd-9-cm|491.21,http://hl7.org/fhir/sid/icd-9-cm|491.22,http://hl7.org/fhir/sid/icd-9-cm|492.0,http://hl7.org/fhir/sid/icd-9-cm|492.8"
+      ],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|J44.0,http://hl7.org/fhir/sid/icd-10-cm|J44.1,http://hl7.org/fhir/sid/icd-10-cm|J44.9,http://hl7.org/fhir/sid/icd-10-cm|J43.0,http://hl7.org/fhir/sid/icd-10-cm|J43.1,http://hl7.org/fhir/sid/icd-10-cm|J43.2,http://hl7.org/fhir/sid/icd-10-cm|J43.8,http://hl7.org/fhir/sid/icd-10-cm|J43.9\nCondition?code=http://hl7.org/fhir/sid/icd-9-cm|496,http://hl7.org/fhir/sid/icd-9-cm|491.20,http://hl7.org/fhir/sid/icd-9-cm|491.21,http://hl7.org/fhir/sid/icd-9-cm|491.22,http://hl7.org/fhir/sid/icd-9-cm|492.0,http://hl7.org/fhir/sid/icd-9-cm|492.8",
+      "prompt_text": "I need to find patients with a documented chronic obstructive pulmonary disease diagnosis by searching Condition resources. The phenotype covers two clinically related SNOMED CT concepts that should both be included: chronic obstructive pulmonary disease as the primary umbrella term, and pulmonary emphysema as a distinct structural subtype that is commonly co-coded. Do not broaden to asthma or other obstructive lung disease codes, which are clinically and codewise distinct from COPD and emphysema."
+     },
+     "3-naive": {
+      "precision": 0.8853,
+      "recall": 0.5062,
+      "f1": 0.6442,
+      "passed": false,
+      "expected_count": 8328,
+      "actual_count": 4762,
+      "elapsed_sec": 33.1,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|J44.0,http://hl7.org/fhir/sid/icd-10-cm|J44.1,http://hl7.org/fhir/sid/icd-10-cm|J44.9",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|J44.0,http://hl7.org/fhir/sid/icd-10-cm|J44.1,http://hl7.org/fhir/sid/icd-10-cm|J44.9",
+      "prompt_text": "Find patients with COPD."
+     },
+     "3-broad": {
+      "precision": 0.5324,
+      "recall": 0.2837,
+      "f1": 0.3702,
+      "passed": false,
+      "expected_count": 8328,
+      "actual_count": 4438,
+      "elapsed_sec": 37.5,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|J44.0,http://hl7.org/fhir/sid/icd-10-cm|J44.1,http://hl7.org/fhir/sid/icd-10-cm|J44.9,http://hl7.org/fhir/sid/icd-10-cm|J43.0,http://hl7.org/fhir/sid/icd-10-cm|J43.1,http://hl7.org/fhir/sid/icd-10-cm|J43.2,http://hl7.org/fhir/sid/icd-10-cm|J43.8,http://hl7.org/fhir/sid/icd-10-cm|J43.9,http://hl7.org/fhir/sid/icd-9-cm|496,http://hl7.org/fhir/sid/icd-9-cm|491.20,http://hl7.org/fhir/sid/icd-9-cm|491.21,http://hl7.org/fhir/sid/icd-9-cm|491.22,http://hl7.org/fhir/sid/icd-9-cm|492.0,http://hl7.org/fhir/sid/icd-9-cm|492.8",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|J44.0,http://hl7.org/fhir/sid/icd-10-cm|J44.1,http://hl7.org/fhir/sid/icd-10-cm|J44.9,http://hl7.org/fhir/sid/icd-10-cm|J43.0,http://hl7.org/fhir/sid/icd-10-cm|J43.1,http://hl7.org/fhir/sid/icd-10-cm|J43.2,http://hl7.org/fhir/sid/icd-10-cm|J43.8,http://hl7.org/fhir/sid/icd-10-cm|J43.9,http://hl7.org/fhir/sid/icd-9-cm|496,http://hl7.org/fhir/sid/icd-9-cm|491.20,http://hl7.org/fhir/sid/icd-9-cm|491.21,http://hl7.org/fhir/sid/icd-9-cm|491.22,http://hl7.org/fhir/sid/icd-9-cm|492.0,http://hl7.org/fhir/sid/icd-9-cm|492.8",
+      "prompt_text": "Find patients diagnosed with chronic obstructive pulmonary disease (COPD) \u2014 including emphysema as a major COPD subtype."
+     },
+     "3-expert": {
+      "precision": 0.5667,
+      "recall": 0.3157,
+      "f1": 0.4055,
+      "passed": false,
+      "expected_count": 8328,
+      "actual_count": 4639,
+      "elapsed_sec": 37.6,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|J44.0,http://hl7.org/fhir/sid/icd-10-cm|J44.1,http://hl7.org/fhir/sid/icd-10-cm|J44.9,http://hl7.org/fhir/sid/icd-10-cm|J43.0,http://hl7.org/fhir/sid/icd-10-cm|J43.1,http://hl7.org/fhir/sid/icd-10-cm|J43.2,http://hl7.org/fhir/sid/icd-10-cm|J43.8,http://hl7.org/fhir/sid/icd-10-cm|J43.9,http://hl7.org/fhir/sid/icd-9-cm|496,http://hl7.org/fhir/sid/icd-9-cm|492.0,http://hl7.org/fhir/sid/icd-9-cm|492.8",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|J44.0,http://hl7.org/fhir/sid/icd-10-cm|J44.1,http://hl7.org/fhir/sid/icd-10-cm|J44.9,http://hl7.org/fhir/sid/icd-10-cm|J43.0,http://hl7.org/fhir/sid/icd-10-cm|J43.1,http://hl7.org/fhir/sid/icd-10-cm|J43.2,http://hl7.org/fhir/sid/icd-10-cm|J43.8,http://hl7.org/fhir/sid/icd-10-cm|J43.9,http://hl7.org/fhir/sid/icd-9-cm|496,http://hl7.org/fhir/sid/icd-9-cm|492.0,http://hl7.org/fhir/sid/icd-9-cm|492.8",
+      "prompt_text": "I need to find patients with a documented chronic obstructive pulmonary disease diagnosis by searching Condition resources. The phenotype covers two clinically related SNOMED CT concepts that should both be included: chronic obstructive pulmonary disease as the primary umbrella term, and pulmonary emphysema as a distinct structural subtype that is commonly co-coded. Do not broaden to asthma or other obstructive lung disease codes, which are clinically and codewise distinct from COPD and emphysema."
+     }
+    },
     "copilot:claude-sonnet-4.6": {
      "1-naive": {
       "precision": 1.0,
@@ -1710,6 +1985,156 @@
        "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|36117"
       ],
       "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|435\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|36117",
+      "prompt_text": "Identify patients on inhaled bronchodilator therapy for COPD by querying MedicationRequest resources. The two agents to target are albuterol, a short-acting beta-agonist used for rescue and maintenance, and salmeterol, a long-acting beta-agonist used for daily maintenance \u2014 both coded in RxNorm. This medication path has significant cross-indication with asthma, so a bronchodilator-only cohort will capture asthma patients as well as COPD patients; treating this as a medication-only test means some false positives are expected."
+     }
+    },
+    "copilot:claude-opus-4.7+mimic": {
+     "1-naive": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 40638,
+      "actual_count": 0,
+      "elapsed_sec": 11.2,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|30125,http://www.nlm.nih.gov/research/umls/rxnorm|7213,http://www.nlm.nih.gov/research/umls/rxnorm|36117,http://www.nlm.nih.gov/research/umls/rxnorm|221124,http://www.nlm.nih.gov/research/umls/rxnorm|19831,http://www.nlm.nih.gov/research/umls/rxnorm|41126,http://www.nlm.nih.gov/research/umls/rxnorm|435&status=active&_include=MedicationRequest:patient",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|30125,http://www.nlm.nih.gov/research/umls/rxnorm|7213,http://www.nlm.nih.gov/research/umls/rxnorm|36117,http://www.nlm.nih.gov/research/umls/rxnorm|221124,http://www.nlm.nih.gov/research/umls/rxnorm|19831,http://www.nlm.nih.gov/research/umls/rxnorm|41126,http://www.nlm.nih.gov/research/umls/rxnorm|435&status=active&_include=MedicationRequest:patient",
+      "prompt_text": "Find patients on COPD medications."
+     },
+     "1-broad": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 40638,
+      "actual_count": 0,
+      "elapsed_sec": 8.6,
+      "queries_generated": 2,
+      "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|435",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|36117"
+      ],
+      "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|435\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|36117",
+      "prompt_text": "Find patients prescribed inhaled bronchodilators commonly used for COPD \u2014 short-acting beta agonists (albuterol) and long-acting beta agonists (salmeterol)."
+     },
+     "1-expert": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 40638,
+      "actual_count": 0,
+      "elapsed_sec": 8.5,
+      "queries_generated": 2,
+      "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|435",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|36117"
+      ],
+      "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|435\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|36117",
+      "prompt_text": "Identify patients on inhaled bronchodilator therapy for COPD by querying MedicationRequest resources. The two agents to target are albuterol, a short-acting beta-agonist used for rescue and maintenance, and salmeterol, a long-acting beta-agonist used for daily maintenance \u2014 both coded in RxNorm. This medication path has significant cross-indication with asthma, so a bronchodilator-only cohort will capture asthma patients as well as COPD patients; treating this as a medication-only test means some false positives are expected."
+     },
+     "2-naive": {
+      "precision": 0.7677,
+      "recall": 0.0591,
+      "f1": 0.1098,
+      "passed": false,
+      "expected_count": 40638,
+      "actual_count": 3129,
+      "elapsed_sec": 208.7,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|69120,7213,36117,25255,4955,884173,1546438,1201621,1114196,1546055,352070",
+      "additional_query_urls": [],
+      "raw_response": "FINAL ANSWER:\n\nMedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|69120,7213,36117,25255,4955,884173,1546438,1201621,1114196,1546055,352070",
+      "prompt_text": "Find patients on COPD medications."
+     },
+     "2-broad": {
+      "precision": 1.0,
+      "recall": 0.0657,
+      "f1": 0.1233,
+      "passed": false,
+      "expected_count": 40638,
+      "actual_count": 2669,
+      "elapsed_sec": 103.2,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|435,http://www.nlm.nih.gov/research/umls/rxnorm|36117",
+      "additional_query_urls": [],
+      "raw_response": "FINAL ANSWER:\n\nMedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|435,http://www.nlm.nih.gov/research/umls/rxnorm|36117",
+      "prompt_text": "Find patients prescribed inhaled bronchodilators commonly used for COPD \u2014 short-acting beta agonists (albuterol) and long-acting beta agonists (salmeterol)."
+     },
+     "2-expert": {
+      "precision": 1.0,
+      "recall": 0.1641,
+      "f1": 0.2819,
+      "passed": false,
+      "expected_count": 40638,
+      "actual_count": 6669,
+      "elapsed_sec": 283.0,
+      "queries_generated": 2,
+      "primary_query_url": "MedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|435",
+      "additional_query_urls": [
+       "MedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|36117"
+      ],
+      "raw_response": "MedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|435\nMedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|36117",
+      "prompt_text": "Identify patients on inhaled bronchodilator therapy for COPD by querying MedicationRequest resources. The two agents to target are albuterol, a short-acting beta-agonist used for rescue and maintenance, and salmeterol, a long-acting beta-agonist used for daily maintenance \u2014 both coded in RxNorm. This medication path has significant cross-indication with asthma, so a bronchodilator-only cohort will capture asthma patients as well as COPD patients; treating this as a medication-only test means some false positives are expected."
+     },
+     "3-naive": {
+      "precision": 0.8741,
+      "recall": 0.261,
+      "f1": 0.402,
+      "passed": false,
+      "expected_count": 40638,
+      "actual_count": 12133,
+      "elapsed_sec": 498.0,
+      "queries_generated": 12,
+      "primary_query_url": "MedicationRequest?medication.code:text=tiotropium",
+      "additional_query_urls": [
+       "MedicationRequest?medication.code:text=ipratropium",
+       "MedicationRequest?medication.code:text=albuterol",
+       "MedicationRequest?medication.code:text=salmeterol",
+       "MedicationRequest?medication.code:text=formoterol",
+       "MedicationRequest?medication.code:text=fluticasone",
+       "MedicationRequest?medication.code:text=budesonide",
+       "MedicationRequest?medication.code:text=umeclidinium",
+       "MedicationRequest?medication.code:text=aclidinium",
+       "MedicationRequest?medication.code:text=olodaterol",
+       "MedicationRequest?medication.code:text=indacaterol",
+       "MedicationRequest?medication.code:text=roflumilast"
+      ],
+      "raw_response": "FINAL ANSWER:\n\nMedicationRequest?medication.code:text=tiotropium\nMedicationRequest?medication.code:text=ipratropium\nMedicationRequest?medication.code:text=albuterol\nMedicationRequest?medication.code:text=salmeterol\nMedicationRequest?medication.code:text=formoterol\nMedicationRequest?medication.code:text=fluticasone\nMedicationRequest?medication.code:text=budesonide\nMedicationRequest?medication.code:text=umeclidinium\nMedicationRequest?medication.code:text=aclidinium\nMedicationRequest?medication.code:text=olodaterol\nMedicationRequest?medication.code:text=indacaterol\nMedicationRequest?medication.code:text=roflumilast",
+      "prompt_text": "Find patients on COPD medications."
+     },
+     "3-broad": {
+      "precision": 1.0,
+      "recall": 0.1641,
+      "f1": 0.2819,
+      "passed": false,
+      "expected_count": 40638,
+      "actual_count": 6669,
+      "elapsed_sec": 125.2,
+      "queries_generated": 2,
+      "primary_query_url": "MedicationRequest?medication.code:text=albuterol",
+      "additional_query_urls": [
+       "MedicationRequest?medication.code:text=salmeterol"
+      ],
+      "raw_response": "MedicationRequest?medication.code:text=albuterol\nMedicationRequest?medication.code:text=salmeterol",
+      "prompt_text": "Find patients prescribed inhaled bronchodilators commonly used for COPD \u2014 short-acting beta agonists (albuterol) and long-acting beta agonists (salmeterol)."
+     },
+     "3-expert": {
+      "precision": 1.0,
+      "recall": 0.1641,
+      "f1": 0.2819,
+      "passed": false,
+      "expected_count": 40638,
+      "actual_count": 6669,
+      "elapsed_sec": 135.6,
+      "queries_generated": 2,
+      "primary_query_url": "MedicationRequest?medication.code:text=albuterol",
+      "additional_query_urls": [
+       "MedicationRequest?medication.code:text=salmeterol"
+      ],
+      "raw_response": "MedicationRequest?medication.code:text=albuterol\nMedicationRequest?medication.code:text=salmeterol",
       "prompt_text": "Identify patients on inhaled bronchodilator therapy for COPD by querying MedicationRequest resources. The two agents to target are albuterol, a short-acting beta-agonist used for rescue and maintenance, and salmeterol, a long-acting beta-agonist used for daily maintenance \u2014 both coded in RxNorm. This medication path has significant cross-indication with asthma, so a bronchodilator-only cohort will capture asthma patients as well as COPD patients; treating this as a medication-only test means some false positives are expected."
      }
     },

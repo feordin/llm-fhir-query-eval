@@ -230,6 +230,143 @@
       "prompt_text": "I need to identify pediatric patients in the post-event pain phenotype using a multi-resource union based on the PheKB algorithm for scoliosis surgery patients with post-operative pain assessment. Run two searches and union the patient sets: first, search Condition resources for scoliosis using the ICD-10-CM code for unspecified scoliosis; second, search Observation resources for numeric pain severity scores coded with the appropriate LOINC term for patient-reported pain severity, filtering for scores at or above four on the numeric rating scale (indicating at least moderate pain). The PheKB cohort requires pediatric age (six years or older) and at least three pain score observations per encounter, but the union across both paths first establishes the candidate population."
      }
     },
+    "copilot:claude-opus-4.7+mimic": {
+     "1-naive": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 408,
+      "actual_count": 0,
+      "elapsed_sec": 7.2,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|22253000&patient.birthdate=ge2008-08-31",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|22253000&patient.birthdate=ge2008-08-31",
+      "prompt_text": "Find pediatric pain patients."
+     },
+     "1-broad": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 408,
+      "actual_count": 0,
+      "elapsed_sec": 12.6,
+      "queries_generated": 3,
+      "primary_query_url": "Procedure?code=http://snomed.info/sct|75837002&subject.birthdate=gt2008-08-31&status=completed",
+      "additional_query_urls": [
+       "Condition?code=http://snomed.info/sct|298382003&subject.birthdate=gt2008-08-31",
+       "Observation?code=http://loinc.org|38208-5&value-quantity=ge0&value-quantity=le10&patient.birthdate=gt2008-08-31"
+      ],
+      "raw_response": "Procedure?code=http://snomed.info/sct|75837002&subject.birthdate=gt2008-08-31&status=completed\nCondition?code=http://snomed.info/sct|298382003&subject.birthdate=gt2008-08-31\nObservation?code=http://loinc.org|38208-5&value-quantity=ge0&value-quantity=le10&patient.birthdate=gt2008-08-31",
+      "prompt_text": "Find pediatric scoliosis surgery patients with documented post-operative pain severity scores (NRS 0-10) \u2014 used in pain pharmacogenetics studies."
+     },
+     "1-expert": {
+      "precision": 0.3333,
+      "recall": 0.0025,
+      "f1": 0.0049,
+      "passed": false,
+      "expected_count": 408,
+      "actual_count": 3,
+      "elapsed_sec": 8.2,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|M41.20",
+      "additional_query_urls": [
+       "Observation?code=http://loinc.org|72514-3&value-quantity=ge4"
+      ],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|M41.20\nObservation?code=http://loinc.org|72514-3&value-quantity=ge4",
+      "prompt_text": "I need to identify pediatric patients in the post-event pain phenotype using a multi-resource union based on the PheKB algorithm for scoliosis surgery patients with post-operative pain assessment. Run two searches and union the patient sets: first, search Condition resources for scoliosis using the ICD-10-CM code for unspecified scoliosis; second, search Observation resources for numeric pain severity scores coded with the appropriate LOINC term for patient-reported pain severity, filtering for scores at or above four on the numeric rating scale (indicating at least moderate pain). The PheKB cohort requires pediatric age (six years or older) and at least three pain score observations per encounter, but the union across both paths first establishes the candidate population."
+     },
+     "2-naive": {
+      "precision": 0.0134,
+      "recall": 0.1961,
+      "f1": 0.025,
+      "passed": false,
+      "expected_count": 408,
+      "actual_count": 5988,
+      "elapsed_sec": 90.5,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|R52,http://hl7.org/fhir/sid/icd-10-cm|G89.0,http://hl7.org/fhir/sid/icd-10-cm|G89.11,http://hl7.org/fhir/sid/icd-10-cm|G89.12,http://hl7.org/fhir/sid/icd-10-cm|G89.18,http://hl7.org/fhir/sid/icd-10-cm|G89.21,http://hl7.org/fhir/sid/icd-10-cm|G89.22,http://hl7.org/fhir/sid/icd-10-cm|G89.28,http://hl7.org/fhir/sid/icd-10-cm|G89.29,http://hl7.org/fhir/sid/icd-10-cm|G89.3,http://hl7.org/fhir/sid/icd-10-cm|G89.4&patient.birthdate=gt2008-08-31",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|R52,http://hl7.org/fhir/sid/icd-10-cm|G89.0,http://hl7.org/fhir/sid/icd-10-cm|G89.11,http://hl7.org/fhir/sid/icd-10-cm|G89.12,http://hl7.org/fhir/sid/icd-10-cm|G89.18,http://hl7.org/fhir/sid/icd-10-cm|G89.21,http://hl7.org/fhir/sid/icd-10-cm|G89.22,http://hl7.org/fhir/sid/icd-10-cm|G89.28,http://hl7.org/fhir/sid/icd-10-cm|G89.29,http://hl7.org/fhir/sid/icd-10-cm|G89.3,http://hl7.org/fhir/sid/icd-10-cm|G89.4&patient.birthdate=gt2008-08-31",
+      "prompt_text": "Find pediatric pain patients."
+     },
+     "2-broad": {
+      "precision": 0.1059,
+      "recall": 0.0221,
+      "f1": 0.0365,
+      "passed": false,
+      "expected_count": 408,
+      "actual_count": 85,
+      "elapsed_sec": 93.5,
+      "queries_generated": 1,
+      "primary_query_url": "Patient?_has:Condition:patient:code=http://hl7.org/fhir/sid/icd-10-cm|M41.0,http://hl7.org/fhir/sid/icd-10-cm|M41.00,http://hl7.org/fhir/sid/icd-10-cm|M41.9,http://hl7.org/fhir/sid/icd-10-cm|M41.20,http://hl7.org/fhir/sid/icd-10-cm|M41.22,http://hl7.org/fhir/sid/icd-9-cm|737.30,http://hl7.org/fhir/sid/icd-9-cm|737.43&_has:Procedure:patient:code=http://hl7.org/fhir/sid/icd-9-cm|81.00,http://hl7.org/fhir/sid/icd-9-cm|81.05,http://hl7.org/fhir/sid/icd-9-cm|81.06,http://hl7.org/fhir/sid/icd-9-cm|81.07,http://hl7.org/fhir/sid/icd-9-cm|81.08&_has:Observation:patient:code=http://loinc.org|98137-3&birthdate=gt2005-01-01",
+      "additional_query_urls": [],
+      "raw_response": "Based on evidence: MIMIC server uses ICD-9/ICD-10 for scoliosis (737.x, M41.x), ICD-9 81.00 for spinal fusion, and LOINC 98137-3 for pain assessments (NRS 0-10 scores).\n\nFINAL ANSWER:\n\nPatient?_has:Condition:patient:code=http://hl7.org/fhir/sid/icd-10-cm|M41.0,http://hl7.org/fhir/sid/icd-10-cm|M41.00,http://hl7.org/fhir/sid/icd-10-cm|M41.9,http://hl7.org/fhir/sid/icd-10-cm|M41.20,http://hl7.org/fhir/sid/icd-10-cm|M41.22,http://hl7.org/fhir/sid/icd-9-cm|737.30,http://hl7.org/fhir/sid/icd-9-cm|737.43&_has:Procedure:patient:code=http://hl7.org/fhir/sid/icd-9-cm|81.00,http://hl7.org/fhir/sid/icd-9-cm|81.05,http://hl7.org/fhir/sid/icd-9-cm|81.06,http://hl7.org/fhir/sid/icd-9-cm|81.07,http://hl7.org/fhir/sid/icd-9-cm|81.08&_has:Observation:patient:code=http://loinc.org|98137-3&birthdate=gt2005-01-01",
+      "prompt_text": "Find pediatric scoliosis surgery patients with documented post-operative pain severity scores (NRS 0-10) \u2014 used in pain pharmacogenetics studies."
+     },
+     "2-expert": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "passed": true,
+      "expected_count": 408,
+      "actual_count": 408,
+      "elapsed_sec": 96.8,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|M41.9",
+      "additional_query_urls": [
+       "Observation?code=http://loinc.org|98137-3&value-quantity=ge4"
+      ],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|M41.9\nObservation?code=http://loinc.org|98137-3&value-quantity=ge4",
+      "prompt_text": "I need to identify pediatric patients in the post-event pain phenotype using a multi-resource union based on the PheKB algorithm for scoliosis surgery patients with post-operative pain assessment. Run two searches and union the patient sets: first, search Condition resources for scoliosis using the ICD-10-CM code for unspecified scoliosis; second, search Observation resources for numeric pain severity scores coded with the appropriate LOINC term for patient-reported pain severity, filtering for scores at or above four on the numeric rating scale (indicating at least moderate pain). The PheKB cohort requires pediatric age (six years or older) and at least three pain score observations per encounter, but the union across both paths first establishes the candidate population."
+     },
+     "3-naive": {
+      "precision": 0.0137,
+      "recall": 0.201,
+      "f1": 0.0256,
+      "passed": false,
+      "expected_count": 408,
+      "actual_count": 5997,
+      "elapsed_sec": 47.4,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|R52,http://hl7.org/fhir/sid/icd-10-cm|G89.29,http://hl7.org/fhir/sid/icd-10-cm|G89.4,http://hl7.org/fhir/sid/icd-10-cm|G89.18,http://hl7.org/fhir/sid/icd-10-cm|G89.11,http://hl7.org/fhir/sid/icd-10-cm|G89.28,http://hl7.org/fhir/sid/icd-10-cm|G89.3&patient.birthdate=gt2007-08-31",
+      "additional_query_urls": [],
+      "raw_response": "Playbook 3 (age) + Playbook 8 (multi-code).\n\nFINAL ANSWER:\n\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|R52,http://hl7.org/fhir/sid/icd-10-cm|G89.29,http://hl7.org/fhir/sid/icd-10-cm|G89.4,http://hl7.org/fhir/sid/icd-10-cm|G89.18,http://hl7.org/fhir/sid/icd-10-cm|G89.11,http://hl7.org/fhir/sid/icd-10-cm|G89.28,http://hl7.org/fhir/sid/icd-10-cm|G89.3&patient.birthdate=gt2007-08-31",
+      "prompt_text": "Find pediatric pain patients."
+     },
+     "3-broad": {
+      "precision": 0.1149,
+      "recall": 0.0245,
+      "f1": 0.0404,
+      "passed": false,
+      "expected_count": 408,
+      "actual_count": 87,
+      "elapsed_sec": 84.9,
+      "queries_generated": 1,
+      "primary_query_url": "Patient?_has:Condition:patient:code=http://hl7.org/fhir/sid/icd-10-cm|M41.9,http://hl7.org/fhir/sid/icd-10-cm|M41.30,http://hl7.org/fhir/sid/icd-10-cm|M41.20,http://hl7.org/fhir/sid/icd-9-cm|737.30&_has:Procedure:patient:code=http://hl7.org/fhir/sid/icd-9-cm|81.00,http://hl7.org/fhir/sid/icd-9-cm|81.05,http://hl7.org/fhir/sid/icd-9-cm|81.08,http://hl7.org/fhir/sid/icd-9-cm|81.62,http://hl7.org/fhir/sid/icd-9-cm|81.63,http://hl7.org/fhir/sid/icd-9-cm|81.64&_has:Observation:patient:code=http://loinc.org|98137-3&birthdate=gt2008-08-31",
+      "additional_query_urls": [],
+      "raw_response": "Patient?_has:Condition:patient:code=http://hl7.org/fhir/sid/icd-10-cm|M41.9,http://hl7.org/fhir/sid/icd-10-cm|M41.30,http://hl7.org/fhir/sid/icd-10-cm|M41.20,http://hl7.org/fhir/sid/icd-9-cm|737.30&_has:Procedure:patient:code=http://hl7.org/fhir/sid/icd-9-cm|81.00,http://hl7.org/fhir/sid/icd-9-cm|81.05,http://hl7.org/fhir/sid/icd-9-cm|81.08,http://hl7.org/fhir/sid/icd-9-cm|81.62,http://hl7.org/fhir/sid/icd-9-cm|81.63,http://hl7.org/fhir/sid/icd-9-cm|81.64&_has:Observation:patient:code=http://loinc.org|98137-3&birthdate=gt2008-08-31",
+      "prompt_text": "Find pediatric scoliosis surgery patients with documented post-operative pain severity scores (NRS 0-10) \u2014 used in pain pharmacogenetics studies."
+     },
+     "3-expert": {
+      "precision": 1.0,
+      "recall": 0.0025,
+      "f1": 0.0049,
+      "passed": false,
+      "expected_count": 408,
+      "actual_count": 1,
+      "elapsed_sec": 27.5,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|M41.9&patient.birthdate=le2020-08-31",
+      "additional_query_urls": [
+       "Observation?code=http://loinc.org|72514-3&value-quantity=ge4&patient.birthdate=le2020-08-31"
+      ],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|M41.9&patient.birthdate=le2020-08-31\nObservation?code=http://loinc.org|72514-3&value-quantity=ge4&patient.birthdate=le2020-08-31",
+      "prompt_text": "I need to identify pediatric patients in the post-event pain phenotype using a multi-resource union based on the PheKB algorithm for scoliosis surgery patients with post-operative pain assessment. Run two searches and union the patient sets: first, search Condition resources for scoliosis using the ICD-10-CM code for unspecified scoliosis; second, search Observation resources for numeric pain severity scores coded with the appropriate LOINC term for patient-reported pain severity, filtering for scores at or above four on the numeric rating scale (indicating at least moderate pain). The PheKB cohort requires pediatric age (six years or older) and at least three pain score observations per encounter, but the union across both paths first establishes the candidate population."
+     }
+    },
     "copilot:claude-sonnet-4.6": {
      "1-naive": {
       "precision": 1.0,

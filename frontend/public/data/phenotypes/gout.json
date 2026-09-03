@@ -240,6 +240,153 @@
       "prompt_text": "I need to identify all gout patients using a three-resource union strategy. First, query Condition resources for a gout diagnosis coded in SNOMED CT. Second, query MedicationRequest resources for the urate-lowering agent allopurinol and the anti-inflammatory colchicine, both coded in RxNorm \u2014 colchicine is cross-indicated for familial Mediterranean fever and pericarditis, so the medication cohort will include some non-gout patients. Third, query Observation resources for elevated serum urate (the hyperuricemia threshold associated with gout) using the appropriate LOINC code for urate in serum or plasma; this captures Path D patients with asymptomatic hyperuricemia who lack a formal gout diagnosis. Union the distinct patient IDs across all three result sets."
      }
     },
+    "copilot:claude-opus-4.7+mimic": {
+     "1-naive": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 14211,
+      "actual_count": 0,
+      "elapsed_sec": 7.1,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|90560007",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|90560007",
+      "prompt_text": "Find all gout patients."
+     },
+     "1-broad": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 14211,
+      "actual_count": 0,
+      "elapsed_sec": 21.9,
+      "queries_generated": 4,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|90560007",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|519",
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|2597",
+       "Observation?code=http://loinc.org|3084-1&value-quantity=gt7|http://unitsofmeasure.org|mg/dL"
+      ],
+      "raw_response": "Condition?code=http://snomed.info/sct|90560007\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|519\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|2597\nObservation?code=http://loinc.org|3084-1&value-quantity=gt7|http://unitsofmeasure.org|mg/dL",
+      "prompt_text": "Find all gout patients \u2014 by diagnosis, allopurinol/colchicine medications, or elevated urate (>7 mg/dL). Run multiple queries and union the patient sets."
+     },
+     "1-expert": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 14211,
+      "actual_count": 0,
+      "elapsed_sec": 10.2,
+      "queries_generated": 3,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|90560007",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|197319,http://www.nlm.nih.gov/research/umls/rxnorm|202363",
+       "Observation?code=http://loinc.org|3084-1&value-quantity=gt6.8|http://unitsofmeasure.org|mg/dL"
+      ],
+      "raw_response": "Condition?code=http://snomed.info/sct|90560007\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|197319,http://www.nlm.nih.gov/research/umls/rxnorm|202363\nObservation?code=http://loinc.org|3084-1&value-quantity=gt6.8|http://unitsofmeasure.org|mg/dL",
+      "prompt_text": "I need to identify all gout patients using a three-resource union strategy. First, query Condition resources for a gout diagnosis coded in SNOMED CT. Second, query MedicationRequest resources for the urate-lowering agent allopurinol and the anti-inflammatory colchicine, both coded in RxNorm \u2014 colchicine is cross-indicated for familial Mediterranean fever and pericarditis, so the medication cohort will include some non-gout patients. Third, query Observation resources for elevated serum urate (the hyperuricemia threshold associated with gout) using the appropriate LOINC code for urate in serum or plasma; this captures Path D patients with asymptomatic hyperuricemia who lack a formal gout diagnosis. Union the distinct patient IDs across all three result sets."
+     },
+     "2-naive": {
+      "precision": 1.0,
+      "recall": 0.3257,
+      "f1": 0.4914,
+      "passed": false,
+      "expected_count": 14211,
+      "actual_count": 4629,
+      "elapsed_sec": 32.6,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code:text=gout",
+      "additional_query_urls": [],
+      "raw_response": "FINAL ANSWER:\n\nCondition?code:text=gout",
+      "prompt_text": "Find all gout patients."
+     },
+     "2-broad": {
+      "precision": 1.0,
+      "recall": 0.5206,
+      "f1": 0.6847,
+      "passed": false,
+      "expected_count": 14211,
+      "actual_count": 7398,
+      "elapsed_sec": 101.2,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code:text=gout",
+      "additional_query_urls": [
+       "Observation?code=http://loinc.org|3084-1&value-quantity=gt7"
+      ],
+      "raw_response": "Condition?code:text=gout\nObservation?code=http://loinc.org|3084-1&value-quantity=gt7",
+      "prompt_text": "Find all gout patients \u2014 by diagnosis, allopurinol/colchicine medications, or elevated urate (>7 mg/dL). Run multiple queries and union the patient sets."
+     },
+     "2-expert": {
+      "precision": 0.9388,
+      "recall": 0.215,
+      "f1": 0.3498,
+      "passed": false,
+      "expected_count": 14211,
+      "actual_count": 3254,
+      "elapsed_sec": 82.7,
+      "queries_generated": 3,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|90560007",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|519,http://www.nlm.nih.gov/research/umls/rxnorm|2683",
+       "Observation?code=http://loinc.org|3084-1&value-quantity=gt6.8"
+      ],
+      "raw_response": "FINAL ANSWER:\n\nCondition?code=http://snomed.info/sct|90560007\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|519,http://www.nlm.nih.gov/research/umls/rxnorm|2683\nObservation?code=http://loinc.org|3084-1&value-quantity=gt6.8",
+      "prompt_text": "I need to identify all gout patients using a three-resource union strategy. First, query Condition resources for a gout diagnosis coded in SNOMED CT. Second, query MedicationRequest resources for the urate-lowering agent allopurinol and the anti-inflammatory colchicine, both coded in RxNorm \u2014 colchicine is cross-indicated for familial Mediterranean fever and pericarditis, so the medication cohort will include some non-gout patients. Third, query Observation resources for elevated serum urate (the hyperuricemia threshold associated with gout) using the appropriate LOINC code for urate in serum or plasma; this captures Path D patients with asymptomatic hyperuricemia who lack a formal gout diagnosis. Union the distinct patient IDs across all three result sets."
+     },
+     "3-naive": {
+      "precision": 1.0,
+      "recall": 0.3257,
+      "f1": 0.4914,
+      "passed": false,
+      "expected_count": 14211,
+      "actual_count": 4629,
+      "elapsed_sec": 32.5,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code:text=gout",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code:text=gout",
+      "prompt_text": "Find all gout patients."
+     },
+     "3-broad": {
+      "precision": 0.9932,
+      "recall": 0.514,
+      "f1": 0.6775,
+      "passed": false,
+      "expected_count": 14211,
+      "actual_count": 7355,
+      "elapsed_sec": 110.8,
+      "queries_generated": 4,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|M10.9,http://hl7.org/fhir/sid/icd-10-cm|M10.00,http://hl7.org/fhir/sid/icd-10-cm|M10.011,http://hl7.org/fhir/sid/icd-10-cm|M10.012,http://hl7.org/fhir/sid/icd-10-cm|M10.019,http://hl7.org/fhir/sid/icd-10-cm|M10.9,http://hl7.org/fhir/sid/icd-10-cm|M1A.9,http://hl7.org/fhir/sid/icd-10-cm|M1A.9XX0,http://hl7.org/fhir/sid/icd-9-cm|274.9,http://hl7.org/fhir/sid/icd-9-cm|274.0,http://hl7.org/fhir/sid/icd-9-cm|274.00,http://hl7.org/fhir/sid/icd-9-cm|274.10,http://hl7.org/fhir/sid/icd-9-cm|274.11,http://hl7.org/fhir/sid/icd-9-cm|274.19,http://hl7.org/fhir/sid/icd-9-cm|274.81,http://hl7.org/fhir/sid/icd-9-cm|274.82,http://hl7.org/fhir/sid/icd-9-cm|274.89",
+      "additional_query_urls": [
+       "Observation?code=http://loinc.org|3084-1&value-quantity=gt7",
+       "MedicationRequest?medication.code:text=allopurinol",
+       "MedicationRequest?medication.code:text=colchicine"
+      ],
+      "raw_response": "FINAL ANSWER:\n\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|M10.9,http://hl7.org/fhir/sid/icd-10-cm|M10.00,http://hl7.org/fhir/sid/icd-10-cm|M10.011,http://hl7.org/fhir/sid/icd-10-cm|M10.012,http://hl7.org/fhir/sid/icd-10-cm|M10.019,http://hl7.org/fhir/sid/icd-10-cm|M10.9,http://hl7.org/fhir/sid/icd-10-cm|M1A.9,http://hl7.org/fhir/sid/icd-10-cm|M1A.9XX0,http://hl7.org/fhir/sid/icd-9-cm|274.9,http://hl7.org/fhir/sid/icd-9-cm|274.0,http://hl7.org/fhir/sid/icd-9-cm|274.00,http://hl7.org/fhir/sid/icd-9-cm|274.10,http://hl7.org/fhir/sid/icd-9-cm|274.11,http://hl7.org/fhir/sid/icd-9-cm|274.19,http://hl7.org/fhir/sid/icd-9-cm|274.81,http://hl7.org/fhir/sid/icd-9-cm|274.82,http://hl7.org/fhir/sid/icd-9-cm|274.89\nObservation?code=http://loinc.org|3084-1&value-quantity=gt7\nMedicationRequest?medication.code:text=allopurinol\nMedicationRequest?medication.code:text=colchicine",
+      "prompt_text": "Find all gout patients \u2014 by diagnosis, allopurinol/colchicine medications, or elevated urate (>7 mg/dL). Run multiple queries and union the patient sets."
+     },
+     "3-expert": {
+      "precision": 0.9698,
+      "recall": 0.4498,
+      "f1": 0.6146,
+      "passed": false,
+      "expected_count": 14211,
+      "actual_count": 6591,
+      "elapsed_sec": 83.3,
+      "queries_generated": 3,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|90560007,http://hl7.org/fhir/sid/icd-10-cm|M10.9,http://hl7.org/fhir/sid/icd-10-cm|M10.0,http://hl7.org/fhir/sid/icd-10-cm|M10.00,http://hl7.org/fhir/sid/icd-10-cm|M1A.9",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|519,http://www.nlm.nih.gov/research/umls/rxnorm|2683",
+       "Observation?code=http://loinc.org|3084-1&value-quantity=gt6.8||mg/dL"
+      ],
+      "raw_response": "Final answer:\n\nCondition?code=http://snomed.info/sct|90560007,http://hl7.org/fhir/sid/icd-10-cm|M10.9,http://hl7.org/fhir/sid/icd-10-cm|M10.0,http://hl7.org/fhir/sid/icd-10-cm|M10.00,http://hl7.org/fhir/sid/icd-10-cm|M1A.9\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|519,http://www.nlm.nih.gov/research/umls/rxnorm|2683\nObservation?code=http://loinc.org|3084-1&value-quantity=gt6.8||mg/dL",
+      "prompt_text": "I need to identify all gout patients using a three-resource union strategy. First, query Condition resources for a gout diagnosis coded in SNOMED CT. Second, query MedicationRequest resources for the urate-lowering agent allopurinol and the anti-inflammatory colchicine, both coded in RxNorm \u2014 colchicine is cross-indicated for familial Mediterranean fever and pericarditis, so the medication cohort will include some non-gout patients. Third, query Observation resources for elevated serum urate (the hyperuricemia threshold associated with gout) using the appropriate LOINC code for urate in serum or plasma; this captures Path D patients with asymptomatic hyperuricemia who lack a formal gout diagnosis. Union the distinct patient IDs across all three result sets."
+     }
+    },
     "copilot:claude-sonnet-4.6": {
      "1-naive": {
       "precision": 1.0,
@@ -1026,6 +1173,134 @@
       "primary_query_url": "Condition?code=http://snomed.info/sct|90560007",
       "additional_query_urls": [],
       "raw_response": "Condition?code=http://snomed.info/sct|90560007",
+      "prompt_text": "I need to identify patients with a documented gout diagnosis. Search Condition resources using the SNOMED CT code for gout \u2014 gout is a distinct crystal-arthropathy caused by urate deposition and should not be broadened to other inflammatory arthritides such as rheumatoid arthritis or pseudogout. The diagnosis code captures patients with a formal problem-list or encounter-diagnosis entry for gout."
+     }
+    },
+    "copilot:claude-opus-4.7+mimic": {
+     "1-naive": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 8679,
+      "actual_count": 0,
+      "elapsed_sec": 7.2,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|90560007",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|90560007",
+      "prompt_text": "Find patients with gout."
+     },
+     "1-broad": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 8679,
+      "actual_count": 0,
+      "elapsed_sec": 7.2,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|90560007",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|90560007",
+      "prompt_text": "Find patients diagnosed with gout \u2014 a metabolic arthritis caused by monosodium urate crystal deposition, distinct from inflammatory arthritis like rheumatoid arthritis."
+     },
+     "1-expert": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 8679,
+      "actual_count": 0,
+      "elapsed_sec": 7.2,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|90560007",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|90560007",
+      "prompt_text": "I need to identify patients with a documented gout diagnosis. Search Condition resources using the SNOMED CT code for gout \u2014 gout is a distinct crystal-arthropathy caused by urate deposition and should not be broadened to other inflammatory arthritides such as rheumatoid arthritis or pseudogout. The diagnosis code captures patients with a formal problem-list or encounter-diagnosis entry for gout."
+     },
+     "2-naive": {
+      "precision": 1.0,
+      "recall": 0.5334,
+      "f1": 0.6957,
+      "passed": false,
+      "expected_count": 8679,
+      "actual_count": 4629,
+      "elapsed_sec": 30.5,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code:text=gout",
+      "additional_query_urls": [],
+      "raw_response": "FINAL ANSWER:\n\nCondition?code:text=gout",
+      "prompt_text": "Find patients with gout."
+     },
+     "2-broad": {
+      "precision": 1.0,
+      "recall": 0.5334,
+      "f1": 0.6957,
+      "passed": false,
+      "expected_count": 8679,
+      "actual_count": 4629,
+      "elapsed_sec": 28.4,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code:text=gout",
+      "additional_query_urls": [],
+      "raw_response": "FINAL ANSWER:\n\nCondition?code:text=gout",
+      "prompt_text": "Find patients diagnosed with gout \u2014 a metabolic arthritis caused by monosodium urate crystal deposition, distinct from inflammatory arthritis like rheumatoid arthritis."
+     },
+     "2-expert": {
+      "precision": 1.0,
+      "recall": 0.5334,
+      "f1": 0.6957,
+      "passed": false,
+      "expected_count": 8679,
+      "actual_count": 4629,
+      "elapsed_sec": 53.6,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code:text=gout",
+      "additional_query_urls": [],
+      "raw_response": "FINAL ANSWER:\n\nCondition?code:text=gout",
+      "prompt_text": "I need to identify patients with a documented gout diagnosis. Search Condition resources using the SNOMED CT code for gout \u2014 gout is a distinct crystal-arthropathy caused by urate deposition and should not be broadened to other inflammatory arthritides such as rheumatoid arthritis or pseudogout. The diagnosis code captures patients with a formal problem-list or encounter-diagnosis entry for gout."
+     },
+     "3-naive": {
+      "precision": 1.0,
+      "recall": 0.5334,
+      "f1": 0.6957,
+      "passed": false,
+      "expected_count": 8679,
+      "actual_count": 4629,
+      "elapsed_sec": 32.9,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code:text=gout",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code:text=gout",
+      "prompt_text": "Find patients with gout."
+     },
+     "3-broad": {
+      "precision": 0.9645,
+      "recall": 0.4542,
+      "f1": 0.6176,
+      "passed": false,
+      "expected_count": 8679,
+      "actual_count": 4087,
+      "elapsed_sec": 37.4,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|M10.9,http://hl7.org/fhir/sid/icd-10-cm|M10.00,http://hl7.org/fhir/sid/icd-10-cm|M10.011,http://hl7.org/fhir/sid/icd-10-cm|M10.012,http://hl7.org/fhir/sid/icd-10-cm|M10.019,http://hl7.org/fhir/sid/icd-10-cm|M10.021,http://hl7.org/fhir/sid/icd-10-cm|M10.022,http://hl7.org/fhir/sid/icd-10-cm|M10.029,http://hl7.org/fhir/sid/icd-10-cm|M10.031,http://hl7.org/fhir/sid/icd-10-cm|M10.032,http://hl7.org/fhir/sid/icd-10-cm|M10.039,http://hl7.org/fhir/sid/icd-10-cm|M10.041,http://hl7.org/fhir/sid/icd-10-cm|M10.042,http://hl7.org/fhir/sid/icd-10-cm|M10.049,http://hl7.org/fhir/sid/icd-10-cm|M10.051,http://hl7.org/fhir/sid/icd-10-cm|M10.052,http://hl7.org/fhir/sid/icd-10-cm|M10.059,http://hl7.org/fhir/sid/icd-10-cm|M10.061,http://hl7.org/fhir/sid/icd-10-cm|M10.062,http://hl7.org/fhir/sid/icd-10-cm|M10.069,http://hl7.org/fhir/sid/icd-10-cm|M10.071,http://hl7.org/fhir/sid/icd-10-cm|M10.072,http://hl7.org/fhir/sid/icd-10-cm|M10.079,http://hl7.org/fhir/sid/icd-10-cm|M10.08,http://hl7.org/fhir/sid/icd-10-cm|M10.09,http://hl7.org/fhir/sid/icd-10-cm|M10.10,http://hl7.org/fhir/sid/icd-10-cm|M10.20,http://hl7.org/fhir/sid/icd-10-cm|M10.30,http://hl7.org/fhir/sid/icd-10-cm|M10.40,http://hl7.org/fhir/sid/icd-10-cm|M1A.9XX0,http://hl7.org/fhir/sid/icd-10-cm|M1A.9XX1",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|M10.9,http://hl7.org/fhir/sid/icd-10-cm|M10.00,http://hl7.org/fhir/sid/icd-10-cm|M10.011,http://hl7.org/fhir/sid/icd-10-cm|M10.012,http://hl7.org/fhir/sid/icd-10-cm|M10.019,http://hl7.org/fhir/sid/icd-10-cm|M10.021,http://hl7.org/fhir/sid/icd-10-cm|M10.022,http://hl7.org/fhir/sid/icd-10-cm|M10.029,http://hl7.org/fhir/sid/icd-10-cm|M10.031,http://hl7.org/fhir/sid/icd-10-cm|M10.032,http://hl7.org/fhir/sid/icd-10-cm|M10.039,http://hl7.org/fhir/sid/icd-10-cm|M10.041,http://hl7.org/fhir/sid/icd-10-cm|M10.042,http://hl7.org/fhir/sid/icd-10-cm|M10.049,http://hl7.org/fhir/sid/icd-10-cm|M10.051,http://hl7.org/fhir/sid/icd-10-cm|M10.052,http://hl7.org/fhir/sid/icd-10-cm|M10.059,http://hl7.org/fhir/sid/icd-10-cm|M10.061,http://hl7.org/fhir/sid/icd-10-cm|M10.062,http://hl7.org/fhir/sid/icd-10-cm|M10.069,http://hl7.org/fhir/sid/icd-10-cm|M10.071,http://hl7.org/fhir/sid/icd-10-cm|M10.072,http://hl7.org/fhir/sid/icd-10-cm|M10.079,http://hl7.org/fhir/sid/icd-10-cm|M10.08,http://hl7.org/fhir/sid/icd-10-cm|M10.09,http://hl7.org/fhir/sid/icd-10-cm|M10.10,http://hl7.org/fhir/sid/icd-10-cm|M10.20,http://hl7.org/fhir/sid/icd-10-cm|M10.30,http://hl7.org/fhir/sid/icd-10-cm|M10.40,http://hl7.org/fhir/sid/icd-10-cm|M1A.9XX0,http://hl7.org/fhir/sid/icd-10-cm|M1A.9XX1",
+      "prompt_text": "Find patients diagnosed with gout \u2014 a metabolic arthritis caused by monosodium urate crystal deposition, distinct from inflammatory arthritis like rheumatoid arthritis."
+     },
+     "3-expert": {
+      "precision": 0.9637,
+      "recall": 0.4431,
+      "f1": 0.6071,
+      "passed": false,
+      "expected_count": 8679,
+      "actual_count": 3991,
+      "elapsed_sec": 42.8,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|M10.9,http://hl7.org/fhir/sid/icd-10-cm|M10.00,http://hl7.org/fhir/sid/icd-10-cm|M1A.9,http://hl7.org/fhir/sid/icd-10-cm|M1A.9XX0,http://hl7.org/fhir/sid/icd-10-cm|M1A.9XX1",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|M10.9,http://hl7.org/fhir/sid/icd-10-cm|M10.00,http://hl7.org/fhir/sid/icd-10-cm|M1A.9,http://hl7.org/fhir/sid/icd-10-cm|M1A.9XX0,http://hl7.org/fhir/sid/icd-10-cm|M1A.9XX1",
       "prompt_text": "I need to identify patients with a documented gout diagnosis. Search Condition resources using the SNOMED CT code for gout \u2014 gout is a distinct crystal-arthropathy caused by urate deposition and should not be broadened to other inflammatory arthritides such as rheumatoid arthritis or pseudogout. The diagnosis code captures patients with a formal problem-list or encounter-diagnosis entry for gout."
      }
     },
@@ -2475,6 +2750,138 @@
        "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|2444"
       ],
       "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|519\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|2444",
+      "prompt_text": "Identify patients treated pharmacologically for gout via their medication orders. Search MedicationRequest resources for the urate-lowering and anti-inflammatory agents used in gout management \u2014 notably allopurinol and colchicine, both coded in RxNorm. This captures treatment rather than diagnosis: colchicine is cross-indicated for conditions like familial Mediterranean fever and pericarditis, so a medication-only cohort will include some non-gout patients."
+     }
+    },
+    "copilot:claude-opus-4.7+mimic": {
+     "1-naive": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 9465,
+      "actual_count": 0,
+      "elapsed_sec": 9.6,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|197319,197320,308167,308168,308169,884437,884438,1101770,1101771,283742,105784,203623,203624,2103574,2103575,8163,8175",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|197319,197320,308167,308168,308169,884437,884438,1101770,1101771,283742,105784,203623,203624,2103574,2103575,8163,8175",
+      "prompt_text": "Find patients on gout meds."
+     },
+     "1-broad": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 9465,
+      "actual_count": 0,
+      "elapsed_sec": 7.7,
+      "queries_generated": 2,
+      "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|519",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|2683"
+      ],
+      "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|519\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|2683",
+      "prompt_text": "Find patients prescribed allopurinol (urate-lowering therapy) or colchicine (acute gout flare prophylaxis/treatment)."
+     },
+     "1-expert": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 9465,
+      "actual_count": 0,
+      "elapsed_sec": 7.7,
+      "queries_generated": 2,
+      "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|519",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|2683"
+      ],
+      "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|519\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|2683",
+      "prompt_text": "Identify patients treated pharmacologically for gout via their medication orders. Search MedicationRequest resources for the urate-lowering and anti-inflammatory agents used in gout management \u2014 notably allopurinol and colchicine, both coded in RxNorm. This captures treatment rather than diagnosis: colchicine is cross-indicated for conditions like familial Mediterranean fever and pericarditis, so a medication-only cohort will include some non-gout patients."
+     },
+     "2-naive": {
+      "precision": 0.902,
+      "recall": 0.1906,
+      "f1": 0.3147,
+      "passed": false,
+      "expected_count": 9465,
+      "actual_count": 2000,
+      "elapsed_sec": 25.4,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?code=Allopurinol,Colchicine,Febuxostat,Probenecid",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?code=Allopurinol,Colchicine,Febuxostat,Probenecid",
+      "prompt_text": "Find patients on gout meds."
+     },
+     "2-broad": {
+      "precision": 0.9243,
+      "recall": 0.1883,
+      "f1": 0.3128,
+      "passed": false,
+      "expected_count": 9465,
+      "actual_count": 1928,
+      "elapsed_sec": 22.3,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?code=http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Allopurinol,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Colchicine",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?code=http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Allopurinol,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Colchicine",
+      "prompt_text": "Find patients prescribed allopurinol (urate-lowering therapy) or colchicine (acute gout flare prophylaxis/treatment)."
+     },
+     "2-expert": {
+      "precision": 0.9243,
+      "recall": 0.1883,
+      "f1": 0.3128,
+      "passed": false,
+      "expected_count": 9465,
+      "actual_count": 1928,
+      "elapsed_sec": 21.9,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?code=http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Allopurinol,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Colchicine",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?code=http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Allopurinol,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Colchicine",
+      "prompt_text": "Identify patients treated pharmacologically for gout via their medication orders. Search MedicationRequest resources for the urate-lowering and anti-inflammatory agents used in gout management \u2014 notably allopurinol and colchicine, both coded in RxNorm. This captures treatment rather than diagnosis: colchicine is cross-indicated for conditions like familial Mediterranean fever and pericarditis, so a medication-only cohort will include some non-gout patients."
+     },
+     "3-naive": {
+      "precision": 0.902,
+      "recall": 0.1906,
+      "f1": 0.3147,
+      "passed": false,
+      "expected_count": 9465,
+      "actual_count": 2000,
+      "elapsed_sec": 22.6,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?code=http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Allopurinol,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Colchicine,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Febuxostat,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Probenecid",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?code=http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Allopurinol,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Colchicine,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Febuxostat,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Probenecid",
+      "prompt_text": "Find patients on gout meds."
+     },
+     "3-broad": {
+      "precision": 0.9243,
+      "recall": 0.1883,
+      "f1": 0.3128,
+      "passed": false,
+      "expected_count": 9465,
+      "actual_count": 1928,
+      "elapsed_sec": 30.1,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?code=http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Allopurinol,Colchicine",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?code=http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Allopurinol,Colchicine",
+      "prompt_text": "Find patients prescribed allopurinol (urate-lowering therapy) or colchicine (acute gout flare prophylaxis/treatment)."
+     },
+     "3-expert": {
+      "precision": 0.9243,
+      "recall": 0.1883,
+      "f1": 0.3128,
+      "passed": false,
+      "expected_count": 9465,
+      "actual_count": 1928,
+      "elapsed_sec": 32.0,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?code=http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Allopurinol,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Colchicine",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?code=http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Allopurinol,http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-medication-name|Colchicine",
       "prompt_text": "Identify patients treated pharmacologically for gout via their medication orders. Search MedicationRequest resources for the urate-lowering and anti-inflammatory agents used in gout management \u2014 notably allopurinol and colchicine, both coded in RxNorm. This captures treatment rather than diagnosis: colchicine is cross-indicated for conditions like familial Mediterranean fever and pericarditis, so a medication-only cohort will include some non-gout patients."
      }
     },

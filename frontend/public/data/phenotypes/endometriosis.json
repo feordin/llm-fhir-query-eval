@@ -229,6 +229,150 @@
       "prompt_text": "I need to identify female patients with endometriosis using a multi-resource union, restricted to female patients throughout. Run two searches and union the results: first, search Condition resources for the SNOMED CT code for endometriosis of the uterus, with a patient gender filter for female; second, search MedicationRequest resources for leuprolide acetate (a GnRH agonist used in endometriosis management), again restricted to female patients. The medication path captures women on leuprolide who may not have a formal endometriosis diagnosis coded, though leuprolide is also used for prostate cancer androgen-deprivation therapy in males \u2014 the female sex restriction eliminates that overlap."
      }
     },
+    "copilot:claude-opus-4.7+mimic": {
+     "1-naive": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 352,
+      "actual_count": 0,
+      "elapsed_sec": 6.3,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|129103003",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|129103003",
+      "prompt_text": "Find all endometriosis patients."
+     },
+     "1-broad": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 352,
+      "actual_count": 0,
+      "elapsed_sec": 9.0,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|129103003&subject.gender=female",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|203150&subject.gender=female"
+      ],
+      "raw_response": "Condition?code=http://snomed.info/sct|129103003&subject.gender=female\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|203150&subject.gender=female",
+      "prompt_text": "Find all female endometriosis patients \u2014 by diagnosis or by leuprolide (GnRH agonist) prescriptions. Run multiple queries and union the patient sets."
+     },
+     "1-expert": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 352,
+      "actual_count": 0,
+      "elapsed_sec": 8.6,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|198437004&patient.gender=female",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1163443&patient.gender=female"
+      ],
+      "raw_response": "Condition?code=http://snomed.info/sct|198437004&patient.gender=female\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1163443&patient.gender=female",
+      "prompt_text": "I need to identify female patients with endometriosis using a multi-resource union, restricted to female patients throughout. Run two searches and union the results: first, search Condition resources for the SNOMED CT code for endometriosis of the uterus, with a patient gender filter for female; second, search MedicationRequest resources for leuprolide acetate (a GnRH agonist used in endometriosis management), again restricted to female patients. The medication path captures women on leuprolide who may not have a formal endometriosis diagnosis coded, though leuprolide is also used for prostate cancer androgen-deprivation therapy in males \u2014 the female sex restriction eliminates that overlap."
+     },
+     "2-naive": {
+      "precision": 0.3596,
+      "recall": 1.0,
+      "f1": 0.5289,
+      "passed": false,
+      "expected_count": 352,
+      "actual_count": 979,
+      "elapsed_sec": 37.8,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|N80,http://hl7.org/fhir/sid/icd-10-cm|N80.0,http://hl7.org/fhir/sid/icd-10-cm|N80.1,http://hl7.org/fhir/sid/icd-10-cm|N80.2,http://hl7.org/fhir/sid/icd-10-cm|N80.3,http://hl7.org/fhir/sid/icd-10-cm|N80.4,http://hl7.org/fhir/sid/icd-10-cm|N80.5,http://hl7.org/fhir/sid/icd-10-cm|N80.6,http://hl7.org/fhir/sid/icd-10-cm|N80.8,http://hl7.org/fhir/sid/icd-10-cm|N80.9",
+      "additional_query_urls": [
+       "Condition?code=http://hl7.org/fhir/sid/icd-9-cm|617.0,http://hl7.org/fhir/sid/icd-9-cm|617.1,http://hl7.org/fhir/sid/icd-9-cm|617.2,http://hl7.org/fhir/sid/icd-9-cm|617.3,http://hl7.org/fhir/sid/icd-9-cm|617.4,http://hl7.org/fhir/sid/icd-9-cm|617.5,http://hl7.org/fhir/sid/icd-9-cm|617.6,http://hl7.org/fhir/sid/icd-9-cm|617.8,http://hl7.org/fhir/sid/icd-9-cm|617.9"
+      ],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|N80,http://hl7.org/fhir/sid/icd-10-cm|N80.0,http://hl7.org/fhir/sid/icd-10-cm|N80.1,http://hl7.org/fhir/sid/icd-10-cm|N80.2,http://hl7.org/fhir/sid/icd-10-cm|N80.3,http://hl7.org/fhir/sid/icd-10-cm|N80.4,http://hl7.org/fhir/sid/icd-10-cm|N80.5,http://hl7.org/fhir/sid/icd-10-cm|N80.6,http://hl7.org/fhir/sid/icd-10-cm|N80.8,http://hl7.org/fhir/sid/icd-10-cm|N80.9\nCondition?code=http://hl7.org/fhir/sid/icd-9-cm|617.0,http://hl7.org/fhir/sid/icd-9-cm|617.1,http://hl7.org/fhir/sid/icd-9-cm|617.2,http://hl7.org/fhir/sid/icd-9-cm|617.3,http://hl7.org/fhir/sid/icd-9-cm|617.4,http://hl7.org/fhir/sid/icd-9-cm|617.5,http://hl7.org/fhir/sid/icd-9-cm|617.6,http://hl7.org/fhir/sid/icd-9-cm|617.8,http://hl7.org/fhir/sid/icd-9-cm|617.9",
+      "prompt_text": "Find all endometriosis patients."
+     },
+     "2-broad": {
+      "precision": 0.3593,
+      "recall": 0.9972,
+      "f1": 0.5282,
+      "passed": false,
+      "expected_count": 352,
+      "actual_count": 977,
+      "elapsed_sec": 126.1,
+      "queries_generated": 4,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|N80.0,http://hl7.org/fhir/sid/icd-10-cm|N80.1,http://hl7.org/fhir/sid/icd-10-cm|N80.2,http://hl7.org/fhir/sid/icd-10-cm|N80.3,http://hl7.org/fhir/sid/icd-10-cm|N80.4,http://hl7.org/fhir/sid/icd-10-cm|N80.5,http://hl7.org/fhir/sid/icd-10-cm|N80.6,http://hl7.org/fhir/sid/icd-10-cm|N80.8,http://hl7.org/fhir/sid/icd-10-cm|N80.9&patient.gender=female",
+      "additional_query_urls": [
+       "Condition?code=http://hl7.org/fhir/sid/icd-9-cm|617.0,http://hl7.org/fhir/sid/icd-9-cm|617.1,http://hl7.org/fhir/sid/icd-9-cm|617.2,http://hl7.org/fhir/sid/icd-9-cm|617.3,http://hl7.org/fhir/sid/icd-9-cm|617.4,http://hl7.org/fhir/sid/icd-9-cm|617.5,http://hl7.org/fhir/sid/icd-9-cm|617.6,http://hl7.org/fhir/sid/icd-9-cm|617.8,http://hl7.org/fhir/sid/icd-9-cm|617.9&patient.gender=female",
+       "MedicationRequest?code:text=leuprolide&subject.gender=female",
+       "MedicationAdministration?code:text=leuprolide&subject.gender=female"
+      ],
+      "raw_response": "FINAL ANSWER:\n\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|N80.0,http://hl7.org/fhir/sid/icd-10-cm|N80.1,http://hl7.org/fhir/sid/icd-10-cm|N80.2,http://hl7.org/fhir/sid/icd-10-cm|N80.3,http://hl7.org/fhir/sid/icd-10-cm|N80.4,http://hl7.org/fhir/sid/icd-10-cm|N80.5,http://hl7.org/fhir/sid/icd-10-cm|N80.6,http://hl7.org/fhir/sid/icd-10-cm|N80.8,http://hl7.org/fhir/sid/icd-10-cm|N80.9&patient.gender=female\nCondition?code=http://hl7.org/fhir/sid/icd-9-cm|617.0,http://hl7.org/fhir/sid/icd-9-cm|617.1,http://hl7.org/fhir/sid/icd-9-cm|617.2,http://hl7.org/fhir/sid/icd-9-cm|617.3,http://hl7.org/fhir/sid/icd-9-cm|617.4,http://hl7.org/fhir/sid/icd-9-cm|617.5,http://hl7.org/fhir/sid/icd-9-cm|617.6,http://hl7.org/fhir/sid/icd-9-cm|617.8,http://hl7.org/fhir/sid/icd-9-cm|617.9&patient.gender=female\nMedicationRequest?code:text=leuprolide&subject.gender=female\nMedicationAdministration?code:text=leuprolide&subject.gender=female",
+      "prompt_text": "Find all female endometriosis patients \u2014 by diagnosis or by leuprolide (GnRH agonist) prescriptions. Run multiple queries and union the patient sets."
+     },
+     "2-expert": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 352,
+      "actual_count": 0,
+      "elapsed_sec": 101.7,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|76376003&patient.gender=female",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6472&patient.gender=female"
+      ],
+      "raw_response": "Condition?code=http://snomed.info/sct|76376003&patient.gender=female\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6472&patient.gender=female",
+      "prompt_text": "I need to identify female patients with endometriosis using a multi-resource union, restricted to female patients throughout. Run two searches and union the results: first, search Condition resources for the SNOMED CT code for endometriosis of the uterus, with a patient gender filter for female; second, search MedicationRequest resources for leuprolide acetate (a GnRH agonist used in endometriosis management), again restricted to female patients. The medication path captures women on leuprolide who may not have a formal endometriosis diagnosis coded, though leuprolide is also used for prostate cancer androgen-deprivation therapy in males \u2014 the female sex restriction eliminates that overlap."
+     },
+     "3-naive": {
+      "precision": 0.3596,
+      "recall": 1.0,
+      "f1": 0.5289,
+      "passed": false,
+      "expected_count": 352,
+      "actual_count": 979,
+      "elapsed_sec": 38.9,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|N80,http://hl7.org/fhir/sid/icd-10-cm|N80.0,http://hl7.org/fhir/sid/icd-10-cm|N80.1,http://hl7.org/fhir/sid/icd-10-cm|N80.2,http://hl7.org/fhir/sid/icd-10-cm|N80.3,http://hl7.org/fhir/sid/icd-10-cm|N80.4,http://hl7.org/fhir/sid/icd-10-cm|N80.5,http://hl7.org/fhir/sid/icd-10-cm|N80.6,http://hl7.org/fhir/sid/icd-10-cm|N80.8,http://hl7.org/fhir/sid/icd-10-cm|N80.9,http://hl7.org/fhir/sid/icd-9-cm|617.0,http://hl7.org/fhir/sid/icd-9-cm|617.1,http://hl7.org/fhir/sid/icd-9-cm|617.2,http://hl7.org/fhir/sid/icd-9-cm|617.3,http://hl7.org/fhir/sid/icd-9-cm|617.4,http://hl7.org/fhir/sid/icd-9-cm|617.5,http://hl7.org/fhir/sid/icd-9-cm|617.6,http://hl7.org/fhir/sid/icd-9-cm|617.8,http://hl7.org/fhir/sid/icd-9-cm|617.9",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|N80,http://hl7.org/fhir/sid/icd-10-cm|N80.0,http://hl7.org/fhir/sid/icd-10-cm|N80.1,http://hl7.org/fhir/sid/icd-10-cm|N80.2,http://hl7.org/fhir/sid/icd-10-cm|N80.3,http://hl7.org/fhir/sid/icd-10-cm|N80.4,http://hl7.org/fhir/sid/icd-10-cm|N80.5,http://hl7.org/fhir/sid/icd-10-cm|N80.6,http://hl7.org/fhir/sid/icd-10-cm|N80.8,http://hl7.org/fhir/sid/icd-10-cm|N80.9,http://hl7.org/fhir/sid/icd-9-cm|617.0,http://hl7.org/fhir/sid/icd-9-cm|617.1,http://hl7.org/fhir/sid/icd-9-cm|617.2,http://hl7.org/fhir/sid/icd-9-cm|617.3,http://hl7.org/fhir/sid/icd-9-cm|617.4,http://hl7.org/fhir/sid/icd-9-cm|617.5,http://hl7.org/fhir/sid/icd-9-cm|617.6,http://hl7.org/fhir/sid/icd-9-cm|617.8,http://hl7.org/fhir/sid/icd-9-cm|617.9",
+      "prompt_text": "Find all endometriosis patients."
+     },
+     "3-broad": {
+      "precision": 0.2588,
+      "recall": 0.5199,
+      "f1": 0.3456,
+      "passed": false,
+      "expected_count": 352,
+      "actual_count": 707,
+      "elapsed_sec": 65.4,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code:text=endometriosis&patient.gender=female",
+      "additional_query_urls": [
+       "MedicationRequest?code:text=leuprolide&patient.gender=female"
+      ],
+      "raw_response": "Condition:text works and returns count with gender filter. Final answer using both text search and ICD codes, filtered to female:\n\nCondition?code:text=endometriosis&patient.gender=female\nMedicationRequest?code:text=leuprolide&patient.gender=female",
+      "prompt_text": "Find all female endometriosis patients \u2014 by diagnosis or by leuprolide (GnRH agonist) prescriptions. Run multiple queries and union the patient sets."
+     },
+     "3-expert": {
+      "precision": 1.0,
+      "recall": 0.9972,
+      "f1": 0.9986,
+      "passed": true,
+      "expected_count": 352,
+      "actual_count": 351,
+      "elapsed_sec": 108.5,
+      "queries_generated": 2,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|N80.0,http://hl7.org/fhir/sid/icd-9-cm|617.0&patient.gender=female",
+      "additional_query_urls": [
+       "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|42375,http://www.nlm.nih.gov/research/umls/rxnorm|203217&patient.gender=female"
+      ],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|N80.0,http://hl7.org/fhir/sid/icd-9-cm|617.0&patient.gender=female\nMedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|42375,http://www.nlm.nih.gov/research/umls/rxnorm|203217&patient.gender=female",
+      "prompt_text": "I need to identify female patients with endometriosis using a multi-resource union, restricted to female patients throughout. Run two searches and union the results: first, search Condition resources for the SNOMED CT code for endometriosis of the uterus, with a patient gender filter for female; second, search MedicationRequest resources for leuprolide acetate (a GnRH agonist used in endometriosis management), again restricted to female patients. The medication path captures women on leuprolide who may not have a formal endometriosis diagnosis coded, though leuprolide is also used for prostate cancer androgen-deprivation therapy in males \u2014 the female sex restriction eliminates that overlap."
+     }
+    },
     "copilot:claude-sonnet-4.6": {
      "1-naive": {
       "precision": 0.0,
@@ -995,6 +1139,134 @@
       "prompt_text": "I need to find female patients with a documented diagnosis of endometriosis from their Condition resources. Search Condition for the SNOMED CT concept for endometriosis of the uterus, and restrict results to female patients using a patient gender filter. This is a female-specific reproductive condition; apply the sex restriction to avoid any incidental miscoded records."
      }
     },
+    "copilot:claude-opus-4.7+mimic": {
+     "1-naive": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 352,
+      "actual_count": 0,
+      "elapsed_sec": 8.0,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|129103003",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|129103003",
+      "prompt_text": "Find patients with endometriosis."
+     },
+     "1-broad": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 352,
+      "actual_count": 0,
+      "elapsed_sec": 8.5,
+      "queries_generated": 1,
+      "primary_query_url": "Patient?gender=female&_has:Condition:patient:code=http://snomed.info/sct|129103003",
+      "additional_query_urls": [],
+      "raw_response": "Patient?gender=female&_has:Condition:patient:code=http://snomed.info/sct|129103003",
+      "prompt_text": "Find female patients diagnosed with endometriosis \u2014 a chronic gynecologic disorder where endometrial tissue grows outside the uterus."
+     },
+     "1-expert": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 352,
+      "actual_count": 0,
+      "elapsed_sec": 8.1,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://snomed.info/sct|198437004&subject.gender=female",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://snomed.info/sct|198437004&subject.gender=female",
+      "prompt_text": "I need to find female patients with a documented diagnosis of endometriosis from their Condition resources. Search Condition for the SNOMED CT concept for endometriosis of the uterus, and restrict results to female patients using a patient gender filter. This is a female-specific reproductive condition; apply the sex restriction to avoid any incidental miscoded records."
+     },
+     "2-naive": {
+      "precision": 0.3596,
+      "recall": 1.0,
+      "f1": 0.5289,
+      "passed": false,
+      "expected_count": 352,
+      "actual_count": 979,
+      "elapsed_sec": 40.9,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|N80.0,http://hl7.org/fhir/sid/icd-10-cm|N80.1,http://hl7.org/fhir/sid/icd-10-cm|N80.2,http://hl7.org/fhir/sid/icd-10-cm|N80.3,http://hl7.org/fhir/sid/icd-10-cm|N80.4,http://hl7.org/fhir/sid/icd-10-cm|N80.5,http://hl7.org/fhir/sid/icd-10-cm|N80.6,http://hl7.org/fhir/sid/icd-10-cm|N80.8,http://hl7.org/fhir/sid/icd-10-cm|N80.9,http://hl7.org/fhir/sid/icd-9-cm|617.0,http://hl7.org/fhir/sid/icd-9-cm|617.1,http://hl7.org/fhir/sid/icd-9-cm|617.2,http://hl7.org/fhir/sid/icd-9-cm|617.3,http://hl7.org/fhir/sid/icd-9-cm|617.4,http://hl7.org/fhir/sid/icd-9-cm|617.5,http://hl7.org/fhir/sid/icd-9-cm|617.6,http://hl7.org/fhir/sid/icd-9-cm|617.8,http://hl7.org/fhir/sid/icd-9-cm|617.9",
+      "additional_query_urls": [],
+      "raw_response": "FINAL ANSWER:\n\nCondition?code=http://hl7.org/fhir/sid/icd-10-cm|N80.0,http://hl7.org/fhir/sid/icd-10-cm|N80.1,http://hl7.org/fhir/sid/icd-10-cm|N80.2,http://hl7.org/fhir/sid/icd-10-cm|N80.3,http://hl7.org/fhir/sid/icd-10-cm|N80.4,http://hl7.org/fhir/sid/icd-10-cm|N80.5,http://hl7.org/fhir/sid/icd-10-cm|N80.6,http://hl7.org/fhir/sid/icd-10-cm|N80.8,http://hl7.org/fhir/sid/icd-10-cm|N80.9,http://hl7.org/fhir/sid/icd-9-cm|617.0,http://hl7.org/fhir/sid/icd-9-cm|617.1,http://hl7.org/fhir/sid/icd-9-cm|617.2,http://hl7.org/fhir/sid/icd-9-cm|617.3,http://hl7.org/fhir/sid/icd-9-cm|617.4,http://hl7.org/fhir/sid/icd-9-cm|617.5,http://hl7.org/fhir/sid/icd-9-cm|617.6,http://hl7.org/fhir/sid/icd-9-cm|617.8,http://hl7.org/fhir/sid/icd-9-cm|617.9",
+      "prompt_text": "Find patients with endometriosis."
+     },
+     "2-broad": {
+      "precision": 0.3593,
+      "recall": 0.9972,
+      "f1": 0.5282,
+      "passed": false,
+      "expected_count": 352,
+      "actual_count": 977,
+      "elapsed_sec": 41.2,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|N80.0,http://hl7.org/fhir/sid/icd-10-cm|N80.00,http://hl7.org/fhir/sid/icd-10-cm|N80.1,http://hl7.org/fhir/sid/icd-10-cm|N80.2,http://hl7.org/fhir/sid/icd-10-cm|N80.3,http://hl7.org/fhir/sid/icd-10-cm|N80.4,http://hl7.org/fhir/sid/icd-10-cm|N80.5,http://hl7.org/fhir/sid/icd-10-cm|N80.6,http://hl7.org/fhir/sid/icd-10-cm|N80.8,http://hl7.org/fhir/sid/icd-10-cm|N80.9,http://hl7.org/fhir/sid/icd-9-cm|617.0,http://hl7.org/fhir/sid/icd-9-cm|617.1,http://hl7.org/fhir/sid/icd-9-cm|617.2,http://hl7.org/fhir/sid/icd-9-cm|617.3,http://hl7.org/fhir/sid/icd-9-cm|617.4,http://hl7.org/fhir/sid/icd-9-cm|617.5,http://hl7.org/fhir/sid/icd-9-cm|617.6,http://hl7.org/fhir/sid/icd-9-cm|617.8,http://hl7.org/fhir/sid/icd-9-cm|617.9&subject:Patient.gender=female",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|N80.0,http://hl7.org/fhir/sid/icd-10-cm|N80.00,http://hl7.org/fhir/sid/icd-10-cm|N80.1,http://hl7.org/fhir/sid/icd-10-cm|N80.2,http://hl7.org/fhir/sid/icd-10-cm|N80.3,http://hl7.org/fhir/sid/icd-10-cm|N80.4,http://hl7.org/fhir/sid/icd-10-cm|N80.5,http://hl7.org/fhir/sid/icd-10-cm|N80.6,http://hl7.org/fhir/sid/icd-10-cm|N80.8,http://hl7.org/fhir/sid/icd-10-cm|N80.9,http://hl7.org/fhir/sid/icd-9-cm|617.0,http://hl7.org/fhir/sid/icd-9-cm|617.1,http://hl7.org/fhir/sid/icd-9-cm|617.2,http://hl7.org/fhir/sid/icd-9-cm|617.3,http://hl7.org/fhir/sid/icd-9-cm|617.4,http://hl7.org/fhir/sid/icd-9-cm|617.5,http://hl7.org/fhir/sid/icd-9-cm|617.6,http://hl7.org/fhir/sid/icd-9-cm|617.8,http://hl7.org/fhir/sid/icd-9-cm|617.9&subject:Patient.gender=female",
+      "prompt_text": "Find female patients diagnosed with endometriosis \u2014 a chronic gynecologic disorder where endometrial tissue grows outside the uterus."
+     },
+     "2-expert": {
+      "precision": 1.0,
+      "recall": 0.9972,
+      "f1": 0.9986,
+      "passed": true,
+      "expected_count": 352,
+      "actual_count": 351,
+      "elapsed_sec": 49.4,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|N80.0,http://hl7.org/fhir/sid/icd-9-cm|617.0&subject.gender=female",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|N80.0,http://hl7.org/fhir/sid/icd-9-cm|617.0&subject.gender=female",
+      "prompt_text": "I need to find female patients with a documented diagnosis of endometriosis from their Condition resources. Search Condition for the SNOMED CT concept for endometriosis of the uterus, and restrict results to female patients using a patient gender filter. This is a female-specific reproductive condition; apply the sex restriction to avoid any incidental miscoded records."
+     },
+     "3-naive": {
+      "precision": 0.3596,
+      "recall": 1.0,
+      "f1": 0.5289,
+      "passed": false,
+      "expected_count": 352,
+      "actual_count": 979,
+      "elapsed_sec": 40.4,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|N80,http://hl7.org/fhir/sid/icd-10-cm|N80.0,http://hl7.org/fhir/sid/icd-10-cm|N80.1,http://hl7.org/fhir/sid/icd-10-cm|N80.2,http://hl7.org/fhir/sid/icd-10-cm|N80.3,http://hl7.org/fhir/sid/icd-10-cm|N80.4,http://hl7.org/fhir/sid/icd-10-cm|N80.5,http://hl7.org/fhir/sid/icd-10-cm|N80.6,http://hl7.org/fhir/sid/icd-10-cm|N80.8,http://hl7.org/fhir/sid/icd-10-cm|N80.9,http://hl7.org/fhir/sid/icd-9-cm|617.0,http://hl7.org/fhir/sid/icd-9-cm|617.1,http://hl7.org/fhir/sid/icd-9-cm|617.2,http://hl7.org/fhir/sid/icd-9-cm|617.3,http://hl7.org/fhir/sid/icd-9-cm|617.4,http://hl7.org/fhir/sid/icd-9-cm|617.5,http://hl7.org/fhir/sid/icd-9-cm|617.6,http://hl7.org/fhir/sid/icd-9-cm|617.8,http://hl7.org/fhir/sid/icd-9-cm|617.9",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|N80,http://hl7.org/fhir/sid/icd-10-cm|N80.0,http://hl7.org/fhir/sid/icd-10-cm|N80.1,http://hl7.org/fhir/sid/icd-10-cm|N80.2,http://hl7.org/fhir/sid/icd-10-cm|N80.3,http://hl7.org/fhir/sid/icd-10-cm|N80.4,http://hl7.org/fhir/sid/icd-10-cm|N80.5,http://hl7.org/fhir/sid/icd-10-cm|N80.6,http://hl7.org/fhir/sid/icd-10-cm|N80.8,http://hl7.org/fhir/sid/icd-10-cm|N80.9,http://hl7.org/fhir/sid/icd-9-cm|617.0,http://hl7.org/fhir/sid/icd-9-cm|617.1,http://hl7.org/fhir/sid/icd-9-cm|617.2,http://hl7.org/fhir/sid/icd-9-cm|617.3,http://hl7.org/fhir/sid/icd-9-cm|617.4,http://hl7.org/fhir/sid/icd-9-cm|617.5,http://hl7.org/fhir/sid/icd-9-cm|617.6,http://hl7.org/fhir/sid/icd-9-cm|617.8,http://hl7.org/fhir/sid/icd-9-cm|617.9",
+      "prompt_text": "Find patients with endometriosis."
+     },
+     "3-broad": {
+      "precision": 0.3593,
+      "recall": 0.9972,
+      "f1": 0.5282,
+      "passed": false,
+      "expected_count": 352,
+      "actual_count": 977,
+      "elapsed_sec": 56.4,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|N80.0,http://hl7.org/fhir/sid/icd-10-cm|N80.1,http://hl7.org/fhir/sid/icd-10-cm|N80.2,http://hl7.org/fhir/sid/icd-10-cm|N80.3,http://hl7.org/fhir/sid/icd-10-cm|N80.4,http://hl7.org/fhir/sid/icd-10-cm|N80.5,http://hl7.org/fhir/sid/icd-10-cm|N80.6,http://hl7.org/fhir/sid/icd-10-cm|N80.8,http://hl7.org/fhir/sid/icd-10-cm|N80.9,http://hl7.org/fhir/sid/icd-9-cm|617.0,http://hl7.org/fhir/sid/icd-9-cm|617.1,http://hl7.org/fhir/sid/icd-9-cm|617.2,http://hl7.org/fhir/sid/icd-9-cm|617.3,http://hl7.org/fhir/sid/icd-9-cm|617.4,http://hl7.org/fhir/sid/icd-9-cm|617.5,http://hl7.org/fhir/sid/icd-9-cm|617.6,http://hl7.org/fhir/sid/icd-9-cm|617.8,http://hl7.org/fhir/sid/icd-9-cm|617.9&patient.gender=female",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|N80.0,http://hl7.org/fhir/sid/icd-10-cm|N80.1,http://hl7.org/fhir/sid/icd-10-cm|N80.2,http://hl7.org/fhir/sid/icd-10-cm|N80.3,http://hl7.org/fhir/sid/icd-10-cm|N80.4,http://hl7.org/fhir/sid/icd-10-cm|N80.5,http://hl7.org/fhir/sid/icd-10-cm|N80.6,http://hl7.org/fhir/sid/icd-10-cm|N80.8,http://hl7.org/fhir/sid/icd-10-cm|N80.9,http://hl7.org/fhir/sid/icd-9-cm|617.0,http://hl7.org/fhir/sid/icd-9-cm|617.1,http://hl7.org/fhir/sid/icd-9-cm|617.2,http://hl7.org/fhir/sid/icd-9-cm|617.3,http://hl7.org/fhir/sid/icd-9-cm|617.4,http://hl7.org/fhir/sid/icd-9-cm|617.5,http://hl7.org/fhir/sid/icd-9-cm|617.6,http://hl7.org/fhir/sid/icd-9-cm|617.8,http://hl7.org/fhir/sid/icd-9-cm|617.9&patient.gender=female",
+      "prompt_text": "Find female patients diagnosed with endometriosis \u2014 a chronic gynecologic disorder where endometrial tissue grows outside the uterus."
+     },
+     "3-expert": {
+      "precision": 1.0,
+      "recall": 0.9972,
+      "f1": 0.9986,
+      "passed": true,
+      "expected_count": 352,
+      "actual_count": 351,
+      "elapsed_sec": 35.6,
+      "queries_generated": 1,
+      "primary_query_url": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|N80.0,http://hl7.org/fhir/sid/icd-9-cm|617.0&patient.gender=female",
+      "additional_query_urls": [],
+      "raw_response": "Condition?code=http://hl7.org/fhir/sid/icd-10-cm|N80.0,http://hl7.org/fhir/sid/icd-9-cm|617.0&patient.gender=female",
+      "prompt_text": "I need to find female patients with a documented diagnosis of endometriosis from their Condition resources. Search Condition for the SNOMED CT concept for endometriosis of the uterus, and restrict results to female patients using a patient gender filter. This is a female-specific reproductive condition; apply the sex restriction to avoid any incidental miscoded records."
+     }
+    },
     "copilot:claude-sonnet-4.6": {
      "1-naive": {
       "precision": 1.0,
@@ -1723,6 +1995,146 @@
       "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6373&subject:Patient.gender=female",
       "additional_query_urls": [],
       "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|6373&subject:Patient.gender=female",
+      "prompt_text": "I need to find female patients who have been prescribed leuprolide acetate, the GnRH agonist used in hormonal suppression therapy for endometriosis. Search MedicationRequest resources for leuprolide acetate using its RxNorm code, and restrict results to female patients using a patient gender filter. Leuprolide is cross-indicated for prostate cancer androgen-deprivation therapy in males, but the female sex restriction eliminates that overlap \u2014 within the female cohort, leuprolide prescriptions are a strong but imperfect signal for endometriosis, as some may reflect treatment for uterine fibroids or precocious puberty."
+     }
+    },
+    "copilot:claude-opus-4.7+mimic": {
+     "1-naive": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 134,
+      "actual_count": 0,
+      "elapsed_sec": 9.0,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1546442,http://www.nlm.nih.gov/research/umls/rxnorm|1000158,http://www.nlm.nih.gov/research/umls/rxnorm|1187660,http://www.nlm.nih.gov/research/umls/rxnorm|151827,http://www.nlm.nih.gov/research/umls/rxnorm|30125",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|1546442,http://www.nlm.nih.gov/research/umls/rxnorm|1000158,http://www.nlm.nih.gov/research/umls/rxnorm|1187660,http://www.nlm.nih.gov/research/umls/rxnorm|151827,http://www.nlm.nih.gov/research/umls/rxnorm|30125",
+      "prompt_text": "Find patients on endometriosis medications."
+     },
+     "1-broad": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 134,
+      "actual_count": 0,
+      "elapsed_sec": 9.3,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?medication=http://www.nlm.nih.gov/research/umls/rxnorm|6387&subject:Patient.gender=female",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?medication=http://www.nlm.nih.gov/research/umls/rxnorm|6387&subject:Patient.gender=female",
+      "prompt_text": "Find female patients prescribed leuprolide \u2014 a GnRH agonist used for endometriosis to suppress estrogen and shrink endometrial implants."
+     },
+     "1-expert": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 134,
+      "actual_count": 0,
+      "elapsed_sec": 7.7,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|203144&patient.gender=female",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?code=http://www.nlm.nih.gov/research/umls/rxnorm|203144&patient.gender=female",
+      "prompt_text": "I need to find female patients who have been prescribed leuprolide acetate, the GnRH agonist used in hormonal suppression therapy for endometriosis. Search MedicationRequest resources for leuprolide acetate using its RxNorm code, and restrict results to female patients using a patient gender filter. Leuprolide is cross-indicated for prostate cancer androgen-deprivation therapy in males, but the female sex restriction eliminates that overlap \u2014 within the female cohort, leuprolide prescriptions are a strong but imperfect signal for endometriosis, as some may reflect treatment for uterine fibroids or precocious puberty."
+     },
+     "2-naive": {
+      "precision": 0.0294,
+      "recall": 0.0299,
+      "f1": 0.0296,
+      "passed": false,
+      "expected_count": 134,
+      "actual_count": 136,
+      "elapsed_sec": 100.4,
+      "queries_generated": 5,
+      "primary_query_url": "MedicationRequest?medication.code:text=leuprolide",
+      "additional_query_urls": [
+       "MedicationRequest?medication.code:text=norethindrone",
+       "MedicationRequest?medication.code:text=danazol",
+       "MedicationRequest?medication.code:text=goserelin",
+       "MedicationRequest?medication.code:text=medroxyprogesterone"
+      ],
+      "raw_response": "FINAL ANSWER:\n\nMedicationRequest?medication.code:text=leuprolide\nMedicationRequest?medication.code:text=norethindrone\nMedicationRequest?medication.code:text=danazol\nMedicationRequest?medication.code:text=goserelin\nMedicationRequest?medication.code:text=medroxyprogesterone",
+      "prompt_text": "Find patients on endometriosis medications."
+     },
+     "2-broad": {
+      "precision": 1.0,
+      "recall": 0.6716,
+      "f1": 0.8036,
+      "passed": true,
+      "expected_count": 134,
+      "actual_count": 90,
+      "elapsed_sec": 27.9,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?medication.code:text=leuprolide&subject.gender=female",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?medication.code:text=leuprolide&subject.gender=female",
+      "prompt_text": "Find female patients prescribed leuprolide \u2014 a GnRH agonist used for endometriosis to suppress estrogen and shrink endometrial implants."
+     },
+     "2-expert": {
+      "precision": 1.0,
+      "recall": 0.6716,
+      "f1": 0.8036,
+      "passed": true,
+      "expected_count": 134,
+      "actual_count": 90,
+      "elapsed_sec": 31.5,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?medication.code:text=leuprolide&patient.gender=female",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?medication.code:text=leuprolide&patient.gender=female",
+      "prompt_text": "I need to find female patients who have been prescribed leuprolide acetate, the GnRH agonist used in hormonal suppression therapy for endometriosis. Search MedicationRequest resources for leuprolide acetate using its RxNorm code, and restrict results to female patients using a patient gender filter. Leuprolide is cross-indicated for prostate cancer androgen-deprivation therapy in males, but the female sex restriction eliminates that overlap \u2014 within the female cohort, leuprolide prescriptions are a strong but imperfect signal for endometriosis, as some may reflect treatment for uterine fibroids or precocious puberty."
+     },
+     "3-naive": {
+      "precision": 0.0294,
+      "recall": 0.0299,
+      "f1": 0.0296,
+      "passed": false,
+      "expected_count": 134,
+      "actual_count": 136,
+      "elapsed_sec": 132.3,
+      "queries_generated": 7,
+      "primary_query_url": "MedicationRequest?medication.code:text=leuprolide",
+      "additional_query_urls": [
+       "MedicationRequest?medication.code:text=goserelin",
+       "MedicationRequest?medication.code:text=nafarelin",
+       "MedicationRequest?medication.code:text=danazol",
+       "MedicationRequest?medication.code:text=elagolix",
+       "MedicationRequest?medication.code:text=norethindrone",
+       "MedicationRequest?medication.code:text=medroxyprogesterone"
+      ],
+      "raw_response": "FINAL ANSWER:\n\nMedicationRequest?medication.code:text=leuprolide\nMedicationRequest?medication.code:text=goserelin\nMedicationRequest?medication.code:text=nafarelin\nMedicationRequest?medication.code:text=danazol\nMedicationRequest?medication.code:text=elagolix\nMedicationRequest?medication.code:text=norethindrone\nMedicationRequest?medication.code:text=medroxyprogesterone",
+      "prompt_text": "Find patients on endometriosis medications."
+     },
+     "3-broad": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "passed": false,
+      "expected_count": 134,
+      "actual_count": 0,
+      "elapsed_sec": 148.8,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|6387&subject.gender=female",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|6387&subject.gender=female",
+      "prompt_text": "Find female patients prescribed leuprolide \u2014 a GnRH agonist used for endometriosis to suppress estrogen and shrink endometrial implants."
+     },
+     "3-expert": {
+      "precision": 1.0,
+      "recall": 0.6716,
+      "f1": 0.8036,
+      "passed": true,
+      "expected_count": 134,
+      "actual_count": 90,
+      "elapsed_sec": 46.9,
+      "queries_generated": 1,
+      "primary_query_url": "MedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|42375&patient.gender=female",
+      "additional_query_urls": [],
+      "raw_response": "MedicationRequest?medication.code=http://www.nlm.nih.gov/research/umls/rxnorm|42375&patient.gender=female",
       "prompt_text": "I need to find female patients who have been prescribed leuprolide acetate, the GnRH agonist used in hormonal suppression therapy for endometriosis. Search MedicationRequest resources for leuprolide acetate using its RxNorm code, and restrict results to female patients using a patient gender filter. Leuprolide is cross-indicated for prostate cancer androgen-deprivation therapy in males, but the female sex restriction eliminates that overlap \u2014 within the female cohort, leuprolide prescriptions are a strong but imperfect signal for endometriosis, as some may reflect treatment for uterine fibroids or precocious puberty."
      }
     },
