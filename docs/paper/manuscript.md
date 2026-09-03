@@ -2,9 +2,10 @@
 
 **Authors:** Jared Erwin¹ *(author list and affiliations to be completed)*
 
-**Status:** DRAFT — full-MIMIC results pending (sweep in progress); figure slots
-reference the Dev Days deck (`docs/presentation/devdays-outline.md`) and the
-interactive leaderboard frontend.
+**Status:** DRAFT — all results in (synthetic 108-phenotype sweep, full-MIMIC
+sweep, n=3 repeat variance); figures pending. Figure slots reference the Dev
+Days deck (`docs/presentation/devdays-outline.md`) and the interactive
+leaderboard frontend.
 
 ---
 
@@ -394,10 +395,6 @@ retained as the primary analysis for correctness (§6).
 > **[FIGURE 7 — Recall vs gold-cohort size]** *T2-broad recall by gold-size
 > bucket (0.41 / 0.64 / 0.70 / 0.28); the code-tail coverage story.*
 
-> **[FIGURE 7 — Synthetic vs real bar pairs]** *T1/T2/T3 bars side-by-side,
-> synthetic vs MIMIC; the T1 collapse and enlarged T1→T2 delta are the
-> visual story.* (Source: deck Slide 21 roadmap slot; data from §4.6.)
-
 ---
 
 ## 5. Discussion
@@ -446,8 +443,14 @@ language, not precise *coding* language.
 
 ## 6. Limitations
 
-- **n=1 agentic runs** per cell; sub-0.05 deltas are within variance. The
-  headline levers (+0.23–0.60) are far above it. Repeat runs (n≥3) planned.
+- **Agentic run-to-run variance.** Most cells are n=1; a repeat study (n=3,
+  Opus, 138 T2/T3 cells over 12 MIMIC phenotypes) measured median per-cell F1
+  range 0.07 but a heavy tail: 7% of cells swing >0.5 between runs, usually
+  because one attempt emits a zero-result query. Aggregate tier means over
+  identical cells are stable to ~±0.03, so tier-level deltas below ~0.05 are
+  within noise while the headline levers (+0.23–0.60) are an order of
+  magnitude above it; single-cell comparisons should not be read at n=1
+  (`docs/results/2026-09-02-mimic-repeat-variance.md`).
 - **Synthetic generosity**: multi-coded patients mean the synthetic
   benchmark does not test code-system selection (the MIMIC arm does). A
   sharper synthetic design would assign each patient one randomly chosen
@@ -481,9 +484,12 @@ UMLS/VSAC integration, pointable at any FHIR endpoint.
 
 Benchmark test cases, Synthea modules, augmentation and evaluation
 pipelines, and the cohort-query agent are available in the project
-repository. MIMIC-IV is available to credentialed users via PhysioNet;
-derived gold cohorts are reproducible with the included scripts
-(`recompute_mimic_gold.py`).
+repository. MIMIC-IV is available to credentialed users via PhysioNet; per
+the PhysioNet Data Use Agreement, no MIMIC-derived artifacts (gold patient
+cohorts, itemid→LOINC maps, NDC lists) are redistributed with the
+repository. Credentialed users can regenerate them from MIMIC-IV-on-FHIR
+with the included scripts (`recompute_mimic_gold.py`,
+`standardize_mimic_fhir.py`, `augment_mimic_medications.py`).
 
 ## Figure/Table inventory (deck mapping)
 
